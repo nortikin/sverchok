@@ -8,12 +8,12 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve, SvNormalTrack
 
-class SvCurveZeroTwistFrameNodeMK2(SverchCustomTreeNode, bpy.types.Node):
+class SvCurveZeroTwistFrameNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Curve Zero-Twist Frame
         Tooltip: Calculate Zero-Twist Perpendicular frame for curve
         """
-        bl_idname = 'SvExCurveZeroTwistFrameNodeMK2'
+        bl_idname = 'SvExCurveZeroTwistFrameNode'
         bl_label = 'Curve Zero-Twist Frame'
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_CURVE_FRAME'
@@ -28,9 +28,9 @@ class SvCurveZeroTwistFrameNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                 default = 0.5,
                 update = updateNode)
 
-        flatten_result : BoolProperty(
-                name = "Flatten result",
-                description = "If enabled, flat generated lists of matrices; otherwise, output separate list of matrices for each spline in object",
+        join : BoolProperty(
+                name = "Join",
+                description = "If enabled, join generated lists of matrices; otherwise, output separate list of matrices for each curve",
                 default = True,
                 update = updateNode)
 
@@ -51,7 +51,7 @@ class SvCurveZeroTwistFrameNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
         def draw_buttons(self, context, layout):
             layout.prop(self, 'algorithm', text='')
-            layout.prop(self, 'flatten_result', toggle=True)
+            layout.prop(self, 'join', toggle=True)
 
         def sv_init(self, context):
             self.inputs.new('SvCurveSocket', "Curve")
@@ -64,30 +64,28 @@ class SvCurveZeroTwistFrameNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             if not any(socket.is_linked for socket in self.outputs):
                 return
 
-            obj_socket = self.inputs['Curve'].sv_get()
-            ts_socket = self.inputs['T'].sv_get()
-            resolution_socket = self.inputs['Resolution'].sv_get()
+            curve_s = self.inputs['Curve'].sv_get()
+            ts_s = self.inputs['T'].sv_get()
+            resolution_s = self.inputs['Resolution'].sv_get()
 
-            obj_s2 = ensure_nesting_level(obj_socket, 2, data_types=(SvCurve,))
-            resolution_s2 = ensure_nesting_level(resolution_socket, 2)
-            ts_s3 = ensure_nesting_level(ts_socket, 3)
+            curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
+            resolution_s = ensure_nesting_level(resolution_s, 2)
+            ts_s = ensure_nesting_level(ts_s, 3)
 
-            objects_torsion = []
-            objects_matrixes = []
-            for splines, resolution_i, ts_i in zip_long_repeat(obj_s2, resolution_s2, ts_s3):
-                object_torsion = []
-                splines_matrixes = []
-                for spline, resolution, ts in zip_long_repeat(splines, resolution_i, ts_i):
+            torsion_out = []
+            matrix_out = []
+            for curves, resolution_i, ts_i in zip_long_repeat(curve_s, resolution_s, ts_s):
+                for curve, resolution, ts in zip_long_repeat(curves, resolution_i, ts_i):
                     ts = np.array(ts)
 
                     if self.algorithm == 'FRENET':
-                        spline.pre_calc_torsion_integral(resolution)
-                        new_torsion, new_matrices = spline.zero_torsion_frame_array(ts)
+                        curve.pre_calc_torsion_integral(resolution)
+                        new_torsion, new_matrices = curve.zero_torsion_frame_array(ts)
                         new_torsion = new_torsion.tolist()
                     else: # TRACK
-                        tracker = SvNormalTrack(spline, resolution)
+                        tracker = SvNormalTrack(curve, resolution)
                         matrices_np = tracker.evaluate_array(ts)
-                        points = spline.evaluate_array(ts)
+                        points = curve.evaluate_array(ts)
                         new_matrices = []
                         for m, point in zip(matrices_np, points):
                             matrix = Matrix(m.tolist()).to_4x4()
@@ -95,19 +93,18 @@ class SvCurveZeroTwistFrameNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                             new_matrices.append(matrix)
                         new_torsion = []
 
-                    object_torsion.append(new_torsion)
-                    splines_matrixes.append(new_matrices)
-                    pass
+                    torsion_out.append(new_torsion)
+                    if self.join:
+                        matrix_out.extend(new_matrices)
+                    else:
+                        matrix_out.append(new_matrices)
 
-                if self.flatten_result:
-                    objects_torsion.append([t for elem in object_torsion for t in elem])
-                    objects_matrixes.append([t for elem in splines_matrixes for t in elem])
-                else:
-                    objects_torsion.append(object_torsion)
-                    objects_matrixes.append(splines_matrixes)
+            self.outputs['CumulativeTorsion'].sv_set(torsion_out)
+            self.outputs['Matrix'].sv_set(matrix_out)
 
-            self.outputs['CumulativeTorsion'].sv_set(objects_torsion)
-            self.outputs['Matrix'].sv_set(objects_matrixes)
+def register():
+    bpy.utils.register_class(SvCurveZeroTwistFrameNode)
 
-classes = [SvCurveZeroTwistFrameNodeMK2]
-register, unregister = bpy.utils.register_classes_factory(classes)
+def unregister():
+    bpy.utils.unregister_class(SvCurveZeroTwistFrameNode)
+
