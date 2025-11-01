@@ -1,11 +1,13 @@
 
 import numpy as np
 
-from mathutils import kdtree
+from mathutils import kdtree, Matrix
 from mathutils.bvhtree import BVHTree
 
-from sverchok.utils.curve import SvIsoUvCurve
+from sverchok.utils.curve import SvIsoUvCurve, SvDeformedByFieldCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve.algorithms import reverse_curve, concatenate_curves
+from sverchok.utils.field.vector import SvMatrixVectorField
 from sverchok.utils.sv_logging import sv_logger, get_logger
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
@@ -1153,6 +1155,7 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
         cpts = segment.get_control_points()
         signs = plane.side_of_points(cpts)
         all_one_side = (signs > 0).all() or (signs < 0).all()
+        #print(f"Check: cpts {cpts} => signs {signs} => result not {all_one_side}")
         return not all_one_side
 
     def middle(segment):
@@ -1217,28 +1220,40 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
             t2 = (-b - np.sqrt(D))/(2*a)
             return [t for t in [t1,t2] if t_min <= t <= t_max]
 
+    def real_cbrt(x):
+        if x.real < 0 and abs(x.imag) < 1e-10:
+            return - (-x.real)**(1.0/3.0) + 0j
+        else:
+            return x ** (1.0/3.0)
+
     def solve_cubic(segment):
         t_min, t_max = segment.get_u_bounds()
         coeffs = get_taylor_coeffs(segment)
-        print("C", coeffs)
         d,c,b,a = coeffs
         d += delta_z
         p = (3*a*c - b*b) / (3*a*a)
         q = (2*b**3 - 9*a*b*c + 27*a*a*d)/(27*a**3)
         Q = (p/3)**3 + (q/2)**2
         sqrt_Q = np.sqrt(Q, dtype=complex)
-        alpha = (-q/2 + sqrt_Q)**(1.0/3.0)
-        beta = (-q/2 - sqrt_Q)**(1.0/3.0)
+        alpha = real_cbrt(-q/2 + sqrt_Q)
+        beta = real_cbrt(-q/2 - sqrt_Q)
+        #print(f"Cubic coeffs: {[a,b,c,d]} => p {p}, q {q}, Q {Q}, alpha {alpha}, beta {beta}")
         sqrt32 = np.sqrt(3.0)/2.0
         y1 = alpha + beta
         y2 = -(alpha + beta)/2.0 + (alpha - beta)*sqrt32*1j
         y3 = -(alpha + beta)/2.0 - (alpha - beta)*sqrt32*1j
+        #print(f"Solve cubic: ys {[y1, y2, y3]}")
         ys = [y.real for y in [y1,y2,y3] if abs(y.imag) < 1e-6]
+        #print(f"Solve cubic: real ys {ys}")
         xs = [y - b/(3*a) for y in ys]
-        print(t_min, t_max, xs)
-        return [t for t in xs if t_min <= t <= t_max]
+        #print(t_min, t_max, xs)
+        solutions = [t for t in xs if t_min <= t <= t_max]
+        #print(f"Solve cubic: {xs}, range ({t_min} - {t_max})")
+        return solutions
 
     def solve(segment, i=0):
+        if segment is None:
+            return []
         if is_small(segment):
             cpts = segment.get_control_points()
             p1, p2 = cpts[0], cpts[-1]
@@ -1268,8 +1283,9 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
     else:
         segments = curve.to_bezier_segments(to_bezier_class=False)
 
-    segments = [segment for segment in segments if check_signs(segment)]
+    segments = [segment for segment in segments if segment is not None and check_signs(segment)]
     solutions = [solve(segment) for segment in segments]
+    #print(f"Intersect: segments {[s.get_control_points()[0] for s in segments]}")
     solutions = sum(solutions, [])
     ts = np.array(solutions)
     pts = curve.evaluate_array(ts)
@@ -1378,5 +1394,95 @@ def intersect_line_iso_surface(field, pt1, direction, max_distance, iso_value, s
         result_ts.append(t)
         result_pts.append(tuple(p))
     return result_ts, result_pts
+
+def symmetrize_curve(curve, plane, sign=1, concatenate=True, flip=False, support_nurbs=True, tolerance=1e-6):
+    if concatenate:
+        flip = True
+    is_nurbs = False
+    if support_nurbs:
+        nurbs_curve = SvNurbsCurve.to_nurbs(curve)
+        if nurbs_curve is not None:
+            curve = nurbs_curve
+            method = NURBS
+            is_nurbs = True
+        else:
+            method = EQUATION
+    else:
+        method = EQUATION
+
+    plane_matrix = plane.get_matrix().to_4x4()
+    plane_matrix.translation = plane.nearest_point_to_origin()
+    matrix = plane_matrix @ Matrix.Diagonal((1, 1, -1)).to_4x4() @ plane_matrix.inverted()
+
+    def mirror_segments(segments):
+        new_segments = []
+        if is_nurbs:
+            np_matrix = np.array(matrix.to_3x3())
+            np_vector = np.array(matrix.translation)
+            for segment in segments:
+                new_segment = segment.transform(np_matrix, np_vector)
+                new_segments.append(new_segment)
+        else:
+            matrix_field = SvMatrixVectorField(matrix)
+            for segment in segments:
+                new_segment = SvDeformedByFieldCurve(segment, matrix_field)
+                new_segments.append(new_segment)
+        return new_segments
+
+    intersections = intersect_curve_plane(curve, plane, method=method, tolerance=tolerance)
+    if not intersections:
+        curves = [curve]
+        if flip:
+            mirrored = mirror_segments([reverse_curve(curve)])
+        else:
+            mirrored = mirror_segments([curve])
+        curves.extend(mirrored)
+        return curves
+
+    key_ts = [t for t, pt in intersections]
+    key_ts = list(sorted(key_ts))
+    #print("I", key_ts)
+    t_min, t_max = curve.get_u_bounds()
+    if len(key_ts) > 0 and t_min != key_ts[0]:
+        key_ts = [t_min] + key_ts
+    if len(key_ts) > 0 and t_max != key_ts[-1]:
+        key_ts = key_ts + [t_max]
+    segments = []
+    for t1, t2 in zip(key_ts, key_ts[1:]):
+        segment = curve.cut_segment(t1, t2)
+        if segment is None:
+            continue
+        t = (t1 + t2)/2
+        pt = curve.evaluate(t)
+        segment_sign = plane.side_of_point(pt)
+        if segment_sign == sign:
+            segments.append(segment)
+    #print("S", segments)
+    new_segments = mirror_segments(segments)
+    result = []
+    for segment, new_segment in zip(segments, new_segments):
+        if flip:
+            new_segment = reverse_curve(new_segment)
+        if concatenate:
+            t1, t2 = segment.get_u_bounds()
+            s1p1, s1p2 = segment.evaluate(t1), segment.evaluate(t2)
+            t1, t2 = new_segment.get_u_bounds()
+            s2p1, s2p2 = new_segment.evaluate(t1), new_segment.evaluate(t2)
+            d1 = np.linalg.norm(s1p2 - s2p1)
+            d2 = np.linalg.norm(s2p2 - s1p1)
+            #print(f"D1 {d1}, D2 {d2}")
+            if d1 < tolerance:
+                #print("Join 1")
+                result.append(concatenate_curves([segment, new_segment]))
+            elif d2 < tolerance:
+                #print("Join 2")
+                result.append(concatenate_curves([new_segment, segment], allow_generic = not is_nurbs))
+            else:
+                #print("No join")
+                result.append(segment)
+                result.append(new_segment)
+        else:
+            result.append([segment, new_segment])
+    return result
 
 

@@ -563,6 +563,7 @@
         - SvIntersectNurbsCurvesNode
         - SvPrepareCurvesNetNode
         - SvExCastCurveNode
+        - SvSymmetrizeCurveNode
         - SvProjectCurveSurfaceNode
         - SvOffsetCurveMk2Node
         - SvCurveOffsetOnSurfaceNode
