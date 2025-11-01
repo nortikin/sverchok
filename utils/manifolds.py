@@ -1,11 +1,13 @@
 
 import numpy as np
 
-from mathutils import kdtree
+from mathutils import kdtree, Matrix
 from mathutils.bvhtree import BVHTree
 
-from sverchok.utils.curve import SvIsoUvCurve
+from sverchok.utils.curve import SvIsoUvCurve, SvDeformedByFieldCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve.algorithms import reverse_curve, concatenate_curves
+from sverchok.utils.field.vector import SvMatrixVectorField
 from sverchok.utils.sv_logging import sv_logger, get_logger
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
@@ -1390,5 +1392,72 @@ def intersect_line_iso_surface(field, pt1, direction, max_distance, iso_value, s
         result_ts.append(t)
         result_pts.append(tuple(p))
     return result_ts, result_pts
+
+def symmetrize_curve(curve, plane, sign=1, concatenate=True, flip=False, tolerance=1e-6):
+    if concatenate:
+        flip = True
+    nurbs_curve = SvNurbsCurve.to_nurbs(curve)
+    if nurbs_curve is not None:
+        curve = nurbs_curve
+        method = NURBS
+    else:
+        method = EQUATION
+    intersections = intersect_curve_plane(curve, plane, method=method, tolerance=tolerance)
+    key_ts = [t for t, pt in intersections]
+    key_ts = list(sorted(key_ts))
+    #print("I", key_ts)
+    t_min, t_max = curve.get_u_bounds()
+    if len(key_ts) > 0 and t_min != key_ts[0]:
+        key_ts = [t_min] + key_ts
+    if len(key_ts) > 0 and t_max != key_ts[-1]:
+        key_ts = key_ts + [t_max]
+    segments = []
+    for t1, t2 in zip(key_ts, key_ts[1:]):
+        segment = curve.cut_segment(t1, t2)
+        if segment is None:
+            continue
+        t = (t1 + t2)/2
+        pt = curve.evaluate(t)
+        segment_sign = plane.side_of_point(pt)
+        if segment_sign == sign:
+            segments.append(segment)
+    #print("S", segments)
+    plane_matrix = plane.get_matrix().to_4x4()
+    plane_matrix.translation = plane.nearest_point_to_origin()
+    matrix = plane_matrix @ Matrix.Diagonal((1, 1, -1)).to_4x4() @ plane_matrix.inverted()
+    new_segments = []
+    if method == NURBS:
+        np_matrix = np.array(matrix.to_3x3())
+        np_vector = np.array(matrix.translation)
+        for segment in segments:
+            new_segment = segment.transform(np_matrix, np_vector)
+            new_segments.append(new_segment)
+    else:
+        matrix_field = SvMatrixVectorField(matrix)
+        for segment in segments:
+            new_segment = SvDeformedByFieldCurve(segment, matrix_field)
+            new_segments.append(new_segment)
+    result = []
+    for segment, new_segment in zip(segments, new_segments):
+        if flip:
+            new_segment = reverse_curve(new_segment)
+        if concatenate:
+            t1, t2 = segment.get_u_bounds()
+            s1p1, s1p2 = segment.evaluate(t1), segment.evaluate(t2)
+            t1, t2 = new_segment.get_u_bounds()
+            s2p1, s2p2 = new_segment.evaluate(t1), new_segment.evaluate(t2)
+            d1 = np.linalg.norm(s1p2 - s2p1)
+            d2 = np.linalg.norm(s2p2 - s1p1)
+            #print(f"D1 {d1}, D2 {d2}")
+            if d1 < tolerance:
+                result.append(concatenate_curves([segment, new_segment]))
+            elif d2 < tolerance:
+                result.append(concatenate_curves([new_segment, segment], allow_generic = method != NURBS))
+            else:
+                result.append(segment)
+                result.append(new_segment)
+        else:
+            result.append([segment, new_segment])
+    return result
 
 
