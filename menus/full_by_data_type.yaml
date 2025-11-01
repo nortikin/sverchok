@@ -292,6 +292,7 @@
         - SvExFlipCurveNode
         - SvReparametrizeCurveNode
         - SvExSurfaceBoundaryNode
+        - SvSymmetrizeCurveNode
     - Modify NURBS Curve:
         - icon_name: TOOL_SETTINGS
         - SvFilletCurveNode
