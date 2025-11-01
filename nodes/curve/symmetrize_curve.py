@@ -103,10 +103,13 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
     def _get_plane(self, point, normal):
         if self.direction in ['X+','X-']:
             normal = (1,0,0)
+            point = (0,0,0)
         elif self.direction in ['Y+', 'Y-']:
             normal = (0,1,0)
+            point = (0,0,0)
         elif self.direction in ['Z+', 'Z-']:
             normal = (0,0,1)
+            point = (0,0,0)
 
         if self.direction in ['X+', 'Y+', 'Z+', 'CUSTOM']:
             sign = -1
