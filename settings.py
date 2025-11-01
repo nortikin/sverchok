@@ -588,8 +588,8 @@ class SverchokPreferences(AddonPreferences):
         row_x1.prop(self, "no_data_color", text='')
 
         col_x2 = split_extra_colors.split().column()
-        col_x2.label(text='Blender theme')
-        col_x2.operator('sverchok.apply_theme', text='Apply BLENDER theme of Sverchok')
+        col_x2.label(text='Blender interface themechanger')
+        col_x2.operator('sverchok.apply_theme', text='Apply Sverchok theme to BLENDER')
 
         col3 = right_split.column()
         col3.label(text='Theme:')
