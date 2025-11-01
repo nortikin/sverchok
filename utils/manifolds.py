@@ -1252,6 +1252,8 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
         return solutions
 
     def solve(segment, i=0):
+        if segment is None:
+            return []
         if is_small(segment):
             cpts = segment.get_control_points()
             p1, p2 = cpts[0], cpts[-1]
@@ -1281,7 +1283,7 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
     else:
         segments = curve.to_bezier_segments(to_bezier_class=False)
 
-    segments = [segment for segment in segments if check_signs(segment)]
+    segments = [segment for segment in segments if segment is not None and check_signs(segment)]
     solutions = [solve(segment) for segment in segments]
     #print(f"Intersect: segments {[s.get_control_points()[0] for s in segments]}")
     solutions = sum(solutions, [])
@@ -1470,10 +1472,13 @@ def symmetrize_curve(curve, plane, sign=1, concatenate=True, flip=False, support
             d2 = np.linalg.norm(s2p2 - s1p1)
             #print(f"D1 {d1}, D2 {d2}")
             if d1 < tolerance:
+                #print("Join 1")
                 result.append(concatenate_curves([segment, new_segment]))
             elif d2 < tolerance:
+                #print("Join 2")
                 result.append(concatenate_curves([new_segment, segment], allow_generic = not is_nurbs))
             else:
+                #print("No join")
                 result.append(segment)
                 result.append(new_segment)
         else:
