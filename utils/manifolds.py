@@ -6,7 +6,7 @@ from mathutils.bvhtree import BVHTree
 
 from sverchok.utils.curve import SvIsoUvCurve, SvDeformedByFieldCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.curve.algorithms import reverse_curve, concatenate_curves
+from sverchok.utils.curve.algorithms import reverse_curve, concatenate_curves, curve_segment
 from sverchok.utils.field.vector import SvMatrixVectorField
 from sverchok.utils.sv_logging import sv_logger, get_logger
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
@@ -867,7 +867,7 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
 
     def to_curve(point, curve, t1, t2, raycast=None):
         if support_nurbs and is_nurbs and raycast is not None:
-            segment = curve.cut_segment(t1, t2)
+            segment = curve_segment(curve, t1, t2)
             surface_u, surface_v = raycast.us[0], raycast.vs[0]
             point_on_surface = raycast.points[0]
             surface_normal = surface.normal(surface_u, surface_v)
@@ -881,7 +881,7 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
             else:
                 return r[0]
         else:
-            nearest = nearest_point_on_curve([point], curve.cut_segment(t1,t2), samples=2)
+            nearest = nearest_point_on_curve([point], curve_segment(curve, t1,t2), samples=2)
             if not nearest:
                 return None
             else:
@@ -1449,7 +1449,7 @@ def symmetrize_curve(curve, plane, sign=1, concatenate=True, flip=False, support
         key_ts = key_ts + [t_max]
     segments = []
     for t1, t2 in zip(key_ts, key_ts[1:]):
-        segment = curve.cut_segment(t1, t2)
+        segment = curve_segment(curve, t1, t2)
         if segment is None:
             continue
         t = (t1 + t2)/2
