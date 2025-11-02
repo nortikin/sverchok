@@ -83,8 +83,15 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
             default = True,
             update = updateNode)
 
+    use_nurbs : BoolProperty(
+            name = "Use NURBS algorithm",
+            description = "Use special algorithm for NURBS curves",
+            default = True,
+            update = updateNode)
+
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        layout.prop(self, "use_nurbs")
         layout.prop(self, "accuracy")
 
     def draw_buttons(self, context, layout):
@@ -141,7 +148,8 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
                 plane, sign = self._get_plane(point, normal)
                 curve = symmetrize_curve(curve, plane, sign,
                                          concatenate = self.concatenate,
-                                         flip = self.flip)
+                                         flip = self.flip,
+                                         support_nurbs = self.use_nurbs)
                 new_curves.append(curve)
             if flat_output:
                 curve_out.extend(new_curves)
