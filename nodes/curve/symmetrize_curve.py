@@ -141,6 +141,8 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
         point_s = ensure_nesting_level(point_s, 3)
         normal_s = ensure_nesting_level(normal_s, 3)
 
+        tolerance = 10 ** (-self.accuracy)
+
         curve_out = []
         for params in zip_long_repeat(curve_s, point_s, normal_s):
             new_curves = []
@@ -149,7 +151,8 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
                 curve = symmetrize_curve(curve, plane, sign,
                                          concatenate = self.concatenate,
                                          flip = self.flip,
-                                         support_nurbs = self.use_nurbs)
+                                         support_nurbs = self.use_nurbs,
+                                         tolerance = tolerance)
                 new_curves.append(curve)
             if flat_output:
                 curve_out.extend(new_curves)
