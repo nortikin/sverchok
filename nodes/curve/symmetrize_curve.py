@@ -24,8 +24,7 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvSymmetrizeCurveNode'
     bl_label = 'Symmetrize Curve'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_MOVE_CURVE_POINT'
+    bl_icon = 'MOD_MIRROR'
 
     directions = [
         ('X+', "-X to +X", "-X to +X", 0),
