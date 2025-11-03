@@ -1274,7 +1274,7 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
             return solve_cubic(segment)
         else:
             if i > maxiter:
-                raise Exception("Maximum number of subdivision iterations reached")
+                raise Exception(f"Maximum number of subdivision iterations ({maxiter}) reached; last segment size is {segment.get_bounding_box().size()}")
             s1, s2 = split(segment)
             return solve(s1, i+1) + solve(s2, i+1)
 
