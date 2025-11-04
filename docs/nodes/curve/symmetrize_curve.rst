@@ -47,6 +47,7 @@ This node has the following parameters:
      normal points to.
 
   The default direction is **-X to +X**.
+
 - **Concatenate**. If checked, then the node will try to concatenate parts of
   the original curve to their mirrored counterparts, if they meet with
   specified precision (and their directions are matching - i.e., the end of one
@@ -65,7 +66,7 @@ This node has the following parameters:
   significantly; but which option is faster depends on exact nature of the
   curve being processed; sometimes the NURBS algorithm is several times faster,
   sometimes it's the other way around. Checked by default.
-* **Accuracy**. This parameter is available in the N panel only. Accuracy level
+- **Accuracy**. This parameter is available in the N panel only. Accuracy level
   both for algorithm which finds the intersection of the curve with the mirror
   plane, and for checking whether the original part of the curve meets with
   it's mirrored counterpart precisely enough to be concatenated. The number of
