@@ -454,6 +454,20 @@ Taken from fractions.py to override depreciation</p></div>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.math.np_ambient_occlusion"><code class="name flex">
+<span>def <span class="ident">np_ambient_occlusion</span></span>(<span>arr, threshold=0.4)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_ambient_occlusion(arr, threshold=0.4):
+    &#39;&#39;&#39; adding reverse light in back side of shadow for viewer draw, default threshold 0.4 &#39;&#39;&#39;
+    return np.where(arr &lt; threshold, threshold+(threshold-arr), arr)</code></pre>
+</details>
+<div class="desc"><p>adding reverse light in back side of shadow for viewer draw, default threshold 0.4</p></div>
+</dd>
 <dt id="sverchok.utils.math.np_dot"><code class="name flex">
 <span>def <span class="ident">np_dot</span></span>(<span>u, v, axis=1)</span>
 </code></dt>
@@ -968,6 +982,7 @@ return list of vector coordinates in UVW basis.</p>
 <li><code><a title="sverchok.utils.math.inverse_square" href="#sverchok.utils.math.inverse_square">inverse_square</a></code></li>
 <li><code><a title="sverchok.utils.math.invsquare" href="#sverchok.utils.math.invsquare">invsquare</a></code></li>
 <li><code><a title="sverchok.utils.math.linear" href="#sverchok.utils.math.linear">linear</a></code></li>
+<li><code><a title="sverchok.utils.math.np_ambient_occlusion" href="#sverchok.utils.math.np_ambient_occlusion">np_ambient_occlusion</a></code></li>
 <li><code><a title="sverchok.utils.math.np_dot" href="#sverchok.utils.math.np_dot">np_dot</a></code></li>
 <li><code><a title="sverchok.utils.math.np_mixed_product" href="#sverchok.utils.math.np_mixed_product">np_mixed_product</a></code></li>
 <li><code><a title="sverchok.utils.math.np_multiply_matrices_vectors" href="#sverchok.utils.math.np_multiply_matrices_vectors">np_multiply_matrices_vectors</a></code></li>

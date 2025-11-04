@@ -215,6 +215,7 @@ list of 2-tuples:
         cpts = segment.get_control_points()
         signs = plane.side_of_points(cpts)
         all_one_side = (signs &gt; 0).all() or (signs &lt; 0).all()
+        #print(f&#34;Check: cpts {cpts} =&gt; signs {signs} =&gt; result not {all_one_side}&#34;)
         return not all_one_side
 
     def middle(segment):
@@ -279,28 +280,40 @@ list of 2-tuples:
             t2 = (-b - np.sqrt(D))/(2*a)
             return [t for t in [t1,t2] if t_min &lt;= t &lt;= t_max]
 
+    def real_cbrt(x):
+        if x.real &lt; 0 and abs(x.imag) &lt; 1e-10:
+            return - (-x.real)**(1.0/3.0) + 0j
+        else:
+            return x ** (1.0/3.0)
+
     def solve_cubic(segment):
         t_min, t_max = segment.get_u_bounds()
         coeffs = get_taylor_coeffs(segment)
-        print(&#34;C&#34;, coeffs)
         d,c,b,a = coeffs
         d += delta_z
         p = (3*a*c - b*b) / (3*a*a)
         q = (2*b**3 - 9*a*b*c + 27*a*a*d)/(27*a**3)
         Q = (p/3)**3 + (q/2)**2
         sqrt_Q = np.sqrt(Q, dtype=complex)
-        alpha = (-q/2 + sqrt_Q)**(1.0/3.0)
-        beta = (-q/2 - sqrt_Q)**(1.0/3.0)
+        alpha = real_cbrt(-q/2 + sqrt_Q)
+        beta = real_cbrt(-q/2 - sqrt_Q)
+        #print(f&#34;Cubic coeffs: {[a,b,c,d]} =&gt; p {p}, q {q}, Q {Q}, alpha {alpha}, beta {beta}&#34;)
         sqrt32 = np.sqrt(3.0)/2.0
         y1 = alpha + beta
         y2 = -(alpha + beta)/2.0 + (alpha - beta)*sqrt32*1j
         y3 = -(alpha + beta)/2.0 - (alpha - beta)*sqrt32*1j
+        #print(f&#34;Solve cubic: ys {[y1, y2, y3]}&#34;)
         ys = [y.real for y in [y1,y2,y3] if abs(y.imag) &lt; 1e-6]
+        #print(f&#34;Solve cubic: real ys {ys}&#34;)
         xs = [y - b/(3*a) for y in ys]
-        print(t_min, t_max, xs)
-        return [t for t in xs if t_min &lt;= t &lt;= t_max]
+        #print(t_min, t_max, xs)
+        solutions = [t for t in xs if t_min &lt;= t &lt;= t_max]
+        #print(f&#34;Solve cubic: {xs}, range ({t_min} - {t_max})&#34;)
+        return solutions
 
     def solve(segment, i=0):
+        if segment is None:
+            return []
         if is_small(segment):
             cpts = segment.get_control_points()
             p1, p2 = cpts[0], cpts[-1]
@@ -321,7 +334,7 @@ list of 2-tuples:
             return solve_cubic(segment)
         else:
             if i &gt; maxiter:
-                raise Exception(&#34;Maximum number of subdivision iterations reached&#34;)
+                raise Exception(f&#34;Maximum number of subdivision iterations ({maxiter}) reached; last segment size is {segment.get_bounding_box().size()}&#34;)
             s1, s2 = split(segment)
             return solve(s1, i+1) + solve(s2, i+1)
 
@@ -330,8 +343,9 @@ list of 2-tuples:
     else:
         segments = curve.to_bezier_segments(to_bezier_class=False)
 
-    segments = [segment for segment in segments if check_signs(segment)]
+    segments = [segment for segment in segments if segment is not None and check_signs(segment)]
     solutions = [solve(segment) for segment in segments]
+    #print(f&#34;Intersect: segments {[s.get_control_points()[0] for s in segments]}&#34;)
     solutions = sum(solutions, [])
     ts = np.array(solutions)
     pts = curve.evaluate_array(ts)
@@ -491,7 +505,7 @@ list of intersection points</p>
 
     def to_curve(point, curve, t1, t2, raycast=None):
         if support_nurbs and is_nurbs and raycast is not None:
-            segment = curve.cut_segment(t1, t2)
+            segment = curve_segment(curve, t1, t2)
             surface_u, surface_v = raycast.us[0], raycast.vs[0]
             point_on_surface = raycast.points[0]
             surface_normal = surface.normal(surface_u, surface_v)
@@ -505,7 +519,7 @@ list of intersection points</p>
             else:
                 return r[0]
         else:
-            nearest = nearest_point_on_curve([point], curve.cut_segment(t1,t2), samples=2)
+            nearest = nearest_point_on_curve([point], curve_segment(curve, t1,t2), samples=2)
             if not nearest:
                 return None
             else:
@@ -1395,6 +1409,202 @@ dependencies: scipy</p></div>
 </details>
 <div class="desc"><p>Shortcut for SurfaceRaycaster</p></div>
 </dd>
+<dt id="sverchok.utils.manifolds.symmetrize_curve"><code class="name flex">
+<span>def <span class="ident">symmetrize_curve</span></span>(<span>curve,<br>plane,<br>sign=1,<br>concatenate=True,<br>flip=False,<br>flat_output=False,<br>separate_output=False,<br>support_nurbs=True,<br>tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def symmetrize_curve(
+    curve,
+    plane,
+    sign=1,
+    concatenate=True,
+    flip=False,
+    flat_output=False,
+    separate_output=False,
+    support_nurbs=True,
+    tolerance=1e-6,
+):
+    &#34;&#34;&#34;
+    Symmetrize a curve: cut the curve in half by a plane; take one half and
+    mirror it around the same plane.
+
+    Args:
+        * curve: SvCurve
+        * plane: PlaneEquation
+        * sign: direction of mirror; 1 means take the part of curve which lies
+        in positive direction of plane&#39;s normal.
+        * concatenate: boolean. Concatenate original parts of the curve with
+        their mirrored versions. Implies flip = true.
+        * flip: boolean. Reverse the direction of mirrored parts. Required in
+        order to concatenate segments.
+        * flat_output: boolean. Not used if concatenate is true. If set to
+        true, output single flat list of curve segments, both origial and
+        mirrored ones. Otherwise, output pairs of segments: original segment
+        and mirrored one.
+        * separate_output: if true, return original and mirrored segments in
+        two separate lists. Otherwise, return one single list of curves (if
+        possible - in such an order, so that they could be concatenated;
+        however, this is not guaranteed).
+        * support_nurbs: boolean. If true, use special algorithm of
+        intersecting the curve with the mirror plane for NURBS curves.
+        Otherwise, always use generic algorithm.
+        * tolerance: tolerance both for intersection algorithm and for concatenation.
+
+    Returns:
+        * If separate_output is true: 2-tuple: original parts of the curve and mirrored parts.
+        * If concatenate is true: list of SvCurve.
+        * If concatenate is false and flat_output is false: list of 2-lists: a curve and it&#39;s mirrored version.
+        * Otherwise, if flat_output is true: flat list of all resulting curve segments.
+    &#34;&#34;&#34;
+    if concatenate:
+        flip = True
+    if concatenate and separate_output:
+        raise ArgumentError(&#34;Cannot enable concatenate and separate_output flags at the same time&#34;)
+
+    is_nurbs = False
+    if support_nurbs:
+        nurbs_curve = SvNurbsCurve.to_nurbs(curve)
+        if nurbs_curve is not None:
+            curve = nurbs_curve
+            method = NURBS
+            is_nurbs = True
+        else:
+            method = EQUATION
+    else:
+        method = EQUATION
+
+    plane_matrix = plane.get_matrix().to_4x4()
+    plane_matrix.translation = plane.nearest_point_to_origin()
+    matrix = plane_matrix @ Matrix.Diagonal((1, 1, -1)).to_4x4() @ plane_matrix.inverted()
+
+    def mirror_segments(segments):
+        new_segments = []
+        if is_nurbs:
+            np_matrix = np.array(matrix.to_3x3())
+            np_vector = np.array(matrix.translation)
+            for segment in segments:
+                new_segment = segment.transform(np_matrix, np_vector)
+                new_segments.append(new_segment)
+        else:
+            matrix_field = SvMatrixVectorField(matrix)
+            for segment in segments:
+                new_segment = SvDeformedByFieldCurve(segment, matrix_field)
+                new_segments.append(new_segment)
+        return new_segments
+
+    intersections = intersect_curve_plane(curve, plane, method=method, tolerance=tolerance)
+    if not intersections:
+        curves = [curve]
+        # curves is 1-list and mirrored is 1-list
+        if flip:
+            mirrored = mirror_segments([reverse_curve(curve)])
+        else:
+            mirrored = mirror_segments([curve])
+        if separate_output:
+            return curves, mirrored
+        elif flat_output:
+            curves.extend(mirrored)
+            # return 2-list
+            return curves
+        else:
+            curves.extend(mirrored)
+            # return 1-list of 2-list
+            return [curves]
+
+    key_ts = [t for t, pt in intersections]
+    key_ts = list(sorted(key_ts))
+    #print(&#34;I&#34;, key_ts)
+    t_min, t_max = curve.get_u_bounds()
+    if len(key_ts) &gt; 0 and t_min != key_ts[0]:
+        key_ts = [t_min] + key_ts
+    if len(key_ts) &gt; 0 and t_max != key_ts[-1]:
+        key_ts = key_ts + [t_max]
+
+    segments = []
+    for t1, t2 in zip(key_ts, key_ts[1:]):
+        segment = curve_segment(curve, t1, t2)
+        if segment is None:
+            continue
+        t = (t1 + t2)/2
+        pt = curve.evaluate(t)
+        segment_sign = plane.side_of_point(pt)
+        if segment_sign == sign:
+            segments.append(segment)
+
+    new_segments = mirror_segments(segments)
+    result = []
+    mirror_result = []
+    for segment, new_segment in zip(segments, new_segments):
+        if flip:
+            new_segment = reverse_curve(new_segment)
+        if concatenate:
+            t1, t2 = segment.get_u_bounds()
+            s1p1, s1p2 = segment.evaluate(t1), segment.evaluate(t2)
+            t1, t2 = new_segment.get_u_bounds()
+            s2p1, s2p2 = new_segment.evaluate(t1), new_segment.evaluate(t2)
+            d1 = np.linalg.norm(s1p2 - s2p1)
+            d2 = np.linalg.norm(s2p2 - s1p1)
+            #print(f&#34;D1 {d1}, D2 {d2}&#34;)
+            if d1 &lt; tolerance:
+                #print(&#34;Join 1&#34;)
+                result.append(concatenate_curves([segment, new_segment]))
+            elif d2 &lt; tolerance:
+                #print(&#34;Join 2&#34;)
+                result.append(concatenate_curves([new_segment, segment], allow_generic = not is_nurbs))
+            else:
+                #print(&#34;No join&#34;)
+                result.append(segment)
+                result.append(new_segment)
+        elif separate_output:
+            result.append(segment)
+            mirror_result.append(new_segment)
+        elif flat_output:
+            result.extend([segment, new_segment])
+        else:
+            result.append([segment, new_segment])
+
+    if separate_output:
+        return result, mirror_result
+    else:
+        return result</code></pre>
+</details>
+<div class="desc"><p>Symmetrize a curve: cut the curve in half by a plane; take one half and
+mirror it around the same plane.</p>
+<h2 id="args">Args</h2>
+<ul>
+<li>curve: SvCurve</li>
+<li>plane: PlaneEquation</li>
+<li>sign: direction of mirror; 1 means take the part of curve which lies
+in positive direction of plane's normal.</li>
+<li>concatenate: boolean. Concatenate original parts of the curve with
+their mirrored versions. Implies flip = true.</li>
+<li>flip: boolean. Reverse the direction of mirrored parts. Required in
+order to concatenate segments.</li>
+<li>flat_output: boolean. Not used if concatenate is true. If set to
+true, output single flat list of curve segments, both origial and
+mirrored ones. Otherwise, output pairs of segments: original segment
+and mirrored one.</li>
+<li>separate_output: if true, return original and mirrored segments in
+two separate lists. Otherwise, return one single list of curves (if
+possible - in such an order, so that they could be concatenated;
+however, this is not guaranteed).</li>
+<li>support_nurbs: boolean. If true, use special algorithm of
+intersecting the curve with the mirror plane for NURBS curves.
+Otherwise, always use generic algorithm.</li>
+<li>tolerance: tolerance both for intersection algorithm and for concatenation.</li>
+</ul>
+<h2 id="returns">Returns</h2>
+<ul>
+<li>If separate_output is true: 2-tuple: original parts of the curve and mirrored parts.</li>
+<li>If concatenate is true: list of SvCurve.</li>
+<li>If concatenate is false and flat_output is false: list of 2-lists: a curve and it's mirrored version.</li>
+<li>Otherwise, if flat_output is true: flat list of all resulting curve segments.</li>
+</ul></div>
+</dd>
 </dl>
 </section>
 <section>
@@ -1754,6 +1964,7 @@ result = raycaster.raycast(src_points, directions, &hellip;)</p>
 <li><code><a title="sverchok.utils.manifolds.ortho_project_curve" href="#sverchok.utils.manifolds.ortho_project_curve">ortho_project_curve</a></code></li>
 <li><code><a title="sverchok.utils.manifolds.ortho_project_surface" href="#sverchok.utils.manifolds.ortho_project_surface">ortho_project_surface</a></code></li>
 <li><code><a title="sverchok.utils.manifolds.raycast_surface" href="#sverchok.utils.manifolds.raycast_surface">raycast_surface</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.symmetrize_curve" href="#sverchok.utils.manifolds.symmetrize_curve">symmetrize_curve</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

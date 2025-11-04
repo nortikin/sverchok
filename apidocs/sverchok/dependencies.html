@@ -176,7 +176,7 @@ whether the dependency is available or not.</p></div>
         for item in items:
             try:
                 dependency = sv_dependencies[item]
-                if dependency.module is None and dependency.pip_installable and pip is not None:
+                if dependency.module is None and dependency.pip_installable and pip is not None and item != &#39;pyOpenSubdiv&#39;:
                     print(f&#34;===&gt;&gt; Install Dependency: {item}&#34;)
                     res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
                     #res = bpy.ops.node.sv_ex_pip_install(&#39;INVOKE_DEFAULT&#39;, package = dependency.package)
@@ -237,7 +237,7 @@ whether the dependency is available or not.</p></div>
     for item in items:
         try:
             dependency = sv_dependencies[item]
-            if dependency.module is None and dependency.pip_installable and pip is not None:
+            if dependency.module is None and dependency.pip_installable and pip is not None and item != &#39;pyOpenSubdiv&#39;:
                 print(f&#34;===&gt;&gt; Install Dependency: {item}&#34;)
                 res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
                 #res = bpy.ops.node.sv_ex_pip_install(&#39;INVOKE_DEFAULT&#39;, package = dependency.package)
