@@ -13,11 +13,15 @@ button_margin = 3
 close_button_width = 103
 
 # Shaders
-if bpy.app.version >= (5, 0, 0):
-    image_shader = gpu.shader.from_builtin('IMAGE_SCENE_LINEAR_TO_REC709_SRGB')
+if bpy.app.background:
+    image_shader = None
+    solid_shader = None
 else:
-    image_shader = gpu.shader.from_builtin('IMAGE')
-solid_shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+    if bpy.app.version >= (5, 0, 0):
+        image_shader = gpu.shader.from_builtin('IMAGE_SCENE_LINEAR_TO_REC709_SRGB')
+    else:
+        image_shader = gpu.shader.from_builtin('IMAGE')
+    solid_shader = gpu.shader.from_builtin('UNIFORM_COLOR')
 
 
 # Добавьте настройку blending для прозрачности
