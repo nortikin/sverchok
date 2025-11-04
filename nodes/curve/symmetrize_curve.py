@@ -36,7 +36,7 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
     output_modes = [
         ('CONCAT', "Concatenate", "Concatenate original parts of curve and their mirrored versions", 0),
         ('NEST', "Output pairs", "Generate a list of 2-lists: original curve segment and it's mirrored version", 1),
-        ('FLAT', "Flat output", "Generate a single flat list of all curve segments", 2),
+        ('FLAT', "Sequential", "Generate a single list of all curve segments", 2),
         ('SEPARATE', "Separate outputs", "Generate a list of original curve parts and a separate list of their mirrored counterparts", 3),
     ]
 

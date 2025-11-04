@@ -48,15 +48,27 @@ This node has the following parameters:
 
   The default direction is **-X to +X**.
 
-- **Concatenate**. If checked, then the node will try to concatenate parts of
-  the original curve to their mirrored counterparts, if they meet with
-  specified precision (and their directions are matching - i.e., the end of one
-  part is coinciding with the beginning of another one). Checked by default.
+- **Output mode**. The following options are available:
+
+  - **Concatenate**. If selected, then the node will try to concatenate parts
+    of the original curve to their mirrored counterparts, if they meet with
+    specified precision (and their directions are matching - i.e., the end of
+    one part is coinciding with the beginning of another one). Selected by
+    default.
+  - **Output pairs**. For each segment of original curve, the node will output a
+    list of 2 items: the original segment and it's mirrored version.
+  - **Sequential**. For each original curve, the node will output a single list
+    of all segments: original ones and mirrored ones.
+  - **Separate outputs**. Two node outputs will be used: **OriginalCurve** and
+    **MirroredCurve**. The first output will contain all segments of original
+    curve, and the second will contain all mirrored segments.
+
 - **Reverse**. If checked, then the node will reverse the direction of
-  mirrorred parts of the curve. This is not available when **Concatenate**
-  parameter is checked, because it is assumed to be always checked in such
-  situations: without reversing the mirrorred parts of the curve it would not
-  be possible to concatenate them to original parts. Checked by default.
+  mirrorred parts of the curve. This is not available when **Output mode**
+  parameter is set to **Concatenate**, because it is assumed to be always
+  checked in such situations: without reversing the mirrorred parts of the
+  curve it would not be possible to concatenate them to original parts. Checked
+  by default.
 - **Use NURBS algorithm**. This parameter is available in the N panel only. If
   checked, the node will use special case of it's algorithm for NURBS and
   NURBS-like curves; in such cases, the resulting curves will be also NURBS.
@@ -77,6 +89,11 @@ Outputs
 
 This node has the following output:
 
-- **Curve**. The resulting symmetrized curve.
+- **Curve**. The resulting symmetrized curve. This output is used when **Output
+  mode** parameter is set to a value other than **Separate outputs**.
+- **OriginalCurve**. Segments of original curve. This output is used when
+  **Output mode** parameter is set to **Separate outputs**.
+- **MirroredCurve**. Mirrored curve segments. This output is used when **Output
+  mode** parameter is set to **Separate outputs**.
 
 
