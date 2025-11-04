@@ -96,4 +96,23 @@ This node has the following output:
 - **MirroredCurve**. Mirrored curve segments. This output is used when **Output
   mode** parameter is set to **Separate outputs**.
 
+Examples of Usage
+-----------------
+
+Simple example of usage with Concatenate mode. The orange curve is the original one:
+
+.. image:: https://github.com/user-attachments/assets/b8f3b0b9-d4cb-49aa-b0cd-9af3c7ca8e6d
+  :target: https://github.com/user-attachments/assets/b8f3b0b9-d4cb-49aa-b0cd-9af3c7ca8e6d
+
+Here Sequential mode (without concatenation) is used, but then the "Snap NURBS
+curves" node is used to adjust the tangents of the curve, and then the curve is
+concatenated manually:
+
+.. image:: https://github.com/user-attachments/assets/f420ab64-8b11-4056-a886-78a75627dc94
+  :target: https://github.com/user-attachments/assets/f420ab64-8b11-4056-a886-78a75627dc94
+
+Separate Outputs mode can be used, for example, with "Ruled Surface" node:
+
+.. image:: https://github.com/user-attachments/assets/fbeda9c9-4743-41fc-93fb-ebd9d663d62e
+  :target: https://github.com/user-attachments/assets/fbeda9c9-4743-41fc-93fb-ebd9d663d62e
 
