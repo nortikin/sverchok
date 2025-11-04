@@ -19,6 +19,7 @@ The DXF nodes provide a complete workflow for importing and exporting DXF files 
 **Export Workflow:**
 1. Create geometry using standard Sverchok nodes
 2. Convert to DXF objects using specialized DXF nodes:
+
    - **DXF Lines** for edge-based geometry
    - **DXF Polygons** for face-based geometry  
    - **DXF Hatches** for patterned fills
