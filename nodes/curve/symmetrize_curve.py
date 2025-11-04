@@ -33,10 +33,18 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
         ('CUSTOM', "Custom", "Custom", 6)
     ]
 
+    output_modes = [
+        ('CONCAT', "Concatenate", "Concatenate original parts of curve and their mirrored versions", 0),
+        ('NEST', "Output pairs", "Generate a list of 2-lists: original curve segment and it's mirrored version", 1),
+        ('FLAT', "Flat output", "Generate a single flat list of all curve segments", 2),
+        ('SEPARATE', "Separate outputs", "Generate a list of original curve parts and a separate list of their mirrored counterparts", 3),
+    ]
+
     def mode_change(self, context):
-        print("St:", self.direction)
         self.inputs['Point'].hide_safe = self.direction != 'CUSTOM'
         self.inputs['Normal'].hide_safe = self.direction != 'CUSTOM'
+        self.outputs['MirroredCurve'].hide_safe = self.output_mode != 'SEPARATE'
+        self.outputs['Curve'].label = 'Curve' if self.output_mode != 'SEPARATE' else 'OriginalCurve'
         updateNode(self, context)
 
     direction : EnumProperty(
@@ -44,6 +52,12 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
             description = "Which sides to copy from and to",
             items = directions,
             default = "X+",
+            update = mode_change)
+
+    output_mode : EnumProperty(
+            name = "Output mode",
+            items = output_modes,
+            default = 'CONCAT',
             update = mode_change)
 
     accuracy : IntProperty(
@@ -67,12 +81,6 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
             precision = 3,
             update = updateNode)
 
-    concatenate : BoolProperty(
-            name = "Concatenate",
-            description = "Concatenate mirrored fragments into single curve, if possible",
-            default = True,
-            update = updateNode)
-
     flip : BoolProperty(
             name = "Reverse",
             description = "Reverse the direction of mirrored curves",
@@ -91,9 +99,11 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "accuracy")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "direction")
-        layout.prop(self, "concatenate")
-        if not self.concatenate:
+        layout.label(text='Direction:')
+        layout.prop(self, "direction", text='')
+        layout.label(text='Output mode:')
+        layout.prop(self, "output_mode", text='')
+        if self.output_mode != 'CONCAT':
             layout.prop(self, "flip")
 
     def sv_init(self, context):
@@ -101,6 +111,7 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvVerticesSocket', "Point").prop_name = 'plane_point'
         self.inputs.new('SvVerticesSocket', "Normal").prop_name = 'plane_normal'
         self.outputs.new('SvCurveSocket', "Curve")
+        self.outputs.new('SvCurveSocket', "MirroredCurve")
         self.mode_change(context)
 
     def _get_plane(self, point, normal):
@@ -140,22 +151,34 @@ class SvSymmetrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
         tolerance = 10 ** (-self.accuracy)
 
         curve_out = []
+        mirrored_curve_out = []
         for params in zip_long_repeat(curve_s, point_s, normal_s):
             new_curves = []
+            new_mirrored_curves = []
             for curve, point, normal in zip_long_repeat(*params):
                 plane, sign = self._get_plane(point, normal)
-                curve = symmetrize_curve(curve, plane, sign,
-                                         concatenate = self.concatenate,
+                result = symmetrize_curve(curve, plane, sign,
+                                         concatenate = self.output_mode == 'CONCAT',
                                          flip = self.flip,
+                                         separate_output = self.output_mode == 'SEPARATE',
+                                         flat_output = self.output_mode == 'FLAT',
                                          support_nurbs = self.use_nurbs,
                                          tolerance = tolerance)
-                new_curves.append(curve)
+                if self.output_mode == 'SEPARATE':
+                    curve, mirrored_curve = result
+                    new_curves.append(curve)
+                    new_mirrored_curves.append(mirrored_curve)
+                else:
+                    new_curves.append(result)
             if flat_output:
                 curve_out.extend(new_curves)
+                mirrored_curve_out.extend(new_mirrored_curves)
             else:
                 curve_out.append(new_curves)
+                mirrored_curve_out.append(new_mirrored_curves)
 
         self.outputs['Curve'].sv_set(curve_out)
+        self.outputs['MirroredCurve'].sv_set(mirrored_curve_out)
 
 def register():
     bpy.utils.register_class(SvSymmetrizeCurveNode)

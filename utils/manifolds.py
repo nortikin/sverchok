@@ -1,9 +1,11 @@
 
 import numpy as np
 
-from mathutils import kdtree, Matrix
+from mathutils import kdtree, Matrix, Vector
 from mathutils.bvhtree import BVHTree
+from mathutils.geometry import intersect_plane_plane, intersect_line_plane, normal as face_normal
 
+from sverchok.core.sv_custom_exceptions import ArgumentError
 from sverchok.utils.curve import SvIsoUvCurve, SvDeformedByFieldCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import reverse_curve, concatenate_curves, curve_segment
@@ -11,9 +13,6 @@ from sverchok.utils.field.vector import SvMatrixVectorField
 from sverchok.utils.sv_logging import sv_logger, get_logger
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
-
-from mathutils import Vector
-from mathutils.geometry import intersect_plane_plane, intersect_line_plane, normal as face_normal
 
 if scipy is not None:
     from scipy.optimize import root_scalar, root, minimize_scalar, minimize
@@ -1395,9 +1394,54 @@ def intersect_line_iso_surface(field, pt1, direction, max_distance, iso_value, s
         result_pts.append(tuple(p))
     return result_ts, result_pts
 
-def symmetrize_curve(curve, plane, sign=1, concatenate=True, flip=False, support_nurbs=True, tolerance=1e-6):
+def symmetrize_curve(
+    curve,
+    plane,
+    sign=1,
+    concatenate=True,
+    flip=False,
+    flat_output=False,
+    separate_output=False,
+    support_nurbs=True,
+    tolerance=1e-6,
+):
+    """
+    Symmetrize a curve: cut the curve in half by a plane; take one half and
+    mirror it around the same plane.
+
+    Args:
+        * curve: SvCurve
+        * plane: PlaneEquation
+        * sign: direction of mirror; 1 means take the part of curve which lies
+        in positive direction of plane's normal.
+        * concatenate: boolean. Concatenate original parts of the curve with
+        their mirrored versions. Implies flip = true.
+        * flip: boolean. Reverse the direction of mirrored parts. Required in
+        order to concatenate segments.
+        * flat_output: boolean. Not used if concatenate is true. If set to
+        true, output single flat list of curve segments, both origial and
+        mirrored ones. Otherwise, output pairs of segments: original segment
+        and mirrored one.
+        * separate_output: if true, return original and mirrored segments in
+        two separate lists. Otherwise, return one single list of curves (if
+        possible - in such an order, so that they could be concatenated;
+        however, this is not guaranteed).
+        * support_nurbs: boolean. If true, use special algorithm of
+        intersecting the curve with the mirror plane for NURBS curves.
+        Otherwise, always use generic algorithm.
+        * tolerance: tolerance both for intersection algorithm and for concatenation.
+
+    Returns:
+        * If separate_output is true: 2-tuple: original parts of the curve and mirrored parts.
+        * If concatenate is true: list of SvCurve.
+        * If concatenate is false and flat_output is false: list of 2-lists: a curve and it's mirrored version.
+        * Otherwise, if flat_output is true: flat list of all resulting curve segments.
+    """
     if concatenate:
         flip = True
+    if concatenate and separate_output:
+        raise ArgumentError("Cannot enable concatenate and separate_output flags at the same time")
+
     is_nurbs = False
     if support_nurbs:
         nurbs_curve = SvNurbsCurve.to_nurbs(curve)
@@ -1432,12 +1476,21 @@ def symmetrize_curve(curve, plane, sign=1, concatenate=True, flip=False, support
     intersections = intersect_curve_plane(curve, plane, method=method, tolerance=tolerance)
     if not intersections:
         curves = [curve]
+        # curves is 1-list and mirrored is 1-list
         if flip:
             mirrored = mirror_segments([reverse_curve(curve)])
         else:
             mirrored = mirror_segments([curve])
-        curves.extend(mirrored)
-        return curves
+        if separate_output:
+            return curves, mirrored
+        elif flat_output:
+            curves.extend(mirrored)
+            # return 2-list
+            return curves
+        else:
+            curves.extend(mirrored)
+            # return 1-list of 2-list
+            return [curves]
 
     key_ts = [t for t, pt in intersections]
     key_ts = list(sorted(key_ts))
@@ -1447,6 +1500,7 @@ def symmetrize_curve(curve, plane, sign=1, concatenate=True, flip=False, support
         key_ts = [t_min] + key_ts
     if len(key_ts) > 0 and t_max != key_ts[-1]:
         key_ts = key_ts + [t_max]
+
     segments = []
     for t1, t2 in zip(key_ts, key_ts[1:]):
         segment = curve_segment(curve, t1, t2)
@@ -1457,9 +1511,10 @@ def symmetrize_curve(curve, plane, sign=1, concatenate=True, flip=False, support
         segment_sign = plane.side_of_point(pt)
         if segment_sign == sign:
             segments.append(segment)
-    #print("S", segments)
+
     new_segments = mirror_segments(segments)
     result = []
+    mirror_result = []
     for segment, new_segment in zip(segments, new_segments):
         if flip:
             new_segment = reverse_curve(new_segment)
@@ -1481,8 +1536,17 @@ def symmetrize_curve(curve, plane, sign=1, concatenate=True, flip=False, support
                 #print("No join")
                 result.append(segment)
                 result.append(new_segment)
+        elif separate_output:
+            result.append(segment)
+            mirror_result.append(new_segment)
+        elif flat_output:
+            result.extend([segment, new_segment])
         else:
             result.append([segment, new_segment])
-    return result
+
+    if separate_output:
+        return result, mirror_result
+    else:
+        return result
 
 
