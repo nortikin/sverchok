@@ -1483,7 +1483,7 @@ def symmetrize_curve(
             mirrored = mirror_segments([curve])
         if separate_output:
             return curves, mirrored
-        elif flat_output:
+        elif flat_output or concatenate:
             curves.extend(mirrored)
             # return 2-list
             return curves
