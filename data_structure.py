@@ -39,7 +39,6 @@ from numpy import (
 from sverchok.utils.sv_logging import sv_logger
 import numpy as np
 
-
 RELOAD_EVENT = False
 
 cache_viewer_baker = {}
@@ -552,6 +551,22 @@ def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES, search_first_data
 
     res = helper(data, 0)
     return res[0] 
+
+def get_max_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
+    def helper(data, recursion_depth):
+        if isinstance(data, data_types):
+            return 0
+        elif isinstance(data, (list, tuple, ndarray)):
+            if len(data) == 0:
+                return 1
+            else:
+                nesting = [helper(item, recursion_depth+1)+1 for item in data]
+                return max(nesting)
+        elif data is None:
+            raise TypeError("get_data_nesting_level: encountered None at nesting level {}".format(recursion_depth))
+        else:
+            return 0
+    return helper(data,0)
 
 def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
     """
