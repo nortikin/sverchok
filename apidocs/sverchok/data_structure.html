@@ -1040,6 +1040,32 @@ of edges within the node tree and it is shared by all nodes using this method.</
 The cache is extended automatically as needed to satisfy the largest number
 of edges within the node tree and it is shared by all nodes using this method.</p></div>
 </dd>
+<dt id="sverchok.data_structure.get_max_data_nesting_level"><code class="name flex">
+<span>def <span class="ident">get_max_data_nesting_level</span></span>(<span>data,<br>data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;))</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_max_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
+    def helper(data, recursion_depth):
+        if isinstance(data, data_types):
+            return 0
+        elif isinstance(data, (list, tuple, ndarray)):
+            if len(data) == 0:
+                return 1
+            else:
+                nesting = [helper(item, recursion_depth+1)+1 for item in data]
+                return max(nesting)
+        elif data is None:
+            raise TypeError(&#34;get_data_nesting_level: encountered None at nesting level {}&#34;.format(recursion_depth))
+        else:
+            return 0
+    return helper(data,0)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.data_structure.get_other_socket"><code class="name flex">
 <span>def <span class="ident">get_other_socket</span></span>(<span>socket)</span>
 </code></dt>
@@ -2404,6 +2430,7 @@ print(extra_arg)</p>
 <li><code><a title="sverchok.data_structure.get_data_nesting_level" href="#sverchok.data_structure.get_data_nesting_level">get_data_nesting_level</a></code></li>
 <li><code><a title="sverchok.data_structure.get_edge_list" href="#sverchok.data_structure.get_edge_list">get_edge_list</a></code></li>
 <li><code><a title="sverchok.data_structure.get_edge_loop" href="#sverchok.data_structure.get_edge_loop">get_edge_loop</a></code></li>
+<li><code><a title="sverchok.data_structure.get_max_data_nesting_level" href="#sverchok.data_structure.get_max_data_nesting_level">get_max_data_nesting_level</a></code></li>
 <li><code><a title="sverchok.data_structure.get_other_socket" href="#sverchok.data_structure.get_other_socket">get_other_socket</a></code></li>
 <li><code><a title="sverchok.data_structure.graft_data" href="#sverchok.data_structure.graft_data">graft_data</a></code></li>
 <li><code><a title="sverchok.data_structure.handle_check" href="#sverchok.data_structure.handle_check">handle_check</a></code></li>

@@ -44,6 +44,80 @@ el.replaceWith(d);
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="sverchok.utils.modules.shader_utils.get_2d_smooth_color_shader"><code class="name flex">
+<span>def <span class="ident">get_2d_smooth_color_shader</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_2d_smooth_color_shader():
+
+    smooth_2d_vertex_shader = &#39;&#39;&#39;
+    in vec2 pos;
+    layout(location=1) in vec4 color;
+
+    uniform mat4 viewProjectionMatrix;
+    uniform float x_offset;
+    uniform float y_offset;
+
+    out vec4 a_color;
+
+    void main()
+    {
+        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+        a_color = color;
+    }
+    &#39;&#39;&#39;
+
+    smooth_2d_fragment_shader = &#39;&#39;&#39;
+    in vec4 a_color;
+
+    out vec4 FragColor;
+    void main()
+    {
+        FragColor = a_color;
+    }
+    &#39;&#39;&#39;
+    return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.shader_utils.get_2d_uniform_color_shader"><code class="name flex">
+<span>def <span class="ident">get_2d_uniform_color_shader</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_2d_uniform_color_shader():
+    uniform_2d_vertex_shader = &#39;&#39;&#39;
+    in vec2 pos;
+    uniform mat4 viewProjectionMatrix;
+    uniform float x_offset;
+    uniform float y_offset;
+
+    void main()
+    {
+       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+    }
+    &#39;&#39;&#39;
+
+    uniform_2d_fragment_shader = &#39;&#39;&#39;
+    uniform vec4 color;
+    out vec4 FragColor;
+
+    void main()
+    {
+       FragColor = color;
+    }
+    &#39;&#39;&#39;
+    return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.modules.shader_utils.get_all_offsets"><code class="name flex">
 <span>def <span class="ident">get_all_offsets</span></span>(<span>controls, points, samples, thickness)</span>
 </code></dt>
@@ -681,6 +755,8 @@ a - d</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="sverchok.utils.modules.shader_utils.get_2d_smooth_color_shader" href="#sverchok.utils.modules.shader_utils.get_2d_smooth_color_shader">get_2d_smooth_color_shader</a></code></li>
+<li><code><a title="sverchok.utils.modules.shader_utils.get_2d_uniform_color_shader" href="#sverchok.utils.modules.shader_utils.get_2d_uniform_color_shader">get_2d_uniform_color_shader</a></code></li>
 <li><code><a title="sverchok.utils.modules.shader_utils.get_all_offsets" href="#sverchok.utils.modules.shader_utils.get_all_offsets">get_all_offsets</a></code></li>
 <li><code><a title="sverchok.utils.modules.shader_utils.get_offset" href="#sverchok.utils.modules.shader_utils.get_offset">get_offset</a></code></li>
 </ul>
