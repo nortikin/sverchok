@@ -229,6 +229,9 @@ class SvMatrixViewer28(SverchCustomTreeNode, bpy.types.Node):
         if not self.inputs[0].other:
             self.sv_free()
 
+    def toggle_viewer(self):
+        self.activate = not self.activate
+
 
 def register():
     bpy.utils.register_class(SvMatrixViewer28)

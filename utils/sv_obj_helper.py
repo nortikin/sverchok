@@ -274,6 +274,12 @@ class SvObjHelper():
         self.basedata_name = dname
         self.use_custom_color = True
 
+    def toggle_viewer(self):
+        objs = self.get_children()
+
+        for obj in objs:
+            obj.hide_viewport = not obj.hide_viewport
+        self.object_hide_viewport = not self.object_hide_viewport
 
     def icons(self, TYPE):
         NAMED_ICON = {

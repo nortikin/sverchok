@@ -266,6 +266,8 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
         except:
             print('stethoscope update holdout (not a problem)')
 
+    def toggle_viewer(self):
+        self.activate = not self.activate
 
 def register():
     bpy.utils.register_class(SvStethoscopeNodeMK2)

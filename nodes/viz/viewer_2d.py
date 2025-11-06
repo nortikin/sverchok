@@ -767,7 +767,8 @@ class SvViewer2D(SverchCustomTreeNode, bpy.types.Node):
     def sv_free(self):
         nvBGL.callback_disable(node_id(self))
 
-
+    def toggle_viewer(self):
+        self.activate = not self.activate
 
 classes = [SvViewer2D,]
 register, unregister = bpy.utils.register_classes_factory(classes)
