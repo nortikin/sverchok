@@ -123,7 +123,7 @@ def matrices_to_quaternions(source_data):
 def string_to_vector(source_data):
     # it can be so that socket is string but data their are already vectors, performance-wise we check only first item
     if isinstance(source_data[0][0], NUMERIC_DATA_TYPES):
-        return [[(v, v, v) for v in obj] for obj in source_data]
+        return [[(v, 0, 0) for v in obj] for obj in source_data]
     return source_data
 
 
