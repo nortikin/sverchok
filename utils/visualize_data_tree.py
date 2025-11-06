@@ -79,23 +79,19 @@ def draw_level(r1, delta_r, phi_start, phi_min, phi_max, data, allow_skip=True):
     N = len(data)
     if N == 1:
         level, lines = draw_level(r2, delta_r, phi_start, phi_min, phi_max, data[0], allow_skip=allow_skip)
-        print(f"Single: return {level+1}")
         return (level+1), [mk_line(r1, r2, phi_start, phi_start)] + lines
 
     phi_range = phi_max - phi_min
 
     def calc_phis(num):
-        #print(f"calc_phis({num})")
         phis = np.linspace(phi_min, phi_max, num=num, endpoint=False)
         delta_phi = phis[1] - phis[0]
         phis += delta_phi*0.5
         return delta_phi, phis
 
     delta_phi, phis = calc_phis(N)
-    #spacing = r2 * delta_phi
     draw_max = N
     idxs = np.arange(N)
-    #print(f"N {N}, Delta {phi_range}, Dphi {delta_phi}, ms {MIN_SPACING}")
     if allow_skip and N > 3 and r2*phi_range > MIN_SPACING and r2*delta_phi < MIN_SPACING:
         min_angle = MIN_SPACING / r2
         fixed_N = int((phi_max - phi_min) / min_angle)
