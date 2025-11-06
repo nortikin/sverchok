@@ -151,19 +151,16 @@ def generate_graph_geom(config, data_curves, data_circles, data_items, nest_pts,
     data_curve_pts, data_curve_edges = curves_to_mesh(data_curves)
     data_circle_pts, data_circle_edges = curves_to_mesh(data_circles)
 
-    all_vecs = data_curve_pts + data_circle_pts
-    maxmin = list(zip(map(max, *all_vecs), map(min, *all_vecs)))
-    print("MM", maxmin)
+    all_vecs = np.array(data_curve_pts + data_circle_pts)
+    maxmin = np.stack((all_vecs.max(axis=0), all_vecs.min(axis=0))).T
     axis1, axis2 = 0,1
     # background geom
     orig_size_x = maxmin[axis1][0]- maxmin[axis1][1]
     orig_size_y = maxmin[axis2][0]- maxmin[axis2][1]
-    print("Orig", orig_size_x, orig_size_y)
     max_size = min([orig_size_x, orig_size_y])
     w = orig_size_x * scale / max_size
     h = orig_size_y * scale / max_size
     #w, h = scale, scale
-    print("Sz", w, h)
     margin = 10 * sys_scale
     geom.background_coords, geom.background_indices = background_rect(x, y, w, h, margin)
     _x = x + margin
@@ -391,7 +388,6 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
         data_in = self.inputs['Data'].sv_get()
 
         max_level, data_lines = data_tree_lines(1.0, data_in, allow_skip = self.allow_skip)
-        print("Level", max_level)
 
         nest_pts = [(0,0,0)]
         dash_pts = []
