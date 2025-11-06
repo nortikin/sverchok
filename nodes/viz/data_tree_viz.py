@@ -10,7 +10,7 @@ from math import pi
 from collections import defaultdict
 
 import bpy
-from bpy.props import FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty, IntVectorProperty
+from bpy.props import FloatProperty, IntProperty, BoolProperty, FloatVectorProperty, IntVectorProperty
 from mathutils import Vector
 
 import gpu
@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_elements
 from sverchok.utils.curve.bakery import curve_to_meshdata
-from sverchok.utils.visualize_data_tree import data_nesting_circles, data_tree_lines, Line, Item
+from sverchok.utils.visualize_data_tree import nesting_circles, data_tree_lines, Line, Item
 from sverchok.settings import get_params
 
 def mesh_join(vertices, edges, polygons):
@@ -386,7 +386,7 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
 
         data_in = self.inputs['Data'].sv_get()
 
-        data_lines = data_tree_lines(1.0, data_in, allow_skip = self.allow_skip)
+        max_level, data_lines = data_tree_lines(1.0, data_in, allow_skip = self.allow_skip)
 
         nest_pts = [(0,0,0)]
         dash_pts = []
@@ -408,7 +408,7 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
             elif isinstance(item, Item):
                 data_items.append(item)
         
-        circles = data_nesting_circles(1.0, data_in)
+        circles = nesting_circles(1.0, max_level)
         data_circles = [(circle, self.curve_samples*12) for circle in circles]
 
         config = self.create_config()

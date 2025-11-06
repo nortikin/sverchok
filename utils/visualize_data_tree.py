@@ -74,11 +74,12 @@ def draw_level(r1, delta_r, phi_start, phi_min, phi_max, data, allow_skip=True):
         return []
     if not isinstance(data, (list, tuple, np.ndarray)):
         pt = [r1*cos(phi_start+pi/2), r1*sin(phi_start+pi/2), 0]
-        return [Item(data, pt)]
+        return 0, [Item(data, pt)]
     r2 = r1+delta_r
     N = len(data)
     if N == 1:
-        return [mk_line(r1, r2, phi_start, phi_start)] + draw_level(r2, delta_r, phi_start, phi_min, phi_max, data[0], allow_skip=allow_skip)
+        level, lines = draw_level(r2, delta_r, phi_start, phi_min, phi_max, data[0], allow_skip=allow_skip)
+        return (level+1), [mk_line(r1, r2, phi_start, phi_start)] + lines
 
     phi_range = phi_max - phi_min
 
@@ -112,20 +113,21 @@ def draw_level(r1, delta_r, phi_start, phi_min, phi_max, data, allow_skip=True):
         #print(f"I = {i}, draw_max = {draw_max} => skip = {skip}")
         line = mk_line(r1, r2, phi_start, phi, skip=skip)
         result.append(line)
+        max_level = 0
         if not skip:
-            lines = draw_level(r2, delta_r, phi, p1, p2, data[i], allow_skip=allow_skip)
+            level, lines = draw_level(r2, delta_r, phi, p1, p2, data[i], allow_skip=allow_skip)
+            max_level = max(level+1, max_level)
             result.extend(lines)
-    return result
+    return max_level, result
 
 def data_tree_lines(delta_r, data, allow_skip=True):
     return draw_level(0.0, delta_r, 0.0, -pi, pi, data, allow_skip=allow_skip)
 
 def data_tree_curves(delta_r, data, allow_skip=True):
-    lines = draw_level(0.0, delta_r, 0.0, -pi, pi, data, allow_skip=allow_skip)
+    lines = draw_level(0.0, delta_r, 0.0, -pi, pi, data, allow_skip=allow_skip)[1]
     return [line.curve for line in lines if isinstance(line, Line)]
 
-def data_nesting_circles(delta_r, data):
-    nesting = get_max_data_nesting_level(data, STANDARD_TYPES)
+def nesting_circles(delta_r, nesting):
     radiuses = delta_r * np.arange(1, nesting+1)
     m = Matrix.Rotation(-pi/2, 4, 'Z')
     def mk_circle(radius):
@@ -134,4 +136,8 @@ def data_nesting_circles(delta_r, data):
         return circle
     circles = [mk_circle(radius) for radius in radiuses]
     return circles
+
+def data_nesting_circles(delta_r, data):
+    nesting = get_max_data_nesting_level(data, STANDARD_TYPES)
+    return nesting_circles(delta_r, nesting)
 
