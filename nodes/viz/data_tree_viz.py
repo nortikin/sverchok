@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
+from math import pi
 from collections import defaultdict
 
 import bpy
@@ -56,6 +57,50 @@ def get_drawing_location(node):
     x, y = node.get_offset()
     return x * node.location_theta, y * node.location_theta
 
+def create_filled_circle_geom(center, radius, samples=8):
+    ts = np.linspace(0, 2*pi, num=samples)
+    pts_x = radius * np.cos(ts) + center[0]
+    pts_y = radius * np.sin(ts) + center[1]
+    pts = np.stack((pts_x, pts_y)).T
+    pts = np.insert(pts, 0, center, axis=0)
+    tris = [(0, i, i+1) for i in range(1, samples)]
+    tris.append((0, samples, 1))
+    return pts.tolist(), tris
+
+def create_empty_circle_geom(center, radius, samples=8):
+    ts = np.linspace(0, 2*pi, num=samples)
+    pts_x = radius * np.cos(ts) + center[0]
+    pts_y = radius * np.sin(ts) + center[1]
+    pts = np.stack((pts_x, pts_y)).T
+    edges = [(i,i+1) for i in range(samples-1)]
+    edges.append((samples-1, 0))
+    return pts.tolist(), edges
+
+def create_circle_batches(fill_shader, edge_shader, border_color, radius, samples=8):
+    pts, tris = create_filled_circle_geom([0,0], radius, samples)
+    fill_batch = batch_for_shader(fill_shader, 'TRIS', {"pos": pts}, indices=tris)
+    pts, edges = create_empty_circle_geom([0,0], radius, samples)
+    colors = [border_color for pt in pts]
+    edge_batch = batch_for_shader(edge_shader, 'LINES', {"pos": pts, "color": colors}, indices=edges)
+    return fill_batch, edge_batch
+
+def draw_bordered(matrix, x, y, fill_shader, edge_shader, fill_batch, edge_batch, fill_color, edge_width):
+    fill_shader.bind()
+    fill_shader.uniform_float("color", fill_color)
+    fill_shader.uniform_float("x_offset", x)
+    fill_shader.uniform_float("y_offset", y)
+    fill_shader.uniform_float("viewProjectionMatrix", matrix)
+    fill_batch.draw(fill_shader)
+
+    drawing.set_line_width(edge_width)
+    edge_shader.bind()
+    edge_shader.uniform_float("x_offset", x)
+    edge_shader.uniform_float("y_offset", y)
+    edge_shader.uniform_float("viewProjectionMatrix", matrix)
+    edge_batch.draw(edge_shader)
+    drawing.reset_line_width()
+    edge_batch.draw(edge_shader)
+
 def view_2d_geom(x, y, args):
     """
     x and y are passed by default so you could add font content
@@ -64,18 +109,18 @@ def view_2d_geom(x, y, args):
 
     geom, config = args
     matrix = gpu.matrix.get_projection_matrix()
+    fill_shader = get_2d_uniform_color_shader()
     if config.draw_background:
         background_color = config.background_color
         # draw background, this could be cached......
 
-        shader = get_2d_uniform_color_shader()
-        batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
-        shader.bind()
-        shader.uniform_float("color", background_color)
-        shader.uniform_float("x_offset", x)
-        shader.uniform_float("y_offset", y)
-        shader.uniform_float("viewProjectionMatrix", matrix)
-        batch.draw(shader)
+        batch = batch_for_shader(fill_shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
+        fill_shader.bind()
+        fill_shader.uniform_float("color", background_color)
+        fill_shader.uniform_float("x_offset", x)
+        fill_shader.uniform_float("y_offset", y)
+        fill_shader.uniform_float("viewProjectionMatrix", matrix)
+        batch.draw(fill_shader)
 
     for key in geom.curves_by_width_and_color:
         edge_width, edge_color = key
@@ -92,15 +137,9 @@ def view_2d_geom(x, y, args):
 
     for pt_size, pt_color in geom.verts_by_size_and_color:
         verts = geom.verts_by_size_and_color[(pt_size, pt_color)]
-        drawing.set_point_size(pt_size)
-        colors = [pt_color for pt in verts]
-        config.v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": verts, "color": colors})
-        config.v_shader.bind()
-        config.v_shader.uniform_float("x_offset", x)
-        config.v_shader.uniform_float("y_offset", y)
-        config.v_shader.uniform_float("viewProjectionMatrix", matrix)
-        config.v_batch.draw(config.v_shader)
-        drawing.reset_point_size()
+        fill_batch, edge_batch = create_circle_batches(fill_shader, config.e_shader, config.edge_color, pt_size/2)
+        for vert in verts:
+            draw_bordered(matrix, x+vert[0], y+vert[1], fill_shader, config.e_shader, fill_batch, edge_batch, pt_color, config.edge_width)
 
 def generate_graph_geom(config, data_curves, data_circles, data_items, nest_pts, dash_pts):
 
