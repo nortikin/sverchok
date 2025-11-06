@@ -135,8 +135,20 @@ def view_2d_geom(x, y, args):
         config.e_batch.draw(config.e_shader)
         drawing.reset_line_width()
 
-    for pt_size, pt_color in geom.verts_by_size_and_color:
-        verts = geom.verts_by_size_and_color[(pt_size, pt_color)]
+    for pt_size, pt_color in geom.points_by_size_and_color:
+        pts = geom.points_by_size_and_color[(pt_size, pt_color)]
+        drawing.set_point_size(pt_size)
+        colors = [pt_color for pt in pts]
+        vert_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": pts, "color": colors})
+        config.v_shader.bind()
+        config.v_shader.uniform_float("x_offset", x)
+        config.v_shader.uniform_float("y_offset", y)
+        config.v_shader.uniform_float("viewProjectionMatrix", matrix)
+        vert_batch.draw(config.v_shader)
+        drawing.reset_point_size()
+
+    for pt_size, pt_color in geom.circles_by_size_and_color:
+        verts = geom.circles_by_size_and_color[(pt_size, pt_color)]
         fill_batch, edge_batch = create_circle_batches(fill_shader, config.e_shader, config.edge_color, pt_size/2)
         for vert in verts:
             draw_bordered(matrix, x+vert[0], y+vert[1], fill_shader, config.e_shader, fill_batch, edge_batch, pt_color, config.edge_width)
@@ -168,11 +180,13 @@ def generate_graph_geom(config, data_curves, data_circles, data_items, nest_pts,
     data_curve_pts = transformed_verts(data_curve_pts, _x, y, maxmin, scale)
     data_circle_pts = transformed_verts(data_circle_pts, _x, y, maxmin, scale)
 
-    geom.verts_by_size_and_color = dict()
-    geom.verts_by_size_and_color[(config.point_size, config.point_color)] = transformed_verts(nest_pts, _x, y, maxmin, scale)
-    geom.verts_by_size_and_color[(config.dash_width, config.edge_color)] = transformed_verts(dash_pts, _x, y, maxmin, scale)
+    geom.circles_by_size_and_color = dict()
+    geom.circles_by_size_and_color[(config.point_size, config.point_color)] = transformed_verts(nest_pts, _x, y, maxmin, scale)
     center_pts = [(0,0,0)]
-    geom.verts_by_size_and_color[(config.center_size, config.center_color)] = transformed_verts(center_pts, _x, y, maxmin, scale)
+    geom.circles_by_size_and_color[(config.center_size, config.center_color)] = transformed_verts(center_pts, _x, y, maxmin, scale)
+
+    geom.points_by_size_and_color = dict()
+    geom.points_by_size_and_color[(config.dash_width, config.edge_color)] = transformed_verts(dash_pts, _x, y, maxmin, scale)
 
     data_items_by_color = defaultdict(list)
     for item in data_items:
@@ -180,7 +194,7 @@ def generate_graph_geom(config, data_curves, data_circles, data_items, nest_pts,
 
     for color in data_items_by_color:
         verts = data_items_by_color[color]
-        geom.verts_by_size_and_color[(config.point_size, item.color)] = transformed_verts(verts, _x, y, maxmin, scale)
+        geom.circles_by_size_and_color[(config.point_size, item.color)] = transformed_verts(verts, _x, y, maxmin, scale)
 
     geom.curves_by_width_and_color = dict()
     if config.draw_circles:
