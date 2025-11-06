@@ -739,6 +739,8 @@
     - SvTextureViewerNode
     - SvTextureViewerNodeLite
     - SvWaveformViewer
+    - ---
+    - SvDataTreeVizNode
     - SvConsoleNode
 
 - Text:

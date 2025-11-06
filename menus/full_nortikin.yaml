@@ -814,6 +814,7 @@
         - SvTextureViewerNode
         - SvTextureViewerNodeLite
         - SvWaveformViewer
+        - SvDataTreeVizNode
         - SvConsoleNode
         - SvVDAttrsNodeMk2
 
