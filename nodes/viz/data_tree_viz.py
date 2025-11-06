@@ -15,8 +15,9 @@ from mathutils import Vector
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-from sverchok.utils.modules.drawing_abstractions import drawing 
 from sverchok.data_structure import updateNode, node_id
+from sverchok.utils.modules.drawing_abstractions import drawing 
+from sverchok.utils.modules.shader_utils import get_2d_smooth_color_shader, get_2d_uniform_color_shader
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_elements
@@ -55,60 +56,6 @@ def get_drawing_location(node):
     x, y = node.get_offset()
     return x * node.location_theta, y * node.location_theta
 
-def get_2d_uniform_color_shader():
-    uniform_2d_vertex_shader = '''
-    in vec2 pos;
-    uniform mat4 viewProjectionMatrix;
-    uniform float x_offset;
-    uniform float y_offset;
-
-    void main()
-    {
-       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
-    }
-    '''
-
-    uniform_2d_fragment_shader = '''
-    uniform vec4 color;
-    out vec4 FragColor;
-
-    void main()
-    {
-       FragColor = color;
-    }
-    '''
-    return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)
-
-def get_2d_smooth_color_shader():
-
-    smooth_2d_vertex_shader = '''
-    in vec2 pos;
-    layout(location=1) in vec4 color;
-
-    uniform mat4 viewProjectionMatrix;
-    uniform float x_offset;
-    uniform float y_offset;
-
-    out vec4 a_color;
-
-    void main()
-    {
-        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
-        a_color = color;
-    }
-    '''
-
-    smooth_2d_fragment_shader = '''
-    in vec4 a_color;
-
-    out vec4 FragColor;
-    void main()
-    {
-        FragColor = a_color;
-    }
-    '''
-    return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)
-
 def view_2d_geom(x, y, args):
     """
     x and y are passed by default so you could add font content
@@ -129,7 +76,6 @@ def view_2d_geom(x, y, args):
         shader.uniform_float("y_offset", y)
         shader.uniform_float("viewProjectionMatrix", matrix)
         batch.draw(shader)
-
 
     for key in geom.curves_by_width_and_color:
         edge_width, edge_color = key
@@ -449,3 +395,4 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
 
 classes = [SvDataTreeVizNode,]
 register, unregister = bpy.utils.register_classes_factory(classes)
+
