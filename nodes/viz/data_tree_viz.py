@@ -153,13 +153,17 @@ def generate_graph_geom(config, data_curves, data_circles, data_items, nest_pts,
 
     all_vecs = data_curve_pts + data_circle_pts
     maxmin = list(zip(map(max, *all_vecs), map(min, *all_vecs)))
+    print("MM", maxmin)
     axis1, axis2 = 0,1
     # background geom
     orig_size_x = maxmin[axis1][0]- maxmin[axis1][1]
     orig_size_y = maxmin[axis2][0]- maxmin[axis2][1]
-    max_size = max([orig_size_x, orig_size_y])
+    print("Orig", orig_size_x, orig_size_y)
+    max_size = min([orig_size_x, orig_size_y])
     w = orig_size_x * scale / max_size
     h = orig_size_y * scale / max_size
+    #w, h = scale, scale
+    print("Sz", w, h)
     margin = 10 * sys_scale
     geom.background_coords, geom.background_indices = background_rect(x, y, w, h, margin)
     _x = x + margin
@@ -333,7 +337,7 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
         row = c0.row(align=True)
         row.prop(self, "draw_background", text='', icon='WORLD')
         if self.draw_background:
-            row.prop(self, "background_color")
+            row.prop(self, "background_color", text='')
 
         row = c0.row(align=True)
         c0.prop(self, "draw_scale")
@@ -387,6 +391,7 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
         data_in = self.inputs['Data'].sv_get()
 
         max_level, data_lines = data_tree_lines(1.0, data_in, allow_skip = self.allow_skip)
+        print("Level", max_level)
 
         nest_pts = [(0,0,0)]
         dash_pts = []

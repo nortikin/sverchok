@@ -79,6 +79,7 @@ def draw_level(r1, delta_r, phi_start, phi_min, phi_max, data, allow_skip=True):
     N = len(data)
     if N == 1:
         level, lines = draw_level(r2, delta_r, phi_start, phi_min, phi_max, data[0], allow_skip=allow_skip)
+        print(f"Single: return {level+1}")
         return (level+1), [mk_line(r1, r2, phi_start, phi_start)] + lines
 
     phi_range = phi_max - phi_min
@@ -101,24 +102,21 @@ def draw_level(r1, delta_r, phi_start, phi_min, phi_max, data, allow_skip=True):
         draw_max = max(fixed_N // 2, 1)
         fixed_N = draw_max * 2 + 1
         delta_phi, phis = calc_phis(min(N, fixed_N))
-        idxs = np.concatenate((idxs[:draw_max], [-1], idxs[-draw_max:])) #print(f"Fixed N = {fixed_N}, draw_max = {draw_max}, fixed n idxs = {len(idxs)}")
+        idxs = np.concatenate((idxs[:draw_max], [-1], idxs[-draw_max:]))
 
     result = []
-    #print("N phi", len(phis))
-    #print("IDxs", idxs)
+    max_level = 0
     for i, phi in zip(idxs, phis):
         p1 = phi - 0.45*delta_phi# + PADDING
         p2 = phi + 0.45*delta_phi# - PADDING
         skip = i < 0
-        #print(f"I = {i}, draw_max = {draw_max} => skip = {skip}")
         line = mk_line(r1, r2, phi_start, phi, skip=skip)
         result.append(line)
-        max_level = 0
         if not skip:
             level, lines = draw_level(r2, delta_r, phi, p1, p2, data[i], allow_skip=allow_skip)
-            max_level = max(level+1, max_level)
+            max_level = max(level, max_level)
             result.extend(lines)
-    return max_level, result
+    return max_level+1, result
 
 def data_tree_lines(delta_r, data, allow_skip=True):
     return draw_level(0.0, delta_r, 0.0, -pi, pi, data, allow_skip=allow_skip)
