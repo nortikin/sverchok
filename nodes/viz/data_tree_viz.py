@@ -174,12 +174,8 @@ def generate_graph_geom(config, data_curves, data_circles, data_items, nest_pts,
     geom.verts_by_size_and_color[(config.center_size, config.center_color)] = transformed_verts(center_pts, _x, y, maxmin, scale)
 
     data_items_by_color = defaultdict(list)
-    #all_data_item_pts = []
     for item in data_items:
         data_items_by_color[item.color].append(item.point)
-        #all_data_item_pts.append(item.point)
-
-    #geom.verts_by_size_and_color[(config.point_size+1, config.edge_color)] = transformed_verts(all_data_item_pts, _x, y, maxmin, scale)
 
     for color in data_items_by_color:
         verts = data_items_by_color[color]
@@ -196,14 +192,14 @@ def generate_graph_geom(config, data_curves, data_circles, data_items, nest_pts,
     return geom
 
 def transformed_verts(vecs, x, y, maxmin, scale, axis1=0, axis2=1):
-    v_path = []
+    if not vecs:
+        return []
+    vecs = np.array(vecs)
     size_x = maxmin[axis1][0] - maxmin[axis1][1]
     size_y = maxmin[axis2][0] - maxmin[axis2][1]
-    for v in vecs:
-        _px = x + (v[axis1] - maxmin[axis1][1]) * scale / size_x
-        _py = y + (v[axis2] - maxmin[axis2][0]) * scale / size_y
-        v_path.append([_px, _py])
-    return v_path
+    vecs[:,0] = x + (vecs[:,0] - maxmin[axis1][1]) * scale / size_x
+    vecs[:,1] = y + (vecs[:,1] - maxmin[axis2][0]) * scale / size_y
+    return vecs.tolist()
 
 class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
     """
