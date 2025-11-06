@@ -14,10 +14,13 @@ from sverchok.data_structure import get_max_data_nesting_level, NUMERIC_DATA_TYP
 from sverchok.core.sockets import (
         SvMatrixSocket,
         SvStringsSocket, SvCurveSocket,
-        SvSurfaceSocket, SvObjectSocket
+        SvSurfaceSocket, SvObjectSocket,
+        SvScalarFieldSocket, SvVectorFieldSocket
     )
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface import SvSurface
+from sverchok.utils.field.vector import SvVectorField
+from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 from sverchok.core.sockets import STANDARD_TYPES
@@ -44,6 +47,10 @@ class Item:
             return SvCurveSocket.color
         elif isinstance(value, SvSurface):
             return SvSurfaceSocket.color
+        elif isinstance(value, SvScalarField):
+            return SvScalarFieldSocket.color
+        elif isinstance(value, SvVectorField):
+            return SvVectorFieldSocket.color
         else:
             return SvObjectSocket.color
 
