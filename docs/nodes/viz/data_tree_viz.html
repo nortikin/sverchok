@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dupli Instancer Lite &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Data Tree Viz &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/viz/dupli_instances_lite';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/viz/data_tree_viz';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Dupli Instancer" href="dupli_instances_mk5.html" />
-    <link rel="prev" title="Data Tree Viz" href="data_tree_viz.html" />
+    <link rel="next" title="Dupli Instancer Lite" href="dupli_instances_lite.html" />
+    <link rel="prev" title="Console Node" href="console_node.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -188,8 +188,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="viz_index.html">Viz</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="console_node.html">Console Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="data_tree_viz.html">Data Tree Viz</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Dupli Instancer Lite</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Data Tree Viz</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">Dupli Instancer Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instancer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geo_nodes_viewer.html">Geo Nodes Viewer</a></li>
@@ -285,7 +285,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/viz/dupli_instances_lite.rst" target="_blank"
+      <li><a href="../../_sources/nodes/viz/data_tree_viz.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -369,7 +369,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Dupli Instancer Lite</h1>
+    <h1>Data Tree Viz</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -380,11 +380,10 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-features">Parameters &amp; Features</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
             </nav>
         </div>
@@ -396,85 +395,86 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="dupli-instancer-lite">
-<h1>Dupli Instancer Lite<a class="headerlink" href="#dupli-instancer-lite" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190475106-1b553c75-7497-47d0-9425-93ec6c223636.png"><img alt="https://user-images.githubusercontent.com/14288520/190475106-1b553c75-7497-47d0-9425-93ec6c223636.png" src="https://user-images.githubusercontent.com/14288520/190475106-1b553c75-7497-47d0-9425-93ec6c223636.png" />
-</a>
+  <section id="data-tree-viz">
+<h1>Data Tree Viz<a class="headerlink" href="#data-tree-viz" title="Link to this heading">#</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node exposes the Blender functionality of Instancing on object Vertices or Faces
-to the Sverchok node tree being able to display many copies of the same object with a very
-low memory impact.</p>
-<dl class="simple">
-<dt>The Node  has to main modes Verts and Polys.</dt><dd><ul class="simple">
-<li><p>In the <strong>Verts</strong> mode the instances will be placed at the parent vertices.</p></li>
-<li><p>In the <strong>Polys</strong> mode the instances will be placed at the parent faces.</p></li>
-</ul>
-</dd>
-</dl>
-</section>
-<section id="parameters-features">
-<h2>Parameters &amp; Features<a class="headerlink" href="#parameters-features" title="Link to this heading">#</a></h2>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Param</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Show instancer
-in viewport</p></td>
-<td><p>Show instancer geometry in viewport</p></td>
-</tr>
-<tr class="row-odd"><td><p>Show instancer
-in render</p></td>
-<td><p>Show instancer geometry in render</p></td>
-</tr>
-<tr class="row-even"><td><p>Show base child
-in viewport</p></td>
-<td><p>Show base child geometry in viewport</p></td>
-</tr>
-<tr class="row-odd"><td><p>Scale Children</p></td>
-<td><p>Scale children instances (only in Polys mode)</p></td>
-</tr>
-<tr class="row-even"><td><p>Align with normal</p></td>
-<td><p>Align Instances with vertex normal (only in Verts mode)</p></td>
-</tr>
-<tr class="row-odd"><td><p>Auto Release</p></td>
-<td><p>Remove children not called by this node</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<p>The node displays the shape of input data in the node editor’s window.
+The data is represented as a tree; the root of the tree is whole data (root
+list). Items of the outer nesting level are level 1 branches of the tree; Items
+of level 1 lists are level 2 branches, and so on. The node draws the tree as it
+is growing from center to outside; so the outermost nodes of the tree (leaves)
+are atomic data items: numbers, curves and so on. Nodes which are not leaves
+represent lists and tuples.</p>
+<p>This node can be used instead (or together with) Stethoscope node, to quickly
+asses the nesting level of data and it’s size. Stethoscope is more focused on
+displaying data items itself, while Data Tree Viz is more focused on displaying
+data structure.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<p>This node has one input: <strong>Data</strong>. This input can consume any type of input data, with any nesting.</p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<p>This node has the following parameters:</p>
 <ul class="simple">
-<li><p><strong>Parent</strong>: Instancer Object(s).</p></li>
-<li><p><strong>Child</strong>: Object(s) to instance.</p></li>
-<li><p><strong>Scale</strong>: Instances scale (value per parent).</p></li>
+<li><p><strong>Active</strong>. Toggle button which controls whether the node should draw in node
+editor’s background. Enabled by default.</p></li>
+<li><p><strong>Simplify</strong>. If checked, then, if node decides that there are too much items
+in a list on some level of nesting, it draws properly only the beginning and
+the end of the list; the middle of the list is replaced with the dotted line,
+and it’s internals (if there are any) are not displayed at all. If not
+checked, then the node tries to display all items and branches of data. When
+not checked, if you pass a lot of data (like, hundreds or thousands of
+values) into the node, it can work slow, and the result will be probably not
+insightful. Checked by default.</p></li>
+<li><p><strong>Branching points color</strong>. The color to be used to draw branching points.
+Leave nodes (which represent atomic data items, not lists or tuples) are
+always drawn with a color of a socket corresponding to data type (numbers are
+displayed in green, curves in blueish and so on).</p></li>
+<li><p><strong>Points size</strong>. Displayed size of branching points. The default value is 4.</p></li>
+<li><p><strong>Branch lines color</strong>. The color to be used to draw branch lines.</p></li>
+<li><p><strong>Branch lines thickness</strong>. Thickness of branch lines. The default value is 1.</p></li>
+<li><p><strong>Display circles</strong>. If checked, then circles are displayed which indicate
+where items of the same nesting level lie.</p></li>
+<li><p><strong>Circles color</strong>. The color to be used to draw circles which indicate
+nesting levels.</p></li>
+<li><p><strong>Circles thickness</strong>. Thickness of circles. The default value is 3.</p></li>
+<li><p><strong>Display background</strong>. If checked, then behind data tree a colored square is
+drawn (can be useful in some color themes). Unchecked by default.</p></li>
+<li><p><strong>Background color</strong>. Color of the background square.</p></li>
+<li><p><strong>Size</strong>. Drawing size. The default value is 250, which is slightly bigger
+than average node.</p></li>
 </ul>
 </section>
-<section id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
-<p>This node can work without being connected to any other nodes but due the logic
-behind Sverchok update system the node will not work if there is not any link in
-the whole node-tree</p>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<p>This node has no outputs.</p>
 </section>
-<section id="see-also">
-<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
-<p>Blender instancing: <a class="reference external" href="https://docs.blender.org/manual/en/latest/scene_layout/object/properties/instancing/index.html">https://docs.blender.org/manual/en/latest/scene_layout/object/properties/instancing/index.html</a></p>
-</section>
-<section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
-<p>Basic usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/119203629-ce5b9780-ba93-11eb-87c0-6905ee79fcc6.png"><img alt="https://user-images.githubusercontent.com/10011941/119203629-ce5b9780-ba93-11eb-87c0-6905ee79fcc6.png" src="https://user-images.githubusercontent.com/10011941/119203629-ce5b9780-ba93-11eb-87c0-6905ee79fcc6.png" />
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
+<p>In this example, data is generated in such a way, that the first sub-list has 1
+item, the second sub-list has 2 items and so on. Also Graft mode is enabled on
+the output socket of “Number Range” node, which creates additional nesting
+level - and outer circle of the shape. Here you can see that items are drawn
+beginning at the bottom of the circle, counterclockwise.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/74d95ec8-5de6-4285-8877-1f4b6a055cbe"><img alt="https://github.com/user-attachments/assets/74d95ec8-5de6-4285-8877-1f4b6a055cbe" src="https://github.com/user-attachments/assets/74d95ec8-5de6-4285-8877-1f4b6a055cbe" />
 </a>
-<ul class="simple">
-<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
-</ul>
-<hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190476701-8ef2ed84-74be-4412-9de9-59fff144a88c.png"><img alt="https://user-images.githubusercontent.com/14288520/190476701-8ef2ed84-74be-4412-9de9-59fff144a88c.png" src="https://user-images.githubusercontent.com/14288520/190476701-8ef2ed84-74be-4412-9de9-59fff144a88c.png" />
+<p>Here structure of Vertices output of a Box node is represented. On the outer
+nesting level, there is 1 item (because there is only 1 box) - which is
+represented by only one branch growing from the center. That single sub-list
+has 8 items (8 vertices of the cube) - hence 8 branches grow on the second
+nesting level. And on the third nesting level, each of those 8 branches has 3
+sub-branches (because each vertex of the cube is a tuple of 3 numbers).</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/c001e847-addb-46c8-9837-1f31f5c9a08d"><img alt="https://github.com/user-attachments/assets/c001e847-addb-46c8-9837-1f31f5c9a08d" src="https://github.com/user-attachments/assets/c001e847-addb-46c8-9837-1f31f5c9a08d" />
+</a>
+<p>Similar, but here 3 cubes are generated, so 3 branches grow from the center;
+each of those branches is organized in the same way as for one cube.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b98a4f86-faec-4b1c-baa6-15602298e6f3"><img alt="https://github.com/user-attachments/assets/b98a4f86-faec-4b1c-baa6-15602298e6f3" src="https://github.com/user-attachments/assets/b98a4f86-faec-4b1c-baa6-15602298e6f3" />
+</a>
+<p>An example of using it with Curves. Here original curve (circle) is subdivided in 5 segments, and then each of segments is subdivided in 9 sub-segments. So you can see that 5 branches grow from the center, and from each of them 9 sub-branches grow.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/bf0a4aa4-2d36-4bac-bbe9-fb4de24582a0"><img alt="https://github.com/user-attachments/assets/bf0a4aa4-2d36-4bac-bbe9-fb4de24582a0" src="https://github.com/user-attachments/assets/bf0a4aa4-2d36-4bac-bbe9-fb4de24582a0" />
 </a>
 </section>
 </section>
@@ -491,20 +491,20 @@ the whole node-tree</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="data_tree_viz.html"
+       href="console_node.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Data Tree Viz</p>
+        <p class="prev-next-title">Console Node</p>
       </div>
     </a>
     <a class="right-next"
-       href="dupli_instances_mk5.html"
+       href="dupli_instances_lite.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Dupli Instancer</p>
+        <p class="prev-next-title">Dupli Instancer Lite</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -525,11 +525,10 @@ the whole node-tree</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-features">Parameters &amp; Features</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
   </nav></div>
 
