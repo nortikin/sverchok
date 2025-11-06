@@ -644,7 +644,7 @@ class SvWaveformViewer(SverchCustomTreeNode, bpy.types.Node):
         self.dirname = dirname
         print(self.dirname, dirname)
 
-    def toggle_viewer(self):
+    def toggle_viewer(self, context):
         self.activate = not self.activate
 
 classes = [SvWaveformViewer, SvWaveformViewerOperator, SvWaveformViewerOperatorDP]

@@ -32,7 +32,7 @@ def viewerdraw_showhide(operator, context):
 
     for node in selected_nodes:
         if hasattr(node, 'toggle_viewer'):
-            node.toggle_viewer()
+            node.toggle_viewer(context)
 
 class SvNodeVDShowHideOperator(bpy.types.Operator):
     """Viewer Draw Node Show Hide Toggle"""

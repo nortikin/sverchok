@@ -443,7 +443,7 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
     def sv_free(self):
         nvBGL.callback_disable(node_id(self))
 
-    def toggle_viewer(self):
+    def toggle_viewer(self, context):
         self.activate = not self.activate
 
 classes = [SvDataTreeVizNode,]

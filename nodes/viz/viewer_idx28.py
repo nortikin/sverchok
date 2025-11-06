@@ -339,7 +339,7 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
             else:
                 callback_disable(node_id(self))
 
-    def toggle_viewer(self):
+    def toggle_viewer(self, context):
         self.activate = not self.activate
 
 def register():

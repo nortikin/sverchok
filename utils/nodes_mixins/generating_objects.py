@@ -437,7 +437,7 @@ class SvViewerNode(BlenderObjects):
         else:
             self.show_objects_update(None, is_show)
 
-    def toggle_viewer(self):
+    def toggle_viewer(self, context):
         self.show_objects = not self.show_objects
 
     def load_from_json(self, node_data: dict, import_version: float):
