@@ -228,7 +228,7 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
         min=10.0,
         default=250.0,
         name="Size",
-        description="Drawing Scale",
+        description="Drawing scale",
         update=updateNode,
     )
 
@@ -238,7 +238,7 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
 
     point_color: FloatVectorProperty(
         update=updateNode,
-        name="Points Color",
+        name="Branching points color",
         default=(0.0, 0.57, 0.02, 1.0),
         size=4,
         min=0.0,
@@ -247,21 +247,21 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
     )
 
     point_size: IntProperty(
-        min=1, default=4, name="Points Size", description="Point Size", update=updateNode
+        min=1, default=4, name="Points size", description="Point size", update=updateNode
     )
 
     edge_width: IntProperty(
-        min=1, default=1, name="Edge Width", description="Edge Width", update=updateNode
+        min=1, default=1, name="Branch line thickness", update=updateNode
     )
 
     curve_samples: IntProperty(
         min=2, default=25, name='Samples',
-        description='Curve Resolution', update=updateNode
+        description='Branch curve resolution', update=updateNode
     )
 
     edge_color: FloatVectorProperty(
         update=updateNode,
-        name="Edges Color",
+        name="Branch line color",
         default=(0.0, 0.01, 0.15, 1.0),
         size=4,
         min=0.0,
@@ -271,7 +271,7 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
 
     background_color: FloatVectorProperty(
         update=updateNode,
-        name="",
+        name="Background color",
         default=(0.83, 0.83, 0.83, 1.0),
         size=4,
         min=0.0,
@@ -280,18 +280,19 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
     )
 
     draw_background: BoolProperty(
-        update=updateNode, name="Display Background", default=True
+        update=updateNode, name="Display background", default=True
     )
 
     draw_circles: BoolProperty(
-        name = "Draw Circles",
+        name = "Draw circles",
+        description = "Display nesting level circles",
         default = True,
         update=updateNode
     )
 
     circle_color: FloatVectorProperty(
         update=updateNode,
-        name="Circles Color",
+        name="Circles color",
         default=(0.87, 0.89, 0.85, 1.0),
         size=4,
         min=0.0,
@@ -300,9 +301,8 @@ class SvDataTreeVizNode(SverchCustomTreeNode, bpy.types.Node):
     )
 
     circle_width: IntProperty(
-        min=1, default=2, name="Circle Width", description="Circle Width", update=updateNode
+        min=1, default=2, name="Circles thickness", update=updateNode
     )
-
 
     location_theta: FloatProperty(name="location theta", default=1.0)
 
