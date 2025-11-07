@@ -154,7 +154,9 @@ el.replaceWith(d);
     delta_r = (r2 - r1) / 3.0
     p1 = np.array([r1*cos(phi1), r1*sin(phi1), 0])
     dphi = phi2 - phi1
-    dr1 = r1 * dphi# / 2.0
+    x = abs(dphi)
+    dr1 = copysign(r1 * (A*x**2 + B*x), dphi)
+    #dr1 = r1*dphi
     p2 = p1 + np.array([-dr1*sin(phi1), dr1*cos(phi1), 0])
     p4 = np.array([r2*cos(phi2), r2*sin(phi2), 0])
     p3 = p4 - np.array([delta_r*cos(phi2), delta_r*sin(phi2), 0])
