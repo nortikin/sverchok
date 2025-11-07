@@ -893,6 +893,47 @@ def partition(p, lst):
             bad.append(item)
     return good, bad
 
+def weave_list(data1, data2, mask, level=None, nesting_match_func = 'REPEAT', final_match_func = 'CYCLE', data_types=SIMPLE_DATA_TYPES):
+    if isinstance(nesting_match_func, str):
+        nesting_match_func = list_match_func[nesting_match_func]
+    if isinstance(final_match_func, str):
+        final_match_func = list_match_func[final_match_func]
+
+    def helper(data1, data2, mask, lvl):
+        if lvl == level:
+            result = []
+            print(f"Final: Lvl {lvl}, D1 {data1}, D2 {data2}, M {mask}")
+            for d1, d2, m in zip(*final_match_func([data1, data2, mask])):
+                if m:
+                    result.append(d2)
+                else:
+                    result.append(d1)
+            return result
+        else:
+            result = []
+            print(f"Nesting: Lvl {lvl}, D1 {data1}, D2 {data2}, M {mask}")
+            for d1, d2, m in zip(*nesting_match_func([data1, data2, mask])):
+                result.append(helper(d1, d2, m, lvl+1))
+            return result
+
+    nesting1 = get_data_nesting_level(data1, data_types=data_types)
+    nesting2 = get_data_nesting_level(data2, data_types=data_types)
+    nesting3 = get_data_nesting_level(mask, data_types=data_types)
+    max_nesting = max(nesting1, nesting2, nesting3)
+    if level is not None and max_nesting < level+1:
+        raise ValueError(f"All arguments have nesting level at most {max_nesting}, which is too small for specified weaving level {level}")
+    if level is None:
+        level = max_nesting - 1
+    data1 = ensure_nesting_level(data1, max_nesting, data_types=data_types)
+    data2 = ensure_nesting_level(data2, max_nesting, data_types=data_types)
+    mask = ensure_nesting_level(mask, level+1, data_types=data_types)
+
+    print("D1", data1)
+    print("D2", data2)
+    print("MSK", mask)
+    return helper(data1, data2, mask, 0)
+
+
 def map_recursive(fn, data, data_types=SIMPLE_DATA_TYPES):
     """
     Given a nested list of items, apply `fn` to each of these items.
