@@ -1178,6 +1178,7 @@ class CurvatureIntegral:
             ts = (ts - t_min) / (t_max - t_min)
         if rescale_curvature:
             ys = ys / ys[-1]
+        self.values = ys
         zeros = np.zeros(len(ts))
         cpts = np.vstack((ts, ys, zeros)).T
         self.prime_spline = CubicSpline(cpts, tknots = ts, is_cyclic=False)
