@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from math import pi, sin, cos
+from math import pi, sin, cos, copysign
 
 from mathutils import Matrix
 
@@ -54,13 +54,18 @@ class Item:
         else:
             return SvObjectSocket.color
 
+A = -1.0/(2*pi)
+B = 7.0/6.0
+
 def mk_line(r1, r2, phi1, phi2, skip=False):
     phi1 += pi/2
     phi2 += pi/2
     delta_r = (r2 - r1) / 3.0
     p1 = np.array([r1*cos(phi1), r1*sin(phi1), 0])
     dphi = phi2 - phi1
-    dr1 = r1 * dphi# / 2.0
+    x = abs(dphi)
+    dr1 = copysign(r1 * (A*x**2 + B*x), dphi)
+    #dr1 = r1*dphi
     p2 = p1 + np.array([-dr1*sin(phi1), dr1*cos(phi1), 0])
     p4 = np.array([r2*cos(phi2), r2*sin(phi2), 0])
     p3 = p4 - np.array([delta_r*cos(phi2), delta_r*sin(phi2), 0])
