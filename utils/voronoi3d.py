@@ -24,7 +24,7 @@ import datetime
 import bpy
 import bmesh
 import random
-from mathutils import Vector
+from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
 
 from sverchok.core.sv_custom_exceptions import SvUnsupportedOptionException
@@ -238,7 +238,7 @@ def calc_bvh_projections(bvh, sites):
     return np.array(projections)
 
 # see additional info https://github.com/nortikin/sverchok/pull/4948
-def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', normal_update = False, precision=1e-8, mask=[]):
+def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', normal_update = False, precision=1e-8, mask=[], sites_matrixes = None ):
 
     def get_sites_delaunay_params(delaunay, n_orig_sites):
         result = defaultdict(list)
@@ -273,7 +273,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     num_bisect = 0 # general count of bisect for full cutting process
     num_unpredicted_erased = 0 # if optimisation can not find a skip bisect case (with using bounding box) then counter incremented
 
-    def cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing, center_of_mass, bbox_aligned):
+    def cut_cell(start_mesh, site_matrix, sites_delaunay_params, site_idx, spacing, center_of_mass, bbox_aligned):
         nonlocal num_bisect, num_unpredicted_erased
         src_mesh = None
         # Check ridges for sites before bisect. If no ridges then no bisect and no mesh in result
@@ -328,6 +328,9 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                     lst_ridges_to_bisect.sort()  # less dist gets more points to cut off (with negative dists to. Negative dist is a negative side of bisect plane)
 
                     src_mesh = start_mesh.copy() # do not need create src_mesh until here.
+                    if site_matrix is not None:
+                        src_mesh.transform(site_matrix)
+                        pass
 
                     # A main bisection process of site_idx
                     for i in range(len(lst_ridges_to_bisect)):
@@ -456,7 +459,10 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
         start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
         for site_idx in range(len(sites)):
             if(mask[site_idx]):
-                cell = cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
+                sites_matrix_idx = None
+                if sites_matrixes is not None and site_idx <= len(sites_matrixes)-1:
+                        sites_matrix_idx = sites_matrixes[site_idx]
+                cell = cut_cell(start_mesh, sites_matrix_idx, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
                 if cell is not None:
                     new_verts, new_edges, new_faces = cell
                     if new_verts:
@@ -490,7 +496,8 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
     clip_inner=True, clip_outer=True, do_clip=True,
     clipping=1.0, mode = 'REGIONS', normal_update=False,
     precision = 1e-8,
-    mask = []
+    mask = [],
+    sites_matrixes = None
     ):
 
     bvh = BVHTree.FromPolygons(verts, faces)
@@ -522,7 +529,7 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
         all_points = [site for site in sites if site]
         verts, edges, faces, used_sites_idx, used_sites_verts = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
                 spacing = spacing, mode = mode, normal_update = normal_update,
-                precision = precision, mask=mask)
+                precision = precision, mask=mask, sites_matrixes=sites_matrixes)
         return verts, edges, faces, used_sites_idx, used_sites_verts
 
 def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True, predicate_plus=None, predicate_minus=None):

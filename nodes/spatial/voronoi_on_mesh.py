@@ -18,6 +18,7 @@
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, ensure_min_nesting
@@ -28,12 +29,12 @@ from sverchok.utils.voronoi3d import voronoi_on_mesh
 import numpy as np
 
 
-class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
+class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi Mesh
     Tooltip: Generate Voronoi diagram on the surface of a mesh object
     """
-    bl_idname = 'SvVoronoiOnMeshNodeMK4'
+    bl_idname = 'SvVoronoiOnMeshNodeMK5'
     bl_label = 'Voronoi on Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
@@ -70,9 +71,9 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets) # type: ignore
     
     join_modes = [
-            ('FLAT', "Separate All Meshes", "Post processing: Separate the result meshes into individual meshes", custom_icon("SV_VOM_SEPARATE_ALL_MESHES"), 0),
-            ('SEPARATE', "Keep Source Meshes", "Post processing: Keep parts of the source meshes as source meshes.", custom_icon("SV_VOM_KEEP_SOURCE_MESHES"), 1),
-            ('JOIN', "Join All Meshes", "Post processing: Join all results meshes into a single mesh", custom_icon("SV_VOM_JOIN_ALL_MESHES"), 2)
+            ('FLAT', "Split", "Post processing: Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
+            ('SEPARATE', "Keep", "Post processing: Keep parts of the source meshes as source meshes.", 'SYNTAX_ON', 1),
+            ('JOIN', "Merge", "Post processing: Join all results meshes into a single mesh", 'STICKY_UVS_LOC', 2)
         ]
 
     join_mode : EnumProperty(
@@ -147,6 +148,7 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvVerticesSocket', 'voronoi_sites').label = 'Voronoi Sites'
         self.inputs.new('SvStringsSocket', 'voronoi_sites_mask').label = "Mask of Voronoi Sites"
         self.inputs.new('SvStringsSocket', 'spacing').prop_name = 'spacing'
+        self.inputs.new('SvMatrixSocket', 'voronoi_matrix_sites').label = 'Voronoi Sites Matrix'
 
         self.inputs['voronoi_sites_mask'].custom_draw = 'draw_voronoi_sites_mask_in_socket'
 
@@ -183,6 +185,9 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         verts_in = self.inputs['vertices'].sv_get(deepcopy=False)
         faces_in = self.inputs['polygons'].sv_get(deepcopy=False)
         sites_in = self.inputs['voronoi_sites'].sv_get(deepcopy=False)
+        voronoi_matrix_sites_in = self.inputs['voronoi_matrix_sites'].sv_get(default=[Matrix().Identity(4)], deepcopy=False)
+        if(get_data_nesting_level(voronoi_matrix_sites_in, search_first_data=True)!=2):
+            voronoi_matrix_sites_in = ensure_nesting_level(voronoi_matrix_sites_in, 2)
 
         mask_in = self.inputs['voronoi_sites_mask'] #.sv_get(deepcopy=False)
         if mask_in.is_linked==False:
@@ -209,7 +214,7 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         sites_idx_out = []
         sites_verts_out = []
 
-        for verts, faces, sites, spacing, mask in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, mask_in):
+        for verts, faces, sites, spacing, mask, sites_matrixes in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, mask_in, voronoi_matrix_sites_in):
             # if mask is zero or not connected then do not mask any. Except of inversion,
             if not mask:
                 np_mask = np.ones(len(sites), dtype=bool)
@@ -245,7 +250,8 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
                             mode = self.mode,
                             normal_update = self.normals,
                             precision = precision,
-                            mask = mask
+                            mask = mask,
+                            sites_matrixes = sites_matrixes
                             )
 
             # collect sites_idx and used_sites_verts independently of self.join_mode
@@ -274,5 +280,5 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['sites_idx'].sv_set(sites_idx_out)
         self.outputs['sites_verts'].sv_set(sites_verts_out)
 
-classes = [SvVoronoiOnMeshNodeMK4]
+classes = [SvVoronoiOnMeshNodeMK5]
 register, unregister = bpy.utils.register_classes_factory(classes)
