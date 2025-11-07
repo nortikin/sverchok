@@ -19,7 +19,8 @@ def get_xy_for_bgl_drawing(node):
     # adjust proposed text location in case node is framed.
     # take into consideration the hidden state
     _x, _y = node.absolute_location
-    _x, _y = (_x + node.width + 20), _y
+    ui_scale = bpy.context.preferences.system.ui_scale
+    _x, _y = (_x + node.width)*ui_scale + 20, _y*ui_scale
 
     # this alters location based on DPI/Scale settings.
     return _x * node.location_theta, _y * node.location_theta
