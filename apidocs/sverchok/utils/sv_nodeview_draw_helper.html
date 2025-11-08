@@ -174,7 +174,10 @@ def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
 
     def adjust_position_and_dimensions(self, x, y, width, height):
         scale, multiplier = self.get_preferences()
-        self.location_theta = multiplier</code></pre>
+        self.location_theta = multiplier
+
+    def toggle_viewer(self, context):
+        self.activate = not self.activate</code></pre>
 </details>
 <div class="desc"></div>
 <h3>Subclasses</h3>
@@ -243,6 +246,19 @@ def xy_offset(self):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.toggle_viewer"><code class="name flex">
+<span>def <span class="ident">toggle_viewer</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def toggle_viewer(self, context):
+    self.activate = not self.activate</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -273,6 +289,7 @@ def xy_offset(self):
 <li><code><a title="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.adjust_position_and_dimensions" href="#sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.adjust_position_and_dimensions">adjust_position_and_dimensions</a></code></li>
 <li><code><a title="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.get_preferences" href="#sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.get_preferences">get_preferences</a></code></li>
 <li><code><a title="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.location_theta" href="#sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.location_theta">location_theta</a></code></li>
+<li><code><a title="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.toggle_viewer" href="#sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.toggle_viewer">toggle_viewer</a></code></li>
 <li><code><a title="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.xy_offset" href="#sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.xy_offset">xy_offset</a></code></li>
 </ul>
 </li>
