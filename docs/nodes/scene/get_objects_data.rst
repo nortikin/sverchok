@@ -38,6 +38,18 @@ A few points worth stating explicitly.
   .. image:: https://github.com/user-attachments/assets/4af6194c-3819-4a36-98e9-b97efe3cab3f
     :target: https://github.com/user-attachments/assets/4af6194c-3819-4a36-98e9-b97efe3cab3f
 
+- select objects in scene by operator in list. Use Shift key to append object into selection set
+
+  .. image:: https://github.com/user-attachments/assets/37193b7e-1383-4d93-b5fb-76a159dfb834
+    :target: https://github.com/user-attachments/assets/37193b7e-1383-4d93-b5fb-76a159dfb834
+
+.. raw:: html
+
+   <video width="700" controls>
+     <source src="https://github.com/user-attachments/assets/20238f9e-5e47-49b5-a0dd-1bcf7949a60c" type="video/mp4">
+    Your browser does not support the video tag.
+   </video>
+
 limitations:
 
 - When you use the ``Post`` mode Sverchok/Blender expect Objects to be visible. If you want to "hide" the original Objects in the scene to avoid visual clutter, you can place them into a Collection and hide the collection. This is a current Blender API limitation.
