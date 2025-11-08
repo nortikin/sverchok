@@ -1125,6 +1125,9 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
     def sv_free(self):
         callback_disable(node_id(self))
 
+    def toggle_viewer(self, context):
+        self.activate = not self.activate
+
     def show_viewport(self, is_show: bool):
         """It should be called by node tree to show/hide objects"""
         if not self.activate:

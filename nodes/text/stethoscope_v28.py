@@ -266,7 +266,6 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
         except:
             print('stethoscope update holdout (not a problem)')
 
-
 def register():
     bpy.utils.register_class(SvStethoscopeNodeMK2)
 

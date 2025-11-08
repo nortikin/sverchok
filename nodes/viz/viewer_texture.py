@@ -381,6 +381,8 @@ class SvTextureViewerNode(SverchCustomTreeNode, bpy.types.Node):
 
         return text
 
+    def toggle_viewer(self, context):
+        self.activate = not self.activate
 
 classes = [SvTextureViewerOperator, SvTextureViewerDirSelect, SvTextureViewerNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
