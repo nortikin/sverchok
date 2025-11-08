@@ -245,13 +245,27 @@ If a Blender file does not posses the collection the empty collection will be ge
             if old_nodes.is_old(node):
                 old_nodes.mark_old(node)
 
+    def _get_main_tree_nodes(self):
+        if &#34;main_tree&#34; in self._struct:
+            return self._struct[&#34;main_tree&#34;].get(&#34;nodes&#34;, dict())
+        elif &#34;node&#34; in self._struct:
+            return self._struct[&#34;node&#34;]
+        else:
+            return dict()
+
+    def _get_main_tree_links(self):
+        if &#34;main_tree&#34; in self._struct:
+            return self._struct[&#34;main_tree&#34;].get(&#34;links&#34;, [])
+        else:
+            return []
+
     def _build_nodes(self, tree, factories, imported_structs):
         &#34;&#34;&#34;Build nodes of the main tree, other dependencies should be already initialized&#34;&#34;&#34;
         with tree.init_tree():
             # first all nodes should be created without applying their inner data
             # because some nodes can have `parent` property which points into another node
             node_structs = []
-            for node_name, raw_structure in self._struct[&#34;main_tree&#34;][&#34;nodes&#34;].items():
+            for node_name, raw_structure in self._get_main_tree_nodes().items():
                 with self.logger.add_fail(&#34;Init node (main tree)&#34;, f&#34;Name: {node_name}&#34;):
                     node_struct = factories.node(node_name, self.logger, raw_structure)
 
@@ -271,7 +285,7 @@ If a Blender file does not posses the collection the empty collection will be ge
                     node = tree.nodes[new_name]
                     node_struct.build(node, factories, imported_structs)
 
-            for raw_struct in self._struct[&#34;main_tree&#34;][&#34;links&#34;]:
+            for raw_struct in self._get_main_tree_links():
                 with self.logger.add_fail(&#34;Build link (main tree)&#34;, f&#34;Struct: {raw_struct}&#34;):
                     factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
 
