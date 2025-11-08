@@ -805,7 +805,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         #     layout.prop(self, 'matrix_draw_visible_if_vertices_connected', text='', icon='HIDE_OFF', emboss=False)
         # else:
         #     layout.prop(self, 'matrix_draw_visible_if_vertices_connected', text='', icon='HIDE_ON', emboss=False)
-        layout.prop(self, 'matrix_draw_scale', text='')
+        layout.prop(self, 'matrix_draw_scale', text='', emboss=False)
         pass
 
     # dashed line props
@@ -870,7 +870,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         row.separator()
         self.wrapper_tracked_ui_draw_op(row, Sv3DviewAlign.bl_idname, icon='CURSOR', text='')
         row = layout.row(align=True)
-        row.prop(self, "matrix_draw_scale")
+        #row.prop(self, "matrix_draw_scale")
 
 
     def draw_buttons_ext(self, context, layout):
