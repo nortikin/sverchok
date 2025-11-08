@@ -383,14 +383,14 @@ document.write(`
                   
   <section id="get-objects-data">
 <h1>Get Objects Data<a class="headerlink" href="#get-objects-data" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d2b29188-e471-4821-80fa-ea0da9e8403e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d2b29188-e471-4821-80fa-ea0da9e8403e" src="https://github.com/nortikin/sverchok/assets/14288520/d2b29188-e471-4821-80fa-ea0da9e8403e" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/95c784b5-41ac-4e7b-9488-d508d3ed8ba5"><img alt="https://github.com/user-attachments/assets/95c784b5-41ac-4e7b-9488-d508d3ed8ba5" src="https://github.com/user-attachments/assets/95c784b5-41ac-4e7b-9488-d508d3ed8ba5" />
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
 <p>Get objects from the Blender <code class="docutils literal notranslate"><span class="pre">Scene</span></code> and output them into Sverchok’s node tree. This node supports most object types. All are converted to a Sverchok representation of <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> where possible.
 Sockets for the selected mesh elements or creases on weights can be used for quck masking.</p>
 <p>A few points worth stating explicitly.</p>
-<ul class="simple">
+<ul>
 <li><p>Empties, Cameras, and Lamps produce only matrix data.</p></li>
 <li><p>The order of the selected Objects can be sorted by name.</p></li>
 <li><p>It supports Object collections.</p></li>
@@ -398,8 +398,31 @@ Sockets for the selected mesh elements or creases on weights can be used for quc
 <li><p>When you <code class="docutils literal notranslate"><span class="pre">Get</span></code> objects from the Scene that have modifiers on them, you can import the final mesh by enabling the <code class="docutils literal notranslate"><span class="pre">Post</span></code> button.</p></li>
 <li><p>Importing Objects with a lot of geometry will decrease Sverchok tree update speed, be careful with any modifiers that produce a lot of extra geometry (like subdivision modifier)</p></li>
 <li><p>The Matrix socket lets you ignore or acquire the Object’s <code class="docutils literal notranslate"><span class="pre">World</span> <span class="pre">Matrix</span></code>, by default the Object data is untransformed. Use a matrix-apply node if you want to explicitly transform the vertex data.</p></li>
+<li><p>add selected objects from scene into the list individually:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7037b5bd-b0f8-4295-84e4-1885f706a035"><img alt="https://github.com/user-attachments/assets/7037b5bd-b0f8-4295-84e4-1885f706a035" src="https://github.com/user-attachments/assets/7037b5bd-b0f8-4295-84e4-1885f706a035" />
+</a>
+</li>
+<li><p>move objects in list up and down:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/32872ce6-9166-4386-852d-9fc16ac0244b"><img alt="https://github.com/user-attachments/assets/32872ce6-9166-4386-852d-9fc16ac0244b" src="https://github.com/user-attachments/assets/32872ce6-9166-4386-852d-9fc16ac0244b" />
+</a>
+</li>
+<li><p>enable/disable objects in list to exclude some objects from process:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/02d1c479-6862-4b99-b9b3-683d433a080b"><img alt="https://github.com/user-attachments/assets/02d1c479-6862-4b99-b9b3-683d433a080b" src="https://github.com/user-attachments/assets/02d1c479-6862-4b99-b9b3-683d433a080b" />
+</a>
+</li>
+<li><p>if objects are not exists in the scene then they shown by gost icon:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/4af6194c-3819-4a36-98e9-b97efe3cab3f"><img alt="https://github.com/user-attachments/assets/4af6194c-3819-4a36-98e9-b97efe3cab3f" src="https://github.com/user-attachments/assets/4af6194c-3819-4a36-98e9-b97efe3cab3f" />
+</a>
+</li>
+<li><p>select objects in scene by operator in list. Use Shift key to append object into selection set</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/37193b7e-1383-4d93-b5fb-76a159dfb834"><img alt="https://github.com/user-attachments/assets/37193b7e-1383-4d93-b5fb-76a159dfb834" src="https://github.com/user-attachments/assets/37193b7e-1383-4d93-b5fb-76a159dfb834" />
+</a>
+</li>
 </ul>
-<p>limitations:</p>
+<video width="700" controls>
+  <source src="https://github.com/user-attachments/assets/20238f9e-5e47-49b5-a0dd-1bcf7949a60c" type="video/mp4">
+ Your browser does not support the video tag.
+</video><p>limitations:</p>
 <ul>
 <li><p>When you use the <code class="docutils literal notranslate"><span class="pre">Post</span></code> mode Sverchok/Blender expect Objects to be visible. If you want to “hide” the original Objects in the scene to avoid visual clutter, you can place them into a Collection and hide the collection. This is a current Blender API limitation.</p></li>
 <li><p>Another method to work with objects - select wireframe mode and hide objects in Render by buttons:</p>
