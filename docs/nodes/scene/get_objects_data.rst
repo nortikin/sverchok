@@ -1,8 +1,8 @@
 Get Objects Data
 ================
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/d2b29188-e471-4821-80fa-ea0da9e8403e
-  :target: https://github.com/nortikin/sverchok/assets/14288520/d2b29188-e471-4821-80fa-ea0da9e8403e
+.. image:: https://github.com/user-attachments/assets/95c784b5-41ac-4e7b-9488-d508d3ed8ba5
+  :target: https://github.com/user-attachments/assets/95c784b5-41ac-4e7b-9488-d508d3ed8ba5
 
 Functionality
 -------------
@@ -18,6 +18,25 @@ A few points worth stating explicitly.
 - When you ``Get`` objects from the Scene that have modifiers on them, you can import the final mesh by enabling the ``Post`` button.
 - Importing Objects with a lot of geometry will decrease Sverchok tree update speed, be careful with any modifiers that produce a lot of extra geometry (like subdivision modifier)
 - The Matrix socket lets you ignore or acquire the Object's ``World Matrix``, by default the Object data is untransformed. Use a matrix-apply node if you want to explicitly transform the vertex data.
+- add selected objects from scene into the list individually:
+
+  .. image:: https://github.com/user-attachments/assets/7037b5bd-b0f8-4295-84e4-1885f706a035
+    :target: https://github.com/user-attachments/assets/7037b5bd-b0f8-4295-84e4-1885f706a035
+
+- move objects in list up and down:
+
+  .. image:: https://github.com/user-attachments/assets/32872ce6-9166-4386-852d-9fc16ac0244b
+    :target: https://github.com/user-attachments/assets/32872ce6-9166-4386-852d-9fc16ac0244b
+
+- enable/disable objects in list to exclude some objects from process:
+
+  .. image:: https://github.com/user-attachments/assets/02d1c479-6862-4b99-b9b3-683d433a080b
+    :target: https://github.com/user-attachments/assets/02d1c479-6862-4b99-b9b3-683d433a080b
+
+- if objects are not exists in the scene then they shown by gost icon:
+
+  .. image:: https://github.com/user-attachments/assets/4af6194c-3819-4a36-98e9-b97efe3cab3f
+    :target: https://github.com/user-attachments/assets/4af6194c-3819-4a36-98e9-b97efe3cab3f
 
 limitations:
 
