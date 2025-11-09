@@ -29,6 +29,7 @@ if FreeCAD is not None:
 
     from sverchok.nodes.solid.mesh_to_solid import ensure_triangles
     from sverchok.utils.surface.freecad import surface_to_freecad
+    from sverchok.utils.solid_conversion import to_solid, to_solid_recursive # for re-export
 
 class SvSolidTopology(object):
     class Item(object):
