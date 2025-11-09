@@ -106,10 +106,10 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
         if object_exists and curve_object==True and bezier_object==True and non_bezier_object==False:
             # all segments are BEZIER
             if item.exclude:
-                exclude_icon='UNPINNED'
+                exclude_icon='CHECKBOX_DEHLT'
                 description_text = 'Object will be excluded from process'
             else:
-                exclude_icon='PINNED'
+                exclude_icon='CHECKBOX_HLT'
                 description_text = 'Object will be processed'
             op = grid.operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
             op.fn_name = 'ENABLER'
@@ -419,7 +419,7 @@ class SvBezierInHighlightProcessedObjectsInSceneMK2(bpy.types.Operator, SvGeneri
     '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
 
     bl_idname = "node.sv_bezierin_highlight_proc_objects_in_list_scene_mk2"
-    bl_label = "Highlight processed objects in scene"
+    bl_label = "Select processed objects in scene"
 
     fn_name: StringProperty(default='')
 
@@ -446,7 +446,7 @@ class SvBezierInHighlightProcessedObjectsInSceneMK2(bpy.types.Operator, SvGeneri
 class SvBezierInHighlightAllObjectsInSceneMK2(bpy.types.Operator, SvGenericNodeLocator):
     '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
     bl_idname = "node.sv_bezierin_highlight_all_objects_in_list_scene_mk2"
-    bl_label = "Highlight all objects in scene"
+    bl_label = "Select all list's objects in 3D scene"
 
     fn_name: StringProperty(default='')
 
@@ -706,7 +706,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             else:
                 icon = 'AUTOMERGE_OFF'
                 description_text = 'Remove duplicates objects in list.\nNo duplicates objects in list now'
-            description_text += "\n\nShift-Clisk - skip confirmation dialog"
+            description_text += "\n\nShift-Cliсk - skip confirmation dialog"
             self.wrapper_tracked_ui_draw_op(col, SvBezierInRemoveDuplicatesObjectsInListMK2.bl_idname, text='', icon=icon, description_text=description_text)
         else:
             layout.label(text='--None--')
