@@ -185,7 +185,7 @@ def add_connection(tree, bl_idname_new_node, offset):
             new_node.draw_bg = True
             connect_idx_viewer(tree, existing_node, new_node)
 
-        elif bl_idname_new_node == 'SvStethoscopeNodeMK2':
+        elif bl_idname_new_node in {'SvStethoscopeNodeMK2', 'SvDataTreeVizNode'}:
             # we can't determine thru cursor location which socket was nearest the rightclick
             # maybe in the future.. or if someone does know :)
             for socket in outputs:
@@ -237,6 +237,8 @@ class SvGenericDeligationOperator(bpy.types.Operator):
             add_connection(tree, bl_idname_new_node="SvIDXViewer28", offset=[180, 0])
         elif self.fn == 'stethoscope':
             add_connection(tree, bl_idname_new_node="SvStethoscopeNodeMK2", offset=[60, 0])
+        elif self.fn == 'data_tree_viz':
+            add_connection(tree, bl_idname_new_node="SvDataTreeVizNode", offset=[60, 0])
         elif self.fn == 'copy_error':
             message = tree.nodes.active.get(ERROR_KEY, "")
             if message is None:
@@ -290,6 +292,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
                     layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
             if len(node.outputs):
                 layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
+                layout.operator("node.sv_deligate_operator", text="Connect Data Tree Viz node").fn = "data_tree_viz"
 
 
             layout.separator()

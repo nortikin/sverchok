@@ -24,7 +24,7 @@ The DXF nodes provide a complete workflow for importing and exporting DXF files 
    - **DXF Polygons** for face-based geometry  
    - **DXF Hatches** for patterned fills
    - **DXF Linear Dimensions** for measurements
-   
+
 3. Connect all DXF objects to **DXF Export** node
 4. Set export path and click "Export DXF"
 

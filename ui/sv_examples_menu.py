@@ -15,6 +15,7 @@ from bpy.types import Operator
 import sverchok
 from sverchok.utils.sv_json_import import JSONImporter
 from sverchok.ui.sv_icons import icon
+from sverchok.ui.sv_3d_panel import plugin_icons
 
 
 def node_examples_pulldown(self, context):
@@ -39,6 +40,8 @@ def node_settings_pulldown(self, context):
             row.operator("sv.orbit_around_selection", icon="PROP_CON",text="",)
         else:
             row.operator("sv.orbit_around_selection", icon="SNAP_NORMAL", text="")
+        row.operator('sv.splash_screen_simple', text='', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
+        #row.operator('sv.splash_screen', text='', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
 
 class SW_OT_Console(Operator):
     """Show/hide console"""
@@ -81,13 +84,13 @@ class SV_MT_LayoutsExamples(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        
+
         # Search field всегда visible
         row = layout.row()
         row.prop(context.window_manager, "sv_examples_search_string", icon='VIEWZOOM', text="")
-        
+
         search_string = context.window_manager.sv_examples_search_string.lower().strip()
-        
+
         if search_string:
             # Показать результаты поиска
             found_files = self.search_examples(search_string)
@@ -109,40 +112,40 @@ class SV_MT_LayoutsExamples(bpy.types.Menu):
     def search_examples(self, search_string):
         """Search through all example files"""
         found_files = []
-        
+
         # Search in main examples
         examples_path = Path(sverchok.__file__).parent / 'json_examples'
         found_files.extend(self.search_in_directory(examples_path, search_string))
-        
+
         # Search in extra examples
         for provider, path in extra_examples.items():
             found_files.extend(self.search_in_directory(path, search_string))
-            
+
         return found_files
 
     def search_in_directory(self, directory_path, search_string):
         """Search for files in a directory matching search string"""
         found = []
         directory = Path(directory_path)
-        
+
         if not directory.exists():
             return found
-            
+
         for category_path in directory.iterdir():
             if category_path.is_dir():
                 for file_path in category_path.glob("*.json"):
                     # Search in filename without extension
                     file_stem = file_path.stem.lower()
                     category_name = category_path.name.lower()
-                    
-                    if (search_string in file_stem or 
+
+                    if (search_string in file_stem or
                         search_string in category_name or
                         search_string in f"{category_name} {file_stem}"):
-                        
+
                         # Create nice display name
                         display_name = f"{file_path.stem} ({category_path.name})"
                         found.append((str(file_path), display_name))
-                        
+
         return found
 
     def categorize_files(self, file_list):
@@ -153,27 +156,27 @@ class SV_MT_LayoutsExamples(bpy.types.Menu):
             if category not in categories:
                 categories[category] = []
             categories[category].append((file_path, display_name))
-        
+
         # Sort categories and files within categories
         for category in categories:
             categories[category].sort(key=lambda x: x[1])
-            
+
         return dict(sorted(categories.items()))
 
     def draw_all_examples(self, layout):
         """Draw all examples without categorization"""
         all_files = []
-        
+
         # Collect all files
         examples_path = Path(sverchok.__file__).parent / 'json_examples'
         all_files.extend(self.get_all_example_files(examples_path))
-        
+
         for provider, path in extra_examples.items():
             all_files.extend(self.get_all_example_files(path))
-        
+
         # Sort alphabetically
         all_files.sort(key=lambda x: x[1])
-        
+
         # Draw all files
         for file_path, display_name in all_files:
             op = layout.operator("node.tree_importer_silent", text=display_name)
@@ -183,16 +186,16 @@ class SV_MT_LayoutsExamples(bpy.types.Menu):
         """Get all example files from a directory"""
         files = []
         directory = Path(directory_path)
-        
+
         if not directory.exists():
             return files
-            
+
         for category_path in directory.iterdir():
             if category_path.is_dir():
                 for file_path in category_path.glob("*.json"):
                     display_name = f"{file_path.stem} ({category_path.name})"
                     files.append((str(file_path), display_name))
-                    
+
         return files
 
 
@@ -275,9 +278,9 @@ class SV_OT_ClearExamplesSearch(bpy.types.Operator):
 
 
 classes = [
-    SW_OT_Orbit_Around_Selection, 
-    SW_OT_Console, 
-    SV_MT_LayoutsExamples, 
+    SW_OT_Orbit_Around_Selection,
+    SW_OT_Console,
+    SV_MT_LayoutsExamples,
     SvNodeTreeImporterSilent,
     SV_OT_ToggleExamplesSearch,
     SV_OT_ClearExamplesSearch

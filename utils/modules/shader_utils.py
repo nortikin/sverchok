@@ -5,9 +5,11 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import numpy as np
+
+import gpu
 from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
-import numpy as np
 
 def get_offset(vec1, vec2, width):
     p1 = Vector(vec1[:2])
@@ -256,3 +258,58 @@ class ShaderLib2D():
         geom.vertex_colors = self.vertex_colors
         geom.indices = self.indices
         return geom
+
+def get_2d_uniform_color_shader():
+    uniform_2d_vertex_shader = '''
+    in vec2 pos;
+    uniform mat4 viewProjectionMatrix;
+    uniform float x_offset;
+    uniform float y_offset;
+
+    void main()
+    {
+       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+    }
+    '''
+
+    uniform_2d_fragment_shader = '''
+    uniform vec4 color;
+    out vec4 FragColor;
+
+    void main()
+    {
+       FragColor = color;
+    }
+    '''
+    return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)
+
+def get_2d_smooth_color_shader():
+
+    smooth_2d_vertex_shader = '''
+    in vec2 pos;
+    layout(location=1) in vec4 color;
+
+    uniform mat4 viewProjectionMatrix;
+    uniform float x_offset;
+    uniform float y_offset;
+
+    out vec4 a_color;
+
+    void main()
+    {
+        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+        a_color = color;
+    }
+    '''
+
+    smooth_2d_fragment_shader = '''
+    in vec4 a_color;
+
+    out vec4 FragColor;
+    void main()
+    {
+        FragColor = a_color;
+    }
+    '''
+    return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)
+

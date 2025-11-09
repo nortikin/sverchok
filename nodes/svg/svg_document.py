@@ -242,7 +242,7 @@ class SvSvgDocumentNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "doc_height")
         layout.prop(self, "doc_scale")
         row = layout.row(align=True)
-        self.wrapper_tracked_ui_draw_op(row, "node.svg_write", icon='RNA_ADD', text="Write")
+        self.wrapper_tracked_ui_draw_op(row, "node.svg_write", icon='RNA', text="Write")
         row.separator()
         row.prop(self, "suffix_filename_with_framenumber", icon="SEQUENCE", text='')
     

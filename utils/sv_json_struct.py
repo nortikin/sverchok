@@ -350,13 +350,27 @@ class FileStruct(Struct):
             if old_nodes.is_old(node):
                 old_nodes.mark_old(node)
 
+    def _get_main_tree_nodes(self):
+        if "main_tree" in self._struct:
+            return self._struct["main_tree"].get("nodes", dict())
+        elif "node" in self._struct:
+            return self._struct["node"]
+        else:
+            return dict()
+
+    def _get_main_tree_links(self):
+        if "main_tree" in self._struct:
+            return self._struct["main_tree"].get("links", [])
+        else:
+            return []
+
     def _build_nodes(self, tree, factories, imported_structs):
         """Build nodes of the main tree, other dependencies should be already initialized"""
         with tree.init_tree():
             # first all nodes should be created without applying their inner data
             # because some nodes can have `parent` property which points into another node
             node_structs = []
-            for node_name, raw_structure in self._struct["main_tree"]["nodes"].items():
+            for node_name, raw_structure in self._get_main_tree_nodes().items():
                 with self.logger.add_fail("Init node (main tree)", f"Name: {node_name}"):
                     node_struct = factories.node(node_name, self.logger, raw_structure)
 
@@ -376,7 +390,7 @@ class FileStruct(Struct):
                     node = tree.nodes[new_name]
                     node_struct.build(node, factories, imported_structs)
 
-            for raw_struct in self._struct["main_tree"]["links"]:
+            for raw_struct in self._get_main_tree_links():
                 with self.logger.add_fail("Build link (main tree)", f"Struct: {raw_struct}"):
                     factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
 

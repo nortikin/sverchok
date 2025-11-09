@@ -115,6 +115,7 @@
     - ---
     - SvExApplyFieldToCurveNode
     - SvExCastCurveNode
+    - SvSymmetrizeCurveNode
     - SvProjectCurveSurfaceNode
     - SvOffsetCurveMk2Node
     - SvCurveOffsetOnSurfaceNode
@@ -700,6 +701,7 @@
     - SvTextureViewerNode
     - SvTextureViewerNodeLite
     - SvWaveformViewer
+    - SvDataTreeVizNode
     - SvConsoleNode
 
 - Text:
