@@ -10,6 +10,10 @@ In general, the node cuts the Solid object in half by a plane, takes one half,
 mirrors it relative to the same plane, and fuses original part with the
 mirrored part.
 
+**Note**: Unfortunately, due to specifics of how FreeCAD booleans work, in some
+cases this node can produce weird (or even empty) results when **Merge** mode
+is enabled.
+
 Inputs
 ------
 
