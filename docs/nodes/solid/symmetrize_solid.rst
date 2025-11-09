@@ -56,3 +56,16 @@ This node has the following outputs:
 
 - **Solid**. The resulting Solid objects.
 
+Examples of Usage
+-----------------
+
+Example 1: Symmetrize from +Z to -Z:
+
+.. image:: https://github.com/user-attachments/assets/bb6dd0fc-301b-45ca-8caa-ced38a4e65dc
+  :target: https://github.com/user-attachments/assets/bb6dd0fc-301b-45ca-8caa-ced38a4e65dc
+
+Example 2: Symmetrize relative to custom plane.
+
+.. image:: https://github.com/user-attachments/assets/0285ff78-31b5-48a2-a96a-76d7365756fc
+  :target: https://github.com/user-attachments/assets/0285ff78-31b5-48a2-a96a-76d7365756fc
+
