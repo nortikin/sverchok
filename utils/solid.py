@@ -683,13 +683,15 @@ def fuse_solids(solids):
         return parts
     elif len(parts) < 1:
         compound = PartModule.Compound(solids)
-        return compound
+        r = PartModule.Solid(compound)
+        return r
     else:
         return parts[0].fuse(parts[1:])
 
 def symmetrize_solid(solid, plane, sign_from=-1, fuse=True):
     plane_face = make_plane_by_size_of_solid(solid, plane)
     plane_face = surface_to_freecad(plane_face, make_face=True)
+    solid = PartModule.Solid(solid)
     parts = bisect_solid(solid, plane_face)
     parts = select_solids_by_plane_side(parts, plane, sign_from)
     mirrored_parts = [mirror_solid(part, plane) for part in parts]
