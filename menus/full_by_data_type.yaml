@@ -494,6 +494,7 @@
         - SvSolidSectionNode
         - SvSolidGeneralFuseNode
         - SvMirrorSolidNode
+        - SvSymmetrizeSolidNode
         - SvOffsetSolidNode
         - SvSplitSolidNode
         - SvHollowSolidNode
