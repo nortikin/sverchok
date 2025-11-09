@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Refine Solid &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Symmetrize Solid &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/solid/refine';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/solid/symmetrize_solid';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Revolve Face (Solid)" href="revolve_face.html" />
-    <link rel="prev" title="Face from Surface (Solid)" href="projection_trim_face.html" />
+    <link rel="next" title="Torus (Solid)" href="torus_solid.html" />
+    <link rel="prev" title="Sweep Face (Solid)" href="sweep_face.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -190,7 +190,7 @@
 <li class="toctree-l3"><a class="reference internal" href="points_inside_solid.html">Points Inside Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polygon_face.html">Polygon Face (Solid)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="projection_trim_face.html">Face from Surface (Solid)</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Refine Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="refine.html">Refine Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="revolve_face.html">Revolve Face (Solid)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ruled_solid.html">Solid from two Faces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="slice_solid.html">Slice Solid</a></li>
@@ -210,7 +210,7 @@
 <li class="toctree-l3"><a class="reference internal" href="sphere_solid.html">Sphere (Solid)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split_solid.html">Split Solid by Face</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sweep_face.html">Sweep Face (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="symmetrize_solid.html">Symmetrize Solid</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Symmetrize Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="torus_solid.html">Torus (Solid)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="transform_solid.html">Transform Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="validate.html">Validate &amp; Fix Solid</a></li>
@@ -304,7 +304,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/solid/refine.rst" target="_blank"
+      <li><a href="../../_sources/nodes/solid/symmetrize_solid.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -388,7 +388,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Refine Solid</h1>
+    <h1>Symmetrize Solid</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -398,10 +398,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
             </nav>
         </div>
@@ -413,32 +414,75 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="refine-solid">
-<h1>Refine Solid<a class="headerlink" href="#refine-solid" title="Link to this heading">#</a></h1>
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
-<p>This node requires <a class="reference external" href="../../solids.rst">FreeCAD</a> library to work.</p>
-</section>
+  <section id="symmetrize-solid">
+<h1>Symmetrize Solid<a class="headerlink" href="#symmetrize-solid" title="Link to this heading">#</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node refines a Solid object, by removing unnecessary edges. Standard
-Sverchok Solid nodes, that can potentially produce bodies with unnecessary
-edges, usually have “Refine Solid” checkbox to perform such refinement by
-themself. But sometimes it is more convenient pass non-refined Solid object
-through several other nodes, and only then refine it.</p>
+<p>This node performs operation similar to “Symmetrize Mesh” node, but works with
+Solid objects instead of meshes.
+In general, the node cuts the Solid object in half by a plane, takes one half,
+mirrors it relative to the same plane, and fuses original part with the
+mirrored part.</p>
+<p><strong>Note</strong>: Unfortunately, due to specifics of how FreeCAD booleans work, in some
+cases this node can produce weird (or even empty) results when <strong>Merge</strong> mode
+is enabled.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
-<p>This node has the following input:</p>
+<p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Solid</strong>. The Solid object to be refined. This input is mandatory.</p></li>
+<li><p><strong>Solid</strong>. The Solid object to be symmetrized. This input is mandatory.</p></li>
+<li><p><strong>Point</strong>. This input is available only when the <strong>Direction</strong> paramter is
+set to <strong>Custom</strong>. This defines the point on the plane which is used as a
+mirror. The default value is <code class="docutils literal notranslate"><span class="pre">(0,0,0)</span></code> (origin).</p></li>
+<li><p><strong>Normal</strong>. This input is available only when the <strong>Direction</strong> parameter is
+set to <strong>Custom</strong>. This defines the normal of the plane which is used as a
+mirror. The default value is <code class="docutils literal notranslate"><span class="pre">(0,0,1)</span></code> (Z axis).</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<p>This node has the following parameters:</p>
+<ul>
+<li><p><strong>Direction</strong>. Transformation direction. This defines which part of the Solid
+object which be taken and where it will be mirrored to. The following
+directions are available:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>-X to +X</strong></p></li>
+<li><p><strong>+X to -X</strong></p></li>
+<li><p><strong>-Y to +Y</strong></p></li>
+<li><p><strong>+Y to -Y</strong></p></li>
+<li><p><strong>-Z to +Z</strong></p></li>
+<li><p><strong>+Z to -Z</strong></p></li>
+<li><p><strong>Custom</strong>. The mirroring plane will be defined by <strong>Point</strong> and
+<strong>Normal</strong> inputs. The node will take the half of space where negative
+direction of the normal points to, and mirror it into the part where the
+normal points to.</p></li>
+</ul>
+</div></blockquote>
+<p>The default direction is <strong>-X to +X</strong>.</p>
+</li>
+<li><p><strong>Merge Solids</strong>. If checked, then mirrored parts of the solid will be merged
+with original parts into a single Solid object. Otherwise, two separate
+objects will be produced. Checked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<p>This node has the following outputs:</p>
 <ul class="simple">
-<li><p><strong>Solid</strong>. The refined Solid object.</p></li>
+<li><p><strong>Solid</strong>. The resulting Solid objects.</p></li>
 </ul>
+</section>
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
+<p>Example 1: Symmetrize from +Z to -Z:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/bb6dd0fc-301b-45ca-8caa-ced38a4e65dc"><img alt="https://github.com/user-attachments/assets/bb6dd0fc-301b-45ca-8caa-ced38a4e65dc" src="https://github.com/user-attachments/assets/bb6dd0fc-301b-45ca-8caa-ced38a4e65dc" />
+</a>
+<p>Example 2: Symmetrize relative to custom plane.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/0285ff78-31b5-48a2-a96a-76d7365756fc"><img alt="https://github.com/user-attachments/assets/0285ff78-31b5-48a2-a96a-76d7365756fc" src="https://github.com/user-attachments/assets/0285ff78-31b5-48a2-a96a-76d7365756fc" />
+</a>
 </section>
 </section>
 
@@ -454,20 +498,20 @@ through several other nodes, and only then refine it.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="projection_trim_face.html"
+       href="sweep_face.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Face from Surface (Solid)</p>
+        <p class="prev-next-title">Sweep Face (Solid)</p>
       </div>
     </a>
     <a class="right-next"
-       href="revolve_face.html"
+       href="torus_solid.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Revolve Face (Solid)</p>
+        <p class="prev-next-title">Torus (Solid)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -487,10 +531,11 @@ through several other nodes, and only then refine it.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
   </nav></div>
 
