@@ -1,0 +1,54 @@
+Symmetrize Solid
+================
+
+Functionality
+-------------
+
+This node performs operation similar to "Symmetrize Mesh" node, but works with
+Solid objects instead of meshes.
+In general, the node cuts the Solid object in half by a plane, takes one half,
+mirrors it relative to the same plane, and fuses original part with the
+mirrored part.
+
+Inputs
+------
+
+This node has the following inputs:
+
+* **Solid**. The Solid object to be symmetrized. This input is mandatory.
+* **Point**. This input is available only when the **Direction** paramter is
+  set to **Custom**. This defines the point on the plane which is used as a
+  mirror. The default value is ``(0,0,0)`` (origin).
+* **Normal**. This input is available only when the **Direction** parameter is
+  set to **Custom**. This defines the normal of the plane which is used as a
+  mirror. The default value is ``(0,0,1)`` (Z axis).
+
+Parameters
+----------
+
+This node has the following parameters:
+
+- **Direction**. Transformation direction. This defines which part of the Solid
+  object which be taken and where it will be mirrored to. The following
+  directions are available:
+
+   - **-X to +X**
+   - **+X to -X**
+   - **-Y to +Y**
+   - **+Y to -Y**
+   - **-Z to +Z**
+   - **+Z to -Z**
+   - **Custom**. The mirroring plane will be defined by **Point** and
+     **Normal** inputs. The node will take the half of space where negative
+     direction of the normal points to, and mirror it into the part where the
+     normal points to.
+
+  The default direction is **-X to +X**.
+
+Outputs
+-------
+
+This node has the following outputs:
+
+- **Solid**. The resulting Solid objects.
+
