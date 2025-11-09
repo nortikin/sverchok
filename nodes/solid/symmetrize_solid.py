@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import EnumProperty, FloatVectorProperty
+from bpy.props import EnumProperty, FloatVectorProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import ensure_nesting_level, get_data_nesting_level, zip_long_repeat, updateNode
@@ -42,6 +42,12 @@ class SvSymmetrizeSolidNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs['Point'].hide_safe = self.direction != 'CUSTOM'
         self.inputs['Normal'].hide_safe = self.direction != 'CUSTOM'
 
+    fuse : BoolProperty(
+            name = "Merge solids",
+            description = "Fuse original parts of Solid object with it's mirrored parts",
+            default = True,
+            update = updateNode)
+
     direction : EnumProperty(
             name = "Direction",
             description = "Which sides to copy from and to",
@@ -66,6 +72,7 @@ class SvSymmetrizeSolidNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.label(text='Direction:')
         layout.prop(self, "direction", text='')
+        layout.prop(self, 'fuse')
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
@@ -112,7 +119,7 @@ class SvSymmetrizeSolidNode(SverchCustomTreeNode, bpy.types.Node):
             new_solids = []
             for solid, point, normal in zip_long_repeat(*params):
                 plane, sign = self._get_plane(point, normal)
-                solids = symmetrize_solid(solid, plane, sign)
+                solids = symmetrize_solid(solid, plane, sign, fuse=self.fuse)
                 new_solids.append(solids)
             if flat_output:
                 solids_out.extend(new_solids)
