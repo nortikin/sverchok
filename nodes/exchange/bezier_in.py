@@ -813,7 +813,6 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             if not obj:
                 raise ValueError(f"{object_name} does not exists. Try exclude it from process (Pin button).")
 
-            object_names_out.append([object_name])
             matrix = obj.matrix_world
             if obj.type != 'CURVE':
                 self.warning("%s: not supported object type: %s", object_name, obj.type)
@@ -871,7 +870,8 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 if self.source_curves_join_mode=='KEEP':
                     curves_out           .append(splines_curves)
                     use_cyclic_u_out     .append(splines_use_cyclic_u)
-                    matrices_out         .append([matrix])
+                    matrices_out         .append([matrix]*len(splines_curves))
+                    object_names_out     .append([object_name]*len(splines_curves))
                     control_points_c0_out.append([co for lst in splines_controls_c0 for co in lst])
                     control_points_c1_out.append([co for lst in splines_controls_c1 for co in lst])
                     control_points_c2_out.append([co for lst in splines_controls_c2 for co in lst])
@@ -880,24 +880,27 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                     radius_out           .append(splines_radius)
                     pass
                 else:
-                    for I, spline in enumerate(splines_curves):
-                        splines_curves_I = splines_curves[I]
-                        curves_out           .append([splines_curves_I])
-                        use_cyclic_u_out     .append([splines_use_cyclic_u[I]])
-                        matrices_out         .append([matrix])
-                        control_points_c0_out.append(splines_controls_c0[I])
-                        control_points_c1_out.append(splines_controls_c1[I])
-                        control_points_c2_out.append(splines_controls_c2[I])
-                        control_points_c3_out.append(splines_controls_c3[I])
-                        tilt_out             .append([splines_tilt[I]])
-                        radius_out           .append([splines_radius[I]])
-                        pass
-                    pass
+                    raise Exception(f"mode {self.source_curves_join_mode} unused")
+                    # for I, spline in enumerate(splines_curves):
+                    #     splines_curves_I = splines_curves[I]
+                    #     curves_out           .append([splines_curves_I])
+                    #     use_cyclic_u_out     .append([splines_use_cyclic_u[I]])
+                    #     object_names_out     .append([object_name])
+                    #     matrices_out         .append([matrix])
+                    #     control_points_c0_out.append(splines_controls_c0[I])
+                    #     control_points_c1_out.append(splines_controls_c1[I])
+                    #     control_points_c2_out.append(splines_controls_c2[I])
+                    #     control_points_c3_out.append(splines_controls_c3[I])
+                    #     tilt_out             .append([splines_tilt[I]])
+                    #     radius_out           .append([splines_radius[I]])
+                    #     pass
+                    # pass
             else:
                 if self.source_curves_join_mode=='KEEP':
                     curves_out           .append(splines_curves)
                     use_cyclic_u_out     .append(splines_use_cyclic_u)
-                    matrices_out         .append([matrix])
+                    matrices_out         .append([matrix]*len(splines_curves))
+                    object_names_out     .append([object_name]*len(splines_curves))
                     spline_c0 = []
                     spline_c1 = []
                     spline_c2 = []
@@ -920,19 +923,21 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                     radius_out           .append(splines_radius)
                     pass
                 else:
-                    for I, spline in enumerate(splines_curves):
-                        splines_curves_I = splines_curves[I]
-                        for IJ, segment in enumerate( splines_curves_I ):
-                            curves_out           .append([segment])
-                            use_cyclic_u_out     .append(False) # [splines_use_cyclic_u[I]]) потому что сегмент всегда разомкнут
-                            matrices_out         .append([matrix])
-                            control_points_c0_out.append([splines_controls_c0[I][IJ][0]])
-                            control_points_c1_out.append([splines_controls_c1[I][IJ][0]])
-                            control_points_c2_out.append([splines_controls_c2[I][IJ][0]])
-                            control_points_c3_out.append([splines_controls_c3[I][IJ][0]])
-                            tilt_out             .append([splines_tilt  [I][IJ]])
-                            radius_out           .append([splines_radius[I][IJ]])
-                    pass
+                    raise Exception(f"mode {self.source_curves_join_mode} unused")
+                    # for I, spline in enumerate(splines_curves):
+                    #     splines_curves_I = splines_curves[I]
+                    #     for IJ, segment in enumerate( splines_curves_I ):
+                    #         curves_out           .append([segment])
+                    #         use_cyclic_u_out     .append(False) # [splines_use_cyclic_u[I]]) потому что сегмент всегда разомкнут
+                    #         matrices_out         .append([matrix]*len(splines_curves))
+                    #         object_names_out     .append([object_name]*len(splines_curves))
+                    #         control_points_c0_out.append([splines_controls_c0[I][IJ][0]])
+                    #         control_points_c1_out.append([splines_controls_c1[I][IJ][0]])
+                    #         control_points_c2_out.append([splines_controls_c2[I][IJ][0]])
+                    #         control_points_c3_out.append([splines_controls_c3[I][IJ][0]])
+                    #         tilt_out             .append([splines_tilt  [I][IJ]])
+                    #         radius_out           .append([splines_radius[I][IJ]])
+                    # pass
                 pass
             pass
 
