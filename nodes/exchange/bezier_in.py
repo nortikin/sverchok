@@ -697,7 +697,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveDownMK2.bl_idname, text='', icon='TRIA_DOWN')
             self.wrapper_tracked_ui_draw_op(col, SvBezierInHighlightProcessedObjectsInSceneMK2.bl_idname, text='', icon='GROUP_VERTEX')
             self.wrapper_tracked_ui_draw_op(col, SvBezierInHighlightAllObjectsInSceneMK2.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
-            self.wrapper_tracked_ui_draw_op(col, SvBezierInSyncSceneObjectWithListMK2.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Sync object in scene with active object in list (jumps overs duplicates on next call operator)')
+            self.wrapper_tracked_ui_draw_op(col, SvBezierInSyncSceneObjectWithListMK2.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
 
             set_object_names = set([o.name for o in self.object_names])
             if len(set_object_names)<len(self.object_names):
