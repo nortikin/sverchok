@@ -28,25 +28,63 @@ class SvBIDataCollectionMK2(bpy.types.PropertyGroup):
 class ReadingBezierInDataError(Exception):
     pass
 
+def get_object_data_spline_info(object_name):
+    '''Is object exists, has spline and bezier info?'''
+    object_exists=False
+    curve_object = True
+    bezier_object = False
+    non_bezier_object = False
+    chars = []
+
+    if object_name in bpy.data.objects:
+        object_exists=True
+        obj = bpy.data.objects[object_name]
+        if hasattr(obj.data, 'splines'):
+            #_set = set([s.type for s in obj.data.splines])
+            
+            if len(obj.data.splines)>0:
+                curve_object = True
+                bezier_object = True
+                splines = obj.data.splines
+                if splines:
+                    for spline in splines:
+                        if spline.type=='BEZIER':
+                            bezier_object = True
+                            chars.append(f"{len(spline.bezier_points)-1+(1 if spline.use_cyclic_u else 0)}{'c' if spline.use_cyclic_u else 'o'}")
+                        else:
+                            non_bezier_object = True
+                            chars.append(f"{spline.type[0]}{'c' if spline.use_cyclic_u else 'o'}")
+                        pass
+                else:
+                    chars=["[empty]"]
+                pass
+            else:
+                curve_object = True
+                bezier_object = False
+                non_bezier_object = False
+                chars.append("")
+                pass
+            pass
+        else:
+            curve_object = False
+            bezier_object = False
+            non_bezier_object = False
+            chars.append("")
+            pass
+
+    return object_exists, curve_object, bezier_object, non_bezier_object, chars
 
 class SVBI_UL_NamesListMK2(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        
-        grid = layout.grid_flow(row_major=False, columns=4, align=True)
+        general_part_of_comments = '\n\nClick - On/off\nShift-Click - Reverse On/Off all items'
+        grid = layout.grid_flow(row_major=False, columns=5, align=True)
 
         object_exists=False
+        curve_object = True
+        bezier_object = True
         chars = []
-        if item.name in bpy.data.objects:
-            object_exists=True
-            splines = bpy.data.objects[item.name].data.splines
-            if splines:
-                for spline in splines:
-                    chars.append(f"{len(spline.bezier_points)-1+(1 if spline.use_cyclic_u else 0)}{'c' if spline.use_cyclic_u else 'o'}")
-                    pass
-            else:
-                chars=["[empty]"]
-            pass
+        object_exists, curve_object, bezier_object, non_bezier_object, chars = get_object_data_spline_info(item.name)
 
         item_icon = item.icon
         if not item.icon or item.icon == "BLANK1":
@@ -56,36 +94,71 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
                 item_icon = "GHOST_DISABLED"
         item_base = len(str(len(data.object_names)))
         grid.label(text=f'{index:0{item_base}d} {item.name} {",".join(chars)}', icon=item_icon)
-        #grid.prop(text='', icon='GHOST_ENABLED')
 
         if object_exists:
             op = grid.operator(SvBezierInItemSelectObjectMK2.bl_idname, icon='CURSOR', text='', emboss=False)
             op.idx = index
-
         else:
+            op = grid.operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
+            op.text='Object does not exists'
             pass
 
-        if item.exclude:
-            exclude_icon='UNPINNED'
+        if object_exists and curve_object==True and bezier_object==True and non_bezier_object==False:
+            # all segments are BEZIER
+            if item.exclude:
+                exclude_icon='UNPINNED'
+                description_text = 'Object will be excluded from process'
+            else:
+                exclude_icon='PINNED'
+                description_text = 'Object will be processed'
+            op = grid.operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
+            op.fn_name = 'ENABLER'
+            op.idx = index
+            op.description_text = description_text+general_part_of_comments
+
+        elif object_exists and curve_object==True and bezier_object==True and non_bezier_object==True:
+            # Not all segments are BEZIER
+            if item.exclude:
+                exclude_icon='GHOST_DISABLED'
+                description_text = 'Object will be excluded from process. Some splines of object are not BEZIER spline (ex.NURBS)'
+            else:
+                exclude_icon='GHOST_ENABLED'
+                description_text = 'Object will be processed but some splines of object are not BEZIER spline (ex.NURBS)'
+            op = grid.operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
+            op.fn_name = 'ENABLER'
+            op.idx = index
+            op.description_text = description_text+general_part_of_comments
+        elif object_exists==False:
+            # Object does not exists
+            op = grid.operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='ERROR', text='', emboss=False)
+            op.text = 'Object does not exists'
+            pass
         else:
-            exclude_icon='PINNED'
-        #grid.prop(item, 'exclude', icon_only=True, icon=exclude_icon, emboss=False)
-        op = grid.operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
-        op.fn_name = 'ENABLER'
-        op.idx = index
-        pass
+            # Object cannot be used
+            op = grid.operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='ERROR', text='', emboss=False)
+            op.text = 'Object cannot be used as curve. Will be skipped in process.'
+            pass
+
         op = grid.operator(SvBezierInItemRemoveMK2.bl_idname, icon='X', text='', emboss=False)
         op.fn_name = 'REMOVE'
         op.idx = index
-        pass
-        #action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_bezierin_collection_operator_mk2", icon='X', text='', emboss=False)
-        #action.fn_name = 'REMOVE'
-        #action.idx = index
+        op.description_text = 'Remove object from list.\n\nUse Shift to skip confirmation dialog.'
+
+        duplicate_sign='BLANK1'
+        if active_data.object_names[getattr(active_data, active_propname)].name==item.name:
+            lst = [o.name for o in active_data.object_names if o.name==item.name]
+            if len(lst)>1:
+                duplicate_sign='ONIONSKIN_ON'
+        col = grid.column(align=True)
+        col.label(text='', icon=duplicate_sign)
+        col.scale_x=0
+
+        return
 
 class SvBezierInItemSelectObjectMK2(bpy.types.Operator):
-    '''Select object as active in 3D Viewport. Use shift to add object into current selection of objects in scene.'''
+    '''Select object as active in 3D Viewport.\n\nShift-Click - add object into current selection of objects in scene.'''
     bl_idname = "node.sv_bezierin_item_select_object_mk2"
-    bl_label = "Select object as active"
+    bl_label = ""
 
     node_name: bpy.props.StringProperty()
     tree_name: bpy.props.StringProperty()  # all item types should have actual name of a tree
@@ -99,15 +172,12 @@ class SvBezierInItemSelectObjectMK2(bpy.types.Operator):
                 object_name = node.object_names[self.idx].name
                 if object_name in bpy.data.objects:
                     obj = bpy.data.objects[object_name]
-                    obj_location = obj.location
-                    context.scene.cursor.location = obj_location[:]
 
                     for area in bpy.context.screen.areas:
                         if area.type == 'VIEW_3D':
                             with context.temp_override(area = area , region = area.regions[-1]):
-                                #bpy.ops.view3d.view_center_cursor()
                                 if event.shift==False:
-                                    # Если Shift не нажат, то сбросить выделения всех объектов:
+                                    # If you do not press Shift, drop the selection of all objects
                                     for o in bpy.context.view_layer.objects:
                                         o.select_set(False)
                                 bpy.context.view_layer.objects.active = obj
@@ -118,29 +188,75 @@ class SvBezierInItemSelectObjectMK2(bpy.types.Operator):
             pass
         return {'FINISHED'}
 
+class SvBezierInEmptyOperatorMK2(bpy.types.Operator):
+    '''Empty operator to fill empty cells in grid'''
+    bl_idname = "node.sv_bezierin_empty_operator_mk2"
+    bl_label = ""
+
+    text: StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.text
+        return s
+
+    def invoke(self, context, event):
+        return {'FINISHED'}
+
 class SvBezierInItemRemoveMK2(bpy.types.Operator):
     '''Remove object from list'''
     bl_idname = "node.sv_bezierin_item_remove_mk2"
-    bl_label = "Remove"
+    bl_label = ""
 
     fn_name: StringProperty(default='')
     idx: IntProperty()
+    description_text: StringProperty(default='')
+    object_name: StringProperty(default='')
+    node_group: StringProperty(default='')
+    node_name: StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text=f'{self.node_name}.')
+        layout.label(text=f'Remove object \'{self.object_name}\' from list?')
 
     def invoke(self, context, event):
-        #node = context.node.object_names[self.idx]
         if self.idx <= len(context.node.object_names)-1:
             if self.fn_name == 'REMOVE':
-                context.node.object_names.remove(self.idx)
-                context.node.process_node(None)
+                self.object_name = context.node.object_names[self.idx].name
+                self.node_name = context.node.name
+                self.node_group = context.annotation_data_owner.name_full
+                if event.shift==True:
+                    return self.execute(context)
+                else:
+                    return context.window_manager.invoke_props_dialog(self)
+        return {'FINISHED'}
+    
+    def execute(self, context):
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        node.object_names.remove(self.idx)
+        node.process_node(None)
+        self.report({'INFO'}, f"Removed \'{self.object_name}\' from list")
         return {'FINISHED'}
 
 class SvBezierInItemEnablerMK2(bpy.types.Operator):
     '''Enable/Disable object to process.\nCtrl button to disable all objects first\nShift button to inverse list.'''
     bl_idname = "node.sv_bezierin_item_enabler_mk2"
-    bl_label = "Processed"
+    bl_label = ""
 
     fn_name: StringProperty(default='')
     idx: IntProperty()
+    description_text: StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
 
     def invoke(self, context, event):
         #node = context.node.object_names[self.idx]
@@ -173,6 +289,59 @@ class SvBezierInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
         """
         node.get_objects_from_scene(self)
 
+class SvBezierInSyncSceneObjectWithListMK2(bpy.types.Operator, SvGenericNodeLocator):
+
+    bl_idname = "node.sv_bezierin_sync_scene_object_with_list"
+    bl_label = ""
+    bl_options = {'INTERNAL'}
+
+    description_text: StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
+
+    def sv_execute(self, context, node):
+        node.sync_active_object_in_scene_with_list(self)
+
+class SvBezierInRemoveDuplicatesObjectsInListMK2(bpy.types.Operator, SvGenericNodeLocator):
+
+    bl_idname = "node.sv_bezierin_remove_duplicates_objects_in_list"
+    bl_label = ""
+    bl_options = {'INTERNAL'}
+
+    description_text: StringProperty(default='')
+    node_group: StringProperty(default='')
+    node_name: StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text=f'{self.node_name}.')
+        layout.label(text=f'Remove duplicates objects from list?')
+
+    def invoke(self, context, event):
+        self.node_name = context.node.name
+        self.node_group = context.annotation_data_owner.name_full
+        if event.shift==True:
+            return self.execute(context)
+        else:
+            return context.window_manager.invoke_props_dialog(self)
+    
+    def execute(self, context):
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        node.remove_duplicates_objects_in_list(self)
+        node.process_node(None)
+        return {'FINISHED'}
+
+    # def sv_execute(self, context, node):
+    #     node.remove_duplicates_objects_in_list(self)
+
 class SvBezierInAddObjectsFromSceneUpMK2(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_bezierin_add_object_from_scene_mk2"
@@ -192,10 +361,8 @@ class SvBezierInMoveUpMK2(bpy.types.Operator, SvGenericNodeLocator):
     bl_options = {'INTERNAL'}
 
     def sv_execute(self, context, node):
-        """
-        passes the operator's 'self' too to allow calling self.report()
-        """
         node.move_current_object_up(self)
+        return
 
 class SvBezierInMoveDownMK2(bpy.types.Operator, SvGenericNodeLocator):
 
@@ -204,10 +371,8 @@ class SvBezierInMoveDownMK2(bpy.types.Operator, SvGenericNodeLocator):
     bl_options = {'INTERNAL'}
 
     def sv_execute(self, context, node):
-        """
-        passes the operator's 'self' too to allow calling self.report()
-        """
         node.move_current_object_down(self)
+        return
 
 class SvBezierInClearObjectsFromListMK2(bpy.types.Operator, SvGenericNodeLocator):
 
@@ -216,10 +381,8 @@ class SvBezierInClearObjectsFromListMK2(bpy.types.Operator, SvGenericNodeLocator
     bl_options = {'INTERNAL'}
 
     def sv_execute(self, context, node):
-        """
-        passes the operator's 'self' too to allow calling self.report()
-        """
         node.clear_objects_from_list(self)
+        return
 
 class SvBezierInViewAlignMK2(bpy.types.Operator, SvGenericNodeLocator):
     """ Zoom to object """
@@ -234,38 +397,27 @@ class SvBezierInViewAlignMK2(bpy.types.Operator, SvGenericNodeLocator):
             object_name = node.object_names[node.active_obj_index].name
             if object_name in bpy.data.objects:
                 obj = bpy.data.objects[object_name]
-                obj_location = obj.location
-                vector_3d = obj_location        
-
-                print(vector_3d)
-                context.scene.cursor.location = vector_3d[:]
 
                 for area in bpy.context.screen.areas:
                     if area.type == 'VIEW_3D':
                         with context.temp_override(area = area , region = area.regions[-1]):
-                            #bpy.ops.view3d.view_center_cursor()
                             for o in bpy.context.view_layer.objects:
                                 o.select_set(False)
                             bpy.context.view_layer.objects.active = obj
                             if obj.select_get()==False:
                                 obj.select_set(True)
                             bpy.ops.view3d.view_selected(use_all_regions=False)
-
-                            # for area in bpy.context.screen.areas:
-                            #         if area.type == 'VIEW_3D':
-                            #             for region in area.regions:
-                            #                 if region.type == 'WINDOW':
-                            #                     override = {
-                            #                         'area': area,
-                            #                         'region': region,
-                            #                         'space': area.spaces.active,
-                            #                     }
-                            #                     bpy.ops.view3d.view_selected(use_all_regions=False)
-        print("SvBezierInViewAlignMK2 FINISHED")
+                            pass
+                        pass
+                    pass
+                pass
+            pass
+        pass
         return {'FINISHED'}
 
 class SvBezierInHighlightProcessedObjectsInSceneMK2(bpy.types.Operator, SvGenericNodeLocator):
     '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
+
     bl_idname = "node.sv_bezierin_highlight_proc_objects_in_list_scene_mk2"
     bl_label = "Highlight processed objects in scene"
 
@@ -283,15 +435,11 @@ class SvBezierInHighlightProcessedObjectsInSceneMK2(bpy.types.Operator, SvGeneri
                         if obj.exclude==False and obj.name in bpy.data.objects:
                             bpy.data.objects[obj.name].select_set(True)
                         pass
-                    #bpy.context.view_layer.objects.active = obj
-                    # if obj.select_get()==False:
-                    #     obj.select_set(True)
                     pass
                 pass
             pass
         pass
 
-        #print(f"SvBezierInHighlightAllObjectsInSceneMK2 FINISHED")
         return {'FINISHED'}
 
 
@@ -314,15 +462,11 @@ class SvBezierInHighlightAllObjectsInSceneMK2(bpy.types.Operator, SvGenericNodeL
                         if obj.name in bpy.data.objects:
                             bpy.data.objects[obj.name].select_set(True)
                         pass
-                    #bpy.context.view_layer.objects.active = obj
-                    # if obj.select_get()==False:
-                    #     obj.select_set(True)
                     pass
                 pass
             pass
         pass
-
-        #print(f"SvBezierInHighlightAllObjectsInSceneMK2 FINISHED")
+    
         return {'FINISHED'}
 
 
@@ -332,7 +476,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     Tooltip: Get Bezier Curve objects from scene
     """
     bl_idname = 'SvBezierInNodeMK2'
-    bl_label = 'Bezier Input MK2'
+    bl_label = 'Bezier Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
 
@@ -343,15 +487,13 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     @property
     def is_animation_dependent(self):
         return self.object_names
-    
-    #object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
     object_names: bpy.props.CollectionProperty(type=SvBIDataCollectionMK2)
 
     active_obj_index: bpy.props.IntProperty() # type: ignore
 
     source_curves_join_modes = [
-            ('SPLIT', "Split", "Split/Separate the object curves into individual curves", 'MOD_OFFSET', 0),
+            #('SPLIT', "Split", "Split/Separate the object curves into individual curves", 'MOD_OFFSET', 0),
             ('KEEP' , "Keep", "Keep curves as in source objects", 'SYNTAX_ON', 1),
             #('MERGE', "Merge", "Join all curves into a single object", 'STICKY_UVS_LOC', 2)
         ]
@@ -361,6 +503,13 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         items = source_curves_join_modes,
         default = 'KEEP',
         update = updateNode) # type: ignore
+
+    legacy_mode: BoolProperty(
+        name='Legacy Mode',
+        description='Flats output lists (affects all sockets)',
+        default=False,
+        update=updateNode
+        )
 
     sort: BoolProperty(
         name='sort by name',
@@ -375,29 +524,32 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     
     concat_segments : BoolProperty(
         name = "Concatenate segments",
-        description = "If checked, join Bezier segments of the curve into a single Curve object; otherwise, output a separate Curve object for each segment",
+        description = "If checked, join Bezier segments of the curve into a single Curve object; otherwise, output a separate Curve object for each segment. Recommended for experienced users.",
         default = True,
         update = updateNode)
     
     def draw_curves_out_socket(self, socket, context, layout):
-        layout.prop(self, 'source_curves_join_mode', text='')
+        layout.alignment = 'RIGHT'
+        flags = socket.get_mode_flags()
+        s_flags = " [" + ",".join(flags) + "]" if flags else ''
         if socket.is_linked:
-            layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
+            layout.label(text=f"{socket.label}. {socket.objects_number or ''}"+s_flags)
         else:
             layout.label(text=f'{socket.label}')
         pass
     
     def sv_init(self, context):
+        self.width = 300
         self.outputs.new('SvCurveSocket', 'Curves')
         self.outputs.new('SvStringsSocket', 'use_cyclic_u').label='Cyclic U'
-        #self.outputs.new('SvVerticesSocket', 'ControlPoints')
         self.outputs.new('SvVerticesSocket', 'control_points_c0')
         self.outputs.new('SvVerticesSocket', 'control_points_c1')
         self.outputs.new('SvVerticesSocket', 'control_points_c2')
         self.outputs.new('SvVerticesSocket', 'control_points_c3')
-        self.outputs.new('SvMatrixSocket', 'Matrices')
         self.outputs.new('SvStringsSocket', 'Tilt')
         self.outputs.new('SvStringsSocket', 'Radius')
+        self.outputs.new('SvStringsSocket', 'object_names').label='Object Names'
+        self.outputs.new('SvMatrixSocket', 'Matrices')
 
         self.outputs["Curves"].label = 'Curves'
         self.outputs["Curves"].custom_draw = 'draw_curves_out_socket'
@@ -406,6 +558,54 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         self.outputs['control_points_c1'].label = "Controls Points handle c1"
         self.outputs['control_points_c2'].label = "Controls Points handle c2"
         self.outputs['control_points_c3'].label = "Controls Points c3"
+        return
+
+    def remove_duplicates_objects_in_list(self, ops):
+        lst = [s.name for s in self.object_names]
+        _s = set(lst)
+        remove_idx = []
+        for I, item in enumerate(self.object_names):
+            if item.name in _s:
+                _s.remove(item.name)
+            else:
+                remove_idx.append(I)
+            pass
+        remove_idx.sort()
+        remove_idx.reverse()
+        for idx in remove_idx:
+            self.object_names.remove(idx)
+        ops.report({'INFO'}, f"removed {len(remove_idx)} object(s) ")
+        return
+
+    def sync_active_object_in_scene_with_list(self, ops):
+        object_synced = False
+        if bpy.context.view_layer.objects.active:
+            active_object = bpy.context.view_layer.objects.active
+            first_duplicated = None
+            sync_index = None
+            for I, item in enumerate(self.object_names):
+                if self.object_names[self.active_obj_index].name == active_object.name and I<=self.active_obj_index:
+                    if first_duplicated==None and self.object_names[I].name == active_object.name:
+                        first_duplicated = I
+                    continue
+                if item.name == active_object.name:
+                    sync_index = I
+                    #object_synced = True
+                    break
+                pass
+
+        if sync_index is not None:
+            self.active_obj_index=sync_index
+            object_synced = True
+        elif first_duplicated is not None:
+            self.active_obj_index=first_duplicated
+            object_synced = True
+
+        if object_synced:
+            ops.report({'INFO'}, f"Object {active_object.name} synced.")
+        else:
+            ops.report({'WARNING'}, f"Object '{active_object.name}' is not in the list of objects")
+        return
 
     def get_objects_from_scene(self, ops):
         """
@@ -424,14 +624,16 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
             return
+        else:
+            ops.report({'INFO'}, f"Added {len(names)} object(s)")
 
         self.process_node(None)
+        return
 
     def add_objects_from_scene(self, ops):
         """
         Add selected objects on the top of the list
         """
-        #self.object_names.clear()
 
         names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
 
@@ -443,8 +645,11 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
             return
+        else:
+            ops.report({'INFO'}, f"Added {len(names)} object(s)")
 
         self.process_node(None)
+        return
 
     def clear_objects_from_list(self, ops):
         """
@@ -452,6 +657,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         """
         self.object_names.clear()
         self.process_node(None)
+        return
 
     def move_current_object_up(self, ops):
         """
@@ -467,10 +673,11 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             return
 
         self.process_node(None)
+        return
 
     def move_current_object_down(self, ops):
         """
-        Move current obbect in list down
+        Move current object in list down
         """
 
         if self.active_obj_index<=len(self.object_names)-2:
@@ -478,45 +685,29 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             self.active_obj_index+=1
 
         self.process_node(None)
+        return
 
     def draw_obj_names(self, layout):
-        # display names currently being tracked, stop at the first 5..
-        # if self.object_names:
-        #     remain = len(self.object_names) - 5
-
-        #     for i, obj_ref in enumerate(self.object_names):
-        #         layout.label(text=obj_ref.name)
-        #         if i > 4 and remain > 0:
-        #             postfix = ('' if remain == 1 else 's')
-        #             more_items = '... {0} more item' + postfix
-        #             layout.label(text=more_items.format(remain))
-        #             break
-        # else:
-        #     layout.label(text='--None--')
-
         if self.object_names:
-            #layout.template_list("SVBI_UL_NamesListMK2", "", self, "object_names", self, "active_obj_index")
-            
-            # grid = layout.grid_flow(row_major=False, columns=2, align=True)
-            # grid.template_list("SVBI_UL_NamesListMK2", "", self, "object_names", self, "active_obj_index")
-            # col = grid.column(align=True)
-            # self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveUpMK2.bl_idname, text='', icon='TRIA_UP')
-            # self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveDownMK2.bl_idname, text='', icon='TRIA_DOWN')
-            
-            # object_names_base = len(f'{len(self.object_names)}')
-            # for I, elem in enumerate(self.object_names):
-            #     elem.base = object_names_base
-            #     pass
-
             row = layout.row(align=True)
-            row.column().template_list("SVBI_UL_NamesListMK2", "", self, "object_names", self, "active_obj_index")
+            row.column().template_list("SVBI_UL_NamesListMK2", f"uniq_{self.name}", self, "object_names", self, "active_obj_index")
             col = row.column(align=True)
             self.wrapper_tracked_ui_draw_op(col, SvBezierInAddObjectsFromSceneUpMK2.bl_idname, text='', icon='ADD')
             self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveUpMK2.bl_idname, text='', icon='TRIA_UP')
             self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveDownMK2.bl_idname, text='', icon='TRIA_DOWN')
             self.wrapper_tracked_ui_draw_op(col, SvBezierInHighlightProcessedObjectsInSceneMK2.bl_idname, text='', icon='GROUP_VERTEX')
             self.wrapper_tracked_ui_draw_op(col, SvBezierInHighlightAllObjectsInSceneMK2.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
+            self.wrapper_tracked_ui_draw_op(col, SvBezierInSyncSceneObjectWithListMK2.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Sync object in scene with active object in list (jumps overs duplicates on next call operator)')
 
+            set_object_names = set([o.name for o in self.object_names])
+            if len(set_object_names)<len(self.object_names):
+                icon = 'AUTOMERGE_ON'
+                description_text = f'Remove duplicates objects in list\nCount of duplicates objects: {len(self.object_names)-len(set_object_names)}'
+            else:
+                icon = 'AUTOMERGE_OFF'
+                description_text = 'Remove duplicates objects in list.\nNo duplicates objects in list now'
+            description_text += "\n\nShift-Clisk - skip confirmation dialog"
+            self.wrapper_tracked_ui_draw_op(col, SvBezierInRemoveDuplicatesObjectsInListMK2.bl_idname, text='', icon=icon, description_text=description_text)
         else:
             layout.label(text='--None--')
 
@@ -541,7 +732,8 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
         layout.prop(self, 'sort', text='Sort', toggle=False)
         layout.prop(self, 'apply_matrix', toggle=False)
-        layout.prop(self, 'concat_segments', toggle=False)
+        layout.prop(self, 'legacy_mode')
+        # layout.prop(self, 'concat_segments', toggle=False)
         row = layout.row(align=True)
         
         self.draw_obj_names(layout)
@@ -550,6 +742,10 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             row = layout.row(align=True)
             row.label(text='')
             self.wrapper_tracked_ui_draw_op(row, SvBezierInClearObjectsFromListMK2.bl_idname, text='', icon='CANCEL')
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "concat_segments")
+        self.draw_buttons(context, layout)
 
     def get_curve(self, spline, matrix):
         segments = []
@@ -585,11 +781,15 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
     def process(self):
 
+        if not any([sock.is_linked for sock in self.outputs]):
+            return
+
         if not self.object_names:
             return
 
         curves_out = []
         use_cyclic_u_out = []
+        object_names_out = []
         matrices_out = []
         controls_out = []
         control_points_c0_out = []
@@ -602,10 +802,18 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             object_name = item.name
             if item.exclude:
                 continue
+            object_exists, curve_object, bezier_object, non_bezier_object, chars = get_object_data_spline_info(item.name)
+            if object_exists==False or curve_object==False or bezier_object==False:
+                continue
+            
             obj = bpy.data.objects.get(object_name)
+            if hasattr(obj.data, 'splines')==False:
+                continue
+
             if not obj:
                 raise ValueError(f"{object_name} does not exists. Try exclude it from process (Pin button).")
 
+            object_names_out.append([object_name])
             matrix = obj.matrix_world
             if obj.type != 'CURVE':
                 self.warning("%s: not supported object type: %s", object_name, obj.type)
@@ -624,7 +832,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             if obj.data.splines:
                 for spline in obj.data.splines:
                     if spline.type != 'BEZIER':
-                        self.warning("%s: not supported spline type: %s", spline, spline.type)
+                        self.warning(f"{obj.name}.{spline}: not supported spline type: {spline.type}")
                         continue
                     controls, tilt_values, radius_values, curve, use_cyclic_u = self.get_curve(spline, matrix)
                     splines_curves.append(curve)
@@ -639,14 +847,15 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                         spline_controls_c2.append(segments_c[2])
                         spline_controls_c3.append(segments_c[3])
                     
-                    splines_controls_c0.append(spline_controls_c0)
-                    splines_controls_c1.append(spline_controls_c1)
-                    splines_controls_c2.append(spline_controls_c2)
-                    splines_controls_c3.append(spline_controls_c3)
+                    splines_controls_c0.append([spline_controls_c0])
+                    splines_controls_c1.append([spline_controls_c1])
+                    splines_controls_c2.append([spline_controls_c2])
+                    splines_controls_c3.append([spline_controls_c3])
                     splines_tilt  .append(tilt_values)
                     splines_radius.append(radius_values)
                     pass
             else:
+                # if splines are empty
                 splines_curves.append([])
                 splines_use_cyclic_u.append([])
                 splines_controls_c0.append([])
@@ -707,10 +916,6 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                     control_points_c1_out.append(spline_c1)
                     control_points_c2_out.append(spline_c2)
                     control_points_c3_out.append(spline_c3)
-                    # control_points_c0_out.append([co for lst in splines_controls_c0 for segment in lst for co in segment])
-                    # control_points_c1_out.append([co for lst in splines_controls_c1 for segment in lst for co in segment])
-                    # control_points_c2_out.append([co for lst in splines_controls_c2 for segment in lst for co in segment])
-                    # control_points_c3_out.append([co for lst in splines_controls_c3 for segment in lst for co in segment])
                     tilt_out             .append(splines_tilt)
                     radius_out           .append(splines_radius)
                     pass
@@ -731,18 +936,44 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 pass
             pass
 
-        self.outputs['Curves'].sv_set(curves_out)
-        self.outputs['use_cyclic_u'].sv_set(use_cyclic_u_out)
-        #self.outputs['ControlPoints'].sv_set(controls_out)
-        self.outputs['control_points_c0'].sv_set(control_points_c0_out)
-        self.outputs['control_points_c1'].sv_set(control_points_c1_out)
-        self.outputs['control_points_c2'].sv_set(control_points_c2_out)
-        self.outputs['control_points_c3'].sv_set(control_points_c3_out)
-        self.outputs['Matrices'].sv_set(matrices_out)
-        if 'Tilt' in self.outputs:
-            self.outputs['Tilt'].sv_set(tilt_out)
-        if 'Radius' in self.outputs:
-            self.outputs['Radius'].sv_set(radius_out)
+        _curves_out = curves_out
+        _use_cyclic_u_out = use_cyclic_u_out
+        _control_points_c0_out = control_points_c0_out
+        _control_points_c1_out = control_points_c1_out
+        _control_points_c2_out = control_points_c2_out
+        _control_points_c3_out = control_points_c3_out
+        _object_names_out = object_names_out
+        _matrices_out = matrices_out
+        _tilt_out = tilt_out
+        _radius_out = radius_out
 
-classes = [SvBezierInItemRemoveMK2, SvBezierInItemEnablerMK2, SvBezierInItemSelectObjectMK2, SvBezierInViewAlignMK2, SvBIDataCollectionMK2, SVBI_UL_NamesListMK2, SvBezierInMoveUpMK2, SvBezierInMoveDownMK2, SvBezierInAddObjectsFromSceneUpMK2, SvBezierInClearObjectsFromListMK2, SvBezierInCallbackOpMK2, SvBezierInHighlightProcessedObjectsInSceneMK2, SvBezierInHighlightAllObjectsInSceneMK2, SvBezierInNodeMK2]
+        if self.legacy_mode == True:
+            _curves_out            = [c for curves in _curves_out            for c in curves]
+            _use_cyclic_u_out      = [c for curves in _use_cyclic_u_out      for c in curves]
+            _control_points_c0_out = [c for curves in _control_points_c0_out for c in curves]
+            _control_points_c1_out = [c for curves in _control_points_c1_out for c in curves]
+            _control_points_c2_out = [c for curves in _control_points_c2_out for c in curves]
+            _control_points_c3_out = [c for curves in _control_points_c3_out for c in curves]
+            _object_names_out      = [c for curves in _object_names_out      for c in curves]
+            _matrices_out          = [c for curves in _matrices_out          for c in curves]
+            _tilt_out              = [c for curves in _tilt_out              for c in curves]
+            _radius_out            = [c for curves in _radius_out            for c in curves]
+            
+
+        
+
+        self.outputs['Curves']           .sv_set(_curves_out)
+        self.outputs['use_cyclic_u']     .sv_set(_use_cyclic_u_out)
+        self.outputs['control_points_c0'].sv_set(_control_points_c0_out)
+        self.outputs['control_points_c1'].sv_set(_control_points_c1_out)
+        self.outputs['control_points_c2'].sv_set(_control_points_c2_out)
+        self.outputs['control_points_c3'].sv_set(_control_points_c3_out)
+        self.outputs['object_names']     .sv_set(_object_names_out)
+        self.outputs['Matrices']         .sv_set(_matrices_out)
+        if 'Tilt' in self.outputs:
+            self.outputs['Tilt']         .sv_set(_tilt_out)
+        if 'Radius' in self.outputs:
+            self.outputs['Radius']       .sv_set(_radius_out)
+
+classes = [SvBezierInRemoveDuplicatesObjectsInListMK2, SvBezierInSyncSceneObjectWithListMK2, SvBezierInEmptyOperatorMK2, SvBezierInItemRemoveMK2, SvBezierInItemEnablerMK2, SvBezierInItemSelectObjectMK2, SvBezierInViewAlignMK2, SvBIDataCollectionMK2, SVBI_UL_NamesListMK2, SvBezierInMoveUpMK2, SvBezierInMoveDownMK2, SvBezierInAddObjectsFromSceneUpMK2, SvBezierInClearObjectsFromListMK2, SvBezierInCallbackOpMK2, SvBezierInHighlightProcessedObjectsInSceneMK2, SvBezierInHighlightAllObjectsInSceneMK2, SvBezierInNodeMK2]
 register, unregister = bpy.utils.register_classes_factory(classes)
