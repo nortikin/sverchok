@@ -652,10 +652,19 @@ def bisect_solid(solid, face_surface):
         return solids
 
 def select_solids_by_plane_side(solids, plane, sign):
+    def get_center(shape):
+        if isinstance(shape, PartModule.Compound):
+            pts = [get_center(s) for s in shape.Solids]
+            pts = np.array(pts)
+            return np.mean(pts, axis=0).tolist()
+        else:
+            ctr = shape.CenterOfMass
+            ctr = (ctr.x, ctr.y, ctr.z)
+            return ctr
+
     result = []
     for solid in solids:
-        ctr = solid.CenterOfMass
-        ctr = (ctr.x, ctr.y, ctr.z)
+        ctr = get_center(solid)
         if plane.side_of_point(ctr) == sign:
             result.append(solid)
     return result
