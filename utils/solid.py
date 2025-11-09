@@ -644,7 +644,7 @@ def make_plane_by_size_of_solid(solid, plane):
 def bisect_solid(solid, face_surface):
     face = face_surface.face
     result, map = solid.generalFuse([face])
-    solids = sum(map, [])
+    solids = map[0]
     if len(solids) == 0:
         return [solid]
     else:
