@@ -45,6 +45,10 @@ This node has the following parameters:
 
   The default direction is **-X to +X**.
 
+- **Merge Solids**. If checked, then mirrored parts of the solid will be merged
+  with original parts into a single Solid object. Otherwise, two separate
+  objects will be produced. Checked by default.
+
 Outputs
 -------
 
