@@ -278,6 +278,7 @@
     - Modify Curve:
         - icon_name: TOOL_SETTINGS
         - SvExApplyFieldToCurveNode
+        - SvSymmetrizeCurveNode
         - SvExCastCurveNode
         - SvOffsetCurveMk2Node
         - SvCurveOffsetOnSurfaceNode
@@ -738,6 +739,8 @@
     - SvTextureViewerNode
     - SvTextureViewerNodeLite
     - SvWaveformViewer
+    - ---
+    - SvDataTreeVizNode
     - SvConsoleNode
 
 - Text:

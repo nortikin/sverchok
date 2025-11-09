@@ -32,7 +32,6 @@ sv_dependencies, pip, ensurepip, draw_message, get_icon = [None] * 5
 set_frame_change = None
 draw_extra_addons = None
 apply_theme, rebuild_color_cache, color_callback = [None] * 3
-from sverchok.ui.color_def import color_callback
 
 def on_select_theme(self, context):
     if color_callback is None:
@@ -589,6 +588,8 @@ class SverchokPreferences(AddonPreferences):
         row_x1.prop(self, "no_data_color", text='')
 
         col_x2 = split_extra_colors.split().column()
+        col_x2.label(text='Blender interface themechanger')
+        col_x2.operator('sverchok.apply_theme', text='Apply Sverchok theme to BLENDER')
 
         col3 = right_split.column()
         col3.label(text='Theme:')
