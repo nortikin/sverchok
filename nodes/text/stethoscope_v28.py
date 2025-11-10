@@ -65,10 +65,7 @@ class FloatPrecisionPrinter(pprint.PrettyPrinter):
         self.precision2 = precision2
 
     def format(self, obj, context, maxlevels, level):
-        # если число с плавающей точкой — форматируем вручную
         if isinstance(obj, float):
-            #text = format(obj, f"{sign_flag}.{self.precision}f")
-            #sign_flag = '' if obj<0 else ' '
             if obj<0:
                 text = f"{obj:>{self.precision2+1}.{self.precision}f}"
             else:
