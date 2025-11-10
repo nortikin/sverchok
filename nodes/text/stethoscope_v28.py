@@ -283,8 +283,10 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     num_elements: IntProperty(default=0)
     element_index: IntProperty(default=0, update=updateNode)
     rounding: IntProperty(min=0, max=5, default=3, update=updateNode,
+        name="Precision",
         description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits")
     rounding2: IntProperty(min=1, max=20, default=2, update=updateNode,
+        name="Field Width",
         description="range 1 to 20\nMinimum length of result string")
     line_width: IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
     compact: BoolProperty(default=False, update=updateNode, description="this tries to show as much data per line as the linewidth will allow")
@@ -320,8 +322,8 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
 
             row.prop(self, "text_color", text='')
             row1 = layout.row(align=True)
-            row1.prop(self, "rounding")
             row1.prop(self, "rounding2")
+            row1.prop(self, "rounding")
             row1.prop(self, "compact", icon="ALIGN_JUSTIFY", text='', toggle=True)
             row1.prop(self, "chop_up", icon="FILTER", text='')
             row2 = layout.row(align=True)
