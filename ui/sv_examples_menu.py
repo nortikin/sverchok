@@ -40,8 +40,35 @@ def node_settings_pulldown(self, context):
             row.operator("sv.orbit_around_selection", icon="PROP_CON",text="",)
         else:
             row.operator("sv.orbit_around_selection", icon="SNAP_NORMAL", text="")
-        row.operator('sv.splash_screen_simple', text='', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
-        #row.operator('sv.splash_screen', text='', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
+        row.menu("SV_MT_layouts_Splash", text='QuickStart', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
+        
+
+class SV_MT_LayoutsSplash(bpy.types.Menu):
+    """Node tree examples"""
+    bl_idname = 'SV_MT_layouts_Splash'
+    bl_space_type = 'NODE_EDITOR'
+    bl_label = ""
+    bl_description = "List of Sverchok Examples"
+
+    @classmethod
+    def poll(cls, context):
+        try:
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+        except Exception as err:
+            return False
+
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row(align=True)
+        row.operator('sv.download_splash_images', text='Download helps', icon='URL')
+        gr = set()
+        for item in context.space_data.node_tree.sv_splash_data:
+            group = item.group
+            if group not in gr:
+                gr.add(group)
+                op = row.operator('sv.splash_screen_simple', text=group, icon='IMPORT')
+                op.group = group
 
 class SW_OT_Console(Operator):
     """Show/hide console"""
@@ -281,6 +308,7 @@ classes = [
     SW_OT_Orbit_Around_Selection,
     SW_OT_Console,
     SV_MT_LayoutsExamples,
+    SV_MT_LayoutsSplash,
     SvNodeTreeImporterSilent,
     SV_OT_ToggleExamplesSearch,
     SV_OT_ClearExamplesSearch
