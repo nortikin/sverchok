@@ -284,7 +284,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     element_index: IntProperty(default=0, update=updateNode)
     rounding: IntProperty(min=0, max=5, default=3, update=updateNode,
         name="Precision",
-        description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits")
+        description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits\nNot affected if there is no fractional part")
     rounding2: IntProperty(min=1, max=20, default=2, update=updateNode,
         name="Field Width",
         description="range 1 to 20\nMinimum length of result string")
