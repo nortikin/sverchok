@@ -21,7 +21,7 @@ import pprint
 import re
 import bpy
 import blf
-import platform
+import os, platform
 
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
 from bpy.props import FloatProperty
@@ -74,7 +74,35 @@ class FloatPrecisionPrinter(pprint.PrettyPrinter):
             else:
                 text = f" {obj:>{self.precision2}.{self.precision}f}"
             return text, True, False
+        elif isinstance(obj, bool):
+            text=" True" if obj==True else "False" 
+            return text, True, False
+        elif isinstance(obj, int):
+            text = f"{obj:{self.precision2}d}"
+            return text, True, False
         elif isinstance(obj, Matrix):
+            len_rows = len(obj.row)
+            indent = " "*level
+            if len_rows==2:
+                row0 = super().format(obj.row[0], context, maxlevels, level)
+                row1 = super().format(obj.row[1], context, maxlevels, level)
+                text = f"Matrix(({row0[0]},\n        {indent+row1[0]}))"
+                return text, True, False
+            if len_rows==3:
+                row0 = super().format(obj.row[0], context, maxlevels, level)
+                row1 = super().format(obj.row[1], context, maxlevels, level)
+                row2 = super().format(obj.row[2], context, maxlevels, level)
+                text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]}))"
+                return text, True, False
+            if len_rows==4:
+                row0 = super().format(list(obj.row[0]), context, maxlevels, level)
+                row1 = super().format(list(obj.row[1]), context, maxlevels, level)
+                row2 = super().format(list(obj.row[2]), context, maxlevels, level)
+                row3 = super().format(list(obj.row[3]), context, maxlevels, level)
+                text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]},\n        {indent+row3[0]}))"
+                return text, True, False
+            text = f"Matrix(): invalid row size: {len_rows}!"
+            return text, True, False
             pass
         return super().format(obj, context, maxlevels, level)
 
@@ -173,6 +201,15 @@ class SvStethoscopeNodeLoadFontOperatorMK2(bpy.types.Operator):
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
+user_fonts_id_cache = {} # share user_font_id over stethoscope nodes
+
+@bpy.app.handlers.persistent
+def clear_font_cache_on_load(dummy):
+    user_fonts_id_cache.clear()
+    pass
+
+bpy.app.handlers.load_post.append(clear_font_cache_on_load)
+
 class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNodeViewDrawMixin):
     """
         Triggers: scope 
@@ -191,7 +228,20 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     def update_font_path(self, context):
         if self.font_pointer:
             self.font_path = self.font_pointer.filepath
-            self.font_id = blf.load(self.font_path)
+            # self.user_font_id = blf.load(self.font_path)
+            # self.font_id = self.user_font_id
+            #self.user_font_id = 0
+            if os.path.exists(self.font_path):
+                if self.font_path in user_fonts_id_cache:
+                    self.user_font_id = user_fonts_id_cache.get(self.font_path)
+                else:
+                    self.user_font_id = blf.load(self.font_path)
+                    user_fonts_id_cache[self.font_path] = self.user_font_id
+            else:
+                self.user_font_id = 0
+        else:
+            self.user_font_id = 0
+        updateNode(self, context)
         return
 
     font_pointer: bpy.props.PointerProperty(type=bpy.types.VectorFont, update=update_font_path)
@@ -202,7 +252,18 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
         #get = get_elem, set = set_elem,
         update=updateNode,
     )
-
+    #user_font_id: IntProperty(default=-1, update=updateNode, options={'SKIP_SAVE'})
+    @property
+    def user_font_id(self):
+        user_font_id = 0
+        if os.path.exists(self.font_path):
+            if self.font_path in user_fonts_id_cache:
+                user_font_id = user_fonts_id_cache.get(self.font_path)
+            else:
+                user_font_id = blf.load(self.font_path)
+                user_fonts_id_cache[self.font_path] = user_font_id
+        return user_font_id
+    
     text_color: FloatVectorProperty(
         name="Color", description='Text color',
         size=3, min=0.0, max=1.0,
@@ -306,6 +367,20 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
         if self.activate and inputs[0].is_linked:
             scale, self.location_theta = self.get_preferences()
 
+            # при первоначальной загрузке загрузить пользовательский шрифт для отображения:
+            if self.user_font_id==-1:
+                if os.path.exists(self.font_path):
+                    if self.font_path in SvStethoscopeNodeMK2.user_fonts_id_cache:
+                        self.user_font_id = SvStethoscopeNodeMK2.user_fonts_id_cache.get(self.font_path)
+                    else:
+                        # Если шрифт существует, то загрузить его
+                        self.user_font_id = blf.load(self.font_path)
+                        SvStethoscopeNodeMK2.user_fonts_id_cache[self.font_path] = self.user_font_id
+                else:
+                    # Если нет, то взять шрифт по умолчанию
+                    self.user_font_id = 0
+                pass
+
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
             self.num_elements = len(data)
@@ -342,7 +417,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
                 'color': self.text_color[:],
                 'scale' : float(scale),
                 'mode': self.selected_mode[:],
-                'font_id': int(self.font_id)
+                'font_id': int(self.user_font_id)
             }
             nvBGL.callback_enable(n_id, draw_data)
 
