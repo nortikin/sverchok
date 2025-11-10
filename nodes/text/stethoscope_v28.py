@@ -25,7 +25,7 @@ import platform
 
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
 from bpy.props import FloatProperty
-from mathutils import Vector
+from mathutils import Vector, Matrix
 
 from sverchok.settings import get_params
 from sverchok.node_tree import SverchCustomTreeNode
@@ -58,7 +58,27 @@ def chop_up_data(data):
 
     return data
 
-def parse_socket(socket, rounding, element_index, view_by_element, props):
+class FloatPrecisionPrinter(pprint.PrettyPrinter):
+    def __init__(self, precision2=2, precision=3, **kwargs):
+        super().__init__(**kwargs)
+        self.precision = precision
+        self.precision2 = precision2
+
+    def format(self, obj, context, maxlevels, level):
+        # если число с плавающей точкой — форматируем вручную
+        if isinstance(obj, float):
+            #text = format(obj, f"{sign_flag}.{self.precision}f")
+            #sign_flag = '' if obj<0 else ' '
+            if obj<0:
+                text = f"{obj:>{self.precision2+1}.{self.precision}f}"
+            else:
+                text = f" {obj:>{self.precision2}.{self.precision}f}"
+            return text, True, False
+        elif isinstance(obj, Matrix):
+            pass
+        return super().format(obj, context, maxlevels, level)
+
+def parse_socket(socket, rounding2, rounding, element_index, view_by_element, props):
 
     data = socket.sv_get(deepcopy=False)
 
@@ -70,7 +90,10 @@ def parse_socket(socket, rounding, element_index, view_by_element, props):
     if props.chop_up:
         data = chop_up_data(data)
 
-    content_str = pprint.pformat(data, width=props.line_width, depth=props.depth, compact=props.compact)
+    # content_str = pprint.pformat(data, width=props.line_width, depth=props.depth, compact=props.compact)
+    # content_array = content_str.split('\n')
+    pp = FloatPrecisionPrinter(precision2=rounding2, precision=rounding, width=props.line_width, depth=props.depth, compact=props.compact)
+    content_str = pp.pformat(data)
     content_array = content_str.split('\n')
 
     if len(content_array) > 20:
@@ -93,8 +116,9 @@ def parse_socket(socket, rounding, element_index, view_by_element, props):
 
     out = []
     for line in display_text:
-        passthru = (rounding == 0) or ("bpy." in line)
-        out.append(line if passthru else re.sub(rounded_vals, mround, line))
+        # passthru = (rounding == 0) or ("bpy." in line)
+        # out.append(line if passthru else re.sub(rounded_vals, mround, line))
+        out.append(line)
     return out
 
 
@@ -202,6 +226,8 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     element_index: IntProperty(default=0, update=updateNode)
     rounding: IntProperty(min=0, max=5, default=3, update=updateNode,
         description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits")
+    rounding2: IntProperty(min=1, max=20, default=2, update=updateNode,
+        description="range 1 to 20\nMinimum length of result string")
     line_width: IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
     compact: BoolProperty(default=False, update=updateNode, description="this tries to show as much data per line as the linewidth will allow")
     depth: IntProperty(default=5, min=0, update=updateNode)
@@ -237,6 +263,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
             row.prop(self, "text_color", text='')
             row1 = layout.row(align=True)
             row1.prop(self, "rounding")
+            row1.prop(self, "rounding2")
             row1.prop(self, "compact", icon="ALIGN_JUSTIFY", text='', toggle=True)
             row1.prop(self, "chop_up", icon="FILTER", text='')
             row2 = layout.row(align=True)
@@ -292,6 +319,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
 
                 processed_data = parse_socket(
                     inputs[0],
+                    self.rounding2,
                     self.rounding,
                     self.element_index,
                     self.view_by_element,
