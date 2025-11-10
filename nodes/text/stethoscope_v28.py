@@ -21,6 +21,7 @@ import pprint
 import re
 import bpy
 import blf
+import platform
 
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
 from bpy.props import FloatProperty
@@ -102,7 +103,51 @@ def high_contrast_color(c):
     L = 0.2126 * (c.r**g) + 0.7152 * (c.g**g) + 0.0722 * (c.b**g)
     return [(.1, .1, .1), (.95, .95, .95)][int(L < 0.5)]
 
+class SvStethoscopeNodeLoadFontOperatorMK2(bpy.types.Operator):
+    '''Load Font'''
+    bl_idname = "node.sv_stethoscope_node_load_font_operator_mk2"
+    bl_label = ""
 
+    filepath: bpy.props.StringProperty(subtype='FILE_PATH')
+    filter_glob: bpy.props.StringProperty(default="*.ttf;*.otf", options={'HIDDEN'})
+
+    description_text: StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
+    
+    def execute(self, context):
+        if not self.filepath:
+            self.report({'WARNING'}, "Файл не выбран")
+            return {'CANCELLED'}
+
+        try:
+            font_id = blf.load(self.filepath)
+            self.report({'INFO'}, f"Шрифт загружен, font_id = {font_id}")
+            # можно сохранить font_id в контексте или вернуть его как нужно
+            #context.scene.my_font_id = font_id
+            return {'FINISHED'}
+        except Exception as e:
+            self.report({'ERROR'}, f"Ошибка загрузки: {e}")
+            return {'CANCELLED'}
+
+    def invoke(self, context, event):
+        # определить стандартный каталог шрифтов в зависимости от ОС
+        sys = platform.system()
+        if sys == "Windows":
+            default_font_dir = "C:/Windows/Fonts/"
+        elif sys == "Darwin":
+            default_font_dir = "/System/Library/Fonts"
+        else:  # Linux / Unix
+            default_font_dir = "/usr/share/fonts/truetype"
+
+        # задать начальный путь (Blender откроет диалог именно тут)
+        self.filepath = default_font_dir
+
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
 
 class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNodeViewDrawMixin):
     """
@@ -118,6 +163,21 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     bl_icon = 'LONGDISPLAY'
 
     font_id: IntProperty(default=0, update=updateNode)
+
+    def update_font_path(self, context):
+        if self.font_pointer:
+            self.font_path = self.font_pointer.filepath
+            self.font_id = blf.load(self.font_path)
+        return
+
+    font_pointer: bpy.props.PointerProperty(type=bpy.types.VectorFont, update=update_font_path)
+    font_path: StringProperty(
+        name = "Font",
+        default = "",
+        #subtype='FILE_PATH',
+        #get = get_elem, set = set_elem,
+        update=updateNode,
+    )
 
     text_color: FloatVectorProperty(
         name="Color", description='Text color',
@@ -182,6 +242,10 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
             row2 = layout.row(align=True)
             row2.prop(self, "line_width")
             row2.prop(self, "depth")
+            row3 = layout.row(align=True)
+            #row3.prop(self, 'font_path')
+            row3.template_ID(self, "font_pointer", open="font.open", unlink="font.unlink")  # https://docs.blender.org/api/current/bpy.types.UILayout.html#bpy.types.UILayout.template_ID
+
             # layout.prop(self, "socket_name")
             layout.label(text=f'input has {self.num_elements} elements')
             layout.prop(self, 'view_by_element', toggle=True)
@@ -266,8 +330,5 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
         except:
             print('stethoscope update holdout (not a problem)')
 
-def register():
-    bpy.utils.register_class(SvStethoscopeNodeMK2)
-
-def unregister():
-    bpy.utils.unregister_class(SvStethoscopeNodeMK2)
+classes = [SvStethoscopeNodeLoadFontOperatorMK2, SvStethoscopeNodeMK2]
+register, unregister = bpy.utils.register_classes_factory(classes)
