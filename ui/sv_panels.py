@@ -181,7 +181,9 @@ class SV_UL_TreePropertyList(bpy.types.UIList):
         # buttons
         row = row.row(align=True)
         row.alignment = 'RIGHT'
-        row.ui_units_x = 5.5
+        
+        scale_x = 6.5 if bpy.context.preferences.addons.get(sverchok.__name__).preferences.over_sized_buttons else 5.5
+        row.ui_units_x = scale_x
         row.operator('node.sverchok_bake_all', text='B').node_tree_name = tree.name
         row.prop(tree, 'sv_show', icon= f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
         row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
