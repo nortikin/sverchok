@@ -288,7 +288,10 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
             row3.prop(self, "depth")
             row4 = text_mode_layout.row(align=True)
             row4.popover(panel="SV_PT_StethoskopeFontPanelMK2", icon='FILE_FONT', text="")
-            font_name = self.font_pointer.name
+            if self.font_pointer:
+                font_name = self.font_pointer.name
+            else:
+                font_name='-'
             row4.label(text=font_name)
 
 
