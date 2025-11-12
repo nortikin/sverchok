@@ -152,15 +152,15 @@ def high_contrast_color(c):
     L = 0.2126 * (c.r**g) + 0.7152 * (c.g**g) + 0.0722 * (c.b**g)
     return [(.1, .1, .1), (.95, .95, .95)][int(L < 0.5)]
 
-user_fonts_id_cache = {} # share user_font_id over stethoscope nodes
+fonts_id_cache = {} # share font_id over stethoscope nodes
 
 @bpy.app.handlers.persistent
 def clear_font_cache_on_load(dummy):
     '''Clear font cache on start on reload addon in development process'''
-    for K in user_fonts_id_cache:
+    for K in fonts_id_cache:
         blf.unload(K)
         pass
-    user_fonts_id_cache.clear()
+    fonts_id_cache.clear()
     pass
 
 bpy.app.handlers.load_post.append(clear_font_cache_on_load)
@@ -195,8 +195,6 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     bl_label = 'Stethoscope MK2'
     bl_icon = 'LONGDISPLAY'
 
-    font_id: IntProperty(default=0, update=updateNode)
-
     def update_font_path(self, context):
         #clear_font_cache_on_load(None)
         if self.font_pointer:
@@ -213,14 +211,14 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
         update=updateNode,
     )
     @property
-    def user_font_id(self):
-        user_font_id = 0
-        if self.font_path in user_fonts_id_cache:
-            user_font_id = user_fonts_id_cache.get(self.font_path)
+    def font_id(self):
+        font_id = 0
+        if self.font_path in fonts_id_cache:
+            font_id = fonts_id_cache.get(self.font_path)
         elif os.path.exists(self.font_path):
-            user_font_id = blf.load(self.font_path)
-            user_fonts_id_cache[self.font_path] = user_font_id
-        return user_font_id
+            font_id = blf.load(self.font_path)
+            fonts_id_cache[self.font_path] = font_id
+        return font_id
     
     text_color: FloatVectorProperty(
         name="Color", description='Text color',
@@ -240,7 +238,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
         default="text-based", update=updateNode
     )
 
-    view_by_element : BoolProperty(update=updateNode)
+    view_by_element : BoolProperty(update=updateNode, description='If count of input objects more 0 then one can show every object independently')
     num_elements    : IntProperty (default=0)
     element_index   : IntProperty (default=0, update=updateNode)
     rounding        : IntProperty (default=    3, min= 0, max=5, update=updateNode, name="Precision", description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits\nNot affected if there is no fractional part")
@@ -295,7 +293,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
 
 
             # layout.prop(self, "socket_name")
-            layout.label(text=f'input has {self.num_elements} elements')
+            #layout.label(text=f'input has {self.num_elements} elements')
             layout.prop(self, 'view_by_element', toggle=True)
             if self.num_elements > 0 and self.view_by_element:
                 layout.prop(self, 'element_index', text='get index')
@@ -311,7 +309,8 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
             pass
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'font_id')
+        #layout.prop(self, 'font_id')
+        pass
 
     def get_preferences(self):
         return get_params({
@@ -326,20 +325,6 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
 
         if self.activate and inputs[0].is_linked:
             scale, self.location_theta = self.get_preferences()
-
-            # # при первоначальной загрузке загрузить пользовательский шрифт для отображения:
-            # if self.user_font_id==-1:
-            #     if os.path.exists(self.font_path):
-            #         if self.font_path in SvStethoscopeNodeMK2.user_fonts_id_cache:
-            #             self.user_font_id = SvStethoscopeNodeMK2.user_fonts_id_cache.get(self.font_path)
-            #         else:
-            #             # Если шрифт существует, то загрузить его
-            #             self.user_font_id = blf.load(self.font_path)
-            #             SvStethoscopeNodeMK2.user_fonts_id_cache[self.font_path] = self.user_font_id
-            #     else:
-            #         # Если нет, то взять шрифт по умолчанию
-            #         self.user_font_id = 0
-            #     pass
 
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
@@ -377,7 +362,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
                 'color': self.text_color[:],
                 'scale' : float(scale),
                 'mode': self.selected_mode[:],
-                'font_id': int(self.user_font_id)
+                'font_id': int(self.font_id)
             })
             nvBGL.callback_enable(n_id, draw_data)
 
