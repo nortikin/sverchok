@@ -33,13 +33,17 @@ def draw_text_data(data):
     x, y = int(x), int(y)
     r, g, b = data.get('color', (0.1, 0.1, 0.1))
     font_id = data.get('font_id', 0)
-    scale = data.get('scale', 1.0)
+    scale   = data.get('scale', 1.0)
 
     text_height = 15 * scale
     line_height = 14 * scale
 
     drawing.blf_size(font_id, int(text_height), 72)
+    #blf.size(font_id, int(text_height))
     blf.color(font_id, r, g, b, 1.0)
+    blf.disable(font_id, blf.WORD_WRAP) # something enable it somewhere if font is non standart...
+    blf.disable(font_id, blf.CLIPPING)
+
     ypos = y
 
     for line in lines:
@@ -51,6 +55,7 @@ def draw_text_data(data):
 def draw_graphical_data(data):
     lines = data.get('content')
     x, y = get_sane_xy(data)
+    x, y = int(x), int(y)
     color = data.get('color', (0.1, 0.1, 0.1))
     font_id = data.get('font_id', 0)
     scale = data.get('scale', 1.0)
@@ -60,11 +65,15 @@ def draw_graphical_data(data):
         return
 
     drawing.blf_size(font_id, int(text_height), 72)
+    #blf.size(font_id, int(text_height))
+    blf.disable(font_id, blf.WORD_WRAP) # something enable it somewhere if font is non standart...
+    blf.disable(font_id, blf.CLIPPING)
 
-    def draw_text(color, xpos, ypos, line):
+
+    def draw_text(font_id, color, xpos, ypos, line):
         r, g, b = color
         blf.color(font_id, r, g, b, 1.0)
-        blf.position(0, xpos, ypos, 0)
+        blf.position(font_id, xpos, ypos, 0)
         blf.draw(font_id, line)
         return blf.dimensions(font_id, line)
 
@@ -72,12 +81,13 @@ def draw_graphical_data(data):
     num_containers = len(lines)
     for idx, line in enumerate(lines):
         y_pos = y - (idx*lineheight)
+        y_pos = int(y_pos)
         gfx_x = x
 
         num_items = str(len(line)) if hasattr(line, '__len__') else '1'
         kind_of_item = type(line).__name__
 
-        tx, _ = draw_text(color, gfx_x, y_pos, f"{kind_of_item} of {num_items} items")
+        tx, _ = draw_text(font_id, color, gfx_x, y_pos, f"{kind_of_item} of {num_items} items")
         gfx_x += (tx + 5)
 
         content_dict = defaultdict(int)
@@ -87,11 +97,13 @@ def draw_graphical_data(data):
         else:
             content_dict[type(line).__name__] += 1
 
-        tx, _ = draw_text(color, gfx_x, y_pos, str(dict(content_dict)))
+        tx, _ = draw_text(font_id, color, gfx_x, y_pos, str(dict(content_dict)))
         gfx_x += (tx + 5)
 
         if idx == 19 and num_containers > 20:
             y_pos = y - ((idx+1)*lineheight)
             text_body = f"Showing the first 20 of {num_containers} items"
-            draw_text(color, x, y_pos, text_body)
+            draw_text(font_id, color, x, y_pos, text_body)
             break
+        pass
+    pass

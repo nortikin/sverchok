@@ -59,36 +59,36 @@ def chop_up_data(data):
     return data
 
 class FloatPrecisionPrinter(pprint.PrettyPrinter):
-    def __init__(self, precision2=2, precision=3, **kwargs):
+    def __init__(self, field_width=2, precision=3, **kwargs):
         super().__init__(**kwargs)
         self.precision = precision
-        self.precision2 = precision2
+        self.field_width = field_width
 
     def format(self, obj, context, maxlevels, level):
         if isinstance(obj, float):
             if obj<0:
-                text = f"{obj:>{self.precision2+1}.{self.precision}f}"
+                text = f"{obj:>{self.field_width+1}.{self.precision}f}"
             else:
-                text = f" {obj:>{self.precision2}.{self.precision}f}"
+                text = f" {obj:>{self.field_width}.{self.precision}f}"
             return text, True, False
         elif isinstance(obj, bool):
             text=" True" if obj==True else "False" 
             return text, True, False
         elif isinstance(obj, int):
-            text = f"{obj:{self.precision2}d}"
+            text = f"{obj:{self.field_width}d}"
             return text, True, False
         elif isinstance(obj, Matrix):
             len_rows = len(obj.row)
             indent = " "*level
             if len_rows==2:
-                row0 = super().format(obj.row[0], context, maxlevels, level)
-                row1 = super().format(obj.row[1], context, maxlevels, level)
+                row0 = super().format(list(obj.row[0]), context, maxlevels, level)
+                row1 = super().format(list(obj.row[1]), context, maxlevels, level)
                 text = f"Matrix(({row0[0]},\n        {indent+row1[0]}))"
                 return text, True, False
             if len_rows==3:
-                row0 = super().format(obj.row[0], context, maxlevels, level)
-                row1 = super().format(obj.row[1], context, maxlevels, level)
-                row2 = super().format(obj.row[2], context, maxlevels, level)
+                row0 = super().format(list(obj.row[0]), context, maxlevels, level)
+                row1 = super().format(list(obj.row[1]), context, maxlevels, level)
+                row2 = super().format(list(obj.row[2]), context, maxlevels, level)
                 text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]}))"
                 return text, True, False
             if len_rows==4:
@@ -103,7 +103,7 @@ class FloatPrecisionPrinter(pprint.PrettyPrinter):
             pass
         return super().format(obj, context, maxlevels, level)
 
-def parse_socket(socket, rounding2, rounding, element_index, view_by_element, props):
+def parse_socket(socket, field_width, rounding, element_index, view_by_element, props):
 
     data = socket.sv_get(deepcopy=False)
 
@@ -117,7 +117,7 @@ def parse_socket(socket, rounding2, rounding, element_index, view_by_element, pr
 
     # content_str = pprint.pformat(data, width=props.line_width, depth=props.depth, compact=props.compact)
     # content_array = content_str.split('\n')
-    pp = FloatPrecisionPrinter(precision2=rounding2, precision=rounding, width=props.line_width, depth=props.depth, compact=props.compact)
+    pp = FloatPrecisionPrinter(field_width=field_width, precision=rounding, width=props.line_width, depth=props.depth, compact=props.compact)
     content_str = pp.pformat(data)
     content_array = content_str.split('\n')
 
@@ -152,60 +152,35 @@ def high_contrast_color(c):
     L = 0.2126 * (c.r**g) + 0.7152 * (c.g**g) + 0.0722 * (c.b**g)
     return [(.1, .1, .1), (.95, .95, .95)][int(L < 0.5)]
 
-class SvStethoscopeNodeLoadFontOperatorMK2(bpy.types.Operator):
-    '''Load Font'''
-    bl_idname = "node.sv_stethoscope_node_load_font_operator_mk2"
-    bl_label = ""
-
-    filepath: bpy.props.StringProperty(subtype='FILE_PATH')
-    filter_glob: bpy.props.StringProperty(default="*.ttf;*.otf", options={'HIDDEN'})
-
-    description_text: StringProperty(default='')
-
-    @classmethod
-    def description(cls, context, properties):
-        s = properties.description_text
-        return s
-    
-    def execute(self, context):
-        if not self.filepath:
-            self.report({'WARNING'}, "Файл не выбран")
-            return {'CANCELLED'}
-
-        try:
-            font_id = blf.load(self.filepath)
-            self.report({'INFO'}, f"Шрифт загружен, font_id = {font_id}")
-            # можно сохранить font_id в контексте или вернуть его как нужно
-            #context.scene.my_font_id = font_id
-            return {'FINISHED'}
-        except Exception as e:
-            self.report({'ERROR'}, f"Ошибка загрузки: {e}")
-            return {'CANCELLED'}
-
-    def invoke(self, context, event):
-        # определить стандартный каталог шрифтов в зависимости от ОС
-        sys = platform.system()
-        if sys == "Windows":
-            default_font_dir = "C:/Windows/Fonts/"
-        elif sys == "Darwin":
-            default_font_dir = "/System/Library/Fonts"
-        else:  # Linux / Unix
-            default_font_dir = "/usr/share/fonts/truetype"
-
-        # задать начальный путь (Blender откроет диалог именно тут)
-        self.filepath = default_font_dir
-
-        context.window_manager.fileselect_add(self)
-        return {'RUNNING_MODAL'}
-
 user_fonts_id_cache = {} # share user_font_id over stethoscope nodes
 
 @bpy.app.handlers.persistent
 def clear_font_cache_on_load(dummy):
+    '''Clear font cache on start on reload addon in development process'''
+    for K in user_fonts_id_cache:
+        blf.unload(K)
+        pass
     user_fonts_id_cache.clear()
     pass
 
 bpy.app.handlers.load_post.append(clear_font_cache_on_load)
+
+
+class SV_PT_StethoskopeFontPanelMK2(bpy.types.Panel):
+    '''Select font for text display. For numeric data, it is recommended to use monospaced text.'''
+    bl_label = "Font Settings"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Node"
+    bl_context = "data"
+
+    def draw(self, context):
+        layout = self.layout
+        if hasattr(context, 'node'):
+            row0 = layout.row()
+            row0.template_ID(context.node, "font_pointer", open="font.open", unlink="font.unlink")  # https://docs.blender.org/api/current/bpy.types.UILayout.html#bpy.types.UILayout.template_ID
+
+        pass
 
 class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNodeViewDrawMixin):
     """
@@ -223,21 +198,11 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     font_id: IntProperty(default=0, update=updateNode)
 
     def update_font_path(self, context):
+        #clear_font_cache_on_load(None)
         if self.font_pointer:
             self.font_path = self.font_pointer.filepath
-            # self.user_font_id = blf.load(self.font_path)
-            # self.font_id = self.user_font_id
-            #self.user_font_id = 0
-            if os.path.exists(self.font_path):
-                if self.font_path in user_fonts_id_cache:
-                    self.user_font_id = user_fonts_id_cache.get(self.font_path)
-                else:
-                    self.user_font_id = blf.load(self.font_path)
-                    user_fonts_id_cache[self.font_path] = self.user_font_id
-            else:
-                self.user_font_id = 0
         else:
-            self.user_font_id = 0
+            self.font_path = ""
         updateNode(self, context)
         return
 
@@ -245,20 +210,16 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     font_path: StringProperty(
         name = "Font",
         default = "",
-        #subtype='FILE_PATH',
-        #get = get_elem, set = set_elem,
         update=updateNode,
     )
-    #user_font_id: IntProperty(default=-1, update=updateNode, options={'SKIP_SAVE'})
     @property
     def user_font_id(self):
         user_font_id = 0
-        if os.path.exists(self.font_path):
-            if self.font_path in user_fonts_id_cache:
-                user_font_id = user_fonts_id_cache.get(self.font_path)
-            else:
-                user_font_id = blf.load(self.font_path)
-                user_fonts_id_cache[self.font_path] = user_font_id
+        if self.font_path in user_fonts_id_cache:
+            user_font_id = user_fonts_id_cache.get(self.font_path)
+        elif os.path.exists(self.font_path):
+            user_font_id = blf.load(self.font_path)
+            user_fonts_id_cache[self.font_path] = user_font_id
         return user_font_id
     
     text_color: FloatVectorProperty(
@@ -279,20 +240,15 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
         default="text-based", update=updateNode
     )
 
-    view_by_element: BoolProperty(update=updateNode)
-    num_elements: IntProperty(default=0)
-    element_index: IntProperty(default=0, update=updateNode)
-    rounding: IntProperty(min=0, max=5, default=3, update=updateNode,
-        name="Precision",
-        description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits\nNot affected if there is no fractional part")
-    rounding2: IntProperty(min=1, max=20, default=2, update=updateNode,
-        name="Field Width",
-        description="range 1 to 20\nMinimum length of result string")
-    line_width: IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
-    compact: BoolProperty(default=False, update=updateNode, description="this tries to show as much data per line as the linewidth will allow")
-    depth: IntProperty(default=5, min=0, update=updateNode)
-    chop_up: BoolProperty(default=False, update=updateNode, 
-        description="perform extra data examination to reduce size of data before pprint (pretty printing, pformat)")
+    view_by_element : BoolProperty(update=updateNode)
+    num_elements    : IntProperty (default=0)
+    element_index   : IntProperty (default=0, update=updateNode)
+    rounding        : IntProperty (default=    3, min= 0, max=5, update=updateNode, name="Precision", description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits\nNot affected if there is no fractional part")
+    field_width     : IntProperty (default=    2, min= 1,        update=updateNode, name="Field Width", description="min 1\nMinimum length of number converted to string.\nUsed for float, int or boolean values")
+    line_width      : IntProperty (default=   60, min=20,        update=updateNode, name='Line Width (chars)')
+    compact         : BoolProperty(default=False,                update=updateNode, description="this tries to show as much data per line as the linewidth will allow")
+    depth           : IntProperty (default=    5, min= 0,        update=updateNode, description="List nesting level",  )
+    chop_up         : BoolProperty(default=False,                update=updateNode, description="perform extra data examination to reduce size of data before pprint (pretty printing, pformat)")
 
     def get_theme_colors_for_contrast(self):
         try:
@@ -320,18 +276,23 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
         row.prop(self, 'selected_mode', expand=True, icon_only=True)
         if self.selected_mode == 'text-based':
 
+            text_mode_layout = layout.column(align=True)
             row.prop(self, "text_color", text='')
-            row1 = layout.row(align=True)
-            row1.prop(self, "rounding2")
+            row0 = text_mode_layout.row(align=True)
+            row0.prop(self, "field_width")
+            row0.prop(self, "compact", icon="ALIGN_JUSTIFY", text='', toggle=True)
+            row0.prop(self, "chop_up", icon="FILTER", text='')
+            row1 = text_mode_layout.row(align=True)
             row1.prop(self, "rounding")
-            row1.prop(self, "compact", icon="ALIGN_JUSTIFY", text='', toggle=True)
-            row1.prop(self, "chop_up", icon="FILTER", text='')
-            row2 = layout.row(align=True)
+            row2 = text_mode_layout.row(align=True)
             row2.prop(self, "line_width")
-            row2.prop(self, "depth")
-            row3 = layout.row(align=True)
-            #row3.prop(self, 'font_path')
-            row3.template_ID(self, "font_pointer", open="font.open", unlink="font.unlink")  # https://docs.blender.org/api/current/bpy.types.UILayout.html#bpy.types.UILayout.template_ID
+            row3 = text_mode_layout.row(align=True)
+            row3.prop(self, "depth")
+            row4 = text_mode_layout.row(align=True)
+            row4.popover(panel="SV_PT_StethoskopeFontPanelMK2", icon='FILE_FONT', text="")
+            font_name = self.font_pointer.name
+            row4.label(text=font_name)
+
 
             # layout.prop(self, "socket_name")
             layout.label(text=f'input has {self.num_elements} elements')
@@ -366,19 +327,19 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
         if self.activate and inputs[0].is_linked:
             scale, self.location_theta = self.get_preferences()
 
-            # при первоначальной загрузке загрузить пользовательский шрифт для отображения:
-            if self.user_font_id==-1:
-                if os.path.exists(self.font_path):
-                    if self.font_path in SvStethoscopeNodeMK2.user_fonts_id_cache:
-                        self.user_font_id = SvStethoscopeNodeMK2.user_fonts_id_cache.get(self.font_path)
-                    else:
-                        # Если шрифт существует, то загрузить его
-                        self.user_font_id = blf.load(self.font_path)
-                        SvStethoscopeNodeMK2.user_fonts_id_cache[self.font_path] = self.user_font_id
-                else:
-                    # Если нет, то взять шрифт по умолчанию
-                    self.user_font_id = 0
-                pass
+            # # при первоначальной загрузке загрузить пользовательский шрифт для отображения:
+            # if self.user_font_id==-1:
+            #     if os.path.exists(self.font_path):
+            #         if self.font_path in SvStethoscopeNodeMK2.user_fonts_id_cache:
+            #             self.user_font_id = SvStethoscopeNodeMK2.user_fonts_id_cache.get(self.font_path)
+            #         else:
+            #             # Если шрифт существует, то загрузить его
+            #             self.user_font_id = blf.load(self.font_path)
+            #             SvStethoscopeNodeMK2.user_fonts_id_cache[self.font_path] = self.user_font_id
+            #     else:
+            #         # Если нет, то взять шрифт по умолчанию
+            #         self.user_font_id = 0
+            #     pass
 
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
@@ -393,7 +354,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
 
                 processed_data = parse_socket(
                     inputs[0],
-                    self.rounding2,
+                    self.field_width,
                     self.rounding,
                     self.element_index,
                     self.view_by_element,
@@ -408,7 +369,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
                 # display the __repr__ version of the incoming data
                 processed_data = data
 
-            draw_data = {
+            draw_data = dict({
                 'tree_name': self.id_data.name[:],
                 'node_name': self.name[:],
                 'content': processed_data,
@@ -417,7 +378,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
                 'scale' : float(scale),
                 'mode': self.selected_mode[:],
                 'font_id': int(self.user_font_id)
-            }
+            })
             nvBGL.callback_enable(n_id, draw_data)
 
     def sv_free(self):
@@ -431,6 +392,20 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
                 nvBGL.callback_disable(node_id(self))        
         except:
             print('stethoscope update holdout (not a problem)')
+        pass
 
-classes = [SvStethoscopeNodeLoadFontOperatorMK2, SvStethoscopeNodeMK2]
-register, unregister = bpy.utils.register_classes_factory(classes)
+classes = [ 
+            SV_PT_StethoskopeFontPanelMK2,
+            SvStethoscopeNodeMK2,
+        ]
+
+#register, unregister = bpy.utils.register_classes_factory(classes) - need individual call to clear fonts cache on reload addon
+
+def register():
+    for class_name in classes:
+        bpy.utils.register_class(class_name)
+    clear_font_cache_on_load(None)
+
+def unregister():
+    for class_name in reversed( classes ):
+        bpy.utils.unregister_class(class_name)
