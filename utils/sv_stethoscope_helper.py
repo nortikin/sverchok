@@ -61,12 +61,14 @@ def draw_graphical_data(data):
     color = data.get('color', (0.1, 0.1, 0.1))
     font_id = data.get('font_id', 0)
     scale = data.get('scale', 1.0)
-    text_height = 15 * scale
+    line_height = 15 * scale
+
+    y -= int(line_height)
 
     if not lines:
         return
 
-    drawing.blf_size(font_id, int(text_height), 72)
+    drawing.blf_size(font_id, int(line_height), 72)
     #blf.size(font_id, int(text_height))
     blf.disable(font_id, blf.WORD_WRAP) # something enable it somewhere if font is non standart...
     blf.disable(font_id, blf.CLIPPING)
