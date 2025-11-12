@@ -38,6 +38,8 @@ def draw_text_data(data):
     text_height = 15 * scale
     line_height = 14 * scale
 
+    y -= int(line_height)
+
     drawing.blf_size(font_id, int(text_height), 72)
     #blf.size(font_id, int(text_height))
     blf.color(font_id, r, g, b, 1.0)
