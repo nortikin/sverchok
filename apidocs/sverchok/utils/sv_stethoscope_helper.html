@@ -55,20 +55,27 @@ el.replaceWith(d);
 <pre><code class="python">def draw_graphical_data(data):
     lines = data.get(&#39;content&#39;)
     x, y = get_sane_xy(data)
+    x, y = int(x), int(y)
     color = data.get(&#39;color&#39;, (0.1, 0.1, 0.1))
     font_id = data.get(&#39;font_id&#39;, 0)
     scale = data.get(&#39;scale&#39;, 1.0)
-    text_height = 15 * scale
+    line_height = 15 * scale
+
+    y -= int(line_height)
 
     if not lines:
         return
 
-    drawing.blf_size(font_id, int(text_height), 72)
+    drawing.blf_size(font_id, int(line_height), 72)
+    #blf.size(font_id, int(text_height))
+    blf.disable(font_id, blf.WORD_WRAP) # something enable it somewhere if font is non standart...
+    blf.disable(font_id, blf.CLIPPING)
 
-    def draw_text(color, xpos, ypos, line):
+
+    def draw_text(font_id, color, xpos, ypos, line):
         r, g, b = color
         blf.color(font_id, r, g, b, 1.0)
-        blf.position(0, xpos, ypos, 0)
+        blf.position(font_id, xpos, ypos, 0)
         blf.draw(font_id, line)
         return blf.dimensions(font_id, line)
 
@@ -76,12 +83,13 @@ el.replaceWith(d);
     num_containers = len(lines)
     for idx, line in enumerate(lines):
         y_pos = y - (idx*lineheight)
+        y_pos = int(y_pos)
         gfx_x = x
 
         num_items = str(len(line)) if hasattr(line, &#39;__len__&#39;) else &#39;1&#39;
         kind_of_item = type(line).__name__
 
-        tx, _ = draw_text(color, gfx_x, y_pos, f&#34;{kind_of_item} of {num_items} items&#34;)
+        tx, _ = draw_text(font_id, color, gfx_x, y_pos, f&#34;{kind_of_item} of {num_items} items&#34;)
         gfx_x += (tx + 5)
 
         content_dict = defaultdict(int)
@@ -91,14 +99,16 @@ el.replaceWith(d);
         else:
             content_dict[type(line).__name__] += 1
 
-        tx, _ = draw_text(color, gfx_x, y_pos, str(dict(content_dict)))
+        tx, _ = draw_text(font_id, color, gfx_x, y_pos, str(dict(content_dict)))
         gfx_x += (tx + 5)
 
         if idx == 19 and num_containers &gt; 20:
             y_pos = y - ((idx+1)*lineheight)
             text_body = f&#34;Showing the first 20 of {num_containers} items&#34;
-            draw_text(color, x, y_pos, text_body)
-            break</code></pre>
+            draw_text(font_id, color, x, y_pos, text_body)
+            break
+        pass
+    pass</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -118,13 +128,19 @@ el.replaceWith(d);
     x, y = int(x), int(y)
     r, g, b = data.get(&#39;color&#39;, (0.1, 0.1, 0.1))
     font_id = data.get(&#39;font_id&#39;, 0)
-    scale = data.get(&#39;scale&#39;, 1.0)
+    scale   = data.get(&#39;scale&#39;, 1.0)
 
     text_height = 15 * scale
     line_height = 14 * scale
 
+    y -= int(line_height)
+
     drawing.blf_size(font_id, int(text_height), 72)
+    #blf.size(font_id, int(text_height))
     blf.color(font_id, r, g, b, 1.0)
+    blf.disable(font_id, blf.WORD_WRAP) # something enable it somewhere if font is non standart...
+    blf.disable(font_id, blf.CLIPPING)
+
     ypos = y
 
     for line in lines:
