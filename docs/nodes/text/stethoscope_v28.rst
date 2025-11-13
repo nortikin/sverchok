@@ -52,4 +52,9 @@ Examples
 Notes
 -----
 
-Implementation is ``POST_PIXEL`` using ``bgl`` and ``blf``
+- preload Sverchok fonts:
+
+  .. image:: https://github.com/user-attachments/assets/2e96681c-5cd2-4029-86be-6a017549503b
+    :target: https://github.com/user-attachments/assets/2e96681c-5cd2-4029-86be-6a017549503b
+
+- Implementation is ``POST_PIXEL`` using ``bgl`` and ``blf``
