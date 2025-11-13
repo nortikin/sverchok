@@ -54,7 +54,6 @@ class KnotvectorDict(object):
     def __init__(self, accuracy):
         self.knots = defaultdict(int)
         self.accuracy = accuracy
-        self._buckets = []
         self._averages = []
         self._bucket_ranges = []
 
@@ -67,20 +66,20 @@ class KnotvectorDict(object):
     def calc_averages(self):
         tolerance = self.tolerance()
         all_knots = []
+        buckets = []
         for knot in self.knots.keys():
             all_knots.append(knot)
         all_knots = list(sorted(all_knots))
         current_bucket = [all_knots[0]]
-        self._buckets = []
         for knot in all_knots[1:]:
             if knot - current_bucket[0] <= 2*tolerance:
                 current_bucket.append(knot)
             else:
-                self._buckets.append(current_bucket)
+                buckets.append(current_bucket)
                 current_bucket = [knot]
-        self._buckets.append(current_bucket)
+        buckets.append(current_bucket)
         self._averages = []
-        for bucket in self._buckets:
+        for bucket in buckets:
             avg = sum(bucket) / len(bucket)
             self._averages.append(avg)
             k1 = bucket[0]
@@ -133,7 +132,7 @@ def unify_curves(curves, method="UNIFY", accuracy=6):
     if method == "UNIFY":
         dst_knots = KnotvectorDict(accuracy)
         for i, curve in enumerate(curves):
-            m = sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2)
+            m = sv_knotvector.to_multiplicity(curve.get_knotvector())
             # print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
             for u, count in m:
                 dst_knots.put(u, count)

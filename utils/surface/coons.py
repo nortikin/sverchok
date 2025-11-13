@@ -70,7 +70,7 @@ GENERIC = 'GENERIC'
 NURBS_ONLY = 'NURBS'
 NURBS_IF_POSSIBLE = 'NURBS_OPTION'
 
-def coons_surface(curve1, curve2, curve3, curve4, use_nurbs=NURBS_IF_POSSIBLE):
+def coons_surface(curve1, curve2, curve3, curve4, knotvector_accuracy=6, use_nurbs=NURBS_IF_POSSIBLE):
     curves = [curve1, curve2, curve3, curve4]
     nurbs_curves = [SvNurbsCurve.to_nurbs(c) for c in curves]
     if use_nurbs == GENERIC:
@@ -85,9 +85,9 @@ def coons_surface(curve1, curve2, curve3, curve4, use_nurbs=NURBS_IF_POSSIBLE):
         implementation = nurbs_curves[0].get_nurbs_implementation()
 
         nurbs_curves[0], nurbs_curves[2] = unify_curves_degree([nurbs_curves[0], nurbs_curves[2]])
-        nurbs_curves[0], nurbs_curves[2] = unify_curves([nurbs_curves[0], nurbs_curves[2]])
+        nurbs_curves[0], nurbs_curves[2] = unify_curves([nurbs_curves[0], nurbs_curves[2]], accuracy=knotvector_accuracy)
         nurbs_curves[1], nurbs_curves[3] = unify_curves_degree([nurbs_curves[1], nurbs_curves[3]])
-        nurbs_curves[1], nurbs_curves[3] = unify_curves([nurbs_curves[1], nurbs_curves[3]])
+        nurbs_curves[1], nurbs_curves[3] = unify_curves([nurbs_curves[1], nurbs_curves[3]], accuracy=knotvector_accuracy)
 
         degree_u = nurbs_curves[0].get_degree()
         degree_v = nurbs_curves[1].get_degree()

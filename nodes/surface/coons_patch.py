@@ -2,7 +2,7 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
@@ -45,6 +45,12 @@ class SvCoonsPatchNode(SverchCustomTreeNode, bpy.types.Node):
         precision = 4,
         update = updateNode)
 
+    knotvector_accuracy : IntProperty(
+        name = "Knotvector accuracy",
+        min = 1, max = 10,
+        default = 6,
+        update = updateNode)
+
     def update_sockets(self, context):
         self.inputs['Curves'].hide_safe = self.input_mode != 'LIST'
         self.inputs['Curve1'].hide_safe = self.input_mode == 'LIST'
@@ -63,6 +69,10 @@ class SvCoonsPatchNode(SverchCustomTreeNode, bpy.types.Node):
             items = modes,
             default = 'LIST',
             update = update_sockets)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'knotvector_accuracy')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'input_mode', text='')
