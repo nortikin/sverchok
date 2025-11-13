@@ -13,7 +13,7 @@ button_margin = 3
 close_button_width = 103
 
 # Shaders
-if bpy.app.background or if bpy.app.version >= (3, 6, 18):
+if bpy.app.background or if bpy.app.version <= (3, 6, 18):
     image_shader = None
     solid_shader = None
 else:
