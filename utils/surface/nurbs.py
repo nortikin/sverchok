@@ -1394,6 +1394,7 @@ def loft_with_tangents(curves, tangent_fields, degree_v = 3,
 
 def interpolate_nurbs_curves(curves, base_vs, target_vs,
         degree_v = None, knots_u = 'UNIFY',
+        knotvector_accuracy = 6,
         implementation = SvNurbsSurface.NATIVE):
     """
     Interpolate many NURBS curves between a list of NURBS curves, by lofting.
@@ -1413,6 +1414,7 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
     tknots = (base_vs - min_v) / (max_v - min_v)
     _,_,lofted = simple_loft(to_loft,
                 degree_v = degree_v, knots_u = knots_u,
+                knotvector_accuracy = knotvector_accuracy,
                 #metric = 'POINTS',
                 tknots = tknots,
                 implementation = implementation)
@@ -1461,7 +1463,7 @@ def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', ukn
 
     return surface
 
-def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
+def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', knotvector_accuracy=6, metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
     """
     NURBS Sweep implementation.
     Interface of this function is not flexible, so you usually want to call `nurbs_sweep' instead.
@@ -1497,10 +1499,22 @@ def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', me
 
     unified_curves, v_curves, surface = simple_loft(to_loft, degree_v = path.get_degree(),
             knots_u = knots_u, metric = metric,
+            knotvector_accuracy = knotvector_accuracy,
             implementation = implementation)
     return to_loft, unified_curves, v_curves, surface
 
-def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE, **kwargs):
+def nurbs_sweep(
+    path,
+    profiles,
+    ts,
+    min_profiles,
+    algorithm,
+    knots_u="UNIFY",
+    knotvector_accuracy = 6,
+    metric="DISTANCE",
+    implementation=SvNurbsSurface.NATIVE,
+    **kwargs,
+):
     """
     NURBS Sweep surface.
     
@@ -1551,6 +1565,7 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
         profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
                     degree_v = min(max_degree, path.get_degree()),
                     knots_u = knots_u,
+                    knotvector_accuracy = knotvector_accuracy,
                     implementation = implementation)
         ts = np.linspace(t_min, t_max, num=min_profiles)
     else:
@@ -1563,12 +1578,14 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
 
     return nurbs_sweep_impl(path, profiles, ts, frame_calculator,
                 knots_u=knots_u, metric=metric,
+                knotvector_accuracy = knotvector_accuracy,
                 implementation=implementation)
 
 def nurbs_birail(path1, path2, profiles,
         ts1 = None, ts2 = None,
         min_profiles = 10,
         knots_u = 'UNIFY',
+        knotvector_accuracy = 6,
         degree_v = None, metric = 'DISTANCE',
         scale_uniform = True,
         auto_rotate = False,
@@ -1646,6 +1663,7 @@ def nurbs_birail(path1, path2, profiles,
         profiles = interpolate_nurbs_curves(profiles, ts1, target_vs,
                     degree_v = min(max_degree, degree_v),
                     knots_u = knots_u,
+                    knotvector_accuracy = knotvector_accuracy,
                     implementation = implementation)
         #if not have_ts1:
         ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
@@ -1709,7 +1727,7 @@ def nurbs_birail(path1, path2, profiles,
         pr_vector = pr_end - pr_start
         pr_length = np.linalg.norm(pr_vector)
         if pr_length < 1e-6:
-            raise Exception("One of profiles is closed")
+            raise Exception(f"One of profiles is closed: t={t_min} {pr_start} - t={t_max} {pr_end}")
         pr_dir = pr_vector / pr_length
         pr_x, pr_y, _ = tuple(pr_dir)
 
@@ -1741,6 +1759,7 @@ def nurbs_birail(path1, path2, profiles,
 
     unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = degree_v,
             knots_u = knots_u, metric = metric,
+            knotvector_accuracy = knotvector_accuracy,
             implementation = implementation)
 
     return placed_profiles, unified_curves, v_curves, surface
