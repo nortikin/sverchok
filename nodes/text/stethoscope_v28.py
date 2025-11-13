@@ -333,12 +333,12 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     view_by_element : BoolProperty(update=updateNode, description='If count of input objects more 0 then one can show every object independently')
     num_elements    : IntProperty (default=0)
     element_index   : IntProperty (default=0, update=updateNode)
-    rounding        : IntProperty (default=    3, min= 0, max=5, update=updateNode, name="Precision", description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits\nNot affected if there is no fractional part")
-    field_width     : IntProperty (default=    2, min= 1,        update=updateNode, name="Field Width", description="min 1\nMinimum length of number converted to string.\nUsed for float, int or boolean values")
-    line_width      : IntProperty (default=   60, min=20,        update=updateNode, name='Line Width (chars)')
-    compact         : BoolProperty(default=False,                update=updateNode, description="this tries to show as much data per line as the linewidth will allow")
-    depth           : IntProperty (default=    5, min= 0,        update=updateNode, description="List nesting level",  )
-    chop_up         : BoolProperty(default=False,                update=updateNode, description="perform extra data examination to reduce size of data before pprint (pretty printing, pformat)")
+    rounding        : IntProperty (default=    3, min= 0, soft_max=10, update=updateNode, name="Precision", description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits\nNot affected if there is no fractional part")
+    field_width     : IntProperty (default=    2, min= 1,              update=updateNode, name="Field Width", description="min 1\nMinimum length of number converted to string.\nUsed for float, int or boolean values")
+    line_width      : IntProperty (default=   60, min=20,              update=updateNode, name='Line Width (chars)')
+    compact         : BoolProperty(default=False,                      update=updateNode, description="this tries to show as much data per line as the linewidth will allow")
+    depth           : IntProperty (default=    5, min= 0,              update=updateNode, description="List nesting level",  )
+    chop_up         : BoolProperty(default=False,                      update=updateNode, description="perform extra data examination to reduce size of data before pprint (pretty printing, pformat)")
 
     def get_theme_colors_for_contrast(self):
         try:
