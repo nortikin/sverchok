@@ -74,6 +74,7 @@ class KnotvectorDict(object):
                 current_bucket = [knot]
         buckets.append(current_bucket)
         self._averages = []
+        self._bucket_ranges = []
         for bucket in buckets:
             avg = sum(bucket) / len(bucket)
             self._averages.append(avg)
@@ -112,6 +113,15 @@ class KnotvectorDict(object):
             if diff > 0:
                 result[knot] = diff
         return result
+
+    def items(self):
+        required = defaultdict(int)
+        for orig_knot, orig_multiplicity in self.knots.items():
+            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+                if k1 <= orig_knot <= k2:
+                    avg = self._averages[avg_idx]
+                    required[avg] = max(required[avg], orig_multiplicity)
+        return required.items()
 
 
 def unify_curves(curves, method="UNIFY", accuracy=6):
