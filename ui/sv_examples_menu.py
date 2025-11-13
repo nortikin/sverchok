@@ -40,8 +40,9 @@ def node_settings_pulldown(self, context):
             row.operator("sv.orbit_around_selection", icon="PROP_CON",text="",)
         else:
             row.operator("sv.orbit_around_selection", icon="SNAP_NORMAL", text="")
-        row.operator('sv.splash_screen_simple', text='', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
-        #row.operator('sv.splash_screen', text='', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
+        if bpy.app.version > (3,6,18):
+            row.operator('sv.splash_screen_simple', text='', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
+            # row.operator('sv.splash_screen', text='', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
 
 class SW_OT_Console(Operator):
     """Show/hide console"""
@@ -276,7 +277,6 @@ class SV_OT_ClearExamplesSearch(bpy.types.Operator):
         context.window_manager.sv_examples_search_string = ""
         return {'FINISHED'}
 
-
 classes = [
     SW_OT_Orbit_Around_Selection,
     SW_OT_Console,
@@ -285,6 +285,7 @@ classes = [
     SV_OT_ToggleExamplesSearch,
     SV_OT_ClearExamplesSearch
 ]
+
 
 
 def register():

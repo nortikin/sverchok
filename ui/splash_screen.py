@@ -413,10 +413,12 @@ class SV_OT_splash_screen_simple(Operator):
 operator_instance = None
 
 def register():
-    bpy.utils.register_class(SV_OT_splash_screen_simple)
+    if bpy.app.version > (3,6,18):
+        bpy.utils.register_class(SV_OT_splash_screen_simple)
 
 def unregister():
-    bpy.utils.unregister_class(SV_OT_splash_screen_simple)
+    if bpy.app.version > (3,6,18):
+        bpy.utils.unregister_class(SV_OT_splash_screen_simple)
 
 # Menu function to easily access the operator
 def menu_func(self, context):
