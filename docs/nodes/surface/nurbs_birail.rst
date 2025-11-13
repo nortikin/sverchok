@@ -141,6 +141,15 @@ This node has the following parameters:
     curves. This can work only when input curves have the same number of
     control points.
   
+* **Knotvector accuracy**. This parameter is available in the N panel only.
+  Accuracy (number of exact digits after decimal points) to be used for
+  knotvector unification algorithm. The default value is 6. Usually you do not
+  have to modify this parameter; but, if your curves have a lot of control
+  points (like, hundreds of them), or if knot values in curves knotvectors are
+  very near one another, you may wish to reduce accuracy in order to reduce the
+  number of control points in the resulting surface (the result will be less
+  precise, but will work faster).
+
   **Unify** option often generates a lot of additional control points for the
   resulting surface; it is more universal, and more precise in many cases.
   **Average** mode does not create additional control points, and so it works
