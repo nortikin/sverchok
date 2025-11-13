@@ -168,6 +168,15 @@ This node has the following parameters:
   faster; but **Average** mode is less universal, and in many cases it gives
   less precise interpolations. The default value is **Unify**.
 
+* **Knotvector accuracy**. This parameter is available in the N panel only.
+  Accuracy (number of exact digits after decimal points) to be used for
+  knotvector unification algorithm. The default value is 6. Usually you do not
+  have to modify this parameter; but, if your curves have a lot of control
+  points (like, hundreds of them), or if knot values in curves knotvectors are
+  very near one another, you may wish to reduce accuracy in order to reduce the
+  number of control points in the resulting surface (the result will be less
+  precise, but will work faster).
+
 * **Metric**. This parameter is available in the N panel only. Distance type
   used for interpolation along V direction. The available values are:
 
