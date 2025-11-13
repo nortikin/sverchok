@@ -976,19 +976,20 @@ the more precise the offset will be)
     curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
     kvs = [curve.get_knotvector() for curve in curves]
     lens = [len(kv) for kv in kvs]
-    if all(l == lens[0] for l in lens):
-        diffs = np.array([kv - kvs[0] for kv in kvs])
-        if abs(diffs).max() &lt; tolerance:
-            return curves
+    # if all(l == lens[0] for l in lens):
+    #     diffs = np.array([kv - kvs[0] for kv in kvs])
+    #     if abs(diffs).max() &lt; tolerance:
+    #         return curves
 
     if method == &#34;UNIFY&#34;:
-        dst_knots = KnotvectorDict(accuracy)
+        dst_knots = KnotvectorDict(tolerance)
         for i, curve in enumerate(curves):
-            m = sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2)
+            m = sv_knotvector.to_multiplicity(curve.get_knotvector())
             # print(f&#34;Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}&#34;)
             for u, count in m:
-                dst_knots.update(i, u, count)
+                dst_knots.put(u, count)
         # print(&#34;Dst&#34;, dst_knots)
+        dst_knots.calc_averages()
 
         result = []
         #     for i, curve1 in enumerate(curves):
@@ -998,23 +999,26 @@ the more precise the offset will be)
         #         result.append(curve1)
 
         for idx, curve in enumerate(curves):
-            diffs = []
-            # kv = np.round(curve.get_knotvector(), accuracy)
-            # curve = curve.copy(knotvector = kv)
-            # print(&#39;next curve&#39;, curve.get_knotvector())
+            kv = curve.get_knotvector().copy()
             ms = dict(
-                sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2)
+                sv_knotvector.to_multiplicity(kv)
             )
-            for dst_u, dst_multiplicity in dst_knots.items():
-                src_multiplicity = ms.get(dst_u, 0)
-                diff = dst_multiplicity - src_multiplicity
-                # print(f&#34;C#{idx}: U = {dst_u}, was = {src_multiplicity}, need = {dst_multiplicity}, diff = {diff}&#34;)
-                diffs.append((dst_u, diff))
-            # print(f&#34;Src {ms}, dst {dst_knots} =&gt; diff {diffs}&#34;)
-
-            for u, diff in diffs:
+            updates = dst_knots.get_updates(ms.keys())
+            #print(f&#34;Curve #{idx}, updates: {updates}&#34;)
+            updated_ms = []
+            for knot_idx, (knot, multiplicity) in enumerate(ms.items()):
+                if knot_idx in updates:
+                    updated_ms.append((updates[knot_idx], multiplicity))
+                else:
+                    updated_ms.append((knot, multiplicity))
+            ms = dict(updated_ms)
+            updated_kv = sv_knotvector.from_multiplicity(updated_ms)
+            curve = curve.copy(knotvector = updated_kv)
+            insertions = dst_knots.get_insertions(ms)
+            #print(&#34;Insertions&#34;, insertions)
+            for knot, diff in insertions.items():
                 if diff &gt; 0:
-                    curve = curve.insert_knot(u, diff)
+                    curve = curve.insert_knot(knot, diff)
             #                     if u in dst_knots.skip_insertions[idx]:
             #                         pass
             #                         print(f&#34;C: skip insertion T = {u}&#34;)
@@ -1130,7 +1134,7 @@ def unify_degrees(curves):
 <dl>
 <dt id="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict"><code class="flex name class">
 <span>class <span class="ident">KnotvectorDict</span></span>
-<span>(</span><span>accuracy)</span>
+<span>(</span><span>tolerance)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -1138,70 +1142,161 @@ def unify_degrees(curves):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class KnotvectorDict(object):
-    def __init__(self, accuracy):
-        self.multiplicities = []
-        self.accuracy = accuracy
-        self.done_knots = set()
-        self.skip_insertions = defaultdict(list)
+    def __init__(self, tolerance):
+        self.knots = defaultdict(int)
+        self.tolerance = tolerance
+        self._averages = []
+        self._bucket_ranges = []
 
-    def tolerance(self):
-        return 10 ** (-self.accuracy)
+    def put(self, knot, multiplicity):
+        self.knots[knot] = max(self.knots[knot], multiplicity)
 
-    def update(self, curve_idx, knot, multiplicity):
-        found_idx = None
-        found_knot = None
-        for idx, (c, k, m) in enumerate(self.multiplicities):
-            if curve_idx != c:
-                if abs(knot - k) &lt; self.tolerance():
-                    # print(f&#34;Found: #{curve_idx}: added {knot} ~= existing {k}&#34;)
-                    if (curve_idx, k) not in self.done_knots:
-                        found_idx = idx
-                        found_knot = k
-                        break
-        if found_idx is not None:
-            m = self.multiplicities[found_idx][2]
-            self.multiplicities[found_idx] = (curve_idx, knot, max(m, multiplicity))
-            self.skip_insertions[curve_idx].append(found_knot)
-        else:
-            self.multiplicities.append((curve_idx, knot, multiplicity))
+    def calc_averages(self):
+        tolerance = self.tolerance
+        all_knots = []
+        buckets = []
+        all_knots = list(sorted(self.knots.keys()))
+        current_bucket = [all_knots[0]]
+        for knot in all_knots[1:]:
+            if knot - current_bucket[0] &lt;= 2*tolerance:
+                current_bucket.append(knot)
+            else:
+                buckets.append(current_bucket)
+                current_bucket = [knot]
+        buckets.append(current_bucket)
+        self._averages = []
+        self._bucket_ranges = []
+        for bucket in buckets:
+            avg = sum(bucket) / len(bucket)
+            self._averages.append(avg)
+            k1 = bucket[0]
+            k2 = bucket[-1]
+            self._bucket_ranges.append((k1, k2))
 
-        self.done_knots.add((curve_idx, knot))
-
-    def get(self, knot):
-        result = 0
-        for c, k, m in self.multiplicities:
-            if abs(knot - k) &lt; self.tolerance():
-                result = max(result, m)
+    def get_updates(self, knots):
+        result = dict()
+        for src_knot_idx, knot in enumerate(knots):
+            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+                if k1 &lt;= knot &lt;= k2:
+                    result[src_knot_idx] = self._averages[avg_idx]
+                    break
         return result
 
-    def __repr__(self):
-        items = [f&#34;c#{c}: {k}: {m}&#34; for c, k, m in self.multiplicities]
-        s = &#34;, &#34;.join(items)
-        return &#34;{&#34; + s + &#34;}&#34;
+    def get_insertions(self, multiplicities):
+        existing = defaultdict(int)
+        for avg_idx, avg in enumerate(self._averages):
+            for knot, multiplicity in multiplicities.items():
+                k1, k2 = self._bucket_ranges[avg_idx]
+                if k1 &lt;= knot &lt;= k2:
+                    existing[avg_idx] += multiplicity
+        required = defaultdict(int)
+        for orig_knot, orig_multiplicity in self.knots.items():
+            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+                if k1 &lt;= orig_knot &lt;= k2:
+                    required[avg_idx] = max(required[avg_idx], orig_multiplicity)
+        result = defaultdict()
+        all_knots = set()
+        all_knots.update(existing.keys())
+        all_knots.update(required.keys())
+        for knot_idx in all_knots:
+            knot = self._averages[knot_idx]
+            diff = required[knot_idx] - existing[knot_idx]
+            if diff &gt; 0:
+                result[knot] = diff
+        return result
 
     def items(self):
-        max_per_knot = defaultdict(int)
-        for c, k, m in self.multiplicities:
-            max_per_knot[k] = max(max_per_knot[k], m)
-        keys = sorted(max_per_knot.keys())
-        return [(key, max_per_knot[key]) for key in keys]</code></pre>
+        required = defaultdict(int)
+        for orig_knot, orig_multiplicity in self.knots.items():
+            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+                if k1 &lt;= orig_knot &lt;= k2:
+                    avg = self._averages[avg_idx]
+                    required[avg] = max(required[avg], orig_multiplicity)
+        return required.items()</code></pre>
 </details>
 <div class="desc"></div>
 <h3>Methods</h3>
 <dl>
-<dt id="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.get"><code class="name flex">
-<span>def <span class="ident">get</span></span>(<span>self, knot)</span>
+<dt id="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.calc_averages"><code class="name flex">
+<span>def <span class="ident">calc_averages</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get(self, knot):
-    result = 0
-    for c, k, m in self.multiplicities:
-        if abs(knot - k) &lt; self.tolerance():
-            result = max(result, m)
+<pre><code class="python">def calc_averages(self):
+    tolerance = self.tolerance
+    all_knots = []
+    buckets = []
+    all_knots = list(sorted(self.knots.keys()))
+    current_bucket = [all_knots[0]]
+    for knot in all_knots[1:]:
+        if knot - current_bucket[0] &lt;= 2*tolerance:
+            current_bucket.append(knot)
+        else:
+            buckets.append(current_bucket)
+            current_bucket = [knot]
+    buckets.append(current_bucket)
+    self._averages = []
+    self._bucket_ranges = []
+    for bucket in buckets:
+        avg = sum(bucket) / len(bucket)
+        self._averages.append(avg)
+        k1 = bucket[0]
+        k2 = bucket[-1]
+        self._bucket_ranges.append((k1, k2))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.get_insertions"><code class="name flex">
+<span>def <span class="ident">get_insertions</span></span>(<span>self, multiplicities)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_insertions(self, multiplicities):
+    existing = defaultdict(int)
+    for avg_idx, avg in enumerate(self._averages):
+        for knot, multiplicity in multiplicities.items():
+            k1, k2 = self._bucket_ranges[avg_idx]
+            if k1 &lt;= knot &lt;= k2:
+                existing[avg_idx] += multiplicity
+    required = defaultdict(int)
+    for orig_knot, orig_multiplicity in self.knots.items():
+        for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+            if k1 &lt;= orig_knot &lt;= k2:
+                required[avg_idx] = max(required[avg_idx], orig_multiplicity)
+    result = defaultdict()
+    all_knots = set()
+    all_knots.update(existing.keys())
+    all_knots.update(required.keys())
+    for knot_idx in all_knots:
+        knot = self._averages[knot_idx]
+        diff = required[knot_idx] - existing[knot_idx]
+        if diff &gt; 0:
+            result[knot] = diff
+    return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.get_updates"><code class="name flex">
+<span>def <span class="ident">get_updates</span></span>(<span>self, knots)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_updates(self, knots):
+    result = dict()
+    for src_knot_idx, knot in enumerate(knots):
+        for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+            if k1 &lt;= knot &lt;= k2:
+                result[src_knot_idx] = self._averages[avg_idx]
+                break
     return result</code></pre>
 </details>
 <div class="desc"></div>
@@ -1215,54 +1310,26 @@ def unify_degrees(curves):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def items(self):
-    max_per_knot = defaultdict(int)
-    for c, k, m in self.multiplicities:
-        max_per_knot[k] = max(max_per_knot[k], m)
-    keys = sorted(max_per_knot.keys())
-    return [(key, max_per_knot[key]) for key in keys]</code></pre>
+    required = defaultdict(int)
+    for orig_knot, orig_multiplicity in self.knots.items():
+        for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+            if k1 &lt;= orig_knot &lt;= k2:
+                avg = self._averages[avg_idx]
+                required[avg] = max(required[avg], orig_multiplicity)
+    return required.items()</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.tolerance"><code class="name flex">
-<span>def <span class="ident">tolerance</span></span>(<span>self)</span>
+<dt id="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.put"><code class="name flex">
+<span>def <span class="ident">put</span></span>(<span>self, knot, multiplicity)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def tolerance(self):
-    return 10 ** (-self.accuracy)</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.update"><code class="name flex">
-<span>def <span class="ident">update</span></span>(<span>self, curve_idx, knot, multiplicity)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def update(self, curve_idx, knot, multiplicity):
-    found_idx = None
-    found_knot = None
-    for idx, (c, k, m) in enumerate(self.multiplicities):
-        if curve_idx != c:
-            if abs(knot - k) &lt; self.tolerance():
-                # print(f&#34;Found: #{curve_idx}: added {knot} ~= existing {k}&#34;)
-                if (curve_idx, k) not in self.done_knots:
-                    found_idx = idx
-                    found_knot = k
-                    break
-    if found_idx is not None:
-        m = self.multiplicities[found_idx][2]
-        self.multiplicities[found_idx] = (curve_idx, knot, max(m, multiplicity))
-        self.skip_insertions[curve_idx].append(found_knot)
-    else:
-        self.multiplicities.append((curve_idx, knot, multiplicity))
-
-    self.done_knots.add((curve_idx, knot))</code></pre>
+<pre><code class="python">def put(self, knot, multiplicity):
+    self.knots[knot] = max(self.knots[knot], multiplicity)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1397,10 +1464,11 @@ def unify_degrees(curves):
 <li>
 <h4><code><a title="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict" href="#sverchok.utils.curve.nurbs_algorithms.KnotvectorDict">KnotvectorDict</a></code></h4>
 <ul class="">
-<li><code><a title="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.get" href="#sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.get">get</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.calc_averages" href="#sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.calc_averages">calc_averages</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.get_insertions" href="#sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.get_insertions">get_insertions</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.get_updates" href="#sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.get_updates">get_updates</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.items" href="#sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.items">items</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.tolerance" href="#sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.tolerance">tolerance</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.update" href="#sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.update">update</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.put" href="#sverchok.utils.curve.nurbs_algorithms.KnotvectorDict.put">put</a></code></li>
 </ul>
 </li>
 <li>

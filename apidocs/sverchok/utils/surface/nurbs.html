@@ -74,7 +74,7 @@ el.replaceWith(d);
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.interpolate_nurbs_curves"><code class="name flex">
-<span>def <span class="ident">interpolate_nurbs_curves</span></span>(<span>curves, base_vs, target_vs, degree_v=None, knots_u='UNIFY', implementation='NATIVE')</span>
+<span>def <span class="ident">interpolate_nurbs_curves</span></span>(<span>curves,<br>base_vs,<br>target_vs,<br>degree_v=None,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>implementation='NATIVE')</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -83,6 +83,7 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">def interpolate_nurbs_curves(curves, base_vs, target_vs,
         degree_v = None, knots_u = &#39;UNIFY&#39;,
+        knotvector_accuracy = 6,
         implementation = SvNurbsSurface.NATIVE):
     &#34;&#34;&#34;
     Interpolate many NURBS curves between a list of NURBS curves, by lofting.
@@ -102,6 +103,7 @@ el.replaceWith(d);
     tknots = (base_vs - min_v) / (max_v - min_v)
     _,_,lofted = simple_loft(to_loft,
                 degree_v = degree_v, knots_u = knots_u,
+                knotvector_accuracy = knotvector_accuracy,
                 #metric = &#39;POINTS&#39;,
                 tknots = tknots,
                 implementation = implementation)
@@ -304,7 +306,7 @@ Returns: list of SvNurbsCurve of length N.</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.nurbs_birail"><code class="name flex">
-<span>def <span class="ident">nurbs_birail</span></span>(<span>path1,<br>path2,<br>profiles,<br>ts1=None,<br>ts2=None,<br>min_profiles=10,<br>knots_u='UNIFY',<br>degree_v=None,<br>metric='DISTANCE',<br>scale_uniform=True,<br>auto_rotate=False,<br>use_tangents='PATHS_AVG',<br>implementation='NATIVE')</span>
+<span>def <span class="ident">nurbs_birail</span></span>(<span>path1,<br>path2,<br>profiles,<br>ts1=None,<br>ts2=None,<br>min_profiles=10,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>degree_v=None,<br>metric='DISTANCE',<br>scale_uniform=True,<br>auto_rotate=False,<br>use_tangents='PATHS_AVG',<br>implementation='NATIVE')</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -315,6 +317,7 @@ Returns: list of SvNurbsCurve of length N.</p></div>
         ts1 = None, ts2 = None,
         min_profiles = 10,
         knots_u = &#39;UNIFY&#39;,
+        knotvector_accuracy = 6,
         degree_v = None, metric = &#39;DISTANCE&#39;,
         scale_uniform = True,
         auto_rotate = False,
@@ -392,6 +395,7 @@ Returns: list of SvNurbsCurve of length N.</p></div>
         profiles = interpolate_nurbs_curves(profiles, ts1, target_vs,
                     degree_v = min(max_degree, degree_v),
                     knots_u = knots_u,
+                    knotvector_accuracy = knotvector_accuracy,
                     implementation = implementation)
         #if not have_ts1:
         ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
@@ -455,7 +459,7 @@ Returns: list of SvNurbsCurve of length N.</p></div>
         pr_vector = pr_end - pr_start
         pr_length = np.linalg.norm(pr_vector)
         if pr_length &lt; 1e-6:
-            raise Exception(&#34;One of profiles is closed&#34;)
+            raise Exception(f&#34;One of profiles is closed: t={t_min} {pr_start} - t={t_max} {pr_end}&#34;)
         pr_dir = pr_vector / pr_length
         pr_x, pr_y, _ = tuple(pr_dir)
 
@@ -487,6 +491,7 @@ Returns: list of SvNurbsCurve of length N.</p></div>
 
     unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = degree_v,
             knots_u = knots_u, metric = metric,
+            knotvector_accuracy = knotvector_accuracy,
             implementation = implementation)
 
     return placed_profiles, unified_curves, v_curves, surface</code></pre>
@@ -519,14 +524,25 @@ Otherwise, try to figure out their rotation automatically.
 * generated NURBS surface.</p></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.nurbs_sweep"><code class="name flex">
-<span>def <span class="ident">nurbs_sweep</span></span>(<span>path,<br>profiles,<br>ts,<br>min_profiles,<br>algorithm,<br>knots_u='UNIFY',<br>metric='DISTANCE',<br>implementation='NATIVE',<br>**kwargs)</span>
+<span>def <span class="ident">nurbs_sweep</span></span>(<span>path,<br>profiles,<br>ts,<br>min_profiles,<br>algorithm,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>metric='DISTANCE',<br>implementation='NATIVE',<br>**kwargs)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = &#39;UNIFY&#39;, metric = &#39;DISTANCE&#39;, implementation = SvNurbsSurface.NATIVE, **kwargs):
+<pre><code class="python">def nurbs_sweep(
+    path,
+    profiles,
+    ts,
+    min_profiles,
+    algorithm,
+    knots_u=&#34;UNIFY&#34;,
+    knotvector_accuracy = 6,
+    metric=&#34;DISTANCE&#34;,
+    implementation=SvNurbsSurface.NATIVE,
+    **kwargs,
+):
     &#34;&#34;&#34;
     NURBS Sweep surface.
     
@@ -577,6 +593,7 @@ Otherwise, try to figure out their rotation automatically.
         profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
                     degree_v = min(max_degree, path.get_degree()),
                     knots_u = knots_u,
+                    knotvector_accuracy = knotvector_accuracy,
                     implementation = implementation)
         ts = np.linspace(t_min, t_max, num=min_profiles)
     else:
@@ -589,6 +606,7 @@ Otherwise, try to figure out their rotation automatically.
 
     return nurbs_sweep_impl(path, profiles, ts, frame_calculator,
                 knots_u=knots_u, metric=metric,
+                knotvector_accuracy = knotvector_accuracy,
                 implementation=implementation)</code></pre>
 </details>
 <div class="desc"><p>NURBS Sweep surface.</p>
@@ -615,14 +633,14 @@ HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL, NORMAL_DIR.
 * generated NURBS surface.</p></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.nurbs_sweep_impl"><code class="name flex">
-<span>def <span class="ident">nurbs_sweep_impl</span></span>(<span>path,<br>profiles,<br>ts,<br>frame_calculator,<br>knots_u='UNIFY',<br>metric='DISTANCE',<br>implementation='NATIVE')</span>
+<span>def <span class="ident">nurbs_sweep_impl</span></span>(<span>path,<br>profiles,<br>ts,<br>frame_calculator,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>metric='DISTANCE',<br>implementation='NATIVE')</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = &#39;UNIFY&#39;, metric = &#39;DISTANCE&#39;, implementation = SvNurbsSurface.NATIVE):
+<pre><code class="python">def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = &#39;UNIFY&#39;, knotvector_accuracy=6, metric = &#39;DISTANCE&#39;, implementation = SvNurbsSurface.NATIVE):
     &#34;&#34;&#34;
     NURBS Sweep implementation.
     Interface of this function is not flexible, so you usually want to call `nurbs_sweep&#39; instead.
@@ -658,6 +676,7 @@ HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL, NORMAL_DIR.
 
     unified_curves, v_curves, surface = simple_loft(to_loft, degree_v = path.get_degree(),
             knots_u = knots_u, metric = metric,
+            knotvector_accuracy = knotvector_accuracy,
             implementation = implementation)
     return to_loft, unified_curves, v_curves, surface</code></pre>
 </details>
