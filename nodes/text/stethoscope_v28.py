@@ -21,7 +21,7 @@ import pprint
 import re
 import bpy
 import blf
-import os, platform
+import os, platform, sys
 
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
 from bpy.app.handlers import persistent
@@ -59,50 +59,131 @@ def chop_up_data(data):
 
     return data
 
-class FloatPrecisionPrinter(pprint.PrettyPrinter):
-    def __init__(self, field_width=2, precision=3, **kwargs):
-        super().__init__(**kwargs)
-        self.precision = precision
-        self.field_width = field_width
+if sys.version_info<(3,10):
+    # fix for format prettyPrint for Blender <= 3.0.0 with python  3.9.x
+    class FloatPrecisionPrinter(pprint.PrettyPrinter):
+        def __init__(self, field_width=2, precision=3, **kwargs):
+            super().__init__(**kwargs)
+            self.precision = precision
+            self.field_width = field_width
 
-    def format(self, obj, context, maxlevels, level):
-        if isinstance(obj, float):
-            if obj<0:
-                text = f"{obj:>{self.field_width+1}.{self.precision}f}"
-            else:
-                text = f" {obj:>{self.field_width}.{self.precision}f}"
-            return text, True, False
-        elif isinstance(obj, bool):
-            text=" True" if obj==True else "False" 
-            return text, True, False
-        elif isinstance(obj, int):
-            text = f"{obj:{self.field_width}d}"
-            return text, True, False
-        elif isinstance(obj, Matrix):
-            len_rows = len(obj.row)
-            indent = " "*level
-            if len_rows==2:
-                row0 = super().format(list(obj.row[0]), context, maxlevels, level)
-                row1 = super().format(list(obj.row[1]), context, maxlevels, level)
-                text = f"Matrix(({row0[0]},\n        {indent+row1[0]}))"
+        def format(self, obj, context, maxlevels, level):
+            res = self._safe_repr(obj, context, maxlevels, level)
+            return res
+
+        def _safe_repr(self, obj, context, maxlevels, level):
+            if isinstance(obj, float):
+                if obj<0:
+                    text = f"{obj:>{self.field_width+1}.{self.precision}f}"
+                else:
+                    text = f" {obj:>{self.field_width}.{self.precision}f}"
                 return text, True, False
-            if len_rows==3:
-                row0 = super().format(list(obj.row[0]), context, maxlevels, level)
-                row1 = super().format(list(obj.row[1]), context, maxlevels, level)
-                row2 = super().format(list(obj.row[2]), context, maxlevels, level)
-                text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]}))"
+            elif isinstance(obj, bool):
+                text=" True" if obj==True else "False" 
                 return text, True, False
-            if len_rows==4:
-                row0 = super().format(list(obj.row[0]), context, maxlevels, level)
-                row1 = super().format(list(obj.row[1]), context, maxlevels, level)
-                row2 = super().format(list(obj.row[2]), context, maxlevels, level)
-                row3 = super().format(list(obj.row[3]), context, maxlevels, level)
-                text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]},\n        {indent+row3[0]}))"
+            elif isinstance(obj, int):
+                text = f"{obj:{self.field_width}d}"
                 return text, True, False
-            text = f"Matrix(): invalid row size: {len_rows}!"
-            return text, True, False
-            pass
-        return super().format(obj, context, maxlevels, level)
+            elif isinstance(obj, Matrix):
+                len_rows = len(obj.row)
+                indent = " "*level
+                if len_rows==2:
+                    row0 = self._safe_repr(list(obj.row[0]), context, maxlevels, level)
+                    row1 = self._safe_repr(list(obj.row[1]), context, maxlevels, level)
+                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]}))"
+                    return text, True, False
+                if len_rows==3:
+                    row0 = self._safe_repr(list(obj.row[0]), context, maxlevels, level)
+                    row1 = self._safe_repr(list(obj.row[1]), context, maxlevels, level)
+                    row2 = self._safe_repr(list(obj.row[2]), context, maxlevels, level)
+                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]}))"
+                    return text, True, False
+                if len_rows==4:
+                    row0 = self._safe_repr(list(obj.row[0]), context, maxlevels, level)
+                    row1 = self._safe_repr(list(obj.row[1]), context, maxlevels, level)
+                    row2 = self._safe_repr(list(obj.row[2]), context, maxlevels, level)
+                    row3 = self._safe_repr(list(obj.row[3]), context, maxlevels, level)
+                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]},\n        {indent+row3[0]}))"
+                    return text, True, False
+                text = f"Matrix(): invalid row size: {len_rows}!"
+                return text, True, False
+            elif isinstance(obj, (list, tuple)):
+                # --- list/tuple ---
+                if not obj:
+                    return repr(obj), True, False
+
+                # recursion for list — pprint call _safe_repr on every element
+                items = []
+                for x in obj:
+                    s, _, _ = self._safe_repr(x, context, maxlevels, level + 1)
+                    items.append(s)
+
+                if isinstance(obj, tuple):
+                    out = "(" + ", ".join(items) + ("," if len(obj) == 1 else "") + ")"
+                else:
+                    out = "[" + ", ".join(items) + "]"
+
+                return out, True, False
+            
+            elif isinstance(obj, dict):
+                # --- dict ---
+                if not obj:
+                    return "{}", True, False
+
+                parts = []
+                for k, v in obj.items():
+                    k_str, _, _ = self._safe_repr(k, context, maxlevels, level + 1)
+                    v_str, _, _ = self._safe_repr(v, context, maxlevels, level + 1)
+                    parts.append(f"{k_str}: {v_str}")
+
+                return "{" + ", ".join(parts) + "}", True, False
+            
+            return repr(obj), True, False
+else:
+    class FloatPrecisionPrinter(pprint.PrettyPrinter):
+        def __init__(self, field_width=2, precision=3, **kwargs):
+            super().__init__(**kwargs)
+            self.precision = precision
+            self.field_width = field_width
+
+        def format(self, obj, context, maxlevels, level):
+            if isinstance(obj, float):
+                if obj<0:
+                    text = f"{obj:>{self.field_width+1}.{self.precision}f}"
+                else:
+                    text = f" {obj:>{self.field_width}.{self.precision}f}"
+                return text, True, False
+            elif isinstance(obj, bool):
+                text=" True" if obj==True else "False" 
+                return text, True, False
+            elif isinstance(obj, int):
+                text = f"{obj:{self.field_width}d}"
+                return text, True, False
+            elif isinstance(obj, Matrix):
+                len_rows = len(obj.row)
+                indent = " "*level
+                if len_rows==2:
+                    row0 = super().format(list(obj.row[0]), context, maxlevels, level)
+                    row1 = super().format(list(obj.row[1]), context, maxlevels, level)
+                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]}))"
+                    return text, True, False
+                if len_rows==3:
+                    row0 = super().format(list(obj.row[0]), context, maxlevels, level)
+                    row1 = super().format(list(obj.row[1]), context, maxlevels, level)
+                    row2 = super().format(list(obj.row[2]), context, maxlevels, level)
+                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]}))"
+                    return text, True, False
+                if len_rows==4:
+                    row0 = super().format(list(obj.row[0]), context, maxlevels, level)
+                    row1 = super().format(list(obj.row[1]), context, maxlevels, level)
+                    row2 = super().format(list(obj.row[2]), context, maxlevels, level)
+                    row3 = super().format(list(obj.row[3]), context, maxlevels, level)
+                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]},\n        {indent+row3[0]}))"
+                    return text, True, False
+                text = f"Matrix(): invalid row size: {len_rows}!"
+                return text, True, False
+                pass
+            return super().format(obj, context, maxlevels, level)
 
 def parse_socket(socket, field_width, rounding, element_index, view_by_element, props):
 
