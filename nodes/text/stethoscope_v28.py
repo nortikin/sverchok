@@ -24,6 +24,7 @@ import blf
 import os, platform
 
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
+from bpy.app.handlers import persistent
 from bpy.props import FloatProperty
 from mathutils import Vector, Matrix
 
@@ -177,8 +178,18 @@ class SV_PT_StethoskopeFontPanelMK2(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         if hasattr(context, 'node'):
-            row0 = layout.row()
-            row0.template_ID(context.node, "font_pointer", open="font.open", unlink="font.unlink")  # https://docs.blender.org/api/current/bpy.types.UILayout.html#bpy.types.UILayout.template_ID
+            #col0 = layout.column(align=True)
+            #col0.label(text=' ')
+            #col0.scale_x=3.0
+            col0 = layout.column(align=True)
+            col0.label(text='Select fonts:')
+            #col0.scale_x=0.5
+            col0.template_ID(context.node, "font_pointer", open="font.open", unlink="font.unlink")  # https://docs.blender.org/api/current/bpy.types.UILayout.html#bpy.types.UILayout.template_ID
+            if context.node is not None and hasattr(context.node,'font_pointer') and context.node.font_pointer:
+                font_name = context.node.font_pointer.name
+            else:
+                font_name='-'
+            col0.label(text=f'{font_name}')
 
         pass
 
@@ -389,11 +400,18 @@ classes = [
 
 #register, unregister = bpy.utils.register_classes_factory(classes) - need individual call to clear fonts cache on reload addon
 
+@persistent
+def load_fonts_after_start(dummy):
+    from sverchok.ui.fonts.load_fonts import load_fonts
+    load_fonts()
+
 def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
     clear_font_cache_on_load(None)
+    bpy.app.handlers.load_post.append(load_fonts_after_start)
 
 def unregister():
     for class_name in reversed( classes ):
         bpy.utils.unregister_class(class_name)
+    bpy.app.handlers.load_post.remove(load_fonts_after_start)
