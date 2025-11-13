@@ -51,25 +51,20 @@ def unify_degrees(curves):
 
 
 class KnotvectorDict(object):
-    def __init__(self, accuracy):
+    def __init__(self, tolerance):
         self.knots = defaultdict(int)
-        self.accuracy = accuracy
+        self.tolerance = tolerance
         self._averages = []
         self._bucket_ranges = []
-
-    def tolerance(self):
-        return 10 ** (-self.accuracy)
 
     def put(self, knot, multiplicity):
         self.knots[knot] = max(self.knots[knot], multiplicity)
 
     def calc_averages(self):
-        tolerance = self.tolerance()
+        tolerance = self.tolerance
         all_knots = []
         buckets = []
-        for knot in self.knots.keys():
-            all_knots.append(knot)
-        all_knots = list(sorted(all_knots))
+        all_knots = list(sorted(self.knots.keys()))
         current_bucket = [all_knots[0]]
         for knot in all_knots[1:]:
             if knot - current_bucket[0] <= 2*tolerance:
@@ -130,7 +125,7 @@ def unify_curves(curves, method="UNIFY", accuracy=6):
     #         return curves
 
     if method == "UNIFY":
-        dst_knots = KnotvectorDict(accuracy)
+        dst_knots = KnotvectorDict(tolerance)
         for i, curve in enumerate(curves):
             m = sv_knotvector.to_multiplicity(curve.get_knotvector())
             # print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
