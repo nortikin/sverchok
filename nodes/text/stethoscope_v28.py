@@ -250,21 +250,25 @@ bpy.app.handlers.load_post.append(clear_font_cache_on_load)
 
 class SV_PT_StethoskopeFontPanelMK2(bpy.types.Panel):
     '''Select font for text display. For numeric data, it is recommended to use monospaced text.'''
+    # Do not use that combination of params else this panel will registered in the N-panel: 
+    # bl_label = "Font Settings"
+    # bl_space_type = 'NODE_EDITOR'
+    # bl_region_type = 'UI'
+    # bl_category = "Node"
+    # bl_context = "data"
+
+    # use this combination - popover will visible only in a node
+    bl_idname="SV_PT_StethoskopeFontPanelMK2"
     bl_label = "Font Settings"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Node"
-    bl_context = "data"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'WINDOW'
+    bl_ui_units_x = 14 # popover width
 
     def draw(self, context):
         layout = self.layout
         if hasattr(context, 'node'):
-            #col0 = layout.column(align=True)
-            #col0.label(text=' ')
-            #col0.scale_x=3.0
             col0 = layout.column(align=True)
             col0.label(text='Select fonts:')
-            #col0.scale_x=0.5
             col0.template_ID(context.node, "font_pointer", open="font.open", unlink="font.unlink")  # https://docs.blender.org/api/current/bpy.types.UILayout.html#bpy.types.UILayout.template_ID
             if context.node is not None and hasattr(context.node,'font_pointer') and context.node.font_pointer:
                 font_name = context.node.font_pointer.name
