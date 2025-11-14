@@ -129,10 +129,10 @@ class SvOB3BItemRemoveMK3(bpy.types.Operator):
 class SVOB3B_UL_NamesListMK3(bpy.types.UIList):
     '''Show objects in list item with controls'''
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        grid = layout.grid_flow(row_major=False, columns=5, align=True)
+        grid = layout.grid_flow(row_major=False, columns=6, align=True)
 
-        object_exists=False
-        item_icon = "GHOST_DISABLED"
+        # object_exists=False
+        # item_icon = "GHOST_DISABLED"
         # if item.name in bpy.data.objects:
         #     object_exists=True
         #     #bpy.data.objects[item.name].data
@@ -144,6 +144,8 @@ class SVOB3B_UL_NamesListMK3(bpy.types.UIList):
         #             ...
         # else:
         #     pass
+
+        item_icon = "GHOST_DISABLED"
         if item.object_pointer:
             try:
                 item_icon = 'OUTLINER_OB_' + item.object_pointer.type
@@ -152,8 +154,9 @@ class SVOB3B_UL_NamesListMK3(bpy.types.UIList):
 
 
         item_base = len(str(len(data.object_names)))
-        #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
         grid.label(text='', icon=item_icon)
+        #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
+        grid.column(align=True).label(text=f'{index:0{item_base}d}')
         grid.prop(item, 'object_pointer', text='')
 
         if item.object_pointer:
