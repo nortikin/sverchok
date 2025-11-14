@@ -1527,15 +1527,12 @@ def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', ukn
 
     return surface
 
-<<<<<<< HEAD
-def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', knotvector_accuracy=6, metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
-=======
 def nurbs_sweep_impl(path, profiles, ts, frame_calculator,
         knots_u = 'UNIFY',
+        knotvector_accuracy = 6,
         metric = 'DISTANCE',
         implementation = SvNurbsSurface.NATIVE,
         logger = None):
->>>>>>> 8a8f53b22 ("nurbs birail": an option to use Gordon algorithm.)
     """
     NURBS Sweep implementation.
     Interface of this function is not flexible, so you usually want to call `nurbs_sweep' instead.
@@ -1571,30 +1568,12 @@ def nurbs_sweep_impl(path, profiles, ts, frame_calculator,
 
     unified_curves, v_curves, surface = simple_loft(to_loft, degree_v = path.get_degree(),
             knots_u = knots_u, metric = metric,
-<<<<<<< HEAD
             knotvector_accuracy = knotvector_accuracy,
-            implementation = implementation)
-    return to_loft, unified_curves, v_curves, surface
-
-def nurbs_sweep(
-    path,
-    profiles,
-    ts,
-    min_profiles,
-    algorithm,
-    knots_u="UNIFY",
-    knotvector_accuracy = 6,
-    metric="DISTANCE",
-    implementation=SvNurbsSurface.NATIVE,
-    **kwargs,
-):
-=======
             implementation = implementation,
             logger = logger)
     return to_loft, unified_curves, v_curves, surface
 
-def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE, logger=None, **kwargs):
->>>>>>> 8a8f53b22 ("nurbs birail": an option to use Gordon algorithm.)
+def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', knotvector_accuracy = 6, metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE, logger=None, **kwargs):
     """
     NURBS Sweep surface.
     
@@ -1648,13 +1627,9 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
         profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
                     degree_v = min(max_degree, path.get_degree()),
                     knots_u = knots_u,
-<<<<<<< HEAD
                     knotvector_accuracy = knotvector_accuracy,
-                    implementation = implementation)
-=======
                     implementation = implementation,
                     logger = logger)
->>>>>>> 8a8f53b22 ("nurbs birail": an option to use Gordon algorithm.)
         ts = np.linspace(t_min, t_max, num=min_profiles)
     else:
         profiles = repeat_last_for_length(profiles, min_profiles)
@@ -1666,24 +1641,17 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
 
     return nurbs_sweep_impl(path, profiles, ts, frame_calculator,
                 knots_u=knots_u, metric=metric,
-<<<<<<< HEAD
                 knotvector_accuracy = knotvector_accuracy,
-                implementation=implementation)
-=======
                 implementation=implementation,
                 logger = logger)
->>>>>>> 8a8f53b22 ("nurbs birail": an option to use Gordon algorithm.)
 
 def prepare_nurbs_birail(path1, path2, profiles,
         ts1 = None, ts2 = None,
         min_profiles = 10,
-<<<<<<< HEAD
         knots_u = 'UNIFY',
         knotvector_accuracy = 6,
-        degree_v = None, metric = 'DISTANCE',
-=======
         degree_v = None,
->>>>>>> 8a8f53b22 ("nurbs birail": an option to use Gordon algorithm.)
+        metric = 'DISTANCE',
         scale_uniform = True,
         auto_rotate = False,
         use_tangents = 'PATHS_AVG',
@@ -1731,13 +1699,9 @@ def prepare_nurbs_birail(path1, path2, profiles,
         profiles = interpolate_nurbs_curves(profiles, ts1, target_vs,
                     degree_v = min(max_degree, degree_v),
                     knots_u = knots_u,
-<<<<<<< HEAD
                     knotvector_accuracy = knotvector_accuracy,
-                    implementation = implementation)
-=======
                     implementation = implementation,
                     logger = logger)
->>>>>>> 8a8f53b22 ("nurbs birail": an option to use Gordon algorithm.)
         #if not have_ts1:
         ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
         #if not have_ts2:
@@ -1835,6 +1799,7 @@ def nurbs_birail(path1, path2, profiles,
         ts1 = None, ts2 = None,
         min_profiles = 10,
         knots_u = 'UNIFY',
+        knotvector_accuracy = 6,
         degree_v = None, metric = 'DISTANCE',
         scale_uniform = True,
         auto_rotate = False,
@@ -1872,7 +1837,7 @@ def nurbs_birail(path1, path2, profiles,
         * generated NURBS surface.
     """
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     placed_profiles = prepare_nurbs_birail(path1, path2, profiles,
             ts1 = ts1, ts2 = ts2,
@@ -1885,13 +1850,9 @@ def nurbs_birail(path1, path2, profiles,
 
     unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = degree_v,
             knots_u = knots_u, metric = metric,
-<<<<<<< HEAD
             knotvector_accuracy = knotvector_accuracy,
-            implementation = implementation)
-=======
             implementation = implementation,
             logger = logger)
->>>>>>> 8a8f53b22 ("nurbs birail": an option to use Gordon algorithm.)
 
     return placed_profiles, unified_curves, v_curves, surface
 
