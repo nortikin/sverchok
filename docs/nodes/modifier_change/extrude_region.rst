@@ -1,8 +1,8 @@
 Extrude Region
 ==============
 
-.. image:: https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png
-  :target: https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png
+.. image:: https://github.com/user-attachments/assets/da0d041b-88ab-4d0e-a602-71fdbb609c4a
+  :target: https://github.com/user-attachments/assets/da0d041b-88ab-4d0e-a602-71fdbb609c4a
 
 Functionality
 -------------
