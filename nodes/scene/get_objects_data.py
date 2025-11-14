@@ -9,6 +9,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty, EnumProperty
 import bmesh
 from mathutils import Vector, Matrix
+import json
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
@@ -24,9 +25,14 @@ import numpy as np
 
 
 class SvOB3BDataCollectionMK3(bpy.types.PropertyGroup):
+    object_pointer: bpy.props.PointerProperty(
+        name="object",
+        type=bpy.types.Object
+    )
     name: bpy.props.StringProperty()
     icon: bpy.props.StringProperty(default="BLANK1")
     exclude: bpy.props.BoolProperty(
+        default=False,
         description='Exclude from process',
     )
 
@@ -123,26 +129,34 @@ class SvOB3BItemRemoveMK3(bpy.types.Operator):
 class SVOB3B_UL_NamesListMK3(bpy.types.UIList):
     '''Show objects in list item with controls'''
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        grid = layout.grid_flow(row_major=False, columns=4, align=True)
+        grid = layout.grid_flow(row_major=False, columns=5, align=True)
 
         object_exists=False
         item_icon = "GHOST_DISABLED"
-        if item.name in bpy.data.objects:
-            object_exists=True
-            #bpy.data.objects[item.name].data
-            item_icon = item.icon
-            if not item.icon or item.icon == "BLANK1":
-                try:
-                    item_icon = 'OUTLINER_OB_' + bpy.data.objects[item.name].type
-                except:
-                    ...
-        else:
-            pass
+        # if item.name in bpy.data.objects:
+        #     object_exists=True
+        #     #bpy.data.objects[item.name].data
+        #     item_icon = item.icon
+        #     if not item.icon or item.icon == "BLANK1":
+        #         try:
+        #             item_icon = 'OUTLINER_OB_' + bpy.data.objects[item.name].type
+        #         except:
+        #             ...
+        # else:
+        #     pass
+        if item.object_pointer:
+            try:
+                item_icon = 'OUTLINER_OB_' + item.object_pointer.type
+            except:
+                ...
+
 
         item_base = len(str(len(data.object_names)))
-        grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
+        #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
+        grid.label(text='', icon=item_icon)
+        grid.prop(item, 'object_pointer', text='')
 
-        if object_exists:
+        if item.object_pointer:
             op = grid.operator(SvOB3ItemSelectObjectMK3.bl_idname, icon='CURSOR', text='', emboss=False)
             op.idx = index
         else:
@@ -154,11 +168,12 @@ class SVOB3B_UL_NamesListMK3(bpy.types.UIList):
         else:
             exclude_icon='PINNED'
 
-        if object_exists:
+        if item.object_pointer:
             op = grid.operator(SvOB3BItemEnablerMK3.bl_idname, icon=exclude_icon, text='', emboss=False)
             op.fn_name = 'ENABLER'
             op.idx = index
         else:
+            op = grid.operator(SvOB3ItemEmptyOperatorMK3.bl_idname, icon='BLANK1', text='', emboss=False)
             pass
         
         op = grid.operator(SvOB3BItemRemoveMK3.bl_idname, icon='X', text='', emboss=False)
@@ -678,6 +693,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         for name in names:
             item = self.object_names.add()
+            item.object_pointer = bpy.data.objects[name]
             item.name = name
             item.icon = 'OUTLINER_OB_' + bpy.data.objects[name].type
 
@@ -696,7 +712,9 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
 
         for name in names:
-            self.object_names.add().name = name
+            elem = self.object_names.add()
+            elem.object_pointer = bpy.data.objects[name]
+            elem.name = name
             self.object_names.move(len(self.object_names)-1, 0)
             self.active_obj_index=0
 
@@ -917,7 +935,8 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         if isinstance(objs[0], list):
             objs = objs[0]
         if not objs:
-            objs = (data_objects.get(o.name) for o in self.object_names if o.exclude==False)
+            #objs = (data_objects.get(o.name) for o in self.object_names if o.exclude==False)
+            objs = (o.object_pointer for o in self.object_names if o.exclude==False and o.object_pointer)
 
         # iterate through references
         for obj in objs:
@@ -1259,6 +1278,46 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 outputs['object'].sv_set(objs)
             else:
                 outputs['object'].sv_set([data_objects.get(o.name) for o in self.object_names])
+            pass
+        pass
+    pass
+
+    def load_from_json(self, node_data: dict, import_version: float):
+        '''function to get data when importing from json'''
+        data_objects = bpy.data.objects
+
+        for item in self.object_names:
+            if item.name in data_objects:
+                item.object_pointer = data_objects[item.name]
+
+        if 'object_names' in node_data:
+            data_list = node_data.get('object_names')
+            if data_list:
+                data = json.loads(data_list)
+                for I, k in enumerate(data):
+                    if len(self.self.object_names)<=I-1:
+                        name    = k['name']
+                        exclude = k['exclude']
+                        if name in data_objects:
+                            self.object_names[I].object_pointer = data_objects[name]
+                            pass
+                        self.object_names[I].exclude = exclude
+                    else:
+                        continue
+                    pass
+        pass
+
+    def save_to_json(self, node_data: list):
+        '''function to set data for exporting json'''
+        data = []
+        for item in self.object_names:
+            if item.object_pointer:
+                data.append( dict(  name=item.object_pointer.name, exclude=item.exclude ) )
+            else:
+                data.append( dict(  name='', exclude=item.exclude ) )
+
+        data_json_str = json.dumps(data)
+        node_data['object_names'] = data_json_str
 
 
 classes = [SvOB3ItemEmptyOperatorMK3, SvOB3BHighlightAllObjectsInSceneMK3, SvOB3BHighlightProcessedObjectsInSceneMK3, SvOB3BViewAlignMK3, SvOB3BClearObjectsFromListMK3, SvOB3BMoveDownMK3, SvOB3BMoveUpMK3, SvOB3BAddObjectsFromSceneUpMK3, SvOB3ItemSelectObjectMK3, SvOB3BItemEnablerMK3, SvOB3BItemRemoveMK3, SvOB3BItemOperatorMK3, SvOB3BDataCollectionMK3, SVOB3B_UL_NamesListMK3, SvOB3BCallbackMK3, SvGetObjectsDataMK3]
