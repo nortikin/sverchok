@@ -40,7 +40,8 @@ def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     segments = []
     for t1, t2 in zip(t_values, t_values[1:]):
         segment = curve.cut_segment(t1, t2, rescale=True)
-        segments.append(segment)
+        if segment is not None:
+            segments.append(segment)
     
     result = segments[0]
     for segment in segments[1:]:
@@ -49,7 +50,7 @@ def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     
     return result
 
-def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, knotvector_accuracy=6, reparametrize_tolerance=1e-2, logger=None):
+def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, cyclic_u = False, cyclic_v = False, knotvector_accuracy=6, reparametrize_tolerance=1e-2, logger=None):
     """
     Generate a NURBS surface from a net of NURBS curves, by use of Gordon's algorithm.
 
@@ -98,6 +99,17 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     u_curves = unify_curves(u_curves, accuracy=knotvector_accuracy)#, method='AVERAGE')
     v_curves = unify_curves_degree(v_curves)
     v_curves = unify_curves(v_curves, accuracy=knotvector_accuracy)#, method='AVERAGE')
+
+    if cyclic_u:
+        u_curves.append(u_curves[0])
+        print("U:Was", intersections.shape)
+        intersections = np.concatenate((intersections, np.transpose(intersections[:,0][np.newaxis], axes=(1,0,2))), axis=1)
+        print("U:New", intersections.shape)
+    if cyclic_v:
+        v_curves.append(v_curves[0])
+        print("V:Was", intersections.shape)
+        intersections = np.concatenate((intersections, intersections[0,:][np.newaxis]))
+        print("V:New", intersections.shape)
 
     u_curves_degree = u_curves[0].get_degree()
     v_curves_degree = v_curves[0].get_degree()

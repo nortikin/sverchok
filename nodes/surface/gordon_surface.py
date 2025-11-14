@@ -48,8 +48,22 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         min = 1, max = 10,
         update = updateNode)
 
+    cyclic_u : BoolProperty(
+        name = "Cyclic U",
+        default = False,
+        update = updateNode
+    )
+
+    cyclic_v : BoolProperty(
+        name = "Cyclic V",
+        default = False,
+        update = updateNode
+    )
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'explicit_t_values')
+        layout.prop(self, 'cyclic_u')
+        layout.prop(self, 'cyclic_v')
 
     def draw_buttons_ext(self, context, layout):
         if not self.explicit_t_values:
@@ -116,7 +130,9 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                 kwargs = {'u_knots': np.array(t1s), 'v_knots': np.array(t2s)}
             else:
                 kwargs = dict()
-            _, _, _, surface = gordon_surface(u_curves, v_curves, intersections, metric=self.metric, knotvector_accuracy = self.knotvector_accuracy, **kwargs)
+            _, _, _, surface = gordon_surface(u_curves, v_curves, intersections,
+                                              cyclic_u = self.cyclic_u, cyclic_v = self.cyclic_v,
+                                              metric=self.metric, knotvector_accuracy = self.knotvector_accuracy, **kwargs)
             surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)
