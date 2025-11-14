@@ -139,15 +139,27 @@ class SvExtrudeRegionNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         layout.label(text=socket.name)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "transform_mode")
+        grid0 = layout.grid_flow(row_major=True, columns=1, align=True)
+        grid0.label(text='Transformation mode:')
+        grid0.row().prop(self, "transform_mode", expand=True)
+
+        grid1 = layout.grid_flow(row_major=True, columns=2, align=True)
+        grid1.enabled=False
         if self.transform_mode == "Matrix":
-            layout.prop(self, "multiple", toggle=True)
+            grid1.enabled=True
+
+        grid1.label(text='Multiple Extrude:')
+        grid1.prop(self, "multiple", text='')
+
+        grid2 = layout.grid_flow(row_major=True, columns=2, align=True)
+        grid2.label(text='Keep original:')
+        grid2.prop(self, "keep_original", text='')
         if is_290:
-            layout.prop(self, 'dissolve_ortho_edges')
+            grid2.label(text='Dissolve Orthogonal Edges:')
+            grid2.prop(self, 'dissolve_ortho_edges', text='')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, "keep_original", toggle=True)
 
     def get_out_mask(self, bm, extruded_faces, extruded_verts):
         mask_layer = bm.faces.layers.int.get('mask')
