@@ -1687,6 +1687,7 @@ def prepare_nurbs_birail(path1, path2, profiles,
         scale_uniform = True,
         auto_rotate = False,
         use_tangents = 'PATHS_AVG',
+        implementation=SvNurbsSurface.NATIVE,
         logger = None):
 
     n_profiles = len(profiles)
