@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from audioop import mul
 import numpy as np
 from collections import defaultdict
 
@@ -50,53 +51,77 @@ def unify_degrees(curves):
 
 
 class KnotvectorDict(object):
-    def __init__(self, accuracy):
-        self.multiplicities = []
-        self.accuracy = accuracy
-        self.done_knots = set()
-        self.skip_insertions = defaultdict(list)
+    def __init__(self, tolerance):
+        self.knots = defaultdict(int)
+        self.tolerance = tolerance
+        self._averages = []
+        self._bucket_ranges = []
 
-    def tolerance(self):
-        return 10 ** (-self.accuracy)
+    def put(self, knot, multiplicity):
+        self.knots[knot] = max(self.knots[knot], multiplicity)
 
-    def update(self, curve_idx, knot, multiplicity):
-        found_idx = None
-        found_knot = None
-        for idx, (c, k, m) in enumerate(self.multiplicities):
-            if curve_idx != c:
-                if abs(knot - k) < self.tolerance():
-                    # print(f"Found: #{curve_idx}: added {knot} ~= existing {k}")
-                    if (curve_idx, k) not in self.done_knots:
-                        found_idx = idx
-                        found_knot = k
-                        break
-        if found_idx is not None:
-            m = self.multiplicities[found_idx][2]
-            self.multiplicities[found_idx] = (curve_idx, knot, max(m, multiplicity))
-            self.skip_insertions[curve_idx].append(found_knot)
-        else:
-            self.multiplicities.append((curve_idx, knot, multiplicity))
+    def calc_averages(self):
+        tolerance = self.tolerance
+        all_knots = []
+        buckets = []
+        all_knots = list(sorted(self.knots.keys()))
+        current_bucket = [all_knots[0]]
+        for knot in all_knots[1:]:
+            if knot - current_bucket[0] <= 2*tolerance:
+                current_bucket.append(knot)
+            else:
+                buckets.append(current_bucket)
+                current_bucket = [knot]
+        buckets.append(current_bucket)
+        self._averages = []
+        self._bucket_ranges = []
+        for bucket in buckets:
+            avg = sum(bucket) / len(bucket)
+            self._averages.append(avg)
+            k1 = bucket[0]
+            k2 = bucket[-1]
+            self._bucket_ranges.append((k1, k2))
 
-        self.done_knots.add((curve_idx, knot))
-
-    def get(self, knot):
-        result = 0
-        for c, k, m in self.multiplicities:
-            if abs(knot - k) < self.tolerance():
-                result = max(result, m)
+    def get_updates(self, knots):
+        result = dict()
+        for src_knot_idx, knot in enumerate(knots):
+            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+                if k1 <= knot <= k2:
+                    result[src_knot_idx] = self._averages[avg_idx]
+                    break
         return result
 
-    def __repr__(self):
-        items = [f"c#{c}: {k}: {m}" for c, k, m in self.multiplicities]
-        s = ", ".join(items)
-        return "{" + s + "}"
+    def get_insertions(self, multiplicities):
+        existing = defaultdict(int)
+        for avg_idx, avg in enumerate(self._averages):
+            for knot, multiplicity in multiplicities.items():
+                k1, k2 = self._bucket_ranges[avg_idx]
+                if k1 <= knot <= k2:
+                    existing[avg_idx] += multiplicity
+        required = defaultdict(int)
+        for orig_knot, orig_multiplicity in self.knots.items():
+            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+                if k1 <= orig_knot <= k2:
+                    required[avg_idx] = max(required[avg_idx], orig_multiplicity)
+        result = defaultdict()
+        all_knots = set()
+        all_knots.update(existing.keys())
+        all_knots.update(required.keys())
+        for knot_idx in all_knots:
+            knot = self._averages[knot_idx]
+            diff = required[knot_idx] - existing[knot_idx]
+            if diff > 0:
+                result[knot] = diff
+        return result
 
     def items(self):
-        max_per_knot = defaultdict(int)
-        for c, k, m in self.multiplicities:
-            max_per_knot[k] = max(max_per_knot[k], m)
-        keys = sorted(max_per_knot.keys())
-        return [(key, max_per_knot[key]) for key in keys]
+        required = defaultdict(int)
+        for orig_knot, orig_multiplicity in self.knots.items():
+            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+                if k1 <= orig_knot <= k2:
+                    avg = self._averages[avg_idx]
+                    required[avg] = max(required[avg], orig_multiplicity)
+        return required.items()
 
 
 def unify_curves(curves, method="UNIFY", accuracy=6):
@@ -104,19 +129,20 @@ def unify_curves(curves, method="UNIFY", accuracy=6):
     curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
     kvs = [curve.get_knotvector() for curve in curves]
     lens = [len(kv) for kv in kvs]
-    if all(l == lens[0] for l in lens):
-        diffs = np.array([kv - kvs[0] for kv in kvs])
-        if abs(diffs).max() < tolerance:
-            return curves
+    # if all(l == lens[0] for l in lens):
+    #     diffs = np.array([kv - kvs[0] for kv in kvs])
+    #     if abs(diffs).max() < tolerance:
+    #         return curves
 
     if method == "UNIFY":
-        dst_knots = KnotvectorDict(accuracy)
+        dst_knots = KnotvectorDict(tolerance)
         for i, curve in enumerate(curves):
-            m = sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2)
+            m = sv_knotvector.to_multiplicity(curve.get_knotvector())
             # print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
             for u, count in m:
-                dst_knots.update(i, u, count)
+                dst_knots.put(u, count)
         # print("Dst", dst_knots)
+        dst_knots.calc_averages()
 
         result = []
         #     for i, curve1 in enumerate(curves):
@@ -126,23 +152,26 @@ def unify_curves(curves, method="UNIFY", accuracy=6):
         #         result.append(curve1)
 
         for idx, curve in enumerate(curves):
-            diffs = []
-            # kv = np.round(curve.get_knotvector(), accuracy)
-            # curve = curve.copy(knotvector = kv)
-            # print('next curve', curve.get_knotvector())
+            kv = curve.get_knotvector().copy()
             ms = dict(
-                sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2)
+                sv_knotvector.to_multiplicity(kv)
             )
-            for dst_u, dst_multiplicity in dst_knots.items():
-                src_multiplicity = ms.get(dst_u, 0)
-                diff = dst_multiplicity - src_multiplicity
-                # print(f"C#{idx}: U = {dst_u}, was = {src_multiplicity}, need = {dst_multiplicity}, diff = {diff}")
-                diffs.append((dst_u, diff))
-            # print(f"Src {ms}, dst {dst_knots} => diff {diffs}")
-
-            for u, diff in diffs:
+            updates = dst_knots.get_updates(ms.keys())
+            #print(f"Curve #{idx}, updates: {updates}")
+            updated_ms = []
+            for knot_idx, (knot, multiplicity) in enumerate(ms.items()):
+                if knot_idx in updates:
+                    updated_ms.append((updates[knot_idx], multiplicity))
+                else:
+                    updated_ms.append((knot, multiplicity))
+            ms = dict(updated_ms)
+            updated_kv = sv_knotvector.from_multiplicity(updated_ms)
+            curve = curve.copy(knotvector = updated_kv)
+            insertions = dst_knots.get_insertions(ms)
+            #print("Insertions", insertions)
+            for knot, diff in insertions.items():
                 if diff > 0:
-                    curve = curve.insert_knot(u, diff)
+                    curve = curve.insert_knot(knot, diff)
             #                     if u in dst_knots.skip_insertions[idx]:
             #                         pass
             #                         print(f"C: skip insertion T = {u}")
