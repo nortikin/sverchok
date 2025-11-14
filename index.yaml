@@ -725,7 +725,7 @@
 - Scene:
     - icon_name: SCENE_DATA
     - extra_menu: ConnectionPartialMenu
-    - SvGetObjectsDataMK3
+    - SvGetObjectsDataMK4
     - SvObjInLite
     - SvCurveInputNode
     - SvFCurveInNodeMK1

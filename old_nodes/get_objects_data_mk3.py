@@ -9,7 +9,6 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty, EnumProperty
 import bmesh
 from mathutils import Vector, Matrix
-import json
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
@@ -24,15 +23,10 @@ from sverchok.utils.blender_mesh import (
 import numpy as np
 
 
-class SvOB3BDataCollectionMK4(bpy.types.PropertyGroup):
-    object_pointer: bpy.props.PointerProperty(
-        name="object",
-        type=bpy.types.Object
-    )
+class SvOB3BDataCollectionMK3(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
     icon: bpy.props.StringProperty(default="BLANK1")
     exclude: bpy.props.BoolProperty(
-        default=False,
         description='Exclude from process',
     )
 
@@ -40,9 +34,9 @@ class SvOB3BDataCollectionMK4(bpy.types.PropertyGroup):
 class ReadingObjectDataError(Exception):
     pass
 
-class SvOB3ItemSelectObjectMK4(bpy.types.Operator):
+class SvOB3ItemSelectObjectMK3(bpy.types.Operator):
     '''Select object as active in 3D Viewport. Use shift to add object into current selection of objects in scene.'''
-    bl_idname = "node.sv_ob3_item_select_object_mk4"
+    bl_idname = "node.sv_ob3_item_select_object_mk3"
     bl_label = "Select object as active"
 
     node_name: bpy.props.StringProperty()
@@ -54,27 +48,26 @@ class SvOB3ItemSelectObjectMK4(bpy.types.Operator):
         node = context.node
         if node:
             if self.idx>=0 and self.idx<=len(node.object_names)-1:
-                object_pointer = node.object_names[self.idx].object_pointer
-                for area in bpy.context.screen.areas:
-                    if area.type == 'VIEW_3D':
-                        #with context.temp_override(area = area , region = area.regions[-1]):
-                            if event.shift==False:
-                                # Если Shift не нажат, то сбросить выделения всех объектов:
-                                for o in bpy.context.view_layer.objects:
-                                    o.select_set(False)
-                            if object_pointer.name in bpy.context.view_layer.objects:
-                                bpy.context.view_layer.objects.active = object_pointer
-                                if object_pointer.select_get()==False:
-                                    object_pointer.select_set(True)
-                            else:
-                                self.report({'INFO'}, f"Object is not in the current scene")
-                            break
+                object_name = node.object_names[self.idx].name
+                if object_name in bpy.data.objects:
+                    obj = bpy.data.objects[object_name]
+                    for area in bpy.context.screen.areas:
+                        if area.type == 'VIEW_3D':
+                            with context.temp_override(area = area , region = area.regions[-1]):
+                                if event.shift==False:
+                                    # Если Shift не нажат, то сбросить выделения всех объектов:
+                                    for o in bpy.context.view_layer.objects:
+                                        o.select_set(False)
+                                bpy.context.view_layer.objects.active = obj
+                                if obj.select_get()==False:
+                                    obj.select_set(True)
+                                break
             pass
         return {'FINISHED'}
     
-class SvOB3BItemEnablerMK4(bpy.types.Operator):
+class SvOB3BItemEnablerMK3(bpy.types.Operator):
     '''Enable/Disable object to process.\nCtrl button to disable all objects first\nShift button to inverse list.'''
-    bl_idname = "node.sv_ob3b_item_enabler_mk4"
+    bl_idname = "node.sv_ob3b_item_enabler_mk3"
     bl_label = "Processed"
 
     fn_name: StringProperty(default='')
@@ -98,9 +91,9 @@ class SvOB3BItemEnablerMK4(bpy.types.Operator):
                 context.node.process_node(None)
         return {'FINISHED'}
 
-class SvOB3ItemEmptyOperatorMK4(bpy.types.Operator):
+class SvOB3ItemEmptyOperatorMK3(bpy.types.Operator):
     '''Empty operator to fill empty cells in grid'''
-    bl_idname = "node.sv_ob3_empty_operator_mk4"
+    bl_idname = "node.sv_ob3_empty_operator_mk3"
     bl_label = "Processed"
 
     fn_name: StringProperty(default='')
@@ -109,9 +102,9 @@ class SvOB3ItemEmptyOperatorMK4(bpy.types.Operator):
     def invoke(self, context, event):
         return {'FINISHED'}
 
-class SvOB3BItemRemoveMK4(bpy.types.Operator):
+class SvOB3BItemRemoveMK3(bpy.types.Operator):
     '''Remove object from list'''
-    bl_idname = "node.sv_ob3b_item_remove_mk4"
+    bl_idname = "node.sv_ob3b_item_remove_mk3"
     bl_label = "Remove"
 
     fn_name: StringProperty(default='')
@@ -127,67 +120,55 @@ class SvOB3BItemRemoveMK4(bpy.types.Operator):
 
 
 
-class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
+class SVOB3B_UL_NamesListMK3(bpy.types.UIList):
     '''Show objects in list item with controls'''
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        grid = layout.grid_flow(row_major=False, columns=6, align=True)
+        grid = layout.grid_flow(row_major=False, columns=4, align=True)
 
-        # object_exists=False
-        # item_icon = "GHOST_DISABLED"
-        # if item.name in bpy.data.objects:
-        #     object_exists=True
-        #     #bpy.data.objects[item.name].data
-        #     item_icon = item.icon
-        #     if not item.icon or item.icon == "BLANK1":
-        #         try:
-        #             item_icon = 'OUTLINER_OB_' + bpy.data.objects[item.name].type
-        #         except:
-        #             ...
-        # else:
-        #     pass
-
+        object_exists=False
         item_icon = "GHOST_DISABLED"
-        if item.object_pointer:
-            try:
-                item_icon = 'OUTLINER_OB_' + item.object_pointer.type
-            except:
-                ...
-
+        if item.name in bpy.data.objects:
+            object_exists=True
+            #bpy.data.objects[item.name].data
+            item_icon = item.icon
+            if not item.icon or item.icon == "BLANK1":
+                try:
+                    item_icon = 'OUTLINER_OB_' + bpy.data.objects[item.name].type
+                except:
+                    ...
+        else:
+            pass
 
         item_base = len(str(len(data.object_names)))
-        grid.label(text='', icon=item_icon)
-        #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
-        grid.column(align=True).label(text=f'{index:0{item_base}d}')
-        grid.prop(item, 'object_pointer', text='')
+        grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
 
-        if item.object_pointer:
-            op = grid.operator(SvOB3ItemSelectObjectMK4.bl_idname, icon='CURSOR', text='', emboss=False)
+        if object_exists:
+            op = grid.operator(SvOB3ItemSelectObjectMK3.bl_idname, icon='CURSOR', text='', emboss=False)
             op.idx = index
         else:
-            op = grid.operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+            op = grid.operator(SvOB3ItemEmptyOperatorMK3.bl_idname, icon='BLANK1', text='', emboss=False)
             pass
 
         if item.exclude:
-            exclude_icon='CHECKBOX_DEHLT'
+            exclude_icon='UNPINNED'
         else:
-            exclude_icon='CHECKBOX_HLT'
+            exclude_icon='PINNED'
 
-        if item.object_pointer:
-            op = grid.operator(SvOB3BItemEnablerMK4.bl_idname, icon=exclude_icon, text='', emboss=False)
+        if object_exists:
+            op = grid.operator(SvOB3BItemEnablerMK3.bl_idname, icon=exclude_icon, text='', emboss=False)
             op.fn_name = 'ENABLER'
             op.idx = index
         else:
-            op = grid.operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
             pass
         
-        op = grid.operator(SvOB3BItemRemoveMK4.bl_idname, icon='X', text='', emboss=False)
+        op = grid.operator(SvOB3BItemRemoveMK3.bl_idname, icon='X', text='', emboss=False)
         op.fn_name = 'REMOVE'
         op.idx = index
 
 
-class SvOB3BItemOperatorMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3BItemOperatorMK3(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_ob3b_collection_operator_mk4"
+    bl_idname = "node.sv_ob3b_collection_operator_mk3"
     bl_label = "generic bladibla"
 
     fn_name: StringProperty(default='')
@@ -198,9 +179,9 @@ class SvOB3BItemOperatorMK4(bpy.types.Operator, SvGenericNodeLocator):
             node.object_names.remove(self.idx)
         node.process_node(None)
 
-class SvOB3BAddObjectsFromSceneUpMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3BAddObjectsFromSceneUpMK3(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_ob3b_add_object_from_scene_mk4"
+    bl_idname = "node.sv_ob3b_add_object_from_scene_mk3"
     bl_label = "Add selected objects from scene into the list"
     bl_options = {'INTERNAL'}
 
@@ -210,9 +191,9 @@ class SvOB3BAddObjectsFromSceneUpMK4(bpy.types.Operator, SvGenericNodeLocator):
         """
         node.add_objects_from_scene(self)
 
-class SvOB3BMoveUpMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3BMoveUpMK3(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_ob3b_moveup_mk4"
+    bl_idname = "node.sv_ob3b_moveup_mk3"
     bl_label = "Move current object up"
     bl_options = {'INTERNAL'}
 
@@ -222,9 +203,9 @@ class SvOB3BMoveUpMK4(bpy.types.Operator, SvGenericNodeLocator):
         """
         node.move_current_object_up(self)
 
-class SvOB3BMoveDownMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3BMoveDownMK3(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_ob3b_movedown_mk4"
+    bl_idname = "node.sv_ob3b_movedown_mk3"
     bl_label = "Move current object down"
     bl_options = {'INTERNAL'}
 
@@ -234,9 +215,9 @@ class SvOB3BMoveDownMK4(bpy.types.Operator, SvGenericNodeLocator):
         """
         node.move_current_object_down(self)
 
-class SvOB3BClearObjectsFromListMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3BClearObjectsFromListMK3(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_ob3b_clear_list_of_objects_mk4"
+    bl_idname = "node.sv_ob3b_clear_list_of_objects_mk3"
     bl_label = "Clear list of objects"
     bl_options = {'INTERNAL'}
 
@@ -246,9 +227,44 @@ class SvOB3BClearObjectsFromListMK4(bpy.types.Operator, SvGenericNodeLocator):
         """
         node.clear_objects_from_list(self)
 
-class SvOB3BHighlightProcessedObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3BViewAlignMK3(bpy.types.Operator, SvGenericNodeLocator):
+    """ Zoom to object """
+    bl_idname = "node.sv_ob3b_align_from_mk3"
+    bl_label = "Align 3dview to Object"
+
+    fn_name: bpy.props.StringProperty(default='')
+
+    def sv_execute(self, context, node):
+
+        if node.active_obj_index>=0 and node.active_obj_index<=len(node.object_names)-1:
+            object_name = node.object_names[node.active_obj_index].name
+            if object_name in bpy.data.objects:
+                obj = bpy.data.objects[object_name]
+                obj_location = obj.location
+                vector_3d = obj_location        
+
+                print(vector_3d)
+                context.scene.cursor.location = vector_3d[:]
+
+                for area in bpy.context.screen.areas:
+                    if area.type == 'VIEW_3D':
+                        with context.temp_override(area = area , region = area.regions[-1]):
+                            #bpy.ops.view3d.view_center_cursor()
+                            for o in bpy.context.view_layer.objects:
+                                o.select_set(False)
+                            bpy.context.view_layer.objects.active = obj
+                            if obj.select_get()==False:
+                                obj.select_set(True)
+                            bpy.ops.view3d.view_selected(use_all_regions=False)
+                            pass
+                        pass
+                    pass
+                pass
+        return {'FINISHED'}
+
+class SvOB3BHighlightProcessedObjectsInSceneMK3(bpy.types.Operator, SvGenericNodeLocator):
     '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
-    bl_idname = "node.sv_ob3b_highlight_proc_objects_in_list_scene_mk4"
+    bl_idname = "node.sv_ob3b_highlight_proc_objects_in_list_scene_mk3"
     bl_label = "Highlight processed objects in scene"
 
     fn_name: StringProperty(default='')
@@ -257,31 +273,28 @@ class SvOB3BHighlightProcessedObjectsInSceneMK4(bpy.types.Operator, SvGenericNod
         node = context.node
         for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
-                #with context.temp_override(area = area , region = area.regions[-1]):
+                with context.temp_override(area = area , region = area.regions[-1]):
                     if event.shift==False:
                         for o in bpy.context.view_layer.objects:
                             o.select_set(False)
-                    some_objects_not_in_the_scene = False
-                    for item in node.object_names:
-                        if item.exclude==False and item.object_pointer:
-                            if item.object_pointer.name in bpy.context.view_layer.objects:
-                                item.object_pointer.select_set(True)
-                            else:
-                                some_objects_not_in_the_scene = True
+                    for obj in node.object_names:
+                        if obj.exclude==False and obj.name in bpy.data.objects:
+                            bpy.data.objects[obj.name].select_set(True)
                         pass
+                    #bpy.context.view_layer.objects.active = obj
+                    # if obj.select_get()==False:
+                    #     obj.select_set(True)
                     pass
-                    if some_objects_not_in_the_scene == True:
-                        self.report({'INFO'}, f"Some object is not in the current scene")
-                #pass
+                pass
             pass
         pass
         return {'FINISHED'}
 
 
-class SvOB3BHighlightAllObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeLocator):
-    '''Select all objects in this node.'''
-    bl_idname = "node.sv_ob3b_highlight_all_objects_in_list_scene_mk4"
-    bl_label = "Select all objects in scene"
+class SvOB3BHighlightAllObjectsInSceneMK3(bpy.types.Operator, SvGenericNodeLocator):
+    '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
+    bl_idname = "node.sv_ob3b_highlight_all_objects_in_list_scene_mk3"
+    bl_label = "Highlight all objects in scene"
 
     fn_name: StringProperty(default='')
 
@@ -289,30 +302,27 @@ class SvOB3BHighlightAllObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeLocat
         node = context.node
         for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
-                #with context.temp_override(area = area , region = area.regions[-1]):
+                with context.temp_override(area = area , region = area.regions[-1]):
                     if event.shift==False:
                         for o in bpy.context.view_layer.objects:
                             o.select_set(False)
-                    some_objects_not_in_the_scene = False
-                    for item in node.object_names:
-                        if item.object_pointer:
-                            if item.object_pointer.name in bpy.context.view_layer.objects:
-                                item.object_pointer.select_set(True)
-                            else:
-                                some_objects_not_in_the_scene = True
+                    for obj in node.object_names:
+                        if obj.name in bpy.data.objects:
+                            bpy.data.objects[obj.name].select_set(True)
                         pass
+                    #bpy.context.view_layer.objects.active = obj
+                    # if obj.select_get()==False:
+                    #     obj.select_set(True)
                     pass
-                    if some_objects_not_in_the_scene == True:
-                        self.report({'INFO'}, f"Some object is not in the current scene")
-                #pass
+                pass
             pass
         pass
 
         return {'FINISHED'}
 
-class SvOB3BClearObjectsFromListMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3BClearObjectsFromListMK3(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_bezierin_clear_list_of_objects_mk4"
+    bl_idname = "node.sv_bezierin_clear_list_of_objects_mk3"
     bl_label = "Clear list of objects"
     bl_options = {'INTERNAL'}
 
@@ -323,10 +333,10 @@ class SvOB3BClearObjectsFromListMK4(bpy.types.Operator, SvGenericNodeLocator):
         node.clear_objects_from_list(self)
 
 
-class SvOB3BCallbackMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3BCallbackMK3(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.ob3b_callback_mk4"
-    bl_label = "Object In mk4 callback"
+    bl_idname = "node.ob3b_callback_mk3"
+    bl_label = "Object In mk3 callback"
     bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
@@ -344,16 +354,18 @@ def get_vertgroups(mesh):
 numpy_socket_names = ['vertices', 'edges', 'vertex_normals', 'material_idx', 'polygon_areas', 'polygon_centers', 'polygon_normals']
 
 
-class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
+class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Object Info
     Tooltip: Get Scene Objects into Sverchok Tree
     """
 
-    bl_idname = 'SvGetObjectsDataMK4'
+    bl_idname = 'SvGetObjectsDataMK3'
     bl_label = 'Get Objects Data'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+
+    replacement_nodes = [('SvGetObjectsDataMK4', None, None)]
 
     @property
     def is_scene_dependent(self):
@@ -389,7 +401,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         description='sorting inserted objects by names',
         default=True, update=updateNode) # type: ignore
 
-    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollectionMK4) # type: ignore
+    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollectionMK3) # type: ignore
 
     active_obj_index: bpy.props.IntProperty() # type: ignore
 
@@ -423,10 +435,10 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         ]
     
     def update_display_type(self, context):
-        for item in self.object_names:
-            if item.object_pointer:
-                #if item.exclude==False:
-                item.object_pointer.display_type=self.display_type
+        for obj in self.object_names:
+            if obj.name in bpy.data.objects:
+                if obj.exclude==False:
+                    bpy.data.objects[obj.name].display_type=self.display_type
         return
     
     display_type : EnumProperty(
@@ -441,9 +453,8 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         ]
     
     def update_render_type(self, context):
-        for item in self.object_names:
-            if item.object_pointer:
-                item.object_pointer.hide_render = True if self.hide_render_type=='RESTRICT_RENDER_ON' else False
+        for obj in self.object_names:
+            bpy.data.objects[obj.name].hide_render = True if self.hide_render_type=='RESTRICT_RENDER_ON' else False
         return
     
     hide_render_type : EnumProperty(
@@ -513,13 +524,14 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             
             # select all objects in list of this node
             if self.align_3dview_type=='ISOLATE_ALL':
-                for item in self.object_names:
-                    if item.object_pointer:
-                        item.object_pointer.select_set(True)
+                for obj in self.object_names:
+                    if obj.name in bpy.data.objects:
+                        bpy.data.objects[obj.name].select_set(True)
 
-            if obj_in_list.object_pointer:
-                obj_in_list.object_pointer.select_set(True)
-                bpy.context.view_layer.objects.active = obj_in_list.object_pointer
+            if obj_in_list.name in bpy.data.objects:
+                obj_in_scene = bpy.data.objects[obj_in_list.name]
+                obj_in_scene.select_set(True)
+                bpy.context.view_layer.objects.active = obj_in_scene
 
             for area in bpy.context.screen.areas:
                 if area.type == 'VIEW_3D':
@@ -668,7 +680,6 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         for name in names:
             item = self.object_names.add()
-            item.object_pointer = bpy.data.objects[name]
             item.name = name
             item.icon = 'OUTLINER_OB_' + bpy.data.objects[name].type
 
@@ -687,9 +698,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
 
         for name in names:
-            item = self.object_names.add()
-            item.object_pointer = bpy.data.objects[name]
-            item.name = name
+            self.object_names.add().name = name
             self.object_names.move(len(self.object_names)-1, 0)
             self.active_obj_index=0
 
@@ -736,14 +745,17 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         """
         Collect selected objects
         """
+        #self.object_names.clear()
         if len(self.object_names)>0:
-            for item in self.object_names:
-                if item.object_pointer:
-                    if bpy.context.scene in item.object_pointer.users_scene:
-                        item.object_pointer.select_set(True)
+            for obj in self.object_names:
+                if obj.name in bpy.data.objects:
+                    bobj = bpy.data.objects[obj.name]
+                    if bpy.context.scene in bobj.users_scene:
+                        bobj.select_set(True)
                     else:
-                        print(f'Object {item.object_pointer.name} is not on the current scene. You can switch from [{bpy.context.scene.name}] to [{";".join([s.name for s in item.object_pointer.users_scene ])}]')
-                pass
+                        print(f'Object {obj.name} is not on the current scene. You can switch from [{bpy.context.scene.name}] to [{";".join([s.name for s in bobj.users_scene ])}]')
+                else:
+                    print(f'{obj.name} not in the scene')
         else:
             print(f"No object in list of 'Get objects Data' '{self.name}'")
 
@@ -751,16 +763,33 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         """
         Collect selected objects
         """
+        #self.object_names.clear()
         if len(self.object_names)>0:
-            for item in self.object_names:
-                if item.object_pointer:
-                    if bpy.context.scene in item.object_pointer.users_scene:
-                        item.object_pointer.select_set(False)
+            for obj in self.object_names:
+                if obj.name in bpy.data.objects:
+                    bobj = bpy.data.objects[obj.name]
+                    if bpy.context.scene in bobj.users_scene:
+                        bobj.select_set(False)
                     else:
-                        print(f'Object {item.object_pointer.name} is not on the current scene. You can switch from [{bpy.context.scene.name}] to [{";".join([s.name for s in item.object_pointer.users_scene ])}]')
-                pass
+                        print(f'Object {obj.name} is not on the current scene. You can switch from [{bpy.context.scene.name}] to [{";".join([s.name for s in bobj.users_scene ])}]')
+                else:
+                    print(f'{obj.name} not in the scene')
         else:
             print(f"No object in list of 'Get objects Data' '{self.name}'")
+
+        # names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
+
+        # if self.sort:
+        #     names.sort()
+
+        # for name in names:
+        #     item = self.object_names.add()
+        #     item.name = name
+        #     item.icon = 'OUTLINER_OB_' + bpy.data.objects[name].type
+
+        # if not self.object_names:
+        #     ops.report({'WARNING'}, "Warning, no selected objects in the scene")
+        #     return
 
         self.process_node(None)
 
@@ -768,7 +797,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
     def select_objs(self, ops):
         """select all objects referenced by node"""
         for item in self.object_names:
-            item.object_pointer.select = True
+            bpy.data.objects[item.name].select = True
 
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no object associated with the obj in Node")
@@ -776,14 +805,16 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
     def draw_obj_names(self, layout):
         if self.object_names:
+            #layout.template_list("SVOB3B_UL_NamesListMK3", "", self, "object_names", self, "active_obj_index")
+
             row = layout.row(align=True)
-            row.column().template_list("SVOB3B_UL_NamesListMK4", "", self, "object_names", self, "active_obj_index", rows=3)
+            row.column().template_list("SVOB3B_UL_NamesListMK3", "", self, "object_names", self, "active_obj_index", rows=3)
             col = row.column(align=True)
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BAddObjectsFromSceneUpMK4.bl_idname, text='', icon='ADD')
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BHighlightProcessedObjectsInSceneMK4.bl_idname, text='', icon='GROUP_VERTEX')
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BHighlightAllObjectsInSceneMK4.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
+            self.wrapper_tracked_ui_draw_op(col, SvOB3BAddObjectsFromSceneUpMK3.bl_idname, text='', icon='ADD')
+            self.wrapper_tracked_ui_draw_op(col, SvOB3BMoveUpMK3.bl_idname, text='', icon='TRIA_UP')
+            self.wrapper_tracked_ui_draw_op(col, SvOB3BMoveDownMK3.bl_idname, text='', icon='TRIA_DOWN')
+            self.wrapper_tracked_ui_draw_op(col, SvOB3BHighlightProcessedObjectsInSceneMK3.bl_idname, text='', icon='GROUP_VERTEX')
+            self.wrapper_tracked_ui_draw_op(col, SvOB3BHighlightAllObjectsInSceneMK3.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
 
         else:
             layout.label(text='--None--')
@@ -799,7 +830,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             row = col.row()
 
             op_text = "Get selection"  # fallback
-            callback = SvOB3BCallbackMK4.bl_idname
+            callback = SvOB3BCallbackMK3.bl_idname
 
             if self.prefs_over_sized_buttons:
                 row.scale_y = 4.0
@@ -824,8 +855,12 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             if len(self.object_names)>0:
                 row = layout.row(align=True)
                 row.label(text='')
-                self.wrapper_tracked_ui_draw_op(row, SvOB3BClearObjectsFromListMK4.bl_idname, text='', icon='CANCEL')
-        pass
+                self.wrapper_tracked_ui_draw_op(row, SvOB3BClearObjectsFromListMK3.bl_idname, text='', icon='CANCEL')
+
+        # if len(self.object_names)>0:
+        #     row = layout.row()
+        #     self.wrapper_tracked_ui_draw_op(row, SvOB3BCallbackMK3.bl_idname, text=f"Select objects ({len(self.object_names)})").fn_name = 'set_objects_selected_scene'
+        #     self.wrapper_tracked_ui_draw_op(row, SvOB3BCallbackMK3.bl_idname, text="Deselect objects").fn_name = 'deselect_objects_from_scene'
 
     def sv_draw_buttons_ext(self, context, layout):
         r = layout.column(align=True)
@@ -850,7 +885,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
     def draw_buttons_3dpanel(self, layout):
         if not self.by_input:
-            callback = SvOB3BCallbackMK4.bl_idname
+            callback = SvOB3BCallbackMK3.bl_idname
             row = layout.row(align=True)
             row.label(text=self.label if self.label else self.name)
             colo = row.row(align=True)
@@ -884,7 +919,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         if isinstance(objs[0], list):
             objs = objs[0]
         if not objs:
-            objs = (o.object_pointer for o in self.object_names if o.exclude==False and o.object_pointer)
+            objs = (data_objects.get(o.name) for o in self.object_names if o.exclude==False)
 
         # iterate through references
         for obj in objs:
@@ -897,7 +932,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             else:
                 mtrx = Matrix()
 
-            if obj.type in {'EMPTY', 'CAMERA', 'LAMP', 'LIGHT' }:
+            if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
                 if o_matrices:
                     l_matrices.append(mtrx)
                 continue
@@ -1226,54 +1261,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 outputs['object'].sv_set(objs)
             else:
                 outputs['object'].sv_set([data_objects.get(o.name) for o in self.object_names])
-            pass
-        pass
-    pass
-
-    def migrate_from(self, old_node):
-        if hasattr(self, 'location_absolute'):
-            # Blender 3.0 has no this attribute
-            self.location_absolute = old_node.location_absolute
-        for I, item in enumerate(old_node.object_names):
-            if I<=len(self.object_names)-1:
-                if item.name in bpy.data.objects:
-                    self.object_names[I].object_pointer = bpy.data.objects[item.name]
-
-        pass
-
-    def load_from_json(self, node_data: dict, import_version: float):
-        '''function to get data when importing from json'''
-        data_objects = bpy.data.objects
-
-        if 'object_names' in node_data:
-            data_list = node_data.get('object_names')
-            if data_list:
-                data = json.loads(data_list)
-                for I, k in enumerate(data):
-                    if len(self.object_names)<=I-1:
-                        name    = k['name']
-                        exclude = k['exclude']
-                        if name in data_objects:
-                            self.object_names[I].object_pointer = data_objects[name]
-                            pass
-                        self.object_names[I].exclude = exclude
-                    else:
-                        continue
-                    pass
-        pass
-
-    def save_to_json(self, node_data: list):
-        '''function to set data for exporting json'''
-        data = []
-        for item in self.object_names:
-            if item.object_pointer:
-                data.append( dict(  name=item.object_pointer.name, exclude=item.exclude ) )
-            else:
-                data.append( dict(  name='', exclude=item.exclude ) )
-
-        data_json_str = json.dumps(data)
-        node_data['object_names'] = data_json_str
 
 
-classes = [SvOB3ItemEmptyOperatorMK4, SvOB3BHighlightAllObjectsInSceneMK4, SvOB3BHighlightProcessedObjectsInSceneMK4, SvOB3BClearObjectsFromListMK4, SvOB3BMoveDownMK4, SvOB3BMoveUpMK4, SvOB3BAddObjectsFromSceneUpMK4, SvOB3ItemSelectObjectMK4, SvOB3BItemEnablerMK4, SvOB3BItemRemoveMK4, SvOB3BItemOperatorMK4, SvOB3BDataCollectionMK4, SVOB3B_UL_NamesListMK4, SvOB3BCallbackMK4, SvGetObjectsDataMK4]
+classes = [SvOB3ItemEmptyOperatorMK3, SvOB3BHighlightAllObjectsInSceneMK3, SvOB3BHighlightProcessedObjectsInSceneMK3, SvOB3BViewAlignMK3, SvOB3BClearObjectsFromListMK3, SvOB3BMoveDownMK3, SvOB3BMoveUpMK3, SvOB3BAddObjectsFromSceneUpMK3, SvOB3ItemSelectObjectMK3, SvOB3BItemEnablerMK3, SvOB3BItemRemoveMK3, SvOB3BItemOperatorMK3, SvOB3BDataCollectionMK3, SVOB3B_UL_NamesListMK3, SvOB3BCallbackMK3, SvGetObjectsDataMK3]
 register, unregister = bpy.utils.register_classes_factory(classes)
