@@ -1622,7 +1622,7 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
         * generated NURBS surface.
     """
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     n_profiles = len(profiles)
     have_ts = ts is not None and len(ts) > 0
@@ -1694,9 +1694,9 @@ def prepare_nurbs_birail(path1, path2, profiles,
     have_ts1 = ts1 is not None and len(ts1) > 0
     have_ts2 = ts2 is not None and len(ts2) > 0
     if have_ts1 and n_profiles != len(ts1):
-        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts1)})")
+        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T1 values ({len(ts1)})")
     if have_ts2 and n_profiles != len(ts2):
-        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts2)})")
+        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T2 values ({len(ts2)})")
 
     if degree_v is None:
         degree_v = path1.get_degree()
@@ -1880,7 +1880,8 @@ def nurbs_birail(path1, path2, profiles,
             degree_v = degree_v,
             scale_uniform = scale_uniform,
             auto_rotate = auto_rotate,
-            use_tangents = use_tangents)
+            use_tangents = use_tangents,
+            knotvector_accuracy = knotvector_accuracy)
 
     unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = degree_v,
             knots_u = knots_u, metric = metric,

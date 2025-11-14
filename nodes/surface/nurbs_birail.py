@@ -205,11 +205,11 @@ class SvNurbsBirailNode(SverchCustomTreeNode, bpy.types.Node):
                 if self.use_gordon:
                     unified_curves = []
                     v_curves = []
-                    surface = nurbs_birail_by_gordon(path1, path2, profiles,
+                    unified_curves, v_curves, surface = nurbs_birail_by_gordon(path1, path2, profiles,
                             ts1 = ts1, ts2 = ts2,
                             min_profiles = profiles_count,
                             degree_v = degree_v,
-                            metric = self.metric,
+                            metric = 'POINTS',
                             scale_uniform = self.scale_uniform,
                             auto_rotate = self.auto_rotate_profiles,
                             use_tangents = self.profile_rotation,
