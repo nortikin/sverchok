@@ -19,6 +19,8 @@
 import inspect
 import sys
 from typing import Set
+import pprint
+import json
 
 from mathutils import Matrix, Quaternion
 import bpy
@@ -87,7 +89,6 @@ def socket_type_names() -> Set[str]:
                 names.add(member.bl_idname)
     return names
 
-
 class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
     bl_label = "Sockets Options"
 
@@ -108,6 +109,111 @@ class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
                 layout.context_pointer_set("node", node)
                 layout.menu('SV_MT_SocketOptionsMenu', text=s.name)
 
+class SV_PT_DialogSocketData(bpy.types.Panel):
+    bl_label = "Mask Settings"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Node"
+    bl_context = "data"
+
+    data = "None"
+    def draw(self, context):
+        self.layout.label(text=self.data)
+
+class SV_OT_show_socket_popover(bpy.types.Operator):
+    bl_idname = "my.show_popover_for_socket"
+    bl_label = "Print data in console."
+    bl_options = {'INTERNAL'}
+
+    data: StringProperty(default="")
+
+    @classmethod
+    def description(cls, context, props):
+        # динамически формируем tooltip
+        #return f"Текущее значение socket: {getattr(context.scene, 'some_value', 0)}"
+        s = "None"
+        try:
+            s = str(context.socket.sv_get())
+        except Exception as _ex:
+            s = f"{_ex}"
+        return f"Socket value with properties:\n{s}"
+    
+    # def invoke(self, context, event):
+    #     SV_PT_DialogSocketData.data = str(self.data)
+    #     return context.window_manager.invoke_props_dialog(self)
+
+    def execute(self, context):
+        # SV_PT_DialogSocketData.data = str(self.data)
+        # bpy.ops.wm.call_panel(name="SV_PT_DialogSocketData", keep_open=True)
+        s = "None"
+        data = []
+        try:
+            data = context.socket.sv_get()
+            s = str(data)
+        except Exception as _ex:
+            s = f"{_ex}"
+        node = context.node
+        socket = context.socket
+        print(f"---------------------------------------------------------------------------------------------------------------------------")
+        print(f"Data for:")
+        print(f"Node: {node.bl_label}")
+        print(f"       bl_idname  : {node.bl_idname}")
+        print(f"            name  : {node.name}")
+        print(f"        bl_label  : {node.bl_label}")
+        print(f"       description: {node.bl_description}")
+        print(f"      {'out' if socket.is_output==True else 'in'} Socket data: {socket.identifier if socket.identifier else socket.label}")
+        pp = pprint.PrettyPrinter(indent=2, width=10**6, compact=False)
+        pp.pprint(data)
+        #pprint.pprint(data)
+        #print(json.dumps(data, indent=4, ensure_ascii=False))
+        return {'FINISHED'}
+
+class SV_PT_AllSocketsOptionsMenu(bpy.types.Panel):
+    bl_label = "Mask Settings"
+
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Node"
+    bl_context = "data"
+
+    #bl_ui_units_x = 12
+
+    @classmethod
+    def description(cls, context, properties):
+        #value = context.scene.my_value
+        return f"Текущее значение exclude:"
+
+    def is_extended():
+        return True
+
+    def draw(self, context):
+        layout = self.layout
+        #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
+        if hasattr(context, 'socket'):
+            if hasattr(context.socket, 'draw_menu_items'):
+                #layout.emboss='RADIAL_MENU'
+                socket = context.socket
+                layout.label(text=f'{"out" if socket.is_output else "in"} socket: {socket.identifier if socket.identifier else socket.label}.{socket.objects_number if socket.is_linked else ""}')
+                layout.label(text=f"Socket data:")
+                grid = layout.grid_flow(row_major=True, columns=3, align=True)
+                data = None
+                try:
+                    data = context.socket.sv_get()
+                    grid.label(text=f"{data}")
+                except Exception as _ex:
+                    grid.label(text=f"Socket data:\n{_ex}")
+                op = grid.operator(SV_OT_show_socket_popover.bl_idname, text="", icon='WORDWRAP_ON', emboss=False)
+                op.data = 'None' if data is None else str(data)
+                context.socket.draw_menu_items(context, layout)
+                # Тестирование вывода сообщения, выделенного красным цветом текста
+                row = layout.row()
+                row.alert = True
+                row.label(text='Alert', icon='ERROR')
+            else:
+                pass
+        else:
+            pass
+        pass
 
 class SV_MT_SocketOptionsMenu(bpy.types.Menu):
     bl_label = "Socket Options"
@@ -119,6 +225,28 @@ class SV_MT_SocketOptionsMenu(bpy.types.Menu):
         layout = self.layout
         if hasattr(context.socket, 'draw_menu_items'):
             context.socket.draw_menu_items(context, layout)
+
+class SvSocketPropertySwitcher(bpy.types.Operator):
+    '''Enable/Disable object to process.\nCtrl button to disable all objects first\nShift button to inverse list.'''
+    bl_idname = "node.sv_socket_property_switcher"
+    bl_label = "Processed"
+
+    node_property_name: StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        #value = context.scene.my_value
+        #res = f"Текущее значение exclude: {properties.idx}: {context.node.object_names[properties.idx].exclude} 11111111111111111111 22222222222222222 33333333333333333333 44444444444444444444 55555555555555555 666666666666666666 777777777777777777 8888888888888888888 999999999999999999 00000000000000000 aaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbbb cccccccccccccccccc ddddddddddddddddd eeeeeeeeeeeeeeee fffffffffffffff ggggggggggggggggg hhhhhhhhhhhhhhhhhh iiiiiiiiiiiiiiii jjjjjjjjjjjjjjjj kkkkkkkkkkkkkkkkkkkkk"
+        res = f"Socket data:\n{context.socket.sv_get()}"
+        return res 
+    
+    def execute(self, context):
+        setattr( context.socket, self.node_property_name, not(getattr(context.socket, self.node_property_name)) )
+        return {'FINISHED'}
+
+    # def invoke(self, context, event):
+    #     setattr( context.socket, self.node_property_name, not(getattr(context.socket, self.node_property_name)) )
+    #     return {'FINISHED'}
 
 class SvSocketProcessing():
     """
@@ -237,26 +365,30 @@ class SvSocketProcessing():
         return flags
 
     def can_flatten(self):
-        return hasattr(self, 'do_flatten') and (self.allow_flatten or self.is_output)
+        return hasattr(self, 'do_flatten') and (self.allow_flatten or self.is_output or self.is_output==False)
 
     def can_flatten_topology(self):
-        return hasattr(self, 'do_flat_topology') and (self.allow_flatten_topology or self.is_output)
+        return hasattr(self, 'do_flat_topology') and (self.allow_flatten_topology or self.is_output or self.is_output==False)
 
     def can_simplify(self):
-        return hasattr(self, 'do_simplify') and (self.allow_simplify or self.is_output)
+        return hasattr(self, 'do_simplify') and (self.allow_simplify or self.is_output or self.is_output==False)
 
     def can_graft(self):
-        return hasattr(self, 'do_graft') and (self.is_output or self.allow_graft)
+        return hasattr(self, 'do_graft') and (self.is_output or self.allow_graft or self.is_output==False)
 
     def can_unwrap(self):
-        return self.is_output or self.allow_unwrap
+        return self.is_output or self.allow_unwrap or self.is_output==False
 
     def can_wrap(self):
-        return self.is_output or self.allow_wrap
+        return self.is_output or self.allow_wrap or self.is_output==False
 
     def draw_simplify_modes(self, layout):
         if self.can_flatten():
             layout.prop(self, 'use_flatten')
+            # row = layout.row(align=True)
+            # op = row.operator(SvSocketPropertySwitcher.bl_idname, icon=('DOWNARROW_HLT' if self.use_flatten else 'SHADING_BBOX'), text='Flatten', emboss=False)
+            # op.node_property_name = 'use_flatten'
+            # row.label(text='')
         if self.can_simplify():
             layout.prop(self, 'use_simplify')
 
@@ -299,7 +431,15 @@ class SvSocketProcessing():
     def draw_menu_button(self, context, layout, node, text):
         if hasattr(node.id_data, 'sv_show_socket_menus') and node.id_data.sv_show_socket_menus:
             if (self.is_output or self.is_linked or not self.use_prop):
-                layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
+                col = layout.column()
+                #col.scale_x=0.7
+                col.emboss='NONE'
+                #col.emboss='NORMAL'
+                #col.menu('SV_MT_SocketOptionsMenu', text='', icon='BLANK1')
+                #col.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
+                #col.operator(SV_OT_show_socket_popover.bl_idname, text="", icon='DOWNARROW_HLT', emboss=False)
+                #col.popover(panel="SV_PT_AllSocketsOptionsMenu", icon='TRIA_DOWN', text="")
+                col.popover(panel="SV_PT_AllSocketsOptionsMenu", icon='DOWNARROW_HLT', text="")
 
     def draw_menu_items(self, context, layout):
         if self.can_flatten_topology():
@@ -431,20 +571,24 @@ class SvSocketCommon(SvSocketProcessing):
         if self.is_output:
             return sv_get_socket(self, False)
 
+        data = None
         if self.is_linked:
-            return sv_get_socket(self, deepcopy)
-
-        prop_name = self.get_prop_name()
-        if prop_name:
-            prop = getattr(self.node, prop_name)
-            return format_bpy_property(prop)
-
-        if self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
-            default_property = self.default_property
-            return format_bpy_property(default_property)
-
-        if default is not ...:
-            return default
+            data = sv_get_socket(self, deepcopy)
+        else:
+            prop_name = self.get_prop_name()
+            if prop_name:
+                prop = getattr(self.node, prop_name)
+                data = format_bpy_property(prop)
+            elif self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
+                default_property = self.default_property
+                data = format_bpy_property(default_property)
+            elif default is not ...:
+                data = default
+        
+        if data is not None:
+            #return data
+            res = self.preprocess_input(data)
+            return res
 
         raise SvNoDataError(self)
 
@@ -521,6 +665,10 @@ class SvSocketCommon(SvSocketProcessing):
                     layout.label(text=text)
 
         menu_option = get_param('show_input_menus', 'QUICKLINK')
+        socket_has_menu = self.has_menu(context)
+        if self.is_output==False and socket_has_menu==True:
+            self.draw_menu_button(context, layout, node, text)
+
 
         # just handle custom draw..be it input or output.
         if self.custom_draw:
@@ -564,7 +712,7 @@ class SvSocketCommon(SvSocketProcessing):
                     self.draw_link_input_menu(context, layout, node)
                 draw_label(self.label or text)
 
-        if self.has_menu(context):
+        if self.is_output==True and socket_has_menu==True:
             self.draw_menu_button(context, layout, node, text)
 
     # https://wiki.blender.org/wiki/Reference/Release_Notes/4.0/Python_API#Node_Groups
@@ -1537,6 +1685,7 @@ class SvSwitchDefaultOp(bpy.types.Operator):
 
 
 classes = [
+    SV_PT_AllSocketsOptionsMenu, SvSocketPropertySwitcher, SV_OT_show_socket_popover, SV_PT_DialogSocketData,
     SV_MT_SocketOptionsMenu, SV_MT_AllSocketsOptionsMenu,
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,

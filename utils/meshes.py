@@ -294,3 +294,37 @@ def fix_len(lst: list, length: int) -> list:
     else:
         lst.extend([lst[-1]] * (length - len(lst)))
         return lst
+
+def get_all_matrixes(obj, res=None):
+    '''Go recursive list and return 2 level of matrixes into res list'''
+    if res is None:
+        # При первом входе может быть не образована структура для сохранения результата.
+        res = []
+    if isinstance(obj, list):
+        if len(obj)>0:
+            if isinstance(obj[0], Matrix):
+                _res = []
+                for elem in obj:
+                    if isinstance(elem, Matrix):
+                        _res.append(elem)
+                    else:
+                        raise ValueError("Object has to be matrix! (1)")
+                    pass
+                res.append(_res)
+                pass
+            elif isinstance(obj[0], list):
+                for elem in obj:
+                    if isinstance(elem, list):
+                        get_all_matrixes(elem, res)
+                    else:
+                        raise ValueError("Object has to be list! (2)")
+                pass
+            pass
+        pass
+    elif isinstance(obj, Matrix):
+        res.append([obj])
+    else:
+        raise ValueError("Object has to be matrix or list! (3)")
+        pass
+    return res
+    pass

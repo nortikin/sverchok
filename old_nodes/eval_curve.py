@@ -8,12 +8,12 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
 
-class SvEvalCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
+class SvEvalCurveNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Evaluate Curve
         Tooltip: Evaluate Curve
         """
-        bl_idname = 'SvExEvalCurveNodeMK2'
+        bl_idname = 'SvExEvalCurveNode'
         bl_label = 'Evaluate Curve'
         bl_icon = 'CURVE_NCURVE'
 
@@ -126,8 +126,8 @@ class SvEvalCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             self.outputs['Tangents'].sv_set(tangents_out)
 
 def register():
-    bpy.utils.register_class(SvEvalCurveNodeMK2)
+    bpy.utils.register_class(SvEvalCurveNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvEvalCurveNodeMK2)
+    bpy.utils.unregister_class(SvEvalCurveNode)
 
