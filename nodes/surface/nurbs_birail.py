@@ -215,7 +215,7 @@ class SvNurbsBirailNode(SverchCustomTreeNode, bpy.types.Node):
                             use_tangents = self.profile_rotation,
                             implementation = self.nurbs_implementation,
                             knotvector_accuracy = self.knotvector_accuracy,
-                            logger = self.get_logger()
+                            logger = self.sv_logger
                         )
                 else:
                     _, unified_curves, v_curves, surface = nurbs_birail(path1, path2,
@@ -230,7 +230,7 @@ class SvNurbsBirailNode(SverchCustomTreeNode, bpy.types.Node):
                                         auto_rotate = self.auto_rotate_profiles,
                                         use_tangents = self.profile_rotation,
                                         implementation = self.nurbs_implementation,
-                                        logger = self.get_logger()
+                                        logger = self.sv_logger
                                     )
                 new_surfaces.append(surface)
                 new_curves.extend(unified_curves)
