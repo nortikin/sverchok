@@ -1655,6 +1655,7 @@ def prepare_nurbs_birail(path1, path2, profiles,
         scale_uniform = True,
         auto_rotate = False,
         use_tangents = 'PATHS_AVG',
+        y_axis = None,
         implementation=SvNurbsSurface.NATIVE,
         logger = None):
 
@@ -1733,6 +1734,8 @@ def prepare_nurbs_birail(path1, path2, profiles,
             yy /= np.linalg.norm(yy)
             tangents.append(yy)
         tangents = np.array(tangents)
+    elif use_tangents == 'CUSTOM':
+        tangents = None
 
     binormals = points2 - points1
     scales = np.linalg.norm(binormals, axis=1, keepdims=True)
@@ -1740,11 +1743,22 @@ def prepare_nurbs_birail(path1, path2, profiles,
         raise Exception("Paths go too close")
     binormals /= scales
 
-    normals = np.cross(tangents, binormals)
-    normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+    if use_tangents != 'CUSTOM':
+        normals = np.cross(tangents, binormals)
+        normals /= np.linalg.norm(normals, axis=1, keepdims=True)
 
-    tangents = np.cross(binormals, normals)
-    tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+        tangents = np.cross(binormals, normals)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    else:
+        if y_axis is None:
+            raise Exception("Y axis is not provided for custom orientation")
+        if np.linalg.norm(y_axis) < 1e-6:
+            raise Exception("Y axis is too small")
+        y_axis /= np.linalg.norm(y_axis)
+        tangents = np.cross(binormals, y_axis)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+        normals = np.cross(tangents, binormals)
+        normals /= np.linalg.norm(normals, axis=1, keepdims=True)
 
     matrices = np.dstack((normals, binormals, tangents))
     matrices = np.transpose(matrices, axes=(0,2,1))
@@ -1804,6 +1818,7 @@ def nurbs_birail(path1, path2, profiles,
         scale_uniform = True,
         auto_rotate = False,
         use_tangents = 'PATHS_AVG',
+        y_axis = None,
         implementation = SvNurbsSurface.NATIVE,
         logger = None):
     """
@@ -1846,6 +1861,7 @@ def nurbs_birail(path1, path2, profiles,
             scale_uniform = scale_uniform,
             auto_rotate = auto_rotate,
             use_tangents = use_tangents,
+            y_axis = y_axis,
             knotvector_accuracy = knotvector_accuracy)
 
     unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = degree_v,

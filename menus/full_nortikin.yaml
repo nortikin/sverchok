@@ -123,7 +123,7 @@
             - SvExInterpolateNurbsSurfaceNodeMK2
             - SvNurbsLoftNode
             - SvNurbsSweepNode
-            - SvNurbsBirailNode
+            - SvNurbsBirailMk2Node
             - SvGordonSurfaceNode
             - SvExQuadsToNurbsNode
     - G FIELDS:

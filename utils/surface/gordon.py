@@ -220,6 +220,7 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
         scale_uniform = True,
         auto_rotate = False,
         use_tangents = 'PATHS_AVG',
+        y_axis = None,
         knotvector_accuracy = 6,
         implementation = SvNurbsSurface.NATIVE,
         logger = None):
@@ -231,6 +232,7 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
                 scale_uniform = scale_uniform,
                 auto_rotate = auto_rotate,
                 use_tangents = use_tangents,
+                y_axis = y_axis,
                 knotvector_accuracy = knotvector_accuracy)
     v_curves = [path1, path2]
     intersections = np.array([u_curve.get_end_points() for u_curve in u_curves])

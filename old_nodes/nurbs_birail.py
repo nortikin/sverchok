@@ -13,21 +13,22 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.math import supported_metrics
 from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import nurbs_birail
-from sverchok.utils.surface.gordon import nurbs_birail_by_gordon
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
-class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
+class SvNurbsBirailNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Birail
     Tooltip: Generate a NURBS surface by sweeping one curve along two other curves (a.k.a. birail)
     """
-    bl_idname = 'SvNurbsBirailMk2Node'
+    bl_idname = 'SvNurbsBirailNode'
     bl_label = 'NURBS Birail'
     bl_icon = 'GP_MULTIFRAME_EDITING'
+
+    replacement_nodes = [('SvNurbsBirailMk2Node', None, None)]
 
     u_knots_modes = [
             ('UNIFY', "Unify", "Unify knot vectors of curves by inserting knots into curves where needed", 0),
@@ -72,8 +73,6 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
     def update_sockets(self, context):
         self.inputs['V1'].hide_safe = not self.explicit_v
         self.inputs['V2'].hide_safe = not self.explicit_v
-        self.inputs['DegreeV'].hide_safe = self.algorithm != 'LOFT'
-        self.inputs['Normal'].hide_safe = self.profile_rotation != 'CUSTOM'
         updateNode(self, context)
 
     profiles_count : IntProperty(
@@ -112,8 +111,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
             ('PATHS_AVG', "Paths Normal Average", "Rotate profile(s), trying to make it perpendicular to both paths", 0),
             ('FROM_PATH1', "Path 1 Normal", "Rotate profile(s), trying to make it perpendicular to the first path", 1),
             ('FROM_PATH2', "Path 2 Normal", "Rotate profile(s), trying to make it perpendicular to the second path", 2),
-            ('FROM_PROFILE', "By profile", "Try to use initial rotation of profile curve(s)", 3),
-            ('CUSTOM', "Custom", "Specify custom orientation by providing additional axis vector", 4)
+            ('FROM_PROFILE', "By profile", "Try to use initial rotation of profile curve(s)", 3)
         ]
 
     profile_rotation : EnumProperty(
@@ -121,23 +119,10 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
             description = "Defines how profile curves should be rotated",
             items = rotate_options,
             default = 'PATHS_AVG',
-            update = update_sockets)
-
-    algorithms = [
-            ('GORDON', "Gordon Surface", "Use Gordon Surface algorithm to follow path curves precisely", 0),
-            ('LOFT', "Loft", "Use legacy Loft algorithm; the surface can follow path curves not quite exactly; but this generates less control points", 1)
-        ]
-
-    algorithm : EnumProperty(
-            name = "Algorithm",
-            items = algorithms,
-            default = 'GORDON',
-            update = update_sockets)
+            update = updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
-        layout.label(text='Algorithm:')
-        layout.prop(self, 'algorithm', text='')
         layout.prop(self, "scale_uniform")
         layout.prop(self, "auto_rotate_profiles")
         layout.label(text="Profile rotation:")
@@ -148,8 +133,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         self.draw_buttons(context, layout)
         layout.prop(self, 'u_knots_mode')
         layout.prop(self, 'knotvector_accuracy')
-        if self.algorithm == 'LOFT':
-            layout.prop(self, 'metric')
+        layout.prop(self, 'metric')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Path1")
@@ -159,9 +143,6 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', "V1")
         self.inputs.new('SvStringsSocket', "V2")
         self.inputs.new('SvStringsSocket', "DegreeV").prop_name = 'degree_v'
-        p = self.inputs.new('SvVerticesSocket', "Normal")
-        p.use_prop = True
-        p.default_property = (0.0, 0.0, 1.0)
         self.outputs.new('SvSurfaceSocket', "Surface")
         self.outputs.new('SvCurveSocket', "AllProfiles")
         self.outputs.new('SvCurveSocket', "VCurves")
@@ -184,71 +165,50 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
             v2_s = [[[]]]
         profiles_count_s = self.inputs['VSections'].sv_get()
         degree_v_s = self.inputs['DegreeV'].sv_get()
-        y_axis_s = self.inputs['Normal'].sv_get()
 
         path1_s = ensure_nesting_level(path1_s, 2, data_types=(SvCurve,))
         path2_s = ensure_nesting_level(path2_s, 2, data_types=(SvCurve,))
         profile_s = ensure_nesting_level(profile_s, 3, data_types=(SvCurve,))
         profiles_count_s = ensure_nesting_level(profiles_count_s, 2)
         degree_v_s = ensure_nesting_level(degree_v_s, 2)
-        y_axis_s = ensure_nesting_level(y_axis_s, 3)
 
         surfaces_out = []
         curves_out = []
         v_curves_out = []
-        for params in zip_long_repeat(path1_s, path2_s, profile_s, v1_s, v2_s, profiles_count_s, degree_v_s, y_axis_s):
+        for params in zip_long_repeat(path1_s, path2_s, profile_s, v1_s, v2_s, profiles_count_s, degree_v_s):
             new_surfaces = []
             new_curves = []
             new_v_curves = []
             new_profiles = []
-            for path1, path2, profiles, vs1, vs2, profiles_count, degree_v, y_axis in zip_long_repeat(*params):
+            for path1, path2, profiles, vs1, vs2, profiles_count, degree_v in zip_long_repeat(*params):
                 path1 = SvNurbsCurve.to_nurbs(path1)
                 if path1 is None:
-                    raise UnsupportedCurveTypeException("Path #1 is not a NURBS curve!")
+                    raise Exception("Path #1 is not a NURBS curve!")
                 path2 = SvNurbsCurve.to_nurbs(path2)
                 if path2 is None:
-                    raise UnsupportedCurveTypeException("Path #2 is not a NURBS curve!")
+                    raise Exception("Path #2 is not a NURBS curve!")
                 profiles = [SvNurbsCurve.to_nurbs(profile) for profile in profiles]
                 if any(p is None for p in profiles):
-                    raise UnsupportedCurveTypeException("Some of profiles are not NURBS curves!")
+                    raise Exception("Some of profiles are not NURBS curves!")
                 if self.explicit_v:
                     ts1 = np.array(vs1)
                     ts2 = np.array(vs2)
                 else:
                     ts1 = None
                     ts2 = None
-                if self.algorithm == 'GORDON':
-                    unified_curves = []
-                    v_curves = []
-                    unified_curves, v_curves, surface = nurbs_birail_by_gordon(path1, path2, profiles,
-                            ts1 = ts1, ts2 = ts2,
-                            min_profiles = profiles_count,
-                            degree_v = degree_v,
-                            metric = 'POINTS',
-                            scale_uniform = self.scale_uniform,
-                            auto_rotate = self.auto_rotate_profiles,
-                            use_tangents = self.profile_rotation,
-                            y_axis = np.array(y_axis),
-                            implementation = self.nurbs_implementation,
-                            knotvector_accuracy = self.knotvector_accuracy,
-                            logger = self.sv_logger
-                        )
-                else: # LOFT
-                    _, unified_curves, v_curves, surface = nurbs_birail(path1, path2,
-                                        profiles,
-                                        ts1 = ts1, ts2 = ts2,
-                                        min_profiles = profiles_count,
-                                        knots_u = self.u_knots_mode,
-                                        knotvector_accuracy = self.knotvector_accuracy,
-                                        degree_v = degree_v,
-                                        metric = self.metric,
-                                        scale_uniform = self.scale_uniform,
-                                        auto_rotate = self.auto_rotate_profiles,
-                                        use_tangents = self.profile_rotation,
-                                        y_axis = np.array(y_axis),
-                                        implementation = self.nurbs_implementation,
-                                        logger = self.sv_logger
-                                    )
+                _, unified_curves, v_curves, surface = nurbs_birail(path1, path2,
+                                    profiles,
+                                    ts1 = ts1, ts2 = ts2,
+                                    min_profiles = profiles_count,
+                                    knots_u = self.u_knots_mode,
+                                    knotvector_accuracy = self.knotvector_accuracy,
+                                    degree_v = degree_v,
+                                    metric = self.metric,
+                                    scale_uniform = self.scale_uniform,
+                                    auto_rotate = self.auto_rotate_profiles,
+                                    use_tangents = self.profile_rotation,
+                                    implementation = self.nurbs_implementation
+                                )
                 new_surfaces.append(surface)
                 new_curves.extend(unified_curves)
                 new_v_curves.extend(v_curves)
@@ -261,8 +221,8 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['VCurves'].sv_set(v_curves_out)
 
 def register():
-    bpy.utils.register_class(SvNurbsBirailMk2Node)
+    bpy.utils.register_class(SvNurbsBirailNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvNurbsBirailMk2Node)
+    bpy.utils.unregister_class(SvNurbsBirailNode)
 
