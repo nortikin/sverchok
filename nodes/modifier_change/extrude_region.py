@@ -220,7 +220,7 @@ class SvExtrudeRegionNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 face_data_matched = repeat_last_for_length(face_data, len(faces))
 
             # see: https://github.com/nortikin/sverchok/pull/4999#issuecomment-1734256435
-            need_fake_face = False
+            need_fake_face = False # True - undo PR for a while. Cannot reproduce issue for Blender >=3.x
             loops = [[faces]]
             if need_fake_face:
                 _, _, loops = separate_loose_mesh(vertices, faces)
