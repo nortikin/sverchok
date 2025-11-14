@@ -57,14 +57,17 @@ class SvOB3ItemSelectObjectMK3(bpy.types.Operator):
                 object_pointer = node.object_names[self.idx].object_pointer
                 for area in bpy.context.screen.areas:
                     if area.type == 'VIEW_3D':
-                        with context.temp_override(area = area , region = area.regions[-1]):
+                        #with context.temp_override(area = area , region = area.regions[-1]):
                             if event.shift==False:
                                 # Если Shift не нажат, то сбросить выделения всех объектов:
                                 for o in bpy.context.view_layer.objects:
                                     o.select_set(False)
-                            bpy.context.view_layer.objects.active = object_pointer
-                            if object_pointer.select_get()==False:
-                                object_pointer.select_set(True)
+                            if object_pointer.name in bpy.context.view_layer.objects:
+                                bpy.context.view_layer.objects.active = object_pointer
+                                if object_pointer.select_get()==False:
+                                    object_pointer.select_set(True)
+                            else:
+                                self.report({'INFO'}, f"Object is not in the current scene")
                             break
             pass
         return {'FINISHED'}
@@ -254,16 +257,21 @@ class SvOB3BHighlightProcessedObjectsInSceneMK3(bpy.types.Operator, SvGenericNod
         node = context.node
         for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
-                with context.temp_override(area = area , region = area.regions[-1]):
+                #with context.temp_override(area = area , region = area.regions[-1]):
                     if event.shift==False:
                         for o in bpy.context.view_layer.objects:
                             o.select_set(False)
                     for item in node.object_names:
                         if item.exclude==False and item.object_pointer:
-                            item.object_pointer.select_set(True)
+                            if item.object_pointer.name in bpy.context.view_layer.objects:
+                                item.object_pointer.select_set(True)
+                            else:
+                                some_objects_not_in_the_scene = True
                         pass
                     pass
-                pass
+                    if some_objects_not_in_the_scene == True:
+                        self.report({'INFO'}, f"Some object is not in the current scene")
+                #pass
             pass
         pass
         return {'FINISHED'}
@@ -280,16 +288,22 @@ class SvOB3BHighlightAllObjectsInSceneMK3(bpy.types.Operator, SvGenericNodeLocat
         node = context.node
         for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
-                with context.temp_override(area = area , region = area.regions[-1]):
+                #with context.temp_override(area = area , region = area.regions[-1]):
                     if event.shift==False:
                         for o in bpy.context.view_layer.objects:
                             o.select_set(False)
+                    some_objects_not_in_the_scene = False
                     for item in node.object_names:
                         if item.object_pointer:
-                            item.object_pointer.select_set(True)
+                            if item.object_pointer.name in bpy.context.view_layer.objects:
+                                item.object_pointer.select_set(True)
+                            else:
+                                some_objects_not_in_the_scene = True
                         pass
                     pass
-                pass
+                    if some_objects_not_in_the_scene == True:
+                        self.report({'INFO'}, f"Some object is not in the current scene")
+                #pass
             pass
         pass
 
