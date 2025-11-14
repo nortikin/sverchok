@@ -165,9 +165,9 @@ class SVOB3B_UL_NamesListMK3(bpy.types.UIList):
             pass
 
         if item.exclude:
-            exclude_icon='UNPINNED'
+            exclude_icon='CHECKBOX_DEHLT'
         else:
-            exclude_icon='PINNED'
+            exclude_icon='CHECKBOX_HLT'
 
         if item.object_pointer:
             op = grid.operator(SvOB3BItemEnablerMK3.bl_idname, icon=exclude_icon, text='', emboss=False)
@@ -893,7 +893,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             else:
                 mtrx = Matrix()
 
-            if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
+            if obj.type in {'EMPTY', 'CAMERA', 'LAMP', 'LIGHT' }:
                 if o_matrices:
                     l_matrices.append(mtrx)
                 continue
