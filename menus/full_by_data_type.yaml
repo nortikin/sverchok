@@ -769,7 +769,7 @@
     - SvCurveInputNode
     - SvFCurveInNodeMK1
     - SvCollectionPicker
-    - SvBezierInNode
+    - SvBezierInNodeMK2
     - SvExNurbsInNode
     - SvParticlesMK2Node
     - ---
