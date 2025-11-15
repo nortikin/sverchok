@@ -309,5 +309,5 @@ class SvObjectsNodeMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 self.object_names.add().name = named_object
 
 
-classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvObjectsNodeMK3]
+classes = [SvOB3BItemOperatorRemove, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvObjectsNodeMK3]
 register, unregister = bpy.utils.register_classes_factory(classes)
