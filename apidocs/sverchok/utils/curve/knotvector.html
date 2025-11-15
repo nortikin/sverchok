@@ -659,7 +659,10 @@ None, if the knotvector is valid.</p></div>
         if prev_u is None:
             last_match = False
         else:
-            last_match = abs(u - prev_u) &lt; tolerance
+            if tolerance is None:
+                last_match = (u == prev_u)
+            else:
+                last_match = abs(u - prev_u) &lt; tolerance
             #print(f&#34;Match: {u} - {prev_u} = {abs(u - prev_u)}, =&gt; {last_match}&#34;)
         if prev_u is None:
             count = 1
@@ -681,6 +684,212 @@ None, if the knotvector is valid.</p></div>
 </dl>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.curve.knotvector.KnotvectorDict"><code class="flex name class">
+<span>class <span class="ident">KnotvectorDict</span></span>
+<span>(</span><span>tolerance)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class KnotvectorDict(object):
+    def __init__(self, tolerance):
+        self.knots = defaultdict(int)
+        self.tolerance = tolerance
+        self._averages = []
+        self._bucket_ranges = []
+
+    def put(self, knot, multiplicity):
+        self.knots[knot] = max(self.knots[knot], multiplicity)
+
+    def calc_averages(self):
+        tolerance = self.tolerance
+        all_knots = []
+        buckets = []
+        all_knots = list(sorted(self.knots.keys()))
+        current_bucket = [all_knots[0]]
+        for knot in all_knots[1:]:
+            if knot - current_bucket[0] &lt;= tolerance:
+                current_bucket.append(knot)
+            else:
+                buckets.append(current_bucket)
+                current_bucket = [knot]
+        buckets.append(current_bucket)
+        self._averages = []
+        self._bucket_ranges = []
+        for bucket in buckets:
+            avg = sum(bucket) / len(bucket)
+            self._averages.append(avg)
+            k1 = bucket[0]
+            k2 = bucket[-1]
+            self._bucket_ranges.append((k1, k2))
+
+    def get_updates(self, knots):
+        result = dict()
+        for src_knot_idx, knot in enumerate(knots):
+            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+                if k1 &lt;= knot &lt;= k2:
+                    result[src_knot_idx] = self._averages[avg_idx]
+                    break
+        return result
+
+    def get_insertions(self, multiplicities):
+        existing = defaultdict(int)
+        for avg_idx, avg in enumerate(self._averages):
+            for knot, multiplicity in multiplicities.items():
+                k1, k2 = self._bucket_ranges[avg_idx]
+                if k1 &lt;= knot &lt;= k2:
+                    existing[avg_idx] += multiplicity
+        required = defaultdict(int)
+        for orig_knot, orig_multiplicity in self.knots.items():
+            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+                if k1 &lt;= orig_knot &lt;= k2:
+                    required[avg_idx] = max(required[avg_idx], orig_multiplicity)
+        result = defaultdict()
+        all_knots = set()
+        all_knots.update(existing.keys())
+        all_knots.update(required.keys())
+        for knot_idx in all_knots:
+            knot = self._averages[knot_idx]
+            diff = required[knot_idx] - existing[knot_idx]
+            if diff &gt; 0:
+                result[knot] = diff
+        return result
+
+    def items(self):
+        required = defaultdict(int)
+        for orig_knot, orig_multiplicity in self.knots.items():
+            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+                if k1 &lt;= orig_knot &lt;= k2:
+                    avg = self._averages[avg_idx]
+                    required[avg] = max(required[avg], orig_multiplicity)
+        return required.items()</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.knotvector.KnotvectorDict.calc_averages"><code class="name flex">
+<span>def <span class="ident">calc_averages</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_averages(self):
+    tolerance = self.tolerance
+    all_knots = []
+    buckets = []
+    all_knots = list(sorted(self.knots.keys()))
+    current_bucket = [all_knots[0]]
+    for knot in all_knots[1:]:
+        if knot - current_bucket[0] &lt;= tolerance:
+            current_bucket.append(knot)
+        else:
+            buckets.append(current_bucket)
+            current_bucket = [knot]
+    buckets.append(current_bucket)
+    self._averages = []
+    self._bucket_ranges = []
+    for bucket in buckets:
+        avg = sum(bucket) / len(bucket)
+        self._averages.append(avg)
+        k1 = bucket[0]
+        k2 = bucket[-1]
+        self._bucket_ranges.append((k1, k2))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.knotvector.KnotvectorDict.get_insertions"><code class="name flex">
+<span>def <span class="ident">get_insertions</span></span>(<span>self, multiplicities)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_insertions(self, multiplicities):
+    existing = defaultdict(int)
+    for avg_idx, avg in enumerate(self._averages):
+        for knot, multiplicity in multiplicities.items():
+            k1, k2 = self._bucket_ranges[avg_idx]
+            if k1 &lt;= knot &lt;= k2:
+                existing[avg_idx] += multiplicity
+    required = defaultdict(int)
+    for orig_knot, orig_multiplicity in self.knots.items():
+        for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+            if k1 &lt;= orig_knot &lt;= k2:
+                required[avg_idx] = max(required[avg_idx], orig_multiplicity)
+    result = defaultdict()
+    all_knots = set()
+    all_knots.update(existing.keys())
+    all_knots.update(required.keys())
+    for knot_idx in all_knots:
+        knot = self._averages[knot_idx]
+        diff = required[knot_idx] - existing[knot_idx]
+        if diff &gt; 0:
+            result[knot] = diff
+    return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.knotvector.KnotvectorDict.get_updates"><code class="name flex">
+<span>def <span class="ident">get_updates</span></span>(<span>self, knots)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_updates(self, knots):
+    result = dict()
+    for src_knot_idx, knot in enumerate(knots):
+        for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+            if k1 &lt;= knot &lt;= k2:
+                result[src_knot_idx] = self._averages[avg_idx]
+                break
+    return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.knotvector.KnotvectorDict.items"><code class="name flex">
+<span>def <span class="ident">items</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def items(self):
+    required = defaultdict(int)
+    for orig_knot, orig_multiplicity in self.knots.items():
+        for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
+            if k1 &lt;= orig_knot &lt;= k2:
+                avg = self._averages[avg_idx]
+                required[avg] = max(required[avg], orig_multiplicity)
+    return required.items()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.knotvector.KnotvectorDict.put"><code class="name flex">
+<span>def <span class="ident">put</span></span>(<span>self, knot, multiplicity)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def put(self, knot, multiplicity):
+    self.knots[knot] = max(self.knots[knot], multiplicity)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -724,6 +933,20 @@ None, if the knotvector is valid.</p></div>
 <li><code><a title="sverchok.utils.curve.knotvector.rescale" href="#sverchok.utils.curve.knotvector.rescale">rescale</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.reverse" href="#sverchok.utils.curve.knotvector.reverse">reverse</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.to_multiplicity" href="#sverchok.utils.curve.knotvector.to_multiplicity">to_multiplicity</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.curve.knotvector.KnotvectorDict" href="#sverchok.utils.curve.knotvector.KnotvectorDict">KnotvectorDict</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.knotvector.KnotvectorDict.calc_averages" href="#sverchok.utils.curve.knotvector.KnotvectorDict.calc_averages">calc_averages</a></code></li>
+<li><code><a title="sverchok.utils.curve.knotvector.KnotvectorDict.get_insertions" href="#sverchok.utils.curve.knotvector.KnotvectorDict.get_insertions">get_insertions</a></code></li>
+<li><code><a title="sverchok.utils.curve.knotvector.KnotvectorDict.get_updates" href="#sverchok.utils.curve.knotvector.KnotvectorDict.get_updates">get_updates</a></code></li>
+<li><code><a title="sverchok.utils.curve.knotvector.KnotvectorDict.items" href="#sverchok.utils.curve.knotvector.KnotvectorDict.items">items</a></code></li>
+<li><code><a title="sverchok.utils.curve.knotvector.KnotvectorDict.put" href="#sverchok.utils.curve.knotvector.KnotvectorDict.put">put</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

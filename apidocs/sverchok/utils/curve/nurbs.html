@@ -604,7 +604,8 @@ el.replaceWith(d);
         # &#34;The NURBS book&#34;, 2nd edition, p.5.2, eq. 5.11
         N = len(self.control_points)
         u = self.get_knotvector()
-        s = sv_knotvector.find_multiplicity(u, u_bar)
+        s = sv_knotvector.find_multiplicity(u, u_bar, tolerance=None)
+        #s = sv_knotvector.find_multiplicity(u, u_bar)
         p = self.get_degree()
 
         if u_bar &lt; u[0] or u_bar &gt; u[-1]:
@@ -615,13 +616,14 @@ el.replaceWith(d);
                 if if_possible:
                     count = (p+1) - s
                 else:
-                    raise CantInsertKnotException(f&#34;Can&#39;t insert first/last knot t={u_bar} for {count} times&#34;)
+                    raise CantInsertKnotException(f&#34;Can&#39;t insert first/last knot t={u_bar} for {count} times (existing knot multiplicity is {s}, maximum is {p+1})&#34;)
         else:
             if s+count &gt; p:
                 if if_possible:
                     count = p - s
                 else:
-                    raise CantInsertKnotException(f&#34;Can&#39;t insert knot t={u_bar} for {count} times&#34;)
+                    print(f&#34;Err KV: {u}&#34;)
+                    raise CantInsertKnotException(f&#34;Can&#39;t insert knot t={u_bar} for {count} times (existing knot multiplicity is {s}, maximum is {p})&#34;)
 
         k = u.searchsorted(u_bar, side=&#39;right&#39;)-1
         new_knotvector = sv_knotvector.insert(u, u_bar, count)
@@ -913,7 +915,8 @@ el.replaceWith(d);
     # &#34;The NURBS book&#34;, 2nd edition, p.5.2, eq. 5.11
     N = len(self.control_points)
     u = self.get_knotvector()
-    s = sv_knotvector.find_multiplicity(u, u_bar)
+    s = sv_knotvector.find_multiplicity(u, u_bar, tolerance=None)
+    #s = sv_knotvector.find_multiplicity(u, u_bar)
     p = self.get_degree()
 
     if u_bar &lt; u[0] or u_bar &gt; u[-1]:
@@ -924,13 +927,14 @@ el.replaceWith(d);
             if if_possible:
                 count = (p+1) - s
             else:
-                raise CantInsertKnotException(f&#34;Can&#39;t insert first/last knot t={u_bar} for {count} times&#34;)
+                raise CantInsertKnotException(f&#34;Can&#39;t insert first/last knot t={u_bar} for {count} times (existing knot multiplicity is {s}, maximum is {p+1})&#34;)
     else:
         if s+count &gt; p:
             if if_possible:
                 count = p - s
             else:
-                raise CantInsertKnotException(f&#34;Can&#39;t insert knot t={u_bar} for {count} times&#34;)
+                print(f&#34;Err KV: {u}&#34;)
+                raise CantInsertKnotException(f&#34;Can&#39;t insert knot t={u_bar} for {count} times (existing knot multiplicity is {s}, maximum is {p})&#34;)
 
     k = u.searchsorted(u_bar, side=&#39;right&#39;)-1
     new_knotvector = sv_knotvector.insert(u, u_bar, count)
