@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, IntProperty, EnumProperty
 import bmesh
 from mathutils import Vector, Matrix
 import json
@@ -29,8 +28,8 @@ class SvOB3BDataCollectionMK4(bpy.types.PropertyGroup):
         name="object",
         type=bpy.types.Object
     )
-    name: bpy.props.StringProperty()
-    icon: bpy.props.StringProperty(default="BLANK1")
+    name   : bpy.props.StringProperty(default='')
+    icon   : bpy.props.StringProperty(default="BLANK1")
     exclude: bpy.props.BoolProperty(
         default=False,
         description='Exclude from process',
@@ -45,10 +44,10 @@ class SvOB3ItemSelectObjectMK4(bpy.types.Operator):
     bl_idname = "node.sv_ob3_item_select_object_mk4"
     bl_label = "Select object as active"
 
-    node_name: bpy.props.StringProperty()
-    tree_name: bpy.props.StringProperty()  # all item types should have actual name of a tree
-    fn_name: StringProperty(default='')
-    idx: IntProperty()
+    node_name: bpy.props.StringProperty(default='')
+    tree_name: bpy.props.StringProperty(default='')  # all item types should have actual name of a tree
+    fn_name  : bpy.props.StringProperty(default='')
+    idx      : bpy.props.IntProperty(default=0)
 
     def invoke(self, context, event):
         node = context.node
@@ -77,8 +76,8 @@ class SvOB3BItemEnablerMK4(bpy.types.Operator):
     bl_idname = "node.sv_ob3b_item_enabler_mk4"
     bl_label = "Processed"
 
-    fn_name: StringProperty(default='')
-    idx: IntProperty()
+    fn_name: bpy.props.StringProperty(default='')
+    idx    : bpy.props.IntProperty(default=0)
 
     def invoke(self, context, event):
         if self.idx <= len(context.node.object_names)-1:
@@ -100,12 +99,23 @@ class SvOB3BItemEnablerMK4(bpy.types.Operator):
 
 class SvOB3ItemEmptyOperatorMK4(bpy.types.Operator):
     '''Empty operator to fill empty cells in grid'''
+
+    # example of usage to show dynamic description onmouseover:
+    # op = row0.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+    # op.description_text='Object pointer is empty'
+
     bl_idname = "node.sv_ob3_empty_operator_mk4"
-    bl_label = "Processed"
+    bl_label = ""
 
-    fn_name: StringProperty(default='')
-    idx: IntProperty()
+    fn_name         : bpy.props.StringProperty(default='')
+    idx             : bpy.props.IntProperty(default=0)
+    description_text: bpy.props.StringProperty(default='')
 
+    @classmethod
+    def description(cls, context, property):
+        s = property.description_text
+        return s
+    
     def invoke(self, context, event):
         return {'FINISHED'}
 
@@ -114,8 +124,8 @@ class SvOB3BItemRemoveMK4(bpy.types.Operator):
     bl_idname = "node.sv_ob3b_item_remove_mk4"
     bl_label = "Remove"
 
-    fn_name: StringProperty(default='')
-    idx: IntProperty()
+    fn_name: bpy.props.StringProperty(default='')
+    idx    : bpy.props.IntProperty(default=0)
 
     def invoke(self, context, event):
         #node = context.node.object_names[self.idx]
@@ -166,6 +176,7 @@ class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
             op.idx = index
         else:
             op = row0.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+            op.description_text='Object pointer is empty'
             pass
 
         if item.exclude:
@@ -179,6 +190,7 @@ class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
             op.idx = index
         else:
             op = row0.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+            op.description_text='Object pointer is empty'
             pass
         
         op = row0.column(align=True).operator(SvOB3BItemRemoveMK4.bl_idname, icon='X', text='', emboss=False)
@@ -191,8 +203,8 @@ class SvOB3BItemOperatorMK4(bpy.types.Operator, SvGenericNodeLocator):
     bl_idname = "node.sv_ob3b_collection_operator_mk4"
     bl_label = "generic bladibla"
 
-    fn_name: StringProperty(default='')
-    idx: IntProperty()
+    fn_name: bpy.props.StringProperty(default='')
+    idx    : bpy.props.IntProperty()
 
     def sv_execute(self, context, node):
         if self.fn_name == 'REMOVE':
@@ -252,7 +264,7 @@ class SvOB3BHighlightProcessedObjectsInSceneMK4(bpy.types.Operator, SvGenericNod
     bl_idname = "node.sv_ob3b_highlight_proc_objects_in_list_scene_mk4"
     bl_label = "Highlight processed objects in scene"
 
-    fn_name: StringProperty(default='')
+    fn_name: bpy.props.StringProperty(default='')
 
     def invoke(self, context, event):
         node = context.node
@@ -284,7 +296,7 @@ class SvOB3BHighlightAllObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeLocat
     bl_idname = "node.sv_ob3b_highlight_all_objects_in_list_scene_mk4"
     bl_label = "Select all objects in scene"
 
-    fn_name: StringProperty(default='')
+    fn_name: bpy.props.StringProperty(default='')
 
     def invoke(self, context, event):
         node = context.node
@@ -330,7 +342,7 @@ class SvOB3BCallbackMK4(bpy.types.Operator, SvGenericNodeLocator):
     bl_label = "Object In mk4 callback"
     bl_options = {'INTERNAL'}
 
-    fn_name: StringProperty(default='')
+    fn_name: bpy.props.StringProperty(default='')
 
     def sv_execute(self, context, node):
         """
@@ -375,17 +387,17 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
-    modifiers: BoolProperty(
+    modifiers: bpy.props.BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
         default=False, update=updateNode) # type: ignore
 
-    vergroups: BoolProperty(
+    vergroups: bpy.props.BoolProperty(
         name='Vergroups',
         description='Use vertex groups to nesty insertion',
         default=False, update=hide_show_versgroups) # type: ignore
 
-    sort: BoolProperty(
+    sort: bpy.props.BoolProperty(
         name='sort by name',
         description='sorting inserted objects by names',
         default=True, update=updateNode) # type: ignore
@@ -399,18 +411,18 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         description="Output NumPy arrays (makes node faster)",
         size=7, update=updateNode) # type: ignore
 
-    output_np_all: BoolProperty(
+    output_np_all: bpy.props.BoolProperty(
         name='Output all numpy',
         description='Output numpy arrays if possible',
         default=False, update=updateNode) # type: ignore
     
-    apply_matrix: BoolProperty(
+    apply_matrix: bpy.props.BoolProperty(
         name = "Apply matrices",
         description = "Apply objects matrices",
         default = True,
         update = updateNode) # type: ignore
     
-    mesh_join : BoolProperty(
+    mesh_join : bpy.props.BoolProperty(
         name = "merge",
         description = "If checked, join mesh elements into one object",
         default = False,
@@ -430,7 +442,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 item.object_pointer.display_type=self.display_type
         return
     
-    display_type : EnumProperty(
+    display_type : bpy.props.EnumProperty(
         name = "Display Types",
         items = display_types,
         default = 'WIRE',
@@ -447,7 +459,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 item.object_pointer.hide_render = True if self.hide_render_type=='RESTRICT_RENDER_ON' else False
         return
     
-    hide_render_type : EnumProperty(
+    hide_render_type : bpy.props.EnumProperty(
         name = "Render Types",
         items = hide_render_types,
         default = 'RESTRICT_RENDER_OFF',
@@ -474,19 +486,19 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             self.outputs[name].hide = not(self.enable_polygons_attribute_sockets)
         updateNode(self, context)
 
-    enable_verts_attribute_sockets: BoolProperty(
+    enable_verts_attribute_sockets: bpy.props.BoolProperty(
         name = "Show verts attribute sockets",
         description = "Show additional sockets for verts attributes:\n1. select\n2. crease\n3. bevel weight",
         default = False,
         update = verts_sockets_update) # type: ignore
 
-    enable_edges_attribute_sockets: BoolProperty(
+    enable_edges_attribute_sockets: bpy.props.BoolProperty(
         name = "Show edges attribute sockets",
         description = "Show additional sockets for edges attributes:\n1. select\n2. sharp\n3. seams\n4. crease\n4. bevel weight",
         default = False,
         update = edges_sockets_update) # type: ignore
 
-    enable_polygons_attribute_sockets: BoolProperty(
+    enable_polygons_attribute_sockets: bpy.props.BoolProperty(
         name = "Show polygons attribute sockets",
         description = "Show additional sockets for faces attributes:\n1. select\n2. smooth",
         default = False,
@@ -497,7 +509,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         ('ACTIVE_FACE_MAP', "", "Get faces indices, currently actived in Face Maps of object", "FACE_MAPS", 1),
     ]
 
-    vertex_attribute_type : EnumProperty(
+    vertex_attribute_type : bpy.props.EnumProperty(
         name = "Render Types",
         items = vertex_attribute_types,
         default = 'SELECTED',
@@ -538,13 +550,13 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             pass
         return
     
-    align_3dview_type : EnumProperty(
+    align_3dview_type : bpy.props.EnumProperty(
         name = "Local View",
         items = align_3dview_types,
         default = 'ISOLATE_CURRENT',
         update = update_align_3dview) # type: ignore
     
-    align_3dview_type_previous_value : EnumProperty(
+    align_3dview_type_previous_value : bpy.props.EnumProperty(
         name = "Local View",
         items = align_3dview_types,
         default = 'ISOLATE_CURRENT') # type: ignore
