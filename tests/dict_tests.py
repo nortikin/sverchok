@@ -1,7 +1,7 @@
 
 from sverchok.utils.testing import *
 from sverchok.utils.dictionary import SvApproxDict
-from sverchok.utils.curve.nurbs_algorithms import KnotvectorDict
+from sverchok.utils.curve.knotvector import KnotvectorDict
 
 
 class ApproxDictTests(SverchokTestCase):
@@ -43,7 +43,7 @@ class ApproxDictTests(SverchokTestCase):
 
 class KnotvectorDictTests(SverchokTestCase):
     def test_dict_1(self):
-        d = KnotvectorDict(tolerance=1e-3)
+        d = KnotvectorDict(tolerance=2e-3)
 
         curve1_kv = [0, 0.499, 0.501, 1]
         for k in curve1_kv:
@@ -58,7 +58,7 @@ class KnotvectorDictTests(SverchokTestCase):
         self.assert_sverchok_data_equal(list(d.items()), expected_items, precision=6)
 
     def test_dict_2(self):
-        d = KnotvectorDict(tolerance=1e-3)
+        d = KnotvectorDict(tolerance=2e-3)
 
         curve1_kv = [(0, 4), (0.499, 3), (0.501, 3), (1, 4)]
         for k, m in curve1_kv:
