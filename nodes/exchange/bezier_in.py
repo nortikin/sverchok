@@ -82,7 +82,7 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         general_part_of_comments = '\n\nClick - On/off\nShift-Click - Reverse On/Off all items'
-        grid = layout.grid_flow(row_major=False, columns=6, align=True)
+        grid = layout.grid_flow(row_major=False, columns=3, align=True)
 
         object_exists=False
         curve_object = True
@@ -103,11 +103,12 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
         row1.label(text='', icon=item_icon)
         grid.prop(item, 'object_pointer', text='')
 
+        row2 = grid.row(align=True)
         if item.object_pointer:
-            op = grid.operator(SvBezierInItemSelectObjectMK2.bl_idname, icon='CURSOR', text='', emboss=False)
+            op = row2.column(align=True).operator(SvBezierInItemSelectObjectMK2.bl_idname, icon='CURSOR', text='', emboss=False)
             op.idx = index
         else:
-            op = grid.operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
+            op = row2.column(align=True).operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
             op.text='Object does not exists'
             pass
 
@@ -119,7 +120,7 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
             else:
                 exclude_icon='CHECKBOX_HLT'
                 description_text = 'Object will be processed'
-            op = grid.operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
+            op = row2.column(align=True).operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
             op.fn_name = 'ENABLER'
             op.idx = index
             op.description_text = description_text+general_part_of_comments
@@ -132,24 +133,24 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
             else:
                 exclude_icon='GHOST_ENABLED'
                 description_text = 'Object will be processed but some splines of object are not BEZIER spline (ex.NURBS)'
-            op = grid.operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
+            op = row2.column(align=True).operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
             op.fn_name = 'ENABLER'
             op.idx = index
             op.description_text = description_text+general_part_of_comments
 
         elif not item.object_pointer:
             # Object does not exists
-            op = grid.operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='REMOVE', text='', emboss=False)
+            op = row2.column(align=True).operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='REMOVE', text='', emboss=False)
             op.text = 'Object does not exists'
             pass
 
         else:
             # Object cannot be used
-            op = grid.operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='REMOVE', text='', emboss=False)
+            op = row2.column(align=True).operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='REMOVE', text='', emboss=False)
             op.text = 'Object cannot be used as curve. Will be skipped in process.'
             pass
 
-        op = grid.operator(SvBezierInItemRemoveMK2.bl_idname, icon='X', text='', emboss=False)
+        op = row2.column(align=True).operator(SvBezierInItemRemoveMK2.bl_idname, icon='X', text='', emboss=False)
         op.fn_name = 'REMOVE'
         op.idx = index
         op.description_text = 'Remove object from list.\n\nUse Shift to skip confirmation dialog.'
@@ -159,7 +160,7 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
             lst = [o for o in active_data.object_names if o.object_pointer and o.object_pointer==item.object_pointer]
             if len(lst)>1:
                 duplicate_sign='ONIONSKIN_ON'
-        col = grid.column(align=True)
+        col = row2.column(align=True).column(align=True)
         col.label(text='', icon=duplicate_sign)
         col.scale_x=0
 
@@ -1001,7 +1002,8 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             if I<=len(self.object_names)-1:
                 if hasattr(item, 'name') and item.name in bpy.data.objects:
                     self.object_names[I].object_pointer = bpy.data.objects[item.name]
-
+        if self.width<305:
+            self.width=305
         pass
 
 classes = [SvBezierInRemoveDuplicatesObjectsInListMK2,
