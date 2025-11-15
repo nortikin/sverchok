@@ -1025,6 +1025,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             if I<=len(self.object_names)-1:
                 if hasattr(item, 'name') and item.name in bpy.data.objects:
                     self.object_names[I].object_pointer = bpy.data.objects[item.name]
+        self.legacy_mode = True
         if self.width<305:
             self.width=305
         pass
