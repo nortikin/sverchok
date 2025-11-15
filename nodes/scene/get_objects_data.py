@@ -1383,7 +1383,8 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             if I<=len(self.object_names)-1:
                 if item.name in bpy.data.objects:
                     self.object_names[I].object_pointer = bpy.data.objects[item.name]
-
+        if self.width<305:
+            self.width=305
         pass
 
     def load_from_json(self, node_data: dict, import_version: float):
