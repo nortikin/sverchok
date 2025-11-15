@@ -872,7 +872,7 @@
     - SvFCurveInNodeMK1
     - SvCollectionPicker
     - SvBezierInNodeMK2
-    - SvExNurbsInNode
+    - SvExNurbsInNodeMK2
     - SvParticlesMK2Node
     - ---
     - SvSelectionGrabberLite

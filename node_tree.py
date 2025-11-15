@@ -541,6 +541,7 @@ class NodeUtils:
         op = layout_element.operator(operator_idname, **keywords)
         op.node_name = self.name
         op.tree_name = self.id_data.name
+        
         if hasattr(op, 'description_text') and description_text is not None:
             op.description_text = description_text
         return op
