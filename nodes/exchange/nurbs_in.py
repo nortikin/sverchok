@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -21,13 +20,23 @@ from sverchok.dependencies import geomdl
 if geomdl is not None:
     from geomdl import NURBS
 
-class SvExNurbsInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
+class SvExNurbsInDataCollectionMK2(bpy.types.PropertyGroup):
+    #base: bpy.props.IntProperty(default=1, min=1)
+    object_pointer: bpy.props.PointerProperty(
+        name="object",
+        type=bpy.types.Object
+    )
+    exclude: bpy.props.BoolProperty(
+        description='Exclude from process',
+    )
 
-    bl_idname = "node.sv_ex_nurbs_in_callback"
+class SvExNurbsInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
+
+    bl_idname = "node.sv_ex_nurbs_in_callback_mk2"
     bl_label = "Nurbs In Callback"
     bl_options = {'INTERNAL'}
 
-    fn_name: StringProperty(default='')
+    fn_name: bpy.props.StringProperty(default='')
 
     def sv_execute(self, context, node):
         """
@@ -36,27 +45,375 @@ class SvExNurbsInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
         """
         getattr(node, self.fn_name)(self)
 
+class SvExNurbsIn_UL_NamesListMK2(bpy.types.UIList):
 
-class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        general_part_of_comments = '\n\nClick - On/off\nShift-Click - Reverse On/Off all items'
+        grid = layout.grid_flow(row_major=False, columns=3, align=True)
+
+        # curve_object = True
+        # bezier_object = True
+
+        item_icon = "GHOST_DISABLED"
+        if item.object_pointer:
+            try:
+                item_icon = 'OUTLINER_OB_' + item.object_pointer.type
+            except:
+                item_icon = "GHOST_DISABLED"
+        item_base = len(str(len(data.object_names)))
+        #grid.label(text=f'{index:0{item_base}d} {item.name} {",".join(chars)}', icon=item_icon)
+        row1 = grid.row(align=True)
+        if item.object_pointer:
+            if item.object_pointer.type not in {'SURFACE', 'CURVE'}:
+                # highlight row that is not surface or bezier:
+                row1.alert = True
+            else:
+                pass
+        else:
+            # highlight row that object does not exists:
+            row1.alert = True
+
+
+        row1.column(align=True).label(text=f'{index:0{item_base}d}')
+        row1.label(text='', icon=item_icon)
+        grid.prop(item, 'object_pointer', text='')
+
+        row2 = grid.row(align=True)
+        if item.object_pointer:
+            op = row2.column(align=True).operator(SvNurbsInItemSelectObjectMK2.bl_idname, icon='CURSOR', text='', emboss=False)
+            op.idx = index
+        else:
+            op = row2.column(align=True).operator(SvNurbsInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
+            op.description_text='Object does not exists'
+            pass
+
+        if item.object_pointer: # and item.object_pointer.type in {'SURFACE', 'CURVE'}: # and curve_object==True and bezier_object==True and non_bezier_object==False:
+            # all segments are BEZIER
+            if item.exclude:
+                exclude_icon='CHECKBOX_DEHLT'
+                description_text = 'Object will be excluded from process'
+            else:
+                exclude_icon='CHECKBOX_HLT'
+                description_text = 'Object will be processed'
+            op = row2.column(align=True).operator(SvNurbsInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
+            op.idx = index
+            op.description_text = description_text+general_part_of_comments
+
+        # elif item.object_pointer:
+        #     op = row2.column(align=True).operator(SvNurbsInEmptyOperatorMK2.bl_idname, icon='REMOVE', text='', emboss=False)
+        #     op.description_text = "Object is not Surface or Curve. It will be excluded from process"
+
+        else:
+            # Object cannot be used
+            op = row2.column(align=True).operator(SvNurbsInEmptyOperatorMK2.bl_idname, icon='REMOVE', text='', emboss=False)
+            op.description_text = 'Object does not exists. Will be skipped from process'
+            pass
+
+        op = row2.column(align=True).operator(SvNurbsInItemRemoveMK2.bl_idname, icon='X', text='', emboss=False)
+        op.idx = index
+        op.description_text = 'Remove object from list.\n\nUse Shift to skip confirmation dialog.'
+
+        duplicate_sign='BLANK1'
+        if item.object_pointer and active_data.object_names[getattr(active_data, active_propname)].object_pointer==item.object_pointer:
+            lst = [o for o in active_data.object_names if o.object_pointer and o.object_pointer==item.object_pointer]
+            if len(lst)>1:
+                duplicate_sign='ONIONSKIN_ON'
+        col = row2.column(align=True).column(align=True)
+        col.label(text='', icon=duplicate_sign)
+        col.scale_x=0
+
+        return
+
+class SvNurbsInEmptyOperatorMK2(bpy.types.Operator):
+    '''Empty operator to fill empty cells in grid'''
+    bl_idname = "node.sv_nurbsin_empty_operator_mk2"
+    bl_label = ""
+
+    description_text: bpy.props.StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
+
+    def invoke(self, context, event):
+        return {'FINISHED'}
+
+class SvNurbsInItemSelectObjectMK2(bpy.types.Operator):
+    '''Select object as active in 3D Viewport.\n\nShift-Click - add object into current selection of objects in scene.'''
+    bl_idname = "node.sv_nurbsin_item_select_object_mk2"
+    bl_label = ""
+
+    node_name: bpy.props.StringProperty(default='')
+    tree_name: bpy.props.StringProperty(default='')  # all item types should have actual name of a tree
+    fn_name  : bpy.props.StringProperty(default='')
+    idx      : bpy.props.IntProperty(default=0)
+
+    def invoke(self, context, event):
+        node = context.node
+        if node:
+            if self.idx>=0 and self.idx<=len(node.object_names)-1:
+                object_pointer = node.object_names[self.idx].object_pointer
+                if object_pointer:
+                    for area in bpy.context.screen.areas:
+                        if area.type == 'VIEW_3D':
+                            with context.temp_override(area = area , region = area.regions[-1]):
+                                if event.shift==False:
+                                    # If you do not press Shift, drop the selection of all objects
+                                    for o in bpy.context.view_layer.objects:
+                                        o.select_set(False)
+                                bpy.context.view_layer.objects.active = object_pointer
+                                if object_pointer.select_get()==False:
+                                    object_pointer.select_set(True)
+                                #bpy.ops.view3d.view_selected(use_all_regions=False) # Иногда крашит Blender, пока отключил. Может вернусь позже. Оставлю пока только выделение объекта в сцене
+                                break
+            pass
+        return {'FINISHED'}
+
+class SvNurbsInItemEnablerMK2(bpy.types.Operator):
+    '''Enable/Disable object to process.\nCtrl button to disable all objects first\nShift button to inverse list.'''
+    bl_idname = "node.sv_nurbsin_item_enabler_mk2"
+    bl_label = ""
+
+    fn_name         : bpy.props.StringProperty(default='')
+    idx             : bpy.props.IntProperty()
+    description_text: bpy.props.StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
+
+    def invoke(self, context, event):
+        #node = context.node.object_names[self.idx]
+        if self.idx <= len(context.node.object_names)-1:
+            if event.ctrl==True:
+                for item in context.node.object_names:
+                    item.exclude = True
+                context.node.object_names[self.idx].exclude = False
+            elif event.shift==True:
+                for item in context.node.object_names:
+                    item.exclude = not(item.exclude)
+                    pass
+                pass
+            else:
+                context.node.object_names[self.idx].exclude = not(context.node.object_names[self.idx].exclude)
+                pass
+            context.node.process_node(None)
+        return {'FINISHED'}
+
+class SvNurbsInItemRemoveMK2(bpy.types.Operator):
+    '''Remove object from list'''
+    bl_idname = "node.sv_nurbsin_item_remove_mk2"
+    bl_label = ""
+
+    idx             : bpy.props.IntProperty(default=0)
+    description_text: bpy.props.StringProperty(default='')
+    node_group      : bpy.props.StringProperty(default='')
+    node_name       : bpy.props.StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text=f'{self.node_name}.')
+        layout.label(text=f'Remove object \'{self.idx}\'-th elem from list?')
+
+    def invoke(self, context, event):
+        if self.idx <= len(context.node.object_names)-1:
+            self.node_name = context.node.name
+            self.node_group = context.annotation_data_owner.name_full
+            if event.shift==True:
+                return self.execute(context)
+            else:
+                return context.window_manager.invoke_props_dialog(self)
+        return {'FINISHED'}
+    
+    def execute(self, context):
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        node.object_names.remove(self.idx)
+        node.process_node(None)
+        self.report({'INFO'}, f"Removed {self.idx}-th item from list")
+        return {'FINISHED'}
+    
+class SvNurbsInAddObjectsFromSceneUpMK2(bpy.types.Operator, SvGenericNodeLocator):
+
+    bl_idname = "node.sv_nurbsin_add_object_from_scene_mk2"
+    bl_label = "Add selected objects from scene into the list"
+    bl_options = {'INTERNAL'}
+
+    def sv_execute(self, context, node):
+        node.add_objects_from_scene(self)
+        pass
+
+class SvNurbsInMoveUpMK2(bpy.types.Operator, SvGenericNodeLocator):
+
+    bl_idname = "node.sv_nurbsin_moveup_mk2"
+    bl_label = "Move current object up"
+    bl_options = {'INTERNAL'}
+
+    def sv_execute(self, context, node):
+        node.move_current_object_up(self)
+        return
+
+class SvNurbsInMoveDownMK2(bpy.types.Operator, SvGenericNodeLocator):
+
+    bl_idname = "node.sv_nurbsin_movedown_mk2"
+    bl_label = "Move current object down"
+    bl_options = {'INTERNAL'}
+
+    def sv_execute(self, context, node):
+        node.move_current_object_down(self)
+        return
+
+class SvNurbsInHighlightProcessedObjectsInSceneMK2(bpy.types.Operator, SvGenericNodeLocator):
+    '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
+
+    bl_idname = "node.sv_nurbsin_highlight_proc_objects_in_list_scene_mk2"
+    bl_label = "Select processed objects in scene"
+
+    fn_name: bpy.props.StringProperty(default='')
+
+    def invoke(self, context, event):
+        node = context.node
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                with context.temp_override(area = area , region = area.regions[-1]):
+                    if event.shift==False:
+                        for o in bpy.context.view_layer.objects:
+                            o.select_set(False)
+                    for item in node.object_names:
+                        if item.object_pointer and item.exclude==False:
+                            item.object_pointer.select_set(True)
+                        pass
+                    pass
+                pass
+            pass
+        pass
+
+        return {'FINISHED'}
+
+class SvNurbsInHighlightAllObjectsInSceneMK2(bpy.types.Operator, SvGenericNodeLocator):
+    '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
+    bl_idname = "node.sv_nurbsin_highlight_all_objects_in_list_scene_mk2"
+    bl_label = "Select all list's objects in 3D scene"
+
+    fn_name: bpy.props.StringProperty(default='')
+
+    def invoke(self, context, event):
+        node = context.node
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                with context.temp_override(area = area , region = area.regions[-1]):
+                    if event.shift==False:
+                        for o in bpy.context.view_layer.objects:
+                            o.select_set(False)
+                    for item in node.object_names:
+                        if item.object_pointer:
+                            item.object_pointer.select_set(True)
+                        pass
+                    pass
+                pass
+            pass
+        pass
+    
+        return {'FINISHED'}
+
+class SvNurbsInSyncSceneObjectWithListMK2(bpy.types.Operator, SvGenericNodeLocator):
+
+    bl_idname = "node.sv_nurbsin_sync_scene_object_with_list"
+    bl_label = ""
+    bl_options = {'INTERNAL'}
+
+    description_text: bpy.props.StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
+
+    def sv_execute(self, context, node):
+        node.sync_active_object_in_scene_with_list(self)
+
+class SvNurbsInRemoveDuplicatesObjectsInListMK2(bpy.types.Operator, SvGenericNodeLocator):
+
+    bl_idname = "node.sv_nurbsin_remove_duplicates_objects_in_list"
+    bl_label = ""
+    bl_options = {'INTERNAL'}
+
+    description_text: bpy.props.StringProperty(default='')
+    node_group      : bpy.props.StringProperty(default='')
+    node_name       : bpy.props.StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text=f'{self.node_name}.')
+        layout.label(text=f'Remove duplicates objects from list?')
+
+    def invoke(self, context, event):
+        self.node_name = context.node.name
+        self.node_group = context.annotation_data_owner.name_full
+        if event.shift==True:
+            return self.execute(context)
+        else:
+            return context.window_manager.invoke_props_dialog(self)
+    
+    def execute(self, context):
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        node.remove_duplicates_objects_in_list(self)
+        node.process_node(None)
+        return {'FINISHED'}
+
+    # def sv_execute(self, context, node):
+    #     node.remove_duplicates_objects_in_list(self)
+
+class SvNurbsInClearObjectsFromListMK2(bpy.types.Operator, SvGenericNodeLocator):
+
+    bl_idname = "node.sv_nurbsin_clear_list_of_objects_mk2"
+    bl_label = "Clear list of objects"
+    bl_options = {'INTERNAL'}
+
+    def sv_execute(self, context, node):
+        node.clear_objects_from_list(self)
+        return
+
+class SvExNurbsInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Input NURBS
     Tooltip: Get NURBS curve or surface objects from scene
     """
-    bl_idname = 'SvExNurbsInNode'
+    bl_idname = 'SvExNurbsInNodeMK2'
     bl_label = 'NURBS Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
     is_scene_dependent = True
     is_animation_dependent = True
 
-    object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    
+    legacy_mode: bpy.props.BoolProperty(
+        name='Legacy Mode',
+        description='Flats output lists (affects all sockets)',
+        default=False,
+        update=updateNode
+        )
+    
+    object_names: bpy.props.CollectionProperty(type=SvExNurbsInDataCollectionMK2)
+    active_obj_index: bpy.props.IntProperty()
 
-    sort: BoolProperty(
+    sort: bpy.props.BoolProperty(
         name='sort by name',
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    apply_matrix : BoolProperty(
+    apply_matrix : bpy.props.BoolProperty(
         name = "Apply matrices",
         description = "Apply object matrices to control points",
         default = True,
@@ -79,7 +436,8 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             names.sort()
 
         for name in names:
-            self.object_names.add().name = name
+            item = self.object_names.add()
+            item.object_pointer = bpy.data.objects[name]
 
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
@@ -92,13 +450,33 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         if self.object_names:
             remain = len(self.object_names) - 5
 
-            for i, obj_ref in enumerate(self.object_names):
-                layout.label(text=obj_ref.name)
-                if i > 4 and remain > 0:
-                    postfix = ('' if remain == 1 else 's')
-                    more_items = '... {0} more item' + postfix
-                    layout.label(text=more_items.format(remain))
-                    break
+            # for i, obj_ref in enumerate(self.object_names):
+            #     layout.label(text=obj_ref.name)
+            #     if i > 4 and remain > 0:
+            #         postfix = ('' if remain == 1 else 's')
+            #         more_items = '... {0} more item' + postfix
+            #         layout.label(text=more_items.format(remain))
+            #         break
+
+            row = layout.row(align=True)
+            row.column().template_list("SvExNurbsIn_UL_NamesListMK2", f"uniq_{self.name}", self, "object_names", self, "active_obj_index")
+            col = row.column(align=True)
+            self.wrapper_tracked_ui_draw_op(col, SvNurbsInAddObjectsFromSceneUpMK2.bl_idname, text='', icon='ADD')
+            self.wrapper_tracked_ui_draw_op(col, SvNurbsInMoveUpMK2.bl_idname, text='', icon='TRIA_UP')
+            self.wrapper_tracked_ui_draw_op(col, SvNurbsInMoveDownMK2.bl_idname, text='', icon='TRIA_DOWN')
+            self.wrapper_tracked_ui_draw_op(col, SvNurbsInHighlightProcessedObjectsInSceneMK2.bl_idname, text='', icon='GROUP_VERTEX')
+            self.wrapper_tracked_ui_draw_op(col, SvNurbsInHighlightAllObjectsInSceneMK2.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
+            self.wrapper_tracked_ui_draw_op(col, SvNurbsInSyncSceneObjectWithListMK2.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
+
+            set_object_names = set([o.object_pointer.name for o in self.object_names if o.object_pointer])
+            if len(set_object_names)<len(self.object_names):
+                icon = 'AUTOMERGE_ON'
+                description_text = f'Remove any duplicates objects in list\nCount of duplicates objects: {len(self.object_names)-len(set_object_names)}'
+            else:
+                icon = 'AUTOMERGE_OFF'
+                description_text = 'Remove any duplicates objects in list.\nNo duplicates objects in list now'
+            description_text += "\n\nShift-Cliсk - skip confirmation dialog"
+            self.wrapper_tracked_ui_draw_op(col, SvNurbsInRemoveDuplicatesObjectsInListMK2.bl_idname, text='', icon=icon, description_text=description_text)
         else:
             layout.label(text='--None--')
 
@@ -109,10 +487,109 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     implementations.append(
         (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
 
-    implementation : EnumProperty(
+    implementation : bpy.props.EnumProperty(
             name = "Implementation",
             items=implementations,
             update = updateNode)
+    
+    def add_objects_from_scene(self, ops):
+        """Add selected objects on the top of the list"""
+        names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
+
+        for name in names:
+            item = self.object_names.add()
+            item.name = name
+            item.object_pointer = bpy.data.objects[name]
+            self.object_names.move(len(self.object_names)-1, 0)
+            self.active_obj_index=0
+
+        if not self.object_names:
+            ops.report({'WARNING'}, "Warning, no selected objects in the scene")
+            return
+        else:
+            ops.report({'INFO'}, f"Added {len(names)} object(s)")
+
+        self.process_node(None)
+        return
+    
+    def move_current_object_up(self, ops):
+        """Move current obbect in list up"""
+
+        if self.active_obj_index>0:
+            self.object_names.move(self.active_obj_index, self.active_obj_index-1)
+            self.active_obj_index-=1
+
+        if not self.object_names:
+            ops.report({'WARNING'}, "Warning, no selected objects in the scene")
+            return
+
+        self.process_node(None)
+        return
+
+    def move_current_object_down(self, ops):
+        """Move current object in list down"""
+
+        if self.active_obj_index<=len(self.object_names)-2:
+            self.object_names.move(self.active_obj_index, self.active_obj_index+1)
+            self.active_obj_index+=1
+
+        self.process_node(None)
+        return
+    
+    def sync_active_object_in_scene_with_list(self, ops):
+        object_synced = False
+        if bpy.context.view_layer.objects.active:
+            active_object = bpy.context.view_layer.objects.active
+            first_duplicated = None
+            sync_index = None
+            for I, item in enumerate(self.object_names):
+                if self.object_names[self.active_obj_index].object_pointer == active_object and I<=self.active_obj_index:
+                    if first_duplicated==None and self.object_names[I].object_pointer == active_object:
+                        first_duplicated = I
+                    continue
+                if item.object_pointer == active_object:
+                    sync_index = I
+                    #object_synced = True
+                    break
+                pass
+
+        if sync_index is not None:
+            self.active_obj_index=sync_index
+            object_synced = True
+        elif first_duplicated is not None:
+            self.active_obj_index=first_duplicated
+            object_synced = True
+
+        if object_synced:
+            ops.report({'INFO'}, f"Object {active_object.name} synced.")
+        else:
+            ops.report({'WARNING'}, f"Object '{active_object.name}' is not in the list of objects")
+        return
+
+    def remove_duplicates_objects_in_list(self, ops):
+        lst = [item.object_pointer for item in self.object_names]
+        _s = set(lst)
+        remove_idx = []
+        for I, item in enumerate(self.object_names):
+            if item.object_pointer in _s:
+                _s.remove(item.object_pointer)
+            else:
+                remove_idx.append(I)
+            pass
+        remove_idx.sort()
+        remove_idx.reverse()
+        for idx in remove_idx:
+            self.object_names.remove(idx)
+        ops.report({'INFO'}, f"removed {len(remove_idx)} object(s).")
+        return
+    
+    def clear_objects_from_list(self, ops):
+        """Clear list of objects"""
+        len_object_names = len(self.object_names)
+        self.object_names.clear()
+        ops.report({'INFO'}, f"Cleared {len_object_names} items in the list.")
+        self.process_node(None)
+        return
 
     def sv_draw_buttons(self, context, layout):
         layout.prop(self, 'implementation', text='')
@@ -125,13 +602,18 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             row.scale_y = 4.0
             op_text = "G E T"
 
-        callback = 'node.sv_ex_nurbs_in_callback'
+        callback = SvExNurbsInCallbackOpMK2.bl_idname
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
-
         layout.prop(self, 'sort', text='Sort', toggle=True)
         layout.prop(self, 'apply_matrix', toggle=True)
+        layout.prop(self, 'legacy_mode')
 
         self.draw_obj_names(layout)
+
+        if len(self.object_names)>0:
+            row = layout.row(align=True)
+            row.label(text='')
+            self.wrapper_tracked_ui_draw_op(row, SvNurbsInClearObjectsFromListMK2.bl_idname, text='', icon='CANCEL')
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "draw_3dpanel", icon="PLUGIN")
@@ -140,7 +622,7 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
-        callback = 'node.sv_ex_nurbs_in_callback'
+        callback = SvExNurbsInCallbackOpMK2.bl_idname
         row.prop(self, 'implementation', text='')
         self.wrapper_tracked_ui_draw_op(row, callback, text='GET').fn_name = 'get_objects_from_scene'
         self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
@@ -252,6 +734,9 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
     def process(self):
 
+        if not any([sock.is_linked for sock in self.outputs]):
+            return
+
         if not self.object_names:
             return
 
@@ -259,37 +744,77 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         surfaces_out = []
         matrices_out = []
         for item in self.object_names:
-            object_name = item.name
-            obj = bpy.data.objects.get(object_name)
-            if not obj:
-                continue
-
-            matrix = obj.matrix_world
-            if obj.type not in {'SURFACE', 'CURVE'}:
-                self.warning("%s: not supported object type: %s", object_name, obj.type)
-                continue
-            for spline in obj.data.splines:
-                if spline.type != 'NURBS':
-                    self.warning("%s: not supported spline type: %s", spline, spline.type)
+            if item.object_pointer and item.exclude==False:
+                object_curves = []
+                object_surfaces = []
+                object_matrices = []
+                matrix = item.object_pointer.matrix_world
+                if item.object_pointer.type not in {'SURFACE', 'CURVE'}:
+                    self.warning("%s: not supported object type: %s", item.object_pointer.name, item.object_pointer.type)
                     continue
-                if obj.type == 'SURFACE':
-                    surface = self.get_surface(spline, matrix)
-                    surfaces_out.append(surface)
-                    matrices_out.append(matrix)
-                elif obj.type == 'CURVE':
-                    curve = self.get_curve(spline, matrix)
-                    curves_out.append(curve)
-                    matrices_out.append(matrix)
+                for spline in item.object_pointer.data.splines:
+                    if spline.type != 'NURBS':
+                        self.warning("%s: not supported spline type: %s", spline, spline.type)
+                        continue
+                    if item.object_pointer.type == 'SURFACE':
+                        surface = self.get_surface(spline, matrix)
+                        object_surfaces.append(surface)
+                        object_matrices.append(matrix)
+                    elif item.object_pointer.type == 'CURVE':
+                        curve = self.get_curve(spline, matrix)
+                        object_curves.append(curve)
+                        object_matrices.append(matrix)
+                    pass
+                pass
+                curves_out.append(object_curves)
+                surfaces_out.append(object_surfaces)
+                matrices_out.append(object_matrices)
+            else:
+                pass
+            pass
+        pass
 
-        self.outputs['Curves'].sv_set(curves_out)
-        self.outputs['Surfaces'].sv_set(surfaces_out)
-        self.outputs['Matrices'].sv_set(matrices_out)
+        _curves_out = curves_out
+        _surfaces_out = surfaces_out
+        _matrices_out = matrices_out
+        if self.legacy_mode == True:
+            _curves_out            = [c for   curves in _curves_out   for c in curves]
+            _surfaces_out          = [s for surfaces in _surfaces_out for s in surfaces]
+            _matrices_out          = [m for matrices in _matrices_out for m in matrices]
 
+        self.outputs[  'Curves'].sv_set(_curves_out)
+        self.outputs['Surfaces'].sv_set(_surfaces_out)
+        self.outputs['Matrices'].sv_set(_matrices_out)
 
-def register():
-    bpy.utils.register_class(SvExNurbsInCallbackOp)
-    bpy.utils.register_class(SvExNurbsInNode)
+    def migrate_from(self, old_node):
+        if hasattr(self, 'location_absolute'):
+            # Blender 3.0 has no this attribute
+            self.location_absolute = old_node.location_absolute
+        for I, item in enumerate(old_node.object_names):
+            if I<=len(self.object_names)-1:
+                if hasattr(item, 'name') and item.name in bpy.data.objects:
+                    self.object_names[I].object_pointer = bpy.data.objects[item.name]
+        self.legacy_mode = True
+        if self.width<305:
+            self.width=305
+        pass
 
-def unregister():
-    bpy.utils.unregister_class(SvExNurbsInNode)
-    bpy.utils.unregister_class(SvExNurbsInCallbackOp)
+classes = [
+    SvNurbsInEmptyOperatorMK2,
+    SvNurbsInItemSelectObjectMK2,
+    SvNurbsInItemEnablerMK2,
+    SvNurbsInItemRemoveMK2,
+    SvNurbsInAddObjectsFromSceneUpMK2,
+    SvNurbsInMoveUpMK2,
+    SvNurbsInMoveDownMK2,
+    SvNurbsInHighlightProcessedObjectsInSceneMK2,
+    SvNurbsInHighlightAllObjectsInSceneMK2,
+    SvNurbsInSyncSceneObjectWithListMK2,
+    SvNurbsInRemoveDuplicatesObjectsInListMK2,
+    SvNurbsInClearObjectsFromListMK2,
+    SvExNurbsInDataCollectionMK2,
+    SvExNurbsIn_UL_NamesListMK2,
+    SvExNurbsInCallbackOpMK2,
+    SvExNurbsInNodeMK2
+]
+register, unregister = bpy.utils.register_classes_factory(classes)
