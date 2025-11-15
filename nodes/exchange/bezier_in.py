@@ -99,6 +99,15 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
         item_base = len(str(len(data.object_names)))
         #grid.label(text=f'{index:0{item_base}d} {item.name} {",".join(chars)}', icon=item_icon)
         row1 = grid.row(align=True)
+        if item.object_pointer and curve_object==True and bezier_object==True and non_bezier_object==False:
+            pass
+        elif item.object_pointer and curve_object==True and bezier_object==True and non_bezier_object==True:
+            pass
+        elif not item.object_pointer:
+            row1.alert = True
+        else:
+            row1.alert = True
+
         row1.column(align=True).label(text=f'{index:0{item_base}d}')
         row1.label(text='', icon=item_icon)
         grid.prop(item, 'object_pointer', text='')
@@ -184,16 +193,21 @@ class SvBezierInItemSelectObjectMK2(bpy.types.Operator):
                 if object_pointer:
                     for area in bpy.context.screen.areas:
                         if area.type == 'VIEW_3D':
-                            with context.temp_override(area = area , region = area.regions[-1]):
-                                if event.shift==False:
-                                    # If you do not press Shift, drop the selection of all objects
-                                    for o in bpy.context.view_layer.objects:
-                                        o.select_set(False)
-                                bpy.context.view_layer.objects.active = object_pointer
-                                if object_pointer.select_get()==False:
-                                    object_pointer.select_set(True)
-                                #bpy.ops.view3d.view_selected(use_all_regions=False) # Иногда крашит Blender, пока отключил. Может вернусь позже. Оставлю пока только выделение объекта в сцене
-                                break
+                            if event.shift==False:
+                                # If you do not press Shift, drop the selection of all objects
+                                for o in bpy.context.view_layer.objects:
+                                    o.select_set(False)
+                            if object_pointer:
+                                if object_pointer.name in bpy.context.view_layer.objects:
+                                    bpy.context.view_layer.objects.active = object_pointer
+                                    if object_pointer.select_get()==False:
+                                        object_pointer.select_set(True)
+                                else:
+                                    self.report({'INFO'}, f"Object {object_pointer.name} not in this scene.")
+                            else:
+                                self.report({'INFO'}, f"Object emty")
+                            #bpy.ops.view3d.view_selected(use_all_regions=False) # Иногда крашит Blender, пока отключил. Может вернусь позже. Оставлю пока только выделение объекта в сцене
+                            break
             pass
         return {'FINISHED'}
 
@@ -440,16 +454,20 @@ class SvBezierInHighlightProcessedObjectsInSceneMK2(bpy.types.Operator, SvGeneri
         node = context.node
         for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
-                with context.temp_override(area = area , region = area.regions[-1]):
+                #with context.temp_override(area = area , region = area.regions[-1]):
                     if event.shift==False:
                         for o in bpy.context.view_layer.objects:
                             o.select_set(False)
-                    for obj in node.object_names:
-                        if obj.exclude==False and obj.name in bpy.data.objects:
-                            bpy.data.objects[obj.name].select_set(True)
-                        pass
+                    some_objects_not_in_the_scene = False
+                    for item in node.object_names:
+                        if item.object_pointer and item.object_pointer.name in bpy.context.view_layer.objects:
+                            item.object_pointer.select_set(True)
+                        else:
+                            some_objects_not_in_the_scene = True
                     pass
-                pass
+                    if some_objects_not_in_the_scene == True:
+                        self.report({'INFO'}, f"Some objects are not in the current scene")
+                #pass
             pass
         pass
 
@@ -467,16 +485,21 @@ class SvBezierInHighlightAllObjectsInSceneMK2(bpy.types.Operator, SvGenericNodeL
         node = context.node
         for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
-                with context.temp_override(area = area , region = area.regions[-1]):
+                #with context.temp_override(area = area , region = area.regions[-1]):
                     if event.shift==False:
                         for o in bpy.context.view_layer.objects:
                             o.select_set(False)
+                    some_objects_not_in_the_scene = False
                     for item in node.object_names:
-                        if item.object_pointer:
+                        if item.object_pointer and item.object_pointer.name in bpy.context.view_layer.objects:
                             item.object_pointer.select_set(True)
+                        else:
+                            some_objects_not_in_the_scene = True
                         pass
                     pass
-                pass
+                    if some_objects_not_in_the_scene == True:
+                        self.report({'INFO'}, f"Some objects are not in the current scene")
+                #pass
             pass
         pass
     
