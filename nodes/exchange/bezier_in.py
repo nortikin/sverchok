@@ -1004,5 +1004,21 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
         pass
 
-classes = [SvBezierInRemoveDuplicatesObjectsInListMK2, SvBezierInSyncSceneObjectWithListMK2, SvBezierInEmptyOperatorMK2, SvBezierInItemRemoveMK2, SvBezierInItemEnablerMK2, SvBezierInItemSelectObjectMK2, SvBIDataCollectionMK2, SVBI_UL_NamesListMK2, SvBezierInMoveUpMK2, SvBezierInMoveDownMK2, SvBezierInAddObjectsFromSceneUpMK2, SvBezierInClearObjectsFromListMK2, SvBezierInCallbackOpMK2, SvBezierInHighlightProcessedObjectsInSceneMK2, SvBezierInHighlightAllObjectsInSceneMK2, SvBezierInNodeMK2]
+classes = [SvBezierInRemoveDuplicatesObjectsInListMK2,
+        SvBezierInSyncSceneObjectWithListMK2,
+        SvBezierInEmptyOperatorMK2,
+        SvBezierInItemRemoveMK2,
+        SvBezierInItemEnablerMK2,
+        SvBezierInItemSelectObjectMK2,
+        SvBIDataCollectionMK2,
+        SVBI_UL_NamesListMK2,
+        SvBezierInMoveUpMK2,
+        SvBezierInMoveDownMK2,
+        SvBezierInAddObjectsFromSceneUpMK2,
+        SvBezierInClearObjectsFromListMK2,
+        SvBezierInCallbackOpMK2,
+        SvBezierInHighlightProcessedObjectsInSceneMK2,
+        SvBezierInHighlightAllObjectsInSceneMK2,
+        SvBezierInNodeMK2
+    ]
 register, unregister = bpy.utils.register_classes_factory(classes)
