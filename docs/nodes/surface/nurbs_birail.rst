@@ -33,9 +33,24 @@ rotation incorrectly. In such cases, you will have to place your profile curves
 in XOY plane and disable "Auto rotate" flag.
 
 The node works by placing several copies of profile curve along the path
-curves, and then lofting (skinning) between them.  If several profile curves
-are used, then the node interpolates between them and places these interpolated
-curves along the path curve.  
+curves. If several profile curves are used, then the node interpolates between
+them and places these interpolated curves along the path curve. Then one of
+two algorithms can be used:
+
+* **Lofting** (legacy). A loft surface is generated from profile curves placed
+  along path curves.
+* **Gordon**. Gordon surface is generated from path curves and profile curves.
+  See documentation of "Surface from NURBS curves net" node for more information.
+
+Loft algorithm works faster with the same number of profile curve copies
+(**VSections** parameter). But, in order for resulting surface to touch path
+curves precisely enough, you usually will have to use high enough value of
+VSections parameter. Gordon algorithm produces the surface which always touches
+path curves precisely, even with small number of V sections. But Gordon
+algorithm is slower, and it produces surfaces with more control points. Also,
+Gordon algorithm does not support (yet) rational curves. One can either use
+Loft algorithm for such curves, or pass curves through "Curve to NURBS" node to
+make them non-rational.
 
 This node can be compared with "NURBS Sweep" node. That node uses only one path
 curve.
@@ -83,6 +98,12 @@ This node has the following inputs:
   level up to 2 (list of lists of numbers). Degree of 1 will make a "linear
   loft", i.e. a surface composed from several ruled surfaces; higher degrees
   will create more smooth surfaces. The default value is 3. 
+* **Normal**. This input is available only when **Profile Rotation** parameter
+  is set to **Custom**. Vector which controls orientation of copies of profile
+  curves along path curves. The node will try to rotate profile curves so that
+  they would lie in the same plane with specified vector. This is not exactly
+  possible in many situations, but at least approximately the profiles will be
+  rotated this way. The default value is ``(0, 0, 1)`` (Z axis).
 
 Parameters
 ----------
@@ -123,6 +144,9 @@ This node has the following parameters:
    * **By profile**. The node will try to place profile curves so that they be
      parallel to initial location of the path curve. This is not always
      possible, but the node will try to keep it as parallel as possible.
+  * **Custom**. The node will try to place profile curves so that they be
+    parallel to the vector specified in the **Normal** input. This is not
+    always possible, but the node will try to keep it as parallel as possible.
 
    The default option is **Path Normal Average**.
 
