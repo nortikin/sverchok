@@ -41,6 +41,12 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
             default = 'UNIFY',
             update = updateNode)
 
+    v_modes = [
+            ('PARAM', "Uniform - Path parameter", "Distribute profile curves uniformly according to path curve parametrization", 0),
+            ('LEN', "Uniform - Path length", "Distribute profile curves uniformly according to path curve length segments (natural parametrization)", 1),
+            ('EXPLICIT', "Explicit values", "Provide values of V parameter (along path curve) for profile curves explicitly", 2)
+        ]
+
     knotvector_accuracy : IntProperty(
             name = "Knotvector accuracy",
             min = 1,
@@ -70,10 +76,11 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
             update = updateNode)
 
     def update_sockets(self, context):
-        self.inputs['V1'].hide_safe = not self.explicit_v
-        self.inputs['V2'].hide_safe = not self.explicit_v
+        self.inputs['V1'].hide_safe = self.v_mode != 'EXPLICIT'
+        self.inputs['V2'].hide_safe = self.v_mode != 'EXPLICIT'
         self.inputs['DegreeV'].hide_safe = self.algorithm != 'LOFT'
         self.inputs['Normal'].hide_safe = self.profile_rotation != 'CUSTOM'
+        self.inputs['LengthResolution'].hide_safe = self.v_mode != 'LEN'
         updateNode(self, context)
 
     profiles_count : IntProperty(
@@ -90,11 +97,18 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         default = 3,
         update = updateNode)
 
-    explicit_v : BoolProperty(
-        name = "Explicit V values",
-        description = "Provide values of V parameter (along path curve) for profile curves explicitly",
-        default = False,
+    v_mode : EnumProperty(
+        name = "V values",
+        description = "How to place copies of profile curves along the path curves",
+        items = v_modes,
+        default = 'PARAM',
         update = update_sockets)
+
+    length_resolution : IntProperty(
+            name = "Length Resolution",
+            min = 10,
+            default = 50,
+            update = updateNode)
 
     scale_uniform : BoolProperty(
         name = "Scale all axes",
@@ -142,7 +156,8 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "auto_rotate_profiles")
         layout.label(text="Profile rotation:")
         layout.prop(self, "profile_rotation", text='')
-        layout.prop(self, "explicit_v")
+        layout.label(text="V mode:")
+        layout.prop(self, "v_mode", text='')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -159,6 +174,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', "V1")
         self.inputs.new('SvStringsSocket', "V2")
         self.inputs.new('SvStringsSocket', "DegreeV").prop_name = 'degree_v'
+        self.inputs.new('SvStringsSocket', "LengthResolution").prop_name = 'length_resolution'
         p = self.inputs.new('SvVerticesSocket', "Normal")
         p.use_prop = True
         p.default_property = (0.0, 0.0, 1.0)
@@ -174,7 +190,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         path1_s = self.inputs['Path1'].sv_get()
         path2_s = self.inputs['Path2'].sv_get()
         profile_s = self.inputs['Profile'].sv_get()
-        if self.explicit_v:
+        if self.v_mode == 'EXPLICIT':
             v1_s = self.inputs['V1'].sv_get()
             v1_s = ensure_nesting_level(v1_s, 3)
             v2_s = self.inputs['V2'].sv_get()
@@ -185,6 +201,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         profiles_count_s = self.inputs['VSections'].sv_get()
         degree_v_s = self.inputs['DegreeV'].sv_get()
         y_axis_s = self.inputs['Normal'].sv_get()
+        resolution_s = self.inputs['LengthResolution'].sv_get()
 
         path1_s = ensure_nesting_level(path1_s, 2, data_types=(SvCurve,))
         path2_s = ensure_nesting_level(path2_s, 2, data_types=(SvCurve,))
@@ -192,16 +209,17 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         profiles_count_s = ensure_nesting_level(profiles_count_s, 2)
         degree_v_s = ensure_nesting_level(degree_v_s, 2)
         y_axis_s = ensure_nesting_level(y_axis_s, 3)
+        resolution_s = ensure_nesting_level(resolution_s, 2)
 
         surfaces_out = []
         curves_out = []
         v_curves_out = []
-        for params in zip_long_repeat(path1_s, path2_s, profile_s, v1_s, v2_s, profiles_count_s, degree_v_s, y_axis_s):
+        for params in zip_long_repeat(path1_s, path2_s, profile_s, v1_s, v2_s, profiles_count_s, degree_v_s, y_axis_s, resolution_s):
             new_surfaces = []
             new_curves = []
             new_v_curves = []
             new_profiles = []
-            for path1, path2, profiles, vs1, vs2, profiles_count, degree_v, y_axis in zip_long_repeat(*params):
+            for path1, path2, profiles, vs1, vs2, profiles_count, degree_v, y_axis, resolution in zip_long_repeat(*params):
                 path1 = SvNurbsCurve.to_nurbs(path1)
                 if path1 is None:
                     raise UnsupportedCurveTypeException("Path #1 is not a NURBS curve!")
@@ -211,17 +229,20 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
                 profiles = [SvNurbsCurve.to_nurbs(profile) for profile in profiles]
                 if any(p is None for p in profiles):
                     raise UnsupportedCurveTypeException("Some of profiles are not NURBS curves!")
-                if self.explicit_v:
+                if self.v_mode == 'EXPLICIT':
                     ts1 = np.array(vs1)
                     ts2 = np.array(vs2)
                 else:
                     ts1 = None
                     ts2 = None
+                if self.v_mode != 'LEN':
+                    resolution = None
                 if self.algorithm == 'GORDON':
                     unified_curves = []
                     v_curves = []
                     unified_curves, v_curves, surface = nurbs_birail_by_gordon(path1, path2, profiles,
                             ts1 = ts1, ts2 = ts2,
+                            length_resolution = resolution,
                             min_profiles = profiles_count,
                             degree_v = degree_v,
                             metric = 'POINTS',
@@ -237,6 +258,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
                     _, unified_curves, v_curves, surface = nurbs_birail(path1, path2,
                                         profiles,
                                         ts1 = ts1, ts2 = ts2,
+                                        length_resolution = resolution,
                                         min_profiles = profiles_count,
                                         knots_u = self.u_knots_mode,
                                         knotvector_accuracy = self.knotvector_accuracy,
