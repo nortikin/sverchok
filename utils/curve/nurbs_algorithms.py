@@ -50,79 +50,6 @@ def unify_degrees(curves):
     return curves
 
 
-class KnotvectorDict(object):
-    def __init__(self, tolerance):
-        self.knots = defaultdict(int)
-        self.tolerance = tolerance
-        self._averages = []
-        self._bucket_ranges = []
-
-    def put(self, knot, multiplicity):
-        self.knots[knot] = max(self.knots[knot], multiplicity)
-
-    def calc_averages(self):
-        tolerance = self.tolerance
-        all_knots = []
-        buckets = []
-        all_knots = list(sorted(self.knots.keys()))
-        current_bucket = [all_knots[0]]
-        for knot in all_knots[1:]:
-            if knot - current_bucket[0] <= 2*tolerance:
-                current_bucket.append(knot)
-            else:
-                buckets.append(current_bucket)
-                current_bucket = [knot]
-        buckets.append(current_bucket)
-        self._averages = []
-        self._bucket_ranges = []
-        for bucket in buckets:
-            avg = sum(bucket) / len(bucket)
-            self._averages.append(avg)
-            k1 = bucket[0]
-            k2 = bucket[-1]
-            self._bucket_ranges.append((k1, k2))
-
-    def get_updates(self, knots):
-        result = dict()
-        for src_knot_idx, knot in enumerate(knots):
-            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
-                if k1 <= knot <= k2:
-                    result[src_knot_idx] = self._averages[avg_idx]
-                    break
-        return result
-
-    def get_insertions(self, multiplicities):
-        existing = defaultdict(int)
-        for avg_idx, avg in enumerate(self._averages):
-            for knot, multiplicity in multiplicities.items():
-                k1, k2 = self._bucket_ranges[avg_idx]
-                if k1 <= knot <= k2:
-                    existing[avg_idx] += multiplicity
-        required = defaultdict(int)
-        for orig_knot, orig_multiplicity in self.knots.items():
-            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
-                if k1 <= orig_knot <= k2:
-                    required[avg_idx] = max(required[avg_idx], orig_multiplicity)
-        result = defaultdict()
-        all_knots = set()
-        all_knots.update(existing.keys())
-        all_knots.update(required.keys())
-        for knot_idx in all_knots:
-            knot = self._averages[knot_idx]
-            diff = required[knot_idx] - existing[knot_idx]
-            if diff > 0:
-                result[knot] = diff
-        return result
-
-    def items(self):
-        required = defaultdict(int)
-        for orig_knot, orig_multiplicity in self.knots.items():
-            for avg_idx, (k1, k2) in enumerate(self._bucket_ranges):
-                if k1 <= orig_knot <= k2:
-                    avg = self._averages[avg_idx]
-                    required[avg] = max(required[avg], orig_multiplicity)
-        return required.items()
-
 
 def unify_curves(curves, method="UNIFY", accuracy=6):
     tolerance = 10 ** (-accuracy)
@@ -135,11 +62,14 @@ def unify_curves(curves, method="UNIFY", accuracy=6):
     #         return curves
 
     if method == "UNIFY":
-        dst_knots = KnotvectorDict(tolerance)
+        dst_knots = sv_knotvector.KnotvectorDict(tolerance)
         for i, curve in enumerate(curves):
-            m = sv_knotvector.to_multiplicity(curve.get_knotvector())
+            m = sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance=None)
             # print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
+            prev_u = None
             for u, count in m:
+                if prev_u is not None and abs(prev_u - u) < tolerance:
+                    raise Exception(f"Knots in original curve #{i} differ less than for tolerance")
                 dst_knots.put(u, count)
         # print("Dst", dst_knots)
         dst_knots.calc_averages()
@@ -156,6 +86,7 @@ def unify_curves(curves, method="UNIFY", accuracy=6):
             ms = dict(
                 sv_knotvector.to_multiplicity(kv)
             )
+            #print(f"Curve #{idx}, orig kv: {ms}")
             updates = dst_knots.get_updates(ms.keys())
             #print(f"Curve #{idx}, updates: {updates}")
             updated_ms = []
