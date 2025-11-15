@@ -125,12 +125,10 @@ class SvOB3BItemRemoveMK4(bpy.types.Operator):
                 context.node.process_node(None)
         return {'FINISHED'}
 
-
-
 class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
     '''Show objects in list item with controls'''
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        grid = layout.grid_flow(row_major=False, columns=6, align=True)
+        grid = layout.grid_flow(row_major=False, columns=3, align=True)
 
         # object_exists=False
         # item_icon = "GHOST_DISABLED"
@@ -155,16 +153,19 @@ class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
 
 
         item_base = len(str(len(data.object_names)))
-        grid.label(text='', icon=item_icon)
+        row1 = grid.row(align=True)
+        row1.column(align=True).label(text=f'{index:0{item_base}d}')
+        row1.label(text='', icon=item_icon)
         #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
-        grid.column(align=True).label(text=f'{index:0{item_base}d}')
         grid.prop(item, 'object_pointer', text='')
 
+        row0=grid.row(align=True)
+
         if item.object_pointer:
-            op = grid.operator(SvOB3ItemSelectObjectMK4.bl_idname, icon='CURSOR', text='', emboss=False)
+            op = row0.column(align=True).operator(SvOB3ItemSelectObjectMK4.bl_idname, icon='CURSOR', text='', emboss=False)
             op.idx = index
         else:
-            op = grid.operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+            op = row0.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
             pass
 
         if item.exclude:
@@ -173,14 +174,14 @@ class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
             exclude_icon='CHECKBOX_HLT'
 
         if item.object_pointer:
-            op = grid.operator(SvOB3BItemEnablerMK4.bl_idname, icon=exclude_icon, text='', emboss=False)
+            op = row0.column(align=True).operator(SvOB3BItemEnablerMK4.bl_idname, icon=exclude_icon, text='', emboss=False)
             op.fn_name = 'ENABLER'
             op.idx = index
         else:
-            op = grid.operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+            op = row0.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
             pass
         
-        op = grid.operator(SvOB3BItemRemoveMK4.bl_idname, icon='X', text='', emboss=False)
+        op = row0.column(align=True).operator(SvOB3BItemRemoveMK4.bl_idname, icon='X', text='', emboss=False)
         op.fn_name = 'REMOVE'
         op.idx = index
 
