@@ -3,13 +3,13 @@ import numpy as np
 from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputException
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
-from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveOnSurfaceCurvaturesCalculator
+from sverchok.utils.curve.algorithms import unify_curves_degree, curve_frame_on_surface_array, SvCurveOnSurfaceCurvaturesCalculator
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents, interpolate_nurbs_curve
 from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.sv_logging import get_logger
 
-def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
+def reparametrize_by_segments(curve, t_values, target_t_values, tolerance=1e-6):
     # Reparametrize given curve so that parameter values from t_values parameter
     # would map to 1.0, 2.0, 3.0...
 
@@ -38,16 +38,18 @@ def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     t_values = [adjust(t) for t in t_values]
 
     segments = []
-    for t1, t2 in zip(t_values, t_values[1:]):
-        segment = curve.cut_segment(t1, t2, rescale=True)
+    for t1, t2, tgt_t1, tgt_t2 in zip(t_values, t_values[1:], target_t_values, target_t_values[1:]):
+        segment = curve.cut_segment(t1, t2)
+        segment = segment.reparametrize(0.0, tgt_t2 - tgt_t1)
         segments.append(segment)
     
     result = segments[0]
     for segment in segments[1:]:
         if segment is not None:
-            result = result.concatenate(segment)
+            result = result.concatenate(segment, remove_knots=False)
     
     return result
+    #return remove_excessive_knots(result, tolerance=tolerance)
 
 def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, knotvector_accuracy=6, reparametrize_tolerance=1e-2, logger=None):
     """
@@ -83,10 +85,15 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     intersections = np.array(intersections)
 
     if u_knots is not None:
-        loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': 'POINTS'}
+        avg_u_knots = np.mean(u_knots, axis=0)
+        avg_v_knots = np.mean(v_knots, axis=0)
+        #loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': 'POINTS'}
+        loft_u_kwargs = {'tknots': avg_u_knots}
+        loft_v_kwargs = {'tknots': avg_v_knots}
+        interpolate_kwargs = {'uknots': avg_v_knots, 'vknots': avg_u_knots}
 
-        u_curves = [reparametrize_by_segments(c, knots, reparametrize_tolerance) for c, knots in zip(u_curves, u_knots)]
-        v_curves = [reparametrize_by_segments(c, knots, reparametrize_tolerance) for c, knots in zip(v_curves, v_knots)]
+        u_curves = [reparametrize_by_segments(c, knots, avg_u_knots, reparametrize_tolerance) for c, knots in zip(u_curves, u_knots)]
+        v_curves = [reparametrize_by_segments(c, knots, avg_v_knots, reparametrize_tolerance) for c, knots in zip(v_curves, v_knots)]
         #print("U", u_curves)
         #print("V", v_curves)
 
