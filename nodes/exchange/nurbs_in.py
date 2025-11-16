@@ -21,7 +21,6 @@ if geomdl is not None:
     from geomdl import NURBS
 
 class SvExNurbsInDataCollectionMK2(bpy.types.PropertyGroup):
-    #base: bpy.props.IntProperty(default=1, min=1)
     object_pointer: bpy.props.PointerProperty(
         name="object",
         type=bpy.types.Object
@@ -29,6 +28,52 @@ class SvExNurbsInDataCollectionMK2(bpy.types.PropertyGroup):
     exclude: bpy.props.BoolProperty(
         description='Exclude from process',
     )
+
+def get_object_data_curve_info(object_pointer):
+    '''Is object exists, has NURBS info?'''
+    object_exists        = None
+    SURFACE_CURVE_object = None
+    Nurbs_SURFACE        = None
+    Nurbs_CURVE          = None
+
+    if object_pointer:
+        object_exists=True
+        #if hasattr(object_pointer.data, 'splines'):
+        if object_pointer.type in ['SURFACE', 'CURVE']:
+            SURFACE_CURVE_object = True
+            Nurbs_SURFACE        = False
+            Nurbs_CURVE          = False
+            if object_pointer.data.splines:
+                splines = object_pointer.data.splines
+                if splines:
+                    for spline in splines:
+                        if spline.type=='NURBS':
+                            if object_pointer.type=='SURFACE':
+                                Nurbs_SURFACE = True
+                            elif object_pointer.type=='CURVE':
+                                Nurbs_CURVE   = True
+                            else:
+                                pass
+                        else:
+                            pass
+                        pass
+                    pass
+                pass
+            else:
+                SURFACE_CURVE_object = True
+                Nurbs_SURFACE        = False
+                Nurbs_CURVE          = False
+                pass
+            pass
+        else:
+            SURFACE_CURVE_object = False
+            Nurbs_SURFACE        = False
+            Nurbs_CURVE          = False
+            pass
+    else:
+        object_exists=False
+
+    return object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE
 
 class SvExNurbsInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
 
@@ -48,8 +93,19 @@ class SvExNurbsInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
 class SvExNurbsIn_UL_NamesListMK2(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE = get_object_data_curve_info(item.object_pointer)
+
         general_part_of_comments = '\n\nClick - On/off\nShift-Click - Reverse On/Off all items'
         grid = layout.grid_flow(row_major=False, columns=3, align=True)
+        if item.object_pointer:
+            if SURFACE_CURVE_object:
+                pass
+            else:
+                # highlight row that is not surface or curve:
+                grid.alert = True
+        else:
+            # highlight row that object does not exists:
+            grid.alert = True
 
         # curve_object = True
         # bezier_object = True
@@ -63,66 +119,100 @@ class SvExNurbsIn_UL_NamesListMK2(bpy.types.UIList):
         item_base = len(str(len(data.object_names)))
         #grid.label(text=f'{index:0{item_base}d} {item.name} {",".join(chars)}', icon=item_icon)
         row1 = grid.row(align=True)
-        if item.object_pointer:
-            if item.object_pointer.type not in {'SURFACE', 'CURVE'}:
-                # highlight row that is not surface or bezier:
-                row1.alert = True
-            else:
-                pass
-        else:
-            # highlight row that object does not exists:
-            row1.alert = True
-
+        row1.alignment = 'LEFT'
 
         row1.column(align=True).label(text=f'{index:0{item_base}d}')
-        row1.label(text='', icon=item_icon)
-        grid.prop(item, 'object_pointer', text='')
 
-        row2 = grid.row(align=True)
-        if item.object_pointer:
-            op = row2.column(align=True).operator(SvNurbsInItemSelectObjectMK2.bl_idname, icon='CURSOR', text='', emboss=False)
-            op.idx = index
+        if data.object_names_ui_minimal:
+            row1.label(text='', icon=item_icon)
+            row1.label(text=item.object_pointer.name)
+            #UI0.label(text='')
         else:
-            op = row2.column(align=True).operator(SvNurbsInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
-            op.description_text='Object does not exists'
-            pass
-
-        if item.object_pointer: # and item.object_pointer.type in {'SURFACE', 'CURVE'}: # and curve_object==True and bezier_object==True and non_bezier_object==False:
-            # all segments are BEZIER
-            if item.exclude:
-                exclude_icon='CHECKBOX_DEHLT'
-                description_text = 'Object will be excluded from process'
+            grid.prop(item, 'object_pointer', text='')
+            row2 = grid.row(align=True)
+            row2.alignment='RIGHT'
+            row2.alert = False
+            if item.object_pointer and SURFACE_CURVE_object==True:
+                op = row2.column(align=True).operator(SvNurbsInItemSelectObjectMK2.bl_idname, icon='CURSOR', text='', emboss=False)
+                op.idx = index
+            elif not item.object_pointer:
+                # Object cannot be used
+                op = row2.column(align=True).operator(SvNurbsInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
+                op.description_text = 'Object does not exists. Will be skipped from process'
             else:
-                exclude_icon='CHECKBOX_HLT'
-                description_text = 'Object will be processed'
-            op = row2.column(align=True).operator(SvNurbsInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
+                # Object cannot be used
+                op = row2.column(align=True).operator(SvNurbsInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
+                op.description_text = 'Object is not compatible. Will be skipped from process'
+                pass
+
+            if item.object_pointer and SURFACE_CURVE_object==True:
+                # all segments are BEZIER
+                if item.exclude:
+                    exclude_icon='CHECKBOX_DEHLT'
+                    description_text = 'Object will be excluded from process'
+                else:
+                    exclude_icon='CHECKBOX_HLT'
+                    description_text = 'Object will be processed'
+                op = row2.column(align=True).operator(SvNurbsInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
+                op.idx = index
+                op.description_text = description_text+general_part_of_comments
+            elif not item.object_pointer:
+                # Object cannot be used
+                op = row2.column(align=True).operator(SvNurbsInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
+                op.description_text = 'Object does not exists. Will be skipped from process'
+            else:
+                # Object cannot be used
+                op = row2.column(align=True).operator(SvNurbsInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
+                op.description_text = 'Object is not compatible. Will be skipped from process'
+                pass
+
+            op = row2.column(align=True).operator(SvNurbsInItemRemoveMK2.bl_idname, icon='X', text='', emboss=False)
             op.idx = index
-            op.description_text = description_text+general_part_of_comments
+            op.description_text = 'Remove object from list.\n\nUse Shift to skip confirmation dialog.'
 
-        # elif item.object_pointer:
-        #     op = row2.column(align=True).operator(SvNurbsInEmptyOperatorMK2.bl_idname, icon='REMOVE', text='', emboss=False)
-        #     op.description_text = "Object is not Surface or Curve. It will be excluded from process"
-
-        else:
-            # Object cannot be used
-            op = row2.column(align=True).operator(SvNurbsInEmptyOperatorMK2.bl_idname, icon='REMOVE', text='', emboss=False)
-            op.description_text = 'Object does not exists. Will be skipped from process'
-            pass
-
-        op = row2.column(align=True).operator(SvNurbsInItemRemoveMK2.bl_idname, icon='X', text='', emboss=False)
-        op.idx = index
-        op.description_text = 'Remove object from list.\n\nUse Shift to skip confirmation dialog.'
-
-        duplicate_sign='BLANK1'
-        if item.object_pointer and active_data.object_names[getattr(active_data, active_propname)].object_pointer==item.object_pointer:
-            lst = [o for o in active_data.object_names if o.object_pointer and o.object_pointer==item.object_pointer]
-            if len(lst)>1:
-                duplicate_sign='ONIONSKIN_ON'
-        col = row2.column(align=True).column(align=True)
-        col.label(text='', icon=duplicate_sign)
-        col.scale_x=0
+            duplicate_sign='BLANK1'
+            if item.object_pointer and active_data.object_names[getattr(active_data, active_propname)].object_pointer==item.object_pointer:
+                lst = [o for o in active_data.object_names if o.object_pointer and o.object_pointer==item.object_pointer]
+                if len(lst)>1:
+                    duplicate_sign='ONIONSKIN_ON'
+            col = row2.column(align=True).column(align=True)
+            col.alignment='RIGHT'
+            col.label(text='', icon=duplicate_sign)
+            col.scale_x=0
 
         return
+    
+    def filter_items(self, context, data, propname):
+
+        object_names_ui_minimal = getattr(data, "object_names_ui_minimal", False)
+
+        items = getattr(data, propname)
+
+        flt_flags = []
+        flt_neworder = []
+
+        for item in items:
+            if not object_names_ui_minimal:
+                flt_flags.append(self.bitflag_filter_item)
+                continue
+            else:
+                object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE = get_object_data_curve_info(item.object_pointer)
+
+                non_applicable_type = False
+                if item.object_pointer and SURFACE_CURVE_object:
+                    pass
+                elif not item.object_pointer:
+                    non_applicable_type = True
+                else:
+                    non_applicable_type = True
+
+                ok = (
+                    (not item.exclude) and
+                    (item.object_pointer) and (not non_applicable_type)
+                )
+                flt_flags.append(self.bitflag_filter_item if ok else 0)
+
+        return flt_flags, flt_neworder
 
 class SvNurbsInEmptyOperatorMK2(bpy.types.Operator):
     '''Empty operator to fill empty cells in grid'''
@@ -407,6 +497,7 @@ class SvExNurbsInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     
     object_names: bpy.props.CollectionProperty(type=SvExNurbsInDataCollectionMK2)
     active_obj_index: bpy.props.IntProperty()
+    object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
 
     sort: bpy.props.BoolProperty(
         name='sort by name',
@@ -592,9 +683,9 @@ class SvExNurbsInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         return
 
     def sv_draw_buttons(self, context, layout):
-        layout.prop(self, 'implementation', text='')
         col = layout.column(align=True)
-        row = col.row(align=True)
+        col.alignment='RIGHT'
+        #row = col.row(align=True)
         row = col.row()
 
         op_text = "Get selection"  # fallback
@@ -604,16 +695,65 @@ class SvExNurbsInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
         callback = SvExNurbsInCallbackOpMK2.bl_idname
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
-        layout.prop(self, 'sort', text='Sort', toggle=True)
-        layout.prop(self, 'apply_matrix', toggle=True)
-        layout.prop(self, 'legacy_mode')
 
-        self.draw_obj_names(layout)
+        grid = layout.grid_flow(row_major=True, columns=2, align=True)
+        c0 = grid.column()
+        c0.alignment = 'RIGHT'
+        c0.label(text='Sort:')
+        grid.column().prop(self, 'sort', text='')
+        c1 = grid.column()
+        c1.alignment = 'RIGHT'
+        c1.label(text='Implementation:')
+        grid.column().prop(self, 'implementation', text='')
+        c2 = grid.column()
+        c2.alignment = 'RIGHT'
+        c2.label(text='Apply matrixes:')
+        grid.column().prop(self, 'apply_matrix', text='')
+        c3 = grid.column()
+        c3.alignment = 'RIGHT'
+        c3.label(text='Legacy Mode:')
+        grid.column().prop(self, 'legacy_mode', text='')
 
-        if len(self.object_names)>0:
-            row = layout.row(align=True)
-            row.label(text='')
-            self.wrapper_tracked_ui_draw_op(row, SvNurbsInClearObjectsFromListMK2.bl_idname, text='', icon='CANCEL')
+
+        # self.draw_obj_names(layout)
+
+        # if len(self.object_names)>0:
+        #     row = layout.row(align=True)
+        #     row.label(text='')
+        #     self.wrapper_tracked_ui_draw_op(row, SvNurbsInClearObjectsFromListMK2.bl_idname, text='', icon='CANCEL')
+
+        if self.object_names:
+            col = layout.column(align=True)
+            elem = col.row(align=True)
+            elem.alignment='RIGHT'
+            self.wrapper_tracked_ui_draw_op(elem, SvNurbsInAddObjectsFromSceneUpMK2.bl_idname, text='', icon='ADD')
+            self.wrapper_tracked_ui_draw_op(elem, SvNurbsInMoveUpMK2.bl_idname, text='', icon='TRIA_UP')
+            self.wrapper_tracked_ui_draw_op(elem, SvNurbsInMoveDownMK2.bl_idname, text='', icon='TRIA_DOWN')
+            self.wrapper_tracked_ui_draw_op(elem, SvNurbsInHighlightProcessedObjectsInSceneMK2.bl_idname, text='', icon='GROUP_VERTEX')
+            self.wrapper_tracked_ui_draw_op(elem, SvNurbsInHighlightAllObjectsInSceneMK2.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
+            self.wrapper_tracked_ui_draw_op(elem, SvNurbsInSyncSceneObjectWithListMK2.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
+            
+            set_object_names = set([o.name for o in self.object_names if o.object_pointer])
+            if len(set_object_names)<len(self.object_names):
+                icon = 'AUTOMERGE_ON'
+                description_text = f'Remove any duplicates objects in list\nCount of duplicates objects: {len(self.object_names)-len(set_object_names)}'
+            else:
+                icon = 'AUTOMERGE_OFF'
+                description_text = 'Remove any duplicates objects in list.\nNo duplicates objects in list now'
+            description_text += "\n\nShift-Cliсk - skip confirmation dialog"
+            self.wrapper_tracked_ui_draw_op(elem, SvNurbsInRemoveDuplicatesObjectsInListMK2.bl_idname, text='', icon=icon, description_text=description_text)
+            elem.separator()
+            self.wrapper_tracked_ui_draw_op(elem, SvNurbsInClearObjectsFromListMK2.bl_idname, text='', icon='CANCEL')
+            elem.separator()
+            if self.object_names_ui_minimal:
+                elem.prop(self, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_EXIT')
+            else:
+                elem.prop(self, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_ENTER')
+
+            col.template_list("SvExNurbsIn_UL_NamesListMK2", "", self, "object_names", self, "active_obj_index", rows=3)
+            
+        else:
+            layout.label(text='--None--')
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "draw_3dpanel", icon="PLUGIN")
@@ -739,38 +879,46 @@ class SvExNurbsInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
         if not self.object_names:
             return
+        
 
         curves_out = []
         surfaces_out = []
         matrices_out = []
         for item in self.object_names:
-            if item.object_pointer and item.exclude==False:
-                object_curves = []
-                object_surfaces = []
-                object_matrices = []
-                matrix = item.object_pointer.matrix_world
-                if item.object_pointer.type not in {'SURFACE', 'CURVE'}:
+            object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE = get_object_data_curve_info(item.object_pointer)
+            if item.object_pointer:
+                if SURFACE_CURVE_object==True:
+                    if item.exclude==False:
+                        object_curves = []
+                        object_surfaces = []
+                        object_matrices = []
+                        matrix = item.object_pointer.matrix_world
+                        for spline in item.object_pointer.data.splines:
+                            if spline.type != 'NURBS':
+                                self.warning("%s: not supported spline type: %s", spline, spline.type)
+                                continue
+                            if item.object_pointer.type == 'SURFACE':
+                                surface = self.get_surface(spline, matrix)
+                                object_surfaces.append(surface)
+                                object_matrices.append(matrix)
+                            elif item.object_pointer.type == 'CURVE':
+                                curve = self.get_curve(spline, matrix)
+                                object_curves.append(curve)
+                                object_matrices.append(matrix)
+                            pass
+                    else:
+                        continue
+                    pass
+                    curves_out.append(object_curves)
+                    surfaces_out.append(object_surfaces)
+                    matrices_out.append(object_matrices)
+                    pass
+                else:
+                    #if item.object_pointer.type not in {'SURFACE', 'CURVE'}:
                     self.warning("%s: not supported object type: %s", item.object_pointer.name, item.object_pointer.type)
                     continue
-                for spline in item.object_pointer.data.splines:
-                    if spline.type != 'NURBS':
-                        self.warning("%s: not supported spline type: %s", spline, spline.type)
-                        continue
-                    if item.object_pointer.type == 'SURFACE':
-                        surface = self.get_surface(spline, matrix)
-                        object_surfaces.append(surface)
-                        object_matrices.append(matrix)
-                    elif item.object_pointer.type == 'CURVE':
-                        curve = self.get_curve(spline, matrix)
-                        object_curves.append(curve)
-                        object_matrices.append(matrix)
-                    pass
-                pass
-                curves_out.append(object_curves)
-                surfaces_out.append(object_surfaces)
-                matrices_out.append(object_matrices)
             else:
-                pass
+                continue
             pass
         pass
 
