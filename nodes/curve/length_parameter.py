@@ -69,7 +69,7 @@ class SvCurveLengthParameterMk2Node(DraftMode, SverchCustomTreeNode, bpy.types.N
     sample_size : IntProperty(
             name = "Samples",
             default = 50,
-            min = 4,
+            min = 3,
             update = updateNode)
 
     segment_length : FloatProperty(

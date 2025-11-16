@@ -170,7 +170,7 @@
         - SvExInterpolateNurbsSurfaceNodeMK2
         - SvNurbsLoftNode
         - SvNurbsSweepNode
-        - SvNurbsBirailNode
+        - SvNurbsBirailMk2Node
         - SvGordonSurfaceNode
         - SvDeconstructSurfaceNode
         - ---

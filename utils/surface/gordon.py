@@ -5,7 +5,9 @@ from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
 from sverchok.utils.curve.algorithms import unify_curves_degree, curve_frame_on_surface_array, SvCurveOnSurfaceCurvaturesCalculator
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents, interpolate_nurbs_curve
-from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface
+from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
+from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
+from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface, prepare_nurbs_birail
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.sv_logging import get_logger
 
@@ -51,7 +53,13 @@ def reparametrize_by_segments(curve, t_values, target_t_values, tolerance=1e-6):
     return result
     #return remove_excessive_knots(result, tolerance=tolerance)
 
-def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, knotvector_accuracy=6, reparametrize_tolerance=1e-2, logger=None):
+def gordon_surface(u_curves, v_curves, intersections,
+        metric='POINTS',
+        u_knots=None, v_knots=None,
+        knotvector_accuracy=6,
+        reparametrize_tolerance=1e-2,
+        implementation = SvNurbsSurface.NATIVE,
+        logger=None):
     """
     Generate a NURBS surface from a net of NURBS curves, by use of Gordon's algorithm.
 
@@ -203,4 +211,50 @@ def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_d
     intersections = np.transpose(np.asarray([c1_points, c2_points]), axes=(1,0,2))
 
     return gordon_surface(u_curves, v_curves, intersections, logger=logger)[-1]
+
+def nurbs_birail_by_gordon(path1, path2, profiles,
+        ts1 = None, ts2 = None,
+        length_resolution = None,
+        min_profiles = 2,
+        degree_v = None,
+        metric = 'POINTS',
+        scale_uniform = True,
+        auto_rotate = False,
+        use_tangents = 'PATHS_AVG',
+        y_axis = None,
+        knotvector_accuracy = 6,
+        implementation = SvNurbsSurface.NATIVE,
+        logger = None):
+
+    placed_ts1, placed_ts2, u_curves = prepare_nurbs_birail(path1, path2, profiles,
+                ts1 = ts1, ts2 = ts2,
+                length_resolution = length_resolution,
+                min_profiles = min_profiles,
+                degree_v = degree_v,
+                scale_uniform = scale_uniform,
+                auto_rotate = auto_rotate,
+                use_tangents = use_tangents,
+                y_axis = y_axis,
+                knotvector_accuracy = knotvector_accuracy)
+    v_curves = [path1, path2]
+    intersections = np.array([u_curve.get_end_points() for u_curve in u_curves])
+    intersections = np.transpose(intersections, axes=(1,0,2))
+    if length_resolution is not None:
+        u_knots = np.array([u_curve.get_u_bounds() for u_curve in u_curves])
+        v_knots = np.array([placed_ts1, placed_ts2])
+    else:
+        u_knots = None
+        v_knots = None
+    surface = gordon_surface(
+        u_curves,
+        v_curves,
+        intersections = intersections,
+        u_knots = u_knots,
+        v_knots = v_knots,
+        metric=metric,
+        implementation=implementation,
+        logger=logger,
+        knotvector_accuracy=knotvector_accuracy,
+    )[-1]
+    return u_curves, v_curves, surface
 
