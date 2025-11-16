@@ -145,8 +145,8 @@ This node has the following parameters:
      parallel to initial location of the path curve. This is not always
      possible, but the node will try to keep it as parallel as possible.
   * **Custom**. The node will try to place profile curves so that they be
-    parallel to the vector specified in the **Normal** input. This is not
-    always possible, but the node will try to keep it as parallel as possible.
+     parallel to the vector specified in the **Normal** input. This is not
+     always possible, but the node will try to keep it as parallel as possible.
 
    The default option is **Path Normal Average**.
 
