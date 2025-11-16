@@ -571,6 +571,13 @@ class SvNurbsSurface(SvSurface):
         else:
             raise Exception("Unsupported direction")
 
+    def reparametrize(self, new_u_min, new_u_max, new_v_min, new_v_max):
+        knotvector_u = self.get_knotvector_u()
+        knotvector_v = self.get_knotvector_v()
+        knotvector_u = sv_knotvector.rescale(knotvector_u, new_u_min, new_u_max)
+        knotvector_v = sv_knotvector.rescale(knotvector_v, new_v_min, new_v_max)
+        return self.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)
+
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):
         self.surface = surface
