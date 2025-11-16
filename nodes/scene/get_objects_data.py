@@ -159,26 +159,8 @@ class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
             except:
                 ...
 
-
         item_base = len(str(len(data.object_names)))
-        # if data.minimal_node_ui:
-        #     grid = layout.grid_flow(row_major=False, columns=2)
-        #     row1 = grid.row(align=True)
-        #     if item.object_pointer:
-        #         r = row1.row(align=True)
-        #         r.alignment='LEFT'
-        #         r.label(text='', icon=item_icon)
-        #         r.label(text=item.object_pointer.name)
-        #     else:
-        #         row1.column(align=True).label(text='')
-        #     c = grid.column(align=True)
-        #     c.alignment='RIGHT'
-        #     c.label(text=f'{index:0{item_base}d}')
 
-        #     #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
-        #     #grid.prop(item, 'object_pointer', text='')
-        # else:
-        
         grid = layout.grid_flow(row_major=False, columns=3, align=True)
         UI0 = grid.row(align=True)
         UI0.alignment = 'LEFT'
@@ -691,10 +673,6 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         self.outputs["polygon_smooth"]          .hide = not(self.enable_polygons_attribute_sockets)
     
     def draw_vertices_out_socket(self, socket, context, layout):
-        # if self.minimal_node_ui:
-        #     layout.prop(self, "minimal_node_ui", text='', toggle=True, icon='FULLSCREEN_EXIT')
-        # else:
-        #     layout.prop(self, "minimal_node_ui", text='', toggle=True, icon='FULLSCREEN_ENTER')
         layout.label(text=f'{socket.label} ')
         layout.prop(self, 'enable_verts_attribute_sockets', icon='STICKY_UVS_DISABLE', text='', toggle=True)
         if socket.is_linked:  # linked INPUT or OUTPUT
@@ -954,33 +932,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no object associated with the obj in Node")
-
-
-    def draw_obj_names(self, layout):
-        if self.object_names:
-            row = layout.row(align=True)
-            row.column().template_list("SVOB3B_UL_NamesListMK4", "", self, "object_names", self, "active_obj_index", rows=3)
-            if self.minimal_node_ui==False:
-                col = row.column(align=True)
-                self.wrapper_tracked_ui_draw_op(col, SvOB3BAddObjectsFromSceneUpMK4.bl_idname, text='', icon='ADD')
-                self.wrapper_tracked_ui_draw_op(col, SvOB3BMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
-                self.wrapper_tracked_ui_draw_op(col, SvOB3BMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
-                self.wrapper_tracked_ui_draw_op(col, SvOB3BHighlightProcessedObjectsInSceneMK4.bl_idname, text='', icon='GROUP_VERTEX')
-                self.wrapper_tracked_ui_draw_op(col, SvOB3BHighlightAllObjectsInSceneMK4.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
-                self.wrapper_tracked_ui_draw_op(col, SvOB3BSyncSceneObjectWithListMK4.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
-                
-                set_object_names = set([o.name for o in self.object_names if o.object_pointer])
-                if len(set_object_names)<len(self.object_names):
-                    icon = 'AUTOMERGE_ON'
-                    description_text = f'Remove any duplicates objects in list\nCount of duplicates objects: {len(self.object_names)-len(set_object_names)}'
-                else:
-                    icon = 'AUTOMERGE_OFF'
-                    description_text = 'Remove any duplicates objects in list.\nNo duplicates objects in list now'
-                description_text += "\n\nShift-Cliсk - skip confirmation dialog"
-                self.wrapper_tracked_ui_draw_op(col, SvOB3BInRemoveDuplicatesObjectsInListMK4.bl_idname, text='', icon=icon, description_text=description_text)
-
-        else:
-            layout.label(text='--None--')
+        pass
 
     @property
     def by_input(self):
@@ -1000,32 +952,26 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 op_text = "G E T"
 
             self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
+            row.prop(self, 'sort', text='Sort')
+
 
         col = layout.column(align=True)
 
         if self.minimal_node_ui==False:
             row = col.row(align=True)
             row.prop(self, "apply_matrix", text="Apply matrix", toggle=True)
-            row.prop(self, "mesh_join", text="merge", toggle=True)
+            row.prop(self, "mesh_join", text="Merge", toggle=True)
             
             col = layout.column(align=True)
             row = col.row(align=True)
-            if not by_input:
-                row.prop(self, 'sort', text='Sort', toggle=True)
             row.prop(self, "modifiers", text="Post", toggle=True)
             row.prop(self, "vergroups", text="VeGr", toggle=True)
 
         if not by_input:
-            # self.draw_obj_names(layout)
-            # if self.minimal_node_ui==False:
-            #     if len(self.object_names)>0:
-            #         row = layout.row(align=True)
-            #         row.label(text='')
-            #         self.wrapper_tracked_ui_draw_op(row, SvOB3BClearObjectsFromListMK4.bl_idname, text='', icon='CANCEL')
-
             if self.object_names:
                 col = layout.column(align=True)
                 elem = col.row(align=True)
+                elem.alignment='RIGHT'
                 self.wrapper_tracked_ui_draw_op(elem, SvOB3BAddObjectsFromSceneUpMK4.bl_idname, text='', icon='ADD')
                 self.wrapper_tracked_ui_draw_op(elem, SvOB3BMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
                 self.wrapper_tracked_ui_draw_op(elem, SvOB3BMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
@@ -1096,22 +1042,6 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         return [face.material_index for face in bm.faces[:]]
 
     def process(self):
-        if self.minimal_node_ui==True:
-            for s in self.outputs:
-                if s.name not in ["vertices", "edges", "polygons"]:
-                    s.hide = not s.is_linked
-            for s in self.inputs:
-                    s.hide = not s.is_linked
-        else:
-            for s in self.outputs:
-                s.hide = False
-            for s in self.inputs:
-                s.hide = False
-            self._verts_sockets_update(None)
-            self._edges_sockets_update(None)
-            self._polygons_sockets_update(None)
-
-
         objs = self.inputs[0].sv_get(default=[[]])
         if not self.object_names and not objs[0]:
             return
