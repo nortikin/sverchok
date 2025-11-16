@@ -320,19 +320,6 @@ class SvOB3BHighlightAllObjectsInSceneMK3(bpy.types.Operator, SvGenericNodeLocat
 
         return {'FINISHED'}
 
-class SvOB3BClearObjectsFromListMK3(bpy.types.Operator, SvGenericNodeLocator):
-
-    bl_idname = "node.sv_bezierin_clear_list_of_objects_mk3"
-    bl_label = "Clear list of objects"
-    bl_options = {'INTERNAL'}
-
-    def sv_execute(self, context, node):
-        """
-        passes the operator's 'self' too to allow calling self.report()
-        """
-        node.clear_objects_from_list(self)
-
-
 class SvOB3BCallbackMK3(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.ob3b_callback_mk3"

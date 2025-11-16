@@ -28,7 +28,7 @@ class SvOB3BDataCollectionMK4(bpy.types.PropertyGroup):
         name="object",
         type=bpy.types.Object
     )
-    name   : bpy.props.StringProperty(default='')
+    #name   : bpy.props.StringProperty(default='')
     icon   : bpy.props.StringProperty(default="BLANK1")
     exclude: bpy.props.BoolProperty(
         default=False,
@@ -138,8 +138,6 @@ class SvOB3BItemRemoveMK4(bpy.types.Operator):
 class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
     '''Show objects in list item with controls'''
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        grid = layout.grid_flow(row_major=False, columns=3, align=True)
-
         # object_exists=False
         # item_icon = "GHOST_DISABLED"
         # if item.name in bpy.data.objects:
@@ -163,48 +161,108 @@ class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
 
 
         item_base = len(str(len(data.object_names)))
-        row1 = grid.row(align=True)
-        row1.column(align=True).label(text=f'{index:0{item_base}d}')
-        row1.label(text='', icon=item_icon)
-        #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
-        grid.prop(item, 'object_pointer', text='')
+        # if data.minimal_node_ui:
+        #     grid = layout.grid_flow(row_major=False, columns=2)
+        #     row1 = grid.row(align=True)
+        #     if item.object_pointer:
+        #         r = row1.row(align=True)
+        #         r.alignment='LEFT'
+        #         r.label(text='', icon=item_icon)
+        #         r.label(text=item.object_pointer.name)
+        #     else:
+        #         row1.column(align=True).label(text='')
+        #     c = grid.column(align=True)
+        #     c.alignment='RIGHT'
+        #     c.label(text=f'{index:0{item_base}d}')
 
-        row2=grid.row(align=True)
-
-        if item.object_pointer:
-            op = row2.column(align=True).operator(SvOB3ItemSelectObjectMK4.bl_idname, icon='CURSOR', text='', emboss=False)
-            op.idx = index
-        else:
-            op = row2.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
-            op.description_text='Object pointer is empty'
-            pass
-
-        if item.exclude:
-            exclude_icon='CHECKBOX_DEHLT'
-        else:
-            exclude_icon='CHECKBOX_HLT'
-
-        if item.object_pointer:
-            op = row2.column(align=True).operator(SvOB3BItemEnablerMK4.bl_idname, icon=exclude_icon, text='', emboss=False)
-            op.fn_name = 'ENABLER'
-            op.idx = index
-        else:
-            op = row2.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
-            op.description_text='Object pointer is empty'
-            pass
+        #     #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
+        #     #grid.prop(item, 'object_pointer', text='')
+        # else:
         
-        op = row2.column(align=True).operator(SvOB3BItemRemoveMK4.bl_idname, icon='X', text='', emboss=False)
-        op.fn_name = 'REMOVE'
-        op.idx = index
+        grid = layout.grid_flow(row_major=False, columns=3, align=True)
+        UI0 = grid.row(align=True)
+        UI0.alignment = 'LEFT'
+        UI01 = UI0.column(align=True)
+        UI01.alignment = 'LEFT'
+        UI01.label(text=f'{index:0{item_base}d}')
+        if data.object_names_ui_minimal==True:
+            UI02 = UI0.column(align=True)
+            UI02.alignment = 'LEFT'
+            UI02.label(text='', icon=item_icon)
+        #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
+        UI03 = UI0.row(align=True)
+        if data.object_names_ui_minimal==False:
+            usable = max(data.width - 160, 20)
+            scale = usable/120
+            UI03.scale_x = max(scale, 1.0)
+            UI03.prop(item, 'object_pointer', text='')
+        else:
+            UI03.alignment = 'LEFT'
+            UI03.label(text=item.object_pointer.name)
 
-        duplicate_sign='BLANK1'
-        if item.object_pointer and active_data.object_names[getattr(active_data, active_propname)].object_pointer==item.object_pointer:
-            lst = [o for o in active_data.object_names if o.object_pointer and o.object_pointer==item.object_pointer]
-            if len(lst)>1:
-                duplicate_sign='ONIONSKIN_ON'
-        col = row2.column(align=True).column(align=True)
-        col.label(text='', icon=duplicate_sign)
-        col.scale_x=0
+
+        if data.object_names_ui_minimal:
+            pass
+        else:
+            UI2=grid.row(align=True)
+            UI2.alignment = 'RIGHT'
+
+            if item.object_pointer:
+                op = UI2.column(align=True).operator(SvOB3ItemSelectObjectMK4.bl_idname, icon='CURSOR', text='', emboss=False)
+                op.idx = index
+            else:
+                op = UI2.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+                op.description_text='Object pointer is empty'
+                pass
+            if item.exclude:
+                exclude_icon='CHECKBOX_DEHLT'
+            else:
+                exclude_icon='CHECKBOX_HLT'
+
+            if item.object_pointer:
+                op = UI2.column(align=True).operator(SvOB3BItemEnablerMK4.bl_idname, icon=exclude_icon, text='', emboss=False)
+                op.fn_name = 'ENABLER'
+                op.idx = index
+            else:
+                op = UI2.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+                op.description_text='Object pointer is empty'
+                pass
+            
+            op = UI2.column(align=True).operator(SvOB3BItemRemoveMK4.bl_idname, icon='X', text='', emboss=False)
+            op.fn_name = 'REMOVE'
+            op.idx = index
+
+            duplicate_sign='BLANK1'
+            if item.object_pointer and active_data.object_names[getattr(active_data, active_propname)].object_pointer==item.object_pointer:
+                lst = [o for o in active_data.object_names if o.object_pointer and o.object_pointer==item.object_pointer]
+                if len(lst)>1:
+                    duplicate_sign='ONIONSKIN_ON'
+            col = UI2.column(align=True).column(align=True)
+            col.label(text='', icon=duplicate_sign)
+            col.scale_x=0
+        pass
+
+    def filter_items(self, context, data, propname):
+
+        object_names_ui_minimal = getattr(data, "object_names_ui_minimal", False)
+
+        items = getattr(data, propname)
+
+        flt_flags = []
+        flt_neworder = []
+
+        for item in items:
+            if not object_names_ui_minimal:
+                flt_flags.append(self.bitflag_filter_item)
+                continue
+            else:
+                ok = (
+                    (not item.exclude) and
+                    (item.object_pointer)
+                )
+                flt_flags.append(self.bitflag_filter_item if ok else 0)
+
+        return flt_flags, flt_neworder
 
 
 class SvOB3BItemOperatorMK4(bpy.types.Operator, SvGenericNodeLocator):
@@ -332,18 +390,6 @@ class SvOB3BHighlightAllObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeLocat
 
         return {'FINISHED'}
 
-class SvOB3BClearObjectsFromListMK4(bpy.types.Operator, SvGenericNodeLocator):
-
-    bl_idname = "node.sv_ob3b_clear_list_of_objects_mk4"
-    bl_label = "Clear list of objects"
-    bl_options = {'INTERNAL'}
-
-    def sv_execute(self, context, node):
-        """
-        passes the operator's 'self' too to allow calling self.report()
-        """
-        node.clear_objects_from_list(self)
-
 class SvOB3BSyncSceneObjectWithListMK4(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_ob3b_sync_scene_object_with_list_mk4"
@@ -464,6 +510,8 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         default=True, update=updateNode) # type: ignore
 
     object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollectionMK4) # type: ignore
+    minimal_node_ui: bpy.props.BoolProperty(default=False)
+    object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
 
     active_obj_index: bpy.props.IntProperty() # type: ignore
 
@@ -532,19 +580,27 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         ]
 
 
-    def verts_sockets_update(self, context):
+    def _verts_sockets_update(self, context):
         for name in ['vertices_select', 'vertices_crease', 'vertices_bevel_weight']:
             self.outputs[name].hide = not(self.enable_verts_attribute_sockets)
+
+    def verts_sockets_update(self, context):
+        self._verts_sockets_update(context)
         updateNode(self, context)
 
-    def edges_sockets_update(self, context):
+    def _edges_sockets_update(self, context):
         for name in ['edges_select', 'edges_seams', 'edges_sharps', 'edges_crease', 'edges_bevel_weight',]:
             self.outputs[name].hide = not(self.enable_edges_attribute_sockets)
+
+    def edges_sockets_update(self, context):
+        self._edges_sockets_update(context)
         updateNode(self, context)
 
-    def polygons_sockets_update(self, context):
+    def _polygons_sockets_update(self, context):
         for name in ['polygon_selects', 'polygon_smooth', ]:
             self.outputs[name].hide = not(self.enable_polygons_attribute_sockets)
+    def polygons_sockets_update(self, context):
+        self._polygons_sockets_update(context)
         updateNode(self, context)
 
     enable_verts_attribute_sockets: bpy.props.BoolProperty(
@@ -635,6 +691,10 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         self.outputs["polygon_smooth"]          .hide = not(self.enable_polygons_attribute_sockets)
     
     def draw_vertices_out_socket(self, socket, context, layout):
+        # if self.minimal_node_ui:
+        #     layout.prop(self, "minimal_node_ui", text='', toggle=True, icon='FULLSCREEN_EXIT')
+        # else:
+        #     layout.prop(self, "minimal_node_ui", text='', toggle=True, icon='FULLSCREEN_ENTER')
         layout.label(text=f'{socket.label} ')
         layout.prop(self, 'enable_verts_attribute_sockets', icon='STICKY_UVS_DISABLE', text='', toggle=True)
         if socket.is_linked:  # linked INPUT or OUTPUT
@@ -752,12 +812,13 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             active_object = bpy.context.view_layer.objects.active
             first_duplicated = None
             sync_index = None
+            object_name_active = self.object_names[self.active_obj_index]
             for I, item in enumerate(self.object_names):
-                if self.object_names[self.active_obj_index].name == active_object.name and I<=self.active_obj_index:
-                    if first_duplicated==None and self.object_names[I].name == active_object.name:
+                if object_name_active.object_pointer and object_name_active.object_pointer == active_object and I<=self.active_obj_index:
+                    if first_duplicated==None and self.object_names[I].object_pointer == active_object:
                         first_duplicated = I
                     continue
-                if item.name == active_object.name:
+                if item.object_pointer == active_object:
                     sync_index = I
                     #object_synced = True
                     break
@@ -899,23 +960,24 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         if self.object_names:
             row = layout.row(align=True)
             row.column().template_list("SVOB3B_UL_NamesListMK4", "", self, "object_names", self, "active_obj_index", rows=3)
-            col = row.column(align=True)
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BAddObjectsFromSceneUpMK4.bl_idname, text='', icon='ADD')
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BHighlightProcessedObjectsInSceneMK4.bl_idname, text='', icon='GROUP_VERTEX')
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BHighlightAllObjectsInSceneMK4.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BSyncSceneObjectWithListMK4.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
-            
-            set_object_names = set([o.name for o in self.object_names if o.object_pointer])
-            if len(set_object_names)<len(self.object_names):
-                icon = 'AUTOMERGE_ON'
-                description_text = f'Remove any duplicates objects in list\nCount of duplicates objects: {len(self.object_names)-len(set_object_names)}'
-            else:
-                icon = 'AUTOMERGE_OFF'
-                description_text = 'Remove any duplicates objects in list.\nNo duplicates objects in list now'
-            description_text += "\n\nShift-Cliсk - skip confirmation dialog"
-            self.wrapper_tracked_ui_draw_op(col, SvOB3BInRemoveDuplicatesObjectsInListMK4.bl_idname, text='', icon=icon, description_text=description_text)
+            if self.minimal_node_ui==False:
+                col = row.column(align=True)
+                self.wrapper_tracked_ui_draw_op(col, SvOB3BAddObjectsFromSceneUpMK4.bl_idname, text='', icon='ADD')
+                self.wrapper_tracked_ui_draw_op(col, SvOB3BMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
+                self.wrapper_tracked_ui_draw_op(col, SvOB3BMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
+                self.wrapper_tracked_ui_draw_op(col, SvOB3BHighlightProcessedObjectsInSceneMK4.bl_idname, text='', icon='GROUP_VERTEX')
+                self.wrapper_tracked_ui_draw_op(col, SvOB3BHighlightAllObjectsInSceneMK4.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
+                self.wrapper_tracked_ui_draw_op(col, SvOB3BSyncSceneObjectWithListMK4.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
+                
+                set_object_names = set([o.name for o in self.object_names if o.object_pointer])
+                if len(set_object_names)<len(self.object_names):
+                    icon = 'AUTOMERGE_ON'
+                    description_text = f'Remove any duplicates objects in list\nCount of duplicates objects: {len(self.object_names)-len(set_object_names)}'
+                else:
+                    icon = 'AUTOMERGE_OFF'
+                    description_text = 'Remove any duplicates objects in list.\nNo duplicates objects in list now'
+                description_text += "\n\nShift-Cliсk - skip confirmation dialog"
+                self.wrapper_tracked_ui_draw_op(col, SvOB3BInRemoveDuplicatesObjectsInListMK4.bl_idname, text='', icon=icon, description_text=description_text)
 
         else:
             layout.label(text='--None--')
@@ -941,22 +1003,58 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         col = layout.column(align=True)
 
-        row = col.row(align=True)
-        row.prop(self, "apply_matrix", text="Apply matrix", toggle=True)
-        row.prop(self, "mesh_join", text="merge", toggle=True)
-        
-        col = layout.column(align=True)
-        row = col.row(align=True)
+        if self.minimal_node_ui==False:
+            row = col.row(align=True)
+            row.prop(self, "apply_matrix", text="Apply matrix", toggle=True)
+            row.prop(self, "mesh_join", text="merge", toggle=True)
+            
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            if not by_input:
+                row.prop(self, 'sort', text='Sort', toggle=True)
+            row.prop(self, "modifiers", text="Post", toggle=True)
+            row.prop(self, "vergroups", text="VeGr", toggle=True)
+
         if not by_input:
-            row.prop(self, 'sort', text='Sort', toggle=True)
-        row.prop(self, "modifiers", text="Post", toggle=True)
-        row.prop(self, "vergroups", text="VeGr", toggle=True)
-        if not by_input:
-            self.draw_obj_names(layout)
-            if len(self.object_names)>0:
-                row = layout.row(align=True)
-                row.label(text='')
-                self.wrapper_tracked_ui_draw_op(row, SvOB3BClearObjectsFromListMK4.bl_idname, text='', icon='CANCEL')
+            # self.draw_obj_names(layout)
+            # if self.minimal_node_ui==False:
+            #     if len(self.object_names)>0:
+            #         row = layout.row(align=True)
+            #         row.label(text='')
+            #         self.wrapper_tracked_ui_draw_op(row, SvOB3BClearObjectsFromListMK4.bl_idname, text='', icon='CANCEL')
+
+            if self.object_names:
+                col = layout.column(align=True)
+                elem = col.row(align=True)
+                self.wrapper_tracked_ui_draw_op(elem, SvOB3BAddObjectsFromSceneUpMK4.bl_idname, text='', icon='ADD')
+                self.wrapper_tracked_ui_draw_op(elem, SvOB3BMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
+                self.wrapper_tracked_ui_draw_op(elem, SvOB3BMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
+                self.wrapper_tracked_ui_draw_op(elem, SvOB3BHighlightProcessedObjectsInSceneMK4.bl_idname, text='', icon='GROUP_VERTEX')
+                self.wrapper_tracked_ui_draw_op(elem, SvOB3BHighlightAllObjectsInSceneMK4.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
+                self.wrapper_tracked_ui_draw_op(elem, SvOB3BSyncSceneObjectWithListMK4.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
+                
+                set_object_names = set([o.name for o in self.object_names if o.object_pointer])
+                if len(set_object_names)<len(self.object_names):
+                    icon = 'AUTOMERGE_ON'
+                    description_text = f'Remove any duplicates objects in list\nCount of duplicates objects: {len(self.object_names)-len(set_object_names)}'
+                else:
+                    icon = 'AUTOMERGE_OFF'
+                    description_text = 'Remove any duplicates objects in list.\nNo duplicates objects in list now'
+                description_text += "\n\nShift-Cliсk - skip confirmation dialog"
+                self.wrapper_tracked_ui_draw_op(elem, SvOB3BInRemoveDuplicatesObjectsInListMK4.bl_idname, text='', icon=icon, description_text=description_text)
+                elem.separator()
+                self.wrapper_tracked_ui_draw_op(elem, SvOB3BClearObjectsFromListMK4.bl_idname, text='', icon='CANCEL')
+                elem.separator()
+                if self.object_names_ui_minimal:
+                    elem.prop(self, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_EXIT')
+                else:
+                    elem.prop(self, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_ENTER')
+
+
+                col.template_list("SVOB3B_UL_NamesListMK4", "", self, "object_names", self, "active_obj_index", rows=3)
+                
+            else:
+                layout.label(text='--None--')
         pass
 
     def sv_draw_buttons_ext(self, context, layout):
@@ -998,6 +1096,22 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         return [face.material_index for face in bm.faces[:]]
 
     def process(self):
+        if self.minimal_node_ui==True:
+            for s in self.outputs:
+                if s.name not in ["vertices", "edges", "polygons"]:
+                    s.hide = not s.is_linked
+            for s in self.inputs:
+                    s.hide = not s.is_linked
+        else:
+            for s in self.outputs:
+                s.hide = False
+            for s in self.inputs:
+                s.hide = False
+            self._verts_sockets_update(None)
+            self._edges_sockets_update(None)
+            self._polygons_sockets_update(None)
+
+
         objs = self.inputs[0].sv_get(default=[[]])
         if not self.object_names and not objs[0]:
             return
@@ -1009,6 +1123,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         o_vertices, o_edges, o_polygons, o_vertices_select, o_vertices_crease, o_vertices_bevel_weight, o_edges_select, o_edges_crease, o_edges_seams, o_edges_sharps, o_edges_bevel_weight, o_polygon_selects, o_polygon_smooth, o_vertex_normals, o_material_idx, o_polygon_areas, o_polygon_centers, o_polygon_normals, o_matrices, o_objects = [s.is_linked for s in self.outputs[:20]]
         l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_crease, l_edges_seams, l_edges_sharps, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_matrices = [[] for s in self.outputs[:19]]
+        sv_depsgraph = None
         if self.modifiers:
             sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
@@ -1148,100 +1263,162 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                         if obj.type == 'CURVE' and obj.mode == 'EDIT' and bpy.app.version[:2] == (3, 2):
                             raise ReadingObjectDataError("Does not support curves in edit mode in Blender 3.2")
                         elif self.modifiers:
-                            obj = sv_depsgraph.objects[obj.name]
-                            obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                            if obj.type in ['POINTCLOUD']:
+                                if sv_depsgraph is None:
+                                    sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                obj = sv_depsgraph.objects[obj.name]
+                                obj_eval = obj.evaluated_get(sv_depsgraph)
+                                obj_data = obj_eval.data
+                            else:
+                                obj = sv_depsgraph.objects[obj.name]
+                                obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                         else:
-                            obj_data = obj.to_mesh()
+                            if obj.type in ['META']:
+                                if sv_depsgraph is None:
+                                    sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                obj = sv_depsgraph.objects[obj.name]
+                                obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                            elif obj.type in ['POINTCLOUD']:
+                                if sv_depsgraph is None:
+                                    sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                obj = sv_depsgraph.objects[obj.name]
+                                #obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                                obj_eval = obj.evaluated_get(sv_depsgraph)
+                                obj_data = obj_eval.data
+                            else:
+                                obj_data = obj.to_mesh()
                         
                         T, R, S = mtrx.decompose()
 
-                        if o_vertices:
-                            verts            = [ ((mtrx @ v.co)[:] if self.apply_matrix else v.co)[:] for v in obj_data.vertices]  # v.co is a Vector()
-                        if o_edges:
-                            edgs             = [[ e.vertices[0], e.vertices[1] ] for e in obj_data.edges]
-                        if o_polygons:
-                            pols             = [list(p.vertices) for p in obj_data.polygons]
-                        if o_vertices_select:
-                            vertices_select1 = [v.select for v in obj_data.vertices]
+                        if obj.type in ['POINTCLOUD']:
+                            if o_vertices:
+                                verts            = [ ((mtrx @ v.co)[:] if self.apply_matrix else v.co)[:] for v in obj_data.points]  # v.co is a Vector()
+                            if o_edges:
+                                edgs             = []
+                            if o_polygons:
+                                pols             = []
+                            if o_vertices_select:
+                                vertices_select1 = []
+                            if o_vertices_crease:
+                                vertices_crease1 = []
+                            if o_vertices_bevel_weight:
+                                vertices_bevel_weight1 = []
+                            if o_edges_select:
+                                edges_select1 = []
+                            if o_edges_seams:
+                                edges_seams1 = []
+                            if o_edges_sharps:
+                                edges_sharps1 = []
+                            if o_edges_crease:
+                                edges_crease1 = []
+                            if o_edges_bevel_weight:
+                                edges_bevel_weight1 = []
+                            if o_polygon_selects:
+                                polygon_selects1 = []
+                            if o_polygon_smooth:
+                                polygon_smooth1 = []
+                            if self.vergroups:
+                                vert_groups      = []
+                            if o_vertex_normals:
+                                vertex_normals   = [] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
+                            if o_material_idx:
+                                #material_indexes = read_materials_idx(obj_data, out_np[3])
+                                material_indexes = []
+                            if o_polygon_areas:
+                                polygons_areas   = []
+                            if o_polygon_centers:
+                                polygon_centers  = []
+                            if o_polygon_normals:
+                                polygon_normals  = []
 
-                        if o_vertices_crease:
-                            if hasattr(obj_data, 'vertex_creases') and (obj_data.vertex_creases is not None) and hasattr(obj_data.vertex_creases, '__len__') and len(obj_data.vertex_creases)>0:
-                                # it is very hard to identify creases in object mode in blender before 4.0
-                                creases = obj_data.vertex_creases[0]
-                                vertices_crease1 = [creases.data[i].value for i, v in enumerate(obj_data.vertices)]
-                            elif 'crease_vert' in obj_data.attributes:
-                                # get creases of vertices in Blender 4.x
-                                vertices_crease1 = [e.value for e in obj_data.attributes['crease_vert'].data]
-                            else:
-                                # if no data then all creases are 0.0
-                                vertices_crease1 = [0.0 for i in range( len(obj_data.vertices) )]
-                            pass
+                        else:
+                            if o_vertices:
+                                verts            = [ ((mtrx @ v.co)[:] if self.apply_matrix else v.co)[:] for v in obj_data.vertices]  # v.co is a Vector()
+                            if o_edges:
+                                edgs             = [[ e.vertices[0], e.vertices[1] ] for e in obj_data.edges]
+                            if o_polygons:
+                                pols             = [list(p.vertices) for p in obj_data.polygons]
+                            if o_vertices_select:
+                                vertices_select1 = [v.select for v in obj_data.vertices]
 
-                        if o_vertices_bevel_weight:
-                            if 'bevel_weight_vert' in obj_data.attributes:
-                                # after Blender 4.0
-                                vertices_bevel_weight1 = [e.value for e in obj_data.attributes['bevel_weight_vert'].data]
-                            elif len(obj_data.vertices)>0 and hasattr(obj_data.vertices[0], 'bevel_weight'):
-                                # before Blender 4.0
-                                vertices_bevel_weight1 = [v.bevel_weight for v in obj_data.vertices]
-                            else:
-                                # vertices has no data in e (not initalized)
-                                vertices_bevel_weight1 = [0.0 for i in range( len(obj_data.vertices) )]
-                            pass
+                            if o_vertices_crease:
+                                if hasattr(obj_data, 'vertex_creases') and (obj_data.vertex_creases is not None) and hasattr(obj_data.vertex_creases, '__len__') and len(obj_data.vertex_creases)>0:
+                                    # it is very hard to identify creases in object mode in blender before 4.0
+                                    creases = obj_data.vertex_creases[0]
+                                    vertices_crease1 = [creases.data[i].value for i, v in enumerate(obj_data.vertices)]
+                                elif 'crease_vert' in obj_data.attributes:
+                                    # get creases of vertices in Blender 4.x
+                                    vertices_crease1 = [e.value for e in obj_data.attributes['crease_vert'].data]
+                                else:
+                                    # if no data then all creases are 0.0
+                                    vertices_crease1 = [0.0 for i in range( len(obj_data.vertices) )]
+                                pass
 
-                        if o_edges_select:
-                            edges_select1 = [e.select for e in obj_data.edges]
-                        if o_edges_seams:
-                            edges_seams1 = [e.use_seam for e in obj_data.edges]
-                        if o_edges_sharps:
-                            edges_sharps1 = [e.use_edge_sharp for e in obj_data.edges]
+                            if o_vertices_bevel_weight:
+                                if 'bevel_weight_vert' in obj_data.attributes:
+                                    # after Blender 4.0
+                                    vertices_bevel_weight1 = [e.value for e in obj_data.attributes['bevel_weight_vert'].data]
+                                elif len(obj_data.vertices)>0 and hasattr(obj_data.vertices[0], 'bevel_weight'):
+                                    # before Blender 4.0
+                                    vertices_bevel_weight1 = [v.bevel_weight for v in obj_data.vertices]
+                                else:
+                                    # vertices has no data in e (not initalized)
+                                    vertices_bevel_weight1 = [0.0 for i in range( len(obj_data.vertices) )]
+                                pass
 
-                        if o_edges_crease:
-                            if 'crease_edge' in obj_data.attributes:
-                                # after blender 4.0
-                                edges_crease1 = [e.value for e in obj_data.attributes['crease_edge'].data]
-                            elif len(obj_data.edges)>0 and hasattr(obj_data.edges[0], 'crease'):
-                                # before Blender 4.0
-                                edges_crease1 = [e.crease for e in obj_data.edges]
-                            else:
-                                # edges has no data in e (not initalized)
-                                edges_crease1 = [0.0 for e in obj_data.edges]
-                            pass
-                        
-                        if o_edges_bevel_weight:
-                            if 'bevel_weight_edge' in obj_data.attributes:
-                                # after Blender 4.0
-                                edges_bevel_weight1 = [e.value for e in obj_data.attributes['bevel_weight_edge'].data]
-                            elif len(obj_data.edges)>0 and hasattr(obj_data.edges[0], 'bevel_weight'):
-                                # before Blender 4.0
-                                edges_bevel_weight1 = [e.bevel_weight for e in obj_data.edges]
-                            else:
-                                # edges has no data for bevel (not initalized)
-                                edges_bevel_weight1 = [0.0 for e in obj_data.edges]
-                            pass
-                                
-                        if o_polygon_selects:
-                            polygon_selects1 = [p.select for p in obj_data.polygons]
-                        if o_polygon_smooth:
-                            polygon_smooth1 = [p.use_smooth for p in obj_data.polygons]
-                        if self.vergroups:
-                            vert_groups      = get_vertgroups(obj_data)
-                        if o_vertex_normals:
-                            vertex_normals   = [ ((   R @ v.co) if self.apply_matrix else v.normal)[:] for v in obj_data.vertices ] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
-                        if o_material_idx:
-                            material_indexes = read_materials_idx(obj_data, out_np[3])
-                        if o_polygon_areas:
-                            polygons_areas   = [ polygon.area for polygon in obj_data.polygons]
-                        if o_polygon_centers:
-                            polygon_centers  = [ ((mtrx @ polygon.center) if self.apply_matrix else polygon.center)[:] for polygon in obj_data.polygons]
-                        if o_polygon_normals:
-                            polygon_normals  = [ ((   R @ polygon.normal) if self.apply_matrix else polygon.normal)[:] for polygon in obj_data.polygons]
+                            if o_edges_select:
+                                edges_select1 = [e.select for e in obj_data.edges]
+                            if o_edges_seams:
+                                edges_seams1 = [e.use_seam for e in obj_data.edges]
+                            if o_edges_sharps:
+                                edges_sharps1 = [e.use_edge_sharp for e in obj_data.edges]
+
+                            if o_edges_crease:
+                                if 'crease_edge' in obj_data.attributes:
+                                    # after blender 4.0
+                                    edges_crease1 = [e.value for e in obj_data.attributes['crease_edge'].data]
+                                elif len(obj_data.edges)>0 and hasattr(obj_data.edges[0], 'crease'):
+                                    # before Blender 4.0
+                                    edges_crease1 = [e.crease for e in obj_data.edges]
+                                else:
+                                    # edges has no data in e (not initalized)
+                                    edges_crease1 = [0.0 for e in obj_data.edges]
+                                pass
+                            
+                            if o_edges_bevel_weight:
+                                if 'bevel_weight_edge' in obj_data.attributes:
+                                    # after Blender 4.0
+                                    edges_bevel_weight1 = [e.value for e in obj_data.attributes['bevel_weight_edge'].data]
+                                elif len(obj_data.edges)>0 and hasattr(obj_data.edges[0], 'bevel_weight'):
+                                    # before Blender 4.0
+                                    edges_bevel_weight1 = [e.bevel_weight for e in obj_data.edges]
+                                else:
+                                    # edges has no data for bevel (not initalized)
+                                    edges_bevel_weight1 = [0.0 for e in obj_data.edges]
+                                pass
+                                    
+                            if o_polygon_selects:
+                                polygon_selects1 = [p.select for p in obj_data.polygons]
+                            if o_polygon_smooth:
+                                polygon_smooth1 = [p.use_smooth for p in obj_data.polygons]
+                            if self.vergroups:
+                                vert_groups      = get_vertgroups(obj_data)
+                            if o_vertex_normals:
+                                vertex_normals   = [ ((   R @ v.co) if self.apply_matrix else v.normal)[:] for v in obj_data.vertices ] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
+                            if o_material_idx:
+                                material_indexes = read_materials_idx(obj_data, out_np[3])
+                            if o_polygon_areas:
+                                polygons_areas   = [ polygon.area for polygon in obj_data.polygons]
+                            if o_polygon_centers:
+                                polygon_centers  = [ ((mtrx @ polygon.center) if self.apply_matrix else polygon.center)[:] for polygon in obj_data.polygons]
+                            if o_polygon_normals:
+                                polygon_normals  = [ ((   R @ polygon.normal) if self.apply_matrix else polygon.normal)[:] for polygon in obj_data.polygons]
 
                     if o_matrices:
                         l_matrices.append(mtrx)
 
                     obj.to_mesh_clear()
-                except ReadingObjectDataError:
+                except ReadingObjectDataError as _ex:
                     raise
                 except Exception as err:
                     # it's not clear which cases this try catch should handle
