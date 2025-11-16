@@ -581,8 +581,8 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         )
 
     sort: BoolProperty(
-        name='sort by name',
-        description='sorting inserted objects by names',
+        name='Sort by names',
+        description='Sorting inserted objects by names',
         default=True, update=updateNode)
 
     apply_matrix: BoolProperty(
@@ -780,13 +780,15 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             op_text = "G E T"
 
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK2.bl_idname, text=op_text)
-        row.column(align=True).prop(self, 'sort', text='Sort')
-
-        row = layout.row(align=True)
-        row.column(align=True).prop(self, 'apply_matrix', toggle=True)
-        row.column(align=True).prop(self, 'legacy_mode', toggle=True)
-        # layout.prop(self, 'concat_segments', toggle=False)
-        row = layout.row(align=True)
+        
+        # row.column(align=True).prop(self, 'sort', text='Sort')
+        # row = layout.row(align=True)
+        # row.column(align=True).prop(self, 'apply_matrix', toggle=True)
+        # row.column(align=True).prop(self, 'legacy_mode', toggle=True)
+        grid = layout.grid_flow(row_major=False, columns=0, align=True)
+        grid.column(align=True).prop(self, 'sort')
+        grid.column(align=True).prop(self, 'apply_matrix')
+        grid.column(align=True).prop(self, 'legacy_mode')
         
         if self.object_names:
             col = layout.column(align=True)
