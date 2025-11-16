@@ -144,7 +144,7 @@ This node has the following parameters:
    * **By profile**. The node will try to place profile curves so that they be
      parallel to initial location of the path curve. This is not always
      possible, but the node will try to keep it as parallel as possible.
-  * **Custom**. The node will try to place profile curves so that they be
+   * **Custom**. The node will try to place profile curves so that they be
      parallel to the vector specified in the **Normal** input. This is not
      always possible, but the node will try to keep it as parallel as possible.
 
