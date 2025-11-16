@@ -226,7 +226,7 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
         implementation = SvNurbsSurface.NATIVE,
         logger = None):
 
-    ts1, ts2, u_curves = prepare_nurbs_birail(path1, path2, profiles,
+    placed_ts1, placed_ts2, u_curves = prepare_nurbs_birail(path1, path2, profiles,
                 ts1 = ts1, ts2 = ts2,
                 length_resolution = length_resolution,
                 min_profiles = min_profiles,
@@ -239,8 +239,12 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
     v_curves = [path1, path2]
     intersections = np.array([u_curve.get_end_points() for u_curve in u_curves])
     intersections = np.transpose(intersections, axes=(1,0,2))
-    v_knots = np.array([ts1, ts2])
-    u_knots = np.array([u_curve.get_u_bounds() for u_curve in u_curves])
+    if length_resolution is not None:
+        u_knots = np.array([u_curve.get_u_bounds() for u_curve in u_curves])
+        v_knots = np.array([placed_ts1, placed_ts2])
+    else:
+        u_knots = None
+        v_knots = None
     surface = gordon_surface(
         u_curves,
         v_curves,
