@@ -1517,12 +1517,17 @@ dependencies: scipy</p></div>
 
     key_ts = [t for t, pt in intersections]
     key_ts = list(sorted(key_ts))
-    #print(&#34;I&#34;, key_ts)
     t_min, t_max = curve.get_u_bounds()
     if len(key_ts) &gt; 0 and t_min != key_ts[0]:
-        key_ts = [t_min] + key_ts
+        pt1 = curve.evaluate(t_min)
+        pt2 = curve.evaluate(key_ts[0])
+        if np.linalg.norm(pt1 - pt2) &gt;= tolerance:
+            key_ts = [t_min] + key_ts
     if len(key_ts) &gt; 0 and t_max != key_ts[-1]:
-        key_ts = key_ts + [t_max]
+        pt1 = curve.evaluate(t_max)
+        pt2 = curve.evaluate(key_ts[-1])
+        if np.linalg.norm(pt1 - pt2) &gt;= tolerance:
+            key_ts = key_ts + [t_max]
 
     segments = []
     for t1, t2 in zip(key_ts, key_ts[1:]):
