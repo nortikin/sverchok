@@ -476,7 +476,7 @@ class SvNurbsCurve(SvCurve):
         if t >= t_max:
             return (self.get_knotvector(), self.get_control_points(), self.get_weights()), None
 
-        current_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector(), t)
+        current_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector(), t, tolerance=None)
         to_add = self.get_degree() - current_multiplicity # + 1
         curve = self.insert_knot(t, count=to_add)
         knot_span = np.searchsorted(curve.get_knotvector(), t)
