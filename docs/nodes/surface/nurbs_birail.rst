@@ -88,16 +88,19 @@ This node has the following inputs:
   default value is 10.
 * **V1**, **V2**. Values of V parameter (i.e. path curve's T parameter), at which
   profile curves must be placed for lofting. This input is available and
-  mandatory if **Explicit V Values** parameter is checked. The node expects
-  number of values in this input equal to number of profile curves. The values 
-  fed in V1 and V2 must be in an ascending order, e.g. (0.0, 0.333, 0.667, 1.0). 
-  For one profile curve, these inputs have no meaning. V1 input is for the first 
-  path, and V2 input is for the second path.
+  mandatory if **Profile V values** parameter is set to **Explicit**. The node
+  expects number of values in this input equal to number of profile curves. The
+  values fed in V1 and V2 must be in an ascending order, e.g. ``(0.0, 0.333,
+  0.667, 1.0)``. For one profile curve, these inputs have no meaning. V1 input
+  is for the first path, and V2 input is for the second path.
 * **DegreeV**. Degree of NURBS curves used to interpolate in V direction. As
   most of Sverchok numeric inputs, this input can process data with nesting
   level up to 2 (list of lists of numbers). Degree of 1 will make a "linear
   loft", i.e. a surface composed from several ruled surfaces; higher degrees
   will create more smooth surfaces. The default value is 3. 
+* **Length Resolution**. This input is available only when **Profile V values**
+  parameter is set to **Path length uniform**. Defines the resolution to be
+  used for calculation of path curves length. The default value is 50.
 * **Normal**. This input is available only when **Profile Rotation** parameter
   is set to **Custom**. Vector which controls orientation of copies of profile
   curves along path curves. The node will try to rotate profile curves so that
@@ -150,11 +153,28 @@ This node has the following parameters:
 
    The default option is **Path Normal Average**.
 
-* **Explicit V Values**. If checked, then the user has the ability to provide
-  values of path curves parameter values, at which the provided path curves
-  must be placed; otherwise, the node will calculate these parameters
-  automatically (evenly). This parameter has no meaning if there is only one
-  profile curve.
+* **Profile V values**. Controls how copies of profile curve(s) are distributed
+  along path curves. The following options are available:
+
+  * **Path parameter uniform**. Distribute profile curves uniformly according
+    to path curve parametrization. This is the fastest and default option.
+  * **Path length uniform**. Distribute profile curves uniformly according to
+    path curve length segments (natural parametrization). Can generate more
+    "natural" forms if path curves parametrization is too far from natural
+    parametrization. Note that if Gordon algorithm is used, then with this mode
+    you will get a surface with more control points. Also, if parametrization
+    of two path curves differs from each other too much, then with Gordon
+    algorithm the resulting surface can be not very smooth in some places. If
+    you need profile curves distributed uniformly along path curves, but this
+    option together with Gordon algorithm give you too strong artifacts, you
+    may wish to use "Curve to NURBS" node on both path curves before passing
+    them to this node.
+  * **Explicit**. In this mode, the user has the ability to provide values of
+    path curves parameter values, at which the provided path curves must be
+    placed. Caveats about Gordon algorithm (see previous option) apply to
+    this option as well. This option has no meaning if there is only one
+    profile curve.
+
 * **U Knots**. This parameter is available in the N panel only. This defines
   how the node will modify input curves in order to make them use exactly the
   same knot vectors. Available options are:
@@ -164,6 +184,13 @@ This node has the following parameters:
   * **Average**. Calculate knot vector by averaging knot vectors of the input
     curves. This can work only when input curves have the same number of
     control points.
+
+  **Unify** option often generates a lot of additional control points for the
+  resulting surface; it is more universal, and more precise in many cases.
+  **Average** mode does not create additional control points, and so it works
+  faster, and any following nodes working with the generated surface will work
+  faster; but **Average** mode is less universal, and in many cases it gives
+  less precise interpolations. The default value is **Unify**.
   
 * **Knotvector accuracy**. This parameter is available in the N panel only.
   Accuracy (number of exact digits after decimal points) to be used for
@@ -174,12 +201,6 @@ This node has the following parameters:
   number of control points in the resulting surface (the result will be less
   precise, but will work faster).
 
-  **Unify** option often generates a lot of additional control points for the
-  resulting surface; it is more universal, and more precise in many cases.
-  **Average** mode does not create additional control points, and so it works
-  faster, and any following nodes working with the generated surface will work
-  faster; but **Average** mode is less universal, and in many cases it gives
-  less precise interpolations. The default value is **Unify**.
 * **Metric**. This parameter is available in the N panel only. Distance type
   used for interpolation along V direction. The available values are:
 

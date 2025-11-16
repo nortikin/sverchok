@@ -42,8 +42,8 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
             update = updateNode)
 
     v_modes = [
-            ('PARAM', "Uniform - Path parameter", "Distribute profile curves uniformly according to path curve parametrization", 0),
-            ('LEN', "Uniform - Path length", "Distribute profile curves uniformly according to path curve length segments (natural parametrization)", 1),
+            ('PARAM', "Path parameter uniform", "Distribute profile curves uniformly according to path curve parametrization", 0),
+            ('LEN', "Path length uniform", "Distribute profile curves uniformly according to path curve length segments (natural parametrization)", 1),
             ('EXPLICIT', "Explicit values", "Provide values of V parameter (along path curve) for profile curves explicitly", 2)
         ]
 
@@ -156,7 +156,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "auto_rotate_profiles")
         layout.label(text="Profile rotation:")
         layout.prop(self, "profile_rotation", text='')
-        layout.label(text="V mode:")
+        layout.label(text="Profile V values:")
         layout.prop(self, "v_mode", text='')
 
     def draw_buttons_ext(self, context, layout):
