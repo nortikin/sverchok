@@ -42,8 +42,9 @@ def reparametrize_by_segments(curve, t_values, target_t_values, tolerance=1e-6):
     segments = []
     for t1, t2, tgt_t1, tgt_t2 in zip(t_values, t_values[1:], target_t_values, target_t_values[1:]):
         segment = curve.cut_segment(t1, t2)
-        segment = segment.reparametrize(0.0, tgt_t2 - tgt_t1)
-        segments.append(segment)
+        if segment is not None:
+            segment = segment.reparametrize(0.0, tgt_t2 - tgt_t1)
+            segments.append(segment)
     
     result = segments[0]
     for segment in segments[1:]:
