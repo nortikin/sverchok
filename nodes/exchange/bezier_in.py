@@ -17,16 +17,13 @@ from sverchok.utils.curve.bezier import SvCubicBezierCurve
 
 
 class SvBIDataCollectionMK2(bpy.types.PropertyGroup):
-    base: bpy.props.IntProperty(default=1, min=1)
     object_pointer: bpy.props.PointerProperty(
         name="object",
         type=bpy.types.Object
     )
-    #name: bpy.props.StringProperty()
     exclude: bpy.props.BoolProperty(
         description='Exclude from process',
     )
-    #icon: bpy.props.StringProperty(default="BLANK1")
 
 
 class ReadingBezierInDataError(Exception):
@@ -34,49 +31,47 @@ class ReadingBezierInDataError(Exception):
 
 def get_object_data_spline_info(object_pointer):
     '''Is object exists, has spline and bezier info?'''
-    object_exists=False
-    curve_object = True
-    bezier_object = False
-    non_bezier_object = False
-    chars = []
+    object_exists       = None
+    curve_object        = None
+    splines_bezier      = None
+    splines_non_bezier  = None
+    chars               = []
 
     if object_pointer:
         object_exists=True
-        #obj = bpy.data.objects[object_name]
-        if hasattr(object_pointer.data, 'splines'):
-            #_set = set([s.type for s in obj.data.splines])
-            
-            if len(object_pointer.data.splines)>0:
-                curve_object = True
-                bezier_object = True
+        #if hasattr(object_pointer.data, 'splines'):
+        if object_pointer.type=='CURVE':
+            curve_object        = True
+            splines_bezier      = False
+            splines_non_bezier  = False
+            if object_pointer.data.splines:
                 splines = object_pointer.data.splines
                 if splines:
                     for spline in splines:
                         if spline.type=='BEZIER':
-                            bezier_object = True
+                            splines_bezier = True
                             chars.append(f"{len(spline.bezier_points)-1+(1 if spline.use_cyclic_u else 0)}{'c' if spline.use_cyclic_u else 'o'}")
                         else:
-                            non_bezier_object = True
+                            splines_non_bezier = True
                             chars.append(f"{spline.type[0]}{'c' if spline.use_cyclic_u else 'o'}")
                         pass
                 else:
-                    chars=["[empty]"]
+                    chars.append("[empty]")
                 pass
             else:
-                curve_object = True
-                bezier_object = False
-                non_bezier_object = False
+                splines_bezier = False
+                splines_non_bezier = False
                 chars.append("")
                 pass
             pass
         else:
             curve_object = False
-            bezier_object = False
-            non_bezier_object = False
+            splines_bezier = False
+            splines_non_bezier = False
             chars.append("")
             pass
 
-    return object_exists, curve_object, bezier_object, non_bezier_object, chars
+    return object_exists, curve_object, splines_bezier, splines_non_bezier, chars
 
 class SVBI_UL_NamesListMK2(bpy.types.UIList):
 
@@ -84,11 +79,8 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
         general_part_of_comments = '\n\nClick - On/off\nShift-Click - Reverse On/Off all items'
         grid = layout.grid_flow(row_major=False, columns=3, align=True)
 
-        object_exists=False
         curve_object = True
-        bezier_object = True
-        chars = []
-        object_exists, curve_object, bezier_object, non_bezier_object, chars = get_object_data_spline_info(item.object_pointer)
+        object_exists, curve_object, splines_bezier, splines_non_bezier, chars = get_object_data_spline_info(item.object_pointer)
 
         item_icon = "GHOST_DISABLED"
         if item.object_pointer:
@@ -98,82 +90,122 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
                 item_icon = "GHOST_DISABLED"
         item_base = len(str(len(data.object_names)))
         #grid.label(text=f'{index:0{item_base}d} {item.name} {",".join(chars)}', icon=item_icon)
-        row1 = grid.row(align=True)
-        if item.object_pointer and curve_object==True and bezier_object==True and non_bezier_object==False:
-            pass
-        elif item.object_pointer and curve_object==True and bezier_object==True and non_bezier_object==True:
+
+        UI0 = grid.row(align=True)
+        if item.object_pointer and curve_object==True:
             pass
         elif not item.object_pointer:
-            row1.alert = True
+            UI0.alert = True
         else:
-            row1.alert = True
+            UI0.alert = True
+        UI0.alignment = 'LEFT'
+        UI01 = UI0.column(align=True)
+        UI01.alignment = 'LEFT'
+        UI01.label(text=f'{index:0{item_base}d}')
+        if data.object_names_ui_minimal==True:
+            UI02 = UI0.column(align=True)
+            UI02.alignment = 'LEFT'
+            UI02.label(text='', icon=item_icon)
 
-        row1.column(align=True).label(text=f'{index:0{item_base}d}')
-        row1.label(text='', icon=item_icon)
-        grid.prop(item, 'object_pointer', text='')
-
-        row2 = grid.row(align=True)
-        if item.object_pointer:
-            op = row2.column(align=True).operator(SvBezierInItemSelectObjectMK2.bl_idname, icon='CURSOR', text='', emboss=False)
-            op.idx = index
+        #grid.prop(item, 'object_pointer', text='')
+        UI03 = UI0.row(align=True)
+        if data.object_names_ui_minimal==False:
+            usable = max(data.width - 150, 20)
+            scale = usable/120
+            UI03.scale_x = max(scale, 1.0)
+            UI03.prop(item, 'object_pointer', text='')
         else:
-            op = row2.column(align=True).operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
-            op.text='Object does not exists'
+            UI03.alignment = 'LEFT'
+            UI03.label(text=item.object_pointer.name)
+
+        if data.object_names_ui_minimal:
             pass
+        else:
+            row2 = grid.row(align=True)
+            row2.alignment='RIGHT'
 
-        if item.object_pointer and curve_object==True and bezier_object==True and non_bezier_object==False:
-            # all segments are BEZIER
-            if item.exclude:
-                exclude_icon='CHECKBOX_DEHLT'
-                description_text = 'Object will be excluded from process'
+            # if object exists then show icon to select object in the 3DView, else show blank column
+            if item.object_pointer:
+                op = row2.column(align=True).operator(SvBezierInItemSelectObjectMK2.bl_idname, icon='CURSOR', text='', emboss=False)
+                op.idx = index
             else:
-                exclude_icon='CHECKBOX_HLT'
-                description_text = 'Object will be processed'
-            op = row2.column(align=True).operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
-            op.fn_name = 'ENABLER'
-            op.idx = index
-            op.description_text = description_text+general_part_of_comments
+                op = row2.column(align=True).operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
+                op.text='Object does not exists'
+                pass
 
-        elif item.object_pointer and curve_object==True and bezier_object==True and non_bezier_object==True:
-            # Not all segments are BEZIER
-            if item.exclude:
-                exclude_icon='GHOST_DISABLED'
-                description_text = 'Object will be excluded from process. Some splines of object are not BEZIER spline (ex.NURBS)'
+            if item.object_pointer and curve_object==True:
+                # all segments are BEZIER
+                if item.exclude:
+                    exclude_icon='CHECKBOX_DEHLT'
+                    description_text = 'Object will be excluded from process'
+                else:
+                    exclude_icon='CHECKBOX_HLT'
+                    description_text = 'Object will be processed'
+                op = row2.column(align=True).operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
+                op.fn_name = 'ENABLER'
+                op.idx = index
+                op.description_text = description_text+general_part_of_comments
+
+            elif not item.object_pointer:
+                # Object does not exists
+                op = row2.column(align=True).operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
+                op.text = 'Object does not exists'
+                pass
+
             else:
-                exclude_icon='GHOST_ENABLED'
-                description_text = 'Object will be processed but some splines of object are not BEZIER spline (ex.NURBS)'
-            op = row2.column(align=True).operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
-            op.fn_name = 'ENABLER'
+                # Object cannot be used
+                op = row2.column(align=True).operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='BLANK1', text='', emboss=False)
+                op.text = 'Object cannot be used as curve. Will be skipped in process.'
+                pass
+
+            op = row2.column(align=True).operator(SvBezierInItemRemoveMK2.bl_idname, icon='X', text='', emboss=False)
+            op.fn_name = 'REMOVE'
             op.idx = index
-            op.description_text = description_text+general_part_of_comments
+            op.description_text = 'Remove object from list.\n\nUse Shift to skip confirmation dialog.'
 
-        elif not item.object_pointer:
-            # Object does not exists
-            op = row2.column(align=True).operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='REMOVE', text='', emboss=False)
-            op.text = 'Object does not exists'
-            pass
-
-        else:
-            # Object cannot be used
-            op = row2.column(align=True).operator(SvBezierInEmptyOperatorMK2.bl_idname, icon='REMOVE', text='', emboss=False)
-            op.text = 'Object cannot be used as curve. Will be skipped in process.'
-            pass
-
-        op = row2.column(align=True).operator(SvBezierInItemRemoveMK2.bl_idname, icon='X', text='', emboss=False)
-        op.fn_name = 'REMOVE'
-        op.idx = index
-        op.description_text = 'Remove object from list.\n\nUse Shift to skip confirmation dialog.'
-
-        duplicate_sign='BLANK1'
-        if item.object_pointer and active_data.object_names[getattr(active_data, active_propname)].object_pointer==item.object_pointer:
-            lst = [o for o in active_data.object_names if o.object_pointer and o.object_pointer==item.object_pointer]
-            if len(lst)>1:
-                duplicate_sign='ONIONSKIN_ON'
-        col = row2.column(align=True).column(align=True)
-        col.label(text='', icon=duplicate_sign)
-        col.scale_x=0
+            duplicate_sign='BLANK1'
+            if item.object_pointer and active_data.object_names[getattr(active_data, active_propname)].object_pointer==item.object_pointer:
+                lst = [o for o in active_data.object_names if o.object_pointer and o.object_pointer==item.object_pointer]
+                if len(lst)>1:
+                    duplicate_sign='ONIONSKIN_ON'
+            col = row2.column(align=True).column(align=True)
+            col.label(text='', icon=duplicate_sign)
+            col.scale_x=0
 
         return
+    
+    def filter_items(self, context, data, propname):
+
+        object_names_ui_minimal = getattr(data, "object_names_ui_minimal", False)
+
+        items = getattr(data, propname)
+
+        flt_flags = []
+        flt_neworder = []
+
+        for item in items:
+            if not object_names_ui_minimal:
+                flt_flags.append(self.bitflag_filter_item)
+                continue
+            else:
+                object_exists, curve_object, bezier_object, non_bezier_object, chars = get_object_data_spline_info(item.object_pointer)
+                non_applicable_type = False
+                if item.object_pointer and curve_object==True and bezier_object==True and non_bezier_object==False:
+                    pass
+                elif item.object_pointer and curve_object==True and bezier_object==True and non_bezier_object==True:
+                    pass
+                elif not item.object_pointer:
+                    non_applicable_type = True
+                else:
+                    non_applicable_type = True
+
+                ok = (
+                    (not item.exclude) and
+                    (item.object_pointer) and (not non_applicable_type)
+                )
+                flt_flags.append(self.bitflag_filter_item if ok else 0)
+
+        return flt_flags, flt_neworder
 
 class SvBezierInItemSelectObjectMK2(bpy.types.Operator):
     '''Select object as active in 3D Viewport.\n\nShift-Click - add object into current selection of objects in scene.'''
@@ -525,6 +557,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         return self.object_names
 
     object_names: bpy.props.CollectionProperty(type=SvBIDataCollectionMK2)
+    object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
 
     active_obj_index: bpy.props.IntProperty() # type: ignore
 
@@ -619,12 +652,13 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             active_object = bpy.context.view_layer.objects.active
             first_duplicated = None
             sync_index = None
+            object_name_active = self.object_names[self.active_obj_index]
             for I, item in enumerate(self.object_names):
-                if self.object_names[self.active_obj_index].name == active_object.name and I<=self.active_obj_index:
-                    if first_duplicated==None and self.object_names[I].name == active_object.name:
+                if object_name_active.object_pointer and object_name_active.object_pointer == active_object and I<=self.active_obj_index:
+                    if first_duplicated==None and self.object_names[I].object_pointer == active_object:
                         first_duplicated = I
                     continue
-                if item.name == active_object.name:
+                if item.object_pointer == active_object:
                     sync_index = I
                     #object_synced = True
                     break
@@ -728,30 +762,6 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         self.process_node(None)
         return
 
-    def draw_obj_names(self, layout):
-        if self.object_names:
-            row = layout.row(align=True)
-            row.column().template_list("SVBI_UL_NamesListMK2", f"uniq_{self.name}", self, "object_names", self, "active_obj_index")
-            col = row.column(align=True)
-            self.wrapper_tracked_ui_draw_op(col, SvBezierInAddObjectsFromSceneUpMK2.bl_idname, text='', icon='ADD')
-            self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveUpMK2.bl_idname, text='', icon='TRIA_UP')
-            self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveDownMK2.bl_idname, text='', icon='TRIA_DOWN')
-            self.wrapper_tracked_ui_draw_op(col, SvBezierInHighlightProcessedObjectsInSceneMK2.bl_idname, text='', icon='GROUP_VERTEX')
-            self.wrapper_tracked_ui_draw_op(col, SvBezierInHighlightAllObjectsInSceneMK2.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
-            self.wrapper_tracked_ui_draw_op(col, SvBezierInSyncSceneObjectWithListMK2.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
-
-            set_object_names = set([o.name for o in self.object_names if o.object_pointer])
-            if len(set_object_names)<len(self.object_names):
-                icon = 'AUTOMERGE_ON'
-                description_text = f'Remove any duplicates objects in list\nCount of duplicates objects: {len(self.object_names)-len(set_object_names)}'
-            else:
-                icon = 'AUTOMERGE_OFF'
-                description_text = 'Remove any duplicates objects in list.\nNo duplicates objects in list now'
-            description_text += "\n\nShift-Cliсk - skip confirmation dialog"
-            self.wrapper_tracked_ui_draw_op(col, SvBezierInRemoveDuplicatesObjectsInListMK2.bl_idname, text='', icon=icon, description_text=description_text)
-        else:
-            layout.label(text='--None--')
-
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
@@ -770,19 +780,46 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             op_text = "G E T"
 
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK2.bl_idname, text=op_text)
+        row.column(align=True).prop(self, 'sort', text='Sort')
 
-        layout.prop(self, 'sort', text='Sort', toggle=False)
-        layout.prop(self, 'apply_matrix', toggle=False)
-        layout.prop(self, 'legacy_mode')
+        row = layout.row(align=True)
+        row.column(align=True).prop(self, 'apply_matrix', toggle=True)
+        row.column(align=True).prop(self, 'legacy_mode', toggle=True)
         # layout.prop(self, 'concat_segments', toggle=False)
         row = layout.row(align=True)
         
-        self.draw_obj_names(layout)
+        if self.object_names:
+            col = layout.column(align=True)
+            elem = col.row(align=True)
+            elem.alignment='RIGHT'
+            self.wrapper_tracked_ui_draw_op(elem, SvBezierInAddObjectsFromSceneUpMK2.bl_idname, text='', icon='ADD')
+            self.wrapper_tracked_ui_draw_op(elem, SvBezierInMoveUpMK2.bl_idname, text='', icon='TRIA_UP')
+            self.wrapper_tracked_ui_draw_op(elem, SvBezierInMoveDownMK2.bl_idname, text='', icon='TRIA_DOWN')
+            self.wrapper_tracked_ui_draw_op(elem, SvBezierInHighlightProcessedObjectsInSceneMK2.bl_idname, text='', icon='GROUP_VERTEX')
+            self.wrapper_tracked_ui_draw_op(elem, SvBezierInHighlightAllObjectsInSceneMK2.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
+            self.wrapper_tracked_ui_draw_op(elem, SvBezierInSyncSceneObjectWithListMK2.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
+            
+            set_object_names = set([o.name for o in self.object_names if o.object_pointer])
+            if len(set_object_names)<len(self.object_names):
+                icon = 'AUTOMERGE_ON'
+                description_text = f'Remove any duplicates objects in list\nCount of duplicates objects: {len(self.object_names)-len(set_object_names)}'
+            else:
+                icon = 'AUTOMERGE_OFF'
+                description_text = 'Remove any duplicates objects in list.\nNo duplicates objects in list now'
+            description_text += "\n\nShift-Cliсk - skip confirmation dialog"
+            self.wrapper_tracked_ui_draw_op(elem, SvBezierInRemoveDuplicatesObjectsInListMK2.bl_idname, text='', icon=icon, description_text=description_text)
+            elem.separator()
+            self.wrapper_tracked_ui_draw_op(elem, SvBezierInClearObjectsFromListMK2.bl_idname, text='', icon='CANCEL')
+            elem.separator()
+            if self.object_names_ui_minimal:
+                elem.prop(self, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_EXIT')
+            else:
+                elem.prop(self, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_ENTER')
 
-        if len(self.object_names)>0:
-            row = layout.row(align=True)
-            row.label(text='')
-            self.wrapper_tracked_ui_draw_op(row, SvBezierInClearObjectsFromListMK2.bl_idname, text='', icon='CANCEL')
+            col.template_list("SVBI_UL_NamesListMK2", "", self, "object_names", self, "active_obj_index", rows=3)
+            
+        else:
+            layout.label(text='--None--')
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "concat_segments")
@@ -844,25 +881,19 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             if item.exclude:
                 continue
             object_exists, curve_object, bezier_object, non_bezier_object, chars = get_object_data_spline_info(item.object_pointer)
-            if not item.object_pointer or curve_object==False or bezier_object==False:
+            if not item.object_pointer:
+                continue
+            if curve_object==False:
                 continue
             
-            if hasattr(item.object_pointer.data, 'splines')==False:
-                continue
-
             matrix = item.object_pointer.matrix_world
-            if item.object_pointer.type != 'CURVE':
-                self.warning("%s: not supported object type: %s", item.object_pointer.name, item.object_pointer.type)
-                continue
 
             splines_curves       = []
             splines_use_cyclic_u = []
-            #splines_controls     = []
             splines_controls_c0  = []
             splines_controls_c1  = []
             splines_controls_c2  = []
             splines_controls_c3  = []
-            #spline_matrices     = []
             splines_tilt         = []
             splines_radius       = []
             if item.object_pointer.data.splines:
@@ -907,7 +938,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 if self.source_curves_join_mode=='KEEP':
                     curves_out           .append(splines_curves)
                     use_cyclic_u_out     .append(splines_use_cyclic_u)
-                    matrices_out         .append([matrix]*len(splines_curves))
+                    matrices_out         .append([matrix]*max(len(splines_curves), 1) ) # if no splines then return 1 matrix of object
                     object_names_out     .append([item.object_pointer.name]*len(splines_curves))
                     control_points_c0_out.append([co for lst in splines_controls_c0 for co in lst])
                     control_points_c1_out.append([co for lst in splines_controls_c1 for co in lst])
