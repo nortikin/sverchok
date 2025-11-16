@@ -477,17 +477,17 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             outs.remove(outs['Vers_grouped'])
 
     modifiers: bpy.props.BoolProperty(
-        name='Modifiers',
+        name='Post',
         description='Apply modifier geometry to import (original untouched)',
         default=False, update=updateNode) # type: ignore
 
     vergroups: bpy.props.BoolProperty(
-        name='Vergroups',
+        name='Verts Groups',
         description='Use vertex groups to nesty insertion',
         default=False, update=hide_show_versgroups) # type: ignore
 
     sort: bpy.props.BoolProperty(
-        name='sort by name',
+        name='Sort',
         description='sorting inserted objects by names',
         default=True, update=updateNode) # type: ignore
 
@@ -514,7 +514,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         update = updateNode) # type: ignore
     
     mesh_join : bpy.props.BoolProperty(
-        name = "merge",
+        name = "Mesh Join",
         description = "If checked, join mesh elements into one object",
         default = False,
         update = updateNode) # type: ignore
@@ -952,20 +952,13 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 op_text = "G E T"
 
             self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
-            row.prop(self, 'sort', text='Sort')
 
-
-        col = layout.column(align=True)
-
-        if self.minimal_node_ui==False:
-            row = col.row(align=True)
-            row.prop(self, "apply_matrix", text="Apply matrix", toggle=True)
-            row.prop(self, "mesh_join", text="Merge", toggle=True)
-            
-            col = layout.column(align=True)
-            row = col.row(align=True)
-            row.prop(self, "modifiers", text="Post", toggle=True)
-            row.prop(self, "vergroups", text="VeGr", toggle=True)
+        grid = layout.grid_flow(row_major=False, columns=0, align=True)
+        grid.column(align=True).prop(self, 'sort')
+        grid.column(align=True).prop(self, 'apply_matrix')
+        grid.column(align=True).prop(self, 'mesh_join')
+        grid.column(align=True).prop(self, 'modifiers')
+        grid.column(align=True).prop(self, 'vergroups')
 
         if not by_input:
             if self.object_names:
