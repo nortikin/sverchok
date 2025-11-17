@@ -35,6 +35,37 @@ class SvOB3BDataCollectionMK4(bpy.types.PropertyGroup):
         description='Exclude from process',
     )
 
+    # dynamic table element description:
+    def _get_description(self):
+        s = 'No object'
+        if self.object_pointer:
+            s = self.object_pointer.type
+            object_pointer = self.object_pointer
+            chars = [object_pointer.name]
+            if object_pointer.type=='CURVE':
+                if object_pointer.data.splines:
+                    splines = object_pointer.data.splines
+                    for I, spline in enumerate(splines):
+                        if spline.type=='BEZIER':
+                            chars.append(f" {I}. {spline.type.lower()}, segments: {len(spline.bezier_points)-1+(1 if spline.use_cyclic_u else 0)}, {'closed' if spline.use_cyclic_u else 'open'}")
+                        else:
+                            chars.append(f" {I}. {spline.type.lower()}, segments: {len(spline.points)-1+(1 if spline.use_cyclic_u else 0)},{'closed' if spline.use_cyclic_u else 'open'}")
+                        pass
+                    pass
+                else:
+                    chars.append("Curve object, No splines")
+                    pass
+            else:
+                pass
+            chars.append("---------------------")
+            s = "\n".join(chars)
+
+        return s
+    test_text1: bpy.props.StringProperty(get=_get_description)
+
+
+
+
 
 class ReadingObjectDataError(Exception):
     pass
@@ -990,7 +1021,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     elem.prop(self, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_ENTER')
 
 
-                col.template_list("SVOB3B_UL_NamesListMK4", "", self, "object_names", self, "active_obj_index", rows=3)
+                col.template_list("SVOB3B_UL_NamesListMK4", "", self, "object_names", self, "active_obj_index", rows=3, item_dyntip_propname='test_text1')
                 
             else:
                 layout.label(text='--None--')
