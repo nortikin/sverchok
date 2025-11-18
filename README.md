@@ -18,125 +18,119 @@
 ## English
 
 [RU](https://github.com/nortikin/sverchok/blob/master/README_RU.md)  
-**Addon for**: [Blender](http://blender.org) version *2.93* and above for now 5.1 tested well. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).   
-**License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**Prerequisites**: We added optional nodes that depend on additional libraries. This [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) lists these dependencies and includes installation instructions.  
-[**Documentation**:](http://nortikin.github.io/sverchok/docs/main.html) If anything isn't clear (or missing) in this document please
-ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right
-and you can help us!  
-**Community**:  [Discord](https://discord.gg/pjHHhjJz8Z)
-  
+**Addon for**: [Blender](http://blender.org) version *2.93* and above (currently tested with 5.1). For *2.79*, see [special installation instructions](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).  
+**License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)  
+**Prerequisites**: Some optional nodes require additional libraries. See this [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for a list of dependencies and installation instructions.  
+[**Documentation**](http://nortikin.github.io/sverchok/docs/main.html): If anything is unclear or missing in this document, please ask on the [Issue Tracker](https://github.com/nortikin/sverchok/issues). We want to improve these resources and your feedback helps!  
+**Community**: [Discord](https://discord.gg/pjHHhjJz8Z)
+
 ### Description
-Sverchok is a powerful parametric tool for architects, allowing geometry to be programmed visually with nodes. 
-Mesh and geometry programming consists of combining basic elements such as:  
+Sverchok is a powerful parametric tool for architects and designers, enabling visual programming of geometry through nodes. Mesh and geometry programming involves combining basic elements such as:
 
-  - lists of indexed Vectors representing coordinates (Sverchok vectors are zero based)
-  - lists of grouped indices to represent edges and polygons.
-  - matrices (user-friendly rotation-scale-location transformations)  
-  - curves  
-  - surfaces  
-  - scalar and vector fields  
-  - solids  
-  - insolation/sun heating calculations   
+- Lists of indexed vectors representing coordinates (Sverchok uses zero-based indexing)
+- Lists of grouped indices representing edges and polygons
+- Matrices (user-friendly rotation-scale-location transformations)
+- Curves
+- Surfaces
+- Scalar and vector fields
+- Solids
+- Insolation and solar heating calculations
 
-### Possibilities
-Comes with more than 600 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
+### Features
+With over 600 nodes for creating and manipulating geometry, combining these nodes enables you to:
 
-  - do parametric constructions  
-  - easily change parameters with sliders and formulas    
-  - power nodes such as: Profile parametric, UVconnect, Generative art, Mesh expression, Proportion edit, Wafel, Adaptive Polygons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops, Bmesh props, etc.  
-  - do cross sections, extrusions, other modifications with height level flexible parametrised and vectorised node tools  
-  - calculate areas, volume, and perform other geometric analysis  
-  - make or import CSV tables or custom formats  
-  - use Vector/Scalar fields, create them, visualize data  
-  - Solid modelling  
-  - even code your own custom nodes in python with Scripted node  
-  - make your own 'addons' on node layouts and utilise them with Sverchok 3dview panel in your everyday pipeline  
-  - access to Blender Python API (bpy) with special _Set_ and _Get_ nodes  
-  - upgrade Sverchok with pressing one button  
-  - using genetic algorithm in your workflow  
-  - insolation/radiation calculations  
-  - SVG/DXF drawing export from node tree  
-  - brep/NURBS/IFC exchange  
-  - and much, much more!  
+- Create parametric constructions
+- Easily adjust parameters using sliders and formulas
+- Utilize powerful nodes including: Profile parametric, UVconnect, Generative art, Mesh expression, Proportion edit, Wafel, Adaptive Polygons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series, List manipulators, CSG Boolean, Bmesh operations, Bmesh properties, and more
+- Perform cross-sections, extrusions, and other modifications with flexible, parameterized, and vectorized node tools
+- Calculate areas, volumes, and perform other geometric analysis
+- Create or import CSV tables and custom formats
+- Work with vector/scalar fields—create them and visualize data
+- Perform solid modeling
+- Code custom nodes in Python using the Scripted node
+- Create custom 'addons' based on node layouts and integrate them into your workflow via Sverchok's 3D View panel
+- Access Blender's Python API (bpy) with specialized *Set* and *Get* nodes
+- Update Sverchok with a single click
+- Incorporate genetic algorithms into your workflow
+- Perform insolation/radiation calculations
+- Export SVG/DXF drawings directly from node trees
+- Exchange BREP/NURBS/IFC data
+- And much more!
 
 ### Installation
-Install Sverchok as you would any blender addon.  
-  
--  _Installation from Preferences_  
-   Download Sverchok [archive (zip) from github](https://github.com/nortikin/sverchok/archive/refs/heads/master.zip)
-   -  Do not unpack it after downloading, Blender will take care of that later.
-       - Mac OS users can [recompress the folder](https://support.apple.com/guide/mac-help/zip-and-unzip-files-and-folders-on-mac-mchlp2528/mac) if Safari has automatically extracted it and deleted the `.zip`  
-   -  Edit > Preferences > Add-ons > 
-   -  Press the `Install..` button 
-   -  Browse to the location of the zip and select it, then press "Install Add-on"
-   -  Blender unpacks the add-on, and when completed it will present the option to enable it.
-   -  Enable it by clicking in the box beside `Node: Sverchok`:
-   -  Let Blender complete the installation, most likely this will take a few seconds, be patient.
-   -  When complete Blender will display:
-       -  [x] Node: Sverchok
-   
-   
-   By default Blender ( above 2.80) will store the fact that you enabled an add-on and it will be available next time you start Blender.
-   
+Install Sverchok like any other Blender addon.
 
--  _Upgrade Sverchok on fly_   
-   Use button `Check for new version` in sverchok panel in node editor (press `N` for panel).    
-   Press `Update Sverchok` button.   
-   At the end press F8 to reload add-ons. In NodeView the new version number will appear in the N-panel.   
+- **Installation from Preferences**  
+  Download the Sverchok [archive (zip) from GitHub](https://github.com/nortikin/sverchok/archive/refs/heads/master.zip)
+  - Do not unpack the archive after downloading — Blender will handle this
+    - Mac OS users may need to [recompress the folder](https://support.apple.com/guide/mac-help/zip-and-unzip-files-and-folders-on-mac-mchlp2528/mac) if Safari automatically extracted and deleted the `.zip`
+  - Go to Edit > Preferences > Add-ons
+  - Click the `Install...` button
+  - Browse to the zip file location, select it, and click "Install Add-on"
+  - Blender will unpack the addon and present an option to enable it
+  - Enable it by checking the box next to `Node: Sverchok`
+  - Allow Blender a few seconds to complete the installation
+  - When complete, Blender will display:
+    - [x] Node: Sverchok
 
--  _Additionally_  
-   Sverchok provides a lot of useful features out-of-the-box that don't require you to install anything extra, but we
-   do provide additional nodes and scripts that make use of so called "3rd party" libraries like: 
-   - scipy
-   - marching cubes 
-   - geomdl   
-   - SciKit-image   
-   - shapely  
-   - circlify  
-   - freecadpython3lib   
-   
-   Instructions regarding their installation is found at this [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies)
+  By default, Blender (version 2.80 and above) will remember enabled addons for future sessions.
+
+- **Updating Sverchok**  
+  Use the `Check for new version` button in Sverchok's panel in the Node Editor (press `N` to open the panel)  
+  Click the `Update Sverchok` button  
+  Press F8 to reload addons—the new version number will appear in the N-panel
+
+- **Additional Dependencies**  
+  Sverchok provides many features out-of-the-box, but additional nodes and scripts utilize third-party libraries including:
+  - scipy
+  - marching cubes
+  - geomdl
+  - SciKit-image
+  - shapely
+  - circlify
+  - freecadpython3lib
+
+  Installation instructions for these dependencies are available on this [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies)
 
 ### Troubleshooting Installation Errors
 
-If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names.
+If installing from a release zip containing a folder named `sverchok-master.x.y.z`, rename it to `sverchok-master` since folder names with dots are invalid Python package names.
 
-If you are installing from a release found [here](https://github.com/nortikin/sverchok/releases), these files contain folders that have the dots mentioned in the previous point. These versioned release zips are not meant for installing from, but rather can be used to try older versions of Sverchok when you are using older .blend files and older Blender versions. Don't use these release zips if you are installing sverchok for the first time.
+If using releases from [here](https://github.com/nortikin/sverchok/releases), note that these versioned zips are intended for testing older Sverchok versions with legacy .blend files and Blender versions, not for initial installations.
 
-##### Errors during "install" or "enable" in preferences
+##### Errors during installation or enabling
 
-if an error is raised like:
+If you encounter errors like:
 
 > `NameError: name 'nodes' is not defined`
 
-then exit Blender and restart Blender. This time also activate Sverchok by checking the tickbox, but give it as long as it needs to initialize the add-on. It's a complicated Add-on and might take up to 10 seconds to enable (depends on how fast your machine is and how much ram you have).
+Exit and restart Blender, then enable Sverchok again. The addon may take up to 10 seconds to initialize depending on your system performance.
 
-##### Other reasons for failing:
+##### Other installation issues
 
-In case Sverchok still fails to install, we've compiled a list of reasons and known resolutions [here](http://nortikin.github.io/sverchok/docs/installation.html). Please let us know if you encounter other installation issues.   
+If Sverchok still fails to install, we've compiled troubleshooting solutions [here](http://nortikin.github.io/sverchok/docs/installation.html). Please report any new issues you encounter.
 
-If you update with update button in sverchok panel it can raise an error if you renamed a folder, so follow [this](https://github.com/nortikin/sverchok/issues/669) (a bootstrap script you can run from TextEditor)  
+Updating via the in-panel button may fail if you've renamed the installation folder. Follow [this guide](https://github.com/nortikin/sverchok/issues/669) for a bootstrap script solution.
 
-### Contact and Credit
-Homepage: [Home](http://nortikin.github.io/sverchok/)  
-Authors: 
--  Alexander Nedovizin,  
--  Nikita Gorodetskiy,  
--  Linus Yng,  
--  Agustin Gimenez, 
--  Dealga McArdle,  
--  Konstantin Vorobiew, 
--  Ilya Portnov,  
--  Eleanor Howick,    
--  Walter Perdan,    
--  Marius Giurgi,      
--  Sergey Soluyanov,     
--  Ivan Prytov,   
--  Victor Doval,  
--  Dion Moult,  
--  Alessandro Zomparelli
--  Alex (aka Satabol)
--  @kevinsmia1939
+### Contact and Credits
+**Homepage**: [nortikin.github.io/sverchok/](http://nortikin.github.io/sverchok/)  
+**Authors**:
+- Alexander Nedovizin
+- Nikita Gorodetskiy
+- Linus Yng
+- Agustin Gimenez
+- Dealga McArdle
+- Konstantin Vorobiew
+- Ilya Portnov
+- Eleanor Howick
+- Walter Perdan
+- Marius Giurgi
+- Sergey Soluyanov
+- Ivan Prytov
+- Victor Doval
+- Dion Moult
+- Alessandro Zomparelli
+- Alex (aka Satabol)
+- @kevinsmia1939
 
-Email: sverchok-b3d@yandex.ru  
+**Email**: sverchok-b3d@yandex.ru
