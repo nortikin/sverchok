@@ -273,6 +273,6 @@ Gordon algorithm result (with the same "path parameter uniform" distribution of 
 
 Gordon algorithm with "path length uniform" distribution of profiles:
 
-.. image:: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37"
-  :target: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37"
+.. image:: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37
+  :target: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37
 
