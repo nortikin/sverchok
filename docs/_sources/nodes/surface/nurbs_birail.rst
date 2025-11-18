@@ -33,9 +33,24 @@ rotation incorrectly. In such cases, you will have to place your profile curves
 in XOY plane and disable "Auto rotate" flag.
 
 The node works by placing several copies of profile curve along the path
-curves, and then lofting (skinning) between them.  If several profile curves
-are used, then the node interpolates between them and places these interpolated
-curves along the path curve.  
+curves. If several profile curves are used, then the node interpolates between
+them and places these interpolated curves along the path curve. Then one of
+two algorithms can be used:
+
+* **Lofting** (legacy). A loft surface is generated from profile curves placed
+  along path curves.
+* **Gordon**. Gordon surface is generated from path curves and profile curves.
+  See documentation of "Surface from NURBS curves net" node for more information.
+
+Loft algorithm works faster with the same number of profile curve copies
+(**VSections** parameter). But, in order for resulting surface to touch path
+curves precisely enough, you usually will have to use high enough value of
+VSections parameter. Gordon algorithm produces the surface which always touches
+path curves precisely, even with small number of V sections. But Gordon
+algorithm is slower, and it produces surfaces with more control points. Also,
+Gordon algorithm does not support (yet) rational curves. One can either use
+Loft algorithm for such curves, or pass curves through "Curve to NURBS" node to
+make them non-rational.
 
 This node can be compared with "NURBS Sweep" node. That node uses only one path
 curve.
@@ -73,16 +88,25 @@ This node has the following inputs:
   default value is 10.
 * **V1**, **V2**. Values of V parameter (i.e. path curve's T parameter), at which
   profile curves must be placed for lofting. This input is available and
-  mandatory if **Explicit V Values** parameter is checked. The node expects
-  number of values in this input equal to number of profile curves. The values 
-  fed in V1 and V2 must be in an ascending order, e.g. (0.0, 0.333, 0.667, 1.0). 
-  For one profile curve, these inputs have no meaning. V1 input is for the first 
-  path, and V2 input is for the second path.
+  mandatory if **Profile V values** parameter is set to **Explicit**. The node
+  expects number of values in this input equal to number of profile curves. The
+  values fed in V1 and V2 must be in an ascending order, e.g. ``(0.0, 0.333,
+  0.667, 1.0)``. For one profile curve, these inputs have no meaning. V1 input
+  is for the first path, and V2 input is for the second path.
 * **DegreeV**. Degree of NURBS curves used to interpolate in V direction. As
   most of Sverchok numeric inputs, this input can process data with nesting
   level up to 2 (list of lists of numbers). Degree of 1 will make a "linear
   loft", i.e. a surface composed from several ruled surfaces; higher degrees
   will create more smooth surfaces. The default value is 3. 
+* **Length Resolution**. This input is available only when **Profile V values**
+  parameter is set to **Path length uniform**. Defines the resolution to be
+  used for calculation of path curves length. The default value is 50.
+* **Normal**. This input is available only when **Profile Rotation** parameter
+  is set to **Custom**. Vector which controls orientation of copies of profile
+  curves along path curves. The node will try to rotate profile curves so that
+  they would lie in the same plane with specified vector. This is not exactly
+  possible in many situations, but at least approximately the profiles will be
+  rotated this way. The default value is ``(0, 0, 1)`` (Z axis).
 
 Parameters
 ----------
@@ -123,14 +147,34 @@ This node has the following parameters:
    * **By profile**. The node will try to place profile curves so that they be
      parallel to initial location of the path curve. This is not always
      possible, but the node will try to keep it as parallel as possible.
+   * **Custom**. The node will try to place profile curves so that they be
+     parallel to the vector specified in the **Normal** input. This is not
+     always possible, but the node will try to keep it as parallel as possible.
 
    The default option is **Path Normal Average**.
 
-* **Explicit V Values**. If checked, then the user has the ability to provide
-  values of path curves parameter values, at which the provided path curves
-  must be placed; otherwise, the node will calculate these parameters
-  automatically (evenly). This parameter has no meaning if there is only one
-  profile curve.
+* **Profile V values**. Controls how copies of profile curve(s) are distributed
+  along path curves. The following options are available:
+
+  * **Path parameter uniform**. Distribute profile curves uniformly according
+    to path curve parametrization. This is the fastest and default option.
+  * **Path length uniform**. Distribute profile curves uniformly according to
+    path curve length segments (natural parametrization). Can generate more
+    "natural" forms if path curves parametrization is too far from natural
+    parametrization. Note that if Gordon algorithm is used, then with this mode
+    you will get a surface with more control points. Also, if parametrization
+    of two path curves differs from each other too much, then with Gordon
+    algorithm the resulting surface can be not very smooth in some places. If
+    you need profile curves distributed uniformly along path curves, but this
+    option together with Gordon algorithm give you too strong artifacts, you
+    may wish to use "Curve to NURBS" node on both path curves before passing
+    them to this node.
+  * **Explicit**. In this mode, the user has the ability to provide values of
+    path curves parameter values, at which the provided path curves must be
+    placed. Caveats about Gordon algorithm (see previous option) apply to
+    this option as well. This option has no meaning if there is only one
+    profile curve.
+
 * **U Knots**. This parameter is available in the N panel only. This defines
   how the node will modify input curves in order to make them use exactly the
   same knot vectors. Available options are:
@@ -140,6 +184,13 @@ This node has the following parameters:
   * **Average**. Calculate knot vector by averaging knot vectors of the input
     curves. This can work only when input curves have the same number of
     control points.
+
+  **Unify** option often generates a lot of additional control points for the
+  resulting surface; it is more universal, and more precise in many cases.
+  **Average** mode does not create additional control points, and so it works
+  faster, and any following nodes working with the generated surface will work
+  faster; but **Average** mode is less universal, and in many cases it gives
+  less precise interpolations. The default value is **Unify**.
   
 * **Knotvector accuracy**. This parameter is available in the N panel only.
   Accuracy (number of exact digits after decimal points) to be used for
@@ -150,12 +201,6 @@ This node has the following parameters:
   number of control points in the resulting surface (the result will be less
   precise, but will work faster).
 
-  **Unify** option often generates a lot of additional control points for the
-  resulting surface; it is more universal, and more precise in many cases.
-  **Average** mode does not create additional control points, and so it works
-  faster, and any following nodes working with the generated surface will work
-  faster; but **Average** mode is less universal, and in many cases it gives
-  less precise interpolations. The default value is **Unify**.
 * **Metric**. This parameter is available in the N panel only. Distance type
   used for interpolation along V direction. The available values are:
 
@@ -209,4 +254,25 @@ Same with Profile rotation = Path 2 Normal (i.e. profiles are perpendicular to t
 Same with Profile rotation = By profile, i.e. try to keep profile curves parallel to the original profile:
 
 .. image:: https://user-images.githubusercontent.com/284644/122664393-917de000-d1ba-11eb-880a-44b53bf159bd.png
+
+Another example; initial curves (with red points you can see how non-uniform is parametrization of path curves):
+
+.. image:: https://github.com/user-attachments/assets/2ec7d3ff-3293-4e8c-989e-54ccc7ae0144
+  :target: https://github.com/user-attachments/assets/2ec7d3ff-3293-4e8c-989e-54ccc7ae0144
+
+Loft algorithm result (with default "Path parameter uniform" distribution of profiles):
+
+.. image:: https://github.com/user-attachments/assets/e9e7f655-305d-4f74-a130-4281ff627abd
+  :target: https://github.com/user-attachments/assets/e9e7f655-305d-4f74-a130-4281ff627abd
+
+Gordon algorithm result (with the same "path parameter uniform" distribution of profiles):
+
+.. image:: https://github.com/user-attachments/assets/79f32682-8704-41fc-944f-9e114f162bdf
+  :target: https://github.com/user-attachments/assets/79f32682-8704-41fc-944f-9e114f162bdf
+
+
+Gordon algorithm with "path length uniform" distribution of profiles:
+
+.. image:: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37"
+  :target: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37"
 
