@@ -2,7 +2,7 @@ import numpy as np
 
 from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputException
 from sverchok.utils.curve.bezier import SvBezierCurve
-from sverchok.utils.curve.nurbs_algorithms import unify_curves
+from sverchok.utils.curve.nurbs_algorithms import CurvesUnificationException, unify_curves
 from sverchok.utils.curve.algorithms import unify_curves_degree, curve_frame_on_surface_array, SvCurveOnSurfaceCurvaturesCalculator
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents, interpolate_nurbs_curve
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
@@ -54,9 +54,15 @@ def reparametrize_by_segments(curve, t_values, target_t_values, tolerance=1e-6):
     return result
     #return remove_excessive_knots(result, tolerance=tolerance)
 
+class GordonUnificationException(ArgumentError):
+    """Raised when we cannot unify curves provided to Gordon algorithm."""
+    __description__ = "Gordon algorithm: NURBS unification exception"
+    pass
+
 def gordon_surface(u_curves, v_curves, intersections,
         metric='POINTS',
         u_knots=None, v_knots=None,
+        knots_unification_method = 'UNIFY',
         knotvector_accuracy=6,
         reparametrize_tolerance=1e-2,
         implementation = SvNurbsSurface.NATIVE,
@@ -111,9 +117,23 @@ def gordon_surface(u_curves, v_curves, intersections,
     interpolate_kwargs['logger'] = logger
 
     u_curves = unify_curves_degree(u_curves)
-    u_curves = unify_curves(u_curves, accuracy=knotvector_accuracy)#, method='AVERAGE')
+    try:
+        u_curves = unify_curves(u_curves, accuracy=knotvector_accuracy, method=knots_unification_method)
+    except CurvesUnificationException as e:
+        if u_knots is not None:
+            explain = " (after reparametrization)"
+        else:
+            explain = ""
+        raise GordonUnificationException(f"Cannot unify U curves{explain}: {e}") from e
     v_curves = unify_curves_degree(v_curves)
-    v_curves = unify_curves(v_curves, accuracy=knotvector_accuracy)#, method='AVERAGE')
+    try:
+        v_curves = unify_curves(v_curves, accuracy=knotvector_accuracy, method=knots_unification_method)
+    except CurvesUnificationException as e:
+        if u_knots is not None:
+            explain = " (after reparametrization)"
+        else:
+            explain = ""
+        raise GordonUnificationException(f"Cannot unify V curves{explain}: {e}") from e
 
     u_curves_degree = u_curves[0].get_degree()
     v_curves_degree = v_curves[0].get_degree()
@@ -223,6 +243,7 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
         auto_rotate = False,
         use_tangents = 'PATHS_AVG',
         y_axis = None,
+        knots_unification_method = 'UNIFY',
         knotvector_accuracy = 6,
         implementation = SvNurbsSurface.NATIVE,
         logger = None):
@@ -255,6 +276,7 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
         metric=metric,
         implementation=implementation,
         logger=logger,
+        knots_unification_method=knots_unification_method,
         knotvector_accuracy=knotvector_accuracy,
     )[-1]
     return u_curves, v_curves, surface

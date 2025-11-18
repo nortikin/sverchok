@@ -251,6 +251,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
                             use_tangents = self.profile_rotation,
                             y_axis = np.array(y_axis),
                             implementation = self.nurbs_implementation,
+                            knots_unification_method = self.u_knots_mode,
                             knotvector_accuracy = self.knotvector_accuracy,
                             logger = self.sv_logger
                         )
