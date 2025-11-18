@@ -255,3 +255,24 @@ Same with Profile rotation = By profile, i.e. try to keep profile curves paralle
 
 .. image:: https://user-images.githubusercontent.com/284644/122664393-917de000-d1ba-11eb-880a-44b53bf159bd.png
 
+Another example; initial curves (with red points you can see how non-uniform is parametrization of path curves):
+
+.. image:: https://github.com/user-attachments/assets/2ec7d3ff-3293-4e8c-989e-54ccc7ae0144
+  :target: https://github.com/user-attachments/assets/2ec7d3ff-3293-4e8c-989e-54ccc7ae0144
+
+Loft algorithm result (with default "Path parameter uniform" distribution of profiles):
+
+.. image:: https://github.com/user-attachments/assets/e9e7f655-305d-4f74-a130-4281ff627abd
+  :target: https://github.com/user-attachments/assets/e9e7f655-305d-4f74-a130-4281ff627abd
+
+Gordon algorithm result (with the same "path parameter uniform" distribution of profiles):
+
+.. image:: https://github.com/user-attachments/assets/79f32682-8704-41fc-944f-9e114f162bdf
+  :target: https://github.com/user-attachments/assets/79f32682-8704-41fc-944f-9e114f162bdf
+
+
+Gordon algorithm with "path length uniform" distribution of profiles:
+
+.. image:: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37"
+  :target: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37"
+
