@@ -657,13 +657,20 @@ calculate surface’s control points during skinning process.</p></li>
 <p>Another example; initial curves (with red points you can see how non-uniform is parametrization of path curves):</p>
 <a class="reference external image-reference" href="https://github.com/user-attachments/assets/2ec7d3ff-3293-4e8c-989e-54ccc7ae0144"><img alt="https://github.com/user-attachments/assets/2ec7d3ff-3293-4e8c-989e-54ccc7ae0144" src="https://github.com/user-attachments/assets/2ec7d3ff-3293-4e8c-989e-54ccc7ae0144" />
 </a>
-<p>Loft algorithm result (with default “Path parameter uniform” distribution of profiles):</p>
+<p>Loft algorithm result (with default “Path parameter uniform” distribution of
+profiles). Here we use low number of VSections (just 4 of them) to show that in
+such a case with Loft algorithm the surface may not follow path curves exactly:</p>
 <a class="reference external image-reference" href="https://github.com/user-attachments/assets/e9e7f655-305d-4f74-a130-4281ff627abd"><img alt="https://github.com/user-attachments/assets/e9e7f655-305d-4f74-a130-4281ff627abd" src="https://github.com/user-attachments/assets/e9e7f655-305d-4f74-a130-4281ff627abd" />
 </a>
-<p>Gordon algorithm result (with the same “path parameter uniform” distribution of profiles):</p>
+<p>Gordon algorithm result (with the same “path parameter uniform” distribution of
+profiles). The same numer of VSections is used. Now the surface follows paths
+exactly, but you can see that iso-curves of the resulting surface are going
+“diagonally” - that’s because path curves parametrization is non-uniform (and
+parametrization of two path curves is very different):</p>
 <a class="reference external image-reference" href="https://github.com/user-attachments/assets/79f32682-8704-41fc-944f-9e114f162bdf"><img alt="https://github.com/user-attachments/assets/79f32682-8704-41fc-944f-9e114f162bdf" src="https://github.com/user-attachments/assets/79f32682-8704-41fc-944f-9e114f162bdf" />
 </a>
-<p>Gordon algorithm with “path length uniform” distribution of profiles:</p>
+<p>Gordon algorithm with “path length uniform” distribution of profiles. Here
+iso-curves go much more straight:</p>
 <a class="reference external image-reference" href="https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37"><img alt="https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37" src="https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37" />
 </a>
 </section>

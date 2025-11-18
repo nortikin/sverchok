@@ -260,18 +260,25 @@ Another example; initial curves (with red points you can see how non-uniform is 
 .. image:: https://github.com/user-attachments/assets/2ec7d3ff-3293-4e8c-989e-54ccc7ae0144
   :target: https://github.com/user-attachments/assets/2ec7d3ff-3293-4e8c-989e-54ccc7ae0144
 
-Loft algorithm result (with default "Path parameter uniform" distribution of profiles):
+Loft algorithm result (with default "Path parameter uniform" distribution of
+profiles). Here we use low number of VSections (just 4 of them) to show that in
+such a case with Loft algorithm the surface may not follow path curves exactly:
 
 .. image:: https://github.com/user-attachments/assets/e9e7f655-305d-4f74-a130-4281ff627abd
   :target: https://github.com/user-attachments/assets/e9e7f655-305d-4f74-a130-4281ff627abd
 
-Gordon algorithm result (with the same "path parameter uniform" distribution of profiles):
+Gordon algorithm result (with the same "path parameter uniform" distribution of
+profiles). The same numer of VSections is used. Now the surface follows paths
+exactly, but you can see that iso-curves of the resulting surface are going
+"diagonally" - that's because path curves parametrization is non-uniform (and
+parametrization of two path curves is very different):
 
 .. image:: https://github.com/user-attachments/assets/79f32682-8704-41fc-944f-9e114f162bdf
   :target: https://github.com/user-attachments/assets/79f32682-8704-41fc-944f-9e114f162bdf
 
 
-Gordon algorithm with "path length uniform" distribution of profiles:
+Gordon algorithm with "path length uniform" distribution of profiles. Here
+iso-curves go much more straight:
 
 .. image:: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37
   :target: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37
