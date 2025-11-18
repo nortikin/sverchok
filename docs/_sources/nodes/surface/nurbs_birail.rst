@@ -126,6 +126,8 @@ This node has the following parameters:
   implementation is better tested.  The default option is **Geomdl**, when it
   is available; otherwise, built-in implementation is used.
 
+* **Algorithm**. The available algorithms are **Loft** and **Gordon Surface**.
+  See description above. The default one is **Gordon Surface**.
 * **Scale all axes**. If not checked, profile curves will be scaled along one
   axis only, in order to fill the space between two paths. If checked, profile
   curves will be scaled along all axes uniformly. Checked by default.
