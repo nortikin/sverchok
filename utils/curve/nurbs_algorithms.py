@@ -49,7 +49,11 @@ def unify_degrees(curves):
     curves = [curve.elevate_degree(target=max_degree) for curve in curves]
     return curves
 
-
+class CurvesUnificationException(Exception):
+    """Raised when NURBS curve unification code can not unify curves with
+    specified tolerance."""
+    __description__ = "NURBS curves unification exception"
+    pass
 
 def unify_curves(curves, method="UNIFY", accuracy=6):
     tolerance = 10 ** (-accuracy)
@@ -69,7 +73,8 @@ def unify_curves(curves, method="UNIFY", accuracy=6):
             prev_u = None
             for u, count in m:
                 if prev_u is not None and abs(prev_u - u) < tolerance:
-                    raise Exception(f"Knots in original curve #{i} differ less than for tolerance")
+                    raise CurvesUnificationException(f"Knots in original curve #{i} differ less than for tolerance: {prev_u}, {u}")
+                prev_u = u
                 dst_knots.put(u, count)
         # print("Dst", dst_knots)
         dst_knots.calc_averages()
@@ -118,7 +123,7 @@ def unify_curves(curves, method="UNIFY", accuracy=6):
         kvs = [len(curve.get_control_points()) for curve in curves]
         max_kv, min_kv = max(kvs), min(kvs)
         if max_kv != min_kv:
-            raise Exception(
+            raise CurvesUnificationException(
                 f"Knotvector averaging is not applicable: Curves have different number of control points: {kvs}"
             )
 

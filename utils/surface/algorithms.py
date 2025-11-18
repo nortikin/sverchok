@@ -1374,6 +1374,8 @@ def unify_nurbs_surfaces(surfaces, knots_method = 'UNIFY', knotvector_accuracy=6
     else:
         knotvector_tolerance = 10**(-knotvector_accuracy)
 
+    surfaces = [surface.reparametrize(0.0, 1.0, 0.0, 1.0) for surface in surfaces]
+
     if knots_method == 'UNIFY':
 
         dst_knots_u = sv_knotvector.KnotvectorDict(knotvector_tolerance)
