@@ -45,14 +45,21 @@ el.replaceWith(d);
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sverchok.utils.surface.gordon.gordon_surface"><code class="name flex">
-<span>def <span class="ident">gordon_surface</span></span>(<span>u_curves,<br>v_curves,<br>intersections,<br>metric='POINTS',<br>u_knots=None,<br>v_knots=None,<br>knotvector_accuracy=6,<br>reparametrize_tolerance=0.01,<br>logger=None)</span>
+<span>def <span class="ident">gordon_surface</span></span>(<span>u_curves,<br>v_curves,<br>intersections,<br>metric='POINTS',<br>u_knots=None,<br>v_knots=None,<br>knots_unification_method='UNIFY',<br>knotvector_accuracy=6,<br>reparametrize_tolerance=0.01,<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def gordon_surface(u_curves, v_curves, intersections, metric=&#39;POINTS&#39;, u_knots=None, v_knots=None, knotvector_accuracy=6, reparametrize_tolerance=1e-2, logger=None):
+<pre><code class="python">def gordon_surface(u_curves, v_curves, intersections,
+        metric=&#39;POINTS&#39;,
+        u_knots=None, v_knots=None,
+        knots_unification_method = &#39;UNIFY&#39;,
+        knotvector_accuracy=6,
+        reparametrize_tolerance=1e-2,
+        implementation = SvNurbsSurface.NATIVE,
+        logger=None):
     &#34;&#34;&#34;
     Generate a NURBS surface from a net of NURBS curves, by use of Gordon&#39;s algorithm.
 
@@ -103,9 +110,23 @@ el.replaceWith(d);
     interpolate_kwargs[&#39;logger&#39;] = logger
 
     u_curves = unify_curves_degree(u_curves)
-    u_curves = unify_curves(u_curves, accuracy=knotvector_accuracy)#, method=&#39;AVERAGE&#39;)
+    try:
+        u_curves = unify_curves(u_curves, accuracy=knotvector_accuracy, method=knots_unification_method)
+    except CurvesUnificationException as e:
+        if u_knots is not None:
+            explain = &#34; (after reparametrization)&#34;
+        else:
+            explain = &#34;&#34;
+        raise GordonUnificationException(f&#34;Cannot unify U curves{explain}: {e}&#34;) from e
     v_curves = unify_curves_degree(v_curves)
-    v_curves = unify_curves(v_curves, accuracy=knotvector_accuracy)#, method=&#39;AVERAGE&#39;)
+    try:
+        v_curves = unify_curves(v_curves, accuracy=knotvector_accuracy, method=knots_unification_method)
+    except CurvesUnificationException as e:
+        if u_knots is not None:
+            explain = &#34; (after reparametrization)&#34;
+        else:
+            explain = &#34;&#34;
+        raise GordonUnificationException(f&#34;Cannot unify V curves{explain}: {e}&#34;) from e
 
     u_curves_degree = u_curves[0].get_degree()
     v_curves_degree = v_curves[0].get_degree()
@@ -153,6 +174,64 @@ intersections from their positions.
 :param v_knots - np.array, T values of curves intersection for each curve from v_curves</p>
 <p>return value: a NURBS surface.</p>
 <p>See also: The NURBS Book, 2nd ed., p.10.5.</p></div>
+</dd>
+<dt id="sverchok.utils.surface.gordon.nurbs_birail_by_gordon"><code class="name flex">
+<span>def <span class="ident">nurbs_birail_by_gordon</span></span>(<span>path1,<br>path2,<br>profiles,<br>ts1=None,<br>ts2=None,<br>length_resolution=None,<br>min_profiles=2,<br>degree_v=None,<br>metric='POINTS',<br>scale_uniform=True,<br>auto_rotate=False,<br>use_tangents='PATHS_AVG',<br>y_axis=None,<br>knots_unification_method='UNIFY',<br>knotvector_accuracy=6,<br>implementation='NATIVE',<br>logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nurbs_birail_by_gordon(path1, path2, profiles,
+        ts1 = None, ts2 = None,
+        length_resolution = None,
+        min_profiles = 2,
+        degree_v = None,
+        metric = &#39;POINTS&#39;,
+        scale_uniform = True,
+        auto_rotate = False,
+        use_tangents = &#39;PATHS_AVG&#39;,
+        y_axis = None,
+        knots_unification_method = &#39;UNIFY&#39;,
+        knotvector_accuracy = 6,
+        implementation = SvNurbsSurface.NATIVE,
+        logger = None):
+
+    placed_ts1, placed_ts2, u_curves = prepare_nurbs_birail(path1, path2, profiles,
+                ts1 = ts1, ts2 = ts2,
+                length_resolution = length_resolution,
+                min_profiles = min_profiles,
+                degree_v = degree_v,
+                scale_uniform = scale_uniform,
+                auto_rotate = auto_rotate,
+                use_tangents = use_tangents,
+                y_axis = y_axis,
+                knotvector_accuracy = knotvector_accuracy)
+    v_curves = [path1, path2]
+    intersections = np.array([u_curve.get_end_points() for u_curve in u_curves])
+    intersections = np.transpose(intersections, axes=(1,0,2))
+    if length_resolution is not None:
+        u_knots = np.array([u_curve.get_u_bounds() for u_curve in u_curves])
+        v_knots = np.array([placed_ts1, placed_ts2])
+    else:
+        u_knots = None
+        v_knots = None
+    surface = gordon_surface(
+        u_curves,
+        v_curves,
+        intersections = intersections,
+        u_knots = u_knots,
+        v_knots = v_knots,
+        metric=metric,
+        implementation=implementation,
+        logger=logger,
+        knots_unification_method=knots_unification_method,
+        knotvector_accuracy=knotvector_accuracy,
+    )[-1]
+    return u_curves, v_curves, surface</code></pre>
+</details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.gordon.nurbs_blend_surfaces"><code class="name flex">
 <span>def <span class="ident">nurbs_blend_surfaces</span></span>(<span>surface1,<br>surface2,<br>curve1,<br>curve2,<br>bulge1,<br>bulge2,<br>u_degree,<br>u_samples,<br>absolute_bulge=True,<br>tangency='G1',<br>ortho_mode='UV',<br>logger=None)</span>
@@ -259,8 +338,9 @@ intersections from their positions.
     segments = []
     for t1, t2, tgt_t1, tgt_t2 in zip(t_values, t_values[1:], target_t_values, target_t_values[1:]):
         segment = curve.cut_segment(t1, t2)
-        segment = segment.reparametrize(0.0, tgt_t2 - tgt_t1)
-        segments.append(segment)
+        if segment is not None:
+            segment = segment.reparametrize(0.0, tgt_t2 - tgt_t1)
+            segments.append(segment)
     
     result = segments[0]
     for segment in segments[1:]:
@@ -275,6 +355,31 @@ intersections from their positions.
 </dl>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.surface.gordon.GordonUnificationException"><code class="flex name class">
+<span>class <span class="ident">GordonUnificationException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GordonUnificationException(ArgumentError):
+    &#34;&#34;&#34;Raised when we cannot unify curves provided to Gordon algorithm.&#34;&#34;&#34;
+    __description__ = &#34;Gordon algorithm: NURBS unification exception&#34;
+    pass</code></pre>
+</details>
+<div class="desc"><p>Raised when we cannot unify curves provided to Gordon algorithm.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.sv_custom_exceptions.ArgumentError" href="../../core/sv_custom_exceptions.html#sverchok.core.sv_custom_exceptions.ArgumentError">ArgumentError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -290,8 +395,16 @@ intersections from their positions.
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="sverchok.utils.surface.gordon.gordon_surface" href="#sverchok.utils.surface.gordon.gordon_surface">gordon_surface</a></code></li>
+<li><code><a title="sverchok.utils.surface.gordon.nurbs_birail_by_gordon" href="#sverchok.utils.surface.gordon.nurbs_birail_by_gordon">nurbs_birail_by_gordon</a></code></li>
 <li><code><a title="sverchok.utils.surface.gordon.nurbs_blend_surfaces" href="#sverchok.utils.surface.gordon.nurbs_blend_surfaces">nurbs_blend_surfaces</a></code></li>
 <li><code><a title="sverchok.utils.surface.gordon.reparametrize_by_segments" href="#sverchok.utils.surface.gordon.reparametrize_by_segments">reparametrize_by_segments</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.surface.gordon.GordonUnificationException" href="#sverchok.utils.surface.gordon.GordonUnificationException">GordonUnificationException</a></code></h4>
+</li>
 </ul>
 </li>
 </ul>

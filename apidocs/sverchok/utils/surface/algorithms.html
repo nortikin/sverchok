@@ -595,6 +595,8 @@ space around surface's normal.</p>
     else:
         knotvector_tolerance = 10**(-knotvector_accuracy)
 
+    surfaces = [surface.reparametrize(0.0, 1.0, 0.0, 1.0) for surface in surfaces]
+
     if knots_method == &#39;UNIFY&#39;:
 
         dst_knots_u = sv_knotvector.KnotvectorDict(knotvector_tolerance)

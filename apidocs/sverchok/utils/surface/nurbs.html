@@ -73,8 +73,84 @@ el.replaceWith(d);
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.surface.nurbs.generic_loft_with_tangents"><code class="name flex">
+<span>def <span class="ident">generic_loft_with_tangents</span></span>(<span>curves,<br>tangents_calculator,<br>degree_v=3,<br>metric='DISTANCE',<br>tknots=None,<br>knotvector_accuracy=6,<br>implementation='NATIVE',<br>logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generic_loft_with_tangents(curves, tangents_calculator, degree_v = 3,
+        metric = &#39;DISTANCE&#39;, tknots=None,
+        knotvector_accuracy = 6,
+        implementation = SvNurbsMaths.NATIVE,
+        logger = None):
+
+    if logger is None:
+        logger = get_logger()
+
+    n_curves = len(curves)
+    curves = unify_curves_degree(curves)
+    curves = unify_curves(curves, accuracy=knotvector_accuracy)
+    degree_u = curves[0].get_degree()
+
+    src_points = [curve.get_homogenous_control_points() for curve in curves]
+    src_points = np.array(src_points)
+    src_points = np.transpose(src_points, axes=(1,0,2))
+    
+    greville_ts = [curve.calc_greville_ts() for curve in curves]
+    
+    binormals = [curve.binormal_array(ts, normalize=True) for curve, ts in zip(curves, greville_ts)]
+    binormals = np.array(binormals)
+    binormals = np.transpose(binormals, axes=(1,0,2))
+
+    greville_pts = [curve.evaluate_array(ts) for curve, ts in zip(curves, greville_ts)]
+    greville_pts = np.array(greville_pts)
+    greville_dpts = greville_pts[1:] - greville_pts[:-1]
+    greville_dpts_mean = np.mean(greville_dpts, axis=0)
+    greville_dpts = np.concatenate((greville_dpts, [greville_dpts_mean]))
+    binormal_lengths = np.linalg.norm(greville_dpts, axis=2, keepdims = True)
+    binormal_lengths = np.transpose(binormal_lengths, axes=(1,0,2))
+    
+    cpts_mean_by_curve = np.mean(src_points, axis=0)
+    cpts_direction = np.mean(cpts_mean_by_curve[1:] - cpts_mean_by_curve[:-1], axis=0)
+    
+    binormals *= binormal_lengths * binormals_scale / 3.0
+    n,m,ndim = binormals.shape
+    
+    binormals = np.concatenate((binormals, np.zeros((n,m,1))), axis=2)
+    
+    r = np.sum(binormals * cpts_direction, axis=2)
+    bad = (r &lt; 0)
+    binormals[bad] = - binormals[bad]
+
+    tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(n)]
+    tknots_vs = np.array(tknots_vs)
+    tknots_v = np.mean(tknots_vs, axis=0)
+    
+    v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, binormals)]
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
+    control_points = np.array(control_points)
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
+    
+    knotvector_u = curves[0].get_knotvector()
+    knotvector_v = v_curves[0].get_knotvector()
+    
+    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+    return surface</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.surface.nurbs.interpolate_nurbs_curves"><code class="name flex">
-<span>def <span class="ident">interpolate_nurbs_curves</span></span>(<span>curves,<br>base_vs,<br>target_vs,<br>degree_v=None,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>implementation='NATIVE')</span>
+<span>def <span class="ident">interpolate_nurbs_curves</span></span>(<span>curves,<br>base_vs,<br>target_vs,<br>degree_v=None,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -84,7 +160,8 @@ el.replaceWith(d);
 <pre><code class="python">def interpolate_nurbs_curves(curves, base_vs, target_vs,
         degree_v = None, knots_u = &#39;UNIFY&#39;,
         knotvector_accuracy = 6,
-        implementation = SvNurbsSurface.NATIVE):
+        implementation = SvNurbsSurface.NATIVE,
+        logger = None):
     &#34;&#34;&#34;
     Interpolate many NURBS curves between a list of NURBS curves, by lofting.
     Inputs:
@@ -106,7 +183,8 @@ el.replaceWith(d);
                 knotvector_accuracy = knotvector_accuracy,
                 #metric = &#39;POINTS&#39;,
                 tknots = tknots,
-                implementation = implementation)
+                implementation = implementation,
+                logger = logger)
 
     rebased_vs = np.linspace(min_v, max_v, num=len(target_vs))
     iso_curves = [lofted.iso_curve(fixed_direction=&#39;V&#39;, param=v) for v in rebased_vs]
@@ -186,65 +264,66 @@ Returns: list of SvNurbsCurve of length N.</p></div>
         implementation = SvNurbsMaths.NATIVE,
         logger = None):
 
-    if logger is None:
-        logger = get_logger()
+    def calc_tangents(vs, u_curves, src_points):
+        greville_ts = [u_curve.calc_greville_ts() for u_curve in u_curves]
+        binormals = [u_curve.binormal_array(ts) for u_curve, ts in zip(u_curves, greville_ts)]
+        binormals = np.array(binormals)
+        binormals = np.transpose(binormals, axes=(1,0,2))
 
-    n_curves = len(curves)
-    curves = unify_curves_degree(curves)
-    curves = unify_curves(curves, accuracy=knotvector_accuracy)
-    degree_u = curves[0].get_degree()
+        greville_pts = [curve.evaluate_array(ts) for curve, ts in zip(u_curves, greville_ts)]
+        greville_pts = np.array(greville_pts)
+        greville_dpts = greville_pts[1:] - greville_pts[:-1]
+        greville_dpts_mean = np.mean(greville_dpts, axis=0)
+        greville_dpts = np.concatenate((greville_dpts, [greville_dpts_mean]))
+        binormal_lengths = np.linalg.norm(greville_dpts, axis=2, keepdims = True)
+        binormal_lengths = np.transpose(binormal_lengths, axes=(1,0,2))
+        
+        cpts_mean_by_curve = np.mean(src_points, axis=0)
+        cpts_direction = np.mean(cpts_mean_by_curve[1:] - cpts_mean_by_curve[:-1], axis=0)[:3]
+        
+        binormals *= binormal_lengths * binormals_scale / 3.0
 
-    src_points = [curve.get_homogenous_control_points() for curve in curves]
-    src_points = np.array(src_points)
-    src_points = np.transpose(src_points, axes=(1,0,2))
-    
-    greville_ts = [curve.calc_greville_ts() for curve in curves]
-    
-    binormals = [curve.binormal_array(ts, normalize=True) for curve, ts in zip(curves, greville_ts)]
-    binormals = np.array(binormals)
-    binormals = np.transpose(binormals, axes=(1,0,2))
+        r = np.sum(binormals * cpts_direction, axis=2)
+        bad = (r &lt; 0)
+        binormals[bad] = - binormals[bad]
 
-    greville_pts = [curve.evaluate_array(ts) for curve, ts in zip(curves, greville_ts)]
-    greville_pts = np.array(greville_pts)
-    greville_dpts = greville_pts[1:] - greville_pts[:-1]
-    greville_dpts_mean = np.mean(greville_dpts, axis=0)
-    greville_dpts = np.concatenate((greville_dpts, [greville_dpts_mean]))
-    binormal_lengths = np.linalg.norm(greville_dpts, axis=2, keepdims = True)
-    binormal_lengths = np.transpose(binormal_lengths, axes=(1,0,2))
-    
-    cpts_mean_by_curve = np.mean(src_points, axis=0)
-    cpts_direction = np.mean(cpts_mean_by_curve[1:] - cpts_mean_by_curve[:-1], axis=0)
-    
-    binormals *= binormal_lengths * binormals_scale / 3.0
-    n,m,ndim = binormals.shape
-    
-    binormals = np.concatenate((binormals, np.zeros((n,m,1))), axis=2)
-    
-    r = np.sum(binormals * cpts_direction, axis=2)
-    bad = (r &lt; 0)
-    binormals[bad] = - binormals[bad]
+        return binormals
 
-    tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(n)]
-    tknots_vs = np.array(tknots_vs)
-    tknots_v = np.mean(tknots_vs, axis=0)
-    
-    v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, binormals)]
-    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
-    control_points = np.array(control_points)
-    n,m,ndim = control_points.shape
-    control_points = control_points.reshape((n*m, ndim))
-    control_points, weights = from_homogenous(control_points)
-    control_points = control_points.reshape((n,m,3))
-    weights = weights.reshape((n,m))
-    
-    knotvector_u = curves[0].get_knotvector()
-    knotvector_v = v_curves[0].get_knotvector()
-    
-    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
-                degree_u, degree_v,
-                knotvector_u, knotvector_v,
-                control_points, weights)
-    return surface</code></pre>
+    return generic_loft_with_tangents(curves, calc_tangents,
+            degree_v = degree_v,
+            metric = metric, tknots = tknots,
+            knotvector_accuracy = knotvector_accuracy,
+            implementation = implementation,
+            logger = logger)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.loft_with_tangent_fields"><code class="name flex">
+<span>def <span class="ident">loft_with_tangent_fields</span></span>(<span>curves,<br>tangent_fields,<br>degree_v=3,<br>metric='DISTANCE',<br>tknots=None,<br>knotvector_accuracy=6,<br>implementation='NATIVE',<br>logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def loft_with_tangent_fields(curves, tangent_fields, degree_v = 3,
+        metric = &#39;DISTANCE&#39;, tknots=None,
+        knotvector_accuracy = 6,
+        implementation = SvNurbsMaths.NATIVE,
+        logger = None):
+
+    def calc_tangents(vs, u_curves, src_points):
+        tangents = [field.evaluate_array(curve.get_control_points()) for curve, field in zip(u_curves, tangent_fields)]
+        tangents = np.array(tangents)
+        tangents = np.transpose(tangents, axes=(2,0,1))
+        return tangents
+
+    return generic_loft_with_tangents(curves, calc_tangents,
+            degree_v = degree_v,
+            metric = metric, tknots = tknots,
+            knotvector_accuracy = knotvector_accuracy,
+            implementation = implementation,
+            logger = logger)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -285,6 +364,11 @@ Returns: list of SvNurbsCurve of length N.</p></div>
     tknots_vs = np.array(tknots_vs)
     tknots_v = np.mean(tknots_vs, axis=0)
 
+    tangents = tangents_calculator(tknots_v, curves, src_points)
+
+    n,m,ndim = tangents.shape
+    tangents = np.concatenate((tangents, np.zeros((n,m,1))), axis=2)
+
     v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, tangents)]
     control_points = [curve.get_homogenous_control_points() for curve in v_curves]
     control_points = np.array(control_points)
@@ -306,7 +390,7 @@ Returns: list of SvNurbsCurve of length N.</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.nurbs_birail"><code class="name flex">
-<span>def <span class="ident">nurbs_birail</span></span>(<span>path1,<br>path2,<br>profiles,<br>ts1=None,<br>ts2=None,<br>min_profiles=10,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>degree_v=None,<br>metric='DISTANCE',<br>scale_uniform=True,<br>auto_rotate=False,<br>use_tangents='PATHS_AVG',<br>implementation='NATIVE')</span>
+<span>def <span class="ident">nurbs_birail</span></span>(<span>path1,<br>path2,<br>profiles,<br>ts1=None,<br>ts2=None,<br>length_resolution=None,<br>min_profiles=10,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>degree_v=None,<br>metric='DISTANCE',<br>scale_uniform=True,<br>auto_rotate=False,<br>use_tangents='PATHS_AVG',<br>y_axis=None,<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -315,6 +399,7 @@ Returns: list of SvNurbsCurve of length N.</p></div>
 </summary>
 <pre><code class="python">def nurbs_birail(path1, path2, profiles,
         ts1 = None, ts2 = None,
+        length_resolution = None,
         min_profiles = 10,
         knots_u = &#39;UNIFY&#39;,
         knotvector_accuracy = 6,
@@ -322,7 +407,9 @@ Returns: list of SvNurbsCurve of length N.</p></div>
         scale_uniform = True,
         auto_rotate = False,
         use_tangents = &#39;PATHS_AVG&#39;,
-        implementation = SvNurbsSurface.NATIVE):
+        y_axis = None,
+        implementation = SvNurbsSurface.NATIVE,
+        logger = None):
     &#34;&#34;&#34;
     NURBS BiRail.
 
@@ -353,54 +440,315 @@ Returns: list of SvNurbsCurve of length N.</p></div>
         * list of NURBS curves along V direction
         * generated NURBS surface.
     &#34;&#34;&#34;
+    if logger is None:
+        logger = get_logger()
+
+    _, _, placed_profiles = prepare_nurbs_birail(path1, path2, profiles,
+            ts1 = ts1, ts2 = ts2,
+            length_resolution = length_resolution,
+            min_profiles = min_profiles,
+            degree_v = degree_v,
+            scale_uniform = scale_uniform,
+            auto_rotate = auto_rotate,
+            use_tangents = use_tangents,
+            y_axis = y_axis,
+            knotvector_accuracy = knotvector_accuracy)
+
+    unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = degree_v,
+            knots_u = knots_u, metric = metric,
+            knotvector_accuracy = knotvector_accuracy,
+            implementation = implementation,
+            logger = logger)
+
+    return placed_profiles, unified_curves, v_curves, surface</code></pre>
+</details>
+<div class="desc"><p>NURBS BiRail.</p>
+<p>Inputs:
+* path1, path2: SvNurbsCurve.
+* profiles: list of SvNurbsCurve.
+* ts: T values along path which correspond to profiles. Number of ts must
+be equal to number of profiles. If None, the function will calculate
+appropriate values automatically.
+* min_profiles: minimal number of (copies of) profile curves to be placed
+along the path: bigger number correspond to better precision, within
+certain limits. If min_profiles &gt; len(profiles), additional profiles
+will be generated by interpolation (by lofting).
+* knots_u: 'UNIFY' or 'AVERAGE'
+* degree_v: degree of the surface along V direction; if not specified,
+degree of the first path will be used.
+* metric: interpolation metric
+* scale_uniform: If True, profile curves will be scaled along all axes
+uniformly; if False, they will be scaled only along one axis, in order to
+fill space between two path curves.
+* auto_rotate: if False, the profile curves are supposed to lie in XOY plane.
+Otherwise, try to figure out their rotation automatically.
+* implementation: surface implementation</p>
+<p>output: tuple:
+* list of curves - initial profile curves placed / rotated along the path curve
+* list of curves - interpolated profile curves
+* list of NURBS curves along V direction
+* generated NURBS surface.</p></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.nurbs_sweep"><code class="name flex">
+<span>def <span class="ident">nurbs_sweep</span></span>(<span>path,<br>profiles,<br>ts,<br>min_profiles,<br>algorithm,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>metric='DISTANCE',<br>implementation='NATIVE',<br>logger=None,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = &#39;UNIFY&#39;, knotvector_accuracy = 6, metric = &#39;DISTANCE&#39;, implementation = SvNurbsSurface.NATIVE, logger=None, **kwargs):
+    &#34;&#34;&#34;
+    NURBS Sweep surface.
+    
+    Inputs:
+    * path: SvNurbsCurve
+    * profiles: list of SvNurbsCurve
+    * ts: T values along path which correspond to profiles. Number of ts must
+        be equal to number of profiles. If None, the function will calculate
+        appropriate values automatically.
+    * min_profiles: minimal number of (copies of) profile curves to be placed
+        along the path: bigger number correspond to better precision, within
+        certain limits. If min_profiles &gt; len(profiles), additional profiles
+        will be generated by interpolation (by lofting).
+    * algorithm: rotation calculation algorithm: one of NONE, ZERO, FRENET,
+        HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL, NORMAL_DIR.
+    * knots_u: &#39;UNIFY&#39; or &#39;AVERAGE&#39;
+    * metric: interpolation metric
+    * implementation: surface implementation
+    * kwargs: arguments for rotation calculation algorithm
+
+    output: tuple:
+        * list of curves - initial profile curves placed / rotated along the path curve
+        * list of curves - interpolated profile curves
+        * list of NURBS curves along V direction
+        * generated NURBS surface.
+    &#34;&#34;&#34;
+    if logger is None:
+        logger = get_logger()
+
+    n_profiles = len(profiles)
+    have_ts = ts is not None and len(ts) &gt; 0
+    if have_ts and n_profiles != len(ts):
+        raise ArgumentError(f&#34;Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts)})&#34;)
+
+    t_min, t_max = path.get_u_bounds()
+    if not have_ts:
+        ts = np.linspace(t_min, t_max, num=n_profiles)
+
+    if n_profiles == 1:
+        p = profiles[0]
+        ts = np.linspace(t_min, t_max, num=min_profiles)
+        profiles = [p] * min_profiles
+    elif n_profiles == 2 and n_profiles &lt; min_profiles:
+        coeffs = np.linspace(0.0, 1.0, num=min_profiles)
+        p0, p1 = profiles
+        profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
+        ts = np.linspace(t_min, t_max, num=min_profiles)
+    elif n_profiles &lt; min_profiles:
+        target_vs = np.linspace(0.0, 1.0, num=min_profiles)
+        max_degree = n_profiles - 1
+        profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
+                    degree_v = min(max_degree, path.get_degree()),
+                    knots_u = knots_u,
+                    knotvector_accuracy = knotvector_accuracy,
+                    implementation = implementation,
+                    logger = logger)
+        ts = np.linspace(t_min, t_max, num=min_profiles)
+    else:
+        profiles = repeat_last_for_length(profiles, min_profiles)
+
+    frame_calculator = SvCurveFrameCalculator(path, algorithm, **kwargs).get_matrices
+
+#     for i, p in enumerate(profiles):
+#         print(f&#34;P#{i}: {p.get_control_points()}&#34;)
+
+    return nurbs_sweep_impl(path, profiles, ts, frame_calculator,
+                knots_u=knots_u, metric=metric,
+                knotvector_accuracy = knotvector_accuracy,
+                implementation=implementation,
+                logger = logger)</code></pre>
+</details>
+<div class="desc"><p>NURBS Sweep surface.</p>
+<p>Inputs:
+* path: SvNurbsCurve
+* profiles: list of SvNurbsCurve
+* ts: T values along path which correspond to profiles. Number of ts must
+be equal to number of profiles. If None, the function will calculate
+appropriate values automatically.
+* min_profiles: minimal number of (copies of) profile curves to be placed
+along the path: bigger number correspond to better precision, within
+certain limits. If min_profiles &gt; len(profiles), additional profiles
+will be generated by interpolation (by lofting).
+* algorithm: rotation calculation algorithm: one of NONE, ZERO, FRENET,
+HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL, NORMAL_DIR.
+* knots_u: 'UNIFY' or 'AVERAGE'
+* metric: interpolation metric
+* implementation: surface implementation
+* kwargs: arguments for rotation calculation algorithm</p>
+<p>output: tuple:
+* list of curves - initial profile curves placed / rotated along the path curve
+* list of curves - interpolated profile curves
+* list of NURBS curves along V direction
+* generated NURBS surface.</p></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.nurbs_sweep_impl"><code class="name flex">
+<span>def <span class="ident">nurbs_sweep_impl</span></span>(<span>path,<br>profiles,<br>ts,<br>frame_calculator,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>metric='DISTANCE',<br>implementation='NATIVE',<br>logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nurbs_sweep_impl(path, profiles, ts, frame_calculator,
+        knots_u = &#39;UNIFY&#39;,
+        knotvector_accuracy = 6,
+        metric = &#39;DISTANCE&#39;,
+        implementation = SvNurbsSurface.NATIVE,
+        logger = None):
+    &#34;&#34;&#34;
+    NURBS Sweep implementation.
+    Interface of this function is not flexible, so you usually want to call `nurbs_sweep&#39; instead.
+
+    Inputs:
+    * path: SvNurbsCurve
+    * profiles: list of SvNurbsCurve
+    * ts: T values along path which correspond to profiles. Number of ts must
+        be equal to number of profiles.
+    * frame_calculator: a function, which takes np.array((n,)) of T values and
+        returns np.array((n, 3, 3)) of curve frames.
+    * rest: arguments for simple_loft function.
+
+    output: tuple:
+        * list of curves - initial profile curves placed / rotated along the path curve
+        * list of curves - interpolated profile curves
+        * list of NURBS curves along V direction
+        * generated NURBS surface.
+    &#34;&#34;&#34;
+    if len(profiles) != len(ts):
+        raise ArgumentError(f&#34;Number of profiles ({len(profiles)}) is not equal to number of T values ({len(ts)})&#34;)
+    if len(ts) &lt; 2:
+        raise ArgumentError(&#34;At least 2 profiles are required&#34;)
+
+    path_points = path.evaluate_array(ts)
+    frames = frame_calculator(ts)
+    to_loft = []
+    for profile, path_point, frame in zip(profiles, path_points, frames):
+        profile = profile.transform(frame, path_point)
+        #cpt = profile.evaluate(profile.get_u_bounds()[0])
+        #profile = profile.transform(None, -cpt + path_point)
+        to_loft.append(profile)
+
+    unified_curves, v_curves, surface = simple_loft(to_loft, degree_v = path.get_degree(),
+            knots_u = knots_u, metric = metric,
+            knotvector_accuracy = knotvector_accuracy,
+            implementation = implementation,
+            logger = logger)
+    return to_loft, unified_curves, v_curves, surface</code></pre>
+</details>
+<div class="desc"><p>NURBS Sweep implementation.
+Interface of this function is not flexible, so you usually want to call `nurbs_sweep' instead.</p>
+<p>Inputs:
+* path: SvNurbsCurve
+* profiles: list of SvNurbsCurve
+* ts: T values along path which correspond to profiles. Number of ts must
+be equal to number of profiles.
+* frame_calculator: a function, which takes np.array((n,)) of T values and
+returns np.array((n, 3, 3)) of curve frames.
+* rest: arguments for simple_loft function.</p>
+<p>output: tuple:
+* list of curves - initial profile curves placed / rotated along the path curve
+* list of curves - interpolated profile curves
+* list of NURBS curves along V direction
+* generated NURBS surface.</p></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.prepare_nurbs_birail"><code class="name flex">
+<span>def <span class="ident">prepare_nurbs_birail</span></span>(<span>path1,<br>path2,<br>profiles,<br>ts1=None,<br>ts2=None,<br>length_resolution=None,<br>min_profiles=10,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>degree_v=None,<br>metric='DISTANCE',<br>scale_uniform=True,<br>auto_rotate=False,<br>use_tangents='PATHS_AVG',<br>y_axis=None,<br>implementation='NATIVE',<br>logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_nurbs_birail(path1, path2, profiles,
+        ts1 = None, ts2 = None,
+        length_resolution = None,
+        min_profiles = 10,
+        knots_u = &#39;UNIFY&#39;,
+        knotvector_accuracy = 6,
+        degree_v = None,
+        metric = &#39;DISTANCE&#39;,
+        scale_uniform = True,
+        auto_rotate = False,
+        use_tangents = &#39;PATHS_AVG&#39;,
+        y_axis = None,
+        implementation=SvNurbsSurface.NATIVE,
+        logger = None):
 
     n_profiles = len(profiles)
     have_ts1 = ts1 is not None and len(ts1) &gt; 0
     have_ts2 = ts2 is not None and len(ts2) &gt; 0
     if have_ts1 and n_profiles != len(ts1):
-        raise ArgumentError(f&#34;Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts1)})&#34;)
+        raise ArgumentError(f&#34;Number of profiles ({n_profiles}) is not equal to number of T1 values ({len(ts1)})&#34;)
     if have_ts2 and n_profiles != len(ts2):
-        raise ArgumentError(f&#34;Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts2)})&#34;)
+        raise ArgumentError(f&#34;Number of profiles ({n_profiles}) is not equal to number of T2 values ({len(ts2)})&#34;)
 
     if degree_v is None:
         degree_v = path1.get_degree()
 
+    if length_resolution is not None:
+        solver1 = SvCurveLengthSolver(path1)
+        solver1.prepare(&#39;SPL&#39;, length_resolution)
+        solver2 = SvCurveLengthSolver(path2)
+        solver2.prepare(&#39;SPL&#39;, length_resolution)
+
     t_min_1, t_max_1 = path1.get_u_bounds()
     t_min_2, t_max_2 = path2.get_u_bounds()
+
+    def calc_ts1(n):
+        if length_resolution is None:
+            return np.linspace(t_min_1, t_max_1, num=n)
+        else:
+            path1_length = solver1.get_total_length()
+            lengths = np.linspace(0.0, path1_length, num=n)
+            return solver1.solve(lengths)
+
+    def calc_ts2(n):
+        if length_resolution is None:
+            return np.linspace(t_min_2, t_max_2, num=n)
+        else:
+            path2_length = solver2.get_total_length()
+            lengths = np.linspace(0.0, path2_length, num=n)
+            return solver2.solve(lengths)
+
     if not have_ts1:
-        ts1 = np.linspace(t_min_1, t_max_1, num=n_profiles)
+        ts1 = calc_ts1(n_profiles)
     if not have_ts2:
-        ts2 = np.linspace(t_min_2, t_max_2, num=n_profiles)
+        ts2 = calc_ts2(n_profiles)
 
     if n_profiles == 1:
         p = profiles[0]
         profiles = [p] * min_profiles
-        #if not have_ts1:
-        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        #if not have_ts2:
-        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+        ts1 = calc_ts1(min_profiles)
+        ts2 = calc_ts2(min_profiles)
     elif n_profiles == 2 and n_profiles &lt; min_profiles:
         coeffs = np.linspace(0.0, 1.0, num=min_profiles)
         p0, p1 = profiles
         profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
-        #if not have_ts1:
-        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        #if not have_ts2:
-        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+        ts1 = calc_ts1(min_profiles)
+        ts2 = calc_ts2(min_profiles)
     elif n_profiles &lt; min_profiles:
         target_vs = np.linspace(0.0, 1.0, num=min_profiles)
         max_degree = n_profiles - 1
-        if not have_ts1:
-            ts1 = np.linspace(t_min_1, t_max_1, num=n_profiles)
-        profiles = interpolate_nurbs_curves(profiles, ts1, target_vs,
+        ts = np.linspace(0.0, 1.0, num=n_profiles)
+        profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
                     degree_v = min(max_degree, degree_v),
                     knots_u = knots_u,
                     knotvector_accuracy = knotvector_accuracy,
-                    implementation = implementation)
-        #if not have_ts1:
-        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        #if not have_ts2:
-        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+                    implementation = implementation,
+                    logger = logger)
+        ts1 = calc_ts1(min_profiles)
+        ts2 = calc_ts2(min_profiles)
     else:
         profiles = repeat_last_for_length(profiles, min_profiles)
 
@@ -428,6 +776,8 @@ Returns: list of SvNurbsCurve of length N.</p></div>
             yy /= np.linalg.norm(yy)
             tangents.append(yy)
         tangents = np.array(tangents)
+    elif use_tangents == &#39;CUSTOM&#39;:
+        tangents = None
 
     binormals = points2 - points1
     scales = np.linalg.norm(binormals, axis=1, keepdims=True)
@@ -435,11 +785,22 @@ Returns: list of SvNurbsCurve of length N.</p></div>
         raise Exception(&#34;Paths go too close&#34;)
     binormals /= scales
 
-    normals = np.cross(tangents, binormals)
-    normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+    if use_tangents != &#39;CUSTOM&#39;:
+        normals = np.cross(tangents, binormals)
+        normals /= np.linalg.norm(normals, axis=1, keepdims=True)
 
-    tangents = np.cross(binormals, normals)
-    tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+        tangents = np.cross(binormals, normals)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    else:
+        if y_axis is None:
+            raise Exception(&#34;Y axis is not provided for custom orientation&#34;)
+        if np.linalg.norm(y_axis) &lt; 1e-6:
+            raise Exception(&#34;Y axis is too small&#34;)
+        y_axis /= np.linalg.norm(y_axis)
+        tangents = np.cross(binormals, y_axis)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+        normals = np.cross(tangents, binormals)
+        normals /= np.linalg.norm(normals, axis=1, keepdims=True)
 
     matrices = np.dstack((normals, binormals, tangents))
     matrices = np.transpose(matrices, axes=(0,2,1))
@@ -488,213 +849,9 @@ Returns: list of SvNurbsCurve of length N.</p></div>
 
         profile = profile.copy(control_points = cpts)
         placed_profiles.append(profile)
-
-    unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = degree_v,
-            knots_u = knots_u, metric = metric,
-            knotvector_accuracy = knotvector_accuracy,
-            implementation = implementation)
-
-    return placed_profiles, unified_curves, v_curves, surface</code></pre>
+    return ts1, ts2, placed_profiles</code></pre>
 </details>
-<div class="desc"><p>NURBS BiRail.</p>
-<p>Inputs:
-* path1, path2: SvNurbsCurve.
-* profiles: list of SvNurbsCurve.
-* ts: T values along path which correspond to profiles. Number of ts must
-be equal to number of profiles. If None, the function will calculate
-appropriate values automatically.
-* min_profiles: minimal number of (copies of) profile curves to be placed
-along the path: bigger number correspond to better precision, within
-certain limits. If min_profiles &gt; len(profiles), additional profiles
-will be generated by interpolation (by lofting).
-* knots_u: 'UNIFY' or 'AVERAGE'
-* degree_v: degree of the surface along V direction; if not specified,
-degree of the first path will be used.
-* metric: interpolation metric
-* scale_uniform: If True, profile curves will be scaled along all axes
-uniformly; if False, they will be scaled only along one axis, in order to
-fill space between two path curves.
-* auto_rotate: if False, the profile curves are supposed to lie in XOY plane.
-Otherwise, try to figure out their rotation automatically.
-* implementation: surface implementation</p>
-<p>output: tuple:
-* list of curves - initial profile curves placed / rotated along the path curve
-* list of curves - interpolated profile curves
-* list of NURBS curves along V direction
-* generated NURBS surface.</p></div>
-</dd>
-<dt id="sverchok.utils.surface.nurbs.nurbs_sweep"><code class="name flex">
-<span>def <span class="ident">nurbs_sweep</span></span>(<span>path,<br>profiles,<br>ts,<br>min_profiles,<br>algorithm,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>metric='DISTANCE',<br>implementation='NATIVE',<br>**kwargs)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def nurbs_sweep(
-    path,
-    profiles,
-    ts,
-    min_profiles,
-    algorithm,
-    knots_u=&#34;UNIFY&#34;,
-    knotvector_accuracy = 6,
-    metric=&#34;DISTANCE&#34;,
-    implementation=SvNurbsSurface.NATIVE,
-    **kwargs,
-):
-    &#34;&#34;&#34;
-    NURBS Sweep surface.
-    
-    Inputs:
-    * path: SvNurbsCurve
-    * profiles: list of SvNurbsCurve
-    * ts: T values along path which correspond to profiles. Number of ts must
-        be equal to number of profiles. If None, the function will calculate
-        appropriate values automatically.
-    * min_profiles: minimal number of (copies of) profile curves to be placed
-        along the path: bigger number correspond to better precision, within
-        certain limits. If min_profiles &gt; len(profiles), additional profiles
-        will be generated by interpolation (by lofting).
-    * algorithm: rotation calculation algorithm: one of NONE, ZERO, FRENET,
-        HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL, NORMAL_DIR.
-    * knots_u: &#39;UNIFY&#39; or &#39;AVERAGE&#39;
-    * metric: interpolation metric
-    * implementation: surface implementation
-    * kwargs: arguments for rotation calculation algorithm
-
-    output: tuple:
-        * list of curves - initial profile curves placed / rotated along the path curve
-        * list of curves - interpolated profile curves
-        * list of NURBS curves along V direction
-        * generated NURBS surface.
-    &#34;&#34;&#34;
-    n_profiles = len(profiles)
-    have_ts = ts is not None and len(ts) &gt; 0
-    if have_ts and n_profiles != len(ts):
-        raise ArgumentError(f&#34;Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts)})&#34;)
-
-    t_min, t_max = path.get_u_bounds()
-    if not have_ts:
-        ts = np.linspace(t_min, t_max, num=n_profiles)
-
-    if n_profiles == 1:
-        p = profiles[0]
-        ts = np.linspace(t_min, t_max, num=min_profiles)
-        profiles = [p] * min_profiles
-    elif n_profiles == 2 and n_profiles &lt; min_profiles:
-        coeffs = np.linspace(0.0, 1.0, num=min_profiles)
-        p0, p1 = profiles
-        profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
-        ts = np.linspace(t_min, t_max, num=min_profiles)
-    elif n_profiles &lt; min_profiles:
-        target_vs = np.linspace(0.0, 1.0, num=min_profiles)
-        max_degree = n_profiles - 1
-        profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
-                    degree_v = min(max_degree, path.get_degree()),
-                    knots_u = knots_u,
-                    knotvector_accuracy = knotvector_accuracy,
-                    implementation = implementation)
-        ts = np.linspace(t_min, t_max, num=min_profiles)
-    else:
-        profiles = repeat_last_for_length(profiles, min_profiles)
-
-    frame_calculator = SvCurveFrameCalculator(path, algorithm, **kwargs).get_matrices
-
-#     for i, p in enumerate(profiles):
-#         print(f&#34;P#{i}: {p.get_control_points()}&#34;)
-
-    return nurbs_sweep_impl(path, profiles, ts, frame_calculator,
-                knots_u=knots_u, metric=metric,
-                knotvector_accuracy = knotvector_accuracy,
-                implementation=implementation)</code></pre>
-</details>
-<div class="desc"><p>NURBS Sweep surface.</p>
-<p>Inputs:
-* path: SvNurbsCurve
-* profiles: list of SvNurbsCurve
-* ts: T values along path which correspond to profiles. Number of ts must
-be equal to number of profiles. If None, the function will calculate
-appropriate values automatically.
-* min_profiles: minimal number of (copies of) profile curves to be placed
-along the path: bigger number correspond to better precision, within
-certain limits. If min_profiles &gt; len(profiles), additional profiles
-will be generated by interpolation (by lofting).
-* algorithm: rotation calculation algorithm: one of NONE, ZERO, FRENET,
-HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL, NORMAL_DIR.
-* knots_u: 'UNIFY' or 'AVERAGE'
-* metric: interpolation metric
-* implementation: surface implementation
-* kwargs: arguments for rotation calculation algorithm</p>
-<p>output: tuple:
-* list of curves - initial profile curves placed / rotated along the path curve
-* list of curves - interpolated profile curves
-* list of NURBS curves along V direction
-* generated NURBS surface.</p></div>
-</dd>
-<dt id="sverchok.utils.surface.nurbs.nurbs_sweep_impl"><code class="name flex">
-<span>def <span class="ident">nurbs_sweep_impl</span></span>(<span>path,<br>profiles,<br>ts,<br>frame_calculator,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>metric='DISTANCE',<br>implementation='NATIVE')</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = &#39;UNIFY&#39;, knotvector_accuracy=6, metric = &#39;DISTANCE&#39;, implementation = SvNurbsSurface.NATIVE):
-    &#34;&#34;&#34;
-    NURBS Sweep implementation.
-    Interface of this function is not flexible, so you usually want to call `nurbs_sweep&#39; instead.
-
-    Inputs:
-    * path: SvNurbsCurve
-    * profiles: list of SvNurbsCurve
-    * ts: T values along path which correspond to profiles. Number of ts must
-        be equal to number of profiles.
-    * frame_calculator: a function, which takes np.array((n,)) of T values and
-        returns np.array((n, 3, 3)) of curve frames.
-    * rest: arguments for simple_loft function.
-
-    output: tuple:
-        * list of curves - initial profile curves placed / rotated along the path curve
-        * list of curves - interpolated profile curves
-        * list of NURBS curves along V direction
-        * generated NURBS surface.
-    &#34;&#34;&#34;
-    if len(profiles) != len(ts):
-        raise ArgumentError(f&#34;Number of profiles ({len(profiles)}) is not equal to number of T values ({len(ts)})&#34;)
-    if len(ts) &lt; 2:
-        raise ArgumentError(&#34;At least 2 profiles are required&#34;)
-
-    path_points = path.evaluate_array(ts)
-    frames = frame_calculator(ts)
-    to_loft = []
-    for profile, path_point, frame in zip(profiles, path_points, frames):
-        profile = profile.transform(frame, path_point)
-        #cpt = profile.evaluate(profile.get_u_bounds()[0])
-        #profile = profile.transform(None, -cpt + path_point)
-        to_loft.append(profile)
-
-    unified_curves, v_curves, surface = simple_loft(to_loft, degree_v = path.get_degree(),
-            knots_u = knots_u, metric = metric,
-            knotvector_accuracy = knotvector_accuracy,
-            implementation = implementation)
-    return to_loft, unified_curves, v_curves, surface</code></pre>
-</details>
-<div class="desc"><p>NURBS Sweep implementation.
-Interface of this function is not flexible, so you usually want to call `nurbs_sweep' instead.</p>
-<p>Inputs:
-* path: SvNurbsCurve
-* profiles: list of SvNurbsCurve
-* ts: T values along path which correspond to profiles. Number of ts must
-be equal to number of profiles.
-* frame_calculator: a function, which takes np.array((n,)) of T values and
-returns np.array((n, 3, 3)) of curve frames.
-* rest: arguments for simple_loft function.</p>
-<p>output: tuple:
-* list of curves - initial profile curves placed / rotated along the path curve
-* list of curves - interpolated profile curves
-* list of NURBS curves along V direction
-* generated NURBS surface.</p></div>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.simple_loft"><code class="name flex">
 <span>def <span class="ident">simple_loft</span></span>(<span>curves,<br>degree_v=None,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>metric='DISTANCE',<br>tknots=None,<br>implementation='NATIVE',<br>logger=None)</span>
@@ -2919,7 +3076,14 @@ def v_size(self):
         elif direction == SvNurbsSurface.V:
             return self._concat_v(surface2, tolerance)
         else:
-            raise Exception(&#34;Unsupported direction&#34;)</code></pre>
+            raise Exception(&#34;Unsupported direction&#34;)
+
+    def reparametrize(self, new_u_min, new_u_max, new_v_min, new_v_max):
+        knotvector_u = self.get_knotvector_u()
+        knotvector_v = self.get_knotvector_v()
+        knotvector_u = sv_knotvector.rescale(knotvector_u, new_u_min, new_u_max)
+        knotvector_v = sv_knotvector.rescale(knotvector_v, new_v_min, new_v_max)
+        return self.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)</code></pre>
 </details>
 <div class="desc"><p>Base abstract class for all supported implementations of NURBS surfaces.</p></div>
 <h3>Ancestors</h3>
@@ -3652,6 +3816,23 @@ def v_size(self):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.reparametrize"><code class="name flex">
+<span>def <span class="ident">reparametrize</span></span>(<span>self, new_u_min, new_u_max, new_v_min, new_v_max)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reparametrize(self, new_u_min, new_u_max, new_v_min, new_v_max):
+    knotvector_u = self.get_knotvector_u()
+    knotvector_v = self.get_knotvector_v()
+    knotvector_u = sv_knotvector.rescale(knotvector_u, new_u_min, new_u_max)
+    knotvector_v = sv_knotvector.rescale(knotvector_v, new_v_min, new_v_max)
+    return self.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.split_at"><code class="name flex">
 <span>def <span class="ident">split_at</span></span>(<span>self, direction, parameter)</span>
 </code></dt>
@@ -3715,13 +3896,16 @@ def v_size(self):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="sverchok.utils.surface.nurbs.build_from_curves" href="#sverchok.utils.surface.nurbs.build_from_curves">build_from_curves</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.generic_loft_with_tangents" href="#sverchok.utils.surface.nurbs.generic_loft_with_tangents">generic_loft_with_tangents</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.interpolate_nurbs_curves" href="#sverchok.utils.surface.nurbs.interpolate_nurbs_curves">interpolate_nurbs_curves</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.interpolate_nurbs_surface" href="#sverchok.utils.surface.nurbs.interpolate_nurbs_surface">interpolate_nurbs_surface</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.loft_by_binormals" href="#sverchok.utils.surface.nurbs.loft_by_binormals">loft_by_binormals</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.loft_with_tangent_fields" href="#sverchok.utils.surface.nurbs.loft_with_tangent_fields">loft_with_tangent_fields</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.loft_with_tangents" href="#sverchok.utils.surface.nurbs.loft_with_tangents">loft_with_tangents</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_birail" href="#sverchok.utils.surface.nurbs.nurbs_birail">nurbs_birail</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_sweep" href="#sverchok.utils.surface.nurbs.nurbs_sweep">nurbs_sweep</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_sweep_impl" href="#sverchok.utils.surface.nurbs.nurbs_sweep_impl">nurbs_sweep_impl</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.prepare_nurbs_birail" href="#sverchok.utils.surface.nurbs.prepare_nurbs_birail">prepare_nurbs_birail</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.simple_loft" href="#sverchok.utils.surface.nurbs.simple_loft">simple_loft</a></code></li>
 </ul>
 </li>
@@ -3818,6 +4002,7 @@ def v_size(self):
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.iso_curve" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.iso_curve">iso_curve</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.reduce_degree" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.reduce_degree">reduce_degree</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.remove_knot" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.remove_knot">remove_knot</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.reparametrize" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.reparametrize">reparametrize</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.split_at" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.split_at">split_at</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.swap_uv" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.swap_uv">swap_uv</a></code></li>
 </ul>

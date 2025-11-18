@@ -989,7 +989,8 @@ the more precise the offset will be)
             prev_u = None
             for u, count in m:
                 if prev_u is not None and abs(prev_u - u) &lt; tolerance:
-                    raise Exception(f&#34;Knots in original curve #{i} differ less than for tolerance&#34;)
+                    raise CurvesUnificationException(f&#34;Knots in original curve #{i} differ less than for tolerance: {prev_u}, {u}&#34;)
+                prev_u = u
                 dst_knots.put(u, count)
         # print(&#34;Dst&#34;, dst_knots)
         dst_knots.calc_averages()
@@ -1038,7 +1039,7 @@ the more precise the offset will be)
         kvs = [len(curve.get_control_points()) for curve in curves]
         max_kv, min_kv = max(kvs), min(kvs)
         if max_kv != min_kv:
-            raise Exception(
+            raise CurvesUnificationException(
                 f&#34;Knotvector averaging is not applicable: Curves have different number of control points: {kvs}&#34;
             )
 
@@ -1136,6 +1137,29 @@ def unify_degrees(curves):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="sverchok.utils.curve.nurbs_algorithms.CurvesUnificationException"><code class="flex name class">
+<span>class <span class="ident">CurvesUnificationException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CurvesUnificationException(Exception):
+    &#34;&#34;&#34;Raised when NURBS curve unification code can not unify curves with
+    specified tolerance.&#34;&#34;&#34;
+    __description__ = &#34;NURBS curves unification exception&#34;
+    pass</code></pre>
+</details>
+<div class="desc"><p>Raised when NURBS curve unification code can not unify curves with
+specified tolerance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.SvNurbsCurveLengthSolver"><code class="flex name class">
 <span>class <span class="ident">SvNurbsCurveLengthSolver</span></span>
 <span>(</span><span>curve)</span>
@@ -1262,6 +1286,9 @@ def unify_degrees(curves):
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="sverchok.utils.curve.nurbs_algorithms.CurvesUnificationException" href="#sverchok.utils.curve.nurbs_algorithms.CurvesUnificationException">CurvesUnificationException</a></code></h4>
+</li>
 <li>
 <h4><code><a title="sverchok.utils.curve.nurbs_algorithms.SvNurbsCurveLengthSolver" href="#sverchok.utils.curve.nurbs_algorithms.SvNurbsCurveLengthSolver">SvNurbsCurveLengthSolver</a></code></h4>
 <ul class="">
