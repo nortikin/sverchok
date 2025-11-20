@@ -24,7 +24,7 @@
             - icon_name: MESH_CUBE
             - color_category: Generator
             - SvLineNodeMK4  # bl_idname of a node
-            - SvSegmentGenerator
+            - SvSegmentGeneratorMK2
             - SvPlaneNodeMk3
             - SvNGonNode
             - SvBoxNodeMk2
@@ -100,7 +100,7 @@
         - GC SCRIPTED:
             - icon_name: PLUGIN
             - color_category: Generator
-            - SvExCurveFormulaNode
+            - SvExCurveFormulaNodeMK2
             - SvExCubicSplineNode
             - SvCatmullRomSplineNode
             - SvTangentsCurveNode
@@ -490,9 +490,9 @@
         - SvExtendCurveNode
         - SvSplitCurveNode
         - SvExCurveLengthNode
-        - SvExCurveFrameNode
+        - SvExCurveFrameNodeMK2
         - SvCurveFrameOnSurfNode
-        - SvExCurveZeroTwistFrameNode
+        - SvExCurveZeroTwistFrameNodeMK2
         - SvCurveLengthParameterMk2Node
         - SvGenerateKnotvectorNode
     - A SURFACES:
@@ -871,7 +871,7 @@
     - SvCurveInputNode
     - SvFCurveInNodeMK1
     - SvCollectionPicker
-    - SvBezierInNode
+    - SvBezierInNodeMK2
     - SvExNurbsInNode
     - SvParticlesMK2Node
     - ---
@@ -894,7 +894,7 @@
         - icon_name: OUTLINER_OB_CURVE
         - SvAdaptivePlotNurbsCurveNode
         - SvAdaptivePlotCurveNode
-        - SvExEvalCurveNode
+        - SvExEvalCurveNodeMK2
     - X SURFACES:
         - icon_name: SURFACE_DATA
         - SvExTessellateTrimSurfaceNode

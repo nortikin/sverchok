@@ -20,6 +20,7 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.data_structure import node_id, updateNode, ensure_nesting_level
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.modules.drawing_abstractions import drawing, shading_2d
+from sverchok.utils.meshes import get_all_matrixes
 
 if not bpy.app.background:
     smooth_2d_shader = gpu.shader.from_builtin(shading_2d.SMOOTH_COLOR)
@@ -73,20 +74,22 @@ def screen_v3d_batch_matrix_overlay(context, args):
     batch.draw(smooth_2d_shader)
     drawing.disable_blendmode()
 
-
 def match_color_to_matrix(node):
     vcol_start = Vector(node.color_start)
     vcol_end = Vector(node.color_end)
 
     _Matrixes       = node.inputs['Matrix'].sv_get()
-    Matrixes2       = ensure_nesting_level(_Matrixes, 2)
+    matr = []
+    get_all_matrixes(_Matrixes, matr)
+    # return matr
+    # Matrixes2       = ensure_nesting_level(_Matrixes, 2)
 
     res = []
     scale_matrix = mathutils.Matrix.Scale(node.scale, 4)
 
 
-    if len(Matrixes2) > 0:
-        for data in Matrixes2:
+    if len(matr) > 0:
+        for data in matr:
             data_out = []
             res.append(data_out)
             if len(data)>0:

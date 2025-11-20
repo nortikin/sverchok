@@ -45,7 +45,7 @@
         - icon_name: SV_POLYLINE
         - color_category: Generator
         - SvLineNodeMK4  # bl_idname of a node
-        - SvSegmentGenerator
+        - SvSegmentGeneratorMK2
         - SvNGonNode
         - SvCircleNode
         - SvEllipseNodeMK3
@@ -253,7 +253,7 @@
         - SvBiArcNode
         - SvPolyArcNode
         - ---
-        - SvExCurveFormulaNode
+        - SvExCurveFormulaNodeMK2
         - SvExCubicSplineNode
         - SvCatmullRomSplineNode
         - SvTangentsCurveNode
@@ -318,13 +318,13 @@
         - SvExtendCurveNode
         - SvSplitCurveNode
         - SvExCurveLengthNode
-        - SvExCurveFrameNode
+        - SvExCurveFrameNodeMK2
         - SvCurveFrameOnSurfNode
         - SvExCurveCurvatureNode
         - SvExCurveTorsionNode
         - SvExCurveExtremesNode
         - SvNurbsCurveExtremesNode
-        - SvExCurveZeroTwistFrameNode
+        - SvExCurveZeroTwistFrameNodeMK2
         - SvExSlerpCurveFrameNode
         - SvCurveLengthParameterMk2Node
         - SvExCrossCurvePlaneNode
@@ -341,7 +341,7 @@
     - ---
     - SvAdaptivePlotNurbsCurveNode
     - SvAdaptivePlotCurveNode
-    - SvExEvalCurveNode
+    - SvExEvalCurveNodeMK2
 
 - Surfaces:
     - icon_name: SURFACE_DATA
@@ -769,7 +769,7 @@
     - SvCurveInputNode
     - SvFCurveInNodeMK1
     - SvCollectionPicker
-    - SvBezierInNode
+    - SvBezierInNodeMK2
     - SvExNurbsInNode
     - SvParticlesMK2Node
     - ---
