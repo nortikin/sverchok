@@ -73,82 +73,6 @@ el.replaceWith(d);
 </details>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.surface.nurbs.generic_loft_with_tangents"><code class="name flex">
-<span>def <span class="ident">generic_loft_with_tangents</span></span>(<span>curves,<br>tangents_calculator,<br>degree_v=3,<br>metric='DISTANCE',<br>tknots=None,<br>knotvector_accuracy=6,<br>implementation='NATIVE',<br>logger=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def generic_loft_with_tangents(curves, tangents_calculator, degree_v = 3,
-        metric = &#39;DISTANCE&#39;, tknots=None,
-        knotvector_accuracy = 6,
-        implementation = SvNurbsMaths.NATIVE,
-        logger = None):
-
-    if logger is None:
-        logger = get_logger()
-
-    n_curves = len(curves)
-    curves = unify_curves_degree(curves)
-    curves = unify_curves(curves, accuracy=knotvector_accuracy)
-    degree_u = curves[0].get_degree()
-
-    src_points = [curve.get_homogenous_control_points() for curve in curves]
-    src_points = np.array(src_points)
-    src_points = np.transpose(src_points, axes=(1,0,2))
-    
-    greville_ts = [curve.calc_greville_ts() for curve in curves]
-    
-    binormals = [curve.binormal_array(ts, normalize=True) for curve, ts in zip(curves, greville_ts)]
-    binormals = np.array(binormals)
-    binormals = np.transpose(binormals, axes=(1,0,2))
-
-    greville_pts = [curve.evaluate_array(ts) for curve, ts in zip(curves, greville_ts)]
-    greville_pts = np.array(greville_pts)
-    greville_dpts = greville_pts[1:] - greville_pts[:-1]
-    greville_dpts_mean = np.mean(greville_dpts, axis=0)
-    greville_dpts = np.concatenate((greville_dpts, [greville_dpts_mean]))
-    binormal_lengths = np.linalg.norm(greville_dpts, axis=2, keepdims = True)
-    binormal_lengths = np.transpose(binormal_lengths, axes=(1,0,2))
-    
-    cpts_mean_by_curve = np.mean(src_points, axis=0)
-    cpts_direction = np.mean(cpts_mean_by_curve[1:] - cpts_mean_by_curve[:-1], axis=0)
-    
-    binormals *= binormal_lengths * binormals_scale / 3.0
-    n,m,ndim = binormals.shape
-    
-    binormals = np.concatenate((binormals, np.zeros((n,m,1))), axis=2)
-    
-    r = np.sum(binormals * cpts_direction, axis=2)
-    bad = (r &lt; 0)
-    binormals[bad] = - binormals[bad]
-
-    tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(n)]
-    tknots_vs = np.array(tknots_vs)
-    tknots_v = np.mean(tknots_vs, axis=0)
-    
-    v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, binormals)]
-    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
-    control_points = np.array(control_points)
-    n,m,ndim = control_points.shape
-    control_points = control_points.reshape((n*m, ndim))
-    control_points, weights = from_homogenous(control_points)
-    control_points = control_points.reshape((n,m,3))
-    weights = weights.reshape((n,m))
-    
-    knotvector_u = curves[0].get_knotvector()
-    knotvector_v = v_curves[0].get_knotvector()
-    
-    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
-                degree_u, degree_v,
-                knotvector_u, knotvector_v,
-                control_points, weights)
-    return surface</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 <dt id="sverchok.utils.surface.nurbs.interpolate_nurbs_curves"><code class="name flex">
 <span>def <span class="ident">interpolate_nurbs_curves</span></span>(<span>curves,<br>base_vs,<br>target_vs,<br>degree_v=None,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
@@ -264,66 +188,65 @@ Returns: list of SvNurbsCurve of length N.</p></div>
         implementation = SvNurbsMaths.NATIVE,
         logger = None):
 
-    def calc_tangents(vs, u_curves, src_points):
-        greville_ts = [u_curve.calc_greville_ts() for u_curve in u_curves]
-        binormals = [u_curve.binormal_array(ts) for u_curve, ts in zip(u_curves, greville_ts)]
-        binormals = np.array(binormals)
-        binormals = np.transpose(binormals, axes=(1,0,2))
+    if logger is None:
+        logger = get_logger()
 
-        greville_pts = [curve.evaluate_array(ts) for curve, ts in zip(u_curves, greville_ts)]
-        greville_pts = np.array(greville_pts)
-        greville_dpts = greville_pts[1:] - greville_pts[:-1]
-        greville_dpts_mean = np.mean(greville_dpts, axis=0)
-        greville_dpts = np.concatenate((greville_dpts, [greville_dpts_mean]))
-        binormal_lengths = np.linalg.norm(greville_dpts, axis=2, keepdims = True)
-        binormal_lengths = np.transpose(binormal_lengths, axes=(1,0,2))
-        
-        cpts_mean_by_curve = np.mean(src_points, axis=0)
-        cpts_direction = np.mean(cpts_mean_by_curve[1:] - cpts_mean_by_curve[:-1], axis=0)[:3]
-        
-        binormals *= binormal_lengths * binormals_scale / 3.0
+    n_curves = len(curves)
+    curves = unify_curves_degree(curves)
+    curves = unify_curves(curves, accuracy=knotvector_accuracy)
+    degree_u = curves[0].get_degree()
 
-        r = np.sum(binormals * cpts_direction, axis=2)
-        bad = (r &lt; 0)
-        binormals[bad] = - binormals[bad]
+    src_points = [curve.get_homogenous_control_points() for curve in curves]
+    src_points = np.array(src_points)
+    src_points = np.transpose(src_points, axes=(1,0,2))
+    
+    greville_ts = [curve.calc_greville_ts() for curve in curves]
+    
+    binormals = [curve.binormal_array(ts, normalize=True) for curve, ts in zip(curves, greville_ts)]
+    binormals = np.array(binormals)
+    binormals = np.transpose(binormals, axes=(1,0,2))
 
-        return binormals
+    greville_pts = [curve.evaluate_array(ts) for curve, ts in zip(curves, greville_ts)]
+    greville_pts = np.array(greville_pts)
+    greville_dpts = greville_pts[1:] - greville_pts[:-1]
+    greville_dpts_mean = np.mean(greville_dpts, axis=0)
+    greville_dpts = np.concatenate((greville_dpts, [greville_dpts_mean]))
+    binormal_lengths = np.linalg.norm(greville_dpts, axis=2, keepdims = True)
+    binormal_lengths = np.transpose(binormal_lengths, axes=(1,0,2))
+    
+    cpts_mean_by_curve = np.mean(src_points, axis=0)
+    cpts_direction = np.mean(cpts_mean_by_curve[1:] - cpts_mean_by_curve[:-1], axis=0)
+    
+    binormals *= binormal_lengths * binormals_scale / 3.0
+    n,m,ndim = binormals.shape
+    
+    binormals = np.concatenate((binormals, np.zeros((n,m,1))), axis=2)
+    
+    r = np.sum(binormals * cpts_direction, axis=2)
+    bad = (r &lt; 0)
+    binormals[bad] = - binormals[bad]
 
-    return generic_loft_with_tangents(curves, calc_tangents,
-            degree_v = degree_v,
-            metric = metric, tknots = tknots,
-            knotvector_accuracy = knotvector_accuracy,
-            implementation = implementation,
-            logger = logger)</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.surface.nurbs.loft_with_tangent_fields"><code class="name flex">
-<span>def <span class="ident">loft_with_tangent_fields</span></span>(<span>curves,<br>tangent_fields,<br>degree_v=3,<br>metric='DISTANCE',<br>tknots=None,<br>knotvector_accuracy=6,<br>implementation='NATIVE',<br>logger=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def loft_with_tangent_fields(curves, tangent_fields, degree_v = 3,
-        metric = &#39;DISTANCE&#39;, tknots=None,
-        knotvector_accuracy = 6,
-        implementation = SvNurbsMaths.NATIVE,
-        logger = None):
-
-    def calc_tangents(vs, u_curves, src_points):
-        tangents = [field.evaluate_array(curve.get_control_points()) for curve, field in zip(u_curves, tangent_fields)]
-        tangents = np.array(tangents)
-        tangents = np.transpose(tangents, axes=(2,0,1))
-        return tangents
-
-    return generic_loft_with_tangents(curves, calc_tangents,
-            degree_v = degree_v,
-            metric = metric, tknots = tknots,
-            knotvector_accuracy = knotvector_accuracy,
-            implementation = implementation,
-            logger = logger)</code></pre>
+    tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(n)]
+    tknots_vs = np.array(tknots_vs)
+    tknots_v = np.mean(tknots_vs, axis=0)
+    
+    v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, binormals)]
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
+    control_points = np.array(control_points)
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
+    
+    knotvector_u = curves[0].get_knotvector()
+    knotvector_v = v_curves[0].get_knotvector()
+    
+    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+    return surface</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -363,11 +286,6 @@ Returns: list of SvNurbsCurve of length N.</p></div>
     tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(n_curves)]
     tknots_vs = np.array(tknots_vs)
     tknots_v = np.mean(tknots_vs, axis=0)
-
-    tangents = tangents_calculator(tknots_v, curves, src_points)
-
-    n,m,ndim = tangents.shape
-    tangents = np.concatenate((tangents, np.zeros((n,m,1))), axis=2)
 
     v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, tangents)]
     control_points = [curve.get_homogenous_control_points() for curve in v_curves]
@@ -3896,11 +3814,9 @@ def v_size(self):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="sverchok.utils.surface.nurbs.build_from_curves" href="#sverchok.utils.surface.nurbs.build_from_curves">build_from_curves</a></code></li>
-<li><code><a title="sverchok.utils.surface.nurbs.generic_loft_with_tangents" href="#sverchok.utils.surface.nurbs.generic_loft_with_tangents">generic_loft_with_tangents</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.interpolate_nurbs_curves" href="#sverchok.utils.surface.nurbs.interpolate_nurbs_curves">interpolate_nurbs_curves</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.interpolate_nurbs_surface" href="#sverchok.utils.surface.nurbs.interpolate_nurbs_surface">interpolate_nurbs_surface</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.loft_by_binormals" href="#sverchok.utils.surface.nurbs.loft_by_binormals">loft_by_binormals</a></code></li>
-<li><code><a title="sverchok.utils.surface.nurbs.loft_with_tangent_fields" href="#sverchok.utils.surface.nurbs.loft_with_tangent_fields">loft_with_tangent_fields</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.loft_with_tangents" href="#sverchok.utils.surface.nurbs.loft_with_tangents">loft_with_tangents</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_birail" href="#sverchok.utils.surface.nurbs.nurbs_birail">nurbs_birail</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_sweep" href="#sverchok.utils.surface.nurbs.nurbs_sweep">nurbs_sweep</a></code></li>
