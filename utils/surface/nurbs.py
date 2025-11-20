@@ -1285,7 +1285,8 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
     surface.u_bounds = curves[0].get_u_bounds()
     return curves, v_curves, surface
 
-def generic_loft_with_tangents(curves, tangents_calculator, degree_v = 3,
+def loft_by_binormals(curves, degree_v = 3,
+        binormals_scale = 1.0,
         metric = 'DISTANCE', tknots=None,
         knotvector_accuracy = 6,
         implementation = SvNurbsMaths.NATIVE,
@@ -1380,11 +1381,6 @@ def loft_with_tangents(curves, tangent_fields, degree_v = 3,
     tknots_vs = np.array(tknots_vs)
     tknots_v = np.mean(tknots_vs, axis=0)
 
-    tangents = tangents_calculator(tknots_v, curves, src_points)
-
-    n,m,ndim = tangents.shape
-    tangents = np.concatenate((tangents, np.zeros((n,m,1))), axis=2)
-
     v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, tangents)]
     control_points = [curve.get_homogenous_control_points() for curve in v_curves]
     control_points = np.array(control_points)
@@ -1402,64 +1398,6 @@ def loft_with_tangents(curves, tangent_fields, degree_v = 3,
                 knotvector_u, knotvector_v,
                 control_points, weights)
     return surface
-
-def loft_by_binormals(curves, degree_v = 3,
-        binormals_scale = 1.0,
-        metric = 'DISTANCE', tknots=None,
-        knotvector_accuracy = 6,
-        implementation = SvNurbsMaths.NATIVE,
-        logger = None):
-
-    def calc_tangents(vs, u_curves, src_points):
-        greville_ts = [u_curve.calc_greville_ts() for u_curve in u_curves]
-        binormals = [u_curve.binormal_array(ts) for u_curve, ts in zip(u_curves, greville_ts)]
-        binormals = np.array(binormals)
-        binormals = np.transpose(binormals, axes=(1,0,2))
-
-        greville_pts = [curve.evaluate_array(ts) for curve, ts in zip(u_curves, greville_ts)]
-        greville_pts = np.array(greville_pts)
-        greville_dpts = greville_pts[1:] - greville_pts[:-1]
-        greville_dpts_mean = np.mean(greville_dpts, axis=0)
-        greville_dpts = np.concatenate((greville_dpts, [greville_dpts_mean]))
-        binormal_lengths = np.linalg.norm(greville_dpts, axis=2, keepdims = True)
-        binormal_lengths = np.transpose(binormal_lengths, axes=(1,0,2))
-        
-        cpts_mean_by_curve = np.mean(src_points, axis=0)
-        cpts_direction = np.mean(cpts_mean_by_curve[1:] - cpts_mean_by_curve[:-1], axis=0)[:3]
-        
-        binormals *= binormal_lengths * binormals_scale / 3.0
-
-        r = np.sum(binormals * cpts_direction, axis=2)
-        bad = (r < 0)
-        binormals[bad] = - binormals[bad]
-
-        return binormals
-
-    return generic_loft_with_tangents(curves, calc_tangents,
-            degree_v = degree_v,
-            metric = metric, tknots = tknots,
-            knotvector_accuracy = knotvector_accuracy,
-            implementation = implementation,
-            logger = logger)
-
-def loft_with_tangent_fields(curves, tangent_fields, degree_v = 3,
-        metric = 'DISTANCE', tknots=None,
-        knotvector_accuracy = 6,
-        implementation = SvNurbsMaths.NATIVE,
-        logger = None):
-
-    def calc_tangents(vs, u_curves, src_points):
-        tangents = [field.evaluate_array(curve.get_control_points()) for curve, field in zip(u_curves, tangent_fields)]
-        tangents = np.array(tangents)
-        tangents = np.transpose(tangents, axes=(2,0,1))
-        return tangents
-
-    return generic_loft_with_tangents(curves, calc_tangents,
-            degree_v = degree_v,
-            metric = metric, tknots = tknots,
-            knotvector_accuracy = knotvector_accuracy,
-            implementation = implementation,
-            logger = logger)
 
 def interpolate_nurbs_curves(curves, base_vs, target_vs,
         degree_v = None, knots_u = 'UNIFY',
