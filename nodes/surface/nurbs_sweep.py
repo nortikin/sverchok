@@ -111,9 +111,15 @@ class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
         default = False,
         update = update_sockets)
 
+    use_tangents : BoolProperty(
+        name = "Use path tangents",
+        default = False,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
         layout.prop(self, "algorithm")
+        layout.prop(self, "use_tangents")
         layout.prop(self, "explicit_v")
 
     def draw_buttons_ext(self, context, layout):
@@ -179,6 +185,7 @@ class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
                 _, unified_curves, v_curves, surface = nurbs_sweep(path, profiles,
                                     ts = ts,
                                     min_profiles = profiles_count,
+                                    use_tangents = self.use_tangents,
                                     algorithm = self.algorithm,
                                     knots_u = self.u_knots_mode,
                                     knotvector_accuracy = self.knotvector_accuracy,
