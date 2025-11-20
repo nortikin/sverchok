@@ -22,11 +22,29 @@ from sverchok.utils.blender_mesh import (
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
 import numpy as np
 
+prop_names = ['name', 'axis', 'wire', 'all_edges', 'texture_space', 'shadows', 'in_front']
 
 class SvOB3BDataCollectionMK4(bpy.types.PropertyGroup):
+    
+    pointer_types = [
+            ('OBJECT'     , "Object"    , 'Use as Object Pointer', 0),
+            ('COLLECTION' , "Collection", 'Use as collection Pointer', 1),
+        ]
+    pointer_type : bpy.props.EnumProperty(
+        name = "Pointer Type",
+        default = 'OBJECT',
+        description = "Pointer Type",
+        items = pointer_types,
+        #update = updateNode
+        ) # type: ignore
+    
     object_pointer: bpy.props.PointerProperty(
         name="object",
         type=bpy.types.Object
+    )
+    collection_pointer: bpy.props.PointerProperty(
+        name="collection",
+        type=bpy.types.Collection
     )
     #name   : bpy.props.StringProperty(default='')
     icon   : bpy.props.StringProperty(default="BLANK1")
@@ -162,9 +180,31 @@ class SvOB3BItemRemoveMK4(bpy.types.Operator):
         #node = context.node.object_names[self.idx]
         if self.idx <= len(context.node.object_names)-1:
             if self.fn_name == 'REMOVE':
+                o = context.node.object_names[self.idx]
+                objs = []
+                if o.pointer_type=='OBJECT':
+                    if o.object_pointer:
+                            objs.append(o.object_pointer)
+                elif o.pointer_type=='COLLECTION':
+                    if o.collection_pointer:
+                        obj_coll = set(o.collection_pointer.objects)
+                        for child in o.collection_pointer.children_recursive:
+                            obj_coll.update(child.objects)
+                        objs.extend(list(obj_coll))
+                for o in objs:
+                    o.display_type = 'TEXTURED'
                 context.node.object_names.remove(self.idx)
                 context.node.process_node(None)
         return {'FINISHED'}
+
+def find_layer_collection(layer_coll, target_coll):
+    if layer_coll.collection == target_coll:
+        return layer_coll
+    for child in layer_coll.children:
+        found = find_layer_collection(child, target_coll)
+        if found:
+            return found
+    return None
 
 class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
     '''Show objects in list item with controls'''
@@ -183,76 +223,148 @@ class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
         # else:
         #     pass
 
-        item_icon = "GHOST_DISABLED"
-        if item.object_pointer:
-            try:
-                item_icon = 'OUTLINER_OB_' + item.object_pointer.type
-            except:
-                ...
+        if item.pointer_type=='OBJECT':
+            item_icon = "GHOST_DISABLED"
+            if item.object_pointer:
+                try:
+                    item_icon = 'OUTLINER_OB_' + item.object_pointer.type
+                except:
+                    ...
 
-        item_base = len(str(len(data.object_names)))
+            item_base = len(str(len(data.object_names)))
 
-        grid = layout.grid_flow(row_major=False, columns=3, align=True)
-        UI0 = grid.row(align=True)
-        UI0.alignment = 'LEFT'
-        UI01 = UI0.column(align=True)
-        UI01.alignment = 'LEFT'
-        UI01.label(text=f'{index:0{item_base}d}')
-        if data.object_names_ui_minimal==True:
-            UI02 = UI0.column(align=True)
-            UI02.alignment = 'LEFT'
-            UI02.label(text='', icon=item_icon)
-        #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
-        UI03 = UI0.row(align=True)
-        if data.object_names_ui_minimal==False:
-            usable = max(data.width - 160, 20)
-            scale = usable/120
-            UI03.scale_x = max(scale, 1.0)
-            UI03.prop(item, 'object_pointer', text='')
+            grid = layout.grid_flow(row_major=False, columns=3, align=True)
+            UI0 = grid.row(align=True)
+            if item.object_pointer:
+                if item.object_pointer.type=='EMPTY' and item.object_pointer.instance_type == 'COLLECTION' and hasattr(item.object_pointer, "hide_viewport")==True:
+                    #UI0.enabled = item.object_pointer.hide_viewport
+                    pass
+                else:
+                    UI0.enabled = item.object_pointer.visible_get()
+            UI0.alignment = 'LEFT'
+            UI01 = UI0.column(align=True)
+            UI01.alignment = 'LEFT'
+            UI01.label(text=f'{index:0{item_base}d}')
+            if data.object_names_ui_minimal==True:
+                UI02 = UI0.column(align=True)
+                UI02.alignment = 'LEFT'
+                UI02.label(text='', icon=item_icon)
+            #grid.label(text=f'{index:0{item_base}d} {item.name}', icon=item_icon)
+            UI03 = UI0.row(align=True)
+            if data.object_names_ui_minimal==False:
+                usable = max(data.width - 160, 20)
+                scale = usable/120
+                UI03.scale_x = max(scale, 1.0)
+                UI03.prop(item, 'object_pointer', text='')
+            else:
+                UI03.alignment = 'LEFT'
+                UI03.label(text=item.object_pointer.name)
+
+
+            if data.object_names_ui_minimal:
+                pass
+            else:
+                UI2=grid.row(align=True)
+                UI2.alignment = 'RIGHT'
+
+                if item.object_pointer:
+                    op = UI2.column(align=True).operator(SvOB3ItemSelectObjectMK4.bl_idname, icon='CURSOR', text='', emboss=False)
+                    op.idx = index
+                else:
+                    op = UI2.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+                    op.description_text='Object pointer is empty'
+                    pass
+                if item.exclude:
+                    exclude_icon='CHECKBOX_DEHLT'
+                else:
+                    exclude_icon='CHECKBOX_HLT'
+
+                if item.object_pointer:
+                    op = UI2.column(align=True).operator(SvOB3BItemEnablerMK4.bl_idname, icon=exclude_icon, text='', emboss=False)
+                    op.fn_name = 'ENABLER'
+                    op.idx = index
+                else:
+                    op = UI2.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+                    op.description_text='Object pointer is empty'
+                    pass
+                
+                op = UI2.column(align=True).operator(SvOB3BItemRemoveMK4.bl_idname, icon='X', text='', emboss=False)
+                op.fn_name = 'REMOVE'
+                op.idx = index
+
+                duplicate_sign='BLANK1'
+                if item.object_pointer and active_data.object_names[getattr(active_data, active_propname)].object_pointer==item.object_pointer:
+                    lst = [o for o in active_data.object_names if o.object_pointer and o.object_pointer==item.object_pointer]
+                    if len(lst)>1:
+                        duplicate_sign='ONIONSKIN_ON'
+                col = UI2.column(align=True).column(align=True)
+                col.label(text='', icon=duplicate_sign)
+                col.scale_x=0
+        elif item.pointer_type=='COLLECTION':
+            item_icon = "GROUP"
+            item_base = len(str(len(data.object_names)))
+
+            grid = layout.grid_flow(row_major=False, columns=3, align=True)
+            UI0 = grid.row(align=True)
+            if item.collection_pointer:
+                layer = find_layer_collection(bpy.context.view_layer.layer_collection, item.collection_pointer)
+                UI0.enabled = not layer.hide_viewport
+            UI0.alignment = 'LEFT'
+            UI01 = UI0.column(align=True)
+            UI01.alignment = 'LEFT'
+            UI01.label(text=f'{index:0{item_base}d}')
+            if data.object_names_ui_minimal==True:
+                UI02 = UI0.column(align=True)
+                UI02.alignment = 'LEFT'
+                UI02.label(text='', icon=item_icon)
+            UI03 = UI0.row(align=True)
+            if data.object_names_ui_minimal==False:
+                usable = max(data.width - 160, 20)
+                scale = usable/120
+                UI03.scale_x = max(scale, 1.0)
+                UI03.prop(item, 'collection_pointer', text='')
+            else:
+                UI03.alignment = 'LEFT'
+                UI03.label(text=item.collection_pointer.name)
+
+            if data.object_names_ui_minimal:
+                pass
+            else:
+                UI2=grid.row(align=True)
+                UI2.alignment = 'RIGHT'
+
+                op = UI2.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+                op.description_text='Collection pointer has no position'
+
+                if item.exclude:
+                    exclude_icon='CHECKBOX_DEHLT'
+                else:
+                    exclude_icon='CHECKBOX_HLT'
+
+                if item.collection_pointer:
+                    op = UI2.column(align=True).operator(SvOB3BItemEnablerMK4.bl_idname, icon=exclude_icon, text='', emboss=False)
+                    op.fn_name = 'ENABLER'
+                    op.idx = index
+                else:
+                    op = UI2.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+                    op.description_text='Object pointer is empty'
+                    pass
+                
+                op = UI2.column(align=True).operator(SvOB3BItemRemoveMK4.bl_idname, icon='X', text='', emboss=False)
+                op.fn_name = 'REMOVE'
+                op.idx = index
+
+                duplicate_sign='BLANK1'
+                if (item.collection_pointer and active_data.object_names[getattr(active_data, active_propname)].pointer_type=='COLLECTION'
+                    and active_data.object_names[getattr(active_data, active_propname)].collection_pointer==item.collection_pointer):
+                    lst = [o for o in active_data.object_names if o.collection_pointer and o.collection_pointer==item.collection_pointer]
+                    if len(lst)>1:
+                        duplicate_sign='ONIONSKIN_ON'
+                col = UI2.column(align=True).column(align=True)
+                col.label(text='', icon=duplicate_sign)
+                col.scale_x=0
         else:
-            UI03.alignment = 'LEFT'
-            UI03.label(text=item.object_pointer.name)
-
-
-        if data.object_names_ui_minimal:
             pass
-        else:
-            UI2=grid.row(align=True)
-            UI2.alignment = 'RIGHT'
-
-            if item.object_pointer:
-                op = UI2.column(align=True).operator(SvOB3ItemSelectObjectMK4.bl_idname, icon='CURSOR', text='', emboss=False)
-                op.idx = index
-            else:
-                op = UI2.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
-                op.description_text='Object pointer is empty'
-                pass
-            if item.exclude:
-                exclude_icon='CHECKBOX_DEHLT'
-            else:
-                exclude_icon='CHECKBOX_HLT'
-
-            if item.object_pointer:
-                op = UI2.column(align=True).operator(SvOB3BItemEnablerMK4.bl_idname, icon=exclude_icon, text='', emboss=False)
-                op.fn_name = 'ENABLER'
-                op.idx = index
-            else:
-                op = UI2.column(align=True).operator(SvOB3ItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
-                op.description_text='Object pointer is empty'
-                pass
-            
-            op = UI2.column(align=True).operator(SvOB3BItemRemoveMK4.bl_idname, icon='X', text='', emboss=False)
-            op.fn_name = 'REMOVE'
-            op.idx = index
-
-            duplicate_sign='BLANK1'
-            if item.object_pointer and active_data.object_names[getattr(active_data, active_propname)].object_pointer==item.object_pointer:
-                lst = [o for o in active_data.object_names if o.object_pointer and o.object_pointer==item.object_pointer]
-                if len(lst)>1:
-                    duplicate_sign='ONIONSKIN_ON'
-            col = UI2.column(align=True).column(align=True)
-            col.label(text='', icon=duplicate_sign)
-            col.scale_x=0
         pass
 
     def filter_items(self, context, data, propname):
@@ -271,7 +383,7 @@ class SVOB3B_UL_NamesListMK4(bpy.types.UIList):
             else:
                 ok = (
                     (not item.exclude) and
-                    (item.object_pointer)
+                    ((item.object_pointer and item.pointer_type=='OBJECT') or (item.collection_pointer and item.pointer_type=='COLLECTION'))
                 )
                 flt_flags.append(self.bitflag_filter_item if ok else 0)
 
@@ -302,6 +414,18 @@ class SvOB3BAddObjectsFromSceneUpMK4(bpy.types.Operator, SvGenericNodeLocator):
         
         """
         node.add_objects_from_scene(self)
+
+class SvOB3BAddEmptyCollectionMK4(bpy.types.Operator, SvGenericNodeLocator):
+    '''Select collection after'''
+    bl_idname = "node.sv_ob3b_add_empty_collection_mk4"
+    bl_label = "Add empty collection into the list"
+    bl_options = {'INTERNAL'}
+
+    def sv_execute(self, context, node):
+        """
+        
+        """
+        node.add_empty_collection(self)
 
 class SvOB3BMoveUpMK4(bpy.types.Operator, SvGenericNodeLocator):
 
@@ -355,10 +479,11 @@ class SvOB3BHighlightProcessedObjectsInSceneMK4(bpy.types.Operator, SvGenericNod
                         for o in bpy.context.view_layer.objects:
                             o.select_set(False)
                     some_objects_not_in_the_scene = False
-                    for item in node.object_names:
-                        if item.exclude==False and item.object_pointer:
-                            if item.object_pointer.name in bpy.context.view_layer.objects:
-                                item.object_pointer.select_set(True)
+                    objs = get_objects_from_node(node.object_names, with_exclude=True)
+                    for item in objs:
+                        if item:
+                            if item.name in bpy.context.view_layer.objects:
+                                item.select_set(True)
                             else:
                                 some_objects_not_in_the_scene = True
                         pass
@@ -387,10 +512,11 @@ class SvOB3BHighlightAllObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeLocat
                         for o in bpy.context.view_layer.objects:
                             o.select_set(False)
                     some_objects_not_in_the_scene = False
-                    for item in node.object_names:
-                        if item.object_pointer:
-                            if item.object_pointer.name in bpy.context.view_layer.objects:
-                                item.object_pointer.select_set(True)
+                    objs = get_objects_from_node(node.object_names)
+                    for item in objs:
+                        if item:
+                            if item.name in bpy.context.view_layer.objects:
+                                item.select_set(True)
                             else:
                                 some_objects_not_in_the_scene = True
                         pass
@@ -471,6 +597,56 @@ class SvOB3BCallbackMK4(bpy.types.Operator, SvGenericNodeLocator):
         """
         getattr(node, self.fn_name)(self)
 
+class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
+    '''Additional objects properties'''
+    # bl_label = "Objects 3DViewport properties"
+    # bl_space_type = 'NODE_EDITOR'
+    # bl_region_type = 'UI'
+    # bl_category = "Node"
+    # bl_context = "data"
+
+    # this combination do not show this panel on the right side panel
+    bl_idname="SV_PT_ViewportDisplayPropertiesMK4"
+    bl_label = "Objects 3DViewport properties"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'WINDOW'
+
+    # @classmethod
+    # def description(cls, context, properties):
+    #     s = "properties.description_text"
+    #     return s
+
+    bl_ui_units_x = 5
+
+    def is_extended():
+        return True
+
+    def draw(self, context):
+        if hasattr(context, "node"):
+            layout = self.layout
+            #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
+            grid = layout.grid_flow(row_major=False, columns=0, align=True)
+            for n in prop_names:
+                prop_name = "show_"+n
+                grid.prop(context.node, prop_name)
+
+        pass
+
+def get_objects_from_node(object_names, with_exclude=False):
+    objs = []
+    for o in object_names:
+        if with_exclude==True and o.exclude==False or with_exclude==False:
+            if o.pointer_type=='OBJECT':
+                if o.object_pointer:
+                    objs.append(o.object_pointer)
+            elif o.pointer_type=='COLLECTION':
+                if o.collection_pointer:
+                    obj_coll = set(o.collection_pointer.objects)
+                    for child in o.collection_pointer.children_recursive:
+                        obj_coll.update(child.objects)
+                    objs.extend(list(obj_coll))
+    return objs
+
 def get_vertgroups(mesh):
     return [k for k,v in enumerate(mesh.vertices) if v.groups.values()]
 
@@ -549,6 +725,77 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         description = "If checked, join mesh elements into one object",
         default = False,
         update = updateNode) # type: ignore
+    
+    def update_viewport_display(self, context):
+        objs = []
+        for o in self.object_names:
+            if o.exclude==False:
+                if o.pointer_type=='OBJECT':
+                    if o.object_pointer:
+                        objs.append(o.object_pointer)
+                elif o.pointer_type=='COLLECTION':
+                    if o.collection_pointer:
+                        obj_coll = set(o.collection_pointer.objects)
+                        for child in o.collection_pointer.children_recursive:
+                            obj_coll.update(child.objects)
+                        objs.extend(list(obj_coll))
+        
+        for o in objs:
+            for n in prop_names:
+                prop_name = "show_"+n
+                if hasattr(o, prop_name):
+                    setattr(o, prop_name, getattr(self, prop_name) )
+            pass
+        pass
+
+    show_name: bpy.props.BoolProperty(
+        name = "Name",
+        description="Display the object's name",
+        default = False,
+        update = update_viewport_display
+    )
+
+    show_axis: bpy.props.BoolProperty(
+        name = "Axes",
+        description="Display the object's origin and exes",
+        default = False,
+        update = update_viewport_display
+    )
+
+    show_wire: bpy.props.BoolProperty(
+        name = "Wireframe",
+        description="Display the object's wireframe over solid shading",
+        default = False,
+        update = update_viewport_display
+    )
+
+    show_all_edges: bpy.props.BoolProperty(
+        name = "All edges",
+        description="Display all edges for mesh objects",
+        default = False,
+        update = update_viewport_display
+    )
+
+    show_texture_space: bpy.props.BoolProperty(
+        name = "Texture space",
+        description="Display the object's texture space",
+        default = False,
+        update = update_viewport_display
+    )
+
+    show_shadows: bpy.props.BoolProperty(
+        name = "Shadow",
+        description="Object cast shadows in the 3D viewport",
+        default = True,
+        update = update_viewport_display
+    )
+
+    show_in_front: bpy.props.BoolProperty(
+        name = "In Front",
+        description="Make the object dosplay in front of others",
+        default = False,
+        update = update_viewport_display
+    )
 
     display_types = [
             ('BOUNDS', "", "BOUNDS: Display the bounds of the object", "MATPLANE", 0),
@@ -558,10 +805,9 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         ]
     
     def update_display_type(self, context):
-        for item in self.object_names:
-            if item.object_pointer:
-                #if item.exclude==False:
-                item.object_pointer.display_type=self.display_type
+        objs = get_objects_from_node(self.object_names)
+        for o in objs:
+            o.display_type=self.display_type
         return
     
     display_type : bpy.props.EnumProperty(
@@ -724,6 +970,8 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             layout.separator()
 
     def draw_polygons_out_socket(self, socket, context, layout):
+        layout.popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
+        #layout.operator(SV_PT_ViewportDisplayPropertiesMK4.bl_idname, icon='TRIA_DOWN', text="")
         layout.prop(self, 'display_type', expand=True, text='')
         layout.separator()
         layout.label(text=f'{socket.label} ')
@@ -890,6 +1138,18 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         self.process_node(None)
 
+
+    def add_empty_collection(self, ops):
+        """
+        Add empty collection pointer on the top of the list
+        """
+        item = self.object_names.add()
+        item.pointer_type = "COLLECTION"
+        self.object_names.move(len(self.object_names)-1, 0)
+        self.active_obj_index=0
+
+        return
+
     def clear_objects_from_list(self, ops):
         """
         Clear list of objects
@@ -997,6 +1257,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 elem = col.row(align=True)
                 elem.alignment='RIGHT'
                 self.wrapper_tracked_ui_draw_op(elem, SvOB3BAddObjectsFromSceneUpMK4.bl_idname, text='', icon='ADD')
+                self.wrapper_tracked_ui_draw_op(elem, SvOB3BAddEmptyCollectionMK4.bl_idname, text='', icon='GROUP')
                 self.wrapper_tracked_ui_draw_op(elem, SvOB3BMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
                 self.wrapper_tracked_ui_draw_op(elem, SvOB3BMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
                 self.wrapper_tracked_ui_draw_op(elem, SvOB3BHighlightProcessedObjectsInSceneMK4.bl_idname, text='', icon='GROUP_VERTEX')
@@ -1066,6 +1327,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         return [face.material_index for face in bm.faces[:]]
 
     def process(self):
+        self.update_display_type(None)
         objs = self.inputs[0].sv_get(default=[[]])
         if not self.object_names and not objs[0]:
             return
@@ -1085,10 +1347,29 @@ class SvGetObjectsDataMK4(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         if isinstance(objs[0], list):
             objs = objs[0]
         if not objs:
-            objs = (o.object_pointer for o in self.object_names if o.exclude==False and o.object_pointer)
+            #objs = (o.object_pointer for o in self.object_names if o.exclude==False and o.object_pointer)
+            objs = []
+            collection_names=[]
+            for o in self.object_names:
+                if o.exclude==False:
+                    if o.pointer_type=='OBJECT':
+                        if o.object_pointer:
+                            objs.append(o.object_pointer)
+                            collection_names.append("")
+                    elif o.pointer_type=='COLLECTION':
+                        if o.collection_pointer:
+                            obj_coll = set(o.collection_pointer.objects)
+                            for child in o.collection_pointer.children_recursive:
+                                obj_coll.update(child.objects)
+                            collection_names.extend( [o.collection_pointer.name]*len(objs) )
+                            objs.extend(list(obj_coll))
+                    else:
+                        raise Exception(f"Unknown pointer type: {o.pointer_type}.")
+        else:
+            collection_names = [""]*len(objs)
 
         # iterate through references
-        for obj in objs:
+        for I, obj in enumerate(objs):
 
             if not obj:
                 continue
@@ -1562,12 +1843,14 @@ classes = [
     SvOB3BMoveDownMK4,
     SvOB3BMoveUpMK4,
     SvOB3BAddObjectsFromSceneUpMK4,
+    SvOB3BAddEmptyCollectionMK4,
     SvOB3ItemSelectObjectMK4,
     SvOB3BItemEnablerMK4,
     SvOB3BItemRemoveMK4,
     SvOB3BItemOperatorMK4,
     SvOB3BDataCollectionMK4,
     SVOB3B_UL_NamesListMK4,
+    SV_PT_ViewportDisplayPropertiesMK4,
     SvOB3BCallbackMK4,
     SvGetObjectsDataMK4,
 ]
