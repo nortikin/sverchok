@@ -112,6 +112,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='NONE',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     
@@ -120,6 +121,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='PERCENTAGE',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     
@@ -128,6 +130,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='FACTOR',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -136,6 +139,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='ANGLE',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     
@@ -144,6 +148,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='TIME',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     
@@ -152,6 +157,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='TIME_ABSOLUTE',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     
@@ -160,6 +166,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='DISTANCE',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     
@@ -168,6 +175,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='DISTANCE_CAMERA',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     
@@ -176,6 +184,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='TEMPERATURE',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     
@@ -192,6 +201,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='POWER',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -230,6 +240,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='NONE',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -240,6 +251,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         max = 1.0,
         subtype='COLOR',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -247,7 +259,8 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         name = "Translation",
         default = (0., 0., 0.,),
         subtype='TRANSLATION',
-        get = get_elem, set = set_elem
+        get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
     ) # type: ignore
 
     DIRECTION: FloatVectorProperty(
@@ -255,6 +268,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (1., 1., 1.,),
         subtype='DIRECTION',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -263,6 +277,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='VELOCITY',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -271,6 +286,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='ACCELERATION',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -286,6 +302,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='EULER',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -302,6 +319,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='AXISANGLE',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -310,6 +328,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='XYZ',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -318,6 +337,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='XYZ_LENGTH',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -326,6 +346,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='COLOR_GAMMA',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -334,6 +355,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='COORDINATES',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -342,6 +364,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='LAYER',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -350,6 +373,7 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         default = (0., 0., 0.,),
         subtype='LAYER_MEMBER',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -425,6 +449,7 @@ class SvListInputQuaternionEntry(bpy.types.PropertyGroup):
         subtype='NONE',
         size=4,
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         #update=update_entry,
     ) # type: ignore
 
@@ -456,6 +481,7 @@ class SvListInputQuaternionEntry(bpy.types.PropertyGroup):
         subtype='QUATERNION',
         size=4,
         get = get_WXYZ, set = set_WXYZ,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -485,6 +511,7 @@ class SvListInputQuaternionEntry(bpy.types.PropertyGroup):
         subtype='EULER',
         size=3,
         get = get_EULER, set = set_EULER,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -514,6 +541,7 @@ class SvListInputQuaternionEntry(bpy.types.PropertyGroup):
         subtype='QUATERNION',
         size=4,
         get = get_SCALARVECTOR, set = set_SCALARVECTOR,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     
@@ -544,6 +572,7 @@ class SvListInputQuaternionEntry(bpy.types.PropertyGroup):
         subtype='AXISANGLE',
         size=4,
         get = get_AXISANGLE, set = set_AXISANGLE,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -595,6 +624,7 @@ class SvListInputColorEntry(bpy.types.PropertyGroup):
         subtype='NONE',
         size=4, min=0., max=1.,
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -604,6 +634,7 @@ class SvListInputColorEntry(bpy.types.PropertyGroup):
         subtype='NONE',
         size=3, min=0., max=1.,
         get = get_elem_without_alpha, set = set_elem_without_alpha,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -613,6 +644,7 @@ class SvListInputColorEntry(bpy.types.PropertyGroup):
         size=4, min=0., max=1.,
         subtype='COLOR',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -622,6 +654,7 @@ class SvListInputColorEntry(bpy.types.PropertyGroup):
         size=3, min=0., max=1.,
         subtype='COLOR',
         get = get_elem_without_alpha, set = set_elem_without_alpha,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -631,6 +664,7 @@ class SvListInputColorEntry(bpy.types.PropertyGroup):
         size=4, min=0., max=1.,
         subtype='COLOR_GAMMA',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -640,6 +674,7 @@ class SvListInputColorEntry(bpy.types.PropertyGroup):
         size=3, min=0., max=1.,
         subtype='COLOR_GAMMA',
         get = get_elem_without_alpha, set = set_elem_without_alpha,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -682,6 +717,7 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
         default = "",
         subtype='NONE',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         #update=update_entry,
     ) # type: ignore
     
@@ -690,6 +726,7 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
         default = "",
         subtype='FILE_PATH',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         #update=update_entry,
     ) # type: ignore
     
@@ -698,6 +735,7 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
         default = "",
         subtype='DIR_PATH',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         #update=update_entry,
     ) # type: ignore
     
@@ -706,6 +744,7 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
         default = "",
         subtype='FILE_NAME',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         #update=update_entry,
     ) # type: ignore
     
@@ -714,6 +753,7 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
         default = "",
         subtype='BYTE_STRING',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         #update=update_entry,
     ) # type: ignore
     
@@ -722,6 +762,7 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
         default = "",
         subtype='PASSWORD',
         get = get_elem, set = set_elem,
+        options={'SKIP_SAVE'},
         #update=update_entry,
     ) # type: ignore
 
@@ -894,6 +935,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         precision=3,
         #subtype='MATRIX',
         get = get_MATRIX, set = set_MATRIX,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -941,6 +983,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='NONE',
         size=3,
         get = get_EULER_LOCATION, set = set_EULER_LOCATION,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     EULER_LOCATION_UI_TRANSLATION: FloatVectorProperty(
@@ -950,6 +993,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         precision=3,
         size=3,
         get = get_EULER_LOCATION, set = set_EULER_LOCATION,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -978,6 +1022,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='EULER',
         size=3,
         get = get_EULER_SCALE, set = set_EULER_SCALE,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     
@@ -1005,6 +1050,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         subtype='EULER',
         size=3,
         get = get_EULER_ANGLE, set = set_EULER_ANGLE,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     ####### euler_location,  euler_scale, /EULER_ANGLE_XYZ #####################################################################################
@@ -1052,6 +1098,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='EULER',
         size=3,
         get = get_AXISANGLE_LOCATION, set = set_AXISANGLE_LOCATION,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
     AXISANGLE_LOCATION_UI_TRANSLATION: FloatVectorProperty(
@@ -1060,6 +1107,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         subtype='TRANSLATION',
         size=3,
         get = get_AXISANGLE_LOCATION, set = set_AXISANGLE_LOCATION,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -1086,6 +1134,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='EULER',
         size=3,
         get = get_AXISANGLE_SCALE, set = set_AXISANGLE_SCALE,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -1112,6 +1161,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='EULER',
         size=3,
         get = get_AXISANGLE_VECTOR, set = set_AXISANGLE_VECTOR,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -1135,6 +1185,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         default = 0.,
         subtype='ANGLE',
         get = get_AXISANGLE_ANGLE, set = set_AXISANGLE_ANGLE,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -1174,6 +1225,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='EULER',
         #size=1,
         get = get_SHEAR_XY_X, set = set_SHEAR_XY_X,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -1201,6 +1253,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='EULER',
         #size=1,
         get = get_SHEAR_XY_Y, set = set_SHEAR_XY_Y,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -1229,6 +1282,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='EULER',
         #size=1,
         get = get_SHEAR_XZ_X, set = set_SHEAR_XZ_X,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -1256,6 +1310,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='EULER',
         #size=1,
         get = get_SHEAR_XZ_Z, set = set_SHEAR_XZ_Z,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -1283,6 +1338,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='EULER',
         #size=1,
         get = get_SHEAR_YZ_Y, set = set_SHEAR_YZ_Y,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
@@ -1310,6 +1366,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         #subtype='EULER',
         #size=1,
         get = get_SHEAR_YZ_Z, set = set_SHEAR_YZ_Z,
+        options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
 
