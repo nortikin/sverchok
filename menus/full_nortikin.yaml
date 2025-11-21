@@ -893,7 +893,7 @@
     - X CURVES:
         - icon_name: OUTLINER_OB_CURVE
         - SvAdaptivePlotNurbsCurveNode
-        - SvAdaptivePlotCurveNode
+        - SvAdaptivePlotCurveMk2Node
         - SvExEvalCurveNode
     - X SURFACES:
         - icon_name: SURFACE_DATA
