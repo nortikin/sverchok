@@ -2464,11 +2464,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                         if elem.matrix_mode1=='EULER':
                             matrix_grid = c1_c.row().grid_flow(row_major=False, columns=3, align=True)
                             if self.unit_system=='NONE':
-                                matrix_grid.prop(elem, 'EULER_LOCATION_UI_NONE', text='Location')
+                                matrix_grid.column().prop(elem, 'EULER_LOCATION_UI_NONE', text='Location')
                             else:
-                                matrix_grid.prop(elem, 'EULER_LOCATION_UI_TRANSLATION', text='Location')
-                            matrix_grid.prop(elem, 'EULER_SCALE_UI', text='Scale')
-                            matrix_grid.prop(elem, 'EULER_ANGLE_UI', text='Angle')
+                                matrix_grid.column().prop(elem, 'EULER_LOCATION_UI_TRANSLATION', text='Location')
+                            matrix_grid.column().prop(elem, 'EULER_SCALE_UI', text='Scale')
+                            matrix_grid.column().prop(elem, 'EULER_ANGLE_UI', text='Angle')
                             # grid_row.label(text='')
                             # grid_row.label(text='')
                             # grid_row.label(text='')
@@ -2476,13 +2476,13 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                             pass
                         elif elem.matrix_mode1=='AXISANGLE':
                             c1_c_row = c1_c.row()
-                            matrix_grid = c1_c_row.column().grid_flow(row_major=True, columns=3, align=True)
+                            matrix_grid = c1_c_row.grid_flow(row_major=True, columns=3, align=True)
                             if self.unit_system=='NONE':
-                                matrix_grid.prop(elem, 'AXISANGLE_LOCATION_UI_NONE', text='Location')
+                                matrix_grid.column().prop(elem, 'AXISANGLE_LOCATION_UI_NONE', text='Location')
                             else:
-                                matrix_grid.prop(elem, 'AXISANGLE_LOCATION_UI_TRANSLATION', text='Location')
-                            matrix_grid.prop(elem, 'AXISANGLE_SCALE_UI', text='Scale')
-                            matrix_grid.prop(elem, 'AXISANGLE_VECTOR_UI', text='Axis')
+                                matrix_grid.column().prop(elem, 'AXISANGLE_LOCATION_UI_TRANSLATION', text='Location')
+                            matrix_grid.column().prop(elem, 'AXISANGLE_SCALE_UI', text='Scale')
+                            matrix_grid.column().prop(elem, 'AXISANGLE_VECTOR_UI', text='Axis')
                             c1_c_row_c = c1_c_row.column()
                             c1_c_row_c.label(text='Axis Angle')
                             c1_c_row_c.prop(elem, 'AXISANGLE_ANGLE_UI', text='')
