@@ -25,6 +25,7 @@ from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.handle_blender_data import correct_collection_length
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
+from sverchok.utils.nodes_mixins.show_3d_properties import Popup3DMenu
 import math
 import numpy as np
 import re
@@ -2651,13 +2652,9 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     def draw_buttons_3dpanel(self, layout, in_menu=None):
         if not in_menu:
-            menu_row = layout.row(align=True)
-            menu_row.column().label(text=f'Show: {self.label or self.name}')
-            self.wrapper_tracked_ui_draw_op(menu_row.column(), "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
-            # If disable next lines then 3D Panel will show context menu with menu items
-            # menu = menu_row.column().operator('node.popup_3d_menu', text=f'"{self.label or self.name}"')
-            # menu.tree_name = self.id_data.name
-            # menu.node_name = self.name
+            menu = layout.row(align=True).operator(Popup3DMenu.bl_idname, text=f'Show: "{self.label or self.name}"')
+            menu.tree_name = self.id_data.name
+            menu.node_name = self.name
         else:
             label = self.label
             if not label:
