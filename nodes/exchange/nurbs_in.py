@@ -121,10 +121,10 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     def sv_init(self, context):
         self.outputs.new('SvCurveSocket', 'Curves')
         self.outputs.new('SvSurfaceSocket', 'Surfaces')
+        self.outputs.new('SvStringsSocket', 'object_names').label='Object Names'
         self.outputs.new('SvMatrixSocket', 'Matrices')
 
-        self.inputs.new('SvObjectSocket'   , "objects")
-        self.inputs ['objects'].label = "Objects"
+        self.inputs.new('SvObjectSocket'   , "objects").label = "Objects"
 
     def draw_obj_names(self, layout):
         if self.object_names:
@@ -352,6 +352,7 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
 
         curves_out = []
         surfaces_out = []
+        object_names_out = []
         matrices_out = []
 
         if isinstance(objs[0], list):
@@ -384,6 +385,10 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         for I, obj in enumerate(objs):
             object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE = get_object_data_curve_info(obj)
             if SURFACE_CURVE_object==False:
+                curves_out.append([])
+                surfaces_out.append([])
+                object_names_out.append([obj.name])
+                matrices_out.append([obj.matrix_world])
                 # time-consumer. More objects, more time
                 self.warning(f"{obj.type}, {obj.name}: do not support NURBS.")
                 pass
@@ -392,6 +397,7 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                 object_surfaces = []
                 object_matrices = []
                 matrix = obj.matrix_world
+                names_count=0
                 for spline in obj.data.splines:
                     if spline.type != 'NURBS':
                         self.warning("%s: not supported spline type: %s", spline, spline.type)
@@ -400,14 +406,17 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                         surface = self.get_surface(spline, matrix)
                         object_surfaces.append(surface)
                         object_matrices.append(matrix)
+                        names_count+=1
                     elif obj.type == 'CURVE':
                         curve = self.get_curve(spline, matrix)
                         object_curves.append(curve)
                         object_matrices.append(matrix)
+                        names_count+=1
                     pass
                 pass
                 curves_out.append(object_curves)
                 surfaces_out.append(object_surfaces)
+                object_names_out.append([obj.name] * max(names_count, 1) )  # if no splines then return 1 for object name
                 matrices_out.append(object_matrices)
                 pass
             pass            
@@ -415,14 +424,17 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
 
         _curves_out = curves_out
         _surfaces_out = surfaces_out
+        _object_names_out = object_names_out
         _matrices_out = matrices_out
         if self.legacy_mode == True:
             _curves_out            = [c for   curves in _curves_out   for c in curves]
             _surfaces_out          = [s for surfaces in _surfaces_out for s in surfaces]
+            _object_names_out      = [name for objs in _object_names_out for name in objs]
             _matrices_out          = [m for matrices in _matrices_out for m in matrices]
 
         self.outputs[  'Curves'].sv_set(_curves_out)
         self.outputs['Surfaces'].sv_set(_surfaces_out)
+        self.outputs['object_names'].sv_set(_object_names_out)
         self.outputs['Matrices'].sv_set(_matrices_out)
 
     def migrate_from(self, old_node):
