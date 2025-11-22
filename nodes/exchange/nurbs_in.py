@@ -108,7 +108,7 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     # object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
 
     sort: bpy.props.BoolProperty(
-        name='sort by name',
+        name='Sort by names',
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
@@ -192,7 +192,7 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         # row0.row().prop(self, 'display_type', expand=True, text='')
 
         grid.prop(self, 'sort')
-        grid.column(align=True).prop(self, 'implementation', text='')
+        grid.column(align=True).prop(self, 'implementation')
         grid.prop(self, 'apply_matrix')
         grid.prop(self, 'legacy_mode')
         row0 = grid.row(align=True)
