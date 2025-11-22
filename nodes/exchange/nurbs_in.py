@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -18,16 +17,64 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.dependencies import geomdl
 
+from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, ReadingObjectDataError, get_objects_from_item
+
 if geomdl is not None:
     from geomdl import NURBS
 
-class SvExNurbsInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
+def get_object_data_curve_info(object_pointer):
+    '''Is object exists, has NURBS info?'''
+    object_exists        = None
+    SURFACE_CURVE_object = None
+    Nurbs_SURFACE        = None
+    Nurbs_CURVE          = None
 
-    bl_idname = "node.sv_ex_nurbs_in_callback"
+    if object_pointer:
+        object_exists=True
+        #if hasattr(object_pointer.data, 'splines'):
+        if object_pointer.type in ['SURFACE', 'CURVE']:
+            SURFACE_CURVE_object = True
+            Nurbs_SURFACE        = False
+            Nurbs_CURVE          = False
+            if object_pointer.data.splines:
+                splines = object_pointer.data.splines
+                if splines:
+                    for spline in splines:
+                        if spline.type=='NURBS':
+                            if object_pointer.type=='SURFACE':
+                                Nurbs_SURFACE = True
+                            elif object_pointer.type=='CURVE':
+                                Nurbs_CURVE   = True
+                            else:
+                                pass
+                        else:
+                            pass
+                        pass
+                    pass
+                pass
+            else:
+                SURFACE_CURVE_object = True
+                Nurbs_SURFACE        = False
+                Nurbs_CURVE          = False
+                pass
+            pass
+        else:
+            SURFACE_CURVE_object = False
+            Nurbs_SURFACE        = False
+            Nurbs_CURVE          = False
+            pass
+    else:
+        object_exists=False
+
+    return object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE
+
+class SvExNurbsInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
+
+    bl_idname = "node.sv_ex_nurbs_in_callback_mk2"
     bl_label = "Nurbs In Callback"
     bl_options = {'INTERNAL'}
 
-    fn_name: StringProperty(default='')
+    fn_name: bpy.props.StringProperty(default='')
 
     def sv_execute(self, context, node):
         """
@@ -36,27 +83,36 @@ class SvExNurbsInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
         """
         getattr(node, self.fn_name)(self)
 
-
-class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
+class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     """
     Triggers: Input NURBS
     Tooltip: Get NURBS curve or surface objects from scene
     """
-    bl_idname = 'SvExNurbsInNode'
+    bl_idname = 'SvExNurbsInNodeMK2'
     bl_label = 'NURBS Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
     is_scene_dependent = True
     is_animation_dependent = True
 
-    object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    
+    legacy_mode: bpy.props.BoolProperty(
+        name='Legacy Mode',
+        description='Flats output lists (affects all sockets)',
+        default=False,
+        update=updateNode
+        )
+    
+    # object_names: bpy.props.CollectionProperty(type=SvExNurbsInDataCollectionMK2)
+    # active_obj_index: bpy.props.IntProperty()
+    # object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
 
-    sort: BoolProperty(
+    sort: bpy.props.BoolProperty(
         name='sort by name',
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    apply_matrix : BoolProperty(
+    apply_matrix : bpy.props.BoolProperty(
         name = "Apply matrices",
         description = "Apply object matrices to control points",
         default = True,
@@ -67,40 +123,19 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvSurfaceSocket', 'Surfaces')
         self.outputs.new('SvMatrixSocket', 'Matrices')
 
-    def get_objects_from_scene(self, ops):
-        """
-        Collect selected objects
-        """
-        self.object_names.clear()
-
-        names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
-
-        if self.sort:
-            names.sort()
-
-        for name in names:
-            self.object_names.add().name = name
-
-        if not self.object_names:
-            ops.report({'WARNING'}, "Warning, no selected objects in the scene")
-            return
-
-        self.process_node(None)
+        self.inputs.new('SvObjectSocket'   , "objects")
+        self.inputs ['objects'].label = "Objects"
 
     def draw_obj_names(self, layout):
-        # display names currently being tracked, stop at the first 5..
         if self.object_names:
-            remain = len(self.object_names) - 5
-
-            for i, obj_ref in enumerate(self.object_names):
-                layout.label(text=obj_ref.name)
-                if i > 4 and remain > 0:
-                    postfix = ('' if remain == 1 else 's')
-                    more_items = '... {0} more item' + postfix
-                    layout.label(text=more_items.format(remain))
-                    break
+            col = layout.column(align=True)
+            elem = col.row(align=True)
+            self.draw_controls(elem)
+            self.draw_object_names(col.row(align=True))
         else:
             layout.label(text='--None--')
+        
+        pass
 
     implementations = []
     if geomdl is not None:
@@ -109,15 +144,19 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     implementations.append(
         (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
 
-    implementation : EnumProperty(
+    implementation : bpy.props.EnumProperty(
             name = "Implementation",
             items=implementations,
             update = updateNode)
+    
+    @property
+    def by_input(self):
+        return self.inputs['objects'].object_ref_pointer is not None or self.inputs['objects'].is_linked
 
     def sv_draw_buttons(self, context, layout):
-        layout.prop(self, 'implementation', text='')
         col = layout.column(align=True)
-        row = col.row(align=True)
+        col.alignment='RIGHT'
+        #row = col.row(align=True)
         row = col.row()
 
         op_text = "Get selection"  # fallback
@@ -125,13 +164,51 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             row.scale_y = 4.0
             op_text = "G E T"
 
-        callback = 'node.sv_ex_nurbs_in_callback'
+        callback = SvExNurbsInCallbackOpMK2.bl_idname
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
 
-        layout.prop(self, 'sort', text='Sort', toggle=True)
-        layout.prop(self, 'apply_matrix', toggle=True)
+        grid = layout.grid_flow(row_major=True, columns=0, align=True)
+        # c0 = grid.column()
+        # c0.alignment = 'RIGHT'
+        # c0.label(text='Sort:')
+        # grid.column().prop(self, 'sort', text='')
+        # c1 = grid.column()
+        # c1.alignment = 'RIGHT'
+        # c1.label(text='Implementation:')
+        # grid.column().prop(self, 'implementation', text='')
+        # c2 = grid.column()
+        # c2.alignment = 'RIGHT'
+        # c2.label(text='Apply matrixes:')
+        # grid.column().prop(self, 'apply_matrix', text='')
+        # c3 = grid.column()
+        # c3.alignment = 'RIGHT'
+        # c3.label(text='Legacy Mode:')
+        # grid.column().prop(self, 'legacy_mode', text='')
+        # c4 = grid.column()
+        # c4.alignment = 'RIGHT'
+        # c4.label(text='Display Mode:')
+        # row0 = grid.row(align=True)
+        # row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
+        # row0.row().prop(self, 'display_type', expand=True, text='')
 
-        self.draw_obj_names(layout)
+        grid.prop(self, 'sort')
+        grid.column(align=True).prop(self, 'implementation', text='')
+        grid.prop(self, 'apply_matrix')
+        grid.prop(self, 'legacy_mode')
+        row0 = grid.row(align=True)
+        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
+        row0.row().prop(self, 'display_type', expand=True, text='')
+
+        if not self.by_input:
+            if self.object_names:
+                col = layout.column(align=True)
+                elem = col.row(align=True)
+                self.draw_controls(elem)
+                self.draw_object_names(col.row(align=True))
+            else:
+                layout.label(text='--None--')
+            pass
+        pass
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "draw_3dpanel", icon="PLUGIN")
@@ -140,7 +217,7 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
-        callback = 'node.sv_ex_nurbs_in_callback'
+        callback = SvExNurbsInCallbackOpMK2.bl_idname
         row.prop(self, 'implementation', text='')
         self.wrapper_tracked_ui_draw_op(row, callback, text='GET').fn_name = 'get_objects_from_scene'
         self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
@@ -249,47 +326,120 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             new_curve.u_bounds = (u_min, u_max)
 
         return new_curve
+    
+    def check_object_allowed(self, layout, item):
+        objs = get_objects_from_item(item)
+        for obj in objs:
+            object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE = get_object_data_curve_info(obj)
+            if object_exists:
+                if SURFACE_CURVE_object:
+                    layout.alert=False
+                else:
+                    layout.alert=True
+                    break
+                pass
+            pass
+        pass
 
     def process(self):
 
-        if not self.object_names:
+        if not any([sock.is_linked for sock in self.outputs]):
             return
+
+        objs = self.inputs['objects'].sv_get(default=[[]])
+        if not self.object_names and not objs[0]:
+            return        
 
         curves_out = []
         surfaces_out = []
         matrices_out = []
-        for item in self.object_names:
-            object_name = item.name
-            obj = bpy.data.objects.get(object_name)
-            if not obj:
-                continue
 
-            matrix = obj.matrix_world
-            if obj.type not in {'SURFACE', 'CURVE'}:
-                self.warning("%s: not supported object type: %s", object_name, obj.type)
-                continue
-            for spline in obj.data.splines:
-                if spline.type != 'NURBS':
-                    self.warning("%s: not supported spline type: %s", spline, spline.type)
-                    continue
-                if obj.type == 'SURFACE':
-                    surface = self.get_surface(spline, matrix)
-                    surfaces_out.append(surface)
-                    matrices_out.append(matrix)
-                elif obj.type == 'CURVE':
-                    curve = self.get_curve(spline, matrix)
-                    curves_out.append(curve)
-                    matrices_out.append(matrix)
+        if isinstance(objs[0], list):
+            objs = objs[0]
+            
+        if not objs:
+            objs = []
+            collection_names=[]
+            for o in self.object_names:
+                if o.exclude==False:
+                    if o.pointer_type=='OBJECT':
+                        if o.object_pointer:
+                            objs.append(o.object_pointer)
+                            collection_names.append("")
+                    elif o.pointer_type=='COLLECTION':
+                        if o.collection_pointer:
+                            obj_coll = list(o.collection_pointer.objects)
+                            for child in o.collection_pointer.children_recursive:
+                                obj_coll.update(child.objects)
+                            collection_names.extend( [o.collection_pointer.name]*len(objs) )
+                            objs.extend(list(obj_coll))
+                    else:
+                        raise Exception(f"Unknown pointer type: {o.pointer_type}.")
+                pass
+            pass
+        else:
+            collection_names = [""]*len(objs)
 
-        self.outputs['Curves'].sv_set(curves_out)
-        self.outputs['Surfaces'].sv_set(surfaces_out)
-        self.outputs['Matrices'].sv_set(matrices_out)
+        #for item in self.object_names:
+        for I, obj in enumerate(objs):
+            object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE = get_object_data_curve_info(obj)
+            if SURFACE_CURVE_object==False:
+                # time-consumer. More objects, more time
+                self.warning(f"{obj.type}, {obj.name}: do not support NURBS.")
+                pass
+            else:
+                object_curves = []
+                object_surfaces = []
+                object_matrices = []
+                matrix = obj.matrix_world
+                for spline in obj.data.splines:
+                    if spline.type != 'NURBS':
+                        self.warning("%s: not supported spline type: %s", spline, spline.type)
+                        continue
+                    if obj.type == 'SURFACE':
+                        surface = self.get_surface(spline, matrix)
+                        object_surfaces.append(surface)
+                        object_matrices.append(matrix)
+                    elif obj.type == 'CURVE':
+                        curve = self.get_curve(spline, matrix)
+                        object_curves.append(curve)
+                        object_matrices.append(matrix)
+                    pass
+                pass
+                curves_out.append(object_curves)
+                surfaces_out.append(object_surfaces)
+                matrices_out.append(object_matrices)
+                pass
+            pass            
+        pass
 
+        _curves_out = curves_out
+        _surfaces_out = surfaces_out
+        _matrices_out = matrices_out
+        if self.legacy_mode == True:
+            _curves_out            = [c for   curves in _curves_out   for c in curves]
+            _surfaces_out          = [s for surfaces in _surfaces_out for s in surfaces]
+            _matrices_out          = [m for matrices in _matrices_out for m in matrices]
 
-def register():
-    bpy.utils.register_class(SvExNurbsInCallbackOp)
-    bpy.utils.register_class(SvExNurbsInNode)
+        self.outputs[  'Curves'].sv_set(_curves_out)
+        self.outputs['Surfaces'].sv_set(_surfaces_out)
+        self.outputs['Matrices'].sv_set(_matrices_out)
 
-def unregister():
-    bpy.utils.unregister_class(SvExNurbsInNode)
-    bpy.utils.unregister_class(SvExNurbsInCallbackOp)
+    def migrate_from(self, old_node):
+        if hasattr(self, 'location_absolute'):
+            # Blender 3.0 has no this attribute
+            self.location_absolute = old_node.location_absolute
+        for I, item in enumerate(old_node.object_names):
+            if I<=len(self.object_names)-1:
+                if hasattr(item, 'name') and item.name in bpy.data.objects:
+                    self.object_names[I].object_pointer = bpy.data.objects[item.name]
+        self.legacy_mode = True
+        if self.width<305:
+            self.width=305
+        pass
+
+classes = [
+    SvExNurbsInCallbackOpMK2,
+    SvExNurbsInNodeMK2
+]
+register, unregister = bpy.utils.register_classes_factory(classes)
