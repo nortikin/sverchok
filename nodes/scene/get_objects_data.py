@@ -453,7 +453,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             mtrx = obj.matrix_world
 
             if o_object_names:
-                l_object_names.append(obj.name)
+                l_object_names.append([obj.name])
 
             if obj.type in {'EMPTY', 'CAMERA', 'LAMP', 'LIGHT' }:
                 if o_matrices:
