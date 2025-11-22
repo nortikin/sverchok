@@ -13,6 +13,23 @@ from sverchok.data_structure import updateNode
 # object properties in Blender viewport -> Object Properties -> Viewport Display
 prop_names = ['name', 'axis', 'wire', 'all_edges', 'texture_space', 'shadows', 'in_front']
 
+def get_objects_of_collection(coll, use_sort_alpha):
+    obj_coll = []
+    if use_sort_alpha==False:
+        # objects before collections
+        obj_coll.extend(coll.objects)
+    
+    for child in coll.children_recursive if use_sort_alpha==False else reversed(coll.children_recursive):
+        if use_sort_alpha==True:
+            obj_coll.extend(sorted(child.objects, key=lambda o: o.name))
+        else:
+            obj_coll.extend( list(child.objects))
+
+    if use_sort_alpha==True:
+        # objects after collections
+        obj_coll.extend(sorted(list(coll.objects), key=lambda o: o.name))
+    
+    return obj_coll
 
 def get_objects_from_item(item):
     '''item - element of object_names table'''
@@ -24,9 +41,14 @@ def get_objects_from_item(item):
             pass
         elif item.pointer_type=='COLLECTION':
             if item.collection_pointer:
-                obj_coll = set(item.collection_pointer.objects)
-                for child in item.collection_pointer.children_recursive:
-                    obj_coll.update(child.objects)
+                # find outlines sort order:
+                use_sort_alpha = True
+                for area in bpy.context.window.screen.areas:
+                    if area.type == 'OUTLINER':
+                        space = area.spaces.active
+                        use_sort_alpha = space.use_sort_alpha
+                        break
+                obj_coll = get_objects_of_collection(item.collection_pointer, use_sort_alpha)
                 objs.extend(list(obj_coll))
             pass
         pass
@@ -41,9 +63,15 @@ def get_objects_from_node(object_names, with_exclude=False):
                     objs.append(o.object_pointer)
             elif o.pointer_type=='COLLECTION':
                 if o.collection_pointer:
-                    obj_coll = set(o.collection_pointer.objects)
-                    for child in o.collection_pointer.children_recursive:
-                        obj_coll.update(child.objects)
+                    # find outlines sort order:
+                    use_sort_alpha = True
+                    for area in bpy.context.window.screen.areas:
+                        if area.type == 'OUTLINER':
+                            space = area.spaces.active
+                            use_sort_alpha = space.use_sort_alpha
+                            break
+                    
+                    obj_coll = get_objects_of_collection(o.collection_pointer, use_sort_alpha)
                     objs.extend(list(obj_coll))
     return objs
 
@@ -127,7 +155,7 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
                 chars = [f'Collection: {self.collection_pointer.name}']
                 objs = get_objects_from_item(self)
                 if objs:
-                    chars.append("Members:")
+                    chars.append("Members:  (Orders as Outliner->Filter->Sort Alphabetically (On/Off))\n")
                 for obj in objs:
                     chars.append( f"   {obj.type}, {obj.name}")
                 chars.append("---------------------")

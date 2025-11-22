@@ -292,7 +292,7 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                             collection_names.append("")
                     elif o.pointer_type=='COLLECTION':
                         if o.collection_pointer:
-                            obj_coll = set(o.collection_pointer.objects)
+                            obj_coll = list(o.collection_pointer.objects)
                             for child in o.collection_pointer.children_recursive:
                                 obj_coll.update(child.objects)
                             collection_names.extend( [o.collection_pointer.name]*len(objs) )
