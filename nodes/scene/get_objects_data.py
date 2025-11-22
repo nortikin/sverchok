@@ -401,7 +401,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         return [face.material_index for face in bm.faces[:]]
 
     def process(self):
-        self.update_display_type(None)
+        #self.update_display_type(None)
         objs = self.inputs[0].sv_get(default=[[]])
         if not self.object_names and not objs[0]:
             return

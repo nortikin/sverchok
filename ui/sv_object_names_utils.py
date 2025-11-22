@@ -91,31 +91,51 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
         description='Exclude from process',
     )
 
-    # dynamic table element description: (appear on mouseover)
+    # dynamic table element description: (appear on mouseover), but do not work on bpy.props.PointerProperty
     def _get_description(self):
         s = 'No object'
-        if self.object_pointer:
-            s = self.object_pointer.type
-            object_pointer = self.object_pointer
-            chars = [object_pointer.name]
-            if object_pointer.type=='CURVE':
-                if object_pointer.data.splines:
-                    splines = object_pointer.data.splines
-                    for I, spline in enumerate(splines):
-                        if spline.type=='BEZIER':
-                            chars.append(f" {I}. {spline.type.lower()}, segments: {len(spline.bezier_points)-1+(1 if spline.use_cyclic_u else 0)}, {'closed' if spline.use_cyclic_u else 'open'}")
-                        else:
-                            chars.append(f" {I}. {spline.type.lower()}, segments: {len(spline.points)-1+(1 if spline.use_cyclic_u else 0)},{'closed' if spline.use_cyclic_u else 'open'}")
+        if self.pointer_type=='OBJECT':
+            if self.object_pointer:
+                s = self.object_pointer.type
+                object_pointer = self.object_pointer
+                chars = [object_pointer.name]
+                if object_pointer.type=='CURVE':
+                    if object_pointer.data.splines:
+                        splines = object_pointer.data.splines
+                        for I, spline in enumerate(splines):
+                            if spline.type=='BEZIER':
+                                chars.append(f" {I}. {spline.type.lower()}, segments: {len(spline.bezier_points)-1+(1 if spline.use_cyclic_u else 0)}, {'closed' if spline.use_cyclic_u else 'open'}")
+                            else:
+                                chars.append(f" {I}. {spline.type.lower()}, segments: {len(spline.points)-1+(1 if spline.use_cyclic_u else 0)},{'closed' if spline.use_cyclic_u else 'open'}")
+                            pass
                         pass
-                    pass
+                    else:
+                        chars.append("Curve object, No splines")
+                        pass
                 else:
-                    chars.append("Curve object, No splines")
+                    # TODO: add another types: objects, collections, empty and other
+                    objs = get_objects_from_item(self)
+                    for obj in objs:
+                        chars.append( f"{obj.type}, {obj.name}")
                     pass
+                chars.append("---------------------")
+                s = "\n".join(chars)
             else:
-                # TODO: add another types: objects, collections, empty and other
                 pass
-            chars.append("---------------------")
-            s = "\n".join(chars)
+        elif self.pointer_type=='COLLECTION':
+            if self.collection_pointer:
+                chars = [f'Collection: {self.collection_pointer.name}']
+                objs = get_objects_from_item(self)
+                if objs:
+                    chars.append("Members:")
+                for obj in objs:
+                    chars.append( f"   {obj.type}, {obj.name}")
+                chars.append("---------------------")
+                s = "\n".join(chars)
+            else:
+                s = 'Collection is empty. Select collection.\n'
+        else:
+            pass
 
         return s
     test_text1: bpy.props.StringProperty(get=_get_description)
@@ -246,6 +266,9 @@ class SvON_UL_NamesListMK4(bpy.types.UIList):
             grid = layout.grid_flow(row_major=False, columns=3, align=True)
             UI0 = grid.row(align=True)
             UI0.alignment = 'LEFT'
+            if hasattr(active_data, 'check_object_allowed')==True:
+               active_data.check_object_allowed(UI0, item)
+
             UI01 = UI0.column(align=True)
             UI01.alignment = 'LEFT'
             UI01.label(text=f'{index:0{item_base}d}')
@@ -557,276 +580,6 @@ class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
         pass
 
 class SvNodeInDataMK4(SverchCustomTreeNode):
-    object_names: bpy.props.CollectionProperty(type=SvONDataCollectionMK4) # type: ignore
-    minimal_node_ui: bpy.props.BoolProperty(default=False)
-    object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
-    active_obj_index: bpy.props.IntProperty() # type: ignore
-
-    apply_matrix: bpy.props.BoolProperty(
-        name = "Apply matrices",
-        description = "Apply objects matrices",
-        default = True,
-        update = updateNode,
-    ) # type: ignore
-
-    def update_viewport_display(self, context):
-        objs = get_objects_from_node(self.object_names)
-        for o in objs:
-            for n in prop_names:
-                prop_name = "show_"+n
-                if hasattr(o, prop_name):
-                    setattr(o, prop_name, getattr(self, prop_name) )
-            pass
-        pass
-
-    show_name: bpy.props.BoolProperty(
-        name = "Name",
-        description="Display the object's name",
-        default = False,
-        update = update_viewport_display
-    )
-
-    show_axis: bpy.props.BoolProperty(
-        name = "Axes",
-        description="Display the object's origin and exes",
-        default = False,
-        update = update_viewport_display
-    )
-
-    show_wire: bpy.props.BoolProperty(
-        name = "Wireframe",
-        description="Display the object's wireframe over solid shading",
-        default = False,
-        update = update_viewport_display
-    )
-
-    show_all_edges: bpy.props.BoolProperty(
-        name = "All edges",
-        description="Display all edges for mesh objects",
-        default = False,
-        update = update_viewport_display
-    )
-
-    show_texture_space: bpy.props.BoolProperty(
-        name = "Texture space",
-        description="Display the object's texture space",
-        default = False,
-        update = update_viewport_display
-    )
-
-    show_shadows: bpy.props.BoolProperty(
-        name = "Shadow",
-        description="Object cast shadows in the 3D viewport",
-        default = True,
-        update = update_viewport_display
-    )
-
-    show_in_front: bpy.props.BoolProperty(
-        name = "In Front",
-        description="Make the object dosplay in front of others",
-        default = False,
-        update = update_viewport_display
-    )
-
-    display_types = [
-            ('BOUNDS', "", "BOUNDS: Display the bounds of the object", "MATPLANE", 0),
-            ('WIRE', "", "WIRE: Display the object as a wireframe", "MESH_CUBE", 1),
-            ('SOLID', "", "SOLID: Display the object as a solid (if solid drawing is enabled in the viewport)", "SNAP_VOLUME", 2),  #custom_icon("SV_MAKE_SOLID")
-            ('TEXTURED', "", "TEXTURED: Display the object with textures (if textures are enabled in the viewport)", "TEXTURE",  3),
-        ]
-    
-    def update_display_type(self, context):
-        objs = get_objects_from_node(self.object_names)
-        for o in objs:
-            o.display_type=self.display_type
-        return
-    
-    display_type : bpy.props.EnumProperty(
-        name = "Display Types",
-        items = display_types,
-        default = 'WIRE',
-        update = update_display_type)
-    
-    hide_render_types = [
-            ('RESTRICT_RENDER_ON', "", "Render objects", "RESTRICT_RENDER_ON", 0),
-            ('RESTRICT_RENDER_OFF', "", "Do not render objects", "RESTRICT_RENDER_OFF", 1),
-        ]
-    
-    def update_render_type(self, context):
-        for item in self.object_names:
-            if item.object_pointer:
-                item.object_pointer.hide_render = True if self.hide_render_type=='RESTRICT_RENDER_ON' else False
-        return
-    
-    hide_render_type : bpy.props.EnumProperty(
-        name = "Render Types",
-        items = hide_render_types,
-        default = 'RESTRICT_RENDER_OFF',
-        update = update_render_type)
-
-    
-    def remove_duplicates_objects_in_list(self, ops):
-        lst=[]
-        remove_idx = []
-        for I, item in enumerate(self.object_names):
-            pointer = None
-            if item.pointer_type=='OBJECT':
-                pointer = item.object_pointer
-            elif item.pointer_type=='COLLECTION':
-                pointer = item.collection_pointer
-            if pointer:
-                if (pointer in lst)==False:
-                    lst.append(pointer)
-                else:
-                    remove_idx.append(I)
-
-        remove_idx.sort()
-        remove_idx.reverse()
-        for idx in remove_idx:
-            self.object_names.remove(idx)
-        ops.report({'INFO'}, f"Removed {len(remove_idx)} object(s) ")
-        return
-
-    def sync_active_object_in_scene_with_list(self, ops):
-        object_synced = False
-        if bpy.context.view_layer.objects.active:
-            active_object = bpy.context.view_layer.objects.active
-            first_duplicated = sync_index = None
-            for I, item in enumerate(self.object_names):
-                objs = get_objects_from_item(item)
-                if active_object in objs:
-                    if first_duplicated==None:
-                        first_duplicated = I
-                        continue
-                    if I>self.active_obj_index:
-                        sync_index = I
-                        break
-                pass
-
-        if sync_index is not None:
-            self.active_obj_index=sync_index
-            object_synced = True
-        elif first_duplicated is not None:
-            self.active_obj_index=first_duplicated
-            object_synced = True
-
-        if object_synced:
-            ops.report({'INFO'}, f"Object {active_object.name} synced.")
-        else:
-            ops.report({'WARNING'}, f"Object '{active_object.name}' is not in the list of objects")
-        return
-
-    def get_objects_from_scene(self, ops):
-        '''Collect selected objects'''
-        self.object_names.clear()
-        names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
-
-        if self.sort:
-            names.sort()
-
-        for name in names:
-            item = self.object_names.add()
-            item.object_pointer = bpy.data.objects[name]
-            item.name = name
-            item.icon = 'OUTLINER_OB_' + bpy.data.objects[name].type
-
-        if not self.object_names:
-            ops.report({'WARNING'}, "Warning, no selected objects in the scene")
-            return
-
-        self.process_node(None)
-
-    def add_objects_from_scene(self, ops):
-        '''Add selected objects on the top of the list'''
-        #self.object_names.clear()
-
-        names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
-
-        for name in names:
-            item = self.object_names.add()
-            item.object_pointer = bpy.data.objects[name]
-            item.name = name
-            self.object_names.move(len(self.object_names)-1, 0)
-            self.active_obj_index=0
-
-        if not self.object_names:
-            ops.report({'WARNING'}, "Warning, no selected objects in the scene")
-            return
-
-        self.process_node(None)
-
-
-    def add_empty_collection(self, ops):
-        '''Add empty collection pointer on the top of the list'''
-
-        item = self.object_names.add()
-        item.pointer_type = "COLLECTION"
-        self.object_names.move(len(self.object_names)-1, 0)
-        self.active_obj_index=0
-
-        return
-
-    def clear_objects_from_list(self, ops):
-        '''Clear list of objects'''
-        self.object_names.clear()
-        self.process_node(None)
-
-    def move_current_object_up(self, ops):
-        '''Move current obbect in list up'''
-
-        if self.active_obj_index>0:
-            self.object_names.move(self.active_obj_index, self.active_obj_index-1)
-            self.active_obj_index-=1
-
-        if not self.object_names:
-            ops.report({'WARNING'}, "Warning, no selected objects in the scene")
-            return
-
-        self.process_node(None)
-
-    def move_current_object_down(self, ops):
-        '''Move current object in list down'''
-
-        if self.active_obj_index<=len(self.object_names)-2:
-            self.object_names.move(self.active_obj_index, self.active_obj_index+1)
-            self.active_obj_index+=1
-
-        self.process_node(None)
-
-    def draw_controls(self, elem):
-        elem.alignment='RIGHT'
-        self.wrapper_tracked_ui_draw_op(elem, SvONAddObjectsFromSceneUpMK4.bl_idname, text='', icon='ADD')
-        self.wrapper_tracked_ui_draw_op(elem, SvONAddEmptyCollectionMK4.bl_idname, text='', icon='GROUP')
-        self.wrapper_tracked_ui_draw_op(elem, SvONItemMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
-        self.wrapper_tracked_ui_draw_op(elem, SvONItemMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
-        self.wrapper_tracked_ui_draw_op(elem, SvONHighlightProcessedObjectsInSceneMK4.bl_idname, text='', icon='GROUP_VERTEX')
-        self.wrapper_tracked_ui_draw_op(elem, SvONHighlightAllObjectsInSceneMK4.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
-        self.wrapper_tracked_ui_draw_op(elem, SvONSyncSceneObjectWithListMK4.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
-        
-        objects_set = get_pointers_from_node(self.object_names)
-        if len(objects_set)<len(self.object_names):
-            icon = 'AUTOMERGE_ON'
-            description_text = f'Remove any duplicates objects in list\nCount of duplicates objects: {len(self.object_names)-len(objects_set)}'
-        else:
-            icon = 'AUTOMERGE_OFF'
-            description_text = 'Remove any duplicates objects in list.\nNo duplicates objects in list now'
-        description_text += "\n\nShift-Cliсk - skip confirmation dialog"
-        self.wrapper_tracked_ui_draw_op(elem, SvONRemoveDuplicatesObjectsInListMK4.bl_idname, text='', icon=icon, description_text=description_text)
-        elem.separator()
-        self.wrapper_tracked_ui_draw_op(elem, SvONClearObjectsFromListMK4.bl_idname, text='', icon='CANCEL')
-        elem.separator()
-        if self.object_names_ui_minimal:
-            elem.prop(self, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_EXIT')
-        else:
-            elem.prop(self, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_ENTER')
-        pass
-
-    def draw_object_names(self, layout):
-        layout.template_list("SvON_UL_NamesListMK4", "", self, "object_names", self, "active_obj_index", rows=3, item_dyntip_propname='test_text1')
-        pass
-    pass
-
-class SvNodeInDataMK4(SverchCustomTreeNode):
     object_names: bpy.props.CollectionProperty(type=SvONDataCollectionMK4)
     minimal_node_ui: bpy.props.BoolProperty(default=False)
     object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
@@ -1092,7 +845,7 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         pass
 
     def draw_object_names(self, layout):
-        layout.template_list("SvON_UL_NamesListMK4", "", self, "object_names", self, "active_obj_index", rows=3, item_dyntip_propname='test_text1')
+        layout.template_list("SvON_UL_NamesListMK4", f"uniq_{self.name}", self, "object_names", self, "active_obj_index", rows=3, item_dyntip_propname='test_text1')
         pass
     pass
 
