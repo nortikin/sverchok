@@ -462,7 +462,7 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             _matrices_out          = [m for matrices in _matrices_out for m in matrices]
 
         self.outputs[  'curves'].sv_set(_curves_out)
-        self.outputs['curfaces'].sv_set(_surfaces_out)
+        self.outputs['surfaces'].sv_set(_surfaces_out)
         self.outputs['object_names'].sv_set(_object_names_out)
         self.outputs['objects'].sv_set(_objects_out)
         self.outputs['matrices'].sv_set(_matrices_out)
@@ -503,6 +503,15 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         if hasattr(self, 'location_absolute'):
             # Blender 3.0 has no this attribute
             self.location_absolute = old_node.location_absolute
+
+        #copy old objects to new object_names table (old table has only names of objects, no pointers):
+        for I, item in enumerate(old_node.object_names):
+            if I<=len(self.object_names)-1:
+                if hasattr(item, 'pointer_type')==False:
+                    if hasattr(item, 'name')==True:
+                        if item.name in bpy.data.objects:
+                            self.object_names[I].object_pointer = bpy.data.objects[item.name]
+
         if hasattr(old_node, 'legacy_mode'):
             self.legacy_mode = old_node.legacy_mode
         else:

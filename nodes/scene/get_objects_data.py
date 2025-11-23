@@ -280,27 +280,27 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         self.inputs.new('SvObjectSocket'   , "objects")
         self.inputs ['objects']         .label = 'Objects'
 
-        self.outputs.new('SvVerticesSocket', "vertices")
-        self.outputs.new('SvStringsSocket' , "edges")
-        self.outputs.new('SvStringsSocket' , "polygons")
-        self.outputs.new('SvStringsSocket' , "vertices_select")
-        self.outputs.new('SvStringsSocket' , "vertices_crease")
-        self.outputs.new('SvStringsSocket' , "vertices_bevel_weight")
-        self.outputs.new('SvStringsSocket' , "edges_select")
-        self.outputs.new('SvStringsSocket' , "edges_crease")
-        self.outputs.new('SvStringsSocket' , "edges_seams")
-        self.outputs.new('SvStringsSocket' , "edges_sharps")
-        self.outputs.new('SvStringsSocket' , "edges_bevel_weight")
-        self.outputs.new('SvStringsSocket' , "polygon_selects")
-        self.outputs.new('SvStringsSocket' , "polygon_smooth")
-        self.outputs.new('SvVerticesSocket', "vertex_normals")
-        self.outputs.new('SvStringsSocket' , "material_idx")
-        self.outputs.new('SvStringsSocket' , "polygon_areas")
-        self.outputs.new('SvVerticesSocket', "polygon_centers")
-        self.outputs.new('SvVerticesSocket', "polygon_normals")
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket' , 'edges')
+        self.outputs.new('SvStringsSocket' , 'polygons')
+        self.outputs.new('SvStringsSocket' , 'vertices_select')
+        self.outputs.new('SvStringsSocket' , 'vertices_crease')
+        self.outputs.new('SvStringsSocket' , 'vertices_bevel_weight')
+        self.outputs.new('SvStringsSocket' , 'edges_select')
+        self.outputs.new('SvStringsSocket' , 'edges_crease')
+        self.outputs.new('SvStringsSocket' , 'edges_seams')
+        self.outputs.new('SvStringsSocket' , 'edges_sharps')
+        self.outputs.new('SvStringsSocket' , 'edges_bevel_weight')
+        self.outputs.new('SvStringsSocket' , 'polygon_selects')
+        self.outputs.new('SvStringsSocket' , 'polygon_smooth')
+        self.outputs.new('SvVerticesSocket', 'vertex_normals')
+        self.outputs.new('SvStringsSocket' , 'material_idx')
+        self.outputs.new('SvStringsSocket' , 'polygon_areas')
+        self.outputs.new('SvVerticesSocket', 'polygon_centers')
+        self.outputs.new('SvVerticesSocket', 'polygon_normals')
         self.outputs.new('SvStringsSocket' , 'object_names')
-        self.outputs.new('SvMatrixSocket'  , "matrix")
-        self.outputs.new('SvObjectSocket'  , "objects")
+        self.outputs.new('SvMatrixSocket'  , 'matrices')
+        self.outputs.new('SvObjectSocket'  , 'objects')
 
 
         self.outputs['vertices']                .label = 'Vertices'
@@ -322,7 +322,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         self.outputs['polygon_centers']         .label = 'Polygon Centers'
         self.outputs['polygon_normals']         .label = 'Polygon Normals'
         self.outputs['object_names']            .label = 'Object Names'
-        self.outputs['matrix']                  .label = 'Matrix'
+        self.outputs['matrices']                .label = 'Matrices'
         self.outputs['objects']                 .label = 'Objects'
 
         self.outputs['vertices_select']         .hide = not(self.enable_verts_attribute_sockets)
@@ -903,6 +903,10 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         for old_link in old_out_links:
             new_source_socket_name = operator.get_new_output_name(old_link.from_socket.name)
             new_source_socket_name = new_source_socket_name.lower()
+            if new_source_socket_name=='object':
+                new_source_socket_name='objects'
+            elif new_source_socket_name=='matrix':
+                new_source_socket_name='matrices'
             # We have to remove old link before creating new one
             # Blender would not allow two links pointing to the same target socket
             old_target_socket = old_link.to_socket
@@ -917,6 +921,14 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         if hasattr(self, 'location_absolute'):
             # Blender 3.0 has no this attribute
             self.location_absolute = old_node.location_absolute
+        
+        #copy old objects to new object_names table (old table has only names of objects, no pointers):
+        for I, item in enumerate(old_node.object_names):
+            if I<=len(self.object_names)-1:
+                if hasattr(item, 'pointer_type')==False:
+                    if hasattr(item, 'name')==True:
+                        if item.name in bpy.data.objects:
+                            self.object_names[I].object_pointer = bpy.data.objects[item.name]
         pass
 
     def load_from_json(self, node_data: dict, import_version: float):

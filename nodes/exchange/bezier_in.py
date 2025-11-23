@@ -146,20 +146,24 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', 'control_points_c1')
         self.outputs.new('SvVerticesSocket', 'control_points_c2')
         self.outputs.new('SvVerticesSocket', 'control_points_c3')
-        self.outputs.new('SvStringsSocket', 'tilt')
-        self.outputs.new('SvStringsSocket', 'radius')
-        self.outputs.new('SvStringsSocket', 'object_names').label='Object Names'
+        self.outputs.new('SvStringsSocket', 'tilts')
+        self.outputs.new('SvStringsSocket', 'radiuses')
+        self.outputs.new('SvStringsSocket', 'object_names')
         self.outputs.new('SvMatrixSocket', 'matrices')
         self.outputs.new('SvObjectSocket', "objects")
 
         self.outputs["curves"].label = 'Curves'
         self.outputs["curves"].custom_draw = 'draw_curves_out_socket'
 
-        self.outputs['control_points_c0'].label = "Controls Points c0"
-        self.outputs['control_points_c1'].label = "Controls Points handle c1"
-        self.outputs['control_points_c2'].label = "Controls Points handle c2"
-        self.outputs['control_points_c3'].label = "Controls Points c3"
-        self.outputs["objects"]          .label = "Objects"
+        self.outputs['control_points_c0'].label = 'Controls Points c0'
+        self.outputs['control_points_c1'].label = 'Controls Points handle c1'
+        self.outputs['control_points_c2'].label = 'Controls Points handle c2'
+        self.outputs['control_points_c3'].label = 'Controls Points c3'
+        self.outputs['tilts']            .label = 'Tilts'
+        self.outputs['radiuses']         .label = 'Radiuses'
+        self.outputs['object_names']     .label = 'Object names'
+        self.outputs['matrices']         .label = 'Matrices'
+        self.outputs['objects']          .label = 'Objects'
 
         self.inputs.new('SvObjectSocket'   , "objects")
         self.inputs ['objects'].label = "Objects"
@@ -176,7 +180,6 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         return self.inputs['objects'].object_ref_pointer is not None or self.inputs['objects'].is_linked
 
     def sv_draw_buttons(self, context, layout):
-        layout.separator(type='LINE')
         col = layout.column(align=True)
         row = col.row(align=True)
         row.alignment='RIGHT'
@@ -481,11 +484,9 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         self.outputs['control_points_c2'].sv_set(_control_points_c2_out)
         self.outputs['control_points_c3'].sv_set(_control_points_c3_out)
         self.outputs['object_names']     .sv_set(_object_names_out)
-        if 'Tilt' in self.outputs:
-            self.outputs['Tilt']         .sv_set(_tilt_out)
-        if 'Radius' in self.outputs:
-            self.outputs['Radius']       .sv_set(_radius_out)
-        self.outputs['objects']         .sv_set(_objects_out)
+        self.outputs['tilts']            .sv_set(_tilt_out)
+        self.outputs['radiuses']         .sv_set(_radius_out)
+        self.outputs['objects']          .sv_set(_objects_out)
         self.outputs['matrices']         .sv_set(_matrices_out)
 
     def migrate_links_from(self, old_node, operator):
@@ -510,6 +511,14 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         for old_link in old_out_links:
             new_source_socket_name = operator.get_new_output_name(old_link.from_socket.name)
             new_source_socket_name = new_source_socket_name.lower()
+            if new_source_socket_name=='object':
+                new_source_socket_name='objects'
+            elif new_source_socket_name=='matrix':
+                new_source_socket_name='matrixes'
+            elif new_source_socket_name=='tilt':
+                new_source_socket_name='tilts'
+            elif new_source_socket_name=='radius':
+                new_source_socket_name='radiuses'
             # We have to remove old link before creating new one
             # Blender would not allow two links pointing to the same target socket
             old_target_socket = old_link.to_socket
@@ -524,6 +533,14 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         if hasattr(self, 'location_absolute'):
             # Blender 3.0 has no this attribute
             self.location_absolute = old_node.location_absolute
+
+        #copy old objects to new object_names table (old table has only names of objects, no pointers):
+        for I, item in enumerate(old_node.object_names):
+            if I<=len(self.object_names)-1:
+                if hasattr(item, 'pointer_type')==False:
+                    if hasattr(item, 'name')==True:
+                        if item.name in bpy.data.objects:
+                            self.object_names[I].object_pointer = bpy.data.objects[item.name]
             
         if hasattr(old_node, 'legacy_mode'):
             self.legacy_mode = old_node.legacy_mode
