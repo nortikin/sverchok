@@ -99,11 +99,12 @@ Also you can simplify table view ob objects:
 Additionally
 ------------
 
-You can see objects info in description of elements on mouse hover:
+- You can see objects info in description of elements on mouse hover:
 
   .. image:: https://github.com/user-attachments/assets/5afb43b4-7651-4d03-9dc8-14b291bf7ca3
     :target: https://github.com/user-attachments/assets/5afb43b4-7651-4d03-9dc8-14b291bf7ca3
 
+- Added Metaball and Point Cloud
 
 Inputs
 ------
