@@ -337,6 +337,10 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         by_input = self.by_input
         if not by_input:
             row = col.row()
+            row.alignment='RIGHT'
+            if self.prefs_over_sized_buttons:
+                row.alignment='CENTER'
+                pass
 
             op_text = "Get selection"  # fallback
             callback = SvOB3BCallbackMK4.bl_idname
@@ -345,9 +349,9 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                 row.scale_y = 4.0
                 op_text = "G E T"
 
-            self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
+            self.wrapper_tracked_ui_draw_op(row, callback, text=op_text, icon='IMPORT').fn_name = 'get_objects_from_scene'
 
-        grid = layout.grid_flow(row_major=False, columns=0, align=True)
+        grid = layout.grid_flow(row_major=False, columns=2, align=True)
         grid.column(align=True).prop(self, 'sort')
         grid.column(align=True).prop(self, 'apply_matrix')
         grid.column(align=True).prop(self, 'mesh_join')

@@ -139,10 +139,8 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
 
     implementations = []
     if geomdl is not None:
-        implementations.append(
-            (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
-    implementations.append(
-        (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
+        implementations.append( (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0) )
+    implementations.append( (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1) )
 
     implementation : bpy.props.EnumProperty(
             name = "Implementation",
@@ -156,8 +154,10 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     def sv_draw_buttons(self, context, layout):
         col = layout.column(align=True)
         col.alignment='RIGHT'
-        #row = col.row(align=True)
-        row = col.row()
+        row = col.row(align=True)
+        row.alignment = 'RIGHT'
+        if self.prefs_over_sized_buttons:
+            row.alignment='CENTER'
 
         op_text = "Get selection"  # fallback
         if self.prefs_over_sized_buttons:
@@ -165,9 +165,13 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             op_text = "G E T"
 
         callback = SvExNurbsInCallbackOpMK2.bl_idname
-        self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
+        self.wrapper_tracked_ui_draw_op(row, callback, text=op_text, icon='IMPORT').fn_name = 'get_objects_from_scene'
 
-        grid = layout.grid_flow(row_major=True, columns=0, align=True)
+        # r = layout.row(align=True)
+        # r.alignment='LEFT'
+        # grid = r.grid_flow(row_major=True, columns=0, align=True)
+        grid = layout.grid_flow(row_major=False, columns=2, align=False)
+        #grid.alignment='RIGHT'
         # c0 = grid.column()
         # c0.alignment = 'RIGHT'
         # c0.label(text='Sort:')
@@ -191,11 +195,24 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         # row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
         # row0.row().prop(self, 'display_type', expand=True, text='')
 
-        grid.prop(self, 'sort')
-        grid.column(align=True).prop(self, 'implementation')
-        grid.prop(self, 'apply_matrix')
-        grid.prop(self, 'legacy_mode')
-        row0 = grid.row(align=True)
+        # grid.prop(self, 'sort')
+        # elem = grid.row(align=True)
+        # elem.alignment='LEFT'
+        # elem.prop(self, 'implementation', expand=True)
+        # grid.prop(self, 'apply_matrix')
+        # grid.prop(self, 'legacy_mode')
+        # row0 = grid.row(align=True)
+        # row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
+        # row0.row().prop(self, 'display_type', expand=True, text='')
+
+        grid.column(align=True).prop(self, 'sort')
+        grid.column(align=True).prop(self, 'apply_matrix')
+        grid.column(align=True).prop(self, 'legacy_mode')
+        row = grid.row(align=True)
+        row.alignment = 'LEFT'
+        row.prop(self, 'implementation', expand=True)
+        row0 = grid.column(align=True).row(align=True)
+        row0.alignment='LEFT'
         row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
         row0.row().prop(self, 'display_type', expand=True, text='')
 

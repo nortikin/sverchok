@@ -174,19 +174,22 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         return self.inputs['objects'].object_ref_pointer is not None or self.inputs['objects'].is_linked
 
     def sv_draw_buttons(self, context, layout):
+        layout.separator(type='LINE')
         col = layout.column(align=True)
         row = col.row(align=True)
+        row.alignment='RIGHT'
+        if self.prefs_over_sized_buttons:
+            row.alignment='CENTER'
 
-        row = col.row()
         op_text = "Get selection"  # fallback
 
         if self.prefs_over_sized_buttons:
             row.scale_y = 4.0
             op_text = "G E T"
 
-        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK2.bl_idname, text=op_text)
+        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK2.bl_idname, text=op_text, icon='IMPORT')
         
-        grid = layout.grid_flow(row_major=False, columns=0, align=True)
+        grid = layout.grid_flow(row_major=False, columns=2, align=True)
         grid.column(align=True).prop(self, 'sort')
         grid.column(align=True).prop(self, 'apply_matrix')
         grid.column(align=True).prop(self, 'legacy_mode')
