@@ -221,7 +221,8 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         row.prop(self, 'implementation', expand=True)
         row0 = grid.column(align=True).row(align=True)
         row0.alignment='LEFT'
-        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
+        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='TOOL_SETTINGS', text="")
+        row0.separator()
         row0.row().prop(self, 'display_type', expand=True, text='')
 
         if not self.by_input:

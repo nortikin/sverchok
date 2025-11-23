@@ -171,6 +171,32 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
 class ReadingObjectDataError(Exception):
     pass
 
+class SvONSwitchOffUnlinkedSocketsMK4(bpy.types.Operator):
+    '''Hide all unlinked sockets'''
+    bl_idname = "node.sv_on_switch_off_unlinked_sockets_mk4"
+    bl_label = "Select object as active"
+
+    # node_name: bpy.props.StringProperty(default='')
+    # tree_name: bpy.props.StringProperty(default='')  # all item types should have actual name of a tree
+    # fn_name  : bpy.props.StringProperty(default='')
+    # idx      : bpy.props.IntProperty(default=0)
+    description_text: bpy.props.StringProperty(default='Only hide unlinked output sockets')
+
+    @classmethod
+    def description(cls, context, property):
+        s = property.description_text
+        return s
+
+    def invoke(self, context, event):
+        node = context.node
+        if node:
+            for s in node.outputs:
+                if not s.is_linked:
+                    s.hide = True
+            pass
+        return {'FINISHED'}
+
+
 class SvONItemSelectObjectMK4(bpy.types.Operator):
     '''Select object as active in 3D Viewport. Use shift to add object into current selection of objects in scene.'''
     bl_idname = "node.sv_on_item_select_object_mk4"
@@ -591,7 +617,7 @@ class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
     #     return s
 
     # horizontal size
-    bl_ui_units_x = 5
+    bl_ui_units_x = 15
 
     # def is_extended():
     #     return True
@@ -600,10 +626,27 @@ class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
         if hasattr(context, "node"):
             layout = self.layout
             #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
-            grid = layout.grid_flow(row_major=False, columns=0, align=True)
+            root_grid = layout.grid_flow(row_major=False, columns=2, align=True)
+            grid1 = root_grid.grid_flow(row_major=False, columns=1, align=True)
+            grid1.label(text='Viewport Display:')
             for n in prop_names:
                 prop_name = "show_"+n
-                grid.prop(context.node, prop_name)
+                grid1.prop(context.node, prop_name)
+            
+            # if context.node.object_names_ui_minimal:
+            #     grid.prop(context.node, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_EXIT')
+            # else:
+            #     grid.prop(context.node, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_ENTER')
+            # pass
+            # grid.prop(context.node, "modifiers", text='Post', toggle=True, icon='MODIFIER_DATA')
+
+            grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
+            grid2.label(text='Sockets:')
+            for s in context.node.outputs:
+                row = grid2.row(align=True)
+                row.enabled = not s.is_linked
+                row.prop(s, 'hide', text=f'{s.label}{" (linked)" if s.is_linked else ""}' if s.label else s.name)
+            grid2.row(align=True).operator(SvONSwitchOffUnlinkedSocketsMK4.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
 
         pass
 
@@ -888,6 +931,7 @@ classes = [
     SvONItemMoveUpMK4,
     SvONAddObjectsFromSceneUpMK4,
     SvONAddEmptyCollectionMK4,
+    SvONSwitchOffUnlinkedSocketsMK4,
     SvONItemSelectObjectMK4,
     SvONItemEnablerMK4,
     SvONItemRemoveMK4,
