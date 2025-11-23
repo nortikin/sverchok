@@ -904,6 +904,14 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                 new_link = tree.links.new(new_source_socket, old_target_socket)
             else:
                 self.debug("New node %s has no output named %s, skipping", self.name, new_source_socket_name)
+        
+        # recreate hide property of socket:
+        for s in old_node.outputs:
+            if s.name in self.outputs:
+                self.outputs[s.name].hide = old_node.outputs[s.name].hide
+            pass
+        pass
+            
 
     def migrate_from(self, old_node):
         if hasattr(self, 'location_absolute'):
@@ -917,40 +925,49 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                     if hasattr(item, 'name')==True:
                         if item.name in bpy.data.objects:
                             self.object_names[I].object_pointer = bpy.data.objects[item.name]
-        pass
-
-    def load_from_json(self, node_data: dict, import_version: float):
-        '''function to get data when importing from json'''
-        data_objects = bpy.data.objects
-
-        if 'object_names' in node_data:
-            data_list = node_data.get('object_names')
-            if data_list:
-                data = json.loads(data_list)
-                for I, k in enumerate(data):
-                    if len(self.object_names)<=I-1:
-                        name    = k['name']
-                        exclude = k['exclude']
-                        if name in data_objects:
-                            self.object_names[I].object_pointer = data_objects[name]
-                            pass
-                        self.object_names[I].exclude = exclude
-                    else:
-                        continue
+                        pass
                     pass
+                pass
+            pass
+
         pass
 
-    def save_to_json(self, node_data: list):
-        '''function to set data for exporting json'''
-        data = []
-        for item in self.object_names:
-            if item.object_pointer:
-                data.append( dict(  name=item.object_pointer.name, exclude=item.exclude ) )
-            else:
-                data.append( dict(  name='', exclude=item.exclude ) )
+    # def load_from_json(self, node_data: dict, import_version: float):
+    #     '''function to get data when importing from json'''
+    #     data_objects = bpy.data.objects
 
-        data_json_str = json.dumps(data)
-        node_data['object_names'] = data_json_str
+    #     if 'object_names' in node_data:
+    #         data_list = node_data.get('object_names')
+    #         if data_list:
+    #             data = json.loads(data_list)
+    #             for I, k in enumerate(data):
+    #                 if len(self.object_names)<=I-1:
+    #                     pointer_type    = k['pointer_type']
+    #                     if pointer_type=='OBJECT':
+    #                         name    = k['name']
+    #                         if name in data_objects:
+    #                             self.object_names[I].object_pointer = data_objects[name]
+    #                             pass
+
+    #                     if 'exclude' in k:
+    #                         exclude = k['exclude']
+    #                         self.object_names[I].exclude = exclude
+    #                 else:
+    #                     continue
+    #                 pass
+    #     pass
+
+    # def save_to_json(self, node_data: list):
+    #     '''function to set data for exporting json'''
+    #     data = []
+    #     for item in self.object_names:
+    #         if item.object_pointer:
+    #             data.append( dict(  name=item.object_pointer.name, exclude=item.exclude ) )
+    #         else:
+    #             data.append( dict(  name='', exclude=item.exclude ) )
+
+    #     data_json_str = json.dumps(data)
+    #     node_data['object_names'] = data_json_str
 
 
 classes = [

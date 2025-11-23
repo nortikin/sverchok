@@ -514,6 +514,14 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                 new_link = tree.links.new(new_source_socket, old_target_socket)
             else:
                 self.debug("New node %s has no output named %s, skipping", self.name, new_source_socket_name)
+            pass
+
+        # recreate hide property of socket:
+        for s in old_node.outputs:
+            if s.name in self.outputs:
+                self.outputs[s.name].hide = old_node.outputs[s.name].hide
+            pass
+        pass
 
     def migrate_from(self, old_node):
         if hasattr(self, 'location_absolute'):
@@ -527,7 +535,11 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                     if hasattr(item, 'name')==True:
                         if item.name in bpy.data.objects:
                             self.object_names[I].object_pointer = bpy.data.objects[item.name]
-            
+                        pass
+                    pass
+                pass
+            pass
+
         if hasattr(old_node, 'legacy_mode'):
             self.legacy_mode = old_node.legacy_mode
         else:

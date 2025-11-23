@@ -173,7 +173,7 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
         name="collection",
         type=bpy.types.Collection
     )
-    icon   : bpy.props.StringProperty(default="BLANK1")
+    icon   : bpy.props.StringProperty(default="BLANK1", options={'SKIP_SAVE'},)
     exclude: bpy.props.BoolProperty(
         default=False,
         description='Exclude from process',
@@ -226,7 +226,11 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
             pass
 
         return s
-    test_text1: bpy.props.StringProperty(get=_get_description)
+    
+    test_text1: bpy.props.StringProperty(
+        get=_get_description,
+        options={'SKIP_SAVE'},
+    )
 
 class ReadingObjectDataError(Exception):
     pass
