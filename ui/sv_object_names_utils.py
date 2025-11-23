@@ -632,16 +632,9 @@ class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
             for n in prop_names:
                 prop_name = "show_"+n
                 grid1.prop(context.node, prop_name)
-            
-            # if context.node.object_names_ui_minimal:
-            #     grid.prop(context.node, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_EXIT')
-            # else:
-            #     grid.prop(context.node, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_ENTER')
-            # pass
-            # grid.prop(context.node, "modifiers", text='Post', toggle=True, icon='MODIFIER_DATA')
 
             grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
-            grid2.label(text='Sockets:')
+            grid2.label(text='Output Sockets:')
             for s in context.node.outputs:
                 row = grid2.row(align=True)
                 row.enabled = not s.is_linked
