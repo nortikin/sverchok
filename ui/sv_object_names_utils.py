@@ -86,7 +86,7 @@ def get_objects_of_collection(coll, use_sort_alpha):
     #     obj_coll = list(obj_coll)
     #     pass
 
-    # for co,patibility with Blender 3.0 coll.children_recursive are not using
+    # for compatibility with Blender 3.0 coll.children_recursive are not using
     obj_coll = all_local_objects_recursive(coll, True)
     obj_coll = list(obj_coll)
     return obj_coll
