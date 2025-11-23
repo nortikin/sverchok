@@ -13,22 +13,82 @@ from sverchok.data_structure import updateNode
 # object properties in Blender viewport -> Object Properties -> Viewport Display
 prop_names = ['name', 'axis', 'wire', 'all_edges', 'texture_space', 'shadows', 'in_front']
 
-def get_objects_of_collection(coll, use_sort_alpha):
-    obj_coll = []
+def walk_collection(col, objs, visited_cols, use_sort_alpha):
+    # recursion safe:
+    if col in visited_cols:
+        return
+    visited_cols.add(col)
+
     if use_sort_alpha==False:
-        # objects before collections
-        obj_coll.extend(coll.objects)
-    
-    for child in coll.children_recursive if use_sort_alpha==False else reversed(coll.children_recursive):
+        # get objects in current collection
+        _objs = []
+        for obj in col.objects:
+            # skip links
+            if obj.library:
+                continue
+
+            # skip duplicated of objects
+            if obj not in objs and obj not in _objs:
+                _objs.append(obj)
+            pass
         if use_sort_alpha==True:
-            obj_coll.extend(sorted(child.objects, key=lambda o: o.name))
-        else:
-            obj_coll.extend( list(child.objects))
+            _objs = sorted(_objs, key=lambda o: o.name)
+        objs.extend(_objs)
+
+    # childer recursion
+    for child in col.children:
+        walk_collection(child, objs, visited_cols, use_sort_alpha)
 
     if use_sort_alpha==True:
-        # objects after collections
-        obj_coll.extend(sorted(list(coll.objects), key=lambda o: o.name))
+        # get objects in current collection
+        _objs = []
+        for obj in col.objects:
+            # skip links
+            if obj.library:
+                continue
+
+            # skip duplicated of objects
+            if obj not in objs and obj not in _objs:
+                _objs.append(obj)
+            pass
+        if use_sort_alpha==True:
+            _objs = sorted(_objs, key=lambda o: o.name)
+
+        objs.extend(_objs)
+
+
+def all_local_objects_recursive(root_collection, use_sort_alpha):
+    '''return objects from collection and its childer without links and duplicated.'''
+    objs = list()
+    visited_cols = set()
+    walk_collection(root_collection, objs, visited_cols, use_sort_alpha)
+    return objs
+
+def get_objects_of_collection(coll, use_sort_alpha):
+    obj_coll = []
     
+    # if False and hasattr(coll, 'children_recursive'):
+    #     if use_sort_alpha==False:
+    #         # objects before collections
+    #         obj_coll.extend(coll.objects)
+
+    #     for child in coll.children_recursive if use_sort_alpha==False else reversed(coll.children_recursive):
+    #         if use_sort_alpha==True:
+    #             obj_coll.extend(sorted(child.objects, key=lambda o: o.name))
+    #         else:
+    #             obj_coll.extend( list(child.objects))
+
+    #     if use_sort_alpha==True:
+    #         # objects after collections
+    #         obj_coll.extend(sorted(list(coll.objects), key=lambda o: o.name))
+    # else:
+    #     obj_coll = all_local_objects_recursive(coll, True)
+    #     obj_coll = list(obj_coll)
+    #     pass
+
+    # for co,patibility with Blender 3.0 coll.children_recursive are not using
+    obj_coll = all_local_objects_recursive(coll, True)
+    obj_coll = list(obj_coll)
     return obj_coll
 
 def get_objects_from_item(item):
@@ -155,7 +215,7 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
                 chars = [f'Collection: {self.collection_pointer.name}']
                 objs = get_objects_from_item(self)
                 if objs:
-                    chars.append("Members:  (Orders as Outliner->Filter->Sort Alphabetically (On/Off))\n")
+                    chars.append("Members:  (Sorted Alphabetically as sorted view in Outliner. Members of collections are first)\n")
                 for obj in objs:
                     chars.append( f"   {obj.type}, {obj.name}")
                 chars.append("---------------------")

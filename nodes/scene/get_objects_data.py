@@ -21,7 +21,7 @@ from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
 import numpy as np
-from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, ReadingObjectDataError
+from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, ReadingObjectDataError, get_objects_from_item
 
 numpy_socket_names = ['vertices', 'edges', 'vertex_normals', 'material_idx', 'polygon_areas', 'polygon_centers', 'polygon_normals']
 
@@ -443,26 +443,13 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         if isinstance(objs[0], list):
             objs = objs[0]
         if not objs:
-            #objs = (o.object_pointer for o in self.object_names if o.exclude==False and o.object_pointer)
             objs = []
-            collection_names=[]
             for o in self.object_names:
                 if o.exclude==False:
-                    if o.pointer_type=='OBJECT':
-                        if o.object_pointer:
-                            objs.append(o.object_pointer)
-                            collection_names.append("")
-                    elif o.pointer_type=='COLLECTION':
-                        if o.collection_pointer:
-                            obj_coll = set(o.collection_pointer.objects)
-                            for child in o.collection_pointer.children_recursive:
-                                obj_coll.update(child.objects)
-                            collection_names.extend( [o.collection_pointer.name]*len(objs) )
-                            objs.extend(list(obj_coll))
-                    else:
-                        raise Exception(f"Unknown pointer type: {o.pointer_type}.")
-        else:
-            collection_names = [""]*len(objs)
+                    _obj = get_objects_from_item(o)
+                    objs.extend(_obj)
+                pass
+            pass
 
         # iterate through references
         for I, obj in enumerate(objs):

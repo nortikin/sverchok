@@ -291,28 +291,13 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             objs = objs[0]
             
         if not objs:
-            #objs = (o.object_pointer for o in self.object_names if o.exclude==False and o.object_pointer)
             objs = []
-            collection_names=[]
             for o in self.object_names:
                 if o.exclude==False:
-                    if o.pointer_type=='OBJECT':
-                        if o.object_pointer:
-                            objs.append(o.object_pointer)
-                            collection_names.append("")
-                    elif o.pointer_type=='COLLECTION':
-                        if o.collection_pointer:
-                            obj_coll = list(o.collection_pointer.objects)
-                            for child in o.collection_pointer.children_recursive:
-                                obj_coll.update(child.objects)
-                            collection_names.extend( [o.collection_pointer.name]*len(objs) )
-                            objs.extend(list(obj_coll))
-                    else:
-                        raise Exception(f"Unknown pointer type: {o.pointer_type}.")
+                    _obj = get_objects_from_item(o)
+                    objs.extend(_obj)
                 pass
             pass
-        else:
-            collection_names = [""]*len(objs)
 
         #for item in self.object_names:
         for I, obj in enumerate(objs):
