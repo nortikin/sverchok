@@ -13,6 +13,7 @@ import bpy
 from bpy.types import Operator
 
 import sverchok
+from sverchok.ui.utils import datafiles
 from sverchok.utils.sv_json_import import JSONImporter
 from sverchok.ui.sv_icons import icon
 from sverchok.ui.sv_3d_panel import plugin_icons
@@ -60,15 +61,18 @@ class SV_MT_LayoutsSplash(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        row = layout.row(align=True)
-        row.operator('sv.download_splash_images', text='Download helps', icon='URL')
-        gr = set()
-        for item in context.space_data.node_tree.sv_splash_data:
-            group = item.group
-            if group not in gr:
-                gr.add(group)
-                op = row.operator('sv.splash_screen_simple', text=group, icon='IMPORT')
-                op.group = group
+        col = layout.column(align=True)
+        col.operator('sv.download_splash_images', text='Download helps', icon='URL')
+        for path, category_name in sv_helps_categories_names():
+            op = col.operator('sv.splash_screen_simple', text=category_name, icon='HIDE_OFF')
+            op.group = category_name
+        #gr = set()
+        #for item in context.space_data.node_tree.sv_splash_data:
+        #    group = item.group
+        #    if group not in gr:
+        #        gr.add(group)
+        #        op = row.operator('sv.splash_screen_simple', text=group, icon='IMPORT')
+        #        op.group = group
 
 class SW_OT_Console(Operator):
     """Show/hide console"""
@@ -256,6 +260,15 @@ def example_categories_names():
     for name in names:
         yield name
 
+
+def sv_helps_categories_names():
+    splash_path = Path(datafiles) / 'splash_images'
+    names = []
+    for category_path in splash_path.iterdir():
+        if category_path.is_dir():
+            names.append((splash_path, category_path.name))
+    for name in names:
+        yield name
 
 class SvNodeTreeImporterSilent(bpy.types.Operator):
     """Importing template tree"""

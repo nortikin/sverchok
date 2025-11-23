@@ -8,6 +8,7 @@ import zipfile
 from sverchok.ui.utils import datafiles
 from pathlib import Path
 import tempfile
+import shutil
 
 # Global variables
 textures = []
@@ -17,7 +18,7 @@ button_height = 20
 button_margin = 3
 close_button_width = 103
 
-splash_images = 'https://github.com/nortikin/test/archive/refs/heads/main.zip'#'https://github.com/nortikin/sverchok_splash_screen/archive/refs/heads/main.zip'
+splash_images = 'https://github.com/nortikin/sverchok_splash_screen/archive/refs/heads/main.zip' #'https://github.com/nortikin/test/archive/refs/heads/main.zip'#
 
 # Shaders
 if bpy.app.background:
@@ -75,7 +76,7 @@ def download_and_extract_splash_images():
                         if len(parts) > 1:
                             new_path = '/'.join(parts[1:])
                             if new_path:  # Если остался путь после удаления корневой папки
-                                target_path = Path(extract_to) / new_path
+                                target_path = splash_images_path / new_path
                                 
                                 if file_path.endswith('/'):
                                     # Папка
@@ -94,11 +95,11 @@ def download_and_extract_splash_images():
             files.append(png_file)
         files.sort()
         
-        for f in files:
-            newitem = bpy.context.space_data.node_tree.sv_splash_data.add()
-            newitem.group = f.parent.name
-            newitem.filename = f.relative_to(splash_images_path).as_posix()
-            newitem.image = f.name[:-4]
+        #for f in files:
+        #    newitem = bpy.context.space_data.node_tree.sv_splash_data.add()
+        #    newitem.group = f.parent.name
+        #    newitem.filename = f.relative_to(splash_images_path).as_posix()
+        #    newitem.image = f.name[:-4]
         
         
         print(f"Splash images successfully extracted to {splash_images_path}")
@@ -116,15 +117,27 @@ def load_images_from_script_folder(group):
     # Clear existing textures
     textures.clear()
 
+    datafiles_path = Path(datafiles) / "splash_images"
+    splash_images_path = datafiles_path / group
+    files = []
+    for png_file in splash_images_path.rglob("*.png"):
+        files.append(png_file)
+    files.sort()
+    for f in files:
+        newitem = bpy.context.space_data.node_tree.sv_splash_data.add()
+        newitem.group = f.parent.name
+        newitem.filename = f.relative_to(splash_images_path).as_posix()
+        newitem.image = f.name[:-4]
     # Get script folder
     script_folder = bpy.context.space_data.node_tree.sv_splash_data #os.path.join(os.path.dirname(os.path.abspath(__file__)), 'splash_images')
 
     # Load images and create textures
     for item in script_folder:
         group_, filename, image = item.group, item.filename, item.image
+        print(group_,filename,image)
         if group_ == group:
             try:
-                img = bpy.data.images.load(filename)
+                img = bpy.data.images.load(str(splash_images_path / filename))
                 # Исправление цветов для Blender 5.0
                 if bpy.app.version >= (5, 0, 0):
                     # Для Blender 5.0+ указываем правильное цветовое пространство
@@ -137,9 +150,9 @@ def load_images_from_script_folder(group):
                 textures.append(texture)
                 # Remove image from Blender data to avoid clutter
                 bpy.data.images.remove(img)
-                print(f"Loaded: {os.path.basename(img_file)}")
+                print(f"Loaded: {os.path.basename(filename)}")
             except Exception as e:
-                print(f"Error loading {img_file}: {e}")
+                print(f"Error loading {filename}: {e}")
 
     return len(textures) > 0
 
