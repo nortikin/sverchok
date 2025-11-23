@@ -175,12 +175,7 @@ class SvONSwitchOffUnlinkedSocketsMK4(bpy.types.Operator):
     '''Hide all unlinked sockets'''
     bl_idname = "node.sv_on_switch_off_unlinked_sockets_mk4"
     bl_label = "Select object as active"
-
-    # node_name: bpy.props.StringProperty(default='')
-    # tree_name: bpy.props.StringProperty(default='')  # all item types should have actual name of a tree
-    # fn_name  : bpy.props.StringProperty(default='')
-    # idx      : bpy.props.IntProperty(default=0)
-    description_text: bpy.props.StringProperty(default='Only hide unlinked output sockets')
+    description_text: bpy.props.StringProperty(default='Only hide unlinked output sockets.\nTo hide linked socket you have to unlink it first.')
 
     @classmethod
     def description(cls, context, property):
@@ -635,10 +630,14 @@ class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
 
             grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
             grid2.label(text='Output Sockets:')
+            grid2.label(text='- socket is visible', icon='CHECKBOX_HLT')
+            grid2.label(text='- socket is hidden', icon='CHECKBOX_DEHLT')
+            grid2.separator()
+            grid2.row(align=True).operator(SvONSwitchOffUnlinkedSocketsMK4.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
             for s in context.node.outputs:
                 row = grid2.row(align=True)
                 row.enabled = not s.is_linked
-                row.prop(s, 'hide', text=f'{s.label}{" (linked)" if s.is_linked else ""}' if s.label else s.name)
+                row.prop(s, 'hide', text=f'{s.label if s.label else s.name}{" (linked)" if s.is_linked else ""}', invert_checkbox=True)
             grid2.row(align=True).operator(SvONSwitchOffUnlinkedSocketsMK4.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
 
         pass
