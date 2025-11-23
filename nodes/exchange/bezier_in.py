@@ -112,7 +112,7 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         )
 
     sort: BoolProperty(
-        name='Sort by names',
+        name='Sort',
         description='Sorting inserted objects by names',
         default=True, update=updateNode)
 
@@ -140,24 +140,26 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     
     def sv_init(self, context):
         self.width = 300
-        self.outputs.new('SvCurveSocket', 'Curves')
+        self.outputs.new('SvCurveSocket', 'curves')
         self.outputs.new('SvStringsSocket', 'use_cyclic_u').label='Cyclic U'
         self.outputs.new('SvVerticesSocket', 'control_points_c0')
         self.outputs.new('SvVerticesSocket', 'control_points_c1')
         self.outputs.new('SvVerticesSocket', 'control_points_c2')
         self.outputs.new('SvVerticesSocket', 'control_points_c3')
-        self.outputs.new('SvStringsSocket', 'Tilt')
-        self.outputs.new('SvStringsSocket', 'Radius')
+        self.outputs.new('SvStringsSocket', 'tilt')
+        self.outputs.new('SvStringsSocket', 'radius')
         self.outputs.new('SvStringsSocket', 'object_names').label='Object Names'
-        self.outputs.new('SvMatrixSocket', 'Matrices')
+        self.outputs.new('SvMatrixSocket', 'matrices')
+        self.outputs.new('SvObjectSocket', "objects")
 
-        self.outputs["Curves"].label = 'Curves'
-        self.outputs["Curves"].custom_draw = 'draw_curves_out_socket'
+        self.outputs["curves"].label = 'Curves'
+        self.outputs["curves"].custom_draw = 'draw_curves_out_socket'
 
         self.outputs['control_points_c0'].label = "Controls Points c0"
         self.outputs['control_points_c1'].label = "Controls Points handle c1"
         self.outputs['control_points_c2'].label = "Controls Points handle c2"
         self.outputs['control_points_c3'].label = "Controls Points c3"
+        self.outputs["objects"]          .label = "Objects"
 
         self.inputs.new('SvObjectSocket'   , "objects")
         self.inputs ['objects'].label = "Objects"
@@ -271,7 +273,6 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         curves_out = []
         use_cyclic_u_out = []
         object_names_out = []
-        matrices_out = []
         controls_out = []
         control_points_c0_out = []
         control_points_c1_out = []
@@ -279,6 +280,8 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         control_points_c3_out = []
         tilt_out = []
         radius_out = []
+        objects_out = []
+        matrices_out = []
 
         if isinstance(objs[0], list):
             objs = objs[0]
@@ -311,7 +314,6 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         for I, obj in enumerate(objs):
             object_exists, curve_object, bezier_object, non_bezier_object, chars = get_object_data_spline_info(obj)
 
-            matrix = obj.matrix_world
             splines_curves       = []
             splines_use_cyclic_u = []
             splines_controls_c0  = []
@@ -320,6 +322,8 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             splines_controls_c3  = []
             splines_tilt         = []
             splines_radius       = []
+            objects              = []
+            matrix = obj.matrix_world
 
             if curve_object==False:
                 # time-consumer. More objects, more time
@@ -363,12 +367,12 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                     splines_tilt.append([])
                     splines_radius.append([])
                     pass
+            objects.append(obj)
 
             if self.concat_segments==True:
                 if self.source_curves_join_mode=='KEEP':
                     curves_out           .append(splines_curves)
                     use_cyclic_u_out     .append(splines_use_cyclic_u)
-                    matrices_out         .append([matrix] * max(len(splines_curves), 1) ) # if no splines then return 1 matrix of object
                     object_names_out     .append([obj.name] * max(len(splines_curves), 1) )  # if no splines then return 1 for object name
                     control_points_c0_out.append([co for lst in splines_controls_c0 for co in lst])
                     control_points_c1_out.append([co for lst in splines_controls_c1 for co in lst])
@@ -376,6 +380,8 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                     control_points_c3_out.append([co for lst in splines_controls_c3 for co in lst])
                     tilt_out             .append(splines_tilt)
                     radius_out           .append(splines_radius)
+                    objects_out          .append(objects )
+                    matrices_out         .append([matrix] * max(len(splines_curves), 1) ) # if no splines then return 1 matrix of object
                     pass
                 else:
                     raise Exception(f"mode {self.source_curves_join_mode} unused")
@@ -397,7 +403,6 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                 if self.source_curves_join_mode=='KEEP':
                     curves_out           .append(splines_curves)
                     use_cyclic_u_out     .append(splines_use_cyclic_u)
-                    matrices_out         .append([matrix]*len(splines_curves))
                     object_names_out     .append([obj.name]*len(splines_curves))
                     spline_c0 = []
                     spline_c1 = []
@@ -419,6 +424,8 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                     control_points_c3_out.append(spline_c3)
                     tilt_out             .append(splines_tilt)
                     radius_out           .append(splines_radius)
+                    objects_out          .append(objects )
+                    matrices_out         .append([matrix]*len(splines_curves))
                     pass
                 else:
                     raise Exception(f"mode {self.source_curves_join_mode} unused")
@@ -446,9 +453,10 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         _control_points_c2_out = control_points_c2_out
         _control_points_c3_out = control_points_c3_out
         _object_names_out = object_names_out
-        _matrices_out = matrices_out
         _tilt_out = tilt_out
         _radius_out = radius_out
+        _objects_out = objects_out
+        _matrices_out = matrices_out
 
         if self.legacy_mode == True:
             _curves_out            = [c for curves in _curves_out            for c in curves]
@@ -458,37 +466,69 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             _control_points_c2_out = [c for curves in _control_points_c2_out for c in curves]
             _control_points_c3_out = [c for curves in _control_points_c3_out for c in curves]
             _object_names_out      = [c for curves in _object_names_out      for c in curves]
-            _matrices_out          = [c for curves in _matrices_out          for c in curves]
             _tilt_out              = [c for curves in _tilt_out              for c in curves]
             _radius_out            = [c for curves in _radius_out            for c in curves]
+            _objects_out           = [c for objs   in _objects_out           for c in objs  ]
+            _matrices_out          = [c for curves in _matrices_out          for c in curves]
             
 
         
 
-        self.outputs['Curves']           .sv_set(_curves_out)
+        self.outputs['curves']           .sv_set(_curves_out)
         self.outputs['use_cyclic_u']     .sv_set(_use_cyclic_u_out)
         self.outputs['control_points_c0'].sv_set(_control_points_c0_out)
         self.outputs['control_points_c1'].sv_set(_control_points_c1_out)
         self.outputs['control_points_c2'].sv_set(_control_points_c2_out)
         self.outputs['control_points_c3'].sv_set(_control_points_c3_out)
         self.outputs['object_names']     .sv_set(_object_names_out)
-        self.outputs['Matrices']         .sv_set(_matrices_out)
         if 'Tilt' in self.outputs:
             self.outputs['Tilt']         .sv_set(_tilt_out)
         if 'Radius' in self.outputs:
             self.outputs['Radius']       .sv_set(_radius_out)
+        self.outputs['objects']         .sv_set(_objects_out)
+        self.outputs['matrices']         .sv_set(_matrices_out)
+
+    def migrate_links_from(self, old_node, operator):
+        '''replace socket names to lowercase'''
+        # copy of "ui\nodes_replacement.py"
+
+        tree = self.id_data
+        # Copy incoming / outgoing links
+        old_in_links = [link for link in tree.links if link.to_node == old_node]
+        old_out_links = [link for link in tree.links if link.from_node == old_node]
+
+        for old_link in old_in_links:
+            new_target_socket_name = operator.get_new_input_name(old_link.to_socket.name)
+            new_target_socket_name = new_target_socket_name.lower()
+            if new_target_socket_name in self.inputs:
+                new_target_socket = self.inputs[new_target_socket_name]
+                new_link = tree.links.new(old_link.from_socket, new_target_socket)
+            else:
+                self.debug("New node %s has no input named %s, skipping", self.name, new_target_socket_name)
+            tree.links.remove(old_link)
+
+        for old_link in old_out_links:
+            new_source_socket_name = operator.get_new_output_name(old_link.from_socket.name)
+            new_source_socket_name = new_source_socket_name.lower()
+            # We have to remove old link before creating new one
+            # Blender would not allow two links pointing to the same target socket
+            old_target_socket = old_link.to_socket
+            tree.links.remove(old_link)
+            if new_source_socket_name in self.outputs:
+                new_source_socket = self.outputs[new_source_socket_name]
+                new_link = tree.links.new(new_source_socket, old_target_socket)
+            else:
+                self.debug("New node %s has no output named %s, skipping", self.name, new_source_socket_name)
 
     def migrate_from(self, old_node):
         if hasattr(self, 'location_absolute'):
             # Blender 3.0 has no this attribute
             self.location_absolute = old_node.location_absolute
-        for I, item in enumerate(old_node.object_names):
-            if I<=len(self.object_names)-1:
-                if hasattr(item, 'name') and item.name in bpy.data.objects:
-                    self.object_names[I].object_pointer = bpy.data.objects[item.name]
-        self.legacy_mode = True
-        if self.width<305:
-            self.width=305
+            
+        if hasattr(old_node, 'legacy_mode'):
+            self.legacy_mode = old_node.legacy_mode
+        else:
+            self.legacy_mode = True
         pass
 
 classes = [

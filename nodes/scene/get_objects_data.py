@@ -25,6 +25,18 @@ from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, ReadingObjectData
 
 numpy_socket_names = ['vertices', 'edges', 'vertex_normals', 'material_idx', 'polygon_areas', 'polygon_centers', 'polygon_normals']
 
+class NODE_OT_open_extra(bpy.types.Operator):
+    bl_idname = "node.open_extra"
+    bl_label = "Extra Settings"
+
+    def execute(self, context):
+        bpy.ops.wm.call_panel(
+            name="NODE_PT_my_extra",
+            keep_open=True,
+        )
+        return {'FINISHED'}
+
+
 def get_vertgroups(mesh):
     return [k for k,v in enumerate(mesh.vertices) if v.groups.values()]
 
@@ -250,9 +262,9 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             layout.separator()
 
     def draw_polygons_out_socket(self, socket, context, layout):
-        layout.popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
-        #layout.operator(SV_PT_ViewportDisplayPropertiesMK4.bl_idname, icon='TRIA_DOWN', text="")
-        layout.prop(self, 'display_type', expand=True, text='')
+        #layout.popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
+        ##layout.operator(SV_PT_ViewportDisplayPropertiesMK4.bl_idname, icon='TRIA_DOWN', text="")
+        #layout.prop(self, 'display_type', expand=True, text='')
         layout.separator()
         layout.label(text=f'{socket.label} ')
         layout.prop(self, 'enable_polygons_attribute_sockets', icon='FILE_3D', text='', toggle=True)
@@ -266,6 +278,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         self.width = 225
         
         self.inputs.new('SvObjectSocket'   , "objects")
+        self.inputs ['objects']         .label = 'Objects'
 
         self.outputs.new('SvVerticesSocket', "vertices")
         self.outputs.new('SvStringsSocket' , "edges")
@@ -285,48 +298,47 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         self.outputs.new('SvStringsSocket' , "polygon_areas")
         self.outputs.new('SvVerticesSocket', "polygon_centers")
         self.outputs.new('SvVerticesSocket', "polygon_normals")
-        self.outputs.new('SvStringsSocket', 'object_names').label='Object Names'
+        self.outputs.new('SvStringsSocket' , 'object_names')
         self.outputs.new('SvMatrixSocket'  , "matrix")
-        self.outputs.new('SvObjectSocket'  , "object")
+        self.outputs.new('SvObjectSocket'  , "objects")
 
-        self.inputs ["objects"]         .label = "Objects"
 
-        self.outputs["vertices"]                .label = "Vertices"
-        self.outputs["edges"]                   .label = "Edges"
-        self.outputs["polygons"]                .label = "Polygons"
-        self.outputs["vertices_select"]         .label = "(*) Vertices Select"
-        self.outputs["vertices_crease"]         .label = "(*) Vertices Crease"
-        self.outputs["vertices_bevel_weight"]   .label = "(*) Vertices Bevel Weight"
-        self.outputs["edges_select"]            .label = "(|) Edges Select"
-        self.outputs["edges_seams"]             .label = "(|) Edges Seam"
-        self.outputs["edges_sharps"]            .label = "(|) Edges Sharp"
-        self.outputs["edges_crease"]            .label = "(|) Edges Crease"
-        self.outputs["edges_bevel_weight"]      .label = "(|) Edges Bevel Weight"
-        self.outputs["polygon_selects"]         .label = "(+) Polygons Select"
-        self.outputs["polygon_smooth"]          .label = "(+) Polygons Smooth"
-        self.outputs["vertex_normals"]          .label = "Vertex Normals"
-        self.outputs["material_idx"]            .label = "Material Idx"
-        self.outputs["polygon_areas"]           .label = "Polygon Areas"
-        self.outputs["polygon_centers"]         .label = "Polygon Centers"
-        self.outputs["polygon_normals"]         .label = "Polygon Normals"
-        self.outputs["object_names"]            .label = "Object Names"
-        self.outputs["matrix"]                  .label = "Matrix"
-        self.outputs["object"]                  .label = "Object"
+        self.outputs['vertices']                .label = 'Vertices'
+        self.outputs['edges']                   .label = 'Edges'
+        self.outputs['polygons']                .label = 'Polygons'
+        self.outputs['vertices_select']         .label = '(*) Vertices Select'
+        self.outputs['vertices_crease']         .label = '(*) Vertices Crease'
+        self.outputs['vertices_bevel_weight']   .label = '(*) Vertices Bevel Weight'
+        self.outputs['edges_select']            .label = '(|) Edges Select'
+        self.outputs['edges_seams']             .label = '(|) Edges Seam'
+        self.outputs['edges_sharps']            .label = '(|) Edges Sharp'
+        self.outputs['edges_crease']            .label = '(|) Edges Crease'
+        self.outputs['edges_bevel_weight']      .label = '(|) Edges Bevel Weight'
+        self.outputs['polygon_selects']         .label = '(+) Polygons Select'
+        self.outputs['polygon_smooth']          .label = '(+) Polygons Smooth'
+        self.outputs['vertex_normals']          .label = 'Vertex Normals'
+        self.outputs['material_idx']            .label = 'Material Idx'
+        self.outputs['polygon_areas']           .label = 'Polygon Areas'
+        self.outputs['polygon_centers']         .label = 'Polygon Centers'
+        self.outputs['polygon_normals']         .label = 'Polygon Normals'
+        self.outputs['object_names']            .label = 'Object Names'
+        self.outputs['matrix']                  .label = 'Matrix'
+        self.outputs['objects']                 .label = 'Objects'
 
-        self.outputs["vertices_select"]         .hide = not(self.enable_verts_attribute_sockets)
-        self.outputs["vertices_crease"]         .hide = not(self.enable_verts_attribute_sockets)
-        self.outputs["vertices_bevel_weight"]   .hide = not(self.enable_verts_attribute_sockets)
-        self.outputs["edges_select"]            .hide = not(self.enable_edges_attribute_sockets)
-        self.outputs["edges_seams"]             .hide = not(self.enable_edges_attribute_sockets)
-        self.outputs["edges_sharps"]            .hide = not(self.enable_edges_attribute_sockets)
-        self.outputs["edges_crease"]            .hide = not(self.enable_edges_attribute_sockets)
-        self.outputs["edges_bevel_weight"]      .hide = not(self.enable_edges_attribute_sockets)
-        self.outputs["polygon_selects"]         .hide = not(self.enable_polygons_attribute_sockets)
-        self.outputs["polygon_smooth"]          .hide = not(self.enable_polygons_attribute_sockets)
+        self.outputs['vertices_select']         .hide = not(self.enable_verts_attribute_sockets)
+        self.outputs['vertices_crease']         .hide = not(self.enable_verts_attribute_sockets)
+        self.outputs['vertices_bevel_weight']   .hide = not(self.enable_verts_attribute_sockets)
+        self.outputs['edges_select']            .hide = not(self.enable_edges_attribute_sockets)
+        self.outputs['edges_seams']             .hide = not(self.enable_edges_attribute_sockets)
+        self.outputs['edges_sharps']            .hide = not(self.enable_edges_attribute_sockets)
+        self.outputs['edges_crease']            .hide = not(self.enable_edges_attribute_sockets)
+        self.outputs['edges_bevel_weight']      .hide = not(self.enable_edges_attribute_sockets)
+        self.outputs['polygon_selects']         .hide = not(self.enable_polygons_attribute_sockets)
+        self.outputs['polygon_smooth']          .hide = not(self.enable_polygons_attribute_sockets)
 
-        self.outputs["vertices"].custom_draw = 'draw_vertices_out_socket'
-        self.outputs["edges"].custom_draw = 'draw_edges_out_socket'
-        self.outputs["polygons"].custom_draw = 'draw_polygons_out_socket'
+        self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
+        self.outputs['edges']   .custom_draw = 'draw_edges_out_socket'
+        self.outputs['polygons'].custom_draw = 'draw_polygons_out_socket'
 
     @property
     def by_input(self):
@@ -357,6 +369,9 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         grid.column(align=True).prop(self, 'mesh_join')
         grid.column(align=True).prop(self, 'modifiers')
         grid.column(align=True).prop(self, 'vergroups')
+        row0 = grid.row(align=True)
+        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
+        row0.row().prop(self, 'display_type', expand=True, text='')
 
         if not by_input:
             if self.object_names:
@@ -859,23 +874,49 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)
         if o_objects:
             if self.by_input:
-                outputs['object'].sv_set(objs)
+                outputs['objects'].sv_set(objs)
             else:
-                outputs['object'].sv_set([data_objects.get(o.name) for o in self.object_names])
+                outputs['objects'].sv_set([data_objects.get(o.name) for o in self.object_names])
             pass
         pass
     pass
+
+    def migrate_links_from(self, old_node, operator):
+        '''replace socket names to lowercase'''
+        # copy of "ui\nodes_replacement.py"
+
+        tree = self.id_data
+        # Copy incoming / outgoing links
+        old_in_links = [link for link in tree.links if link.to_node == old_node]
+        old_out_links = [link for link in tree.links if link.from_node == old_node]
+
+        for old_link in old_in_links:
+            new_target_socket_name = operator.get_new_input_name(old_link.to_socket.name)
+            new_target_socket_name = new_target_socket_name.lower()
+            if new_target_socket_name in self.inputs:
+                new_target_socket = self.inputs[new_target_socket_name]
+                new_link = tree.links.new(old_link.from_socket, new_target_socket)
+            else:
+                self.debug("New node %s has no input named %s, skipping", self.name, new_target_socket_name)
+            tree.links.remove(old_link)
+
+        for old_link in old_out_links:
+            new_source_socket_name = operator.get_new_output_name(old_link.from_socket.name)
+            new_source_socket_name = new_source_socket_name.lower()
+            # We have to remove old link before creating new one
+            # Blender would not allow two links pointing to the same target socket
+            old_target_socket = old_link.to_socket
+            tree.links.remove(old_link)
+            if new_source_socket_name in self.outputs:
+                new_source_socket = self.outputs[new_source_socket_name]
+                new_link = tree.links.new(new_source_socket, old_target_socket)
+            else:
+                self.debug("New node %s has no output named %s, skipping", self.name, new_source_socket_name)
 
     def migrate_from(self, old_node):
         if hasattr(self, 'location_absolute'):
             # Blender 3.0 has no this attribute
             self.location_absolute = old_node.location_absolute
-        for I, item in enumerate(old_node.object_names):
-            if I<=len(self.object_names)-1:
-                if item.name in bpy.data.objects:
-                    self.object_names[I].object_pointer = bpy.data.objects[item.name]
-        if self.width<305:
-            self.width=305
         pass
 
     def load_from_json(self, node_data: dict, import_version: float):
@@ -913,6 +954,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
 
 
 classes = [
+    NODE_OT_open_extra,
     SvOB3BCallbackMK4,
     SvGetObjectsDataMK4,
 ]

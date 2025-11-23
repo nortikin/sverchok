@@ -108,8 +108,8 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     # object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
 
     sort: bpy.props.BoolProperty(
-        name='Sort by names',
-        description='sorting inserted objects by names',
+        name='Sort',
+        description='Sorting inserted objects by names',
         default=True, update=updateNode)
 
     apply_matrix : bpy.props.BoolProperty(
@@ -119,12 +119,20 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         update = updateNode)
 
     def sv_init(self, context):
-        self.outputs.new('SvCurveSocket', 'Curves')
-        self.outputs.new('SvSurfaceSocket', 'Surfaces')
-        self.outputs.new('SvStringsSocket', 'object_names').label='Object Names'
-        self.outputs.new('SvMatrixSocket', 'Matrices')
+        self.outputs.new('SvCurveSocket'  , 'curves')
+        self.outputs.new('SvSurfaceSocket', 'surfaces')
+        self.outputs.new('SvStringsSocket', 'object_names')
+        self.outputs.new('SvMatrixSocket' , 'matrices')
+        self.outputs.new('SvObjectSocket' , 'objects')
 
-        self.inputs.new('SvObjectSocket'   , "objects").label = "Objects"
+        self.outputs['curves'      ].label = 'Curves'
+        self.outputs['surfaces'    ].label = 'Surfaces'
+        self.outputs['object_names'].label = 'Object Names'
+        self.outputs['matrices'    ].label = 'Matrices'
+        self.outputs['objects'     ].label = 'Objects'
+
+        self.inputs.new('SvObjectSocket'   , 'objects')
+        self.inputs['objects'].label = 'Objects'
 
     def draw_obj_names(self, layout):
         if self.object_names:
@@ -370,6 +378,7 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         curves_out = []
         surfaces_out = []
         object_names_out = []
+        objects_out = []
         matrices_out = []
 
         if isinstance(objs[0], list):
@@ -401,6 +410,7 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         #for item in self.object_names:
         for I, obj in enumerate(objs):
             object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE = get_object_data_curve_info(obj)
+            objects_out.append([obj])
             if SURFACE_CURVE_object==False:
                 curves_out.append([])
                 surfaces_out.append([])
@@ -442,29 +452,61 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         _curves_out = curves_out
         _surfaces_out = surfaces_out
         _object_names_out = object_names_out
+        _objects_out = objects_out
         _matrices_out = matrices_out
         if self.legacy_mode == True:
             _curves_out            = [c for   curves in _curves_out   for c in curves]
             _surfaces_out          = [s for surfaces in _surfaces_out for s in surfaces]
             _object_names_out      = [name for objs in _object_names_out for name in objs]
+            _objects_out           = [o for objs in _objects_out for o in objs]
             _matrices_out          = [m for matrices in _matrices_out for m in matrices]
 
-        self.outputs[  'Curves'].sv_set(_curves_out)
-        self.outputs['Surfaces'].sv_set(_surfaces_out)
+        self.outputs[  'curves'].sv_set(_curves_out)
+        self.outputs['curfaces'].sv_set(_surfaces_out)
         self.outputs['object_names'].sv_set(_object_names_out)
-        self.outputs['Matrices'].sv_set(_matrices_out)
+        self.outputs['objects'].sv_set(_objects_out)
+        self.outputs['matrices'].sv_set(_matrices_out)
+
+    def migrate_links_from(self, old_node, operator):
+        '''replace socket names to lowercase'''
+        # copy of "ui\nodes_replacement.py"
+
+        tree = self.id_data
+        # Copy incoming / outgoing links
+        old_in_links = [link for link in tree.links if link.to_node == old_node]
+        old_out_links = [link for link in tree.links if link.from_node == old_node]
+
+        for old_link in old_in_links:
+            new_target_socket_name = operator.get_new_input_name(old_link.to_socket.name)
+            new_target_socket_name = new_target_socket_name.lower()
+            if new_target_socket_name in self.inputs:
+                new_target_socket = self.inputs[new_target_socket_name]
+                new_link = tree.links.new(old_link.from_socket, new_target_socket)
+            else:
+                self.debug("New node %s has no input named %s, skipping", self.name, new_target_socket_name)
+            tree.links.remove(old_link)
+
+        for old_link in old_out_links:
+            new_source_socket_name = operator.get_new_output_name(old_link.from_socket.name)
+            new_source_socket_name = new_source_socket_name.lower()
+            # We have to remove old link before creating new one
+            # Blender would not allow two links pointing to the same target socket
+            old_target_socket = old_link.to_socket
+            tree.links.remove(old_link)
+            if new_source_socket_name in self.outputs:
+                new_source_socket = self.outputs[new_source_socket_name]
+                new_link = tree.links.new(new_source_socket, old_target_socket)
+            else:
+                self.debug("New node %s has no output named %s, skipping", self.name, new_source_socket_name)
 
     def migrate_from(self, old_node):
         if hasattr(self, 'location_absolute'):
             # Blender 3.0 has no this attribute
             self.location_absolute = old_node.location_absolute
-        for I, item in enumerate(old_node.object_names):
-            if I<=len(self.object_names)-1:
-                if hasattr(item, 'name') and item.name in bpy.data.objects:
-                    self.object_names[I].object_pointer = bpy.data.objects[item.name]
-        self.legacy_mode = True
-        if self.width<305:
-            self.width=305
+        if hasattr(old_node, 'legacy_mode'):
+            self.legacy_mode = old_node.legacy_mode
+        else:
+            self.legacy_mode = True
         pass
 
 classes = [
