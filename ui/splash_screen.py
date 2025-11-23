@@ -21,7 +21,7 @@ close_button_width = 103
 splash_images = 'https://github.com/nortikin/sverchok_splash_screen/archive/refs/heads/main.zip' #'https://github.com/nortikin/test/archive/refs/heads/main.zip'#
 
 # Shaders
-if bpy.app.background:
+if bpy.app.background or bpy.app.version <= (3, 6, 18):
     image_shader = None
     solid_shader = None
 else:
@@ -113,6 +113,8 @@ def download_and_extract_splash_images():
 def load_images_from_script_folder(group):
     """Load all PNG images from the script folder"""
     global textures
+    global current_image_index
+    current_image_index = 0
 
     # Clear existing textures
     textures.clear()
@@ -519,17 +521,19 @@ class SV_OT_splash_screen_simple(Operator):
 operator_instance = None
 
 def register():
-    bpy.utils.register_class(SV_OT_splash_screen_simple)
-    bpy.utils.register_class(SV_OT_DownloadSplashImages)
-    bpy.utils.register_class(SV_Splash_screen)
-    bpy.types.NodeTree.sv_splash_data = bpy.props.CollectionProperty( type=SV_Splash_screen )
+    if bpy.app.version > (3,6,18):
+        bpy.utils.register_class(SV_OT_splash_screen_simple)
+        bpy.utils.register_class(SV_OT_DownloadSplashImages)
+        bpy.utils.register_class(SV_Splash_screen)
+        bpy.types.NodeTree.sv_splash_data = bpy.props.CollectionProperty( type=SV_Splash_screen )
     
 
 def unregister():
-    del bpy.types.NodeTree.sv_splash_data
-    bpy.utils.unregister_class(SV_Splash_screen)
-    bpy.utils.unregister_class(SV_OT_DownloadSplashImages)
-    bpy.utils.unregister_class(SV_OT_splash_screen_simple)
+    if bpy.app.version > (3,6,18):
+        del bpy.types.NodeTree.sv_splash_data
+        bpy.utils.unregister_class(SV_Splash_screen)
+        bpy.utils.unregister_class(SV_OT_DownloadSplashImages)
+        bpy.utils.unregister_class(SV_OT_splash_screen_simple)
 
 # Menu function to easily access the operator
 def menu_func(self, context):

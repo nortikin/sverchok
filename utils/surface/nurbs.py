@@ -11,7 +11,7 @@ from sverchok.utils.nurbs_common import (
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_algorithms import unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
-from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator
+from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator, SvCurveLengthSolver
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
@@ -570,6 +570,13 @@ class SvNurbsSurface(SvSurface):
             return self._concat_v(surface2, tolerance)
         else:
             raise Exception("Unsupported direction")
+
+    def reparametrize(self, new_u_min, new_u_max, new_v_min, new_v_max):
+        knotvector_u = self.get_knotvector_u()
+        knotvector_v = self.get_knotvector_v()
+        knotvector_u = sv_knotvector.rescale(knotvector_u, new_u_min, new_u_max)
+        knotvector_v = sv_knotvector.rescale(knotvector_v, new_v_min, new_v_max)
+        return self.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)
 
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):
@@ -1394,7 +1401,9 @@ def loft_with_tangents(curves, tangent_fields, degree_v = 3,
 
 def interpolate_nurbs_curves(curves, base_vs, target_vs,
         degree_v = None, knots_u = 'UNIFY',
-        implementation = SvNurbsSurface.NATIVE):
+        knotvector_accuracy = 6,
+        implementation = SvNurbsSurface.NATIVE,
+        logger = None):
     """
     Interpolate many NURBS curves between a list of NURBS curves, by lofting.
     Inputs:
@@ -1413,9 +1422,11 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
     tknots = (base_vs - min_v) / (max_v - min_v)
     _,_,lofted = simple_loft(to_loft,
                 degree_v = degree_v, knots_u = knots_u,
+                knotvector_accuracy = knotvector_accuracy,
                 #metric = 'POINTS',
                 tknots = tknots,
-                implementation = implementation)
+                implementation = implementation,
+                logger = logger)
 
     rebased_vs = np.linspace(min_v, max_v, num=len(target_vs))
     iso_curves = [lofted.iso_curve(fixed_direction='V', param=v) for v in rebased_vs]
@@ -1461,7 +1472,12 @@ def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', ukn
 
     return surface
 
-def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
+def nurbs_sweep_impl(path, profiles, ts, frame_calculator,
+        knots_u = 'UNIFY',
+        knotvector_accuracy = 6,
+        metric = 'DISTANCE',
+        implementation = SvNurbsSurface.NATIVE,
+        logger = None):
     """
     NURBS Sweep implementation.
     Interface of this function is not flexible, so you usually want to call `nurbs_sweep' instead.
@@ -1497,10 +1513,12 @@ def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', me
 
     unified_curves, v_curves, surface = simple_loft(to_loft, degree_v = path.get_degree(),
             knots_u = knots_u, metric = metric,
-            implementation = implementation)
+            knotvector_accuracy = knotvector_accuracy,
+            implementation = implementation,
+            logger = logger)
     return to_loft, unified_curves, v_curves, surface
 
-def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE, **kwargs):
+def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', knotvector_accuracy = 6, metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE, logger=None, **kwargs):
     """
     NURBS Sweep surface.
     
@@ -1527,6 +1545,9 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
         * list of NURBS curves along V direction
         * generated NURBS surface.
     """
+    if logger is None:
+        logger = get_logger()
+
     n_profiles = len(profiles)
     have_ts = ts is not None and len(ts) > 0
     if have_ts and n_profiles != len(ts):
@@ -1551,7 +1572,9 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
         profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
                     degree_v = min(max_degree, path.get_degree()),
                     knots_u = knots_u,
-                    implementation = implementation)
+                    knotvector_accuracy = knotvector_accuracy,
+                    implementation = implementation,
+                    logger = logger)
         ts = np.linspace(t_min, t_max, num=min_profiles)
     else:
         profiles = repeat_last_for_length(profiles, min_profiles)
@@ -1563,17 +1586,204 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
 
     return nurbs_sweep_impl(path, profiles, ts, frame_calculator,
                 knots_u=knots_u, metric=metric,
-                implementation=implementation)
+                knotvector_accuracy = knotvector_accuracy,
+                implementation=implementation,
+                logger = logger)
+
+def prepare_nurbs_birail(path1, path2, profiles,
+        ts1 = None, ts2 = None,
+        length_resolution = None,
+        min_profiles = 10,
+        knots_u = 'UNIFY',
+        knotvector_accuracy = 6,
+        degree_v = None,
+        metric = 'DISTANCE',
+        scale_uniform = True,
+        auto_rotate = False,
+        use_tangents = 'PATHS_AVG',
+        y_axis = None,
+        implementation=SvNurbsSurface.NATIVE,
+        logger = None):
+
+    n_profiles = len(profiles)
+    have_ts1 = ts1 is not None and len(ts1) > 0
+    have_ts2 = ts2 is not None and len(ts2) > 0
+    if have_ts1 and n_profiles != len(ts1):
+        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T1 values ({len(ts1)})")
+    if have_ts2 and n_profiles != len(ts2):
+        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T2 values ({len(ts2)})")
+
+    if degree_v is None:
+        degree_v = path1.get_degree()
+
+    if length_resolution is not None:
+        solver1 = SvCurveLengthSolver(path1)
+        solver1.prepare('SPL', length_resolution)
+        solver2 = SvCurveLengthSolver(path2)
+        solver2.prepare('SPL', length_resolution)
+
+    t_min_1, t_max_1 = path1.get_u_bounds()
+    t_min_2, t_max_2 = path2.get_u_bounds()
+
+    def calc_ts1(n):
+        if length_resolution is None:
+            return np.linspace(t_min_1, t_max_1, num=n)
+        else:
+            path1_length = solver1.get_total_length()
+            lengths = np.linspace(0.0, path1_length, num=n)
+            return solver1.solve(lengths)
+
+    def calc_ts2(n):
+        if length_resolution is None:
+            return np.linspace(t_min_2, t_max_2, num=n)
+        else:
+            path2_length = solver2.get_total_length()
+            lengths = np.linspace(0.0, path2_length, num=n)
+            return solver2.solve(lengths)
+
+    if not have_ts1:
+        ts1 = calc_ts1(n_profiles)
+    if not have_ts2:
+        ts2 = calc_ts2(n_profiles)
+
+    if n_profiles == 1:
+        p = profiles[0]
+        profiles = [p] * min_profiles
+        ts1 = calc_ts1(min_profiles)
+        ts2 = calc_ts2(min_profiles)
+    elif n_profiles == 2 and n_profiles < min_profiles:
+        coeffs = np.linspace(0.0, 1.0, num=min_profiles)
+        p0, p1 = profiles
+        profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
+        ts1 = calc_ts1(min_profiles)
+        ts2 = calc_ts2(min_profiles)
+    elif n_profiles < min_profiles:
+        target_vs = np.linspace(0.0, 1.0, num=min_profiles)
+        max_degree = n_profiles - 1
+        ts = np.linspace(0.0, 1.0, num=n_profiles)
+        profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
+                    degree_v = min(max_degree, degree_v),
+                    knots_u = knots_u,
+                    knotvector_accuracy = knotvector_accuracy,
+                    implementation = implementation,
+                    logger = logger)
+        ts1 = calc_ts1(min_profiles)
+        ts2 = calc_ts2(min_profiles)
+    else:
+        profiles = repeat_last_for_length(profiles, min_profiles)
+
+    points1 = path1.evaluate_array(ts1)
+    points2 = path2.evaluate_array(ts2)
+
+    orig_profiles = profiles[:]
+
+    if use_tangents == 'PATHS_AVG':
+        tangents1 = path1.tangent_array(ts1)
+        tangents2 = path2.tangent_array(ts2)
+        tangents = 0.5 * (tangents1 + tangents2)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    elif use_tangents == 'FROM_PATH1':
+        tangents = path1.tangent_array(ts1)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    elif use_tangents == 'FROM_PATH2':
+        tangents = path2.tangent_array(ts2)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    elif use_tangents == 'FROM_PROFILE':
+        tangents = []
+        for profile in orig_profiles:
+            matrix = nurbs_curve_matrix(profile)
+            yy = matrix @ np.array([0, 0, -1])
+            yy /= np.linalg.norm(yy)
+            tangents.append(yy)
+        tangents = np.array(tangents)
+    elif use_tangents == 'CUSTOM':
+        tangents = None
+
+    binormals = points2 - points1
+    scales = np.linalg.norm(binormals, axis=1, keepdims=True)
+    if scales.min() < 1e-6:
+        raise Exception("Paths go too close")
+    binormals /= scales
+
+    if use_tangents != 'CUSTOM':
+        normals = np.cross(tangents, binormals)
+        normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+
+        tangents = np.cross(binormals, normals)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    else:
+        if y_axis is None:
+            raise Exception("Y axis is not provided for custom orientation")
+        if np.linalg.norm(y_axis) < 1e-6:
+            raise Exception("Y axis is too small")
+        y_axis /= np.linalg.norm(y_axis)
+        tangents = np.cross(binormals, y_axis)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+        normals = np.cross(tangents, binormals)
+        normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+
+    matrices = np.dstack((normals, binormals, tangents))
+    matrices = np.transpose(matrices, axes=(0,2,1))
+    matrices = np.linalg.inv(matrices)
+
+    scales = scales.flatten()
+    placed_profiles = []
+    prev_normal = None
+    for pt1, pt2, profile, tangent, scale, matrix in zip(points1, points2, profiles, tangents, scales, matrices):
+
+        if auto_rotate:
+            profile = nurbs_curve_to_xoy(profile, tangent)
+
+        t_min, t_max = profile.get_u_bounds()
+        pr_start = profile.evaluate(t_min)
+        pr_end = profile.evaluate(t_max)
+        pr_vector = pr_end - pr_start
+        pr_length = np.linalg.norm(pr_vector)
+        if pr_length < 1e-6:
+            raise Exception(f"One of profiles is closed: t={t_min} {pr_start} - t={t_max} {pr_end}")
+        pr_dir = pr_vector / pr_length
+        pr_x, pr_y, _ = tuple(pr_dir)
+
+        rotation = np.array([
+                (pr_y, -pr_x, 0),
+                (pr_x, pr_y, 0),
+                (0, 0, 1)
+            ])
+
+        src_scale = scale
+        scale /= pr_length
+        if scale_uniform:
+            scale_m = np.array([
+                    (scale, 0, 0),
+                    (0, scale, 0),
+                    (0, 0, scale)
+                ])
+        else:
+            scale_m = np.array([
+                    (1, 0, 0),
+                    (0, scale, 0),
+                    (0, 0, 1)
+                ])
+        cpts = [matrix @ scale_m @ rotation @ (pt - pr_start) + pt1 for pt in profile.get_control_points()]
+        cpts = np.array(cpts)
+
+        profile = profile.copy(control_points = cpts)
+        placed_profiles.append(profile)
+    return ts1, ts2, placed_profiles
 
 def nurbs_birail(path1, path2, profiles,
         ts1 = None, ts2 = None,
+        length_resolution = None,
         min_profiles = 10,
         knots_u = 'UNIFY',
+        knotvector_accuracy = 6,
         degree_v = None, metric = 'DISTANCE',
         scale_uniform = True,
         auto_rotate = False,
         use_tangents = 'PATHS_AVG',
-        implementation = SvNurbsSurface.NATIVE):
+        y_axis = None,
+        implementation = SvNurbsSurface.NATIVE,
+        logger = None):
     """
     NURBS BiRail.
 
@@ -1604,144 +1814,25 @@ def nurbs_birail(path1, path2, profiles,
         * list of NURBS curves along V direction
         * generated NURBS surface.
     """
+    if logger is None:
+        logger = get_logger()
 
-    n_profiles = len(profiles)
-    have_ts1 = ts1 is not None and len(ts1) > 0
-    have_ts2 = ts2 is not None and len(ts2) > 0
-    if have_ts1 and n_profiles != len(ts1):
-        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts1)})")
-    if have_ts2 and n_profiles != len(ts2):
-        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts2)})")
-
-    if degree_v is None:
-        degree_v = path1.get_degree()
-
-    t_min_1, t_max_1 = path1.get_u_bounds()
-    t_min_2, t_max_2 = path2.get_u_bounds()
-    if not have_ts1:
-        ts1 = np.linspace(t_min_1, t_max_1, num=n_profiles)
-    if not have_ts2:
-        ts2 = np.linspace(t_min_2, t_max_2, num=n_profiles)
-
-    if n_profiles == 1:
-        p = profiles[0]
-        profiles = [p] * min_profiles
-        #if not have_ts1:
-        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        #if not have_ts2:
-        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
-    elif n_profiles == 2 and n_profiles < min_profiles:
-        coeffs = np.linspace(0.0, 1.0, num=min_profiles)
-        p0, p1 = profiles
-        profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
-        #if not have_ts1:
-        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        #if not have_ts2:
-        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
-    elif n_profiles < min_profiles:
-        target_vs = np.linspace(0.0, 1.0, num=min_profiles)
-        max_degree = n_profiles - 1
-        if not have_ts1:
-            ts1 = np.linspace(t_min_1, t_max_1, num=n_profiles)
-        profiles = interpolate_nurbs_curves(profiles, ts1, target_vs,
-                    degree_v = min(max_degree, degree_v),
-                    knots_u = knots_u,
-                    implementation = implementation)
-        #if not have_ts1:
-        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        #if not have_ts2:
-        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
-    else:
-        profiles = repeat_last_for_length(profiles, min_profiles)
-
-    points1 = path1.evaluate_array(ts1)
-    points2 = path2.evaluate_array(ts2)
-
-    orig_profiles = profiles[:]
-
-    if use_tangents == 'PATHS_AVG':
-        tangents1 = path1.tangent_array(ts1)
-        tangents2 = path2.tangent_array(ts2)
-        tangents = 0.5 * (tangents1 + tangents2)
-        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
-    elif use_tangents == 'FROM_PATH1':
-        tangents = path1.tangent_array(ts1)
-        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
-    elif use_tangents == 'FROM_PATH2':
-        tangents = path2.tangent_array(ts2)
-        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
-    elif use_tangents == 'FROM_PROFILE':
-        tangents = []
-        for profile in orig_profiles:
-            matrix = nurbs_curve_matrix(profile)
-            yy = matrix @ np.array([0, 0, -1])
-            yy /= np.linalg.norm(yy)
-            tangents.append(yy)
-        tangents = np.array(tangents)
-
-    binormals = points2 - points1
-    scales = np.linalg.norm(binormals, axis=1, keepdims=True)
-    if scales.min() < 1e-6:
-        raise Exception("Paths go too close")
-    binormals /= scales
-
-    normals = np.cross(tangents, binormals)
-    normals /= np.linalg.norm(normals, axis=1, keepdims=True)
-
-    tangents = np.cross(binormals, normals)
-    tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
-
-    matrices = np.dstack((normals, binormals, tangents))
-    matrices = np.transpose(matrices, axes=(0,2,1))
-    matrices = np.linalg.inv(matrices)
-
-    scales = scales.flatten()
-    placed_profiles = []
-    prev_normal = None
-    for pt1, pt2, profile, tangent, scale, matrix in zip(points1, points2, profiles, tangents, scales, matrices):
-
-        if auto_rotate:
-            profile = nurbs_curve_to_xoy(profile, tangent)
-
-        t_min, t_max = profile.get_u_bounds()
-        pr_start = profile.evaluate(t_min)
-        pr_end = profile.evaluate(t_max)
-        pr_vector = pr_end - pr_start
-        pr_length = np.linalg.norm(pr_vector)
-        if pr_length < 1e-6:
-            raise Exception("One of profiles is closed")
-        pr_dir = pr_vector / pr_length
-        pr_x, pr_y, _ = tuple(pr_dir)
-
-        rotation = np.array([
-                (pr_y, -pr_x, 0),
-                (pr_x, pr_y, 0),
-                (0, 0, 1)
-            ])
-
-        src_scale = scale
-        scale /= pr_length
-        if scale_uniform:
-            scale_m = np.array([
-                    (scale, 0, 0),
-                    (0, scale, 0),
-                    (0, 0, scale)
-                ])
-        else:
-            scale_m = np.array([
-                    (1, 0, 0),
-                    (0, scale, 0),
-                    (0, 0, 1)
-                ])
-        cpts = [matrix @ scale_m @ rotation @ (pt - pr_start) + pt1 for pt in profile.get_control_points()]
-        cpts = np.array(cpts)
-
-        profile = profile.copy(control_points = cpts)
-        placed_profiles.append(profile)
+    _, _, placed_profiles = prepare_nurbs_birail(path1, path2, profiles,
+            ts1 = ts1, ts2 = ts2,
+            length_resolution = length_resolution,
+            min_profiles = min_profiles,
+            degree_v = degree_v,
+            scale_uniform = scale_uniform,
+            auto_rotate = auto_rotate,
+            use_tangents = use_tangents,
+            y_axis = y_axis,
+            knotvector_accuracy = knotvector_accuracy)
 
     unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = degree_v,
             knots_u = knots_u, metric = metric,
-            implementation = implementation)
+            knotvector_accuracy = knotvector_accuracy,
+            implementation = implementation,
+            logger = logger)
 
     return placed_profiles, unified_curves, v_curves, surface
 

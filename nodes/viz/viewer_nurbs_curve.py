@@ -138,7 +138,6 @@ class SvNurbsCurveOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
 
         self.outputs['Objects'].sv_set(objects)
 
-
 classes = [SvNurbsCurveOutNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
 

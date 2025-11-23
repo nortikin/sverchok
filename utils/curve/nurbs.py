@@ -476,7 +476,7 @@ class SvNurbsCurve(SvCurve):
         if t >= t_max:
             return (self.get_knotvector(), self.get_control_points(), self.get_weights()), None
 
-        current_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector(), t)
+        current_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector(), t, tolerance=None)
         to_add = self.get_degree() - current_multiplicity # + 1
         curve = self.insert_knot(t, count=to_add)
         knot_span = np.searchsorted(curve.get_knotvector(), t)
@@ -1334,7 +1334,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         # "The NURBS book", 2nd edition, p.5.2, eq. 5.11
         N = len(self.control_points)
         u = self.get_knotvector()
-        s = sv_knotvector.find_multiplicity(u, u_bar)
+        s = sv_knotvector.find_multiplicity(u, u_bar, tolerance=None)
+        #s = sv_knotvector.find_multiplicity(u, u_bar)
         p = self.get_degree()
 
         if u_bar < u[0] or u_bar > u[-1]:
@@ -1345,13 +1346,14 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                 if if_possible:
                     count = (p+1) - s
                 else:
-                    raise CantInsertKnotException(f"Can't insert first/last knot t={u_bar} for {count} times")
+                    raise CantInsertKnotException(f"Can't insert first/last knot t={u_bar} for {count} times (existing knot multiplicity is {s}, maximum is {p+1})")
         else:
             if s+count > p:
                 if if_possible:
                     count = p - s
                 else:
-                    raise CantInsertKnotException(f"Can't insert knot t={u_bar} for {count} times")
+                    print(f"Err KV: {u}")
+                    raise CantInsertKnotException(f"Can't insert knot t={u_bar} for {count} times (existing knot multiplicity is {s}, maximum is {p})")
 
         k = u.searchsorted(u_bar, side='right')-1
         new_knotvector = sv_knotvector.insert(u, u_bar, count)

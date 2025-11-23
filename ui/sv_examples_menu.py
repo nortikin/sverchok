@@ -60,19 +60,13 @@ class SV_MT_LayoutsSplash(bpy.types.Menu):
 
 
     def draw(self, context):
+        if bpy.app.version <= (3,6,18): return
         layout = self.layout
         col = layout.column(align=True)
         col.operator('sv.download_splash_images', text='Download helps', icon='URL')
         for path, category_name in sv_helps_categories_names():
             op = col.operator('sv.splash_screen_simple', text=category_name, icon='HIDE_OFF')
             op.group = category_name
-        #gr = set()
-        #for item in context.space_data.node_tree.sv_splash_data:
-        #    group = item.group
-        #    if group not in gr:
-        #        gr.add(group)
-        #        op = row.operator('sv.splash_screen_simple', text=group, icon='IMPORT')
-        #        op.group = group
 
 class SW_OT_Console(Operator):
     """Show/hide console"""
@@ -316,7 +310,6 @@ class SV_OT_ClearExamplesSearch(bpy.types.Operator):
         context.window_manager.sv_examples_search_string = ""
         return {'FINISHED'}
 
-
 classes = [
     SW_OT_Orbit_Around_Selection,
     SW_OT_Console,
@@ -326,6 +319,7 @@ classes = [
     SV_OT_ToggleExamplesSearch,
     SV_OT_ClearExamplesSearch
 ]
+
 
 
 def register():

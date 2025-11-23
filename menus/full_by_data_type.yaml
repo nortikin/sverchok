@@ -376,7 +376,7 @@
         - SvExInterpolateNurbsSurfaceNodeMK2
         - SvNurbsLoftNode
         - SvNurbsSweepNode
-        - SvNurbsBirailNode
+        - SvNurbsBirailMk2Node
         - SvGordonSurfaceNode
         - ---
         - SvExQuadsToNurbsNode
@@ -494,6 +494,7 @@
         - SvSolidSectionNode
         - SvSolidGeneralFuseNode
         - SvMirrorSolidNode
+        - SvSymmetrizeSolidNode
         - SvOffsetSolidNode
         - SvSplitSolidNode
         - SvHollowSolidNode
@@ -739,6 +740,8 @@
     - SvTextureViewerNode
     - SvTextureViewerNodeLite
     - SvWaveformViewer
+    - ---
+    - SvDataTreeVizNode
     - SvConsoleNode
 
 - Text:

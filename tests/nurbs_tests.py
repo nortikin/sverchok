@@ -418,6 +418,38 @@ class OtherNurbsTests(SverchokTestCase):
         result = inserted.evaluate_array(ts)
         self.assert_numpy_arrays_equal(result, expected, precision=8)
 
+    def test_insert_tolerance_evaluate(self):
+        """Insertion of knot with value very near to existing one does not change curve shape"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2,1,0], [3, 0, 0], [4,0,0]])
+        weights = [1, 1, 1, 1, 1]
+        degree = 3
+        kv = np.array([0,0,0,0, 0.5, 1,1,1,1])
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+
+        u_bar = 0.5000001
+        inserted = curve.insert_knot(u_bar)
+        ts = np.array([0, 0.25, 0.5, 0.75, 1.0])
+        expected = curve.evaluate_array(ts)
+        result = inserted.evaluate_array(ts)
+        self.assert_numpy_arrays_equal(result, expected, precision=8)
+
+    def test_insert_tolerance_repeated(self):
+        """Insertion of knot with value very near to existing one is allowed
+        for the same number of times that for any other value (except existing
+        knot), and does not change curve shape."""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2,1,0], [3, 0, 0], [4,0,0]])
+        weights = [1, 1, 1, 1, 1]
+        degree = 3
+        kv = np.array([0,0,0,0, 0.5, 1,1,1,1])
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+
+        u_bar = 0.5000001
+        inserted = curve.insert_knot(u_bar, 3)
+        ts = np.array([0, 0.25, 0.5, 0.75, 1.0])
+        expected = curve.evaluate_array(ts)
+        result = inserted.evaluate_array(ts)
+        self.assert_numpy_arrays_equal(result, expected, precision=8)
+
     def test_insert_unclamped_native_middle(self):
         points = np.array([[0, 0, 0], [1, 1, 0], [2,1,0], [3, 0, 0]])
         degree = 2

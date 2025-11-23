@@ -1483,7 +1483,7 @@ def symmetrize_curve(
             mirrored = mirror_segments([curve])
         if separate_output:
             return curves, mirrored
-        elif flat_output:
+        elif flat_output or concatenate:
             curves.extend(mirrored)
             # return 2-list
             return curves
@@ -1494,12 +1494,17 @@ def symmetrize_curve(
 
     key_ts = [t for t, pt in intersections]
     key_ts = list(sorted(key_ts))
-    #print("I", key_ts)
     t_min, t_max = curve.get_u_bounds()
     if len(key_ts) > 0 and t_min != key_ts[0]:
-        key_ts = [t_min] + key_ts
+        pt1 = curve.evaluate(t_min)
+        pt2 = curve.evaluate(key_ts[0])
+        if np.linalg.norm(pt1 - pt2) >= tolerance:
+            key_ts = [t_min] + key_ts
     if len(key_ts) > 0 and t_max != key_ts[-1]:
-        key_ts = key_ts + [t_max]
+        pt1 = curve.evaluate(t_max)
+        pt2 = curve.evaluate(key_ts[-1])
+        if np.linalg.norm(pt1 - pt2) >= tolerance:
+            key_ts = key_ts + [t_max]
 
     segments = []
     for t1, t2 in zip(key_ts, key_ts[1:]):

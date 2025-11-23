@@ -382,6 +382,9 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
     def sv_free(self):
         callback_disable(node_id(self))
 
+    def toggle_viewer(self, context):
+        self.activate = not self.activate
+
 classes = [SvCurveViewerDrawNode, SvBakeCurveOp]
 register, unregister = bpy.utils.register_classes_factory(classes)
 

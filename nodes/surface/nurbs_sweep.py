@@ -41,6 +41,12 @@ class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
             default = 'UNIFY',
             update = updateNode)
 
+    knotvector_accuracy : IntProperty(
+            name = "Knotvector accuracy",
+            min = 1,
+            default = 6,
+            update = updateNode)
+
     metric : EnumProperty(
             name = "Metric",
             description = "Metric to be used for interpolation",
@@ -113,6 +119,7 @@ class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.prop(self, 'u_knots_mode')
+        layout.prop(self, 'knotvector_accuracy')
         layout.prop(self, 'metric')
 
     def sv_init(self, context):
@@ -174,6 +181,7 @@ class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
                                     min_profiles = profiles_count,
                                     algorithm = self.algorithm,
                                     knots_u = self.u_knots_mode,
+                                    knotvector_accuracy = self.knotvector_accuracy,
                                     metric = self.metric,
                                     implementation = self.nurbs_implementation,
                                     resolution = resolution,

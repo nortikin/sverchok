@@ -7,26 +7,29 @@
 
 import math
 from collections import defaultdict
-import numpy as np
 
+import numpy as np
 from mathutils.kdtree import KDTree
 
 from sverchok.data_structure import match_long_repeat as mlr
-from sverchok.utils.curve.core import SvCurve
-from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.solid_conversion import to_solid, to_solid_recursive
+from sverchok.utils.geom import diameter
+from sverchok.utils.surface.primitives import SvPlane
 
 if FreeCAD is not None:
 
-    import Part
     import Mesh
     import MeshPart
+    from FreeCAD import Part
+    try:
+        import Part as PartModule
+    except ImportError:
+        PartModule = Part
     from FreeCAD import Base
 
     from sverchok.nodes.solid.mesh_to_solid import ensure_triangles
-    from sverchok.utils.curve.freecad import curve_to_freecad
-    from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
+    from sverchok.utils.surface.freecad import surface_to_freecad
+    from sverchok.utils.solid_conversion import to_solid, to_solid_recursive # for re-export
 
 class SvSolidTopology(object):
     class Item(object):
@@ -378,7 +381,7 @@ class SvGeneralFuse(object):
             solid = parts[0]
         else:
             solid = parts[0].fuse(parts[1:])
-            if do_refine:
+            if refine:
                 solid = solid.removeSplitter()
         return solid
 
@@ -472,30 +475,30 @@ def svmesh_to_solid(verts, faces, precision=1e-6, remove_splitter=True, method=F
         tri_faces = ensure_triangles(verts, faces, True)
         faces_t = [[verts[c] for c in f] for f in tri_faces]
         mesh = Mesh.Mesh(faces_t)
-        shape = Part.Shape()
+        shape = PartModule.Shape()
         shape.makeShapeFromMesh(mesh.Topology, precision)
 
         if remove_splitter:
             # may slow it down, or be totally necessary
             shape = shape.removeSplitter() 
 
-        return Part.makeSolid(shape)
+        return PartModule.makeSolid(shape)
     elif method == BMESH:
         fc_faces = []
         for face in faces:
             face_i = list(face) + [face[0]]
             face_verts = [Base.Vector(verts[i]) for i in face_i]
-            wire = Part.makePolygon(face_verts)
+            wire = PartModule.makePolygon(face_verts)
             wire.fixTolerance(precision)
             try:
-                fc_face = Part.Face(wire)
-                #fc_face = Part.makeFilledFace(wire.Edges)
+                fc_face = PartModule.Face(wire)
+                #fc_face = PartModule.makeFilledFace(wire.Edges)
             except Exception as e:
                 print(f"Face idxs: {face_i}, verts: {face_verts}")
                 raise Exception("Maybe face is not planar?") from e
             fc_faces.append(fc_face)
-        shell = Part.makeShell(fc_faces)
-        solid = Part.makeSolid(shell)
+        shell = PartModule.makeShell(fc_faces)
+        solid = PartModule.makeSolid(shell)
         if remove_splitter:
             solid = solid.removeSplitter()
         return solid
@@ -550,7 +553,8 @@ def mesh_from_solid_faces(solid):
 
 def hascurves(shape):
     for e in shape.Edges:
-        if not isinstance(e.Curve, (Part.Line, Part.LineSegment)): return True
+        if not isinstance(e.Curve, (PartModule.Line, PartModule.LineSegment)):
+            return True
     return False
 
 def drop_existing_faces(faces):
@@ -585,12 +589,12 @@ def mesh_from_solid_faces_MOD(shape, quality=1.0, tessellate=False):
     # write FreeCAD faces as polygons when possible
     for face in shape.Faces:
         
-        if (len(face.Wires) > 1) or (not isinstance(face.Surface, Part.Plane)) or hascurves(face) or tessellate:
+        if (len(face.Wires) > 1) or (not isinstance(face.Surface, PartModule.Plane)) or hascurves(face) or tessellate:
             # face has holes or is curved, so we need to triangulate it
             rawdata = face.tessellate(quality)
             
             for v in rawdata[0]:
-                if not (v1 := (v.x, v.y, v.z)) in vdict:
+                if (v1 := (v.x, v.y, v.z)) not in vdict:
                     vdict[v1] = len(vdict)
             
             for f in rawdata[1]:
@@ -605,7 +609,7 @@ def mesh_from_solid_faces_MOD(shape, quality=1.0, tessellate=False):
         
             for v in ov:
 
-                if not (vec := (v.X, v.Y, v.Z)) in vdict:
+                if (vec := (v.X, v.Y, v.Z)) not in vdict:
                     vdict[vec] = len(vdict)
                     f.append(len(vdict) - 1)
                 else:
@@ -624,3 +628,76 @@ def mesh_from_solid_faces_MOD(shape, quality=1.0, tessellate=False):
     faces = drop_existing_faces(faces)
     verts = list(vdict.keys())
     return verts, faces
+
+def make_plane_by_size_of_solid(solid, plane):
+    box = solid.BoundBox
+    bbox_pts = [box.getPoint(i) for i in range(8)]
+    bbox_pts = [(p.x,p.y,p.z) for p in bbox_pts]
+    diam = diameter(bbox_pts, None)
+    vec1, vec2 = plane.two_vectors()
+    bbox_ctr = (box.Center.x, box.Center.y, box.Center.z)
+    bbox_ctr = plane.projection_of_point(bbox_ctr)
+    plane_surface = SvPlane(np.array(bbox_ctr), np.array(vec1.normalized()*diam), np.array(vec2.normalized()*diam))
+    plane_surface.u_bounds = (-1,1)
+    plane_surface.v_bounds = (-1,1)
+    return plane_surface.to_nurbs()
+
+def bisect_solid(solid, face_surface):
+    face = face_surface.face
+    result, map = solid.generalFuse([face])
+    solids = map[0]
+    if len(solids) == 0:
+        return [solid]
+    else:
+        return solids
+
+def select_solids_by_plane_side(solids, plane, sign):
+    def get_center(shape):
+        if isinstance(shape, PartModule.Compound):
+            pts = [get_center(s) for s in shape.Solids]
+            pts = np.array(pts)
+            return np.mean(pts, axis=0).tolist()
+        else:
+            ctr = shape.CenterOfMass
+            ctr = (ctr.x, ctr.y, ctr.z)
+            return ctr
+
+    result = []
+    for solid in solids:
+        ctr = get_center(solid)
+        if plane.side_of_point(ctr) == sign:
+            result.append(solid)
+    return result
+
+def mirror_solid(solid, plane):
+    origin = plane.nearest_point_to_origin()
+    direction = plane.normal
+    return solid.mirror(Base.Vector(origin), Base.Vector(direction))
+
+def fuse_solids(solids):
+    if len(solids) <= 1:
+        return solids
+    result, map = solids[0].generalFuse(solids[1:])
+    parts = sum(map, [])
+    if len(parts) == 1:
+        return parts
+    elif len(parts) < 1:
+        compound = PartModule.Compound(solids)
+        r = PartModule.Solid(compound)
+        return r
+    else:
+        return parts[0].fuse(parts[1:])
+
+def symmetrize_solid(solid, plane, sign_from=-1, fuse=True):
+    plane_face = make_plane_by_size_of_solid(solid, plane)
+    plane_face = surface_to_freecad(plane_face, make_face=True)
+    solid = PartModule.Solid(solid)
+    parts = bisect_solid(solid, plane_face)
+    parts = select_solids_by_plane_side(parts, plane, sign_from)
+    mirrored_parts = [mirror_solid(part, plane) for part in parts]
+    if fuse:
+        solids = fuse_solids(parts + mirrored_parts)
+    else:
+        solids = parts + mirrored_parts
+    return solids
+

@@ -322,22 +322,15 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         """Main processing function - called when node needs update"""
         if self.file_path:
-            self.DXF_OPEN()
+            self.DXF_OPEN(fp=self.file_path)
 
-    def DXF_OPEN(self):
+    def DXF_OPEN(self, fp=''):
         """
         Import DXF file with current settings
         
         Reads DXF file, applies layer filtering, and outputs geometry data
         """
-        if not self.file_path:
-            if self.inputs['path'].is_linked:
-                fp = self.inputs['path'].sv_get()[0][0]
-                self.file_path = fp
-            else:
-                return
-        else:
-            fp = self.file_path
+        if not fp: return
 
         resolution = self.resolution
         scale = self.scale
@@ -382,7 +375,7 @@ class DXFImportOperator(bpy.types.Operator, SvGenericNodeLocator):
         Returns:
             dict: Operation status {'FINISHED'} or {'CANCELLED'}
         """
-        if not node.file_path and node.inputs['path'].is_linked:
+        if node.inputs['path'].is_linked:
             file_path = node.inputs['path'].sv_get()[0][0]
             node.file_path = file_path
 
@@ -391,7 +384,7 @@ class DXFImportOperator(bpy.types.Operator, SvGenericNodeLocator):
             return {'CANCELLED'}
 
         try:
-            node.DXF_OPEN()
+            node.DXF_OPEN(fp=node.file_path)
             self.report({'INFO'}, f"DXF imported from {node.file_path}")
             return {'FINISHED'}
         except Exception as e:

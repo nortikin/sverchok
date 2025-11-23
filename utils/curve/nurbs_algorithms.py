@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from audioop import mul
 import numpy as np
 from collections import defaultdict
 
@@ -48,75 +49,35 @@ def unify_degrees(curves):
     curves = [curve.elevate_degree(target=max_degree) for curve in curves]
     return curves
 
-
-class KnotvectorDict(object):
-    def __init__(self, accuracy):
-        self.multiplicities = []
-        self.accuracy = accuracy
-        self.done_knots = set()
-        self.skip_insertions = defaultdict(list)
-
-    def tolerance(self):
-        return 10 ** (-self.accuracy)
-
-    def update(self, curve_idx, knot, multiplicity):
-        found_idx = None
-        found_knot = None
-        for idx, (c, k, m) in enumerate(self.multiplicities):
-            if curve_idx != c:
-                if abs(knot - k) < self.tolerance():
-                    # print(f"Found: #{curve_idx}: added {knot} ~= existing {k}")
-                    if (curve_idx, k) not in self.done_knots:
-                        found_idx = idx
-                        found_knot = k
-                        break
-        if found_idx is not None:
-            m = self.multiplicities[found_idx][2]
-            self.multiplicities[found_idx] = (curve_idx, knot, max(m, multiplicity))
-            self.skip_insertions[curve_idx].append(found_knot)
-        else:
-            self.multiplicities.append((curve_idx, knot, multiplicity))
-
-        self.done_knots.add((curve_idx, knot))
-
-    def get(self, knot):
-        result = 0
-        for c, k, m in self.multiplicities:
-            if abs(knot - k) < self.tolerance():
-                result = max(result, m)
-        return result
-
-    def __repr__(self):
-        items = [f"c#{c}: {k}: {m}" for c, k, m in self.multiplicities]
-        s = ", ".join(items)
-        return "{" + s + "}"
-
-    def items(self):
-        max_per_knot = defaultdict(int)
-        for c, k, m in self.multiplicities:
-            max_per_knot[k] = max(max_per_knot[k], m)
-        keys = sorted(max_per_knot.keys())
-        return [(key, max_per_knot[key]) for key in keys]
-
+class CurvesUnificationException(Exception):
+    """Raised when NURBS curve unification code can not unify curves with
+    specified tolerance."""
+    __description__ = "NURBS curves unification exception"
+    pass
 
 def unify_curves(curves, method="UNIFY", accuracy=6):
     tolerance = 10 ** (-accuracy)
     curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
     kvs = [curve.get_knotvector() for curve in curves]
     lens = [len(kv) for kv in kvs]
-    if all(l == lens[0] for l in lens):
-        diffs = np.array([kv - kvs[0] for kv in kvs])
-        if abs(diffs).max() < tolerance:
-            return curves
+    # if all(l == lens[0] for l in lens):
+    #     diffs = np.array([kv - kvs[0] for kv in kvs])
+    #     if abs(diffs).max() < tolerance:
+    #         return curves
 
     if method == "UNIFY":
-        dst_knots = KnotvectorDict(accuracy)
+        dst_knots = sv_knotvector.KnotvectorDict(tolerance)
         for i, curve in enumerate(curves):
-            m = sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2)
+            m = sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance=None)
             # print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
+            prev_u = None
             for u, count in m:
-                dst_knots.update(i, u, count)
+                if prev_u is not None and abs(prev_u - u) < tolerance:
+                    raise CurvesUnificationException(f"Knots in original curve #{i} differ less than for tolerance: {prev_u}, {u}")
+                prev_u = u
+                dst_knots.put(u, count)
         # print("Dst", dst_knots)
+        dst_knots.calc_averages()
 
         result = []
         #     for i, curve1 in enumerate(curves):
@@ -126,23 +87,27 @@ def unify_curves(curves, method="UNIFY", accuracy=6):
         #         result.append(curve1)
 
         for idx, curve in enumerate(curves):
-            diffs = []
-            # kv = np.round(curve.get_knotvector(), accuracy)
-            # curve = curve.copy(knotvector = kv)
-            # print('next curve', curve.get_knotvector())
+            kv = curve.get_knotvector().copy()
             ms = dict(
-                sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2)
+                sv_knotvector.to_multiplicity(kv)
             )
-            for dst_u, dst_multiplicity in dst_knots.items():
-                src_multiplicity = ms.get(dst_u, 0)
-                diff = dst_multiplicity - src_multiplicity
-                # print(f"C#{idx}: U = {dst_u}, was = {src_multiplicity}, need = {dst_multiplicity}, diff = {diff}")
-                diffs.append((dst_u, diff))
-            # print(f"Src {ms}, dst {dst_knots} => diff {diffs}")
-
-            for u, diff in diffs:
+            #print(f"Curve #{idx}, orig kv: {ms}")
+            updates = dst_knots.get_updates(ms.keys())
+            #print(f"Curve #{idx}, updates: {updates}")
+            updated_ms = []
+            for knot_idx, (knot, multiplicity) in enumerate(ms.items()):
+                if knot_idx in updates:
+                    updated_ms.append((updates[knot_idx], multiplicity))
+                else:
+                    updated_ms.append((knot, multiplicity))
+            ms = dict(updated_ms)
+            updated_kv = sv_knotvector.from_multiplicity(updated_ms)
+            curve = curve.copy(knotvector = updated_kv)
+            insertions = dst_knots.get_insertions(ms)
+            #print("Insertions", insertions)
+            for knot, diff in insertions.items():
                 if diff > 0:
-                    curve = curve.insert_knot(u, diff)
+                    curve = curve.insert_knot(knot, diff)
             #                     if u in dst_knots.skip_insertions[idx]:
             #                         pass
             #                         print(f"C: skip insertion T = {u}")
@@ -158,7 +123,7 @@ def unify_curves(curves, method="UNIFY", accuracy=6):
         kvs = [len(curve.get_control_points()) for curve in curves]
         max_kv, min_kv = max(kvs), min(kvs)
         if max_kv != min_kv:
-            raise Exception(
+            raise CurvesUnificationException(
                 f"Knotvector averaging is not applicable: Curves have different number of control points: {kvs}"
             )
 

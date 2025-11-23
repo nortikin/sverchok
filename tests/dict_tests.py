@@ -1,7 +1,7 @@
 
 from sverchok.utils.testing import *
 from sverchok.utils.dictionary import SvApproxDict
-from sverchok.utils.curve.nurbs_algorithms import KnotvectorDict
+from sverchok.utils.curve.knotvector import KnotvectorDict
 
 
 class ApproxDictTests(SverchokTestCase):
@@ -43,47 +43,51 @@ class ApproxDictTests(SverchokTestCase):
 
 class KnotvectorDictTests(SverchokTestCase):
     def test_dict_1(self):
-        d = KnotvectorDict(accuracy=3)
+        d = KnotvectorDict(tolerance=2e-3)
 
         curve1_kv = [0, 0.499, 0.501, 1]
         for k in curve1_kv:
-            d.update(1, k, 1)
+            d.put(k, 1)
 
         curve2_kv = [0, 0.5, 1]
         for k in curve2_kv:
-            d.update(2, k, 1)
+            d.put(k, 1)
+        d.calc_averages()
 
-        expected_items = [(0, 1), (0.499, 1), (0.5, 1), (0.501, 1), (1, 1)]
-        self.assertEqual(d.items(), expected_items)
+        expected_items = [(0, 1), (0.4995, 1), (0.501, 1), (1, 1)]
+        self.assert_sverchok_data_equal(list(d.items()), expected_items, precision=6)
 
     def test_dict_2(self):
-        d = KnotvectorDict(accuracy=3)
+        d = KnotvectorDict(tolerance=2e-3)
 
         curve1_kv = [(0, 4), (0.499, 3), (0.501, 3), (1, 4)]
         for k, m in curve1_kv:
-            d.update(1, k, m)
+            d.put(k, m)
 
         curve2_kv = [(0, 4), (0.5, 3), (1, 4)]
         for k, m in curve2_kv:
-            d.update(2, k, m)
+            d.put(k, m)
+        d.calc_averages()
 
-        expected_items = [(0, 4), (0.499, 3), (0.5, 3), (0.501, 3), (1, 4)]
-        self.assertEqual(d.items(), expected_items)
+        expected_items = [(0.0, 4), (0.4995, 3), (0.501, 3), (1.0, 4)]
+        self.assert_sverchok_data_equal(list(d.items()), expected_items, precision=6)
 
     def test_dict_3(self):
-        d = KnotvectorDict(accuracy=2)
+        d = KnotvectorDict(tolerance=1e-2)
 
         curve1_kv = [(0,4), (0.499, 3), (0.501, 3), (1, 4)]
         for k, m in curve1_kv:
-            d.update(1, k, m)
+            d.put(k, m)
+        d.calc_averages()
 
-        expected_items = [(0, 4), (0.499, 3), (0.501, 3), (1, 4)]
-        self.assertEqual(d.items(), expected_items)
+        expected_items = [(0.0, 4), (0.5, 3), (1.0, 4)]
+        self.assert_sverchok_data_equal(list(d.items()), expected_items, precision=6)
 
         curve2_kv = [(0,4), (0.5, 3), (1, 4)]
         for k, m in curve2_kv:
-            d.update(2, k, m)
+            d.put(k, m)
+        d.calc_averages()
 
-        expected_items = [(0, 4), (0.5, 3), (0.501, 3), (1, 4)]
-        self.assertEqual(d.items(), expected_items)
+        expected_items = [(0.0, 4), (0.5, 3), (1.0, 4)]
+        self.assert_sverchok_data_equal(list(d.items()), expected_items, precision=6)
 
