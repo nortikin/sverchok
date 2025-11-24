@@ -362,9 +362,16 @@ their own way to generate the links.</p></div>
             self.wrapper_tracked_ui_draw_op(row, &#34;node.view3d_align_from&#34;, icon=&#39;CURSOR&#39;, text=&#39;&#39;)
 
         &#34;&#34;&#34;
+        description_text = None
+        if &#39;description_text&#39; in keywords:
+            description_text = keywords[&#39;description_text&#39;]
+            keywords.pop(&#39;description_text&#39;)
+
         op = layout_element.operator(operator_idname, **keywords)
         op.node_name = self.name
         op.tree_name = self.id_data.name
+        if hasattr(op, &#39;description_text&#39;) and description_text is not None:
+            op.description_text = description_text
         return op
 
     def get_bpy_data_from_name(self, identifier, bpy_data_kind):  # todo, method which have nothing related with nodes
@@ -611,9 +618,16 @@ regarding the need to trim the first 3 chars of a stored StringProperty, best le
         self.wrapper_tracked_ui_draw_op(row, &#34;node.view3d_align_from&#34;, icon=&#39;CURSOR&#39;, text=&#39;&#39;)
 
     &#34;&#34;&#34;
+    description_text = None
+    if &#39;description_text&#39; in keywords:
+        description_text = keywords[&#39;description_text&#39;]
+        keywords.pop(&#39;description_text&#39;)
+
     op = layout_element.operator(operator_idname, **keywords)
     op.node_name = self.name
     op.tree_name = self.id_data.name
+    if hasattr(op, &#39;description_text&#39;) and description_text is not None:
+        op.description_text = description_text
     return op</code></pre>
 </details>
 <div class="desc"><p>this wrapper allows you to track the origin of a clicked operator, by automatically passing
@@ -709,11 +723,11 @@ self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', te
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f4772f0ea70>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f92ec8e2c20>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f4772f0e9e0>, 'attr': 'sv_show_time_nodes'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f92ec8e2b90>, 'attr': 'sv_show_time_nodes'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -997,11 +1011,11 @@ even if the tree is not in the Live update mode</p></div>
 effect not all nodes but only those which have property
 <code><a title="sverchok.node_tree.UpdateNodes.is_animatable" href="#sverchok.node_tree.UpdateNodes.is_animatable">UpdateNodes.is_animatable</a></code> enabled.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7f4772f0ee60>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7f92ec8e3010>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
 <dd>
 <div class="desc"><p>Draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7f4772f0eef0>, 'options': set(), 'attr': 'sv_process'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7f92ec8e30a0>, 'options': set(), 'attr': 'sv_process'}></code></dt>
 <dd>
 <div class="desc"><p>If enabled it means that the tree will be evaluated upon changes in its
 topology, changes in node properties or scene changes made by user.
@@ -1022,7 +1036,7 @@ reevaluated upon changes in the scene. It will effect only nodes with
 <li>etc.</li>
 </ul></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7f4772f0edd0>, 'options': set(), 'attr': 'sv_show'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7f92ec8e2f80>, 'options': set(), 'attr': 'sv_show'}></code></dt>
 <dd>
 <div class="desc"><p>See `SverchCustomTree.turn_off_ng</p></div>
 </dd>
@@ -1224,6 +1238,7 @@ Viewer nodes should have <code>show_viewport</code> method which takes 'to_show'
                 row.prop(self, &#39;is_interactive&#39;, icon=&#39;SCENE_DATA&#39;, icon_only=True)
             if self.is_animation_dependent or self.is_scene_dependent:
                 row = row or layout.row(align=True)
+                row.alignment = &#39;RIGHT&#39;
                 row.prop(self, &#39;refresh&#39;, icon=&#39;FILE_REFRESH&#39;)
         self.sv_draw_buttons(context, layout)
 
@@ -1574,11 +1589,9 @@ until new release.</p>
 <li>sverchok.nodes.exchange.FCStd_spreadsheet.SvFCStdSpreadsheetNode</li>
 <li>sverchok.nodes.exchange.FCStd_write.SvWriteFCStdNode</li>
 <li>sverchok.nodes.exchange.approx_subd_to_nurbs.SvApproxSubdtoNurbsNode</li>
-<li>sverchok.nodes.exchange.bezier_in.SvBezierInNode</li>
 <li>sverchok.nodes.exchange.export_rw3dm_json.SvExNurbsToJsonNode</li>
 <li>sverchok.nodes.exchange.gcode_exporter.SvExportGcodeNode</li>
 <li>sverchok.nodes.exchange.import_rw3dm_json.SvExJsonToNurbsNode</li>
-<li>sverchok.nodes.exchange.nurbs_in.SvExNurbsInNode</li>
 <li>sverchok.nodes.exchange.receive_from_sorcar.SvReceiveFromSorcarNode</li>
 <li>sverchok.nodes.field.attractor_field_mk2.SvAttractorFieldNodeMk2</li>
 <li>sverchok.nodes.field.compose_vector_field.SvComposeVectorFieldNode</li>
@@ -1852,7 +1865,6 @@ until new release.</p>
 <li>sverchok.nodes.scene.collection_picker_mk1.SvCollectionPicker</li>
 <li>sverchok.nodes.scene.curve_in.SvCurveInputNode</li>
 <li>sverchok.nodes.scene.frame_info_mk2.SvFrameInfoNodeMK2</li>
-<li>sverchok.nodes.scene.get_objects_data.SvGetObjectsDataMK3</li>
 <li>sverchok.nodes.scene.node_remote_mk2.SvNodeRemoteNodeMK2</li>
 <li>sverchok.nodes.scene.obj_remote_mk2.SvObjRemoteNodeMK2</li>
 <li>sverchok.nodes.scene.objects_in_lite.SvObjInLite</li>
@@ -2075,6 +2087,7 @@ until new release.</p>
 <li>sverchok.nodes.viz.viewer_typography.SvTypeViewerNodeV28</li>
 <li>sverchok.nodes.viz.viewer_waveform_output.SvWaveformViewer</li>
 <li>sverchok.old_nodes.getprop.SvGetPropNode</li>
+<li>sverchok.ui.sv_object_names_utils.SvNodeInDataMK4</li>
 </ul>
 <h3>Class variables</h3>
 <dl>
@@ -2194,6 +2207,7 @@ def draw_buttons(self, context, layout):
             row.prop(self, &#39;is_interactive&#39;, icon=&#39;SCENE_DATA&#39;, icon_only=True)
         if self.is_animation_dependent or self.is_scene_dependent:
             row = row or layout.row(align=True)
+            row.alignment = &#39;RIGHT&#39;
             row.prop(self, &#39;refresh&#39;, icon=&#39;FILE_REFRESH&#39;)
     self.sv_draw_buttons(context, layout)</code></pre>
 </details>
@@ -2746,7 +2760,7 @@ This UI is displayed on a property panel of the tree editor.</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7f4772f0f400>, 'attr': 'is_animatable'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7f92ec8e35b0>, 'attr': 'is_animatable'}></code></dt>
 <dd>
 <div class="desc"><p>A switch for user to make a node to update on frame changes in a scene.
 Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href="#sverchok.node_tree.UpdateNodes.is_animation_dependent">UpdateNodes.is_animation_dependent</a></code> to display the option in node UI.</p></div>
@@ -2757,7 +2771,7 @@ Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href=
 Also the node should use <code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons">SverchCustomTreeNode.sv_draw_buttons()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193507101-60a28c3f-50a1-4117-a66f-25b0b4e07e13.png"></p></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7f4772f0f2e0>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7f92ec8e3490>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
 <dd>
 <div class="desc"><p>When this option is on arbitrary changes in scene will update this node.
 Those changes can be:
@@ -2787,7 +2801,7 @@ should be used instead.</p>
 <pre><code class="language-text">⚠️ There is no sense to override this property
 </code></pre></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7f4772f0f370>, 'attr': 'refresh'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7f92ec8e3520>, 'attr': 'refresh'}></code></dt>
 <dd>
 <div class="desc"><p>See <code><a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193505561-395ca65c-3354-4e23-b5f7-765b2d830e4b.png"></p>
