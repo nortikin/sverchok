@@ -184,7 +184,7 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         row = col.row(align=True)
         row.alignment='RIGHT'
         if self.prefs_over_sized_buttons:
-            row.alignment='CENTER'
+            row.alignment='EXPAND'
 
         op_text = "Get selection"  # fallback
 
