@@ -2,12 +2,13 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty, IntProperty, BoolProperty
 
 from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve, SvOffsetCurve
+from sverchok.utils.curve.nurbs_algorithms import offset_nurbs_curve
 from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL, NORMAL_DIR
 
 class SvOffsetCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
@@ -91,14 +92,22 @@ class SvOffsetCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
             default = SvOffsetCurve.BY_PARAMETER,
             update = update_sockets)
 
+    use_nurbs : BoolProperty(
+            name = "Loose NURBS",
+            description = "Use approximate NURBS offset algorithm",
+            default = False,
+            update = update_sockets)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "algorithm")
         if self.algorithm != NORMAL_DIR:
             layout.prop(self, "mode")
-        layout.prop(self, 'offset_type', expand=True)
-        if self.offset_type == 'CURVE':
-            layout.label(text="Offset curve use:")
-            layout.prop(self, 'offset_curve_type', text='')
+        layout.prop(self, 'use_nurbs')
+        if not self.use_nurbs:
+            layout.prop(self, 'offset_type', expand=True)
+            if self.offset_type == 'CURVE':
+                layout.label(text="Offset curve use:")
+                layout.prop(self, 'offset_curve_type', text='')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
@@ -141,11 +150,17 @@ class SvOffsetCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
                     vector = np.array(vector)
 
                 if self.offset_type == 'CONST':
-                    new_curve = SvOffsetCurve(curve,
-                                    offset_vector = vector,
-                                    offset_amount = offset,
+                    if self.use_nurbs:
+                        new_curve = offset_nurbs_curve(curve,
+                                    offset_vector = offset * vector,
                                     algorithm = self.algorithm,
-                                    resolution = resolution)
+                                    algorithm_resolution = resolution)
+                    else:
+                        new_curve = SvOffsetCurve(curve,
+                                        offset_vector = vector,
+                                        offset_amount = offset,
+                                        algorithm = self.algorithm,
+                                        resolution = resolution)
                 else:
                     if offset_curve is None:
                         raise SvNoDataError(socket=self.inputs['OffsetCurve'], node=self)
