@@ -72,7 +72,7 @@ def is_readonly_prop(propdef):
     return has_get and not has_set
 
 
-def deep_copy_node_properties(src, dst):
+def deep_copy_property_group(src, dst):
     '''Deep copying PropertyGroup: Copies all properties, including PointerProperty and CollectionProperty, skips read-only properties.'''
 
     props = collect_declared_props(src.__class__)
@@ -90,11 +90,11 @@ def deep_copy_node_properties(src, dst):
             dst_coll.clear()
             for item_src in val:
                 item_dst = dst_coll.add()
-                deep_copy_pg(item_src, item_dst)
+                deep_copy_property_group(item_src, item_dst)
 
         elif isinstance(val, bpy.types.PropertyGroup):
             # POINTER PROPERTY (один PG)
-            deep_copy_pg(val, getattr(dst, name))
+            deep_copy_property_group(val, getattr(dst, name))
 
         else:
             # ordinary propertry
@@ -157,7 +157,7 @@ class SvReplaceNode(bpy.types.Operator):
         for prop_name in ui_props:
             setattr(new_node, prop_name, getattr(old_node, prop_name))
 
-        deep_copy_node_properties(old_node, new_node)
+        deep_copy_property_group(old_node, new_node)
 
         # get the node ready for linking
         if hasattr(new_node, "migrate_props_pre_relink"):
