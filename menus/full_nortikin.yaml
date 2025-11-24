@@ -1,8 +1,13 @@
+# DO NOT USE. REPLACED WITH full_by_operations.yaml:
 # This file is parsed by sverchok.ui.nodeview_space_menu
 # It's quite limited representation of yaml syntax, stick to existing lexical
 # constructions
 
 # Shift+A / Add(Node) Menu
+
+- DO_NOT_USE_THIS_MENU:
+    - icon_name: ERROR
+    - operator: node.sv_on_item_empty_operator_mk4
 
 - Search:  # Label of an operator
     - icon_name: VIEWZOOM  # icon name to show
