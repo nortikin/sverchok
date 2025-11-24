@@ -200,8 +200,6 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         grid.column(align=True).prop(self, 'legacy_mode')
         row0 = grid.row(align=True)
         row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='TOOL_SETTINGS', text="")
-        row0.separator()
-        row0.row().prop(self, 'display_type', expand=True, text='')
         
         if not self.by_input:
             if self.object_names:
