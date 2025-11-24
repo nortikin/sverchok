@@ -157,6 +157,11 @@ class SvReplaceNode(bpy.types.Operator):
         for prop_name in ui_props:
             setattr(new_node, prop_name, getattr(old_node, prop_name))
 
+        # Copy ID properties
+        # for prop_name, prop_value in old_node.items():
+        #     if hasattr(new_node, prop_name):
+        #         new_node[prop_name] = old_node[prop_name]
+        
         deep_copy_property_group(old_node, new_node)
 
         # get the node ready for linking

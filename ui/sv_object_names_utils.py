@@ -357,7 +357,7 @@ class SvONItemRemoveMK4(bpy.types.Operator):
             context.node.process_node(None)
         return {'FINISHED'}
 
-class SvON_UL_NamesListMK4(bpy.types.UIList):
+class SVON_UL_NamesListMK4(bpy.types.UIList):
     '''Show objects in list item with controls'''
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
@@ -972,7 +972,7 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         pass
 
     def draw_object_names(self, layout):
-        layout.template_list("SvON_UL_NamesListMK4", f"uniq_{self.name}", self, "object_names", self, "active_obj_index", rows=3, item_dyntip_propname='test_text1')
+        layout.template_list("SVON_UL_NamesListMK4", f"uniq_{self.name}", self, "object_names", self, "active_obj_index", rows=3, item_dyntip_propname='test_text1')
         pass
     pass
 
@@ -993,7 +993,7 @@ classes = [
     SvONItemRemoveMK4,
     SvONItemOperatorMK4,
     SvONDataCollectionMK4,
-    SvON_UL_NamesListMK4,
+    SVON_UL_NamesListMK4,
     SV_PT_ViewportDisplayPropertiesMK4,
 ]
 
