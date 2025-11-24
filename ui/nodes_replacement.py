@@ -45,6 +45,62 @@ def set_outputs_mapping(operator, mapping):
             item.old_name = old
             item.new_name = new
 
+def collect_declared_props(cls):
+    """Collect bpy.props.* in the class and its parents."""
+    props = {}
+    for base in cls.__mro__:
+        ann = getattr(base, "__annotations__", {})
+        for name, p in ann.items():
+            if isinstance(p, bpy.props._PropertyDeferred):
+                props[name] = p
+    return props
+
+
+def is_readonly_prop(propdef):
+    '''What bpy.props. * is only declared with get= and without set=.'''
+    # Blender before 4.x
+    if hasattr(propdef, "kwargs"):
+        kw = propdef.kwargs
+    # Blender 4.x–5.x
+    elif hasattr(propdef, "keywords"):
+        kw = propdef.keywords
+    else:
+        return False
+    
+    has_get = "get" in kw
+    has_set = "set" in kw
+    return has_get and not has_set
+
+
+def deep_copy_property_group(src, dst):
+    '''Deep copying PropertyGroup: Copies all properties, including PointerProperty and CollectionProperty, skips read-only properties.'''
+
+    props = collect_declared_props(src.__class__)
+
+    for name, propdef in props.items():
+        # skip getter-only property
+        if is_readonly_prop(propdef):
+            continue
+
+        val = getattr(src, name)
+
+        if isinstance(val, bpy.types.bpy_prop_collection):
+            #bpy.props.CollectionProperty - collection of bpy.types.PropertyGroup
+            dst_coll = getattr(dst, name)
+            dst_coll.clear()
+            for item_src in val:
+                item_dst = dst_coll.add()
+                deep_copy_property_group(item_src, item_dst)
+
+        elif isinstance(val, bpy.types.PropertyGroup):
+            # POINTER PROPERTY (один PG)
+            deep_copy_property_group(val, getattr(dst, name))
+
+        else:
+            # ordinary propertry
+            setattr(dst, name, val)
+
+
 class SvReplaceNode(bpy.types.Operator):
     """
     Replace selected node with another node.
@@ -100,10 +156,13 @@ class SvReplaceNode(bpy.types.Operator):
         ui_props = ['location', 'height', 'width', 'label', 'hide']
         for prop_name in ui_props:
             setattr(new_node, prop_name, getattr(old_node, prop_name))
+
         # Copy ID properties
-        for prop_name, prop_value in old_node.items():
-            if hasattr(new_node, prop_name):
-                new_node[prop_name] = old_node[prop_name]
+        # for prop_name, prop_value in old_node.items():
+        #     if hasattr(new_node, prop_name):
+        #         new_node[prop_name] = old_node[prop_name]
+        
+        deep_copy_property_group(old_node, new_node)
 
         # get the node ready for linking
         if hasattr(new_node, "migrate_props_pre_relink"):

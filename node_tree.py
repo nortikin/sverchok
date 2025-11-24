@@ -533,9 +533,16 @@ class NodeUtils:
             self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
 
         """
+        description_text = None
+        if 'description_text' in keywords:
+            description_text = keywords['description_text']
+            keywords.pop('description_text')
+
         op = layout_element.operator(operator_idname, **keywords)
         op.node_name = self.name
         op.tree_name = self.id_data.name
+        if hasattr(op, 'description_text') and description_text is not None:
+            op.description_text = description_text
         return op
 
     def get_bpy_data_from_name(self, identifier, bpy_data_kind):  # todo, method which have nothing related with nodes
@@ -724,6 +731,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies, NodeDocumen
                 row.prop(self, 'is_interactive', icon='SCENE_DATA', icon_only=True)
             if self.is_animation_dependent or self.is_scene_dependent:
                 row = row or layout.row(align=True)
+                row.alignment = 'RIGHT'
                 row.prop(self, 'refresh', icon='FILE_REFRESH')
         self.sv_draw_buttons(context, layout)
 
