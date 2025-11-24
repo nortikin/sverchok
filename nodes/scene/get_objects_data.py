@@ -125,12 +125,6 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         default = False,
         update = updateNode) # type: ignore
     
-    align_3dview_types = [
-            ('ISOLATE_CURRENT', "", "Toggle local view with only current selected object in the list\nPress again to restore view", "PIVOT_CURSOR", 0),
-            ('ISOLATE_ALL', "", "Toggle local view with all objects in the list\nPress again to restore view", "PIVOT_INDIVIDUAL", 1),
-        ]
-
-
     def _verts_sockets_update(self, context):
         for name in ['vertices_select', 'vertices_crease', 'vertices_bevel_weight']:
             self.outputs[name].hide = not(self.enable_verts_attribute_sockets)
@@ -183,52 +177,6 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         default = 'SELECTED',
         update = updateNode) # type: ignore
 
-    def update_align_3dview(self, context):
-        if len(self.object_names)==0:
-            return
-        obj_in_list = self.object_names[self.active_obj_index]
-        if obj_in_list:
-            # reset all selections
-            for obj in bpy.context.selected_objects:
-                obj.select_set(False)
-            
-            # select all objects in list of this node
-            if self.align_3dview_type=='ISOLATE_ALL':
-                for item in self.object_names:
-                    if item.object_pointer:
-                        item.object_pointer.select_set(True)
-
-            if obj_in_list.object_pointer:
-                obj_in_list.object_pointer.select_set(True)
-                bpy.context.view_layer.objects.active = obj_in_list.object_pointer
-
-            for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    ctx = bpy.context.copy()
-                    ctx['area'] = area
-                    ctx['region'] = area.regions[-1]
-                    # test if current mode is local view: https://blender.stackexchange.com/questions/290669/checking-for-object-being-in-local-view
-                    if self.align_3dview_type_previous_value!=self.align_3dview_type and area.spaces.active.local_view:
-                        bpy.ops.view3d.localview(ctx, frame_selected=False)
-                    self.align_3dview_type_previous_value = self.align_3dview_type
-                    bpy.ops.view3d.localview(ctx, frame_selected=False)
-                    #bpy.ops.view3d.view_selected(ctx)
-                    break
-
-            pass
-        return
-    
-    align_3dview_type : bpy.props.EnumProperty(
-        name = "Local View",
-        items = align_3dview_types,
-        default = 'ISOLATE_CURRENT',
-        update = update_align_3dview) # type: ignore
-    
-    align_3dview_type_previous_value : bpy.props.EnumProperty(
-        name = "Local View",
-        items = align_3dview_types,
-        default = 'ISOLATE_CURRENT') # type: ignore
-
     def migrate_from(self, old_node):
         self.outputs["vertices_select"]         .hide = not(self.enable_verts_attribute_sockets)
         self.outputs["vertices_crease"]         .hide = not(self.enable_verts_attribute_sockets)
@@ -250,10 +198,10 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             layout.separator()
 
     def draw_edges_out_socket(self, socket, context, layout):
-        layout.prop(self, 'hide_render_type', expand=True)
-        layout.separator()
-        layout.prop(self, 'align_3dview_type', expand=True)
-        layout.separator()
+        # layout.prop(self, 'hide_render_type', expand=True)
+        # layout.separator()
+        # layout.prop(self, 'align_3dview_type', expand=True)
+        # layout.separator()
         layout.label(text=f'  {socket.label} ')
         layout.prop(self, 'enable_edges_attribute_sockets', icon='MESH_DATA', text='', toggle=True)
         if socket.is_linked:  # linked INPUT or OUTPUT
@@ -371,8 +319,8 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         grid.column(align=True).prop(self, 'vergroups')
         row0 = grid.row(align=True)
         row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='TOOL_SETTINGS', text="")
-        row0.separator()
-        row0.row().prop(self, 'display_type', expand=True, text='')
+        # row0.separator()
+        # row0.row().prop(self, 'display_type', expand=True, text='')
 
         if not by_input:
             if self.object_names:
@@ -931,57 +879,6 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             pass
 
         pass
-
-    # def load_from_json(self, node_data: dict, import_version: float):
-    #     '''function to get data when importing from json'''
-    #     data_objects = bpy.data.objects
-
-    #     if 'object_names' in node_data:
-    #         data_list = node_data.get('object_names')
-    #         if data_list:
-    #             data = json.loads(data_list)
-    #             for I, k in enumerate(data):
-    #                 if I<=len(self.object_names)-1:
-    #                     pointer_type    = k['pointer_type']
-    #                     if pointer_type=='OBJECT':
-    #                         name    = k['object_pointer']
-    #                         if name in data_objects:
-    #                             self.object_names[I].object_pointer = data_objects[name]
-    #                             pass
-    #                     elif pointer_type=='COLLECTION':
-    #                         name    = k['collection_pointer']
-    #                         coll = bpy.data.collections.get(name)
-    #                         if coll is not None:
-    #                             self.object_names[I].collection_pointer = coll
-    #                         pass
-
-    #                     if 'exclude' in k:
-    #                         exclude = k['exclude']
-    #                         self.object_names[I].exclude = exclude
-    #                 else:
-    #                     continue
-    #                 pass
-    #     pass
-
-    # def save_to_json(self, node_data: list):
-    #     '''function to set data for exporting json'''
-    #     data = []
-    #     for item in self.object_names:
-    #         if item.pointer_type=='OBJECT':
-    #             if item.object_pointer:
-    #                 data.append( dict(  object_pointer=item.object_pointer.name, exclude=item.exclude, pointer_type=item.pointer_type ) )
-    #             else:
-    #                 data.append( dict(  object_pointer='', exclude=item.exclude, pointer_type=item.pointer_type ) )
-    #         elif item.pointer_type=='COLLECTION':
-    #             if item.collection_pointer:
-    #                 data.append( dict(  collection_pointer=item.collection_pointer.name, exclude=item.exclude, pointer_type=item.pointer_type ) )
-    #             else:
-    #                 data.append( dict(  collection_pointer='', exclude=item.exclude, pointer_type=item.pointer_type ) )
-    #             pass
-    #         pass
-
-    #     data_json_str = json.dumps(data)
-    #     node_data['object_names'] = data_json_str
 
 
 classes = [

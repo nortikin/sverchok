@@ -9,6 +9,7 @@ import bpy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+import json
 
 # object properties in Blender viewport -> Object Properties -> Viewport Display
 prop_names = ['name', 'axis', 'wire', 'all_edges', 'texture_space', 'shadows', 'in_front']
@@ -676,7 +677,7 @@ class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
     #     return s
 
     # horizontal size
-    bl_ui_units_x = 15
+    bl_ui_units_x = 22
 
     # def is_extended():
     #     return True
@@ -691,6 +692,26 @@ class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
             for n in prop_names:
                 prop_name = "show_"+n
                 grid1.prop(context.node, prop_name)
+            grid1.label(text='')
+            
+            grid2 = grid1.grid_flow(row_major=True, columns=2, align=False)
+            #grid2.alignment = 'RIGHT'
+
+            row0 = grid2.row(align=True)
+            row0.alignment = 'RIGHT'
+            row0.label(text='Render Types:')
+            grid2.row(align=True).prop(context.node, 'hide_render_type', expand=True, )
+
+            row1 = grid2.row(align=True)
+            row1.alignment = 'RIGHT'
+            row1.label(text='Local View:')
+            grid2.row(align=True).prop(context.node, 'align_3dview_type', expand=True, )
+
+            row2 = grid2.row(align=True)
+            row2.alignment = 'RIGHT'
+            row2.label(text='Display Types:')
+            grid2.row(align=True).prop(context.node, 'display_type', expand=True, text='1234')
+
 
             grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
             grid2.label(text='Output Sockets:')
@@ -813,6 +834,60 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         items = hide_render_types,
         default = 'RESTRICT_RENDER_OFF',
         update = update_render_type)
+    
+
+    def update_align_3dview(self, context):
+        if len(self.object_names)==0:
+            return
+        obj_in_list = self.object_names[self.active_obj_index]
+        if obj_in_list:
+            # reset all selections
+            for obj in bpy.context.selected_objects:
+                obj.select_set(False)
+            
+            # select all objects in list of this node
+            if self.align_3dview_type=='ISOLATE_ALL':
+                for item in self.object_names:
+                    if item.object_pointer:
+                        item.object_pointer.select_set(True)
+
+            if obj_in_list.object_pointer:
+                obj_in_list.object_pointer.select_set(True)
+                bpy.context.view_layer.objects.active = obj_in_list.object_pointer
+
+            for area in bpy.context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    ctx = bpy.context.copy()
+                    ctx['area'] = area
+                    ctx['region'] = area.regions[-1]
+                    # test if current mode is local view: https://blender.stackexchange.com/questions/290669/checking-for-object-being-in-local-view
+                    if self.align_3dview_type_previous_value!=self.align_3dview_type and area.spaces.active.local_view:
+                        bpy.ops.view3d.localview(ctx, frame_selected=False)
+                    self.align_3dview_type_previous_value = self.align_3dview_type
+                    bpy.ops.view3d.localview(ctx, frame_selected=False)
+                    #bpy.ops.view3d.view_selected(ctx)
+                    break
+
+            pass
+        return
+
+    align_3dview_types = [
+            ('ISOLATE_CURRENT', "", "Toggle local view with only current selected object in the list\nPress again to restore view", "PIVOT_CURSOR", 0),
+            ('ISOLATE_ALL', "", "Toggle local view with all objects in the list\nPress again to restore view", "PIVOT_INDIVIDUAL", 1),
+        ]
+
+    align_3dview_type : bpy.props.EnumProperty(
+        name = "Local View",
+        items = align_3dview_types,
+        default = 'ISOLATE_CURRENT',
+        update = update_align_3dview) # type: ignore
+    
+    align_3dview_type_previous_value : bpy.props.EnumProperty(
+        name = "Local View",
+        items = align_3dview_types,
+        default = 'ISOLATE_CURRENT') # type: ignore
+
+
 
     
     def remove_duplicates_objects_in_list(self, ops):
@@ -974,6 +1049,58 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
     def draw_object_names(self, layout):
         layout.template_list("SVON_UL_NamesListMK4", f"uniq_{self.name}", self, "object_names", self, "active_obj_index", rows=3, item_dyntip_propname='test_text1')
         pass
+
+    def load_from_json(self, node_data: dict, import_version: float):
+        '''function to get data when importing from json'''
+        data_objects = bpy.data.objects
+
+        if 'object_names' in node_data:
+            data_list = node_data.get('object_names')
+            if data_list:
+                data = json.loads(data_list)
+                for I, k in enumerate(data):
+                    if I<=len(self.object_names)-1:
+                        pointer_type    = k['pointer_type']
+                        if pointer_type=='OBJECT':
+                            name    = k['object_pointer']
+                            if name in data_objects:
+                                self.object_names[I].object_pointer = data_objects[name]
+                                pass
+                        elif pointer_type=='COLLECTION':
+                            name    = k['collection_pointer']
+                            coll = bpy.data.collections.get(name)
+                            if coll is not None:
+                                self.object_names[I].collection_pointer = coll
+                            pass
+
+                        if 'exclude' in k:
+                            exclude = k['exclude']
+                            self.object_names[I].exclude = exclude
+                    else:
+                        continue
+                    pass
+        pass
+
+    def save_to_json(self, node_data: list):
+        '''function to set data for exporting json'''
+        data = []
+        for item in self.object_names:
+            if item.pointer_type=='OBJECT':
+                if item.object_pointer:
+                    data.append( dict(  object_pointer=item.object_pointer.name, exclude=item.exclude, pointer_type=item.pointer_type ) )
+                else:
+                    data.append( dict(  object_pointer='', exclude=item.exclude, pointer_type=item.pointer_type ) )
+            elif item.pointer_type=='COLLECTION':
+                if item.collection_pointer:
+                    data.append( dict(  collection_pointer=item.collection_pointer.name, exclude=item.exclude, pointer_type=item.pointer_type ) )
+                else:
+                    data.append( dict(  collection_pointer='', exclude=item.exclude, pointer_type=item.pointer_type ) )
+                pass
+            pass
+
+        data_json_str = json.dumps(data)
+        node_data['object_names'] = data_json_str
+
     pass
 
 classes = [
