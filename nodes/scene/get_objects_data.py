@@ -941,13 +941,19 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     #         if data_list:
     #             data = json.loads(data_list)
     #             for I, k in enumerate(data):
-    #                 if len(self.object_names)<=I-1:
+    #                 if I<=len(self.object_names)-1:
     #                     pointer_type    = k['pointer_type']
     #                     if pointer_type=='OBJECT':
-    #                         name    = k['name']
+    #                         name    = k['object_pointer']
     #                         if name in data_objects:
     #                             self.object_names[I].object_pointer = data_objects[name]
     #                             pass
+    #                     elif pointer_type=='COLLECTION':
+    #                         name    = k['collection_pointer']
+    #                         coll = bpy.data.collections.get(name)
+    #                         if coll is not None:
+    #                             self.object_names[I].collection_pointer = coll
+    #                         pass
 
     #                     if 'exclude' in k:
     #                         exclude = k['exclude']
@@ -961,10 +967,18 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     #     '''function to set data for exporting json'''
     #     data = []
     #     for item in self.object_names:
-    #         if item.object_pointer:
-    #             data.append( dict(  name=item.object_pointer.name, exclude=item.exclude ) )
-    #         else:
-    #             data.append( dict(  name='', exclude=item.exclude ) )
+    #         if item.pointer_type=='OBJECT':
+    #             if item.object_pointer:
+    #                 data.append( dict(  object_pointer=item.object_pointer.name, exclude=item.exclude, pointer_type=item.pointer_type ) )
+    #             else:
+    #                 data.append( dict(  object_pointer='', exclude=item.exclude, pointer_type=item.pointer_type ) )
+    #         elif item.pointer_type=='COLLECTION':
+    #             if item.collection_pointer:
+    #                 data.append( dict(  collection_pointer=item.collection_pointer.name, exclude=item.exclude, pointer_type=item.pointer_type ) )
+    #             else:
+    #                 data.append( dict(  collection_pointer='', exclude=item.exclude, pointer_type=item.pointer_type ) )
+    #             pass
+    #         pass
 
     #     data_json_str = json.dumps(data)
     #     node_data['object_names'] = data_json_str
