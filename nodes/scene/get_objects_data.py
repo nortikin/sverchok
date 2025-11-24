@@ -297,10 +297,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         by_input = self.by_input
         if not by_input:
             row = col.row()
-            row.alignment='RIGHT'
-            if self.prefs_over_sized_buttons:
-                row.alignment='EXPAND'
-                pass
+            row.alignment='EXPAND'
 
             op_text = "Get selection"  # fallback
             callback = SvOB3BCallbackMK4.bl_idname

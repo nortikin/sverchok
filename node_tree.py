@@ -731,6 +731,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies, NodeDocumen
                 row.prop(self, 'is_interactive', icon='SCENE_DATA', icon_only=True)
             if self.is_animation_dependent or self.is_scene_dependent:
                 row = row or layout.row(align=True)
+                row.alignment = 'RIGHT'
                 row.prop(self, 'refresh', icon='FILE_REFRESH')
         self.sv_draw_buttons(context, layout)
 

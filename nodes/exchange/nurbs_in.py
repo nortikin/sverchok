@@ -163,9 +163,7 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         col = layout.column(align=True)
         col.alignment='RIGHT'
         row = col.row(align=True)
-        row.alignment = 'RIGHT'
-        if self.prefs_over_sized_buttons:
-            row.alignment='EXPAND'
+        row.alignment = 'EXPAND'
 
         op_text = "Get selection"  # fallback
         if self.prefs_over_sized_buttons:
