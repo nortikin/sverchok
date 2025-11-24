@@ -408,14 +408,27 @@ Otherwise, try to figure out their rotation automatically.
 * generated NURBS surface.</p></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.nurbs_sweep"><code class="name flex">
-<span>def <span class="ident">nurbs_sweep</span></span>(<span>path,<br>profiles,<br>ts,<br>min_profiles,<br>algorithm,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>metric='DISTANCE',<br>implementation='NATIVE',<br>logger=None,<br>**kwargs)</span>
+<span>def <span class="ident">nurbs_sweep</span></span>(<span>path,<br>profiles,<br>ts,<br>min_profiles,<br>algorithm,<br>use_tangents=False,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>metric='DISTANCE',<br>implementation='NATIVE',<br>logger=None,<br>**kwargs)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = &#39;UNIFY&#39;, knotvector_accuracy = 6, metric = &#39;DISTANCE&#39;, implementation = SvNurbsSurface.NATIVE, logger=None, **kwargs):
+<pre><code class="python">def nurbs_sweep(
+    path,
+    profiles,
+    ts,
+    min_profiles,
+    algorithm,
+    use_tangents = False,
+    knots_u=&#34;UNIFY&#34;,
+    knotvector_accuracy=6,
+    metric=&#34;DISTANCE&#34;,
+    implementation=SvNurbsSurface.NATIVE,
+    logger=None,
+    **kwargs,
+):
     &#34;&#34;&#34;
     NURBS Sweep surface.
     
@@ -481,11 +494,18 @@ Otherwise, try to figure out their rotation automatically.
 #     for i, p in enumerate(profiles):
 #         print(f&#34;P#{i}: {p.get_control_points()}&#34;)
 
-    return nurbs_sweep_impl(path, profiles, ts, frame_calculator,
-                knots_u=knots_u, metric=metric,
-                knotvector_accuracy = knotvector_accuracy,
-                implementation=implementation,
-                logger = logger)</code></pre>
+    if not use_tangents:
+        return nurbs_sweep_impl(path, profiles, ts, frame_calculator,
+                    knots_u=knots_u, metric=metric,
+                    knotvector_accuracy = knotvector_accuracy,
+                    implementation=implementation,
+                    logger = logger)
+    else:
+        return nurbs_sweep_with_tangents_impl(path, profiles, ts, frame_calculator,
+                    knots_u=knots_u, metric=metric,
+                    knotvector_accuracy = knotvector_accuracy,
+                    implementation=implementation,
+                    logger = logger)</code></pre>
 </details>
 <div class="desc"><p>NURBS Sweep surface.</p>
 <p>Inputs:
@@ -579,6 +599,77 @@ returns np.array((n, 3, 3)) of curve frames.
 * list of curves - interpolated profile curves
 * list of NURBS curves along V direction
 * generated NURBS surface.</p></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.nurbs_sweep_with_tangents_impl"><code class="name flex">
+<span>def <span class="ident">nurbs_sweep_with_tangents_impl</span></span>(<span>path,<br>profiles,<br>ts,<br>frame_calculator,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>metric='DISTANCE',<br>implementation='NATIVE',<br>logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nurbs_sweep_with_tangents_impl(path, profiles, ts, frame_calculator,
+        knots_u = &#39;UNIFY&#39;,
+        knotvector_accuracy = 6,
+        metric = &#39;DISTANCE&#39;,
+        implementation = SvNurbsSurface.NATIVE,
+        logger = None):
+
+    if len(profiles) != len(ts):
+        raise ArgumentError(f&#34;Number of profiles ({len(profiles)}) is not equal to number of T values ({len(ts)})&#34;)
+    if len(ts) &lt; 2:
+        raise ArgumentError(&#34;At least 2 profiles are required&#34;)
+
+    profiles = unify_curves_degree(profiles)
+    profiles = unify_curves(profiles, method=knots_u, accuracy=knotvector_accuracy)
+
+    path_points = path.evaluate_array(ts)
+    frames = frame_calculator(ts)
+    placed_profiles = []
+    for profile, path_point, frame in zip(profiles, path_points, frames):
+        profile = profile.transform(frame, path_point)
+        placed_profiles.append(profile)
+
+    degree_u = placed_profiles[0].get_degree()
+    degree_v = path.get_degree()
+
+    src_points = [profile.get_homogenous_control_points() for profile in placed_profiles]
+    src_points = np.array(src_points)
+    src_points = np.transpose(src_points, axes=(1,0,2))
+
+    path_tangents = path.tangent_array(ts)
+    curvatures = path.curvature_array(ts)
+    normals = path.main_normal_array(ts, normalize=True)
+
+    #offset_vectors = [profile.get_control_points() - pt0 for profile, pt0 in zip(placed_profiles, path_points)]
+    offset_vectors = [profile.calc_greville_points() - pt0 for profile, pt0 in zip(placed_profiles, path_points)]
+    offset_vectors = np.array(offset_vectors)
+    normals = np.transpose(normals[np.newaxis], axes=(1,0,2))
+    prod = np.sum(offset_vectors * normals, axis=2)
+    profile_tangents = (1.0 - prod * curvatures[np.newaxis].T)[np.newaxis].T * path_tangents
+
+    n,m,ndim = profile_tangents.shape
+    profile_tangents = np.concatenate((profile_tangents, np.zeros((n,m,1))), axis=2)
+
+    v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=ts, implementation=implementation, logger=logger) for points, tangents in zip(src_points, profile_tangents)]
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
+    control_points = np.array(control_points)
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
+    
+    knotvector_u = placed_profiles[0].get_knotvector()
+    knotvector_v = v_curves[0].get_knotvector()
+
+    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+    return None, placed_profiles, v_curves, surface</code></pre>
+</details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.prepare_nurbs_birail"><code class="name flex">
 <span>def <span class="ident">prepare_nurbs_birail</span></span>(<span>path1,<br>path2,<br>profiles,<br>ts1=None,<br>ts2=None,<br>length_resolution=None,<br>min_profiles=10,<br>knots_u='UNIFY',<br>knotvector_accuracy=6,<br>degree_v=None,<br>metric='DISTANCE',<br>scale_uniform=True,<br>auto_rotate=False,<br>use_tangents='PATHS_AVG',<br>y_axis=None,<br>implementation='NATIVE',<br>logger=None)</span>
@@ -3821,6 +3912,7 @@ def v_size(self):
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_birail" href="#sverchok.utils.surface.nurbs.nurbs_birail">nurbs_birail</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_sweep" href="#sverchok.utils.surface.nurbs.nurbs_sweep">nurbs_sweep</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_sweep_impl" href="#sverchok.utils.surface.nurbs.nurbs_sweep_impl">nurbs_sweep_impl</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.nurbs_sweep_with_tangents_impl" href="#sverchok.utils.surface.nurbs.nurbs_sweep_with_tangents_impl">nurbs_sweep_with_tangents_impl</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.prepare_nurbs_birail" href="#sverchok.utils.surface.nurbs.prepare_nurbs_birail">prepare_nurbs_birail</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.simple_loft" href="#sverchok.utils.surface.nurbs.simple_loft">simple_loft</a></code></li>
 </ul>
