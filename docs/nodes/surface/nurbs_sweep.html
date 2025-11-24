@@ -555,6 +555,12 @@ vectors.</p></li>
 <li><p><strong>Track normal</strong>: try to maintain constant normal direction by tracking it along the curve.</p></li>
 </ul>
 </li>
+<li><p><strong>Use path tangents</strong>. If checked, the node will consider tangents of the
+Path curve when creating the shape of the Sweep surface. This creates
+surfaces that follow Path curve more precisely even with lower values of <strong>V
+Sections</strong> parameter. If not checked, the node will just generate a loft
+surface through profile curves placed along the path curve. Unchecked by
+default.</p></li>
 <li><p><strong>Explicit V Values</strong>. If checked, then the user has the ability to provide
 values of path curve’s parameter values, at which the provided path curves
 must be placed; otherwise, the node will calculate these parameters
@@ -620,6 +626,15 @@ calculate surface’s control points during skinning process.</p></li>
 <img alt="https://user-images.githubusercontent.com/284644/93505298-1b4f0300-f934-11ea-91c7-1bd7c7570789.png" src="https://user-images.githubusercontent.com/284644/93505298-1b4f0300-f934-11ea-91c7-1bd7c7570789.png" />
 <p>Three Profile curves:</p>
 <img alt="https://user-images.githubusercontent.com/284644/93505300-1be79980-f934-11ea-9b0b-71d150312ca2.png" src="https://user-images.githubusercontent.com/284644/93505300-1be79980-f934-11ea-9b0b-71d150312ca2.png" />
+<p>Example with low value of V Sections parameter. Note that the surface follows
+the path curve very loosely.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/c15a52ba-d6ed-4ded-9162-bea7971597ae"><img alt="https://github.com/user-attachments/assets/c15a52ba-d6ed-4ded-9162-bea7971597ae" src="https://github.com/user-attachments/assets/c15a52ba-d6ed-4ded-9162-bea7971597ae" />
+</a>
+<p>The same setup, with the same value of V Sections parameter, but with <strong>Use
+path tangents</strong> parameter enabled:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/1b34098e-6573-4e99-94eb-d5b3e54295c6"><img alt="https://github.com/user-attachments/assets/1b34098e-6573-4e99-94eb-d5b3e54295c6" src="https://github.com/user-attachments/assets/1b34098e-6573-4e99-94eb-d5b3e54295c6" />
+</a>
+<p>Now more control points are generated, but the surface follows the path much more accurately.</p>
 </section>
 </section>
 
