@@ -563,7 +563,6 @@
         - SvIntersectNurbsCurvesNode
         - SvPrepareCurvesNetNode
         - SvExCastCurveNode
-        - SvSymmetrizeCurveNode
         - SvProjectCurveSurfaceNode
         - SvOffsetCurveMk2Node
         - SvCurveOffsetOnSurfaceNode
@@ -814,7 +813,6 @@
         - SvTextureViewerNode
         - SvTextureViewerNodeLite
         - SvWaveformViewer
-        - SvDataTreeVizNode
         - SvConsoleNode
         - SvVDAttrsNodeMk2
 
@@ -870,7 +868,7 @@
     - SvCurveInputNode
     - SvFCurveInNodeMK1
     - SvCollectionPicker
-    - SvBezierInNodeMK2
+    - SvBezierInNode
     - SvExNurbsInNode
     - SvParticlesMK2Node
     - ---
