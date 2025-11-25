@@ -694,10 +694,10 @@ def cast_nurbs_curve(curve, target, coeff=1.0):
 
     return curve.copy(control_points=result_cpts)
 
-
 def offset_nurbs_curve(
     curve,
     offset_vector,
+    plane_normal = None,
     src_ts = None,
     algorithm=FRENET,
     algorithm_resolution=50
@@ -723,7 +723,7 @@ def offset_nurbs_curve(
 
     curve_pts = curve.evaluate_array(src_ts)
     n = len(src_ts)
-    calc = SvCurveFrameCalculator(curve, algorithm, resolution=algorithm_resolution)
+    calc = SvCurveFrameCalculator(curve, algorithm, resolution=algorithm_resolution, normal=plane_normal)
     matrices = calc.get_matrices(src_ts)
     offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
     offset_vectors = (matrices @ offset_vectors)[:, :, 0]
