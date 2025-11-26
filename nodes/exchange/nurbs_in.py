@@ -17,7 +17,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.dependencies import geomdl
 
-from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, ReadingObjectDataError, get_objects_from_item
+from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, ReadingObjectDataError, get_objects_from_item
 
 if geomdl is not None:
     from geomdl import NURBS
@@ -173,53 +173,16 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         callback = SvExNurbsInCallbackOpMK2.bl_idname
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text, icon='IMPORT').fn_name = 'get_objects_from_scene'
 
-        # r = layout.row(align=True)
-        # r.alignment='LEFT'
-        # grid = r.grid_flow(row_major=True, columns=0, align=True)
         grid = layout.grid_flow(row_major=False, columns=2, align=False)
-        #grid.alignment='RIGHT'
-        # c0 = grid.column()
-        # c0.alignment = 'RIGHT'
-        # c0.label(text='Sort:')
-        # grid.column().prop(self, 'sort', text='')
-        # c1 = grid.column()
-        # c1.alignment = 'RIGHT'
-        # c1.label(text='Implementation:')
-        # grid.column().prop(self, 'implementation', text='')
-        # c2 = grid.column()
-        # c2.alignment = 'RIGHT'
-        # c2.label(text='Apply matrixes:')
-        # grid.column().prop(self, 'apply_matrix', text='')
-        # c3 = grid.column()
-        # c3.alignment = 'RIGHT'
-        # c3.label(text='Legacy Mode:')
-        # grid.column().prop(self, 'legacy_mode', text='')
-        # c4 = grid.column()
-        # c4.alignment = 'RIGHT'
-        # c4.label(text='Display Mode:')
-        # row0 = grid.row(align=True)
-        # row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
-        # row0.row().prop(self, 'display_type', expand=True, text='')
-
-        # grid.prop(self, 'sort')
-        # elem = grid.row(align=True)
-        # elem.alignment='LEFT'
-        # elem.prop(self, 'implementation', expand=True)
-        # grid.prop(self, 'apply_matrix')
-        # grid.prop(self, 'legacy_mode')
-        # row0 = grid.row(align=True)
-        # row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
-        # row0.row().prop(self, 'display_type', expand=True, text='')
-
         grid.column(align=True).prop(self, 'sort')
         grid.column(align=True).prop(self, 'apply_matrix')
         grid.column(align=True).prop(self, 'legacy_mode')
         row = grid.row(align=True)
         row.alignment = 'LEFT'
         row.prop(self, 'implementation', expand=True)
-        row0 = grid.column(align=True).row(align=True)
-        row0.alignment='LEFT'
-        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='TOOL_SETTINGS', text="")
+        row0 = grid.row(align=True)
+        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK4.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
+        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
 
         if not self.by_input:
             if self.object_names:
