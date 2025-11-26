@@ -61,7 +61,7 @@ def read_edges(blender_mesh, output_numpy=False):
     return np.reshape(fastedges, (len(blender_mesh.edges), 2)).tolist()
 
 def read_materials_idx(blender_mesh, output_numpy=False):
-    material_index = np.zeros((len(blender_mesh.polygons)), dtype=np.float64)
+    material_index = np.zeros((len(blender_mesh.polygons)), dtype=np.int64)
     blender_mesh.polygons.foreach_get("material_index", material_index)
     if output_numpy:
         return material_index
