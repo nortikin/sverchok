@@ -787,8 +787,9 @@ def draw_properties(layout, node_group, node_name):
 
     grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
     grid2.label(text='Output Sockets:')
-    grid2.label(text='- socket is visible', icon='CHECKBOX_HLT')
-    grid2.label(text='- socket is hidden', icon='CHECKBOX_DEHLT')
+    row0 = grid2.row(align=True)
+    row0.label(text='- socket is visible', icon='CHECKBOX_HLT')
+    row0.label(text='- socket is hidden', icon='CHECKBOX_DEHLT')
     grid2.separator()
     row_op = grid2.row(align=True)
     row_op.alignment = "LEFT"
