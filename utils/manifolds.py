@@ -6,12 +6,15 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import intersect_plane_plane, intersect_line_plane, normal as face_normal
 
 from sverchok.core.sv_custom_exceptions import ArgumentError
+from sverchok.utils.math import solve_quadratic, solve_cubic
+from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
+from sverchok.utils.polynomial import Polynomial
 from sverchok.utils.curve import SvIsoUvCurve, SvDeformedByFieldCurve
+from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import reverse_curve, concatenate_curves, curve_segment
 from sverchok.utils.field.vector import SvMatrixVectorField
 from sverchok.utils.sv_logging import sv_logger, get_logger
-from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
 
 if scipy is not None:
@@ -1554,4 +1557,135 @@ def symmetrize_curve(
     else:
         return result
 
+def curve_curvature_zeros(curve, init_samples=10, tolerance=1e-3, logger=None):
+    if logger is None:
+        logger = get_logger()
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+
+    def goal(t):
+        tangents, seconds = curve.derivatives_array(2, np.array([t]))
+        tangent = tangents[0]
+        second = seconds[0]
+        return np.linalg.norm(np.cross(tangent, second))
+    
+    solutions = []
+    for u1, u2 in zip(u_range, u_range[1:]):
+        sol = minimize_scalar(goal,
+                              bounds = (u1, u2),
+                              bracket = (u1, u2),
+                              method = 'Bounded')
+        if sol.success:
+            if u_min <= sol.x <= u_max:
+                curvature = curve.curvature(sol.x)
+                if abs(curvature) < tolerance:
+                    solutions.append(sol.x)
+    if len(solutions) == 0:
+        raise Exception("No extreme points")
+    return np.array(solutions)
+
+def curve_curvature_maximum(curve, init_samples=10, global_only=True, logger=None):
+    if logger is None:
+        logger = get_logger()
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+
+    def goal(t):
+        return - curve.curvature(t)
+
+    solutions = []
+    for u1, u2 in zip(u_range, u_range[1:]):
+        sol = minimize_scalar(goal,
+                              bounds = (u1, u2),
+                              bracket = (u1, u2),
+                              method = 'Bounded')
+        if sol.success:
+            if u_min <= sol.x <= u_max:
+                solutions.append(sol.x)
+    if len(solutions) == 0:
+        raise Exception("No extreme points")
+    if global_only:
+        solutions.extend(u_range)
+        solutions = np.array(sorted(solutions))
+        curvatures = curve.curvature_array(solutions)
+        #print("C", curvatures)
+        idxs = np.argmax(curvatures)
+        #print("I", idxs, solutions.shape)
+        return np.array([solutions[idxs]])
+    else:
+        return np.array(solutions)
+
+def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True):
+    if curve.is_rational():
+        raise UnsupportedCurveTypeException("Rational curves are not supported")
+    #degree = curve.get_degree()
+    if curve.get_degree() == 1:
+        print("Line")
+        return np.array([])
+
+    def solve_segment(segment, orig_t1, orig_t2):
+        t1, t2 = segment.get_u_bounds()
+        poly = Polynomial(segment.get_coefficients())
+        derivative = poly.derivative()
+        second = poly.nth_derivative(2)
+        numerator = (derivative.cross(second)).scalar_square()
+        denominator = derivative.scalar_square().power(3)
+
+        def goal(t):
+            value = -sign * numerator.evaluate_array(np.array([t]))[0] / denominator.evaluate_array(np.array([t]))[0]
+            #print(f"T {t} => {value}")
+            return value[0]
+
+        solutions = []
+        sol = minimize_scalar(goal,
+                              bounds = (t1, t2),
+                              bracket = (t1, t2),
+                              method = 'Bounded')
+        root = None
+        if sol.success:
+            if t1 <= sol.x <= t2:
+                root = sol.x
+                root = (orig_t2 - orig_t1) * (root - t1) / (t2 - t1) + orig_t1
+                solutions.append(root)
+
+        c1 = segment.curvature(orig_t1)
+        c2 = segment.curvature(orig_t2)
+        if root is None or (sign > 0 and c1 > root) or (sign < 0 and c1 < root):
+            solutions.append(orig_t1)
+        if root is None or (sign > 0 and c2 > root) or (sign < 0 and c2 < root):
+            solutions.append(orig_t2)
+        print(f"[{orig_t1} - {orig_t2}] => {solutions}")
+        return solutions
+
+    solutions = []
+    #print("Curve", curve.get_u_bounds())
+    for segment in curve.to_bezier_segments(to_bezier_class=False):
+        sol = solve_segment(segment.bezier_to_taylor(ndim=3), *segment.get_u_bounds())
+        solutions.extend(sol)
+
+    if global_only:
+        solutions = np.array(sorted(set(solutions)))
+        curvatures = curve.curvature_array(solutions)
+        #print("C", curvatures)
+        if sign > 0:
+            idxs = np.argmax(curvatures)
+        else:
+            idxs = np.argmin(curvatures)
+        #print("I", idxs, solutions.shape)
+        return np.array([solutions[idxs]])
+    else:
+        #print("No global", solutions)
+        return np.array(sorted(set(solutions)))
+
+def nurbs_curve_curvature_maximum(curve, global_only=True):
+    return nurbs_curve_curvature_extremes(curve, sign=1, global_only=global_only)
+
+def nurbs_curve_curvature_zero(curve, tolerance=1e-6):
+    ts = nurbs_curve_curvature_extremes(curve, sign=-1, global_only=False)
+    if len(ts) == 0:
+        return ts
+    curvatures = curve.curvature_array(ts)
+    #print(f"T {ts} => C {curvatures}")
+    idxs = (abs(curvatures) < tolerance)
+    return ts[idxs]
 
