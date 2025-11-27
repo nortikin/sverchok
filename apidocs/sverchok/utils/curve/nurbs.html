@@ -444,6 +444,10 @@ el.replaceWith(d);
     def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyclic=False, logger=None):
         return interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
 
+    @classmethod
+    def interpolate_with_tangents(cls, degree, points, tangents, metric=&#39;DISTANCE&#39;, tknots=None, logger=None):
+        return interpolate_nurbs_curve_with_tangents(degree, points, tangents, metric=metric, tknots=tknots, logger=logger)
+
     def is_rational(self, tolerance=1e-6):
         w, W = self.weights.min(), self.weights.max()
         return (W - w) &gt; tolerance
@@ -827,6 +831,12 @@ el.replaceWith(d);
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate"><code class="name flex">
 <span>def <span class="ident">interpolate</span></span>(<span>degree, points, metric='DISTANCE', tknots=None, cyclic=False, logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate_with_tangents"><code class="name flex">
+<span>def <span class="ident">interpolate_with_tangents</span></span>(<span>degree, points, tangents, metric='DISTANCE', tknots=None, logger=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -3585,6 +3595,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction_single" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction_single">fraction_single</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.insert_knot" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.insert_knot">insert_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate">interpolate</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate_with_tangents" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate_with_tangents">interpolate_with_tangents</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.is_rational" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.remove_knot" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.remove_knot">remove_knot</a></code></li>
 </ul>

@@ -653,6 +653,13 @@ el.replaceWith(d);
         return nurbs_class.interpolate(degree, points, metric=metric, **kwargs)
 
     @staticmethod
+    def interpolate_with_tangents(implementation, degree, points, tangents, **kwargs):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None and isinstance(implementation, type):
+            nurbs_class = implementation
+        return nurbs_class.interpolate_with_tangents(degree, points, tangents, **kwargs)
+
+    @staticmethod
     def to_nurbs_curve(curve, implementation = NATIVE):
         nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
         if nurbs_class is None:
@@ -763,6 +770,23 @@ def interpolate_curve(implementation, degree, points, metric=&#39;DISTANCE&#39;,
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.interpolate_with_tangents"><code class="name flex">
+<span>def <span class="ident">interpolate_with_tangents</span></span>(<span>implementation, degree, points, tangents, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def interpolate_with_tangents(implementation, degree, points, tangents, **kwargs):
+    nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+    if nurbs_class is None and isinstance(implementation, type):
+        nurbs_class = implementation
+    return nurbs_class.interpolate_with_tangents(degree, points, tangents, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_curve"><code class="name flex">
 <span>def <span class="ident">to_nurbs_curve</span></span>(<span>curve, implementation='NATIVE')</span>
 </code></dt>
@@ -847,7 +871,7 @@ def to_nurbs_surface(surface, implementation = NATIVE):
 </li>
 <li>
 <h4><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths" href="#sverchok.utils.nurbs_common.SvNurbsMaths">SvNurbsMaths</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.FREECAD" href="#sverchok.utils.nurbs_common.SvNurbsMaths.FREECAD">FREECAD</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.GEOMDL" href="#sverchok.utils.nurbs_common.SvNurbsMaths.GEOMDL">GEOMDL</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.NATIVE" href="#sverchok.utils.nurbs_common.SvNurbsMaths.NATIVE">NATIVE</a></code></li>
@@ -855,6 +879,7 @@ def to_nurbs_surface(surface, implementation = NATIVE):
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.build_surface" href="#sverchok.utils.nurbs_common.SvNurbsMaths.build_surface">build_surface</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.curve_classes" href="#sverchok.utils.nurbs_common.SvNurbsMaths.curve_classes">curve_classes</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.interpolate_curve" href="#sverchok.utils.nurbs_common.SvNurbsMaths.interpolate_curve">interpolate_curve</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.interpolate_with_tangents" href="#sverchok.utils.nurbs_common.SvNurbsMaths.interpolate_with_tangents">interpolate_with_tangents</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.surface_classes" href="#sverchok.utils.nurbs_common.SvNurbsMaths.surface_classes">surface_classes</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_curve" href="#sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_curve">to_nurbs_curve</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_surface" href="#sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_surface">to_nurbs_surface</a></code></li>

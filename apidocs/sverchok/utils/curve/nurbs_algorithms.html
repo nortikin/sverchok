@@ -704,7 +704,7 @@ pseudo-inverse matrix - numpy.linalg.pinv.</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.offset_nurbs_curve"><code class="name flex">
-<span>def <span class="ident">offset_nurbs_curve</span></span>(<span>curve,<br>offset_vector,<br>src_ts,<br>algorithm='FRENET',<br>algorithm_resolution=50,<br>metric='DISTANCE',<br>target_tolerance=0.0001)</span>
+<span>def <span class="ident">offset_nurbs_curve</span></span>(<span>curve,<br>offset_vector,<br>plane_normal=None,<br>src_ts=None,<br>algorithm='FRENET',<br>algorithm_resolution=50)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -714,11 +714,10 @@ pseudo-inverse matrix - numpy.linalg.pinv.</p></div>
 <pre><code class="python">def offset_nurbs_curve(
     curve,
     offset_vector,
-    src_ts,
+    plane_normal = None,
+    src_ts = None,
     algorithm=FRENET,
-    algorithm_resolution=50,
-    metric=&#34;DISTANCE&#34;,
-    target_tolerance=1e-4,
+    algorithm_resolution=50
 ):
     &#34;&#34;&#34;
     Offset a NURBS curve to obtain another NURBS curve.
@@ -732,28 +731,32 @@ pseudo-inverse matrix - numpy.linalg.pinv.</p></div>
     * curve - the curve to be offsetted
     * offset_vector - np.array of shape (3,)
     * src_ts - T parameters of the points to be offsetted (the more points you take,
-        the more precise the offset will be)
+        the more precise the offset will be). If None, Greville nodes will be used.
     * algorithm
     * algorithm_resolution
-    * metric
-    * target_tolerance - the tolerance of remove_excessive_knots procedure
     &#34;&#34;&#34;
-    src_points = curve.evaluate_array(src_ts)
+    if src_ts is None:
+        src_ts = curve.calc_greville_ts()
+
+    curve_pts = curve.evaluate_array(src_ts)
     n = len(src_ts)
-    calc = SvCurveFrameCalculator(curve, algorithm, resolution=algorithm_resolution)
+    calc = SvCurveFrameCalculator(curve, algorithm, resolution=algorithm_resolution, normal = plane_normal)
     matrices = calc.get_matrices(src_ts)
     offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
     offset_vectors = (matrices @ offset_vectors)[:, :, 0]
-    offset_points = src_points + offset_vectors
-    offset_curve = interpolate_nurbs_curve(
-        curve.get_nurbs_implementation(),
-        degree=curve.get_degree(),
-        points=offset_points,
-        # metric = None, tknots = src_ts)
-        metric=metric,
-    )
-    offset_curve = remove_excessive_knots(offset_curve, tolerance=target_tolerance)
-    return offset_curve</code></pre>
+    offset_points = curve_pts + offset_vectors
+
+    tangents = curve.tangent_array(src_ts)
+    curvatures = curve.curvature_array(src_ts)
+    normals = curve.main_normal_array(src_ts, normalize = True)
+    prod = np_dot(offset_vectors, normals)
+    offset_tangents = (1.0 - prod * curvatures)[np.newaxis].T * tangents
+
+    return SvNurbsMaths.interpolate_with_tangents(
+                curve.get_nurbs_implementation(),
+                curve.get_degree(),
+                offset_points, offset_tangents,
+                tknots = src_ts)</code></pre>
 </details>
 <div class="desc"><p>Offset a NURBS curve to obtain another NURBS curve.</p>
 <p>The algorithm is as follows:
@@ -764,11 +767,9 @@ pseudo-inverse matrix - numpy.linalg.pinv.</p></div>
 * curve - the curve to be offsetted
 * offset_vector - np.array of shape (3,)
 * src_ts - T parameters of the points to be offsetted (the more points you take,
-the more precise the offset will be)
+the more precise the offset will be). If None, Greville nodes will be used.
 * algorithm
-* algorithm_resolution
-* metric
-* target_tolerance - the tolerance of remove_excessive_knots procedure</p></div>
+* algorithm_resolution</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.refine_curve"><code class="name flex">
 <span>def <span class="ident">refine_curve</span></span>(<span>curve,<br>samples,<br>t_min=None,<br>t_max=None,<br>algorithm='DISTRIBUTE',<br>refine_max=False,<br>solver=None,<br>output_new_knots=False)</span>
