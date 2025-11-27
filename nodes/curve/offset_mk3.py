@@ -53,6 +53,7 @@ class SvOffsetCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
         self.inputs['PlaneNormal'].hide_safe = not (self.algorithm == NORMAL_DIR)
         self.inputs['Resolution'].hide_safe = not (self.algorithm in {ZERO, TRACK_NORMAL} or (self.offset_type == 'CURVE' and self.offset_curve_type == SvOffsetCurve.BY_LENGTH))
         self.inputs['OffsetCurve'].hide_safe = (self.offset_type != 'CURVE') or (self.use_nurbs == True)
+        self.inputs['T'].hide_safe = not (self.custom_key_t == True and self.use_nurbs == True)
         updateNode(self, context)
 
     direction : EnumProperty(
@@ -99,6 +100,12 @@ class SvOffsetCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
             default = False,
             update = update_sockets)
 
+    custom_key_t : BoolProperty(
+            name = "Specify key T values",
+            description = "If checked, specify list of T values for points on which NURBS Offset algorithm will be based. If not checked, Greville points will be used.",
+            default = False,
+            update = update_sockets)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "algorithm")
         layout.prop(self, "direction")
@@ -108,6 +115,8 @@ class SvOffsetCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
             if self.offset_type == 'CURVE':
                 layout.label(text="Offset curve use:")
                 layout.prop(self, 'offset_curve_type', text='')
+        else:
+            layout.prop(self, 'custom_key_t')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
@@ -120,6 +129,7 @@ class SvOffsetCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
         p.use_prop = True
         p.default_property = (0.0, 0.0, 1.0)
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
+        self.inputs.new('SvStringsSocket', "T")
         self.outputs.new('SvCurveSocket', "Curve")
         self.update_sockets(context)
 
@@ -133,6 +143,10 @@ class SvOffsetCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
         vector_s = self.inputs['Vector'].sv_get()
         normal_s = self.inputs['PlaneNormal'].sv_get()
         resolution_s = self.inputs['Resolution'].sv_get()
+        if self.use_nurbs and self.custom_key_t:
+            key_ts_s = self.inputs['T'].sv_get()
+        else:
+            key_ts_s = None
 
         curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
         offset_s = ensure_nesting_level(offset_s, 2)
@@ -141,11 +155,15 @@ class SvOffsetCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
         resolution_s = ensure_nesting_level(resolution_s, 2)
         if self.inputs['OffsetCurve'].is_linked:
             offset_curve_s = ensure_nesting_level(offset_curve_s, 2, data_types=(SvCurve,))
+        if key_ts_s is not None:
+            key_ts_s = ensure_nesting_level(key_ts_s, 3)
+        else:
+            key_ts_s = [[[0]]]
 
         curve_out = []
-        for params in zip_long_repeat(curve_s, offset_s, offset_curve_s, vector_s, normal_s, resolution_s):
+        for params in zip_long_repeat(curve_s, offset_s, offset_curve_s, vector_s, normal_s, resolution_s, key_ts_s):
             new_curves = []
-            for curve, offset, offset_curve, vector, normal, resolution in zip_long_repeat(*params):
+            for curve, offset, offset_curve, vector, normal, resolution, key_ts in zip_long_repeat(*params):
                 normal = np.array(normal)
                 if self.direction == 'X':
                     vector = [1.0, 0, 0]
@@ -153,14 +171,18 @@ class SvOffsetCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
                     vector = [0, 1.0, 0]
                 if vector is not None:
                     vector = np.array(vector)
+                if self.use_nurbs and self.custom_key_t:
+                    key_ts = np.array(key_ts)
+                else:
+                    key_ts = None
 
                 if self.offset_type == 'CONST' or self.use_nurbs:
                     if self.use_nurbs:
-                        #vector /= np.linalg.norm(vector)
                         new_curve = offset_nurbs_curve(curve,
                                     offset_vector = offset * vector,
                                     plane_normal = normal,
                                     algorithm = self.algorithm,
+                                    src_ts = key_ts,
                                     algorithm_resolution = resolution)
                     else:
                         new_curve = SvOffsetCurve(curve,
