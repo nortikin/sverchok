@@ -280,7 +280,7 @@
         - SvExApplyFieldToCurveNode
         - SvSymmetrizeCurveNode
         - SvExCastCurveNode
-        - SvOffsetCurveMk2Node
+        - SvOffsetCurveMk3Node
         - SvCurveOffsetOnSurfaceNode
         - SvExIsoUvCurveNode
         - SvExCurveOnSurfaceNode

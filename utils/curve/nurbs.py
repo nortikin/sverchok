@@ -20,7 +20,7 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvPointCurve
 from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.curve.nurbs_algorithms import unify_two_curves
-from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve, interpolate_nurbs_curve_with_tangents
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths,SvNurbsBasisFunctions,
         nurbs_divide, elevate_bezier_degree, reduce_bezier_degree,
@@ -1173,6 +1173,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE', tknots=None, cyclic=False, logger=None):
         return interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
+
+    @classmethod
+    def interpolate_with_tangents(cls, degree, points, tangents, metric='DISTANCE', tknots=None, logger=None):
+        return interpolate_nurbs_curve_with_tangents(degree, points, tangents, metric=metric, tknots=tknots, logger=logger)
 
     def is_rational(self, tolerance=1e-6):
         w, W = self.weights.min(), self.weights.max()

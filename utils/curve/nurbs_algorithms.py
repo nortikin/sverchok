@@ -9,7 +9,7 @@ from audioop import mul
 import numpy as np
 from collections import defaultdict
 
-from sverchok.utils.math import distribute_int, solve_quadratic, solve_cubic, FRENET
+from sverchok.utils.math import distribute_int, solve_quadratic, solve_cubic, np_dot, FRENET
 from sverchok.utils.geom import (
     LineEquation,
     linear_approximation,
@@ -698,11 +698,10 @@ def cast_nurbs_curve(curve, target, coeff=1.0):
 def offset_nurbs_curve(
     curve,
     offset_vector,
-    src_ts,
+    plane_normal = None,
+    src_ts = None,
     algorithm=FRENET,
-    algorithm_resolution=50,
-    metric="DISTANCE",
-    target_tolerance=1e-4,
+    algorithm_resolution=50
 ):
     """
     Offset a NURBS curve to obtain another NURBS curve.
@@ -716,29 +715,32 @@ def offset_nurbs_curve(
     * curve - the curve to be offsetted
     * offset_vector - np.array of shape (3,)
     * src_ts - T parameters of the points to be offsetted (the more points you take,
-        the more precise the offset will be)
+        the more precise the offset will be). If None, Greville nodes will be used.
     * algorithm
     * algorithm_resolution
-    * metric
-    * target_tolerance - the tolerance of remove_excessive_knots procedure
     """
-    src_points = curve.evaluate_array(src_ts)
+    if src_ts is None:
+        src_ts = curve.calc_greville_ts()
+
+    curve_pts = curve.evaluate_array(src_ts)
     n = len(src_ts)
-    calc = SvCurveFrameCalculator(curve, algorithm, resolution=algorithm_resolution)
+    calc = SvCurveFrameCalculator(curve, algorithm, resolution=algorithm_resolution, normal = plane_normal)
     matrices = calc.get_matrices(src_ts)
     offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
     offset_vectors = (matrices @ offset_vectors)[:, :, 0]
-    offset_points = src_points + offset_vectors
-    offset_curve = interpolate_nurbs_curve(
-        curve.get_nurbs_implementation(),
-        degree=curve.get_degree(),
-        points=offset_points,
-        # metric = None, tknots = src_ts)
-        metric=metric,
-    )
-    offset_curve = remove_excessive_knots(offset_curve, tolerance=target_tolerance)
-    return offset_curve
+    offset_points = curve_pts + offset_vectors
 
+    tangents = curve.tangent_array(src_ts)
+    curvatures = curve.curvature_array(src_ts)
+    normals = curve.main_normal_array(src_ts, normalize = True)
+    prod = np_dot(offset_vectors, normals)
+    offset_tangents = (1.0 - prod * curvatures)[np.newaxis].T * tangents
+
+    return SvNurbsMaths.interpolate_with_tangents(
+                curve.get_nurbs_implementation(),
+                curve.get_degree(),
+                offset_points, offset_tangents,
+                tknots = src_ts)
 
 def move_curve_point_by_moving_control_point(curve, u_bar, k, vector, relative=True):
     """

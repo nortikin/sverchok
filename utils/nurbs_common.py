@@ -64,6 +64,13 @@ class SvNurbsMaths(object):
         return nurbs_class.interpolate(degree, points, metric=metric, **kwargs)
 
     @staticmethod
+    def interpolate_with_tangents(implementation, degree, points, tangents, **kwargs):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None and isinstance(implementation, type):
+            nurbs_class = implementation
+        return nurbs_class.interpolate_with_tangents(degree, points, tangents, **kwargs)
+
+    @staticmethod
     def to_nurbs_curve(curve, implementation = NATIVE):
         nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
         if nurbs_class is None:
