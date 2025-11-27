@@ -1615,7 +1615,7 @@ def curve_curvature_maximum(curve, init_samples=10, global_only=True, logger=Non
     else:
         return np.array(solutions)
 
-def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True, add_bounds=False):
+def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True, add_bounds=False, add_bezier_joints=False):
     if curve.is_rational():
         raise UnsupportedCurveTypeException("Rational curves are not supported")
     #degree = curve.get_degree()
@@ -1649,11 +1649,11 @@ def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True, add_bounds=F
 
         c1 = segment.curvature(orig_t1)
         c2 = segment.curvature(orig_t2)
-        if root is None or (sign > 0 and c1 > root) or (sign < 0 and c1 < root):
+        if add_bezier_joints and (root is None or (sign > 0 and c1 > root) or (sign < 0 and c1 < root)):
             solutions.append(orig_t1)
-        if root is None or (sign > 0 and c2 > root) or (sign < 0 and c2 < root):
+        if add_bezier_joints and (root is None or (sign > 0 and c2 > root) or (sign < 0 and c2 < root)):
             solutions.append(orig_t2)
-        #print(f"[{orig_t1} - {orig_t2}], sign={sign} => {solutions}")
+        #print(f"Bezier [{orig_t1} - {orig_t2}], sign={sign} => {solutions}")
         return solutions
 
     solutions = []
@@ -1685,11 +1685,19 @@ def nurbs_curve_curvature_maximum(curve, global_only=True):
         return nurbs_curve_curvature_extremes(curve, sign=1, global_only=True)
     else:
         zero_ts = nurbs_curve_curvature_extremes(curve, sign=-1, global_only=False, add_bounds=True)
+        print(f"Zero {zero_ts} => C {curve.curvature_array(zero_ts)}")
         solutions = []
         for t1, t2 in zip(zero_ts, zero_ts[1:]):
-            segment = curve.cut_segment(t1, t2)
-            ts = nurbs_curve_curvature_extremes(segment, sign=1, global_only=False)
-            solutions.extend(ts)
+            local_segment = curve.cut_segment(t1, t2)
+            local_solutions = []
+            for segment in local_segment.to_bezier_segments(to_bezier_class=False):
+                ts = nurbs_curve_curvature_extremes(segment, sign=1, global_only=False)
+                local_solutions.extend(ts)
+            local_solutions = np.array(sorted(set(local_solutions)))
+            curvatures = local_segment.curvature_array(local_solutions)
+            idxs = np.argmax(curvatures)
+            print(f"Local [{t1} - {t2}] => {local_solutions} => {local_solutions[idxs]}")
+            solutions.append(local_solutions[idxs])
         return np.array(solutions)
 
 def nurbs_curve_curvature_zero(curve, tolerance=1e-6):
