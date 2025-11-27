@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Extend Curve &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Offset Curve &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/curve/extend_curve';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/curve/offset_mk3';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Curve Extremes" href="extremes.html" />
-    <link rel="prev" title="Evaluate Curve" href="eval_curve.html" />
+    <link rel="next" title="Offset Curve on Surface" href="offset_on_surface.html" />
+    <link rel="prev" title="NURBS Curve Extremes" href="nurbs_extremes.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -199,7 +199,7 @@
 <li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Extend Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extremes.html">Curve Extremes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fillet_curve.html">Fillet Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fillet_polyline.html">Fillet Polyline</a></li>
@@ -223,7 +223,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nurbs_curve.html">Build NURBS Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_curve_nodes.html">NURBS Curve Nodes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_extremes.html">NURBS Curve Extremes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="offset_mk3.html">Offset Curve</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Offset Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="offset_on_surface.html">Offset Curve on Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ortho_project.html">Ortho Project on Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="point_curve.html">Single-Point Curve</a></li>
@@ -338,7 +338,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/curve/extend_curve.rst" target="_blank"
+      <li><a href="../../_sources/nodes/curve/offset_mk3.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -422,7 +422,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Extend Curve</h1>
+    <h1>Offset Curve</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -436,7 +436,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
             </nav>
         </div>
@@ -448,154 +448,299 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="extend-curve">
-<h1>Extend Curve<a class="headerlink" href="#extend-curve" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5" src="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5" />
+  <section id="offset-curve">
+<h1>Offset Curve<a class="headerlink" href="#offset-curve" title="Link to this heading">#</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210442183-f0ed37ab-79d7-4062-91b4-175595212016.png"><img alt="https://user-images.githubusercontent.com/14288520/210442183-f0ed37ab-79d7-4062-91b4-175595212016.png" src="https://user-images.githubusercontent.com/14288520/210442183-f0ed37ab-79d7-4062-91b4-175595212016.png" />
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node generates a continuation of given Curve beyond it’s end points in a
-smooth manner. It can be used if you for some reason have just a segment of a
-curve, and want to continue it, for example, until it meets some plane or
-surface.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b" src="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b" />
+<p>This node generates a Curve, calculated as offset of another Curve by some
+amount. It takes all points of original curve and moves them in direction
+perpendicular to curve’s tangent. In other words, this “offsetting” operation
+can be described as extruding one single point along the curve.</p>
+<p>When we say “offset all points of curve in direction perpendicular to curve’s
+tangent”, there is a good question: where exactly? There are several algorithms
+how to define a reference frame associated with curve’s point and curve’s
+tangent direction. In simplest cases, all of them will give very similar
+results. In more complex cases, results will be very different. Different
+algorithms give best results in different cases:</p>
+<ul class="simple">
+<li><p><strong>Frenet</strong> or <strong>Zero-Twist</strong> algorithms give very good results in case when
+extrusion curve has non-zero curvature in all points (The curvature of a
+straight line is zero). If the extrusion curve
+has zero curvature points, or, even worse, it has straight segments, these
+algorithms will either make “flipping” surface, or give an error.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210894147-00b44d39-6842-4a75-80cc-2e0b3a1e2ed2.png"><img alt="https://user-images.githubusercontent.com/14288520/210894147-00b44d39-6842-4a75-80cc-2e0b3a1e2ed2.png" src="https://user-images.githubusercontent.com/14288520/210894147-00b44d39-6842-4a75-80cc-2e0b3a1e2ed2.png" />
 </a>
+<ul class="simple">
+<li><p><strong>Householder</strong>, <strong>Tracking</strong> and <strong>Rotation difference</strong> algorithms are
+“curve-agnostic”, they work independently of curve by itself, depending only
+on tangent direction. They give “good enough” result (at least, without
+errors or sudden flips) for all extrusion curves, but may make twisted
+surfaces in some special cases.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210892606-1e623971-82b3-4b97-a0a4-a8bda04ddc14.png"><img alt="https://user-images.githubusercontent.com/14288520/210892606-1e623971-82b3-4b97-a0a4-a8bda04ddc14.png" src="https://user-images.githubusercontent.com/14288520/210892606-1e623971-82b3-4b97-a0a4-a8bda04ddc14.png" />
+</a>
+<ul class="simple">
+<li><p><strong>Track normal</strong> algorithm is supposed to give good results without twisting
+for all extrusion curves. It will give better results with higher values of
+“resolution” parameter, but that may be slow.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210893380-e8e5e7a3-fc7e-4b98-b712-88b64dfc90a3.png"><img alt="https://user-images.githubusercontent.com/14288520/210893380-e8e5e7a3-fc7e-4b98-b712-88b64dfc90a3.png" src="https://user-images.githubusercontent.com/14288520/210893380-e8e5e7a3-fc7e-4b98-b712-88b64dfc90a3.png" />
+</a>
+<ul class="simple">
+<li><p><strong>Specified plane</strong> algorithm selects offset direction vector so that it
+satisfies two conditions: 1) it is perpendicular to curve’s tangent vector,
+and 2) it lies in so-called “offset operation plane”, which is specified by
+user by providing the normal vector of such plane (in other words, offset
+direction vector is perpendicular to normal vector provided by user). This
+algorithm is supposed to give good results for planar or almost planar
+curves. The resulting curve may have twists in places where original curve’s
+tangent vector is parallel to offset operation plane’s normal (i.e. tangent
+is perpendicular to offset operation plane). Hint: you may use “Linear
+approximation” node to automatically calculate normal vector of offset
+operation plane.</p></li>
+</ul>
+<p><a class="reference external" href="https://gist.github.com/0f8f8c8d4b0dca3a403534fb1c423305">https://gist.github.com/0f8f8c8d4b0dca3a403534fb1c423305</a></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210561951-0a2a47f8-34ba-4a2f-adb7-d5db19da352b.png"><img alt="https://user-images.githubusercontent.com/14288520/210561951-0a2a47f8-34ba-4a2f-adb7-d5db19da352b.png" src="https://user-images.githubusercontent.com/14288520/210561951-0a2a47f8-34ba-4a2f-adb7-d5db19da352b.png" />
+</a>
+<p>Animation for “specified plane” mode (press image to open):</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210567213-8e792e30-3794-4398-a298-82ea0c11c150.gif"><img alt="https://user-images.githubusercontent.com/14288520/210567502-07ed3926-8eef-4fdd-b593-8b1fdb340cf0.png" src="https://user-images.githubusercontent.com/14288520/210567502-07ed3926-8eef-4fdd-b593-8b1fdb340cf0.png" />
+</a>
+<p>For all algorithms, reference frame’s Z axis is always pointing along curve’s
+tangent direction. Two other axes are always perpendicular to tangent
+direction, but where exactly they are pointing - depends on the algorithm. For
+Frenet algorithm, X axis is pointing along curve’s normal and Y axis is
+pointing along curve’s binormal.</p>
+<p>Optionally, this node can produce a NURBS curve by offsetting some so-called
+“key” points of original curve and interpolating between these offset points.
+This is called “Loose NURBS offset” algorithm. For many cases, the resulting
+curve can approximate the “true” offset curve good enough, especially if
+selection of “key” points is good. By default, Greville points of the original
+curve are used. But it is also possible to specify custom key T parameter
+values.</p>
+<p>Curve domain and parametrization: the same as of original curve.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Curve</strong>. The curve to be extended. This input is mandatory.</p></li>
+<li><p><strong>Curve</strong>. The curve to be offset. This input is mandatory.</p></li>
+<li><p><strong>Offset</strong>. Offset amount. This input is available only if <strong>Algorithm</strong>
+parameter is set to <strong>Specified plane</strong>, or the <strong>Direction</strong> parameter is
+set to <strong>X (Normal)</strong> or <strong>Y (Binormal)</strong>. The input is not available when
+<strong>Offset type</strong> parameter is set to <strong>Variable</strong>. The default value is 0.1.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29" src="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png"><img alt="https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png" src="https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png" />
 </a>
 <ul class="simple">
-<li><p><strong>StartExt</strong>. This defines how far the curve should be extended beyond it’s
-starting point. Depending on <strong>Extend by</strong> parameter, this is measured either
-in terms of curve’s T parameter, or in terms of curve length. Default value
-is 1.0. If this input is set to 0.0, then no continuation will be generated
-beyond curve’s starting point.</p></li>
-<li><p><strong>EndExt</strong>. This defines how far the curve should be extended beyond it’s
-ending point. Depending on <strong>Extend by</strong> parameter, this is measured either
-in terms of curve’s T parameter, or in terms of curve length. Default value
-is 1.0. If this input is set to 0.0, then no continuation will be generated
-beyond curve’s ending point.</p></li>
+<li><p><strong>OffsetCurve</strong>. The curve defining the offset amount for each point of
+original curve. The curve is supposed to lie in XOY coordinate plane. The
+node uses this curve’s mapping of T parameter to Y coordinate. For parameter
+of this offset curve, the node will use either parameter of the original
+curve, or it’s length share, depending on <strong>Offset curve type</strong> parameter.
+This input is available and mandatory only if <strong>Offset type</strong> parameter is
+set to <strong>Variable</strong>.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png"><img alt="https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png" src="https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png" />
+</a>
+<ul>
+<li><p><strong>Vector</strong>. Offset direction vector. This input is available only if the
+<strong>Direction</strong> parameter is set to <strong>Custom (N/B/T)</strong>. Components of the
+vector are used within curve frame, calculated according to <strong>Algorithm</strong>
+parameter. For Frenet algorithm, X component of the vector represents offset
+along curve’s normal, Y component of the vector represents offset along
+curve’s binormal, and Z component of the vector represents offset along
+curve’s tangent.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png"><img alt="https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png" src="https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png" />
+</a>
+</div></blockquote>
+<p>The default value is <code class="docutils literal notranslate"><span class="pre">(0.1,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p>
+</li>
+<li><p><strong>PlaneNormal</strong>. This input is available only if <strong>Algorithm</strong> parameter is
+set to <strong>Specified Plane</strong>. This input defines the normal vector of offset
+operation plane (offset direction vector will be always perpendicular to it).</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png"><img alt="https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png" src="https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif"><img alt="https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif" src="https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Resolution</strong>. Number of samples for <strong>Zero-Twist</strong> or <strong>Track normal</strong>
+rotation algorithm calculation. It is also used for curve length calculation,
+when <strong>Offset type</strong> parameter is set to <strong>Variable</strong>, and <strong>Offset curve
+use</strong> parameter is set to <strong>Curve length</strong>. The more the number is, the more
+precise the calculation is, but the slower. The default value is 50. This
+input is only available when <strong>Algorithm</strong> parameter is set to <strong>Zero-Twist</strong>
+or <strong>Track normal</strong>, or when <strong>Offset type</strong> parameter is set to <strong>Variable</strong>
+and <strong>Offset curve use</strong> parameter is set to <strong>Curve length</strong>.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211007523-82c07800-6c0f-4a47-8313-ef51da2b3aaa.png"><img alt="https://user-images.githubusercontent.com/14288520/211007523-82c07800-6c0f-4a47-8313-ef51da2b3aaa.png" src="https://user-images.githubusercontent.com/14288520/211007523-82c07800-6c0f-4a47-8313-ef51da2b3aaa.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif"><img alt="https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif" src="https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif" />
+</a>
+<ul class="simple">
+<li><p><strong>T</strong>. Key T values for “Loose NURBS offset” algorithm. Available and
+mandatory if <strong>Loose NURBS</strong> and <strong>Specify key T values</strong> parameters are both
+checked.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <p>This node has the following parameters:</p>
+<ul class="simple">
+<li><p><strong>Algorithm</strong>. Curve frame calculation algorithm. The available options are:</p></li>
+</ul>
+<p><a class="reference external" href="https://gist.github.com/0ca7f735f7d85f5ed6ff456b89f088ff">https://gist.github.com/0ca7f735f7d85f5ed6ff456b89f088ff</a></p>
+<blockquote>
+<div><ul>
+<li><p><strong>Frenet</strong>. Rotate the profile curve according to Frenet frame of the
+extrusion curve (press image to animate).</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211011663-0150f048-ab33-4591-a593-4097a17fa570.gif"><img alt="https://user-images.githubusercontent.com/14288520/211011794-3cdaecce-991c-4e10-a551-efad0b25c277.png" src="https://user-images.githubusercontent.com/14288520/211011794-3cdaecce-991c-4e10-a551-efad0b25c277.png" />
+</a>
+</li>
+<li><p><strong>Zero-Twist</strong>. Rotate the profile curve according to “zero-twist” frame of
+the extrusion curve.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211012646-108ade70-735f-4efe-a5bf-2adf8f228805.gif"><img alt="https://user-images.githubusercontent.com/14288520/211012243-84eaf3e9-187d-43d9-96bc-1677db73294e.png" src="https://user-images.githubusercontent.com/14288520/211012243-84eaf3e9-187d-43d9-96bc-1677db73294e.png" />
+</a>
+</li>
+<li><p><strong>Householder</strong>. Calculate rotation by using Householder’s reflection matrix
+(see <a class="reference external" href="https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections">Wikipedia</a> article).</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211013591-1bc61f00-bfd8-4b3a-b4b2-5d964d32a1c3.gif"><img alt="https://user-images.githubusercontent.com/14288520/211013397-b606e1eb-3b96-49a2-83f9-120fa3434f01.png" src="https://user-images.githubusercontent.com/14288520/211013397-b606e1eb-3b96-49a2-83f9-120fa3434f01.png" />
+</a>
+</li>
+<li><p><strong>Tracking</strong>. Use the same algorithm as in Blender’s “TrackTo” kinematic
+constraint. This node currently always uses X as the Up axis.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211014189-8315f06f-8c4b-4caf-bcf0-884ee99a893c.gif"><img alt="https://user-images.githubusercontent.com/14288520/211013932-f1d03a0b-9685-4250-b2ce-334084054698.png" src="https://user-images.githubusercontent.com/14288520/211013932-f1d03a0b-9685-4250-b2ce-334084054698.png" />
+</a>
+</li>
+<li><p><strong>Rotation difference</strong>. Calculate rotation as rotation difference between two
+vectors.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211032854-08120c6f-85ef-4b20-9845-f1faa8fce5b2.gif"><img alt="https://user-images.githubusercontent.com/14288520/211032437-537b9d20-35e6-49f8-80e7-9e9694dd8492.png" src="https://user-images.githubusercontent.com/14288520/211032437-537b9d20-35e6-49f8-80e7-9e9694dd8492.png" />
+</a>
+</li>
+<li><p><strong>Track normal</strong>. Try to maintain constant normal direction by tracking it
+along the curve.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211033788-c94a2f21-e151-41a1-99d4-9f65da89e4f5.gif"><img alt="https://user-images.githubusercontent.com/14288520/211033494-833df34c-a151-42ff-aed0-86bb20895e1d.png" src="https://user-images.githubusercontent.com/14288520/211033494-833df34c-a151-42ff-aed0-86bb20895e1d.png" />
+</a>
+</li>
+<li><p><strong>Specified plane</strong>. Offset direction vector will be always lying in a
+plane which is defined by normal vector provided in <strong>Vector</strong> input. (<a class="reference external" href="https://gist.github.com/c000254e670af7a3435e84ca301ded81">https://gist.github.com/c000254e670af7a3435e84ca301ded81</a>)</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211037516-2c25c468-5751-45d2-a9a9-6ee2e175421f.gif"><img alt="https://user-images.githubusercontent.com/14288520/211036054-327073ee-bb27-44c0-b34a-47055731736a.png" src="https://user-images.githubusercontent.com/14288520/211036054-327073ee-bb27-44c0-b34a-47055731736a.png" />
+</a>
+</li>
+</ul>
+<p>The default option is <strong>Householder</strong>.</p>
+</div></blockquote>
 <ul>
-<li><p><strong>Type</strong>. Extending curves type. The available options are:</p>
-<ul>
-<li><p><strong>1 - Line</strong>. Extend the curve with straight line segments. The direction of
-lines is calculated accordingly to curve’s tangent directions at starting
-and ending point. Thus, it is guaranteed that the resulting curve will have
-continuous first derivative at the point where original curve is glued with
-it’s extension.</p>
+<li><p><strong>Direction</strong>. This defines offset direction. This input is not available
+when <strong>Algorithm</strong> parameter is set to <strong>Specified plane</strong>. The available
+options are:</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5" src="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5" />
-</a>
-</div></blockquote>
-</li>
-<li><p><strong>1 - Arc</strong>. Extend the curve with circular arcs. Extension direction and arc
-radius is calculated from curve’s tangents. The plane where the arc will
-lie is calculated based on curve’s second derivatives at ending points.
-Thus, it is guaranteed that the resulting curve will have continuous first
-derivative at the point where original curve is glued with it’s extension.</p>
-<blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98" src="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98" />
-</a>
-</div></blockquote>
-</li>
-<li><p><strong>2 - Smooth - Normal</strong>. Extend the curve with segments of second order
-(quadratic) curves. The coefficients of curves are calculated based on
-original curve’s tangent and second derivatives directions at the ending
-points. Thus, it is guaraneed that the resulting curve will have continuous
-first and second derivatives at the point where original curve is glued
-with it’s extension.</p>
-<blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca" src="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca" />
-</a>
-</div></blockquote>
-</li>
-<li><p><strong>3 - Smooth - Curvature</strong>. Extend the curve with segments of third order
-(cubic) curves. The coefficients of curves are calculated based on
-original curve’s tangent, second and third derivatives directions at the ending
-points. Thus, it is guaraneed that the resulting curve will have continuous
-first, second and third derivatives at the point where original curve is glued
-with it’s extension.</p>
-<blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300" src="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300" />
-</a>
+<div><ul class="simple">
+<li><p><strong>X (Normal)</strong>. Offset along curve reference frame’s X axis (for Frenet
+frame - curve normal).</p></li>
+<li><p><strong>Y (Binormal)</strong>. Offset along curve reference frame’s Y axis (for Frenet
+frame - curve binormal).</p></li>
+<li><p><strong>Custom (N/B/T)</strong>. Offset along user-provided vector.</p></li>
+</ul>
+<p>The default option is <strong>X (Normal)</strong>.</p>
 </div></blockquote>
 </li>
 </ul>
-<p>The default option is <strong>1 - Line</strong>.</p>
-</li>
-<li><p><strong>Extend by</strong>. This defines the units in which values of <strong>StartExt</strong>,
-<strong>EndExt</strong> inputs is measured. The available options are:</p>
-<ul>
-<li><p><strong>Curve parameter</strong>. Inputs define the range of curve’s T parameter. Since
-coefficients of the generated extension curves are calculated
-automatically, the length of extension curves can be hard to predict from
-the input values. On the other hand, this option is the faster one.</p></li>
-<li><p><strong>Curve length</strong>. Inputs define the length of extension curves. Required
-ranges of curve’s T parameter is calculated numerically, so this option is
-slower.</p>
-<blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9" src="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png"><img alt="https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png" src="https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png" />
 </a>
-</div></blockquote>
-</li>
-</ul>
-<p>The default option is <strong>Curve parameter</strong>.</p>
-</li>
-<li><p><strong>Length resolution</strong>. This parameter is available in the N panel only, and
-only when <strong>Extend by</strong> parameter is set to <strong>Curve length</strong>. Defines the
-resolution value for curve length calculation. The higher the value is, the
-more precisely extension curves length will be equal to the specified inputs,
-but the slower the computation will be. The default value is 50.</p></li>
+<ul class="simple">
+<li><p><strong>Loose NURBS</strong>. If checked, “Loose NURBS offset” algorithm is used, in order
+to generate a NURBS curve, which approximates the “true” offset curve.
+Unchecked by default.</p></li>
+<li><p><strong>Specify key T values</strong>. Available only when <strong>Loose NURBS</strong> parameter is
+checked. If checked, then key values of T parameters must be provided in the
+<strong>T</strong> input. Otherwise, Greville points of the original curve will be used.
+Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
-<p>This node has the following outputs:</p>
-<ul>
-<li><p><strong>ExtendedCurve</strong>. The original curve extended by one extension curve at the
-beginning and another curve at the end.</p>
-<blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6" src="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6" />
-</a>
-</div></blockquote>
-</li>
-<li><p><strong>StartExtent</strong>. Extension curve generated at the beginning of the original curve.</p>
-<blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc"><img alt="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc" src="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc" />
-</a>
-</div></blockquote>
-</li>
-<li><p><strong>EndExtent</strong>. Extension curve generated at the end of the original curve.</p>
-<blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2" src="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2" />
-</a>
-</div></blockquote>
-</li>
+<p>This node has the following output:</p>
+<ul class="simple">
+<li><p><strong>Curve</strong>. The offsetted curve.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211048162-b8e636c8-34a0-40f0-9885-6c18f50f5df4.png"><img alt="https://user-images.githubusercontent.com/14288520/211048162-b8e636c8-34a0-40f0-9885-6c18f50f5df4.png" src="https://user-images.githubusercontent.com/14288520/211048162-b8e636c8-34a0-40f0-9885-6c18f50f5df4.png" />
+</a>
 </section>
-<section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">#</a></h2>
-<p>Build part of curve from points, and then extend it to additional length of 1
-at the beginning and to additional length of 2 at the end:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png"><img alt="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png" src="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png" />
+<section id="examples-of-usage">
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
+<p>Offset one curve with several different offset amounts:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211057398-9c88a831-d9e6-4f47-b306-bc29f5a5153f.png"><img alt="https://user-images.githubusercontent.com/14288520/211057398-9c88a831-d9e6-4f47-b306-bc29f5a5153f.png" src="https://user-images.githubusercontent.com/14288520/211057398-9c88a831-d9e6-4f47-b306-bc29f5a5153f.png" />
 </a>
 <ul class="simple">
-<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
 </ul>
+<hr class="docutils" />
+<p>Example of <strong>Custom (N/B/T)</strong> mode usage:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211058665-ba9623df-b1db-4751-b773-505f5f6ee5d8.png"><img alt="https://user-images.githubusercontent.com/14288520/211058665-ba9623df-b1db-4751-b773-505f5f6ee5d8.png" src="https://user-images.githubusercontent.com/14288520/211058665-ba9623df-b1db-4751-b773-505f5f6ee5d8.png" />
+</a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>Example of <strong>Specified plane</strong> mode usage. Here <strong>Linear approximation</strong> node
+is used to automatically detect the plane where the curve is lying (mostly); it
+outputs a normal vector, which is nearly OY axis, so the offset operation plane
+will be nearly XOZ. Note that the offsetted curve has a twist in a place where
+the tangent of original curve is perpendicular to offset operation plane.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211066233-f38a07f4-be2e-4c04-85da-79ad36d32d52.png"><img alt="https://user-images.githubusercontent.com/14288520/211066233-f38a07f4-be2e-4c04-85da-79ad36d32d52.png" src="https://user-images.githubusercontent.com/14288520/211066233-f38a07f4-be2e-4c04-85da-79ad36d32d52.png" />
+</a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/linear_approx.html"><span class="doc">Linear Approximation</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>Example of <strong>Variable</strong> offset mode usage:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211068041-f2f513fc-067f-4d4a-8e2d-1235b485e86c.png"><img alt="https://user-images.githubusercontent.com/14288520/211068041-f2f513fc-067f-4d4a-8e2d-1235b485e86c.png" src="https://user-images.githubusercontent.com/14288520/211068041-f2f513fc-067f-4d4a-8e2d-1235b485e86c.png" />
+</a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="curve_formula.html"><span class="doc">Curve Formula</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/linear_approx.html"><span class="doc">Linear Approximation</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211071408-a2f9312f-e857-4141-9646-c133b2cb9c73.gif"><img alt="https://user-images.githubusercontent.com/14288520/211071408-a2f9312f-e857-4141-9646-c133b2cb9c73.gif" src="https://user-images.githubusercontent.com/14288520/211071408-a2f9312f-e857-4141-9646-c133b2cb9c73.gif" />
+</a>
 </section>
 </section>
 
@@ -611,20 +756,20 @@ at the beginning and to additional length of 2 at the end:</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="eval_curve.html"
+       href="nurbs_extremes.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Evaluate Curve</p>
+        <p class="prev-next-title">NURBS Curve Extremes</p>
       </div>
     </a>
     <a class="right-next"
-       href="extremes.html"
+       href="offset_on_surface.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Curve Extremes</p>
+        <p class="prev-next-title">Offset Curve on Surface</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -648,7 +793,7 @@ at the beginning and to additional length of 2 at the end:</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
   </nav></div>
 

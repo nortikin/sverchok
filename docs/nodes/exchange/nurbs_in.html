@@ -381,6 +381,8 @@ document.write(`
                   
   <section id="nurbs-input">
 <h1>NURBS Input<a class="headerlink" href="#nurbs-input" title="Link to this heading">#</a></h1>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/07f09b8e-1434-4e5f-a7ce-5372c1a87aeb"><img alt="https://github.com/user-attachments/assets/07f09b8e-1434-4e5f-a7ce-5372c1a87aeb" src="https://github.com/user-attachments/assets/07f09b8e-1434-4e5f-a7ce-5372c1a87aeb" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
 <p>This node can optionally use <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library.</p>
@@ -388,16 +390,23 @@ document.write(`
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
 <p>This node allows to bring <a class="reference external" href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline">NURBS</a> Curve and / or Surface objects from Blender’s scene into Sverchok.</p>
+<p>Additional description see <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a>.</p>
+<p>If objects has red color then they cannot be used as NURBS (Mesh, Nurbs, Empty, Lamp and other). If collection has red color then some objects cannot be used as NURBS.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/e3d10f06-7791-4f79-bfcd-3088e049d8af"><img alt="https://github.com/user-attachments/assets/e3d10f06-7791-4f79-bfcd-3088e049d8af" src="https://github.com/user-attachments/assets/e3d10f06-7791-4f79-bfcd-3088e049d8af" />
+</a>
+</div></blockquote>
+<p>Unprocessed objects also shown in the node buttom with yellow color.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
-<p>This node does not have any inputs.</p>
+<p>Objects Socket. You can select object or link to Collection picker node to select a collection.</p>
 </section>
 <section id="operators">
 <h2>Operators<a class="headerlink" href="#operators" title="Link to this heading">#</a></h2>
 <p>This node has the following operator button:</p>
 <ul class="simple">
-<li><p><strong>GET</strong>. When pressed, the node will update the list of objects bringed into
+<li><p><strong>GET Selection</strong>. When pressed, the node will update the list of objects bringed into
 Sverchok with a list of currently selected objects. If there are objects
 along selected ones, which are not NURBS curves or surfaces, the node will
 skip them.</p></li>

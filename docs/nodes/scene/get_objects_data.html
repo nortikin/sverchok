@@ -365,6 +365,8 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simplify-node-view">Simplify node view</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additionally">Additionally</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-panel">3D panel</a></li>
@@ -383,7 +385,7 @@ document.write(`
                   
   <section id="get-objects-data">
 <h1>Get Objects Data<a class="headerlink" href="#get-objects-data" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/95c784b5-41ac-4e7b-9488-d508d3ed8ba5"><img alt="https://github.com/user-attachments/assets/95c784b5-41ac-4e7b-9488-d508d3ed8ba5" src="https://github.com/user-attachments/assets/95c784b5-41ac-4e7b-9488-d508d3ed8ba5" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/fd6896df-16d0-4bc6-a197-ee534be1eaf0"><img alt="https://github.com/user-attachments/assets/fd6896df-16d0-4bc6-a197-ee534be1eaf0" src="https://github.com/user-attachments/assets/fd6896df-16d0-4bc6-a197-ee534be1eaf0" />
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
@@ -399,30 +401,42 @@ Sockets for the selected mesh elements or creases on weights can be used for quc
 <li><p>Importing Objects with a lot of geometry will decrease Sverchok tree update speed, be careful with any modifiers that produce a lot of extra geometry (like subdivision modifier)</p></li>
 <li><p>The Matrix socket lets you ignore or acquire the Object’s <code class="docutils literal notranslate"><span class="pre">World</span> <span class="pre">Matrix</span></code>, by default the Object data is untransformed. Use a matrix-apply node if you want to explicitly transform the vertex data.</p></li>
 <li><p>add selected objects from scene into the list individually:</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7037b5bd-b0f8-4295-84e4-1885f706a035"><img alt="https://github.com/user-attachments/assets/7037b5bd-b0f8-4295-84e4-1885f706a035" src="https://github.com/user-attachments/assets/7037b5bd-b0f8-4295-84e4-1885f706a035" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/827589d4-13ca-4523-b0eb-0380932d8260"><img alt="https://github.com/user-attachments/assets/827589d4-13ca-4523-b0eb-0380932d8260" src="https://github.com/user-attachments/assets/827589d4-13ca-4523-b0eb-0380932d8260" />
 </a>
 </li>
 <li><p>move objects in list up and down:</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/32872ce6-9166-4386-852d-9fc16ac0244b"><img alt="https://github.com/user-attachments/assets/32872ce6-9166-4386-852d-9fc16ac0244b" src="https://github.com/user-attachments/assets/32872ce6-9166-4386-852d-9fc16ac0244b" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7e1c2fee-e757-4523-a0b4-3659e5d3a851"><img alt="https://github.com/user-attachments/assets/7e1c2fee-e757-4523-a0b4-3659e5d3a851" src="https://github.com/user-attachments/assets/7e1c2fee-e757-4523-a0b4-3659e5d3a851" />
 </a>
 </li>
 <li><p>enable/disable objects in list to exclude some objects from process:</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/02d1c479-6862-4b99-b9b3-683d433a080b"><img alt="https://github.com/user-attachments/assets/02d1c479-6862-4b99-b9b3-683d433a080b" src="https://github.com/user-attachments/assets/02d1c479-6862-4b99-b9b3-683d433a080b" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/1daefd0b-bda2-46b7-930f-41457873684f"><img alt="https://github.com/user-attachments/assets/1daefd0b-bda2-46b7-930f-41457873684f" src="https://github.com/user-attachments/assets/1daefd0b-bda2-46b7-930f-41457873684f" />
+</a>
+<p>This work for collections too:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/32446a11-cffe-4e75-9b27-da7e2791b8fb"><img alt="https://github.com/user-attachments/assets/32446a11-cffe-4e75-9b27-da7e2791b8fb" src="https://github.com/user-attachments/assets/32446a11-cffe-4e75-9b27-da7e2791b8fb" />
+</a>
+</div></blockquote>
+</li>
+<li><p>select objects or collections in scene by operator in list. Use Shift key to append object into selection set</p>
+<video width="700" controls>
+  <source src="https://github.com/user-attachments/assets/d4bd813f-a9c2-488e-b7fc-e9251ac61af5" type="video/mp4">
+  Your browser does not support the video tag.
+</video></li>
+<li><p>Find active object in list. If object is in collection then active position will be switched on duplicates or collections that has this object</p>
+<video width="700" controls>
+  <source src="https://github.com/user-attachments/assets/2e43c672-93f5-4bdf-bf31-8da6720ffafe" type="video/mp4">
+  Your browser does not support the video tag.
+</video></li>
+<li><p>duplicates objects can be marked with a sign (for active object in list):</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/41b112c4-4688-4214-9cff-f5191e8a456f"><img alt="https://github.com/user-attachments/assets/41b112c4-4688-4214-9cff-f5191e8a456f" src="https://github.com/user-attachments/assets/41b112c4-4688-4214-9cff-f5191e8a456f" />
 </a>
 </li>
-<li><p>if objects are not exists in the scene then they shown by gost icon:</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/4af6194c-3819-4a36-98e9-b97efe3cab3f"><img alt="https://github.com/user-attachments/assets/4af6194c-3819-4a36-98e9-b97efe3cab3f" src="https://github.com/user-attachments/assets/4af6194c-3819-4a36-98e9-b97efe3cab3f" />
-</a>
-</li>
-<li><p>select objects in scene by operator in list. Use Shift key to append object into selection set</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/37193b7e-1383-4d93-b5fb-76a159dfb834"><img alt="https://github.com/user-attachments/assets/37193b7e-1383-4d93-b5fb-76a159dfb834" src="https://github.com/user-attachments/assets/37193b7e-1383-4d93-b5fb-76a159dfb834" />
+<li><p>add collections into the list (1-add empty pointer, 2-open list of collections in this scene, 3-select collection):</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/8a026341-8ec3-48ce-98aa-06e339cabce5"><img alt="https://github.com/user-attachments/assets/8a026341-8ec3-48ce-98aa-06e339cabce5" src="https://github.com/user-attachments/assets/8a026341-8ec3-48ce-98aa-06e339cabce5" />
 </a>
 </li>
 </ul>
-<video width="700" controls>
-  <source src="https://github.com/user-attachments/assets/20238f9e-5e47-49b5-a0dd-1bcf7949a60c" type="video/mp4">
- Your browser does not support the video tag.
-</video><p>limitations:</p>
+<p>limitations:</p>
 <ul>
 <li><p>When you use the <code class="docutils literal notranslate"><span class="pre">Post</span></code> mode Sverchok/Blender expect Objects to be visible. If you want to “hide” the original Objects in the scene to avoid visual clutter, you can place them into a Collection and hide the collection. This is a current Blender API limitation.</p></li>
 <li><p>Another method to work with objects - select wireframe mode and hide objects in Render by buttons:</p>
@@ -437,9 +451,36 @@ Sockets for the selected mesh elements or creases on weights can be used for quc
 <li><p>We have Bezier-in and NURBS-in nodes if you want to get Curve data from Scene objects, instead of Mesh.</p></li>
 </ul>
 </section>
+<section id="simplify-node-view">
+<h2>Simplify node view<a class="headerlink" href="#simplify-node-view" title="Link to this heading">#</a></h2>
+<p>This node can be very large. If you have no plans to use all sockets then you can hide unused socket:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/55a8b530-b822-41f4-8ed7-4260ef455be9"><img alt="https://github.com/user-attachments/assets/55a8b530-b822-41f4-8ed7-4260ef455be9" src="https://github.com/user-attachments/assets/55a8b530-b822-41f4-8ed7-4260ef455be9" />
+</a>
+</div></blockquote>
+<p>Also you can simplify table view ob objects:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/9ebe3a1f-783b-4a07-a4cf-aa121db8115c"><img alt="https://github.com/user-attachments/assets/9ebe3a1f-783b-4a07-a4cf-aa121db8115c" src="https://github.com/user-attachments/assets/9ebe3a1f-783b-4a07-a4cf-aa121db8115c" />
+</a>
+</div></blockquote>
+</section>
+<section id="additionally">
+<h2>Additionally<a class="headerlink" href="#additionally" title="Link to this heading">#</a></h2>
+<ul>
+<li><p>You can see objects info in description of elements on mouse hover:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5afb43b4-7651-4d03-9dc8-14b291bf7ca3"><img alt="https://github.com/user-attachments/assets/5afb43b4-7651-4d03-9dc8-14b291bf7ca3" src="https://github.com/user-attachments/assets/5afb43b4-7651-4d03-9dc8-14b291bf7ca3" />
+</a>
+</li>
+<li><p>Added Metaball and Point Cloud</p></li>
+</ul>
+</section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
-<p>Objects Socket</p>
+<p>Objects Socket. You can select object or link to Collection picker node to select a collection:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/f3c654c2-51c1-4d06-aee8-e02ec88bc747"><img alt="https://github.com/user-attachments/assets/f3c654c2-51c1-4d06-aee8-e02ec88bc747" src="https://github.com/user-attachments/assets/f3c654c2-51c1-4d06-aee8-e02ec88bc747" />
+</a>
+</div></blockquote>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
@@ -630,6 +671,8 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simplify-node-view">Simplify node view</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additionally">Additionally</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-panel">3D panel</a></li>

@@ -381,21 +381,28 @@ document.write(`
                   
   <section id="bezier-input">
 <h1>Bezier Input<a class="headerlink" href="#bezier-input" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/eef11720-c215-4c30-a45e-28088a3fd695"><img alt="https://github.com/nortikin/sverchok/assets/14288520/eef11720-c215-4c30-a45e-28088a3fd695" src="https://github.com/nortikin/sverchok/assets/14288520/eef11720-c215-4c30-a45e-28088a3fd695" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/233fafda-4aef-48f1-80b0-a1a48f77e4a4"><img alt="https://github.com/user-attachments/assets/233fafda-4aef-48f1-80b0-a1a48f77e4a4" src="https://github.com/user-attachments/assets/233fafda-4aef-48f1-80b0-a1a48f77e4a4" />
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
 <p>This node allows to bring <a class="reference external" href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">Bezier</a> Curve objects from Blender’s scene into Sverchok.</p>
+<p>Additional description see <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a>.</p>
+<p>If objects has red color then they cannot be used as spline (Mesh, Nurbs, Empty, Lamp and other). If collection has red color then some objects cannot be used as bezier splines.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/faa5717b-178a-4b2a-9b83-bb074e430d63"><img alt="https://github.com/user-attachments/assets/faa5717b-178a-4b2a-9b83-bb074e430d63" src="https://github.com/user-attachments/assets/faa5717b-178a-4b2a-9b83-bb074e430d63" />
+</a>
+</div></blockquote>
+<p>Unprocessed objects also shown in the node buttom with yellow color.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
-<p>This node does not have any inputs.</p>
+<p>Objects Socket. You can select object or link to Collection picker node to select a collection.</p>
 </section>
 <section id="operators">
 <h2>Operators<a class="headerlink" href="#operators" title="Link to this heading">#</a></h2>
 <p>This node has the following operator button:</p>
 <ul class="simple">
-<li><p><strong>GET</strong>. When pressed, the node will update the list of objects bringed into
+<li><p><strong>GET Selected</strong>. When pressed, the node will update the list of objects bringed into
 Sverchok with a list of currently selected objects. If there are objects
 along selected ones, which are not Bezier curves, the node will skip them.</p></li>
 </ul>
