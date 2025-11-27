@@ -72,6 +72,14 @@ direction, but where exactly they are pointing - depends on the algorithm. For
 Frenet algorithm, X axis is pointing along curve's normal and Y axis is
 pointing along curve's binormal.
 
+Optionally, this node can produce a NURBS curve by offsetting some so-called
+"key" points of original curve and interpolating between these offset points.
+This is called "Loose NURBS offset" algorithm. For many cases, the resulting
+curve can approximate the "true" offset curve good enough, especially if
+selection of "key" points is good. By default, Greville points of the original
+curve are used. But it is also possible to specify custom key T parameter
+values.
+
 Curve domain and parametrization: the same as of original curve.
 
 Inputs
@@ -88,7 +96,6 @@ This node has the following inputs:
 .. image:: https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png
   :target: https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png
 
-
 * **OffsetCurve**. The curve defining the offset amount for each point of
   original curve. The curve is supposed to lie in XOY coordinate plane. The
   node uses this curve's mapping of T parameter to Y coordinate. For parameter
@@ -100,13 +107,22 @@ This node has the following inputs:
 .. image:: https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png
   :target: https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png
 
-* **Vector**. Offset direction vector. This input is available only if
-  **Algorithm** parameter is set to **Specified plane**, or the **Direction**
-  parameter is set to **Custom (N/B/T)**.
+* **Vector**. Offset direction vector. This input is available only if the
+  **Direction** parameter is set to **Custom (N/B/T)**. Components of the
+  vector are used within curve frame, calculated according to **Algorithm**
+  parameter. For Frenet algorithm, X component of the vector represents offset
+  along curve's normal, Y component of the vector represents offset along
+  curve's binormal, and Z component of the vector represents offset along
+  curve's tangent.
+    
+    .. image:: https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png
+      :target: https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png
 
-  * For **Specified plane** algorithm, this input defines the normal vector of
-    offset operation plane (offset direction vector will be always
-    perpendicular to it).
+  The default value is ``(0.1, 0, 0)``.
+
+* **PlaneNormal**. This input is available only if **Algorithm** parameter is
+  set to **Specified Plane**. This input defines the normal vector of offset
+  operation plane (offset direction vector will be always perpendicular to it).
 
     .. image:: https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png
       :target: https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png
@@ -114,18 +130,6 @@ This node has the following inputs:
     .. image:: https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif
       :target: https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif
 
-
-  * For other algorithms, Components of the vector are used within curve frame,
-    calculated according to **Algorithm** parameter. For Frenet algorithm, X
-    component of the vector represents offset along curve's normal, Y component
-    of the vector represents offset along curve's binormal, and Z component of
-    the vector represents offset along curve's tangent.
-    
-    .. image:: https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png
-      :target: https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png
-
-  The default value is ``(0.1, 0, 0)``.
-      
 * **Resolution**. Number of samples for **Zero-Twist** or **Track normal**
   rotation algorithm calculation. It is also used for curve length calculation,
   when **Offset type** parameter is set to **Variable**, and **Offset curve
@@ -140,6 +144,10 @@ This node has the following inputs:
 
 .. image:: https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif
   :target: https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif
+
+* **T**. Key T values for "Loose NURBS offset" algorithm. Available and
+  mandatory if **Loose NURBS** and **Specify key T values** parameters are both
+  checked.
 
 Parameters
 ----------
@@ -210,6 +218,14 @@ https://gist.github.com/0ca7f735f7d85f5ed6ff456b89f088ff
 
 .. image:: https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png
   :target: https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png
+
+* **Loose NURBS**. If checked, "Loose NURBS offset" algorithm is used, in order
+  to generate a NURBS curve, which approximates the "true" offset curve.
+  Unchecked by default.
+* **Specify key T values**. Available only when **Loose NURBS** parameter is
+  checked. If checked, then key values of T parameters must be provided in the
+  **T** input. Otherwise, Greville points of the original curve will be used.
+  Unchecked by default.
 
 Outputs
 -------
