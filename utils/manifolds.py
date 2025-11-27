@@ -1615,12 +1615,11 @@ def curve_curvature_maximum(curve, init_samples=10, global_only=True, logger=Non
     else:
         return np.array(solutions)
 
-def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True):
+def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True, add_bounds=False):
     if curve.is_rational():
         raise UnsupportedCurveTypeException("Rational curves are not supported")
     #degree = curve.get_degree()
     if curve.get_degree() == 1:
-        print("Line")
         return np.array([])
 
     def solve_segment(segment, orig_t1, orig_t2):
@@ -1654,7 +1653,7 @@ def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True):
             solutions.append(orig_t1)
         if root is None or (sign > 0 and c2 > root) or (sign < 0 and c2 < root):
             solutions.append(orig_t2)
-        print(f"[{orig_t1} - {orig_t2}] => {solutions}")
+        #print(f"[{orig_t1} - {orig_t2}], sign={sign} => {solutions}")
         return solutions
 
     solutions = []
@@ -1664,6 +1663,8 @@ def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True):
         solutions.extend(sol)
 
     if global_only:
+        if add_bounds:
+            solutions.extend(curve.get_u_bounds())
         solutions = np.array(sorted(set(solutions)))
         curvatures = curve.curvature_array(solutions)
         #print("C", curvatures)
@@ -1675,10 +1676,21 @@ def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True):
         return np.array([solutions[idxs]])
     else:
         #print("No global", solutions)
+        if add_bounds:
+            solutions.extend(curve.get_u_bounds())
         return np.array(sorted(set(solutions)))
 
 def nurbs_curve_curvature_maximum(curve, global_only=True):
-    return nurbs_curve_curvature_extremes(curve, sign=1, global_only=global_only)
+    if global_only:
+        return nurbs_curve_curvature_extremes(curve, sign=1, global_only=True)
+    else:
+        zero_ts = nurbs_curve_curvature_extremes(curve, sign=-1, global_only=False, add_bounds=True)
+        solutions = []
+        for t1, t2 in zip(zero_ts, zero_ts[1:]):
+            segment = curve.cut_segment(t1, t2)
+            ts = nurbs_curve_curvature_extremes(segment, sign=1, global_only=False)
+            solutions.extend(ts)
+        return np.array(solutions)
 
 def nurbs_curve_curvature_zero(curve, tolerance=1e-6):
     ts = nurbs_curve_curvature_extremes(curve, sign=-1, global_only=False)
