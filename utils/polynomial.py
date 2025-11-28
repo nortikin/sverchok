@@ -120,7 +120,7 @@ class Polynomial:
             return self.coeffs.shape[-1]
 
     def evaluate(self, x):
-        return self.evaluate(np.array([x]))[0]
+        return self.evaluate_array(np.array([x]))[0]
 
     def evaluate_array(self, xs):
         n = len(self.coeffs)
@@ -294,19 +294,33 @@ class Polynomial:
             return self
         elif ndim == 1:
             coeffs = self.coeffs[:,0]
-            return Polynomial(coeffs, ndim=ndim)
+            return Polynomial(coeffs)
         else:
             raise Exception("Root finding is supported for 1D-polynomials only")
 
     def roots(self, domain=None, real_only=True):
-        poly = np_Polynomial(self.to_1d().coeffs, domain=domain)
+        poly = np_Polynomial(self.to_1d().coeffs)
         roots = poly.roots()
         if domain is not None:
             x1, x2 = domain
             roots = [r for r in roots if x1 <= r.real <= x2]
         if real_only:
-            roots = [r for r in roots if np.isreal(r)]
+            roots = [r.real for r in roots if np.isreal(r)]
         return np.array(roots)
+    
+    def find_all_extremes(self, domain, sign=-1):
+        poly = self.to_1d()
+        derivative_roots = poly.derivative().roots(domain)
+        candidates = derivative_roots
+        candidates = np.append(candidates, domain)
+        second_derivative = poly.nth_derivative(2)
+        result = []
+        for x in candidates:
+            #print("X", x)
+            second_derivative_value = second_derivative.evaluate(x)
+            if second_derivative_value * sign < 0:
+                result.append(x)
+        return np.array(sorted(result))
 
 def lagrange_basis(n, i, xs, ndim=None):
     poly = Polynomial.Constant(1, ndim=ndim)

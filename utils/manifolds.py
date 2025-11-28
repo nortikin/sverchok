@@ -9,6 +9,7 @@ from sverchok.core.sv_custom_exceptions import ArgumentError
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.utils.polynomial import Polynomial
 from sverchok.utils.curve import SvIsoUvCurve, SvDeformedByFieldCurve
+from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import reverse_curve, concatenate_curves, curve_segment
@@ -1584,7 +1585,7 @@ def curve_curvature_zeros(curve, init_samples=10, tolerance=1e-3, logger=None):
         return np.array([])
     return np.array(solutions)
 
-def curve_curvature_maximum(curve, init_samples=10, global_only=True, logger=None):
+def curve_curvature_maximum(curve, init_samples=10, global_only=True, tolerance=1e-6, logger=None):
     if logger is None:
         logger = get_logger()
     u_min, u_max = curve.get_u_bounds()
@@ -1598,7 +1599,8 @@ def curve_curvature_maximum(curve, init_samples=10, global_only=True, logger=Non
         sol = minimize_scalar(goal,
                               bounds = (u1, u2),
                               bracket = (u1, u2),
-                              method = 'Bounded')
+                              method = 'Bounded',
+                              options = {'xatol': tolerance})
         if sol.success:
             if u_min <= sol.x <= u_max:
                 solutions.append(sol.x)
@@ -1632,27 +1634,28 @@ def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True, add_bounds=F
 
         if sign > 0:
             denominator = derivative.scalar_square().power(3)
+
             def goal(t):
                 ts = np.array([t])
                 value = - numerator.evaluate_array(ts) / denominator.evaluate_array(ts)
                 return value[0][0]
-        else:
-            def goal(t):
-                value = numerator.evaluate_array(np.array([t]))[0]
-                return value[0]
 
-        solutions = []
-        sol = minimize_scalar(goal,
-                              bounds = (t1, t2),
-                              bracket = (t1, t2),
-                              method = 'Bounded',
-                              options = {'xatol': tolerance})
-        root = None
-        if sol.success:
-            if t1 <= sol.x <= t2:
-                root = sol.x
-                root = (orig_t2 - orig_t1) * (root - t1) / (t2 - t1) + orig_t1
-                solutions.append(root)
+            solutions = []
+            sol = minimize_scalar(goal,
+                                bounds = (t1, t2),
+                                bracket = (t1, t2),
+                                method = 'Bounded',
+                                options = {'xatol': tolerance})
+            root = None
+            if sol.success:
+                if t1 <= sol.x <= t2:
+                    root = sol.x
+                    root = (orig_t2 - orig_t1) * (root - t1) / (t2 - t1) + orig_t1
+                    solutions.append(root)
+        else:
+            roots = numerator.find_all_extremes((t1,t2))
+            solutions = (orig_t2 - orig_t1) * (roots - t1) / (t2 - t1) + orig_t1
+            solutions = solutions.tolist()
 
         if add_bezier_joints:
             c1 = segment.curvature(orig_t1)
@@ -1688,8 +1691,10 @@ def nurbs_curve_curvature_maximum(curve, global_only=True):
     if global_only:
         return nurbs_curve_curvature_extremes(curve, sign=1, global_only=True)
     else:
-        zero_ts = nurbs_curve_curvature_extremes(curve, sign=-1, global_only=False, add_bounds=True)
-        #print(f"Zero {zero_ts} => C {curve.curvature_array(zero_ts)}")
+        zero_ts = nurbs_curve_curvature_extremes(curve, sign=-1, global_only=False, add_bounds=True).tolist()
+        internal_knots = sv_knotvector.get_internal_knots(curve.get_knotvector(), tolerance=None)
+        zero_ts.extend(internal_knots)
+        zero_ts = list(sorted(set(zero_ts)))
         solutions = []
         for t1, t2 in zip(zero_ts, zero_ts[1:]):
             local_segment = curve.cut_segment(t1, t2)
