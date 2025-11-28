@@ -16,7 +16,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 
-from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, ReadingObjectDataError, get_objects_from_item
+from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, ReadingObjectDataError, get_objects_from_item
 
 def get_object_data_spline_info(object_pointer):
     '''Is object exists, has spline and bezier info?'''
@@ -197,7 +197,8 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         grid.column(align=True).prop(self, 'apply_matrix')
         grid.column(align=True).prop(self, 'legacy_mode')
         row0 = grid.row(align=True)
-        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='TOOL_SETTINGS', text="")
+        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK4.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
+        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
         
         if not self.by_input:
             if self.object_names:

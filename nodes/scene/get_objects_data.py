@@ -21,7 +21,7 @@ from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
 import numpy as np
-from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, ReadingObjectDataError, get_objects_from_item
+from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, ReadingObjectDataError, get_objects_from_item
 
 numpy_socket_names = ['vertices', 'edges', 'vertex_normals', 'material_idx', 'polygon_areas', 'polygon_centers', 'polygon_normals']
 
@@ -315,7 +315,8 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         grid.column(align=True).prop(self, 'modifiers')
         grid.column(align=True).prop(self, 'vergroups')
         row0 = grid.row(align=True)
-        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='TOOL_SETTINGS', text="")
+        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK4.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
+        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
         # row0.separator()
         # row0.row().prop(self, 'display_type', expand=True, text='')
 
