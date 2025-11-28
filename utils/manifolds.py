@@ -6,7 +6,6 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import intersect_plane_plane, intersect_line_plane, normal as face_normal
 
 from sverchok.core.sv_custom_exceptions import ArgumentError
-from sverchok.utils.math import solve_quadratic, solve_cubic
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.utils.polynomial import Polynomial
 from sverchok.utils.curve import SvIsoUvCurve, SvDeformedByFieldCurve
@@ -1579,9 +1578,10 @@ def curve_curvature_zeros(curve, init_samples=10, tolerance=1e-3, logger=None):
             if u_min <= sol.x <= u_max:
                 curvature = curve.curvature(sol.x)
                 if abs(curvature) < tolerance:
+                    #print(f"Generic [{u1} - {u2}] => {sol.x}")
                     solutions.append(sol.x)
     if len(solutions) == 0:
-        raise Exception("No extreme points")
+        return np.array([])
     return np.array(solutions)
 
 def curve_curvature_maximum(curve, init_samples=10, global_only=True, logger=None):
@@ -1624,22 +1624,29 @@ def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True, add_bounds=F
 
     def solve_segment(segment, orig_t1, orig_t2):
         t1, t2 = segment.get_u_bounds()
+
         poly = Polynomial(segment.get_coefficients())
         derivative = poly.derivative()
         second = poly.nth_derivative(2)
         numerator = (derivative.cross(second)).scalar_square()
-        denominator = derivative.scalar_square().power(3)
 
-        def goal(t):
-            value = -sign * numerator.evaluate_array(np.array([t]))[0] / denominator.evaluate_array(np.array([t]))[0]
-            #print(f"T {t} => {value}")
-            return value[0]
+        if sign > 0:
+            denominator = derivative.scalar_square().power(3)
+            def goal(t):
+                ts = np.array([t])
+                value = - numerator.evaluate_array(ts) / denominator.evaluate_array(ts)
+                return value[0][0]
+        else:
+            def goal(t):
+                value = numerator.evaluate_array(np.array([t]))[0]
+                return value[0]
 
         solutions = []
         sol = minimize_scalar(goal,
                               bounds = (t1, t2),
                               bracket = (t1, t2),
-                              method = 'Bounded')
+                              method = 'Bounded',
+                              options = {'xatol': 1e-6})
         root = None
         if sol.success:
             if t1 <= sol.x <= t2:
@@ -1657,7 +1664,6 @@ def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True, add_bounds=F
         return solutions
 
     solutions = []
-    #print("Curve", curve.get_u_bounds())
     for segment in curve.to_bezier_segments(to_bezier_class=False):
         sol = solve_segment(segment.bezier_to_taylor(ndim=3), *segment.get_u_bounds())
         solutions.extend(sol)
@@ -1667,15 +1673,12 @@ def nurbs_curve_curvature_extremes(curve, sign=1, global_only=True, add_bounds=F
             solutions.extend(curve.get_u_bounds())
         solutions = np.array(sorted(set(solutions)))
         curvatures = curve.curvature_array(solutions)
-        #print("C", curvatures)
         if sign > 0:
             idxs = np.argmax(curvatures)
         else:
             idxs = np.argmin(curvatures)
-        #print("I", idxs, solutions.shape)
         return np.array([solutions[idxs]])
     else:
-        #print("No global", solutions)
         if add_bounds:
             solutions.extend(curve.get_u_bounds())
         return np.array(sorted(set(solutions)))
@@ -1685,7 +1688,7 @@ def nurbs_curve_curvature_maximum(curve, global_only=True):
         return nurbs_curve_curvature_extremes(curve, sign=1, global_only=True)
     else:
         zero_ts = nurbs_curve_curvature_extremes(curve, sign=-1, global_only=False, add_bounds=True)
-        print(f"Zero {zero_ts} => C {curve.curvature_array(zero_ts)}")
+        #print(f"Zero {zero_ts} => C {curve.curvature_array(zero_ts)}")
         solutions = []
         for t1, t2 in zip(zero_ts, zero_ts[1:]):
             local_segment = curve.cut_segment(t1, t2)
@@ -1693,10 +1696,12 @@ def nurbs_curve_curvature_maximum(curve, global_only=True):
             for segment in local_segment.to_bezier_segments(to_bezier_class=False):
                 ts = nurbs_curve_curvature_extremes(segment, sign=1, global_only=False)
                 local_solutions.extend(ts)
+            if len(local_solutions) == 0:
+                continue
             local_solutions = np.array(sorted(set(local_solutions)))
             curvatures = local_segment.curvature_array(local_solutions)
             idxs = np.argmax(curvatures)
-            print(f"Local [{t1} - {t2}] => {local_solutions} => {local_solutions[idxs]}")
+            #print(f"Local [{t1} - {t2}] => {local_solutions} => {local_solutions[idxs]}")
             solutions.append(local_solutions[idxs])
         return np.array(solutions)
 

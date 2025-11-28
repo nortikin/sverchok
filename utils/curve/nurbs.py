@@ -716,7 +716,7 @@ class SvNurbsCurve(SvCurve):
 
         segments = []
         rest = self
-        for u in sv_knotvector.get_internal_knots(self.get_knotvector()):
+        for u in sv_knotvector.get_internal_knots(self.get_knotvector(), tolerance=None):
             segment, rest = rest.split_at(u)
             if to_bezier_class:
                 segments.append(segment.to_bezier())
