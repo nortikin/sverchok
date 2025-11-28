@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
+from numpy.polynomial import Polynomial as np_Polynomial
 from math import pi
 
 from sverchok.utils.math import binomial_array
@@ -119,9 +120,7 @@ class Polynomial:
             return self.coeffs.shape[-1]
 
     def evaluate(self, x):
-        n = len(self.coeffs)
-        ds = np.arange(n)
-        return (self.coeffs * x ** ds).sum(axis=0)
+        return self.evaluate(np.array([x]))[0]
 
     def evaluate_array(self, xs):
         n = len(self.coeffs)
@@ -288,6 +287,26 @@ class Polynomial:
     def truncate(self, max_degree):
         n = min(len(self.coeffs), max_degree+1)
         return Polynomial(self.coeffs[:n])
+
+    def to_1d(self):
+        ndim = self.get_ndim()
+        if ndim is None:
+            return self
+        elif ndim == 1:
+            coeffs = self.coeffs[:,0]
+            return Polynomial(coeffs, ndim=ndim)
+        else:
+            raise Exception("Root finding is supported for 1D-polynomials only")
+
+    def roots(self, domain=None, real_only=True):
+        poly = np_Polynomial(self.to_1d().coeffs, domain=domain)
+        roots = poly.roots()
+        if domain is not None:
+            x1, x2 = domain
+            roots = [r for r in roots if x1 <= r.real <= x2]
+        if real_only:
+            roots = [r for r in roots if np.isreal(r)]
+        return np.array(roots)
 
 def lagrange_basis(n, i, xs, ndim=None):
     poly = Polynomial.Constant(1, ndim=ndim)
