@@ -422,6 +422,9 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                     pols = []
                 if o_vertices_select:
                     vertices_select1 = []
+
+                material_indexes = []
+                materials_info = dict()
             else:
                 try:
                     if obj.mode == 'EDIT' and obj.type == 'MESH':
@@ -612,12 +615,9 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                                     # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
                                     materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
                                 else:
-                                    if obj_data.polygons:
-                                        material_indexes = [0]*len(obj_data.polygons)
-                                        materials_info = dict( [(0,dict(material_name=None, is_faces=True))] )
-                                    else:
-                                        material_indexes = []
-                                        materials_info = dict()
+                                    # POINT_CLOUDS has no polygons
+                                    material_indexes = []
+                                    materials_info = dict()
 
                             if o_polygon_areas:
                                 polygons_areas   = []
