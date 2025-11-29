@@ -522,8 +522,12 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                                 # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
                                 materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
                             else:
-                                material_indexes = []
-                                materials_info = dict()
+                                if bm.faces:
+                                    material_indexes = [0]*len(bm.faces)
+                                    materials_info = dict( [(0,dict(material_name=None, is_faces=True))] )
+                                else:
+                                    material_indexes = []
+                                    materials_info = dict()
                             pass
 
                         if o_polygon_areas:
