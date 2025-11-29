@@ -259,37 +259,37 @@ def draw_callback():
 
     # Close button (above navigation buttons)
     close_button_y = button_y + button_height + button_margin
-    close_button_vertices = (
-        (close_button_x, close_button_y),
-        (close_button_x + close_button_width, close_button_y),
-        (close_button_x + close_button_width, close_button_y + button_height),
-        (close_button_x, close_button_y + button_height)
-    )
+    close_button_vertices = [
+        ((close_button_x, close_button_y),(close_button_x + close_button_width, close_button_y)),
+        ((close_button_x, close_button_y),(close_button_x, close_button_y + button_height)),
+        ((close_button_x + close_button_width, close_button_y + button_height), (close_button_x, close_button_y + button_height)),
+        ((close_button_x + close_button_width, close_button_y + button_height), (close_button_x + close_button_width, close_button_y))
+    ]
 
     # Draw button backgrounds
     solid_shader.bind()
 
     # Navigation buttons - gray
-    solid_shader.uniform_float("color", (0.84, 0.91, 0.83, 0.65))
-    left_button_batch = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": left_button_vertices})
-    right_button_batch = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": right_button_vertices})
-    left_button_batch.draw(solid_shader)
-    right_button_batch.draw(solid_shader)
+    #solid_shader.uniform_float("color", (0.84, 0.91, 0.83, 0.65))
+    #left_button_batch = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": left_button_vertices})
+    #right_button_batch = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": right_button_vertices})
+    #left_button_batch.draw(solid_shader)
+    #right_button_batch.draw(solid_shader)
 
     # Close button - red
-    solid_shader.uniform_float("color", (0.84, 0.91, 0.83, 0.65))
-    close_button_batch = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": close_button_vertices})
-    close_button_batch.draw(solid_shader)
+    #solid_shader.uniform_float("color", (0.84, 0.91, 0.83, 0.65))
+    #close_button_batch = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": close_button_vertices})
+    #close_button_batch.draw(solid_shader)
 
     # Draw button borders
-    solid_shader.uniform_float("color", (0.84, 0.91, 0.83, 0.65))
-    left_border_batch = batch_for_shader(solid_shader, 'LINE_LOOP', {"pos": left_button_vertices})
-    right_border_batch = batch_for_shader(solid_shader, 'LINE_LOOP', {"pos": right_button_vertices})
-    close_border_batch = batch_for_shader(solid_shader, 'LINE_LOOP', {"pos": close_button_vertices})
+    #solid_shader.uniform_float("color", (0.84, 0.91, 0.83, 0.65))
+    #left_border_batch = batch_for_shader(solid_shader, 'LINE_LOOP', {"pos": left_button_vertices})
+    #right_border_batch = batch_for_shader(solid_shader, 'LINE_LOOP', {"pos": right_button_vertices})
+    #close_border_batch = batch_for_shader(solid_shader, 'LINE_LOOP', {"pos": close_button_vertices})
 
-    left_border_batch.draw(solid_shader)
-    right_border_batch.draw(solid_shader)
-    close_border_batch.draw(solid_shader)
+    #left_border_batch.draw(solid_shader)
+    #right_border_batch.draw(solid_shader)
+    #close_border_batch.draw(solid_shader)
 
     # Draw button symbols
     solid_shader.uniform_float("color", (0.34, 0.5, 0.76, 1.0))
@@ -322,6 +322,9 @@ def draw_callback():
     right_arrow_batch = batch_for_shader(solid_shader, 'TRIS', {"pos": right_arrow_vertices})
     close_x_batch1 = batch_for_shader(solid_shader, 'LINES', {"pos": close_x_vertices1})
     close_x_batch2 = batch_for_shader(solid_shader, 'LINES', {"pos": close_x_vertices2})
+    for i in close_button_vertices:
+        close_x_batch3 = batch_for_shader(solid_shader, 'LINES', {"pos": i})
+        close_x_batch3.draw(solid_shader)
 
     left_arrow_batch.draw(solid_shader)
     right_arrow_batch.draw(solid_shader)
