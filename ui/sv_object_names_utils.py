@@ -973,62 +973,7 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         items = hide_render_types,
         default = 'RESTRICT_RENDER_OFF',
         update = update_render_type)
-    
-
-    def update_align_3dview(self, context):
-        if len(self.object_names)==0:
-            return
-        obj_in_list = self.object_names[self.active_obj_index]
-        if obj_in_list:
-            # reset all selections
-            for obj in bpy.context.selected_objects:
-                obj.select_set(False)
-            
-            # select all objects in list of this node
-            if self.align_3dview_type=='ISOLATE_ALL':
-                for item in self.object_names:
-                    if item.object_pointer:
-                        item.object_pointer.select_set(True)
-
-            if obj_in_list.object_pointer:
-                obj_in_list.object_pointer.select_set(True)
-                bpy.context.view_layer.objects.active = obj_in_list.object_pointer
-
-            for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    ctx = bpy.context.copy()
-                    ctx['area'] = area
-                    ctx['region'] = area.regions[-1]
-                    # test if current mode is local view: https://blender.stackexchange.com/questions/290669/checking-for-object-being-in-local-view
-                    if self.align_3dview_type_previous_value!=self.align_3dview_type and area.spaces.active.local_view:
-                        bpy.ops.view3d.localview(ctx, frame_selected=False)
-                    self.align_3dview_type_previous_value = self.align_3dview_type
-                    bpy.ops.view3d.localview(ctx, frame_selected=False)
-                    #bpy.ops.view3d.view_selected(ctx)
-                    break
-
-            pass
-        return
-
-    align_3dview_types = [
-            ('ISOLATE_CURRENT', "", "Toggle local view with only current selected object in the list\nPress again to restore view", "PIVOT_CURSOR", 0),
-            ('ISOLATE_ALL', "", "Toggle local view with all objects in the list\nPress again to restore view", "PIVOT_INDIVIDUAL", 1),
-        ]
-
-    align_3dview_type : bpy.props.EnumProperty(
-        name = "Local View",
-        items = align_3dview_types,
-        default = 'ISOLATE_CURRENT',
-        update = update_align_3dview) # type: ignore
-    
-    align_3dview_type_previous_value : bpy.props.EnumProperty(
-        name = "Local View",
-        items = align_3dview_types,
-        default = 'ISOLATE_CURRENT') # type: ignore
-
-
-
-    
+        
     frame_selected: bpy.props.BoolProperty(default=True, description='Frame selected: magnify Local View')
     
     def remove_duplicates_objects_in_list(self, ops):

@@ -610,7 +610,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                                 else:
                                     if obj_data.polygons:
                                         material_indexes = [0]*len(obj_data.polygons)
-                                        materials_info = dict( [ 0,dict(material_name=None, is_faces=False) ] )
+                                        materials_info = dict( [(0,dict(material_name=None, is_faces=True))] )
                                     else:
                                         material_indexes = []
                                         materials_info = dict()
@@ -709,7 +709,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                                 else:
                                     if obj_data.polygons:
                                         material_indexes = [0]*len(obj_data.polygons)
-                                        materials_info = dict( [ 0,dict(material_name=None, is_faces=False) ] )
+                                        materials_info = dict( [(0,dict(material_name=None, is_faces=True))] )
                                     else:
                                         material_indexes = []
                                         materials_info = dict()
