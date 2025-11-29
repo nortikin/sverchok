@@ -3158,25 +3158,40 @@
         "inputs": {
           "vertices": {
             "bl_idname": "SvVerticesSocket",
-            "name": "Vertices"
+            "name": "vertices",
+            "properties": {
+              "label": "Vertices"
+            }
           },
           "polygons": {
             "bl_idname": "SvStringsSocket",
-            "name": "Polygons"
+            "name": "polygons",
+            "properties": {
+              "label": "Polygons"
+            }
           },
           "groups_id": {
             "bl_idname": "SvStringsSocket",
-            "name": "Groups by"
+            "name": "groups_id",
+            "properties": {
+              "label": "Group by"
+            }
           }
         },
         "outputs": {
           "area": {
             "bl_idname": "SvStringsSocket",
-            "name": "area"
+            "name": "area",
+            "properties": {
+              "label": "Area"
+            }
           },
           "groups_id": {
             "bl_idname": "SvStringsSocket",
-            "name": "Groups by"
+            "name": "groups_id",
+            "properties": {
+              "label": "Group By"
+            }
           }
         },
         "bl_idname": "SvAreaNodeMK2"
