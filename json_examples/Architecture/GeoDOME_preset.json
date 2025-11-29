@@ -3156,22 +3156,45 @@
           "sum_faces": true
         },
         "inputs": {
-          "Vertices": {
+          "vertices": {
             "bl_idname": "SvVerticesSocket",
-            "name": "Vertices"
+            "name": "vertices",
+            "properties": {
+              "label": "Vertices"
+            }
           },
-          "Polygons": {
+          "polygons": {
             "bl_idname": "SvStringsSocket",
-            "name": "Polygons"
+            "name": "polygons",
+            "properties": {
+              "label": "Polygons"
+            }
+          },
+          "groups_id": {
+            "bl_idname": "SvStringsSocket",
+            "name": "groups_id",
+            "properties": {
+              "label": "Group by"
+            }
           }
         },
         "outputs": {
-          "Area": {
+          "area": {
             "bl_idname": "SvStringsSocket",
-            "name": "Area"
+            "name": "area",
+            "properties": {
+              "label": "Area"
+            }
+          },
+          "groups_id": {
+            "bl_idname": "SvStringsSocket",
+            "name": "groups_id",
+            "properties": {
+              "label": "Group By"
+            }
           }
         },
-        "bl_idname": "SvAreaNode"
+        "bl_idname": "SvAreaNodeMK2"
       },
       "Scalar Math.001": {
         "attributes": {
@@ -4431,17 +4454,17 @@
         "from_node": "UV Connection",
         "from_socket": "vertices",
         "to_node": "Area",
-        "to_socket": "Vertices"
+        "to_socket": "vertices"
       },
       {
         "from_node": "UV Connection",
         "from_socket": "data",
         "to_node": "Area",
-        "to_socket": "Polygons"
+        "to_socket": "polygons"
       },
       {
         "from_node": "Area",
-        "from_socket": "Area",
+        "from_socket": "area",
         "to_node": "Scalar Math.001",
         "to_socket": "x"
       },
