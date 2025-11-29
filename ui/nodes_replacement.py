@@ -153,9 +153,12 @@ class SvReplaceNode(bpy.types.Operator):
         old_node = tree.nodes[self.old_node_name]
         new_node = tree.nodes.new(self.new_bl_idname)
         # Copy UI properties
-        ui_props = ['location', 'height', 'width', 'label', 'hide']
+        ui_props = ['location', 'height', 'width', 'label', 'hide',
+                    'location_absolute', # > Blender 3.0
+        ]
         for prop_name in ui_props:
-            setattr(new_node, prop_name, getattr(old_node, prop_name))
+            if hasattr(old_node, prop_name):
+                setattr(new_node, prop_name, getattr(old_node, prop_name))
 
         # Copy ID properties
         # for prop_name, prop_value in old_node.items():

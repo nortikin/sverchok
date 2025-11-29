@@ -1,19 +1,21 @@
 Area
 =====
 
-.. image:: https://user-images.githubusercontent.com/14288520/195365832-e25b9df7-6038-4a04-9489-ff75dea36c7a.png
-  :target: https://user-images.githubusercontent.com/14288520/195365832-e25b9df7-6038-4a04-9489-ff75dea36c7a.png
+.. image:: https://github.com/user-attachments/assets/df35fcaf-c566-45d9-8b36-223e9cc9a9df
+  :target: https://github.com/user-attachments/assets/df35fcaf-c566-45d9-8b36-223e9cc9a9df
 
 Functionality
 -------------
 
-Area node is one of the analyzer type. It is used to get the area of any polygon, no matter the number of its vertices or its world position.
+Area node is one of the analyzer type. It is used to get the area of any polygon og groups of polygons, no matter the number of its vertices or its world position.
 
 Inputs
 ------
 
 **Vertices** and **Polygons** are needed. 
 Both inputs need to be of the kind Vertices and Strings, respectively
+
+**Group by** - indexes per faces. Used to group faces by numbers.
 
 Parameters
 ----------
@@ -28,13 +30,14 @@ All parameters need to proceed from an external node.
 +------------------+---------------+-------------+-----------------------------------------------+
 | **Polygons**     | Strings       | None        | polygons referenced to vertices               |
 +------------------+---------------+-------------+-----------------------------------------------+
-| **Count Faces**  | Boolean       | True        | output individual faces or the sum of all     |
+| **Summ Faces**   | Boolean       | True        | output individual faces or the sum of all     |
 +------------------+---------------+-------------+-----------------------------------------------+
 
 Outputs
 -------
 
 **Area** will be calculated only if both **Vertices** and **Polygons** inputs are linked.
+**Group by** - what group number for results areas if "Group by" used.
 
 See also
 --------
@@ -57,3 +60,29 @@ Example of usage
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 In the example we have the inputs from a plane with 16 faces. You can use **Area** node to get the sum of all of them or the area of every face individually.
+
+Get Areas of Suzanne's eyes
+---------------------------
+
+Here you can calculate the area of objects individually
+
+.. image:: https://github.com/user-attachments/assets/5426cae7-8e09-449d-a237-32f4eed24f23
+  :target: https://github.com/user-attachments/assets/5426cae7-8e09-449d-a237-32f4eed24f23
+
+Get Areas with mesh join
+------------------------
+
+Summarize areas by materials over all objects
+
+.. image:: https://github.com/user-attachments/assets/7bea18e5-29ab-4f24-8782-f8e343ce2ac2
+  :target: https://github.com/user-attachments/assets/7bea18e5-29ab-4f24-8782-f8e343ce2ac2
+
+If use Mesh Join or/and Post you can joim materials of all meshes and get summary of areas by metarials in objects in list (not only mesh as original but with Metaball, Beveled Besier and Nurbs surfaces)
+
+Get Areas of Beveled Bezier and Nurbs
+-------------------------------------
+
+.. image:: https://github.com/user-attachments/assets/004b1204-40a5-4492-9e20-5fae3cfa7e65
+  :target: https://github.com/user-attachments/assets/004b1204-40a5-4492-9e20-5fae3cfa7e65
+
+You can use None material. In this case if will be None in the list.
