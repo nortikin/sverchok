@@ -17,6 +17,7 @@ from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
+from sverchok.old_nodes.objects_mk3 import SVOB3B_UL_NamesList
 
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
@@ -26,24 +27,6 @@ class SvOB3BDataCollection(bpy.types.PropertyGroup):
 
 class ReadingObjectDataError(Exception):
     pass
-
-
-class SVOB3B_UL_NamesList(bpy.types.UIList):
-
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-
-        item_icon = item.icon
-        if not item.icon or item.icon == "BLANK1":
-            try:
-                item_icon = 'OUTLINER_OB_' + bpy.data.objects[item.name].type
-            except:
-                item_icon = ""
-
-        layout.label(text=item.name, icon=item_icon)
-        action = data.wrapper_tracked_ui_draw_op(layout, SvOB3BItemOperator.bl_idname, icon='X', text='')
-        action.fn_name = 'REMOVE'
-        action.idx = index
-
 
 class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
 
@@ -379,5 +362,5 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
-classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvGetObjectsData]
+classes = [SvOB3BItemOperator, SvOB3BDataCollection, SvOB3Callback, SvGetObjectsData]
 register, unregister = bpy.utils.register_classes_factory(classes)
