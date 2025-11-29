@@ -41,7 +41,7 @@ def node_settings_pulldown(self, context):
             row.operator("sv.orbit_around_selection", icon="PROP_CON",text="",)
         else:
             row.operator("sv.orbit_around_selection", icon="SNAP_NORMAL", text="")
-        row.menu("SV_MT_layouts_Splash", text='QuickStart', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
+        row.menu("SV_MT_layouts_Splash", text='👈☝ ( ͡° ͜ʖ ͡°)', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
         
 
 class SV_MT_LayoutsSplash(bpy.types.Menu):
