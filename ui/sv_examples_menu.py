@@ -49,7 +49,7 @@ class SV_MT_LayoutsSplash(bpy.types.Menu):
     bl_idname = 'SV_MT_layouts_Splash'
     bl_space_type = 'NODE_EDITOR'
     bl_label = ""
-    bl_description = "List of Sverchok Examples"
+    bl_description = "Quick help can be downloaded from github repo and used inside node tree as popup splash screen"
 
     @classmethod
     def poll(cls, context):
