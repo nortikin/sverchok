@@ -205,7 +205,7 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
                     # TODO: add another types: objects, collections, empty and other
                     objs = get_objects_from_item(self)
                     for obj in objs:
-                        chars.append( f"{obj.type}, {obj.name}")
+                        chars.append( f"{obj.type}, {obj.name}{' not in the scene' if obj.name not in bpy.context.scene.objects else ''}")
                     pass
                 chars.append("---------------------")
                 s = "\n".join(chars)
@@ -218,7 +218,7 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
                 if objs:
                     chars.append("Members:  (Sorted Alphabetically as sorted view in Outliner. Members of collections are first)\n")
                 for obj in objs:
-                    chars.append( f"   {obj.type}, {obj.name}")
+                    chars.append( f"   {obj.type}, {obj.name}{': not in the scene' if obj.name not in bpy.context.scene.objects else ''}")
                 chars.append("---------------------")
                 s = "\n".join(chars)
             else:
@@ -385,6 +385,10 @@ class SVON_UL_NamesListMK4(bpy.types.UIList):
             grid = layout.grid_flow(row_major=False, columns=3, align=True)
             UI0 = grid.row(align=True)
             UI0.alignment = 'LEFT'
+            if _pointer_prop_name=='object_pointer' and _object_pointer:
+                object_in_scene = _object_pointer.name in bpy.context.scene.objects
+                UI0.alert = not object_in_scene
+
             if hasattr(active_data, 'check_object_allowed')==True:
                active_data.check_object_allowed(UI0, item)
 
@@ -486,7 +490,8 @@ class SVON_UL_NamesListMK4(bpy.types.UIList):
             else:
                 ok = (
                     (not item.exclude) and
-                    ((item.object_pointer and item.pointer_type=='OBJECT') or (item.collection_pointer and item.pointer_type=='COLLECTION'))
+                    ((item.object_pointer and item.pointer_type=='OBJECT' and (item.object_pointer.name in bpy.context.scene.objects)) or
+                     (item.collection_pointer and item.pointer_type=='COLLECTION'))
                 )
                 flt_flags.append(self.bitflag_filter_item if ok else 0)
 
@@ -1020,6 +1025,9 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         name = "Local View",
         items = align_3dview_types,
         default = 'ISOLATE_CURRENT') # type: ignore
+
+
+
     
     frame_selected: bpy.props.BoolProperty(default=True, description='Frame selected: magnify Local View')
     
