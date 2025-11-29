@@ -271,7 +271,7 @@ def idname_draw(self, context):
         box.label(text="Replace with:")
         for new_bl_idname, inputs_mapping, outputs_mapping in node.replacement_nodes:
             node_class = bpy.types.Node.bl_rna_get_subclass_py(new_bl_idname)
-            text = node_class.bl_label
+            text = f"{node_class.bl_label} ({node.bl_idname}->{node_class.bl_idname})"
             op = box.operator("node.sv_replace_node", text=text)
             op.old_node_name = node.name
             op.new_bl_idname = new_bl_idname
