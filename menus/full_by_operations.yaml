@@ -432,7 +432,7 @@
         - SvComponentAnalyzerNode
         - SvDiameterNode
         - SvVolumeNodeMK2
-        - SvAreaNode
+        - SvAreaNodeMK2
         - DistancePPNode
         - SvWeightedVectorSumNode
         - SvDistancePointLineNode
