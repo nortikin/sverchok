@@ -3,6 +3,12 @@ from bpy.types import Operator
 import gpu
 import os
 from gpu_extras.batch import batch_for_shader
+import urllib.request
+import zipfile
+from sverchok.ui.utils import datafiles
+from pathlib import Path
+import tempfile
+import shutil
 
 # Global variables
 textures = []
@@ -11,6 +17,8 @@ button_width = 50
 button_height = 20
 button_margin = 3
 close_button_width = 103
+
+splash_images = 'https://github.com/nortikin/sverchok_splash_screen/archive/refs/heads/main.zip' #'https://github.com/nortikin/test/archive/refs/heads/main.zip'#
 
 # Shaders
 if bpy.app.background or bpy.app.version <= (3, 6, 18):
@@ -33,44 +41,120 @@ def disable_alpha_blending():
     """Выключает blending"""
     gpu.state.blend_set('NONE')
 
-def load_images_from_script_folder():
+class SV_Splash_screen(bpy.types.PropertyGroup):
+    group : bpy.props.StringProperty()
+    filename : bpy.props.StringProperty()
+    image : bpy.props.StringProperty()
+
+def download_and_extract_splash_images():
+    """Скачивает и распаковывает splash images в папку datafiles"""
+    splash_url = splash_images
+    
+    try:
+        # Получаем путь к папке datafiles
+        datafiles_path = Path(datafiles)
+        splash_images_path = datafiles_path / "splash_images"
+        
+        # Создаем временный файл для скачивания
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.zip') as tmp_file:
+            # Скачиваем архив
+            print(f"Downloading splash images from {splash_url}...")
+            urllib.request.urlretrieve(splash_url, tmp_file.name)
+            
+            # Создаем папку если не существует
+            splash_images_path.mkdir(parents=True, exist_ok=True)
+            
+            # Разархивируем
+            print(f"Extracting to {splash_images_path}...")
+            with zipfile.ZipFile(tmp_file.name, 'r') as zip_ref:
+                # zip_ref.extractall(splash_images_path)
+                for file_path in zip_ref.namelist():
+                    # Пропускаем корневую папку
+                    if '/' in file_path:
+                        # Берем путь без первого элемента
+                        parts = file_path.split('/')
+                        if len(parts) > 1:
+                            new_path = '/'.join(parts[1:])
+                            if new_path:  # Если остался путь после удаления корневой папки
+                                target_path = splash_images_path / new_path
+                                
+                                if file_path.endswith('/'):
+                                    # Папка
+                                    target_path.mkdir(parents=True, exist_ok=True)
+                                else:
+                                    # Файл
+                                    target_path.parent.mkdir(parents=True, exist_ok=True)
+                                    with zip_ref.open(file_path) as source, open(target_path, 'wb') as target:
+                                        shutil.copyfileobj(source, target)
+            
+            # Удаляем временный файл
+            Path(tmp_file.name).unlink()
+        # Рекурсивно ищем все PNG файлы
+        files = []
+        for png_file in splash_images_path.rglob("*.png"):
+            files.append(png_file)
+        files.sort()
+        
+        #for f in files:
+        #    newitem = bpy.context.space_data.node_tree.sv_splash_data.add()
+        #    newitem.group = f.parent.name
+        #    newitem.filename = f.relative_to(splash_images_path).as_posix()
+        #    newitem.image = f.name[:-4]
+        
+        
+        print(f"Splash images successfully extracted to {splash_images_path}")
+        return str(splash_images_path)
+        
+    except Exception as e:
+        print(f"Error downloading splash images: {e}")
+        return None
+
+
+def load_images_from_script_folder(group):
     """Load all PNG images from the script folder"""
     global textures
+    global current_image_index
+    current_image_index = 0
 
     # Clear existing textures
     textures.clear()
 
+    datafiles_path = Path(datafiles) / "splash_images"
+    splash_images_path = datafiles_path / group
+    files = []
+    for png_file in splash_images_path.rglob("*.png"):
+        files.append(png_file)
+    files.sort()
+    for f in files:
+        newitem = bpy.context.space_data.node_tree.sv_splash_data.add()
+        newitem.group = f.parent.name
+        newitem.filename = f.relative_to(splash_images_path).as_posix()
+        newitem.image = f.name[:-4]
     # Get script folder
-    script_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'splash_images')
-
-    # Find all PNG files
-    png_files = []
-    for file in os.listdir(script_folder):
-        if file.lower().endswith('.png'):
-            png_files.append(os.path.join(script_folder, file))
-    png_files.sort()
-
-    print(f"Found {len(png_files)} PNG files in {script_folder}")
+    script_folder = bpy.context.space_data.node_tree.sv_splash_data #os.path.join(os.path.dirname(os.path.abspath(__file__)), 'splash_images')
 
     # Load images and create textures
-    for img_file in png_files:
-        try:
-            img = bpy.data.images.load(img_file)
-            # ДОБАВЛЕНО: Исправление цветов для Blender 5.0
-            if bpy.app.version >= (5, 0, 0):
-                # Для Blender 5.0+ указываем правильное цветовое пространство
-                if hasattr(img, 'colorspace_settings'):
-                    img.colorspace_settings.name = 'sRGB'
-                elif hasattr(img, 'color_space'):
-                    # Старый атрибут для обратной совместимости
-                    img.color_space = 'sRGB'
-            texture = gpu.texture.from_image(img)
-            textures.append(texture)
-            # Remove image from Blender data to avoid clutter
-            bpy.data.images.remove(img)
-            print(f"Loaded: {os.path.basename(img_file)}")
-        except Exception as e:
-            print(f"Error loading {img_file}: {e}")
+    for item in script_folder:
+        group_, filename, image = item.group, item.filename, item.image
+        print(group_,filename,image)
+        if group_ == group:
+            try:
+                img = bpy.data.images.load(str(splash_images_path / filename))
+                # Исправление цветов для Blender 5.0
+                if bpy.app.version >= (5, 0, 0):
+                    # Для Blender 5.0+ указываем правильное цветовое пространство
+                    if hasattr(img, 'colorspace_settings'):
+                        img.colorspace_settings.name = 'sRGB'
+                    elif hasattr(img, 'color_space'):
+                        # Старый атрибут для обратной совместимости
+                        img.color_space = 'sRGB'
+                texture = gpu.texture.from_image(img)
+                textures.append(texture)
+                # Remove image from Blender data to avoid clutter
+                bpy.data.images.remove(img)
+                print(f"Loaded: {os.path.basename(filename)}")
+            except Exception as e:
+                print(f"Error loading {filename}: {e}")
 
     return len(textures) > 0
 
@@ -338,12 +422,36 @@ def close_splash_screen(context):
             context.area.tag_redraw()
 
 
+class SV_OT_DownloadSplashImages(Operator):
+    """Download and extract splash images"""
+    bl_idname = "sv.download_splash_images"
+    bl_label = "Download Splash Images"
+    bl_description = "Download and extract splash images archive"
+
+    def execute(self, context):
+        try:
+            result = download_and_extract_splash_images()
+            if result:
+                self.report({'INFO'}, f"Splash images downloaded to: {result}")
+            else:
+                self.report({'ERROR'}, "Failed to download splash images")
+        except Exception as e:
+            self.report({'ERROR'}, f"Error: {str(e)}")
+        return {'FINISHED'}
+
 class SV_OT_splash_screen_simple(Operator):
     """Splash Screen для Sverchok"""
     bl_idname = "sv.splash_screen_simple"
-    bl_label = "Sverchok - Добро пожаловать!"
+    bl_label = "Sverchok - wellcome. Добро пожаловать!"
     bl_description = "Displays help images on Sverchok addon"
     bl_options = {'REGISTER'}
+
+
+    group: bpy.props.StringProperty(
+        name="splash_group",
+        description="Group of splash images to display",
+        default="Quick_start_en"
+    )
 
     _handle = None
 
@@ -384,7 +492,7 @@ class SV_OT_splash_screen_simple(Operator):
         operator_instance = self
 
         # Load images from script folder
-        if not load_images_from_script_folder():
+        if not load_images_from_script_folder(self.group):
             self.report({'WARNING'}, "No PNG images found in script folder")
             return {'CANCELLED'}
 
@@ -415,9 +523,16 @@ operator_instance = None
 def register():
     if bpy.app.version > (3,6,18):
         bpy.utils.register_class(SV_OT_splash_screen_simple)
+        bpy.utils.register_class(SV_OT_DownloadSplashImages)
+        bpy.utils.register_class(SV_Splash_screen)
+        bpy.types.NodeTree.sv_splash_data = bpy.props.CollectionProperty( type=SV_Splash_screen )
+    
 
 def unregister():
     if bpy.app.version > (3,6,18):
+        del bpy.types.NodeTree.sv_splash_data
+        bpy.utils.unregister_class(SV_Splash_screen)
+        bpy.utils.unregister_class(SV_OT_DownloadSplashImages)
         bpy.utils.unregister_class(SV_OT_splash_screen_simple)
 
 # Menu function to easily access the operator

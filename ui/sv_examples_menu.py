@@ -13,6 +13,7 @@ import bpy
 from bpy.types import Operator
 
 import sverchok
+from sverchok.ui.utils import datafiles
 from sverchok.utils.sv_json_import import JSONImporter
 from sverchok.ui.sv_icons import icon
 from sverchok.ui.sv_3d_panel import plugin_icons
@@ -40,9 +41,32 @@ def node_settings_pulldown(self, context):
             row.operator("sv.orbit_around_selection", icon="PROP_CON",text="",)
         else:
             row.operator("sv.orbit_around_selection", icon="SNAP_NORMAL", text="")
-        if bpy.app.version > (3,6,18):
-            row.operator('sv.splash_screen_simple', text='', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
-            # row.operator('sv.splash_screen', text='', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
+        row.menu("SV_MT_layouts_Splash", text='👈☝ ( ͡° ͜ʖ ͡°)', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
+        
+
+class SV_MT_LayoutsSplash(bpy.types.Menu):
+    """Node tree examples"""
+    bl_idname = 'SV_MT_layouts_Splash'
+    bl_space_type = 'NODE_EDITOR'
+    bl_label = ""
+    bl_description = "List of Sverchok Examples"
+
+    @classmethod
+    def poll(cls, context):
+        try:
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+        except Exception as err:
+            return False
+
+
+    def draw(self, context):
+        if bpy.app.version <= (3,6,18): return
+        layout = self.layout
+        col = layout.column(align=True)
+        col.operator('sv.download_splash_images', text='Download helps', icon='URL')
+        for path, category_name in sv_helps_categories_names():
+            op = col.operator('sv.splash_screen_simple', text=category_name, icon='HIDE_OFF')
+            op.group = category_name
 
 class SW_OT_Console(Operator):
     """Show/hide console"""
@@ -231,6 +255,15 @@ def example_categories_names():
         yield name
 
 
+def sv_helps_categories_names():
+    splash_path = Path(datafiles) / 'splash_images'
+    names = []
+    for category_path in splash_path.iterdir():
+        if category_path.is_dir():
+            names.append((splash_path, category_path.name))
+    for name in names:
+        yield name
+
 class SvNodeTreeImporterSilent(bpy.types.Operator):
     """Importing template tree"""
     bl_idname = "node.tree_importer_silent"
@@ -281,6 +314,7 @@ classes = [
     SW_OT_Orbit_Around_Selection,
     SW_OT_Console,
     SV_MT_LayoutsExamples,
+    SV_MT_LayoutsSplash,
     SvNodeTreeImporterSilent,
     SV_OT_ToggleExamplesSearch,
     SV_OT_ClearExamplesSearch
