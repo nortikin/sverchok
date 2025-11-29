@@ -3171,7 +3171,7 @@
             "name": "Area"
           }
         },
-        "bl_idname": "SvAreaNode"
+        "bl_idname": "SvAreaNodeMK2"
       },
       "Scalar Math.001": {
         "attributes": {
