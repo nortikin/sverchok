@@ -1,8 +1,8 @@
 Get Objects Data
 ================
 
-.. image:: https://github.com/user-attachments/assets/fd6896df-16d0-4bc6-a197-ee534be1eaf0
-  :target: https://github.com/user-attachments/assets/fd6896df-16d0-4bc6-a197-ee534be1eaf0
+.. image:: https://github.com/user-attachments/assets/d291d5cf-c65d-467b-938a-5f32ac4d2b36
+  :target: https://github.com/user-attachments/assets/d291d5cf-c65d-467b-938a-5f32ac4d2b36
 
 Functionality
 -------------
@@ -177,6 +177,8 @@ Outputs
 +-----------------------+--------------------------------------------------------------------------+
 | Material Idx          | Material indexes per object face.                                        |
 +-----------------------+--------------------------------------------------------------------------+
+| Material Names        | Material names per object face.                                          |
++-----------------------+--------------------------------------------------------------------------+
 | Polygons Areas        | Area of Polygons of objects.                                             |
 +-----------------------+--------------------------------------------------------------------------+
 | Polygons Centers      | Polygons Center of objects.                                              |
@@ -189,6 +191,27 @@ Outputs
 +-----------------------+--------------------------------------------------------------------------+
 
 It can output Numpy arrays of vertices and edges if enabled on N-panel properties (makes node faster)
+
+About Material Idx and Material Names
+-------------------------------------
+
+Initially, these parameters produce results according to the materials in the corresponding material sockets of the object.
+When the node parameters “Mesh Join” and “Post” are enabled, the material indices are combined, duplicate materials are removed,
+the Material Names are sorted alphabetically, and the Material Idx values are renumbered according to each material name’s
+position after sorting. If a material is not assigned but is used by some Faces, this material is treated as None, and during
+the sorting of Material Names, the value None is placed at the end of the sorted list.
+
+Before Mesh Join:
+
+  .. image:: https://github.com/user-attachments/assets/fca3b1de-9e39-4bae-91ba-e688643a9dcd
+    :target: https://github.com/user-attachments/assets/fca3b1de-9e39-4bae-91ba-e688643a9dcd
+
+After Mesh Join:
+
+  .. image:: https://github.com/user-attachments/assets/2ade627a-a965-478e-9ee6-e3b6b3c6964b
+    :target: https://github.com/user-attachments/assets/2ade627a-a965-478e-9ee6-e3b6b3c6964b
+
+Material Idx can be used to calculate the area of materials.
 
 Examples
 --------

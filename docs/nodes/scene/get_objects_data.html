@@ -371,6 +371,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-panel">3D panel</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-material-idx-and-material-names">About Material Idx and Material Names</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
             </nav>
@@ -385,7 +386,7 @@ document.write(`
                   
   <section id="get-objects-data">
 <h1>Get Objects Data<a class="headerlink" href="#get-objects-data" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/fd6896df-16d0-4bc6-a197-ee534be1eaf0"><img alt="https://github.com/user-attachments/assets/fd6896df-16d0-4bc6-a197-ee534be1eaf0" src="https://github.com/user-attachments/assets/fd6896df-16d0-4bc6-a197-ee534be1eaf0" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/d291d5cf-c65d-467b-938a-5f32ac4d2b36"><img alt="https://github.com/user-attachments/assets/d291d5cf-c65d-467b-938a-5f32ac4d2b36" src="https://github.com/user-attachments/assets/d291d5cf-c65d-467b-938a-5f32ac4d2b36" />
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
@@ -581,25 +582,47 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
 <tr class="row-even"><td><p>Material Idx</p></td>
 <td><p>Material indexes per object face.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Polygons Areas</p></td>
+<tr class="row-odd"><td><p>Material Names</p></td>
+<td><p>Material names per object face.</p></td>
+</tr>
+<tr class="row-even"><td><p>Polygons Areas</p></td>
 <td><p>Area of Polygons of objects.</p></td>
 </tr>
-<tr class="row-even"><td><p>Polygons Centers</p></td>
+<tr class="row-odd"><td><p>Polygons Centers</p></td>
 <td><p>Polygons Center of objects.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Polygons Normal</p></td>
+<tr class="row-even"><td><p>Polygons Normal</p></td>
 <td><p>Polygons Normal of objects.</p></td>
 </tr>
-<tr class="row-even"><td><p>Matrix</p></td>
+<tr class="row-odd"><td><p>Matrix</p></td>
 <td><p>Matrices of objects</p></td>
 </tr>
-<tr class="row-odd"><td><p>Vers grouped</p></td>
+<tr class="row-even"><td><p>Vers grouped</p></td>
 <td><p>Vertex groups’ indices from all vertex groups</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>It can output Numpy arrays of vertices and edges if enabled on N-panel properties (makes node faster)</p>
+</section>
+<section id="about-material-idx-and-material-names">
+<h2>About Material Idx and Material Names<a class="headerlink" href="#about-material-idx-and-material-names" title="Link to this heading">#</a></h2>
+<p>Initially, these parameters produce results according to the materials in the corresponding material sockets of the object.
+When the node parameters “Mesh Join” and “Post” are enabled, the material indices are combined, duplicate materials are removed,
+the Material Names are sorted alphabetically, and the Material Idx values are renumbered according to each material name’s
+position after sorting. If a material is not assigned but is used by some Faces, this material is treated as None, and during
+the sorting of Material Names, the value None is placed at the end of the sorted list.</p>
+<p>Before Mesh Join:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/fca3b1de-9e39-4bae-91ba-e688643a9dcd"><img alt="https://github.com/user-attachments/assets/fca3b1de-9e39-4bae-91ba-e688643a9dcd" src="https://github.com/user-attachments/assets/fca3b1de-9e39-4bae-91ba-e688643a9dcd" />
+</a>
+</div></blockquote>
+<p>After Mesh Join:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/2ade627a-a965-478e-9ee6-e3b6b3c6964b"><img alt="https://github.com/user-attachments/assets/2ade627a-a965-478e-9ee6-e3b6b3c6964b" src="https://github.com/user-attachments/assets/2ade627a-a965-478e-9ee6-e3b6b3c6964b" />
+</a>
+</div></blockquote>
+<p>Material Idx can be used to calculate the area of materials.</p>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
@@ -677,6 +700,7 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-panel">3D panel</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-material-idx-and-material-names">About Material Idx and Material Names</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
   </nav></div>
