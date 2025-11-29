@@ -205,7 +205,7 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
                     # TODO: add another types: objects, collections, empty and other
                     objs = get_objects_from_item(self)
                     for obj in objs:
-                        chars.append( f"{obj.type}, {obj.name}")
+                        chars.append( f"{obj.type}, {obj.name}{' not in the scene' if obj.name not in bpy.context.scene.objects else ''}")
                     pass
                 chars.append("---------------------")
                 s = "\n".join(chars)
@@ -218,7 +218,7 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
                 if objs:
                     chars.append("Members:  (Sorted Alphabetically as sorted view in Outliner. Members of collections are first)\n")
                 for obj in objs:
-                    chars.append( f"   {obj.type}, {obj.name}")
+                    chars.append( f"   {obj.type}, {obj.name}{': not in the scene' if obj.name not in bpy.context.scene.objects else ''}")
                 chars.append("---------------------")
                 s = "\n".join(chars)
             else:
@@ -242,13 +242,18 @@ class SvONSwitchOffUnlinkedSocketsMK4(bpy.types.Operator):
     bl_label = "Select object as active"
     description_text: bpy.props.StringProperty(default='Only hide unlinked output sockets.\nTo hide linked socket you have to unlink it first.')
 
+    description_text: bpy.props.StringProperty(default='')
+    node_group      : bpy.props.StringProperty(default='')
+    node_name       : bpy.props.StringProperty(default='')
+
     @classmethod
     def description(cls, context, property):
         s = property.description_text
         return s
 
     def invoke(self, context, event):
-        node = context.node
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        #node = context.node
         if node:
             for s in node.outputs:
                 if not s.is_linked:
@@ -380,6 +385,10 @@ class SVON_UL_NamesListMK4(bpy.types.UIList):
             grid = layout.grid_flow(row_major=False, columns=3, align=True)
             UI0 = grid.row(align=True)
             UI0.alignment = 'LEFT'
+            if _pointer_prop_name=='object_pointer' and _object_pointer:
+                object_in_scene = _object_pointer.name in bpy.context.scene.objects
+                UI0.alert = not object_in_scene
+
             if hasattr(active_data, 'check_object_allowed')==True:
                active_data.check_object_allowed(UI0, item)
 
@@ -481,7 +490,8 @@ class SVON_UL_NamesListMK4(bpy.types.UIList):
             else:
                 ok = (
                     (not item.exclude) and
-                    ((item.object_pointer and item.pointer_type=='OBJECT') or (item.collection_pointer and item.pointer_type=='COLLECTION'))
+                    ((item.object_pointer and item.pointer_type=='OBJECT' and (item.object_pointer.name in bpy.context.scene.objects)) or
+                     (item.collection_pointer and item.pointer_type=='COLLECTION'))
                 )
                 flt_flags.append(self.bitflag_filter_item if ok else 0)
 
@@ -502,7 +512,7 @@ class SvONItemOperatorMK4(bpy.types.Operator, SvGenericNodeLocator):
         node.process_node(None)
 
 class SvONAddObjectsFromSceneUpMK4(bpy.types.Operator, SvGenericNodeLocator):
-
+    '''Select objects in 3DView and add them into current list.'''
     bl_idname = "node.sv_on_add_objects_from_scene_up_mk4"
     bl_label = "Add selected objects from scene into the list"
     bl_options = {'INTERNAL'}
@@ -663,6 +673,176 @@ class SvONRemoveDuplicatesObjectsInListMK4(bpy.types.Operator, SvGenericNodeLoca
         node.process_node(None)
         return {'FINISHED'}
 
+class SVON_localview_objectsInListMK4(bpy.types.Operator):
+    bl_idname = "sv.localview_objects_in_listmk4"
+    bl_label = '' #"Local View Selected"
+
+    #frame_selected  : bpy.props.BoolProperty(default=False)
+    local_view_mode : bpy.props.BoolProperty(default=False)
+    description_text: bpy.props.StringProperty(default='')
+    node_group      : bpy.props.StringProperty(default='')
+    node_name       : bpy.props.StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, properties):
+        s = properties.description_text
+        return s
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        objs = get_objects_from_node(node.object_names)
+        # 1. Are objects in node exists?
+        if not objs:
+            self.report({'INFO'}, f"No objects in Node {node.name}")
+            return {'CANCELLED'}
+
+        # 2. Find 3D Viewport in current window
+        win = context.window
+        screen = win.screen
+
+        # 2. Find 3D Viewport
+        for area in screen.areas:
+            if area.type != 'VIEW_3D':
+                continue
+
+            region = next((r for r in area.regions if r.type == 'WINDOW'), None)
+            if region is None:
+                continue
+
+            space = area.spaces.active
+            in_local = space.local_view is not None  # what local view mode?
+            # if in_local==True and self.local_view_mode==True or in_local==False and self.local_view_mode==False:
+            #     return {'CANCELLED'}
+            
+            # reset all selection
+            for obj in bpy.context.selected_objects:
+                obj.select_set(False)
+            for obj in objs:
+                obj.select_set(True)
+            
+            if hasattr(context, "temp_override"):
+                # for Blender >=3.1
+                with context.temp_override(
+                    window=win,
+                    screen=screen,
+                    area=area,
+                    region=region,
+                    space_data=space,
+                    scene=context.scene,
+                    view_layer=context.view_layer,
+                ):
+                    bpy.ops.view3d.localview(frame_selected=node.frame_selected)
+                self.report({'INFO'}, f"Local view is {'OFF' if in_local else 'ON'}")
+                return {'FINISHED'}
+            else:
+                # --- Старый API (2.80–3.1) ---
+                override = {
+                    "window": win,
+                    "screen": screen,
+                    "area": area,
+                    "region": region,
+                    "space_data": space,
+                    "scene": context.scene,
+                    "view_layer": context.view_layer,
+                }
+                bpy.ops.view3d.localview(override, frame_selected=node.frame_selected)
+                self.report({'INFO'}, f"Local view is {'OFF' if in_local else 'ON'}")
+                return {'FINISHED'}
+
+        self.report({'WARNING'}, "No 3D Viewport")
+        return {'CANCELLED'}
+
+def draw_properties(layout, node_group, node_name):
+    node = bpy.data.node_groups[node_group].nodes[node_name]
+    #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
+    root_grid = layout.grid_flow(row_major=False, columns=2, align=True)
+    root_grid.alignment = 'EXPAND'
+    grid1 = root_grid.grid_flow(row_major=False, columns=1, align=True)
+    grid1.label(text='Viewport Display:')
+    for n in prop_names:
+        prop_name = "show_"+n
+        grid1.prop(node, prop_name)
+    grid1.label(text='')
+    
+    grid2 = grid1.grid_flow(row_major=True, columns=2, align=False)
+    #grid2.alignment = 'RIGHT'
+
+    row0 = grid2.row(align=True)
+    row0.alignment = 'RIGHT'
+    row0.label(text='Render Types:')
+    grid2.row(align=True).prop(node, 'hide_render_type', expand=True, )
+
+    row1 = grid2.row(align=True)
+    row1.alignment = 'RIGHT'
+    row1.label(text='Local View:')
+    #grid2.row(align=True).prop(node, 'align_3dview_type', expand=True, )
+    row11 = grid2.row(align=True)
+    op1 = row11.operator(SVON_localview_objectsInListMK4.bl_idname, text='', icon='PIVOT_CURSOR')
+    op1.local_view_mode = True
+    op1.description_text = 'Turn Local View ON/OFF'
+    op1.node_group = node_group
+    op1.node_name  = node_name
+    row11.prop(node, 'frame_selected', expand=True, icon='ZOOM_SELECTED', text='')
+    
+
+    row2 = grid2.row(align=True)
+    row2.alignment = 'RIGHT'
+    row2.label(text='Display Types:')
+    grid2.row(align=True).prop(node, 'display_type', expand=True, text='1234')
+
+    grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
+    grid2.label(text='Output Sockets:')
+    row0 = grid2.row(align=True)
+    row0.label(text='- socket is visible', icon='CHECKBOX_HLT')
+    row0.label(text='- socket is hidden', icon='CHECKBOX_DEHLT')
+    grid2.separator()
+    row_op = grid2.row(align=True)
+    row_op.alignment = "LEFT"
+    op = row_op.operator(SvONSwitchOffUnlinkedSocketsMK4.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
+    op.node_group = node_group
+    op.node_name  = node_name
+
+    for s in node.outputs:
+        row = grid2.row(align=True)
+        row.enabled = not s.is_linked
+        row.prop(s, 'hide', text=f'{s.label if s.label else s.name}{" (linked)" if s.is_linked else ""}', invert_checkbox=True)
+
+    row_op = grid2.row(align=True)
+    row_op.alignment = "LEFT"
+    op = row_op.operator(SvONSwitchOffUnlinkedSocketsMK4.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
+    op.node_group = node_group
+    op.node_name  = node_name
+    pass
+
+class SV_PT_ViewportDisplayPropertiesDialogMK4(bpy.types.Operator):
+    '''Additional objects properties\nYou can pan dialog window out of node.'''
+    # this combination do not show this panel on the right side panel
+    bl_idname="sv.viewport_display_properties_dialog"
+    bl_label = "Objects 3DViewport properties as Dialog Window."
+
+    # horizontal size
+    # bl_ui_units_x = 40 - Has no influence in Dialog mode
+
+    description_text: bpy.props.StringProperty(default='')
+    node_group      : bpy.props.StringProperty(default='')
+    node_name       : bpy.props.StringProperty(default='')
+
+    # def is_extended():
+    #     return True
+
+    def execute(self, context):
+        return {'FINISHED'}
+    
+    def invoke(self, context, event):
+        self.node_name = context.node.name
+        self.node_group = context.annotation_data_owner.name_full
+        return context.window_manager.invoke_props_dialog(self, width=500)
+        #return context.window_manager.invoke_popup(self, width=400)
+
+    def draw(self, context):
+        draw_properties(self.layout, self.node_group, self.node_name)
+        pass
+
 class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
     '''Additional objects properties'''
     # this combination do not show this panel on the right side panel
@@ -679,58 +859,17 @@ class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
     # horizontal size
     bl_ui_units_x = 22
 
-    # def is_extended():
-    #     return True
-
     def draw(self, context):
         if hasattr(context, "node"):
-            layout = self.layout
-            #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
-            root_grid = layout.grid_flow(row_major=False, columns=2, align=True)
-            grid1 = root_grid.grid_flow(row_major=False, columns=1, align=True)
-            grid1.label(text='Viewport Display:')
-            for n in prop_names:
-                prop_name = "show_"+n
-                grid1.prop(context.node, prop_name)
-            grid1.label(text='')
-            
-            grid2 = grid1.grid_flow(row_major=True, columns=2, align=False)
-            #grid2.alignment = 'RIGHT'
-
-            row0 = grid2.row(align=True)
-            row0.alignment = 'RIGHT'
-            row0.label(text='Render Types:')
-            grid2.row(align=True).prop(context.node, 'hide_render_type', expand=True, )
-
-            row1 = grid2.row(align=True)
-            row1.alignment = 'RIGHT'
-            row1.label(text='Local View:')
-            grid2.row(align=True).prop(context.node, 'align_3dview_type', expand=True, )
-
-            row2 = grid2.row(align=True)
-            row2.alignment = 'RIGHT'
-            row2.label(text='Display Types:')
-            grid2.row(align=True).prop(context.node, 'display_type', expand=True, text='1234')
-
-
-            grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
-            grid2.label(text='Output Sockets:')
-            grid2.label(text='- socket is visible', icon='CHECKBOX_HLT')
-            grid2.label(text='- socket is hidden', icon='CHECKBOX_DEHLT')
-            grid2.separator()
-            grid2.row(align=True).operator(SvONSwitchOffUnlinkedSocketsMK4.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
-            for s in context.node.outputs:
-                row = grid2.row(align=True)
-                row.enabled = not s.is_linked
-                row.prop(s, 'hide', text=f'{s.label if s.label else s.name}{" (linked)" if s.is_linked else ""}', invert_checkbox=True)
-            grid2.row(align=True).operator(SvONSwitchOffUnlinkedSocketsMK4.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
-
+            node_name = context.node.name
+            node_group = context.annotation_data_owner.name_full
+            draw_properties(self.layout, node_group, node_name)
         pass
 
 class SvNodeInDataMK4(SverchCustomTreeNode):
     object_names: bpy.props.CollectionProperty(type=SvONDataCollectionMK4)
     minimal_node_ui: bpy.props.BoolProperty(default=False)
-    object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
+    object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view, show only used/enabled objects')
     active_obj_index: bpy.props.IntProperty()
 
     apply_matrix: bpy.props.BoolProperty(
@@ -834,61 +973,8 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         items = hide_render_types,
         default = 'RESTRICT_RENDER_OFF',
         update = update_render_type)
-    
-
-    def update_align_3dview(self, context):
-        if len(self.object_names)==0:
-            return
-        obj_in_list = self.object_names[self.active_obj_index]
-        if obj_in_list:
-            # reset all selections
-            for obj in bpy.context.selected_objects:
-                obj.select_set(False)
-            
-            # select all objects in list of this node
-            if self.align_3dview_type=='ISOLATE_ALL':
-                for item in self.object_names:
-                    if item.object_pointer:
-                        item.object_pointer.select_set(True)
-
-            if obj_in_list.object_pointer:
-                obj_in_list.object_pointer.select_set(True)
-                bpy.context.view_layer.objects.active = obj_in_list.object_pointer
-
-            for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    ctx = bpy.context.copy()
-                    ctx['area'] = area
-                    ctx['region'] = area.regions[-1]
-                    # test if current mode is local view: https://blender.stackexchange.com/questions/290669/checking-for-object-being-in-local-view
-                    if self.align_3dview_type_previous_value!=self.align_3dview_type and area.spaces.active.local_view:
-                        bpy.ops.view3d.localview(ctx, frame_selected=False)
-                    self.align_3dview_type_previous_value = self.align_3dview_type
-                    bpy.ops.view3d.localview(ctx, frame_selected=False)
-                    #bpy.ops.view3d.view_selected(ctx)
-                    break
-
-            pass
-        return
-
-    align_3dview_types = [
-            ('ISOLATE_CURRENT', "", "Toggle local view with only current selected object in the list\nPress again to restore view", "PIVOT_CURSOR", 0),
-            ('ISOLATE_ALL', "", "Toggle local view with all objects in the list\nPress again to restore view", "PIVOT_INDIVIDUAL", 1),
-        ]
-
-    align_3dview_type : bpy.props.EnumProperty(
-        name = "Local View",
-        items = align_3dview_types,
-        default = 'ISOLATE_CURRENT',
-        update = update_align_3dview) # type: ignore
-    
-    align_3dview_type_previous_value : bpy.props.EnumProperty(
-        name = "Local View",
-        items = align_3dview_types,
-        default = 'ISOLATE_CURRENT') # type: ignore
-
-
-
+        
+    frame_selected: bpy.props.BoolProperty(default=True, description='Frame selected: magnify Local View')
     
     def remove_duplicates_objects_in_list(self, ops):
         lst=[]
@@ -1110,6 +1196,7 @@ classes = [
     SvONClearObjectsFromListMK4,
     SvONSyncSceneObjectWithListMK4,
     SvONRemoveDuplicatesObjectsInListMK4,
+    SVON_localview_objectsInListMK4,
     SvONItemMoveDownMK4,
     SvONItemMoveUpMK4,
     SvONAddObjectsFromSceneUpMK4,
@@ -1121,6 +1208,7 @@ classes = [
     SvONItemOperatorMK4,
     SvONDataCollectionMK4,
     SVON_UL_NamesListMK4,
+    SV_PT_ViewportDisplayPropertiesDialogMK4,
     SV_PT_ViewportDisplayPropertiesMK4,
 ]
 
