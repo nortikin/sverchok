@@ -422,6 +422,9 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                     pols = []
                 if o_vertices_select:
                     vertices_select1 = []
+
+                material_indexes = []
+                materials_info = dict()
             else:
                 try:
                     if obj.mode == 'EDIT' and obj.type == 'MESH':
@@ -522,8 +525,12 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                                 # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
                                 materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
                             else:
-                                material_indexes = []
-                                materials_info = dict()
+                                if bm.faces:
+                                    material_indexes = [0]*len(bm.faces)
+                                    materials_info = dict( [(0,dict(material_name=None, is_faces=True))] )
+                                else:
+                                    material_indexes = []
+                                    materials_info = dict()
                             pass
 
                         if o_polygon_areas:
@@ -608,12 +615,9 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                                     # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
                                     materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
                                 else:
-                                    if obj_data.polygons:
-                                        material_indexes = [0]*len(obj_data.polygons)
-                                        materials_info = dict( [(0,dict(material_name=None, is_faces=True))] )
-                                    else:
-                                        material_indexes = []
-                                        materials_info = dict()
+                                    # POINT_CLOUDS has no polygons
+                                    material_indexes = []
+                                    materials_info = dict()
 
                             if o_polygon_areas:
                                 polygons_areas   = []
@@ -702,9 +706,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                                 if obj.material_slots:
                                     material_indexes = read_materials_idx(obj_data, out_np[3])
                                     material_socket_ids = set(material_indexes)
-                                    # Требуется запомнить все материалы объекта, даже если они не используются. Возможна ситуация, что задано несколько материалов, но используется только один последний.
-                                    # Если не запомнить все, то будет указан только один используемый материал и он пойдёт первым в списке материалов, хотя в списке id материалов будет написано не нулевое число
-                                    # и будет выглядеть странно, что материал указан в 0-й позиции, а индексы начинаются не с 0, поэтому надо запомнить, были ли использованы эти материалы. 
+                                    # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
                                     materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
                                 else:
                                     if obj_data.polygons:
