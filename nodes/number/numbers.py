@@ -89,7 +89,7 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
         # do not need update node
         pass
 
-    precision_high: BoolProperty(default=False, name="Hight precision", description="Show input socket value with high precision and mouse movement ", update=update_precision)
+    precision_high: BoolProperty(default=False, name="Hight precision", description="Show input socket value with high precision and pricise mouse movement", update=update_precision)
 
     float_: FloatProperty(
         default=0.0, name="a float", update=updateNode,
@@ -99,7 +99,7 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
     )
     float_p6: FloatProperty(
         default=0.0, name="a float", update=updateNode, precision=6, 
-        description = "Floating-point value",
+        description = "Floating-point high precision value",
         get=lambda s: uget(s, 'float_'),
         set=lambda s, val: uset(s, val, 'float_', 'float_min', 'float_max',),
         step=0.01, options={'SKIP_SAVE'},
@@ -114,7 +114,7 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
     )
     float_draft_p6: FloatProperty(
         default=0.0, name="[D] a float",
-        description = "Floating-point value (draft mode)",
+        description = "Floating-point value high precision value (draft mode)",
         update=updateNode, precision=6, 
         get=lambda s: uget(s, 'float_draft_'),
         set=lambda s, val: uset(s, val, 'float_draft_', 'float_min', 'float_max'),
