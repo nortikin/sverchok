@@ -83,7 +83,13 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
         description='maximum'
     ) # type: ignore
 
-    precision_high: BoolProperty(default=False, name="Hight precision", description="Show input socket value with high precision and mouse movement ", update=updateNode)
+    def update_precision(self, context):
+        prop_name = self.get_prop_name()
+        self.inputs["Float"].prop_name = prop_name
+        # do not need update node
+        pass
+
+    precision_high: BoolProperty(default=False, name="Hight precision", description="Show input socket value with high precision and mouse movement ", update=update_precision)
 
     float_: FloatProperty(
         default=0.0, name="a float", update=updateNode,
@@ -162,11 +168,15 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
         if self.id_data.sv_draft:
             if self.selected_mode == 'float':
                 prop_name = 'float_draft_'
+                if self.precision_high==True:
+                    prop_name+='p6'
             else:
                 prop_name = 'int_draft_'
         else:
             if self.selected_mode == 'float':
                 prop_name = 'float_'
+                if self.precision_high==True:
+                    prop_name+='p6'
             else:
                 prop_name = 'int_'
         return prop_name
@@ -181,6 +191,7 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
         c1 = layout.column()
         r1 = c1.row(align=True)
         r1.prop(self, 'selected_mode', expand=True)
+        r1.prop(self, "precision_high", text='', icon='MOD_HUE_SATURATION')
         #r1.prop(self, 'show_limits', icon='SETTINGS', text='')
         #if self.show_limits:
         c2 = c1.row().column(align=True)
@@ -191,8 +202,6 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         prop_name = self.get_prop_name()
-        if self.selected_mode == 'float' and self.precision_high==True:
-            prop_name = prop_name+"p6"
         row.prop(self, prop_name,
                  text=self.label if self.label else self.name)
         colo = row.row(align=True)
@@ -225,11 +234,6 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
 
 
     def process(self):
-
-        prop_name = self.get_prop_name()
-        if self.selected_mode == 'float':
-            prop_name = prop_name+"p6" if self.precision_high==True else prop_name
-            self.inputs["Float"].prop_name = prop_name
 
         if not self.inputs[0].is_linked:
             prop_name = self.get_prop_name()
