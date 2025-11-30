@@ -10,6 +10,7 @@ import numpy as np
 from collections import defaultdict
 
 from sverchok.utils.math import distribute_int, solve_quadratic, solve_cubic, np_dot, FRENET
+from sverchok.utils.polynomial import Polynomial
 from sverchok.utils.geom import (
     LineEquation,
     linear_approximation,
@@ -1133,3 +1134,4 @@ def nurbs_curve_extremes(curve, direction, sign=1, global_only=False):
         return np.array([ts[idx]])
     else:
         return ts
+

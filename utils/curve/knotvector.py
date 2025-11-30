@@ -236,7 +236,7 @@ def find_multiplicity(knot_vector, u, tolerance=1e-6):
     return 0
 
 def get_internal_knots(knot_vector, output_multiplicity = False, tolerance=1e-6):
-    pairs = to_multiplicity(knot_vector)
+    pairs = to_multiplicity(knot_vector, tolerance=tolerance)
     internal = pairs[1:-1]
     if output_multiplicity:
         return internal
