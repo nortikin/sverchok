@@ -403,6 +403,9 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-areas-of-suzanne-s-eyes">Get Areas of Suzanne’s eyes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-areas-with-mesh-join">Get Areas with mesh join</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-areas-of-beveled-bezier-and-nurbs">Get Areas of Beveled Bezier and Nurbs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-area-of-bevel-modifier">Get Area of Bevel modifier</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-area-of-boolean-modifier">Get Area of Boolean modifier</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-area-of-solidify-modifier">Get Area of Solidify modifier</a></li>
 </ul>
             </nav>
         </div>
@@ -420,7 +423,7 @@ document.write(`
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>Area node is one of the analyzer type. It is used to get the area of any polygon og groups of polygons, no matter the number of its vertices or its world position.</p>
+<p>Area node is one of the analyzer type. It is used to get the area of any polygon or groups of polygons, no matter the number of its vertices or its world position.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
@@ -472,8 +475,10 @@ Both inputs need to be of the kind Vertices and Strings, respectively</p>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">#</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195367229-67a81667-6b71-46f6-abce-cbc4bfc8e74f.png"><img alt="https://user-images.githubusercontent.com/14288520/195367229-67a81667-6b71-46f6-abce-cbc4bfc8e74f.png" src="https://user-images.githubusercontent.com/14288520/195367229-67a81667-6b71-46f6-abce-cbc4bfc8e74f.png" />
+<blockquote>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195367229-67a81667-6b71-46f6-abce-cbc4bfc8e74f.png"><img alt="https://user-images.githubusercontent.com/14288520/195367229-67a81667-6b71-46f6-abce-cbc4bfc8e74f.png" src="https://user-images.githubusercontent.com/14288520/195367229-67a81667-6b71-46f6-abce-cbc4bfc8e74f.png" />
 </a>
+</div></blockquote>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
@@ -488,21 +493,48 @@ Both inputs need to be of the kind Vertices and Strings, respectively</p>
 <section id="get-areas-of-suzanne-s-eyes">
 <h2>Get Areas of Suzanne’s eyes<a class="headerlink" href="#get-areas-of-suzanne-s-eyes" title="Link to this heading">#</a></h2>
 <p>Here you can calculate the area of objects individually</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5426cae7-8e09-449d-a237-32f4eed24f23"><img alt="https://github.com/user-attachments/assets/5426cae7-8e09-449d-a237-32f4eed24f23" src="https://github.com/user-attachments/assets/5426cae7-8e09-449d-a237-32f4eed24f23" />
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/5426cae7-8e09-449d-a237-32f4eed24f23"><img alt="https://github.com/user-attachments/assets/5426cae7-8e09-449d-a237-32f4eed24f23" src="https://github.com/user-attachments/assets/5426cae7-8e09-449d-a237-32f4eed24f23" />
 </a>
+</div></blockquote>
 </section>
 <section id="get-areas-with-mesh-join">
 <h2>Get Areas with mesh join<a class="headerlink" href="#get-areas-with-mesh-join" title="Link to this heading">#</a></h2>
 <p>Summarize areas by materials over all objects</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7bea18e5-29ab-4f24-8782-f8e343ce2ac2"><img alt="https://github.com/user-attachments/assets/7bea18e5-29ab-4f24-8782-f8e343ce2ac2" src="https://github.com/user-attachments/assets/7bea18e5-29ab-4f24-8782-f8e343ce2ac2" />
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/7bea18e5-29ab-4f24-8782-f8e343ce2ac2"><img alt="https://github.com/user-attachments/assets/7bea18e5-29ab-4f24-8782-f8e343ce2ac2" src="https://github.com/user-attachments/assets/7bea18e5-29ab-4f24-8782-f8e343ce2ac2" />
 </a>
-<p>If use Mesh Join or/and Post you can joim materials of all meshes and get summary of areas by metarials in objects in list (not only mesh as original but with Metaball, Beveled Besier and Nurbs surfaces)</p>
+</div></blockquote>
+<p>The “Mesh Join” and “Post” properties allow you to objectify not only materials that are polygonal Mesh, but also Metaball, Beveled/Extruded Bezier, NURBS surfaces.</p>
 </section>
 <section id="get-areas-of-beveled-bezier-and-nurbs">
 <h2>Get Areas of Beveled Bezier and Nurbs<a class="headerlink" href="#get-areas-of-beveled-bezier-and-nurbs" title="Link to this heading">#</a></h2>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/004b1204-40a5-4492-9e20-5fae3cfa7e65"><img alt="https://github.com/user-attachments/assets/004b1204-40a5-4492-9e20-5fae3cfa7e65" src="https://github.com/user-attachments/assets/004b1204-40a5-4492-9e20-5fae3cfa7e65" />
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/004b1204-40a5-4492-9e20-5fae3cfa7e65"><img alt="https://github.com/user-attachments/assets/004b1204-40a5-4492-9e20-5fae3cfa7e65" src="https://github.com/user-attachments/assets/004b1204-40a5-4492-9e20-5fae3cfa7e65" />
 </a>
-<p>You can use None material. In this case if will be None in the list.</p>
+</div></blockquote>
+<p>You can use None material. In this case material will be None in the list.</p>
+</section>
+<section id="get-area-of-bevel-modifier">
+<h2>Get Area of Bevel modifier<a class="headerlink" href="#get-area-of-bevel-modifier" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/e55fa8d0-8fda-477d-b457-751bf7846078"><img alt="https://github.com/user-attachments/assets/e55fa8d0-8fda-477d-b457-751bf7846078" src="https://github.com/user-attachments/assets/e55fa8d0-8fda-477d-b457-751bf7846078" />
+</a>
+</div></blockquote>
+</section>
+<section id="get-area-of-boolean-modifier">
+<h2>Get Area of Boolean modifier<a class="headerlink" href="#get-area-of-boolean-modifier" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/38c749e5-0164-42e3-aaef-fb0db74d0728"><img alt="https://github.com/user-attachments/assets/38c749e5-0164-42e3-aaef-fb0db74d0728" src="https://github.com/user-attachments/assets/38c749e5-0164-42e3-aaef-fb0db74d0728" />
+</a>
+</div></blockquote>
+</section>
+<section id="get-area-of-solidify-modifier">
+<h2>Get Area of Solidify modifier<a class="headerlink" href="#get-area-of-solidify-modifier" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/1b88f9bf-6299-454a-b849-6dd1f32c23aa"><img alt="https://github.com/user-attachments/assets/1b88f9bf-6299-454a-b849-6dd1f32c23aa" src="https://github.com/user-attachments/assets/1b88f9bf-6299-454a-b849-6dd1f32c23aa" />
+</a>
+</div></blockquote>
 </section>
 </section>
 
@@ -560,6 +592,9 @@ Both inputs need to be of the kind Vertices and Strings, respectively</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-areas-of-suzanne-s-eyes">Get Areas of Suzanne’s eyes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-areas-with-mesh-join">Get Areas with mesh join</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-areas-of-beveled-bezier-and-nurbs">Get Areas of Beveled Bezier and Nurbs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-area-of-bevel-modifier">Get Area of Bevel modifier</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-area-of-boolean-modifier">Get Area of Boolean modifier</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-area-of-solidify-modifier">Get Area of Solidify modifier</a></li>
 </ul>
   </nav></div>
 
