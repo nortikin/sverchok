@@ -154,9 +154,34 @@ class SvScalarMathNodeMK4(SverchCustomTreeNode, bpy.types.Node):
     current_op: EnumProperty(
         name="Function", description="Function choice", default="MUL",
         items=mode_items, update=mode_change)
+    
+    def update_precision(self, context):
+        if "x" in self.inputs and self.input_mode_one == 'Float':
+            self.inputs["x"].prop_name = 'x_p6' if self.precision_high==True else 'x_'
+
+        if "y" in self.inputs and self.input_mode_two == 'Float':
+            self.inputs["y"].prop_name = 'y_p6' if self.precision_high==True else 'y_'
+        pass
+
+    precision_high: BoolProperty(default=False, name="Hight precision", description="Show input socket value with high precision and mouse movement ", update=update_precision)
 
     x_: FloatProperty(default=1.0, name='x', update=updateNode)
     y_: FloatProperty(default=1.0, name='y', update=updateNode)
+
+    def set_x_double_precision(self, value):
+        self.x_ = value
+        pass
+    def get_x_double_precision(self):
+        return self.x_
+
+    def set_y_double_precision(self, value):
+        self.y_ = value
+        pass
+    def get_y_double_precision(self):
+        return self.y_
+
+    x_p6: FloatProperty(default=1.0, name='x', precision=6, set=set_x_double_precision, get=get_x_double_precision, step=0.01, options={'SKIP_SAVE'},)
+    y_p6: FloatProperty(default=1.0, name='y', precision=6, set=set_y_double_precision, get=get_y_double_precision, step=0.01, options={'SKIP_SAVE'},)
     xi_: IntProperty(default=1, name='x', update=updateNode)
     yi_: IntProperty(default=1, name='y', update=updateNode)
 
@@ -201,8 +226,9 @@ class SvScalarMathNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         return " ".join(label)
 
     def draw_buttons(self, ctx, layout):
-        row = layout.row(align=True)
-        row.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
+        elem = layout.row(align=True)
+        elem.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
+        elem.prop(self, "precision_high", text='', icon='MOD_HUE_SATURATION')
 
 
     def draw_buttons_ext(self, ctx, layout):
@@ -254,6 +280,11 @@ class SvScalarMathNodeMK4(SverchCustomTreeNode, bpy.types.Node):
                 self.outputs[0].replace_socket("SvStringsSocket", "Out")
         elif len(self.outputs) == 2:
             self.outputs[0].replace_socket("SvStringsSocket", "sin( x )")
+
+        if "x" in self.inputs and self.input_mode_one == 'Float':
+            self.inputs["x"].prop_name = 'x_p6' if self.precision_high==True else 'x_'
+        if "y" in self.inputs and self.input_mode_two == 'Float':
+            self.inputs["y"].prop_name = 'y_p6' if self.precision_high==True else 'y_'
 
     def process(self):
 
