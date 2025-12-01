@@ -523,11 +523,10 @@ class SvSocketCommon(SvSocketProcessing):
         menu_option = get_param('show_input_menus', 'QUICKLINK')
 
         # just handle custom draw..be it input or output.
-        if self.custom_draw:
+        if self.custom_draw and hasattr(node, self.custom_draw):
             # does the node have the draw function referred to by
             # the string stored in socket's custom_draw attribute
-            if hasattr(node, self.custom_draw):
-                getattr(node, self.custom_draw)(self, context, layout)
+            getattr(node, self.custom_draw)(self, context, layout)
 
         elif self.is_linked:  # linked INPUT or OUTPUT
             draw_label((self.label or text) + f". {self.objects_number or ''}")
