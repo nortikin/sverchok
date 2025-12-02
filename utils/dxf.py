@@ -242,8 +242,8 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
 
         curve_knotvector = new_curve.get_knotvector().tolist()
         if entity.closed:
-            u_min = curve_knotvector[degree]
-            u_max = curve_knotvector[-degree-1]
+            u_min = curve_knotvector[curve_degree]
+            u_max = curve_knotvector[-curve_degree-1]
             new_curve.u_bounds = u_min, u_max
         else:
             u_min = min(curve_knotvector)
