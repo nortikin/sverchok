@@ -2320,23 +2320,31 @@ def take(surface, fixed_axis, value, flip=False):
         ts = np.array(ts)
         tknots, quats = self.tknots, self.quats
         base_indexes = tknots.searchsorted(ts, side=&#39;left&#39;)-1
-        t1s, t2s = tknots[base_indexes], tknots[base_indexes+1]
-        dts = (ts - t1s) / (t2s - t1s)
+        shifted_indexes = base_indexes + 1
+        good = shifted_indexes &lt; len(tknots)
+        shifted_indexes[np.logical_not(good)] = len(tknots) - 1
+        t1s, t2s = tknots[base_indexes], tknots[shifted_indexes]
+        dts = np.empty_like(ts)
+        dts[good] = (ts[good] - t1s[good]) / (t2s[good] - t1s[good])
+        dts[np.logical_not(good)] = 0
         #dts = np.clip(dts, 0.0, 1.0) # Just in case...
         matrix_out = []
         # TODO: ideally this should be vectorized with numpy;
         # but that would require implementation of quaternion
         # interpolation in numpy.
         for dt, base_index in zip(dts, base_indexes):
-            q1, q2 = quats[base_index], quats[base_index+1]
-            # spherical linear interpolation.
-            # TODO: implement `squad`.
-            if dt &lt; 0:
-                q = q1
-            elif dt &gt; 1.0:
-                q = q2
+            if base_index+1 &lt; len(quats):
+                q1, q2 = quats[base_index], quats[base_index+1]
+                # spherical linear interpolation.
+                # TODO: implement `squad`.
+                if dt &lt; 0:
+                    q = q1
+                elif dt &gt; 1.0:
+                    q = q2
+                else:
+                    q = q1.slerp(q2, dt)
             else:
-                q = q1.slerp(q2, dt)
+                q = quats[base_index]
             matrix = np.array(q.to_matrix())
             matrix_out.append(matrix)
         return np.array(matrix_out)</code></pre>
@@ -2363,23 +2371,31 @@ def take(surface, fixed_axis, value, flip=False):
     ts = np.array(ts)
     tknots, quats = self.tknots, self.quats
     base_indexes = tknots.searchsorted(ts, side=&#39;left&#39;)-1
-    t1s, t2s = tknots[base_indexes], tknots[base_indexes+1]
-    dts = (ts - t1s) / (t2s - t1s)
+    shifted_indexes = base_indexes + 1
+    good = shifted_indexes &lt; len(tknots)
+    shifted_indexes[np.logical_not(good)] = len(tknots) - 1
+    t1s, t2s = tknots[base_indexes], tknots[shifted_indexes]
+    dts = np.empty_like(ts)
+    dts[good] = (ts[good] - t1s[good]) / (t2s[good] - t1s[good])
+    dts[np.logical_not(good)] = 0
     #dts = np.clip(dts, 0.0, 1.0) # Just in case...
     matrix_out = []
     # TODO: ideally this should be vectorized with numpy;
     # but that would require implementation of quaternion
     # interpolation in numpy.
     for dt, base_index in zip(dts, base_indexes):
-        q1, q2 = quats[base_index], quats[base_index+1]
-        # spherical linear interpolation.
-        # TODO: implement `squad`.
-        if dt &lt; 0:
-            q = q1
-        elif dt &gt; 1.0:
-            q = q2
+        if base_index+1 &lt; len(quats):
+            q1, q2 = quats[base_index], quats[base_index+1]
+            # spherical linear interpolation.
+            # TODO: implement `squad`.
+            if dt &lt; 0:
+                q = q1
+            elif dt &gt; 1.0:
+                q = q2
+            else:
+                q = q1.slerp(q2, dt)
         else:
-            q = q1.slerp(q2, dt)
+            q = quats[base_index]
         matrix = np.array(q.to_matrix())
         matrix_out.append(matrix)
     return np.array(matrix_out)</code></pre>
