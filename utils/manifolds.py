@@ -6,12 +6,15 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import intersect_plane_plane, intersect_line_plane, normal as face_normal
 
 from sverchok.core.sv_custom_exceptions import ArgumentError
+from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
+from sverchok.utils.polynomial import Polynomial
 from sverchok.utils.curve import SvIsoUvCurve, SvDeformedByFieldCurve
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import reverse_curve, concatenate_curves, curve_segment
 from sverchok.utils.field.vector import SvMatrixVectorField
 from sverchok.utils.sv_logging import sv_logger, get_logger
-from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
 
 if scipy is not None:
@@ -1554,4 +1557,187 @@ def symmetrize_curve(
     else:
         return result
 
+def curve_curvature_zero(curve, init_samples=10, tolerance=1e-3, global_only = False, logger=None):
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+
+    def goal(t):
+        tangents, seconds = curve.derivatives_array(2, np.array([t]))
+        tangent = tangents[0]
+        second = seconds[0]
+        return np.linalg.norm(np.cross(tangent, second))
+    
+    solutions = []
+    for u1, u2 in zip(u_range, u_range[1:]):
+        sol = minimize_scalar(goal,
+                              bounds = (u1, u2),
+                              bracket = (u1, u2),
+                              method = 'Bounded')
+        if sol.success:
+            if u_min <= sol.x <= u_max:
+                curvature = curve.curvature(sol.x)
+                if tolerance is None or abs(curvature) < tolerance:
+                    #print(f"Generic [{u1} - {u2}] => {sol.x}")
+                    solutions.append(sol.x)
+    if len(solutions) == 0:
+        return np.array([])
+    if global_only:
+        solutions = np.array(solutions)
+        curvatures = curve.curvature_array(solutions)
+        idxs = np.argmin(curvatures)
+        return np.array([solutions[idxs]])
+    else:
+        return np.array(solutions)
+
+def curve_curvature_maximum(curve, init_samples=10, global_only=True, tolerance=1e-6):
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+
+    def goal(t):
+        return - curve.curvature(t)
+
+    solutions = []
+    for u1, u2 in zip(u_range, u_range[1:]):
+        sol = minimize_scalar(goal,
+                              bounds = (u1, u2),
+                              bracket = (u1, u2),
+                              method = 'Bounded',
+                              options = {'xatol': tolerance})
+        if sol.success:
+            if u_min <= sol.x <= u_max:
+                solutions.append(sol.x)
+    if len(solutions) == 0:
+        return np.array([])
+    if global_only:
+        solutions.extend(u_range)
+        solutions = np.array(sorted(solutions))
+        curvatures = curve.curvature_array(solutions)
+        #print("C", curvatures)
+        idxs = np.argmax(curvatures)
+        #print("I", idxs, solutions.shape)
+        return np.array([solutions[idxs]])
+    else:
+        return np.array(solutions)
+
+def _nurbs_curve_curvature_extremes_impl(curve, sign=1, global_only=True, add_bounds=False, add_bezier_joints=False, tolerance=1e-6):
+    if curve.is_rational():
+        raise UnsupportedCurveTypeException("Rational curves are not supported")
+    #degree = curve.get_degree()
+    if curve.get_degree() == 1:
+        return np.array([])
+
+    def solve_segment(segment, orig_t1, orig_t2):
+        t1, t2 = segment.get_u_bounds()
+
+        poly = Polynomial(segment.get_coefficients())
+        derivative = poly.derivative()
+        second = poly.nth_derivative(2)
+        numerator = (derivative.cross(second)).scalar_square()
+
+        if sign > 0:
+            denominator = derivative.scalar_square().power(3)
+
+            def goal(t):
+                ts = np.array([t])
+                value = - numerator.evaluate_array(ts) / denominator.evaluate_array(ts)
+                return value[0][0]
+
+            solutions = []
+            sol = minimize_scalar(goal,
+                                bounds = (t1, t2),
+                                bracket = (t1, t2),
+                                method = 'Bounded',
+                                options = {'xatol': tolerance})
+            root = None
+            if sol.success:
+                if t1 <= sol.x <= t2:
+                    root = sol.x
+                    root = (orig_t2 - orig_t1) * (root - t1) / (t2 - t1) + orig_t1
+                    solutions.append(root)
+        else:
+            roots = numerator.find_all_extremes((t1,t2))
+            solutions = (orig_t2 - orig_t1) * (roots - t1) / (t2 - t1) + orig_t1
+            solutions = solutions.tolist()
+
+        if add_bezier_joints:
+            c1 = segment.curvature(orig_t1)
+            if root is None or (sign > 0 and c1 > root) or (sign < 0 and c1 < root):
+                solutions.append(orig_t1)
+            c2 = segment.curvature(orig_t2)
+            if root is None or (sign > 0 and c2 > root) or (sign < 0 and c2 < root):
+                solutions.append(orig_t2)
+        #print(f"Bezier [{orig_t1} - {orig_t2}], sign={sign} => {solutions}")
+        return solutions
+
+    solutions = []
+    for segment in curve.to_bezier_segments(to_bezier_class=False):
+        sol = solve_segment(segment.bezier_to_taylor(ndim=3), *segment.get_u_bounds())
+        solutions.extend(sol)
+
+    if global_only:
+        if add_bounds:
+            solutions.extend(curve.get_u_bounds())
+        solutions = np.array(sorted(set(solutions)))
+        curvatures = curve.curvature_array(solutions)
+        if sign > 0:
+            idxs = np.argmax(curvatures)
+        else:
+            idxs = np.argmin(curvatures)
+        return np.array([solutions[idxs]])
+    else:
+        if add_bounds:
+            solutions.extend(curve.get_u_bounds())
+        return np.array(sorted(set(solutions)))
+
+def nurbs_curve_curvature_extremes(curve, global_only=True, need_maximum=True, need_minimum=True, min_tolerance=1e-6):
+    result = dict()
+    if global_only:
+        if need_maximum:
+            result['maximum'] = _nurbs_curve_curvature_extremes_impl(curve, sign=1, global_only=True)
+        if need_minimum:
+            result['minimum'] = _nurbs_curve_curvature_extremes_impl(curve, sign=-1, global_only=True)
+        return result
+    else:
+        min_ts = _nurbs_curve_curvature_extremes_impl(curve, sign=-1, global_only=False, add_bounds=True).tolist()
+        if need_maximum:
+            internal_knots = sv_knotvector.get_internal_knots(curve.get_knotvector(), tolerance=None)
+            min_ts.extend(internal_knots)
+            min_ts = list(sorted(set(min_ts)))
+            solutions = []
+            for t1, t2 in zip(min_ts, min_ts[1:]):
+                local_segment = curve.cut_segment(t1, t2)
+                local_solutions = []
+                for segment in local_segment.to_bezier_segments(to_bezier_class=False):
+                    ts = _nurbs_curve_curvature_extremes_impl(segment, sign=1, global_only=False)
+                    local_solutions.extend(ts)
+                if len(local_solutions) == 0:
+                    continue
+                local_solutions = np.array(sorted(set(local_solutions)))
+                solutions.extend(local_solutions)
+            result['maximum'] = np.array(solutions)
+        if need_minimum:
+            if min_tolerance is None:
+                result['minimum'] = np.array(min_ts)
+            else:
+                if len(min_ts) == 0:
+                    result['minimum'] = np.array(min_ts)
+                else:
+                    min_ts = np.array(min_ts)
+                    curvatures = curve.curvature_array(min_ts)
+                    idxs = (abs(curvatures) < min_tolerance)
+                    idxs = np.where(idxs)[0]
+                    result['minimum'] = min_ts[idxs]
+        return result
+
+def nurbs_curve_curvature_maximum(curve, global_only=True, min_tolerance=1e-6):
+    return nurbs_curve_curvature_extremes(curve, global_only=global_only,
+                        need_maximum = True,
+                        need_minimum = False,
+                        min_tolerance = min_tolerance)['maximum']
+
+def nurbs_curve_curvature_zero(curve, tolerance=1e-6):
+    return nurbs_curve_curvature_extremes(curve, global_only=False,
+                        need_maximum = False,
+                        need_minimum = True,
+                        min_tolerance = tolerance)['minimum']
 
