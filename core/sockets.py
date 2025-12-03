@@ -522,6 +522,12 @@ class SvSocketCommon(SvSocketProcessing):
 
         menu_option = get_param('show_input_menus', 'QUICKLINK')
 
+        if self.custom_draw and hasattr(node, self.custom_draw)==False:
+            col = layout.column(align=True)
+            col.alert = True
+            op = col.operator(SvONSocketShowError.bl_idname, icon='ERROR', text='', emboss=True)
+            op.description_text = 'No custom_draw ['+node.name + ']["'+self.custom_draw+'"].\n- Try to recreate node (Sidebar N->Node->Node->Recreate Node)\nor\n- Check Update Sverchok'
+
         # just handle custom draw..be it input or output.
         if self.custom_draw and hasattr(node, self.custom_draw):
             # does the node have the draw function referred to by
@@ -876,6 +882,26 @@ class SvSeparatorSocket(NodeSocket, SvSocketCommon):
         # layout.label("")
         layout.label(text="——————")
 
+class SvONSocketShowError(bpy.types.Operator):
+    '''Empty operator to show messages'''
+
+    # example of usage to show dynamic description onmouseover:
+    # op = row0.column(align=True).operator(SvONSocketShowError.bl_idname, icon='BLANK1', text='', emboss=False)
+    # op.description_text='Object pointer is empty'
+
+    bl_idname = "node.sv_socker_show_error"
+    bl_label = ""
+
+    description_text: bpy.props.StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, property):
+        s = property.description_text
+        return s
+    
+    def invoke(self, context, event):
+        self.report({'ERROR'}, self.description_text)
+        return {'FINISHED'}
 
 class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
     '''Generic, mostly numbers, socket type'''
@@ -958,9 +984,38 @@ class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
             else:
                 self.default_int_property = value
 
+    # test is property can be drawn
+    def can_draw_property(self, obj, prop_name):
+        # is it RNA-property?
+        try:
+            obj.bl_rna.properties[prop_name]
+            return True
+        except KeyError:
+            pass
+
+        # is it IDProperty?
+        if hasattr(obj, "keys") and prop_name in obj.keys():
+            return True
+
+        return False
+
     def draw_property(self, layout, prop_origin=None, prop_name=None):
         if prop_origin and prop_name:
-            layout.prop(prop_origin, prop_name, text=self.label or None)
+            if self.can_draw_property(prop_origin, prop_name):
+                layout.prop(prop_origin, prop_name, text=self.label or None)
+            else:
+                elem = layout.row(align=True)
+                if self.is_output==False:
+                    col = elem.column(align=True)
+                    col.alert = True
+                    op = col.operator(SvONSocketShowError.bl_idname, icon='ERROR', text='', emboss=True)
+                    op.description_text = 'no property '+prop_name+' for '+prop_origin.name + '.\n- Try to recreate node (Sidebar N->Node->Node->Recreate Node)\nor\n- Check Update Sverchok'
+                elem.label(text='no prop '+prop_name)
+                if self.is_output==True:
+                    col = elem.column(align=True)
+                    col.alert = True
+                    op = col.operator(SvONSocketShowError.bl_idname, icon='ERROR', text='', emboss=True)
+                    op.description_text = 'no property '+prop_name+' for '+prop_origin.name + '.\n- Try to recreate node (Sidebar N->Node->Node->Recreate Node)\nor\n- Check Update Sverchok'
         elif self.use_prop:
             row = layout.row(align=True)
             if self.default_property_type == 'float':
@@ -1538,7 +1593,7 @@ class SvSwitchDefaultOp(bpy.types.Operator):
 classes = [
     SV_MT_SocketOptionsMenu, SV_MT_AllSocketsOptionsMenu,
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
-    SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
+    SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket, SvONSocketShowError,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
     SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvFormulaSocket,
