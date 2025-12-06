@@ -140,17 +140,19 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     
     def sv_init(self, context):
         self.width = 300
-        self.outputs.new('SvCurveSocket', 'curves')
-        self.outputs.new('SvStringsSocket', 'use_cyclic_u').label='Cyclic U'
+        self.outputs.new('SvCurveSocket'   , 'curves')
+        self.outputs.new('SvStringsSocket' , 'use_cyclic_u').label='Cyclic U'
         self.outputs.new('SvVerticesSocket', 'control_points_c0')
         self.outputs.new('SvVerticesSocket', 'control_points_c1')
         self.outputs.new('SvVerticesSocket', 'control_points_c2')
         self.outputs.new('SvVerticesSocket', 'control_points_c3')
-        self.outputs.new('SvStringsSocket', 'tilts')
-        self.outputs.new('SvStringsSocket', 'radiuses')
-        self.outputs.new('SvStringsSocket', 'object_names')
-        self.outputs.new('SvMatrixSocket', 'matrices')
-        self.outputs.new('SvObjectSocket', "objects")
+        self.outputs.new('SvStringsSocket' , 'tilts')
+        self.outputs.new('SvStringsSocket' , 'radiuses')
+        self.outputs.new('SvStringsSocket' , 'material_idx')
+        self.outputs.new('SvStringsSocket' , 'material_names')
+        self.outputs.new('SvMatrixSocket'  , 'matrices')
+        self.outputs.new('SvObjectSocket'  , "objects")
+        self.outputs.new('SvStringsSocket' , 'object_names')
 
         self.outputs["curves"].label = 'Curves'
         self.outputs["curves"].custom_draw = 'draw_curves_out_socket'
@@ -161,9 +163,11 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         self.outputs['control_points_c3'].label = 'Controls Points c3'
         self.outputs['tilts']            .label = 'Tilts'
         self.outputs['radiuses']         .label = 'Radiuses'
-        self.outputs['object_names']     .label = 'Object names'
+        self.outputs['material_idx']     .label = 'Material Idx'
+        self.outputs['material_names']   .label = 'Material Names'
         self.outputs['matrices']         .label = 'Matrices'
         self.outputs['objects']          .label = 'Objects'
+        self.outputs['object_names']     .label = 'Object names'
 
         self.inputs.new('SvObjectSocket'   , "objects")
         self.inputs ['objects'].label = "Objects"
@@ -271,18 +275,20 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         # if not self.object_names:
         #     return
 
-        curves_out = []
-        use_cyclic_u_out = []
-        object_names_out = []
-        controls_out = []
-        control_points_c0_out = []
-        control_points_c1_out = []
-        control_points_c2_out = []
-        control_points_c3_out = []
-        tilt_out = []
-        radius_out = []
-        objects_out = []
-        matrices_out = []
+        curves_out              = []
+        use_cyclic_u_out        = []
+        object_names_out        = []
+        controls_out            = []
+        control_points_c0_out   = []
+        control_points_c1_out   = []
+        control_points_c2_out   = []
+        control_points_c3_out   = []
+        tilt_out                = []
+        radius_out              = []
+        objects_out             = []
+        material_idx_out        = []
+        material_names_out      = []
+        matrices_out            = []
 
         if isinstance(objs[0], list):
             objs = objs[0]
@@ -297,6 +303,9 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             pass
 
         #for item in self.object_names:
+        l_material_idx   = []
+        l_material_names = []
+
         for I, obj in enumerate(objs):
             object_exists, curve_object, bezier_object, non_bezier_object, chars = get_object_data_spline_info(obj)
 
@@ -317,11 +326,13 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                 pass
             else:
                 if obj.data.splines:
+                    material_indexes = []
                     for spline in obj.data.splines:
                         if spline.type != 'BEZIER':
                             self.warning(f"{obj.name}.{spline}: not supported spline type: {spline.type}")
                             continue
                         controls, tilt_values, radius_values, curve, use_cyclic_u = self.get_curve(spline, matrix)
+                        material_indexes.append(spline.material_index)
                         splines_curves.append(curve)
                         splines_use_cyclic_u.append(use_cyclic_u)
                         spline_controls_c0  = []
@@ -341,6 +352,19 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                         splines_tilt  .append(tilt_values)
                         splines_radius.append(radius_values)
                         pass
+                    pass
+                    if obj.material_slots:
+                        material_socket_ids = set(material_indexes)
+                        # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
+                        materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
+                    else:
+                        if splines_curves:
+                            material_indexes = [0]*len(splines_curves)
+                            materials_info = dict( [(0,dict(material_name=None, is_faces=True))] )
+                        else:
+                            material_indexes = []
+                            materials_info = dict()
+                    pass
                 else:
                     # if splines are empty
                     splines_curves.append([])
@@ -352,84 +376,93 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
 
                     splines_tilt.append([])
                     splines_radius.append([])
+
+                    material_indexes = []
+                    materials_info = dict()
+
                     pass
             objects.append(obj)
+            l_material_idx.append( material_indexes )
+            l_material_names.append(materials_info)
+
 
             if self.concat_segments==True:
-                if self.source_curves_join_mode=='KEEP':
-                    curves_out           .append(splines_curves)
-                    use_cyclic_u_out     .append(splines_use_cyclic_u)
-                    object_names_out     .append([obj.name] * max(len(splines_curves), 1) )  # if no splines then return 1 for object name
-                    control_points_c0_out.append([co for lst in splines_controls_c0 for co in lst])
-                    control_points_c1_out.append([co for lst in splines_controls_c1 for co in lst])
-                    control_points_c2_out.append([co for lst in splines_controls_c2 for co in lst])
-                    control_points_c3_out.append([co for lst in splines_controls_c3 for co in lst])
-                    tilt_out             .append(splines_tilt)
-                    radius_out           .append(splines_radius)
-                    objects_out          .append(objects )
-                    matrices_out         .append([matrix] * max(len(splines_curves), 1) ) # if no splines then return 1 matrix of object
-                    pass
-                else:
-                    raise Exception(f"mode {self.source_curves_join_mode} unused")
-                    # for I, spline in enumerate(splines_curves):
-                    #     splines_curves_I = splines_curves[I]
-                    #     curves_out           .append([splines_curves_I])
-                    #     use_cyclic_u_out     .append([splines_use_cyclic_u[I]])
-                    #     object_names_out     .append([object_name])
-                    #     matrices_out         .append([matrix])
-                    #     control_points_c0_out.append(splines_controls_c0[I])
-                    #     control_points_c1_out.append(splines_controls_c1[I])
-                    #     control_points_c2_out.append(splines_controls_c2[I])
-                    #     control_points_c3_out.append(splines_controls_c3[I])
-                    #     tilt_out             .append([splines_tilt[I]])
-                    #     radius_out           .append([splines_radius[I]])
-                    #     pass
-                    # pass
-            else:
-                if self.source_curves_join_mode=='KEEP':
-                    curves_out           .append(splines_curves)
-                    use_cyclic_u_out     .append(splines_use_cyclic_u)
-                    object_names_out     .append([obj.name]*len(splines_curves))
-                    spline_c0 = []
-                    spline_c1 = []
-                    spline_c2 = []
-                    spline_c3 = []
-                    for I in range(len(splines_controls_c0)):
-                        splines_controls_c0_I = splines_controls_c0[I]
-                        splines_controls_c1_I = splines_controls_c1[I]
-                        splines_controls_c2_I = splines_controls_c2[I]
-                        splines_controls_c3_I = splines_controls_c3[I]
-                        spline_c0.append([co for controls in splines_controls_c0_I for co in controls])
-                        spline_c1.append([co for controls in splines_controls_c1_I for co in controls])
-                        spline_c2.append([co for controls in splines_controls_c2_I for co in controls])
-                        spline_c3.append([co for controls in splines_controls_c3_I for co in controls])
-                        pass
-                    control_points_c0_out.append(spline_c0)
-                    control_points_c1_out.append(spline_c1)
-                    control_points_c2_out.append(spline_c2)
-                    control_points_c3_out.append(spline_c3)
-                    tilt_out             .append(splines_tilt)
-                    radius_out           .append(splines_radius)
-                    objects_out          .append(objects )
-                    matrices_out         .append([matrix]*len(splines_curves))
-                    pass
-                else:
-                    raise Exception(f"mode {self.source_curves_join_mode} unused")
-                    # for I, spline in enumerate(splines_curves):
-                    #     splines_curves_I = splines_curves[I]
-                    #     for IJ, segment in enumerate( splines_curves_I ):
-                    #         curves_out           .append([segment])
-                    #         use_cyclic_u_out     .append(False) # [splines_use_cyclic_u[I]]) потому что сегмент всегда разомкнут
-                    #         matrices_out         .append([matrix]*len(splines_curves))
-                    #         object_names_out     .append([object_name]*len(splines_curves))
-                    #         control_points_c0_out.append([splines_controls_c0[I][IJ][0]])
-                    #         control_points_c1_out.append([splines_controls_c1[I][IJ][0]])
-                    #         control_points_c2_out.append([splines_controls_c2[I][IJ][0]])
-                    #         control_points_c3_out.append([splines_controls_c3[I][IJ][0]])
-                    #         tilt_out             .append([splines_tilt  [I][IJ]])
-                    #         radius_out           .append([splines_radius[I][IJ]])
-                    # pass
+                curves_out           .append(splines_curves)
+                use_cyclic_u_out     .append(splines_use_cyclic_u)
+                object_names_out     .append([obj.name] * max(len(splines_curves), 1) )  # if no splines then return 1 for object name
+                control_points_c0_out.append([co for lst in splines_controls_c0 for co in lst])
+                control_points_c1_out.append([co for lst in splines_controls_c1 for co in lst])
+                control_points_c2_out.append([co for lst in splines_controls_c2 for co in lst])
+                control_points_c3_out.append([co for lst in splines_controls_c3 for co in lst])
+                tilt_out             .append(splines_tilt)
+                radius_out           .append(splines_radius)
+                objects_out          .append(objects )
+                matrices_out         .append([matrix] * max(len(splines_curves), 1) ) # if no splines then return 1 matrix of object
                 pass
+            else:
+                curves_out           .append(splines_curves)
+                use_cyclic_u_out     .append(splines_use_cyclic_u)
+                object_names_out     .append([obj.name]*len(splines_curves))
+                spline_c0 = []
+                spline_c1 = []
+                spline_c2 = []
+                spline_c3 = []
+                for I in range(len(splines_controls_c0)):
+                    splines_controls_c0_I = splines_controls_c0[I]
+                    splines_controls_c1_I = splines_controls_c1[I]
+                    splines_controls_c2_I = splines_controls_c2[I]
+                    splines_controls_c3_I = splines_controls_c3[I]
+                    spline_c0.append([co for controls in splines_controls_c0_I for co in controls])
+                    spline_c1.append([co for controls in splines_controls_c1_I for co in controls])
+                    spline_c2.append([co for controls in splines_controls_c2_I for co in controls])
+                    spline_c3.append([co for controls in splines_controls_c3_I for co in controls])
+                    pass
+                control_points_c0_out.append(spline_c0)
+                control_points_c1_out.append(spline_c1)
+                control_points_c2_out.append(spline_c2)
+                control_points_c3_out.append(spline_c3)
+                tilt_out             .append(splines_tilt)
+                radius_out           .append(splines_radius)
+                objects_out          .append(objects )
+                matrices_out         .append([matrix]*len(splines_curves))
+                pass
+            pass
+
+        if self.legacy_mode==True:
+            # Обработка материалов для legacy
+            # Create dict of unique materials before join polygons
+            _materials_ids = []
+            _l_materials_names_unique = set()  # Unique materials names before sorting: {'Material.002.Red', None, 'Material.005.Green', 'Material.001.Blue'}
+            for l_material in l_material_names:
+                for K in l_material:
+                    # do not use material if it has no faces
+                    if l_material[K]['is_faces']==True:
+                        _l_materials_names_unique.update( [l_material[K]['material_name']] )
+                    pass
+                pass
+            _l_materials_names_unique_sorted = sorted(_l_materials_names_unique, key=lambda x: (x is None, x)) # # sorted unique names, None is a last element (for convinience reading, has no influence for mesh join): ['Material.001.Blue', 'Material.002.Red', 'Material.005.Green', None]
+            _l_materials_names_uniques = dict( zip( _l_materials_names_unique_sorted, list(range(len(_l_materials_names_unique))))) # Global materials idx: {'Material.001.Blue': 0, 'Material.002.Red': 1, 'Material.005.Green': 2, None: 3}
+            for idx, obj in enumerate(objs):
+                # material changes in mesh join:
+                l_material_idx_I   = l_material_idx[idx]    # what sockets idx: [2, 1, 0, 3, 1, 1]
+                l_material_info_I  = l_material_names[idx]  # what materials info of sockets: {0: {'material_name': 'Material.006', 'is_faces': False}, 1: {'material_name': 'Material.005.Green', 'is_faces': True}, 2: {'material_name': 'Material.007_Object', 'is_faces': False}}
+                l_material_names_I = dict([(K, l_material_info_I[K]['material_name']) for K in l_material_info_I if l_material_info_I[K]['is_faces']==True]) # What used materials info: {0: None, 1: 'Material.001.Blue', 2: 'Material.002.Red', 3: 'Material.005.Green'}
+
+                l_materials_I_repack_materials = dict([(k, _l_materials_names_uniques[l_material_names_I[k]]) for k in l_material_names_I])   # repack info of materials for global materials indexes: {0: 3, 1: 0, 2: 1, 3: 2}
+                l_material_idx_I_repack        = [l_materials_I_repack_materials[s] for s in l_material_idx_I]                                # replace local sockets idx for global materials idx: [1, 0, 3, 2, 0, 0] This idx may do not equals Mesh Join in reality, but algorithm does equals results
+                _materials_ids.extend(l_material_idx_I_repack)
+                pass
+            l_material_idx = [_materials_ids]
+            l_material_names = [ list(_l_materials_names_uniques.keys())]
+            pass
+        else:
+            _t = []
+            for materials_of_object in l_material_names:
+                _to = []
+                for material_socket in sorted(materials_of_object.keys()):
+                    _to.append(materials_of_object[material_socket]['material_name'])
+                _t.append(_to)
+            l_material_names = _t
             pass
 
         _curves_out = curves_out
@@ -466,11 +499,15 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         self.outputs['control_points_c1'].sv_set(_control_points_c1_out)
         self.outputs['control_points_c2'].sv_set(_control_points_c2_out)
         self.outputs['control_points_c3'].sv_set(_control_points_c3_out)
-        self.outputs['object_names']     .sv_set(_object_names_out)
         self.outputs['tilts']            .sv_set(_tilt_out)
         self.outputs['radiuses']         .sv_set(_radius_out)
-        self.outputs['objects']          .sv_set(_objects_out)
+        if 'material_idx' in self.outputs:
+            self.outputs['material_idx'] .sv_set(l_material_idx)
+        if 'material_names' in self.outputs:
+            self.outputs['material_names'].sv_set(l_material_names)
         self.outputs['matrices']         .sv_set(_matrices_out)
+        self.outputs['objects']          .sv_set(_objects_out)
+        self.outputs['object_names']     .sv_set(_object_names_out)
 
     def migrate_links_from(self, old_node, operator):
         '''replace socket names to lowercase'''
