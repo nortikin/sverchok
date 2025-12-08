@@ -41,25 +41,31 @@ def adjust_list(in_list, x, y):
 
 
 def generate_points_tris(width, height, x, y):
-    amp = 5  # radius fillet
+    #amp = 5  # radius filletdraw_obj_idx
+    # _width += 2
+    # _height += 4
+    # _width = ((_width/2) - amp) + 2
+    # _height -= (2*amp)
 
-    width += 2
-    height += 4
-    width = ((width/2) - amp) + 2
-    height -= (2*amp)
+    # _height += 4
+    # _width += 3    
 
-    height += 4
-    width += 3    
+    border=4 # even size
+    border2=border/2
+    _width = width
+    _height = height
+    _y = y
+    _x = x
 
     final_list = [
         # a
-        [-width+x, +height+y],   # A         D - - - - - E
-        [+width+x, -height+y],   # B         A .         |
-        [-width+x, -height+y],   # C         |   .    b  |
-        # b                                  |     .     |
-        [-width+x, +height+y],   # D         |   a   .   |
-        [+width+x, +height+y],   # E         |         . F
-        [+width+x, -height+y]    # F         C - - - - - B
+        [        _x-border2, +_height+_y+border2],   # A         D - - - - - E
+        [+_width+_x+border2,          _y-border2],   # B         A .         |
+        [        _x-border2,          _y-border2],   # C         |   .    b  |
+        # b                                                      |     .     |
+        [        _x-border2, +_height+_y+border2],   # D         |   a   .   |
+        [+_width+_x+border2, +_height+_y+border2],   # E         |         . F
+        [+_width+_x+border2,          _y-border2]    # F         C - - - - - B
     ] 
     return final_list
 
@@ -82,6 +88,7 @@ def draw_indices_2D(context, args):
     display_edge_index = settings['display_edge_index']
     display_face_index = settings['display_face_index']
     scale = settings['scale']
+    draw_obj_idx = settings['draw_obj_idx']
     draw_bface = settings['draw_bface']
 
     font_id = 0
@@ -105,36 +112,65 @@ def draw_indices_2D(context, args):
 
         # ---- draw text ----
         index_str = str(index)
-        txt_width, txt_height = blf.dimensions(0, index_str)
+        if draw_obj_idx==True:
+            txt_parts = index_str.split(':',1)
+            if len(txt_parts)>1:
+                object_index, txt = txt_parts
+            else:
+                object_index=''
+                txt = txt_parts[0]
+        else:
+            object_index=''
+            txt = index_str
 
-        blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
-        blf.draw(0, index_str)
+
+        drawing.blf_size(font_id, text_height, 72)  # should check prefs.dpi
+        txt_width, txt_height = blf.dimensions(font_id, txt)
+        #txt_width, txt_height = blf.dimensions(font_id, f'{txt}{object_index}' if object_index else txt) # a bit more than text with object index in the screen
+        # txt_width_general, txt_height_general = txt_width, txt_height = blf.dimensions(font_id, txt)
+        # if object_index:
+        #     drawing.blf_size(font_id, text_height*0.5, 72)
+        #     text_object_index_dim_width, text_object_index_dim_height = blf.dimensions(font_id, txt)
+        #     txt_width_general+=text_object_index_dim_width+2
+
+        pos_x = x - (txt_width / 2)
+        pos_y = y - (txt_height / 2)
+        drawing.blf_size(font_id, text_height, 72)  # should check prefs.dpi
+        blf.position(font_id, pos_x, pos_y, 0)
+        blf.draw(font_id, txt)
+
+        if object_index:
+            drawing.blf_size(font_id, text_height*0.5, 72)
+            #blf.position(font_id, pos_x + txt_width + 2, pos_y - text_height*0.1, 0)
+            blf.position(font_id, pos_x + txt_width + 2, pos_y, 0)
+            blf.draw(font_id, object_index)
+        pass
 
     if draw_bface:
 
         blf.color(font_id, *vert_idx_color)
-        if geom.vert_data and geom.text_data:
-            for text_item, (idx, location) in zip(geom.text_data, geom.vert_data):
-                draw_index(text_item, location)
-        else:
-            for vidx in geom.vert_data:
-                draw_index(*vidx)
+        if display_vert_index:
+            for text_data, vert_data in zip(geom.text_data, geom.vert_data):
+                for text_item, (idx, location) in zip(text_data, vert_data):
+                    draw_index(text_item, location)
+                pass
+            pass
     
         blf.color(font_id, *edge_idx_color)
-        if geom.text_data:
-            for text_item, (_, location) in zip(geom.text_data, geom.edge_data):
-                draw_index(text_item, location)
-        else:
-            for eidx in geom.edge_data:
-                draw_index(*eidx)
+        if display_edge_index:
+            for text_data, edge_data in zip(geom.text_data, geom.edge_data):
+                for text_item, (_, location) in zip(text_data, edge_data):
+                    draw_index(text_item, location)
+                pass
+            pass
 
         blf.color(font_id, *face_idx_color)
-        if geom.text_data:
-            for text_item, (_, location) in zip(geom.text_data, geom.face_data):
-                draw_index(text_item, location)
-        else:
-            for fidx in geom.face_data:
-                draw_index(*fidx)
+        if display_face_index:
+            for text_data, face_data in zip(geom.text_data, geom.face_data):
+                for text_item, (_, location) in zip(text_data, face_data):
+                    draw_index(text_item, location)
+                pass
+            pass
 
         # if drawing all geometry, we end early.
         return
@@ -178,7 +214,7 @@ def draw_indices_2D(context, args):
                 if hit:
                     if hit[2] == idx:
                         if display_face_index:
-                            text = geom.text_data[idx] if geom.text_data else idx
+                            text = geom.text_data[obj_index][idx] 
                             draw_index(text, world_coordinate)
                         
                         if display_vert_index:
@@ -193,7 +229,7 @@ def draw_indices_2D(context, args):
 
             blf.color(font_id, *vert_idx_color)
             for idx in cache_vert_indices:
-                text = geom.text_data[idx] if geom.text_data else idx
+                text = geom.text_data[obj_index][idx] 
                 draw_index(text, vertices[idx])
 
             blf.color(font_id, *edge_idx_color)
@@ -202,7 +238,7 @@ def draw_indices_2D(context, args):
                 if sorted_edge in cache_edge_indices:
                     idx1, idx2 = sorted_edge
                     loc = vertices[idx1].lerp(vertices[idx2], 0.5)
-                    text = geom.text_data[idx] if geom.text_data else idx
+                    text = geom.text_data[obj_index][idx] 
                     draw_index(text, loc)
                     cache_edge_indices.remove(sorted_edge)
 
@@ -245,6 +281,7 @@ def draw_indices_2D_wbg(context, args):
     display_edge_index = settings['display_edge_index']
     display_face_index = settings['display_face_index']
     scale = settings['scale']
+    draw_obj_idx = settings['draw_obj_idx']
     draw_bg = settings['draw_bg']
     draw_bface = settings['draw_bface']
 
@@ -282,10 +319,28 @@ def draw_indices_2D_wbg(context, args):
 
         # draw text 
         for counter, (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts) in final_draw_data.items():
+            drawing.blf_size(font_id, text_height, 72)  # should check prefs.dpi
             text_color = settings[f'numid_{type_draw}_col']
+            if draw_obj_idx==True:
+                txt_parts = index_str.split(':',1)
+                if len(txt_parts)>1:
+                    object_index, txt = txt_parts
+                else:
+                    object_index=''
+                    txt = txt_parts[0]
+            else:
+                object_index=''
+                txt = index_str
+
             blf.color(font_id, *text_color)
-            blf.position(0, pos_x, pos_y, 0)
-            blf.draw(0, index_str)
+            blf.position(font_id, pos_x, pos_y, 0)
+            blf.draw(font_id, txt)
+
+            if object_index:
+                txt_width, txt_height = blf.dimensions(font_id, txt)
+                drawing.blf_size(font_id, text_height*0.5, 72)
+                blf.position(font_id, pos_x + txt_width+2, pos_y, 0)
+                blf.draw(font_id, object_index)
 
     def gather_index(index, vec, type_draw):
 
@@ -298,13 +353,26 @@ def draw_indices_2D_wbg(context, args):
 
         # ---- draw text ----
         index_str = str(index)
-        txt_width, txt_height = blf.dimensions(0, index_str)
+        if draw_obj_idx==True:
+            txt_parts = index_str.split(':',1)
+            if len(txt_parts)>1:
+                object_index, txt = txt_parts
+            else:
+                object_index=''
+                txt = txt_parts[0]
+        else:
+            object_index=''
+            txt = index_str
 
-        # blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
+        drawing.blf_size(font_id, text_height, 72)
+        txt_width, txt_height = blf.dimensions(font_id, txt)
         pos_x = x - (txt_width / 2)
         pos_y = y - (txt_height / 2)
-        # blf.draw(0, index_str)
-        pts = generate_points_tris(txt_width, txt_height, x, y-1)
+        if object_index:
+            drawing.blf_size(font_id, text_height*0.5, 72)
+            txt_index_width, txt_index_height = blf.dimensions(font_id, f'{object_index}') # a bit more than text with object index in the screen
+            txt_width+=txt_index_width+2
+        pts = generate_points_tris(txt_width, txt_height, pos_x, pos_y)
         data_index_counter = len(final_draw_data)
         final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts)
 
@@ -313,28 +381,28 @@ def draw_indices_2D_wbg(context, args):
     if draw_bface:
 
         # blf.color(font_id, *vert_idx_color)
-        if geom.vert_data and geom.text_data:
-            for text_item, (idx, location) in zip(geom.text_data, geom.vert_data):
-                gather_index(text_item, location, 'verts')
-        else:
-            for vidx in geom.vert_data:
-                gather_index(vidx[0], vidx[1], 'verts')
+        if display_vert_index:
+            for text_data, vert_data in zip(geom.text_data, geom.vert_data):
+                for text_item, (idx, location) in zip(text_data, vert_data):
+                    gather_index(text_item, location, 'verts')
+                pass
+            pass
     
         # blf.color(font_id, *edge_idx_color)
-        if geom.text_data:
-            for text_item, eidx in zip(geom.text_data, geom.edge_data):
-                gather_index(text_item, eidx[1], 'edges')
-        else:
-            for eidx in geom.edge_data:
-                gather_index(eidx[0], eidx[1], 'edges')
+        if display_edge_index:
+            for text_data, edge_data in zip(geom.text_data, geom.edge_data):
+                for text_item, eidx in zip(text_data, edge_data):
+                    gather_index(text_item, eidx[1], 'edges')
+                pass
+            pass
 
         # blf.color(font_id, *face_idx_color)
-        if geom.text_data:
-            for text_item, fidx in zip(geom.text_data, geom.face_data):
-                gather_index(text_item, fidx[1], 'faces')
-        else:
-            for fidx in geom.face_data:
-                gather_index(fidx[0], fidx[1], 'faces')
+        if display_face_index:
+            for text_data, face_data in zip(geom.text_data, geom.face_data):
+                for text_item, fidx in zip(text_data, face_data):
+                    gather_index(text_item, fidx[1], 'faces')
+                pass
+            pass
 
         draw_all_text_at_once(final_draw_data)
         # if drawing all geometry, we end early.
@@ -381,7 +449,7 @@ def draw_indices_2D_wbg(context, args):
                 if hit:
                     if hit[2] == idx:
                         if display_face_index:
-                            text = geom.text_data[idx] if geom.text_data else idx
+                            text = geom.text_data[obj_index][idx] 
                             gather_index(text, world_coordinate, 'faces')
                         
                         if display_vert_index:
@@ -396,7 +464,7 @@ def draw_indices_2D_wbg(context, args):
 
             # blf.color(font_id, *vert_idx_color)
             for idx in cache_vert_indices:
-                text = geom.text_data[idx] if geom.text_data else idx
+                text = geom.text_data[obj_index][idx] 
                 gather_index(text, vertices[idx], 'verts')
 
             # blf.color(font_id, *edge_idx_color)
@@ -405,7 +473,7 @@ def draw_indices_2D_wbg(context, args):
                 if sorted_edge in cache_edge_indices:
                     idx1, idx2 = sorted_edge
                     loc = vertices[idx1].lerp(vertices[idx2], 0.5)
-                    text = geom.text_data[idx] if geom.text_data else idx
+                    text = geom.text_data[obj_index][idx] 
                     gather_index(text, loc, 'edges')
                     cache_edge_indices.remove(sorted_edge)
 
