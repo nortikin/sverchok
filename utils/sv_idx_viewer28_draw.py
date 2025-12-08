@@ -239,7 +239,8 @@ def draw_indices_2D_wbg(context, args):
 
     try:
 
-        for obj_index, polygons in enumerate(geom.faces):
+        for obj_index, vert_data in enumerate(geom.vert_data):
+            polygons = geom.faces[obj_index]
             edges = geom.edges[obj_index] if obj_index < len(geom.edges) else []
             vertices = geom.verts[obj_index]
             bvh = BVHTree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
@@ -248,10 +249,7 @@ def draw_indices_2D_wbg(context, args):
             cache_edge_indices = set()
 
             for idx, polygon in enumerate(polygons):
-                ### TODO - test elements that has no faces (single edges, vertices) !!!!
-
                 # check the face normal, reject it if it's facing away.
-
                 face_normal      = geom.face_data[obj_index][idx].normal
                 world_coordinate = geom.face_data[obj_index][idx].location
 
@@ -273,25 +271,49 @@ def draw_indices_2D_wbg(context, args):
                     if hit[2] == idx:
                         if display_face_index:
                             gather_index(geom.face_data[obj_index][idx], 'faces')
-                        
-                        if display_vert_index:
-                            for j in polygon:
-                                cache_vert_indices.add(j)
-
-                        # this could be woefully slow...
-                        if display_edge_index and edges:
-                            for j in range(len(polygon)-1):
-                                polygon_j0, polygon_j1 = polygon[j], polygon[j+1]
-                                if polygon_j0 > polygon_j1:
-                                    edge_indices = (polygon_j1, polygon_j0)
-                                else:
-                                    edge_indices = (polygon_j0, polygon_j1)
-                                cache_edge_indices.add(edge_indices)
-                                pass
-                            cache_edge_indices.add(tuple(sorted([polygon[-1], polygon[0]])))
-                        pass
                     pass
                 pass
+            
+            if display_edge_index:
+                eps=1e-5
+                for idx, edge in enumerate(edges):
+                    world_coordinate = geom.edge_data[obj_index][idx].location
+                    result_vector = eye_location - world_coordinate
+                    dist = result_vector.length
+                    if dist==0:
+                        continue
+                    
+                    # cast ray from eye towards the median of the edge, the reycast will return (almost definitely..)
+
+                    direction = world_coordinate - eye_location
+                    direction.normalize()
+                    hit = bvh.ray_cast(eye_location, direction)
+                    if hit:
+                        hit_co, hit_no, hit_index, hit_dist = hit
+                        if hit_co is None or (hit_dist>=dist - eps):
+                            cache_edge_indices.add(tuple(sorted([edge[0], edge[1]])))
+                        pass
+                    pass
+            
+            if display_vert_index:
+                eps=1e-5
+                for idx, vert in enumerate(vertices):
+                    world_coordinate = geom.vert_data[obj_index][idx].location
+                    result_vector = eye_location - world_coordinate
+                    dist = result_vector.length
+                    if dist==0:
+                        continue
+                    
+                    # cast ray from eye towards the vert, the reycast will return (almost definitely..)
+                    direction = world_coordinate - eye_location
+                    direction.normalize()
+                    hit = bvh.ray_cast(eye_location, direction)
+                    if hit:
+                        hit_co, hit_no, hit_index, hit_dist = hit
+                        if hit_co is None or (hit_dist>=dist - eps):
+                            cache_vert_indices.add(idx)
+                        pass
+                    pass
 
             for idx in cache_vert_indices:
                 gather_index(geom.vert_data[obj_index][idx], 'verts')
