@@ -454,7 +454,7 @@
         - SvFlatGeometryNode
 
     - Modifier Make:
-        - LineConnectNodeMK2
+        - LineConnectNodeMK3
         - ---
         - SvOpenSubdivisionNode
         - SvSubdivideNodeMK2

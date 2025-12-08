@@ -271,7 +271,7 @@
             - SvVertSortNode
 
         - M MAKE:
-            - LineConnectNodeMK2
+            - LineConnectNodeMK3
             - ---
             - SvOpenSubdivisionNode
             - SvSubdivideNodeMK2

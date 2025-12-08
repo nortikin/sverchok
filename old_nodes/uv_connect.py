@@ -32,6 +32,8 @@ class LineConnectNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
     base_name = 'vertices '
     multi_socket_type = 'SvVerticesSocket'
+    
+    replacement_nodes = [('LineConnectNodeMK3', dict(vertices='vertices'), dict(vertices='vertices', polygons='data', edges='data'))]
 
     direction = [('U_dir', 'U', 'u direction'), ('V_dir', 'V', 'v direction')]
     polsORedges = [('Pols', 'Pols', 'Pols'), ('Edges', 'Edges', 'Edges')]
