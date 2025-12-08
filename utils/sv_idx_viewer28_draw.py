@@ -204,7 +204,7 @@ def draw_indices_2D_wbg(context, args):
 
     # THIS SECTION IS ONLY EXECUTED IF BOTH FORWARD AND BACKFACING ARE DRAWN
 
-    if draw_bface:
+    if draw_bface or not geom.faces:
 
         if display_vert_index:
             for vert_data in geom.vert_data:
@@ -248,6 +248,7 @@ def draw_indices_2D_wbg(context, args):
             cache_edge_indices = set()
 
             for idx, polygon in enumerate(polygons):
+                ### TODO - test elements that has no faces (single edges, vertices) !!!!
 
                 # check the face normal, reject it if it's facing away.
 
@@ -288,6 +289,9 @@ def draw_indices_2D_wbg(context, args):
                                 cache_edge_indices.add(edge_indices)
                                 pass
                             cache_edge_indices.add(tuple(sorted([polygon[-1], polygon[0]])))
+                        pass
+                    pass
+                pass
 
             for idx in cache_vert_indices:
                 gather_index(geom.vert_data[obj_index][idx], 'verts')
