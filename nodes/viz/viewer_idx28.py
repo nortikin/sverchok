@@ -190,29 +190,6 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
         layout.row().prop(self, 'text_scale', text="Text Scale")
 
 
-    def get_face_extras(self, geom):
-        face_medians = []
-        face_normals = []
-        for obj_index, faces in enumerate(geom.faces):
-
-            verts = geom.verts[obj_index]
-
-            medians = []
-            normals = []
-            concat_median = medians.append
-            concat_normal = normals.append
-
-            for face in faces:
-                poly_verts = [verts[idx] for idx in face]
-                concat_normal(normal(poly_verts))
-                concat_median(calc_median(poly_verts))
-
-            face_medians.append(medians)
-            face_normals.append(normals)
-
-        return face_medians, face_normals
-
-
     def get_geometry(self):
         inputs = self.inputs
         geom = SimpleNamespace( **dict( verts=[], edges=[], faces=[], vert_data=[], edge_data=[], face_data=[], text_data=[], text=[], ) )
@@ -232,8 +209,6 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
                         input_stream[obj_index] = [matrix @ v for v in verts]
 
             setattr(geom, socket, input_stream)
-
-        prefix_if_needed = lambda obj_index, chars: (f'{obj_index}:{chars}') if self.draw_obj_idx else chars
 
         fixed_text = []
         if geom.text:
@@ -264,22 +239,18 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
             obj_faces = []
             if self.display_vert_index:
                 for vert_index, vpos in enumerate(final_verts):
-                    chars = prefix_if_needed(obj_index, vert_index)
-                    obj_verts.append( TextInfo(fixed_text[obj_index][vert_index], obj_index, vert_index, vpos, None) )
+                    obj_verts.append( TextInfo(fixed_text[obj_index][vert_index], obj_index, vert_index, vpos) )
 
             if self.display_edge_index and obj_index < len(geom.edges):
                 for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
                     loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
-                    chars = prefix_if_needed(obj_index, edge_index)
-                    obj_edges.append( TextInfo(fixed_text[obj_index][edge_index], obj_index, edge_index, loc, None) )
+                    obj_edges.append( TextInfo(fixed_text[obj_index][edge_index], obj_index, edge_index, loc) )
 
             if (self.display_face_index or not self.draw_bface) and obj_index < len(geom.faces):
                 for face_index, f in enumerate(geom.faces[obj_index]):
                     poly_verts = [final_verts[idx] for idx in f]
                     median = calc_median(poly_verts)
-                    norm = normal(poly_verts)
-                    chars = prefix_if_needed(obj_index, face_index)
-                    obj_faces.append( TextInfo(fixed_text[obj_index][face_index], obj_index, face_index, median, norm) )
+                    obj_faces.append( TextInfo(fixed_text[obj_index][face_index], obj_index, face_index, median) )
             
             concat_vert(obj_verts)
             concat_edge(obj_edges)

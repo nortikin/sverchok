@@ -19,7 +19,8 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
 from sverchok.data_structure import Vector_generate
-from sverchok.utils.modules.drawing_abstractions import drawing 
+from sverchok.utils.modules.drawing_abstractions import drawing
+from bpy_extras import view3d_utils
 
 
 SpaceView3D = bpy.types.SpaceView3D
@@ -27,15 +28,22 @@ callback_dict = {}
 point_dict = {}
 
 class TextInfo:
-    def __init__(self, _text, _object_index, _index, _location, _normal=None):
+    def __init__(self, _text, _object_index, _index, _location):
         self.text=_text
         self.object_index = _object_index
         self.index = _index  # index vert, edge or face
         self.location = _location
-        self.normal = _normal
 
 # pylint: disable=W0703
 # pylint: disable=C0301
+
+def point_on_screen(region, rv3d, point_world):
+    p = view3d_utils.location_3d_to_region_2d(region, rv3d, point_world)
+    if p is None:
+        return False
+    if 0 <= p.x <= region.width and 0 <= p.y <= region.height:
+        return True
+    return False
 
 
 def calc_median(vlist):
@@ -114,7 +122,6 @@ def draw_indices_2D_wbg(context, args):
     perspective_matrix  = region3d.perspective_matrix.copy()
 
     final_draw_data     = {}
-    data_index_counter  = 0
 
     object_index_index_gap=2
     def draw_all_text_at_once(final_draw_data):
@@ -163,7 +170,9 @@ def draw_indices_2D_wbg(context, args):
         return
 
     def gather_index(text_info, type_draw):
-
+        if point_on_screen( region, region3d, text_info.location)==False:
+            return
+        
         vec_4d = perspective_matrix @ text_info.location.to_4d()
         if vec_4d.w <= 0.0:
             return
@@ -256,6 +265,7 @@ def draw_indices_2D_wbg(context, args):
                     # if hit: (Vector location, Vector normal, int index, float distance) else all (None, ...)
 
                     direction = world_coordinate - eye_location
+                    direction.normalize()
                     hit = bvh.ray_cast(eye_location, direction)
                     if hit:
                         hit_co, hit_no, hit_index, hit_dist = hit
