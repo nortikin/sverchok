@@ -245,9 +245,6 @@ def draw_indices_2D_wbg(context, args):
             vertices = geom.verts[obj_index]
             bvh = BVHTree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
 
-            cache_vert_indices = set()
-            cache_edge_indices = set()
-
             if display_face_index:
                 for idx, polygon in enumerate(polygons):
                     # check the face normal, reject it if it's facing away.
@@ -269,7 +266,8 @@ def draw_indices_2D_wbg(context, args):
                     direction = world_coordinate - eye_location
                     hit = bvh.ray_cast(eye_location, direction)
                     if hit:
-                        if hit[2] == idx:
+                        hit_co, hit_no, hit_index, hit_dist = hit
+                        if hit_index == idx:
                             gather_index(geom.face_data[obj_index][idx], 'faces')
                         pass
                     pass
@@ -291,19 +289,8 @@ def draw_indices_2D_wbg(context, args):
                     if hit:
                         hit_co, hit_no, hit_index, hit_dist = hit
                         if hit_co is None or (hit_dist>=dist - eps):
-                            cache_edge_indices.add(tuple(sorted([edge[0], edge[1]])))
+                            gather_index(geom.edge_data[obj_index][idx], 'edges')
                         pass
-                    pass
-                
-                for edge_index, edge in enumerate(edges):
-                    if edge[0]>edge[1]:
-                        sorted_edge = ( edge[1], edge[0] )
-                    else:
-                        sorted_edge = tuple( edge )
-
-                    if sorted_edge in cache_edge_indices:
-                        gather_index(geom.edge_data[obj_index][edge_index], 'edges')
-                        cache_edge_indices.remove(sorted_edge)
                     pass
                 pass
             
@@ -322,14 +309,10 @@ def draw_indices_2D_wbg(context, args):
                     if hit:
                         hit_co, hit_no, hit_index, hit_dist = hit
                         if hit_co is None or (hit_dist>=dist - eps):
-                            cache_vert_indices.add(idx)
+                            gather_index(geom.vert_data[obj_index][idx], 'verts')
                         pass
                     pass
                 pass
-
-                for idx in cache_vert_indices:
-                    gather_index(geom.vert_data[obj_index][idx], 'verts')
-
 
         draw_all_text_at_once(final_draw_data)
 
