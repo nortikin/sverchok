@@ -238,7 +238,7 @@ def draw_indices_2D_wbg(context, args):
     eye_location = region3d.view_location + eye  
 
     try:
-
+        eps=1e-5
         for obj_index, vert_data in enumerate(geom.vert_data):
             polygons = geom.faces[obj_index]
             edges = geom.edges[obj_index] if obj_index < len(geom.edges) else []
@@ -248,34 +248,34 @@ def draw_indices_2D_wbg(context, args):
             cache_vert_indices = set()
             cache_edge_indices = set()
 
-            for idx, polygon in enumerate(polygons):
-                # check the face normal, reject it if it's facing away.
-                face_normal      = geom.face_data[obj_index][idx].normal
-                world_coordinate = geom.face_data[obj_index][idx].location
+            if display_face_index:
+                for idx, polygon in enumerate(polygons):
+                    # check the face normal, reject it if it's facing away.
+                    face_normal      = geom.face_data[obj_index][idx].normal
+                    world_coordinate = geom.face_data[obj_index][idx].location
 
-                result_vector = eye_location - world_coordinate
-                dot_value     = face_normal.dot(result_vector.normalized())
+                    result_vector = eye_location - world_coordinate
+                    dot_value     = face_normal.dot(result_vector.normalized())
 
-                if dot_value < 0.0:
-                    continue # reject
+                    if dot_value < 0.0:
+                        continue # reject
 
-                # cast ray from eye towards the median of the polygon, the reycast will return (almost definitely..)
-                # but if the return idx does not correspond with the polygon index, then it is occluded :)
+                    # cast ray from eye towards the median of the polygon, the reycast will return (almost definitely..)
+                    # but if the return idx does not correspond with the polygon index, then it is occluded :)
 
-                # bvh.ray_cast(origin, direction, distance=sys.float_info.max) : returns
-                # if hit: (Vector location, Vector normal, int index, float distance) else all (None, ...)
+                    # bvh.ray_cast(origin, direction, distance=sys.float_info.max) : returns
+                    # if hit: (Vector location, Vector normal, int index, float distance) else all (None, ...)
 
-                direction = world_coordinate - eye_location
-                hit = bvh.ray_cast(eye_location, direction)
-                if hit:
-                    if hit[2] == idx:
-                        if display_face_index:
+                    direction = world_coordinate - eye_location
+                    hit = bvh.ray_cast(eye_location, direction)
+                    if hit:
+                        if hit[2] == idx:
                             gather_index(geom.face_data[obj_index][idx], 'faces')
+                        pass
                     pass
                 pass
             
             if display_edge_index:
-                eps=1e-5
                 for idx, edge in enumerate(edges):
                     world_coordinate = geom.edge_data[obj_index][idx].location
                     result_vector = eye_location - world_coordinate
@@ -294,9 +294,20 @@ def draw_indices_2D_wbg(context, args):
                             cache_edge_indices.add(tuple(sorted([edge[0], edge[1]])))
                         pass
                     pass
+                
+                for edge_index, edge in enumerate(edges):
+                    if edge[0]>edge[1]:
+                        sorted_edge = ( edge[1], edge[0] )
+                    else:
+                        sorted_edge = tuple( edge )
+
+                    if sorted_edge in cache_edge_indices:
+                        gather_index(geom.edge_data[obj_index][edge_index], 'edges')
+                        cache_edge_indices.remove(sorted_edge)
+                    pass
+                pass
             
             if display_vert_index:
-                eps=1e-5
                 for idx, vert in enumerate(vertices):
                     world_coordinate = geom.vert_data[obj_index][idx].location
                     result_vector = eye_location - world_coordinate
@@ -314,19 +325,11 @@ def draw_indices_2D_wbg(context, args):
                             cache_vert_indices.add(idx)
                         pass
                     pass
+                pass
 
-            for idx in cache_vert_indices:
-                gather_index(geom.vert_data[obj_index][idx], 'verts')
+                for idx in cache_vert_indices:
+                    gather_index(geom.vert_data[obj_index][idx], 'verts')
 
-            for edge_index, edge in enumerate(edges):
-                if edge[0]>edge[1]:
-                    sorted_edge = ( edge[1], edge[0] )
-                else:
-                    sorted_edge = tuple( edge )
-
-                if sorted_edge in cache_edge_indices:
-                    gather_index(geom.edge_data[obj_index][edge_index], 'edges')
-                    cache_edge_indices.remove(sorted_edge)
 
         draw_all_text_at_once(final_draw_data)
 
