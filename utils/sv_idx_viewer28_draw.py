@@ -247,16 +247,8 @@ def draw_indices_2D_wbg(context, args):
 
             if display_face_index:
                 for idx, polygon in enumerate(polygons):
-                    # check the face normal, reject it if it's facing away.
-                    face_normal      = geom.face_data[obj_index][idx].normal
                     world_coordinate = geom.face_data[obj_index][idx].location
-
                     result_vector = eye_location - world_coordinate
-                    dot_value     = face_normal.dot(result_vector.normalized())
-
-                    if dot_value < 0.0:
-                        continue # reject
-
                     # cast ray from eye towards the median of the polygon, the reycast will return (almost definitely..)
                     # but if the return idx does not correspond with the polygon index, then it is occluded :)
 
