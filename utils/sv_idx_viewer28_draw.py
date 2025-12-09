@@ -313,6 +313,7 @@ def draw_indices_2D_wbg(context, args):
                         pass
                     pass
                 pass
+            pass
 
         draw_all_text_at_once(final_draw_data)
 
