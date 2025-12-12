@@ -170,8 +170,8 @@ def draw_indices_2D_wbg(context, args):
         return
 
     def gather_index(text_info, type_draw):
-        if point_on_screen( region, region3d, text_info.location)==False:
-            return
+        # if point_on_screen( region, region3d, text_info.location)==False:
+        #     return
         
         vec_4d = perspective_matrix @ text_info.location.to_4d()
         if vec_4d.w <= 0.0:
@@ -218,21 +218,24 @@ def draw_indices_2D_wbg(context, args):
         if display_vert_index:
             for vert_data in geom.vert_data:
                 for vidx in vert_data:
-                    gather_index(vidx, 'verts')
+                    if point_on_screen( region, region3d, vidx.location):
+                        gather_index(vidx, 'verts')
                 pass
             pass
     
         if display_edge_index:
             for edge_data in geom.edge_data:
                 for eidx in edge_data:
-                    gather_index(eidx, 'edges')
+                    if point_on_screen( region, region3d, eidx.location):
+                        gather_index(eidx, 'edges')
                 pass
             pass
 
         if display_face_index:
             for face_data in geom.face_data:
                 for fidx in face_data:
-                    gather_index(fidx, 'faces')
+                    if point_on_screen( region, region3d, fidx.location):
+                        gather_index(fidx, 'faces')
                 pass
             pass
 
@@ -257,6 +260,9 @@ def draw_indices_2D_wbg(context, args):
             if display_face_index:
                 for idx, polygon in enumerate(polygons):
                     world_coordinate = geom.face_data[obj_index][idx].location
+                    if point_on_screen( region, region3d, world_coordinate)==False:
+                        continue
+
                     result_vector = eye_location - world_coordinate
                     # cast ray from eye towards the median of the polygon, the reycast will return (almost definitely..)
                     # but if the return idx does not correspond with the polygon index, then it is occluded :)
@@ -278,6 +284,8 @@ def draw_indices_2D_wbg(context, args):
             if display_edge_index:
                 for idx, edge in enumerate(edges):
                     world_coordinate = geom.edge_data[obj_index][idx].location
+                    if point_on_screen( region, region3d, world_coordinate)==False:
+                        continue
                     result_vector = eye_location - world_coordinate
                     dist = result_vector.length
                     if dist==0:
@@ -299,6 +307,8 @@ def draw_indices_2D_wbg(context, args):
             if display_vert_index:
                 for idx, vert in enumerate(vertices):
                     world_coordinate = geom.vert_data[obj_index][idx].location
+                    if point_on_screen( region, region3d, world_coordinate)==False:
+                        continue
                     result_vector = eye_location - world_coordinate
                     dist = result_vector.length
                     if dist==0:
