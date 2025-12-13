@@ -716,7 +716,7 @@ class SvNurbsCurve(SvCurve):
 
         segments = []
         rest = self
-        for u in sv_knotvector.get_internal_knots(self.get_knotvector()):
+        for u in sv_knotvector.get_internal_knots(self.get_knotvector(), tolerance=None):
             segment, rest = rest.split_at(u)
             if to_bezier_class:
                 segments.append(segment.to_bezier())
@@ -728,10 +728,12 @@ class SvNurbsCurve(SvCurve):
             segments.append(rest)
         return segments
 
-    def bezier_to_taylor(self):
+    def bezier_to_taylor(self, ndim=4):
         # Refer to The NURBS Book, 2nd ed., p. 6.6
         if not self.is_bezier():
             raise NotImplementedError("Non-Bezier NURBS curve cannot be converted to Taylor curve")
+        if ndim not in {3,4}:
+            raise ArgumentError("Only ndim = 3 or 4 is supported")
 
         p = self.get_degree()
         cpts = self.get_homogenous_control_points()
@@ -746,6 +748,8 @@ class SvNurbsCurve(SvCurve):
             coeffs[k] = R @ M @ cpts[:,k]
         #print(f"T: {self.get_u_bounds()} => {coeffs.T}")
         #print(f"C: {c}, D: {d} => R {R}")
+        if ndim == 3:
+            coeffs = coeffs[:3,:]
 
         taylor = SvTaylorCurve.from_coefficients(coeffs.T)
         taylor.u_bounds = self.get_u_bounds()

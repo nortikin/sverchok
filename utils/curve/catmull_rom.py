@@ -144,13 +144,14 @@ class SvUniformCatmullRomCurve(SvCurve):
         n = len(self.points)
         for i in range(n-3):
             spline_cpts = self.points[i:i+4]
-            print(f"I {i} => tension {self.tensions[i+1]}")
+            #print(f"I {i} => tension {self.tensions[i+1]}")
             segment = uniform_catmull_rom_bezier_segment(spline_cpts, self.tensions[i+1])
             segments.append(segment)
         return segments
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
-        return concatenate_nurbs_curves(self.to_bezier_segments(), tolerance=None)
+        u_bounds = self.get_u_bounds()
+        return concatenate_nurbs_curves(self.to_bezier_segments(), tolerance=None).reparametrize(*u_bounds)
 
     def get_control_points(self):
         return self.to_nurbs().get_control_points()
