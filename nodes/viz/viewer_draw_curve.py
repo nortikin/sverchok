@@ -402,21 +402,22 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
                 for IJ, curve_data in enumerate(obj):
                     if curve_data.control_points is not None:
                         vert_data = [(Vector(p)) for IJ, p in enumerate(curve_data.control_points) if IJ%3==0]
-                        verts_info = [ TextInfo('', f'{IJ}/{I}', IJK, p) for IJK, p in enumerate(vert_data)]
+                        verts_info = [ TextInfo('', f'{IJ}:{I}', IJK, p) for IJK, p in enumerate(vert_data)]
                         # combine first and last indexes if curve is cyclic
                         if curve_data.curve.is_closed()==True and len(verts_info)>1:
                             verts_info.pop(0)
                             verts_info[-1].index = "0-"+str(verts_info[-1].index)
                         geom.vert_data.append( verts_info )
                         # calculate of segments points
-                        if curve_data.curve.is_bezier():
+                        #if curve_data.curve.is_bezier():
+                        if curve_data.curve.is_rational()==False:
                             lbs = curve_data.curve.to_bezier_segments()
                             edges_info = []
                             for IJK, bs in enumerate(lbs):
                                 t_min, t_max = bs.get_u_bounds()
                                 t_mid = (t_max-t_min)/2.0
                                 mid_point = bs.evaluate(t_mid)
-                                edges_info.append( TextInfo('', f'{IJ}/{I}', IJK, Vector(mid_point)) )
+                                edges_info.append( TextInfo('', f'{IJ}:{I}', IJK, Vector(mid_point)) )
                                 pass
                             geom.edge_data.append(edges_info)
                         
