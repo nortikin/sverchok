@@ -113,6 +113,9 @@ def draw_indices_2D_wbg(context, args):
 
     font_id             = 0
     text_height         = int(13.0 * scale)
+    text_height_05      = int(text_height*0.5)
+    if(text_height_05<2):
+        text_height_05=2
     drawing.blf_size(font_id, text_height, 72)  # should check prefs.dpi
 
     region_mid_width    = region.width / 2.0
@@ -156,14 +159,14 @@ def draw_indices_2D_wbg(context, args):
             blf.draw(font_id, text)
 
             txt_width, txt_height = blf.dimensions(font_id, text)
-            drawing.blf_size(font_id, text_height*0.5, 72)
+            drawing.blf_size(font_id, text_height_05, 72)
             object_index_width, object_index_height = blf.dimensions(font_id, str(text_info.object_index))
             if draw_obj_idx:
                 blf.position(font_id, pos_x + txt_width+2, pos_y, 0)
                 blf.draw(font_id, str(text_info.object_index) )
 
             if text_mode in ['TEXT_INDEX']:
-                drawing.blf_size(font_id, text_height*0.5, 72)
+                drawing.blf_size(font_id, text_height_05, 72)
                 blf.position(font_id, pos_x + txt_width+2, pos_y+object_index_height+object_index_index_gap, 0)
                 blf.draw(font_id, str(text_info.index) )
             pass
@@ -190,7 +193,7 @@ def draw_indices_2D_wbg(context, args):
         pos_x = x - (txt_width / 2)
         pos_y = y - (txt_height / 2)
 
-        drawing.blf_size(font_id, text_height*0.5, 72)
+        drawing.blf_size(font_id, text_height_05, 72)
         object_index_width, object_index_height = blf.dimensions(font_id, str(text_info.object_index))
         text_index_width, text_index_height = blf.dimensions(font_id, str(text_info.index))
         txt_extra_width, txt_extra_height = 0,0
