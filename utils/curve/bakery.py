@@ -52,7 +52,7 @@ class CurveData(object):
             self.edges = None
 
         self.control_points = None
-        if (node.draw_control_polygon or node.draw_control_points):
+        if (node.draw_control_polygon or node.draw_control_points or hasattr(node, 'draw_control_points_indexes') and node.draw_control_points_indexes or hasattr(node, 'draw_segments_indexes') and node.draw_segments_indexes):
             try:
                 if hasattr(curve, 'get_control_points'):
                     cpts = curve.get_control_points().tolist()
