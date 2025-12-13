@@ -25,17 +25,32 @@ Additionally
 
 Because it can be difficult to read indices when there are many geometric elements visible there is an option to draw a small background under the text element.
 
+Difference from standard index display mode in Blender
+------------------------------------------------------
+
+Blender in "Edit mode" mode can display the indices of elements of the original polygonal grid:
+
+  .. image:: https://github.com/user-attachments/assets/97b38eef-f223-4969-9e56-d1ad694ef321
+    :target: https://github.com/user-attachments/assets/97b38eef-f223-4969-9e56-d1ad694ef321
+
+This node can display the indices of the polygonal grid regardless of the mode of display of the object, and also in the Post modifiers mode:
+
+.. image:: https://github.com/user-attachments/assets/03448df5-3618-41d3-8e80-af15b0550715
+  :target: https://github.com/user-attachments/assets/03448df5-3618-41d3-8e80-af15b0550715
+
 Parameters
 ----------
 
 Activate
-  Enabling the node.
+  Enabling the node (show hide indexes).
 
 Draw background
   Hide background around text.
 
-.. image:: https://user-images.githubusercontent.com/14288520/190143217-5cc4e457-194b-491e-9de0-2fc793d645d7.png
-  :target: https://user-images.githubusercontent.com/14288520/190143217-5cc4e457-194b-491e-9de0-2fc793d645d7.png
+  .. image:: https://user-images.githubusercontent.com/14288520/190143217-5cc4e457-194b-491e-9de0-2fc793d645d7.png
+    :target: https://user-images.githubusercontent.com/14288520/190143217-5cc4e457-194b-491e-9de0-2fc793d645d7.png
+
+----------
 
 Draw bface
   (using the Ghost icon in the Node UI) if you attach verts + faces, you can
@@ -43,20 +58,44 @@ Draw bface
   information gives the node enough information to detect what can be seen
   directly by the viewport "eye" location.
 
-.. image:: https://user-images.githubusercontent.com/14288520/190142052-1524e31a-a4fa-4c69-9c3c-bc0230f7cec7.png
-  :target: https://user-images.githubusercontent.com/14288520/190142052-1524e31a-a4fa-4c69-9c3c-bc0230f7cec7.png
+  .. image:: https://user-images.githubusercontent.com/14288520/190142052-1524e31a-a4fa-4c69-9c3c-bc0230f7cec7.png
+    :target: https://user-images.githubusercontent.com/14288520/190142052-1524e31a-a4fa-4c69-9c3c-bc0230f7cec7.png
+
+-----------
 
 Draw object index
-  (available from N Panel) the Node can display the Object index associated
-  with the element ( the first object, first index will be drawn as ``0: 0`` )
+  The Node can display the Object index associated with the element. Index first and object index as subtext:
 
-.. image:: https://user-images.githubusercontent.com/14288520/190146606-ab79e7d2-00f7-4f39-b805-94a82da20d1e.png
-  :target: https://user-images.githubusercontent.com/14288520/190146606-ab79e7d2-00f7-4f39-b805-94a82da20d1e.png
+  .. image:: https://github.com/user-attachments/assets/d8bb319f-a7e8-473c-b103-365356b39305
+    :target: https://github.com/user-attachments/assets/d8bb319f-a7e8-473c-b103-365356b39305
+
+Draw text with inex of elements
+  The Node can display the text with index associated with the element:
+
+  .. image:: https://github.com/user-attachments/assets/070c8afa-df80-464a-a756-d59ea011db98
+    :target: https://github.com/user-attachments/assets/070c8afa-df80-464a-a756-d59ea011db98
 
 Examples
 --------
 
-**Hide text behind geometry**
+Length of edges
+---------------
+
+.. image:: https://github.com/user-attachments/assets/d8f87e21-9d81-4cfa-a089-bc9c29c5182b
+  :target: https://github.com/user-attachments/assets/d8f87e21-9d81-4cfa-a089-bc9c29c5182b
+
+-----------
+
+Area of faces
+-------------
+
+.. image:: https://github.com/user-attachments/assets/357c16cc-85a0-43c8-b9e3-46e694796ebc
+  :target: https://github.com/user-attachments/assets/357c16cc-85a0-43c8-b9e3-46e694796ebc
+
+-----------
+
+Hide text behind geometry
+-------------------------
 
 .. image:: https://user-images.githubusercontent.com/14288520/189987936-5d24ba0b-9141-4f1e-bbd1-97f1dbad1bde.png
   :target: https://user-images.githubusercontent.com/14288520/189987936-5d24ba0b-9141-4f1e-bbd1-97f1dbad1bde.png
@@ -66,7 +105,8 @@ Examples
 
 ---------
 
-**Show custom text with offset**
+Show custom text with offset
+----------------------------
 
 .. image:: https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png
   :target: https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png

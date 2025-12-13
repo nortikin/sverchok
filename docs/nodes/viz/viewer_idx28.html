@@ -380,8 +380,13 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#difference-from-standard-index-display-mode-in-blender">Difference from standard index display mode in Blender</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-of-edges">Length of edges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#area-of-faces">Area of faces</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hide-text-behind-geometry">Hide text behind geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#show-custom-text-with-offset">Show custom text with offset</a></li>
 </ul>
             </nav>
         </div>
@@ -416,44 +421,76 @@ number of elements the last element will be displayed on rest elements.</p></li>
 </ul>
 <p>Because it can be difficult to read indices when there are many geometric elements visible there is an option to draw a small background under the text element.</p>
 </section>
+<section id="difference-from-standard-index-display-mode-in-blender">
+<h2>Difference from standard index display mode in Blender<a class="headerlink" href="#difference-from-standard-index-display-mode-in-blender" title="Link to this heading">#</a></h2>
+<p>Blender in “Edit mode” mode can display the indices of elements of the original polygonal grid:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/97b38eef-f223-4969-9e56-d1ad694ef321"><img alt="https://github.com/user-attachments/assets/97b38eef-f223-4969-9e56-d1ad694ef321" src="https://github.com/user-attachments/assets/97b38eef-f223-4969-9e56-d1ad694ef321" />
+</a>
+</div></blockquote>
+<p>This node can display the indices of the polygonal grid regardless of the mode of display of the object, and also in the Post modifiers mode:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/03448df5-3618-41d3-8e80-af15b0550715"><img alt="https://github.com/user-attachments/assets/03448df5-3618-41d3-8e80-af15b0550715" src="https://github.com/user-attachments/assets/03448df5-3618-41d3-8e80-af15b0550715" />
+</a>
+</section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>Activate</dt><dd><p>Enabling the node.</p>
+<dl>
+<dt>Activate</dt><dd><p>Enabling the node (show hide indexes).</p>
 </dd>
 <dt>Draw background</dt><dd><p>Hide background around text.</p>
-</dd>
-</dl>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190143217-5cc4e457-194b-491e-9de0-2fc793d645d7.png"><img alt="https://user-images.githubusercontent.com/14288520/190143217-5cc4e457-194b-491e-9de0-2fc793d645d7.png" src="https://user-images.githubusercontent.com/14288520/190143217-5cc4e457-194b-491e-9de0-2fc793d645d7.png" />
 </a>
-<dl class="simple">
+</dd>
+</dl>
+<hr class="docutils" />
+<dl>
 <dt>Draw bface</dt><dd><p>(using the Ghost icon in the Node UI) if you attach verts + faces, you can
 also hide backfacing indices from being displayed. Adding the faces
 information gives the node enough information to detect what can be seen
 directly by the viewport “eye” location.</p>
-</dd>
-</dl>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190142052-1524e31a-a4fa-4c69-9c3c-bc0230f7cec7.png"><img alt="https://user-images.githubusercontent.com/14288520/190142052-1524e31a-a4fa-4c69-9c3c-bc0230f7cec7.png" src="https://user-images.githubusercontent.com/14288520/190142052-1524e31a-a4fa-4c69-9c3c-bc0230f7cec7.png" />
 </a>
-<dl class="simple">
-<dt>Draw object index</dt><dd><p>(available from N Panel) the Node can display the Object index associated
-with the element ( the first object, first index will be drawn as <code class="docutils literal notranslate"><span class="pre">0:</span> <span class="pre">0</span></code> )</p>
 </dd>
 </dl>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190146606-ab79e7d2-00f7-4f39-b805-94a82da20d1e.png"><img alt="https://user-images.githubusercontent.com/14288520/190146606-ab79e7d2-00f7-4f39-b805-94a82da20d1e.png" src="https://user-images.githubusercontent.com/14288520/190146606-ab79e7d2-00f7-4f39-b805-94a82da20d1e.png" />
+<hr class="docutils" />
+<dl>
+<dt>Draw object index</dt><dd><p>The Node can display the Object index associated with the element. Index first and object index as subtext:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/d8bb319f-a7e8-473c-b103-365356b39305"><img alt="https://github.com/user-attachments/assets/d8bb319f-a7e8-473c-b103-365356b39305" src="https://github.com/user-attachments/assets/d8bb319f-a7e8-473c-b103-365356b39305" />
 </a>
+</dd>
+<dt>Draw text with inex of elements</dt><dd><p>The Node can display the text with index associated with the element:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/070c8afa-df80-464a-a756-d59ea011db98"><img alt="https://github.com/user-attachments/assets/070c8afa-df80-464a-a756-d59ea011db98" src="https://github.com/user-attachments/assets/070c8afa-df80-464a-a756-d59ea011db98" />
+</a>
+</dd>
+</dl>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
-<p><strong>Hide text behind geometry</strong></p>
+</section>
+<section id="length-of-edges">
+<h2>Length of edges<a class="headerlink" href="#length-of-edges" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/d8f87e21-9d81-4cfa-a089-bc9c29c5182b"><img alt="https://github.com/user-attachments/assets/d8f87e21-9d81-4cfa-a089-bc9c29c5182b" src="https://github.com/user-attachments/assets/d8f87e21-9d81-4cfa-a089-bc9c29c5182b" />
+</a>
+</section>
+<hr class="docutils" />
+<section id="area-of-faces">
+<h2>Area of faces<a class="headerlink" href="#area-of-faces" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/357c16cc-85a0-43c8-b9e3-46e694796ebc"><img alt="https://github.com/user-attachments/assets/357c16cc-85a0-43c8-b9e3-46e694796ebc" src="https://github.com/user-attachments/assets/357c16cc-85a0-43c8-b9e3-46e694796ebc" />
+</a>
+</section>
+<hr class="docutils" />
+<section id="hide-text-behind-geometry">
+<h2>Hide text behind geometry<a class="headerlink" href="#hide-text-behind-geometry" title="Link to this heading">#</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189987936-5d24ba0b-9141-4f1e-bbd1-97f1dbad1bde.png"><img alt="https://user-images.githubusercontent.com/14288520/189987936-5d24ba0b-9141-4f1e-bbd1-97f1dbad1bde.png" src="https://user-images.githubusercontent.com/14288520/189987936-5d24ba0b-9141-4f1e-bbd1-97f1dbad1bde.png" />
 </a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
+</section>
 <hr class="docutils" />
-<p><strong>Show custom text with offset</strong></p>
+<section id="show-custom-text-with-offset">
+<h2>Show custom text with offset<a class="headerlink" href="#show-custom-text-with-offset" title="Link to this heading">#</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png"><img alt="https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png" src="https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png" />
 </a>
 <ul class="simple">
@@ -512,8 +549,13 @@ with the element ( the first object, first index will be drawn as <code class="d
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#difference-from-standard-index-display-mode-in-blender">Difference from standard index display mode in Blender</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-of-edges">Length of edges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#area-of-faces">Area of faces</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hide-text-behind-geometry">Hide text behind geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#show-custom-text-with-offset">Show custom text with offset</a></li>
 </ul>
   </nav></div>
 
