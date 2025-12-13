@@ -25,6 +25,19 @@ Additionally
 
 Because it can be difficult to read indices when there are many geometric elements visible there is an option to draw a small background under the text element.
 
+Difference from standard index display mode in Blender
+------------------------------------------------------
+
+Blender in "Edit mode" mode can display the indices of elements of the original polygonal grid:
+
+  .. image:: https://github.com/user-attachments/assets/97b38eef-f223-4969-9e56-d1ad694ef321
+    :target: https://github.com/user-attachments/assets/97b38eef-f223-4969-9e56-d1ad694ef321
+
+This node can display the indices of the polygonal grid regardless of the mode of display of the object, and also in the Post modifiers mode:
+
+.. image:: https://github.com/user-attachments/assets/03448df5-3618-41d3-8e80-af15b0550715
+  :target: https://github.com/user-attachments/assets/03448df5-3618-41d3-8e80-af15b0550715
+
 Parameters
 ----------
 
