@@ -164,7 +164,7 @@
                 },
                 "properties": {
                     "n_id": "-7289117756019158704",
-                    "text": "2022 | you need to install freecad libs to get it work. for now python 3.9 supported, so elder blender needed in fact. Follow wiki instructions.\nOpen file in <freecad root folder>\\data\\examples\\ArchDetail.FCStd"
+                    "text": "2022 | you need to install freecad libs to get it work. for now python 3.9 supported, so elder blender needed in fact. Follow wiki instructions.\nOpen file in <freecad root folder>\\data\\examples\\ArchDetail.FCStd",
                     "show_text": false
                 },
                 "inputs": {
