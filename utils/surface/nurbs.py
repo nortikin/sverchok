@@ -11,7 +11,7 @@ from sverchok.utils.nurbs_common import (
         CantRemoveKnotException, CantReduceDegreeException
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs_algorithms import unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
+from sverchok.utils.curve.nurbs_algorithms import unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix, move_curve_point_by_moving_control_points, TANGENT_PRESERVE
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator, SvCurveLengthSolver
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
@@ -1917,6 +1917,115 @@ def nurbs_birail(path1, path2, profiles,
             logger = logger)
 
     return placed_profiles, unified_curves, v_curves, surface
+
+def unify_surface_curve(surface, direction, curve, tolerance=1e-6):
+    curve = curve.reparametrize(0.0, 1.0)
+    u_min, u_max = surface.get_u_bounds()
+    v_min, v_max = surface.get_v_bounds()
+    if direction == SvNurbsSurface.U:
+        surface = surface.reparametrize(0.0, 1.0, v_min, v_max)
+    else:
+        surface = surface.reparametrize(u_min, u_max, 0.0, 1.0)
+
+    curve_degree = curve.get_degree()
+    if direction == SvNurbsSurface.U:
+        surface_degree = surface.get_degree_u()
+    else:
+        surface_degree = surface.get_degree_v()
+
+    degree = max(curve_degree, surface_degree)
+    surface = surface.elevate_degree(direction, target=degree)
+    curve = curve.elevate_degree(target=degree)
+
+    dst_knots = sv_knotvector.KnotvectorDict(tolerance)
+    if direction == SvNurbsSurface.U:
+        surface_kv = surface.get_knotvector_u()
+    else:
+        surface_kv = surface.get_knotvector_v()
+    curve_kv = curve.get_knotvector()
+
+    curve_ms = sv_knotvector.to_multiplicity(curve_kv, tolerance=None)
+    for u, count in curve_ms:
+        dst_knots.put(u, count)
+    surface_ms = sv_knotvector.to_multiplicity(surface_kv, tolerance=None)
+    for u, count in surface_ms:
+        dst_knots.put(u, count)
+    dst_knots.calc_averages()
+
+    curve_ms = dict(curve_ms)
+    surface_ms = dict(surface_ms)
+
+    curve_updates = dst_knots.get_updates(curve_ms.keys())
+    updated_ms = []
+    for knot_idx, (knot, multiplicity) in enumerate(curve_ms.items()):
+        if knot_idx in curve_updates:
+            updated_ms.append((curve_updates[knot_idx], multiplicity))
+        else:
+            updated_ms.append((knot, multiplicity))
+    ms = dict(updated_ms)
+    updated_kv = sv_knotvector.from_multiplicity(updated_ms)
+    curve = curve.copy(knotvector = updated_kv)
+
+    curve_insertions = dst_knots.get_insertions(ms)
+    for knot, diff in curve_insertions.items():
+        if diff > 0:
+            curve = curve.insert_knot(knot, diff)
+
+    surface_updates = dst_knots.get_updates(surface_ms.keys())
+    updated_ms = []
+    for knot_idx, (knot, multiplicity) in enumerate(surface_ms.items()):
+        if knot_idx in surface_updates:
+            updated_ms.append((surface_updates[knot_idx], multiplicity))
+        else:
+            updated_ms.append((knot, multiplicity))
+    ms = dict(updated_ms)
+    updated_kv = sv_knotvector.from_multiplicity(updated_ms)
+    if direction == SvNurbsSurface.U:
+        surface = surface.copy(knotvector_u = updated_kv)
+    else:
+        surface = surface.copy(knotvector_v = updated_kv)
+
+    surface_insertions = dst_knots.get_insertions(ms)
+    for knot, diff in surface_insertions.items():
+        if diff > 0:
+            surface = surface.insert_knot(direction, knot, count=diff)
+
+    return surface, curve
+
+def adjust_nurbs_surface(surface, direction, value, target_curve, preserve_tangents=False):
+    surface, target_curve = unify_surface_curve(surface, direction, target_curve)
+    controls = surface.get_control_points()
+    weights = surface.get_weights()
+    k_u,k_v = weights.shape
+    if preserve_tangents:
+        tangent = TANGENT_PRESERVE
+    else:
+        tangent = None
+    if direction == SvNurbsSurface.U:
+        q_curves = [SvNurbsMaths.build_curve(surface.get_nurbs_implementation(),
+                        surface.get_degree_v(),
+                        surface.get_knotvector_v(),
+                        controls[j,:], weights[j,:]) for j in range(k_u)]
+        updated_q_curves = []
+        for q_curve, target_control in zip(q_curves, target_curve.get_control_points()):
+            q_curve = move_curve_point_by_moving_control_points(q_curve, value, target_control, relative=False, tangent=tangent)
+            updated_q_curves.append(q_curve)
+        q_controls = [q_curve.get_control_points() for q_curve in updated_q_curves]
+        q_controls = np.array(q_controls)
+        return surface.copy(control_points = q_controls)
+    else:
+        q_curves = [SvNurbsMaths.build_curve(surface.get_nurbs_implementation(),
+                        surface.get_degree_u(),
+                        surface.get_knotvector_u(),
+                        controls[:,j], weights[:,j]) for j in range(k_v)]
+        updated_q_curves = []
+        for q_curve, target_control in zip(q_curves, target_curve.get_control_points()):
+            q_curve = move_curve_point_by_moving_control_points(q_curve, value, target_control, relative=False, tangent=tangent)
+            updated_q_curves.append(q_curve)
+        q_controls = [q_curve.get_control_points() for q_curve in updated_q_curves]
+        q_controls = np.array(q_controls)
+        q_controls = np.transpose(q_controls, axes=(1,0,2))
+        return surface.copy(control_points = q_controls)
 
 SvNurbsMaths.surface_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsSurface
 if geomdl is not None:
