@@ -68,6 +68,11 @@ class SvCurveToNurbsNode(SverchCustomTreeNode, bpy.types.Node):
             default = True,
             update = update_sockets)
 
+    use_tangents : BoolProperty(
+            name = "Use tangents",
+            default = False,
+            update = updateNode)
+
     tolerance : FloatProperty(
             name = "Tolerance",
             default = 1e-6,
@@ -78,6 +83,7 @@ class SvCurveToNurbsNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.label(text='Parametrization:')
         layout.prop(self, 'parametrization', text='')
+        layout.prop(self, 'use_tangents')
         layout.prop(self, 'simplify')
 
     def sv_init(self, context):
@@ -120,6 +126,7 @@ class SvCurveToNurbsNode(SverchCustomTreeNode, bpy.types.Node):
                                        method = self.parametrization,
                                        parametrization = parametrization,
                                        resolution = resolution,
+                                       use_tangents = self.use_tangents,
                                        logger = self.sv_logger)
                 if self.simplify:
                     curve = remove_excessive_knots(curve, tolerance = tolerance)

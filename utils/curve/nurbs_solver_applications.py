@@ -362,10 +362,14 @@ def curve_to_nurbs(degree, curve,
             ts = ts[:-1]
         points = curve.evaluate_array(ts)
         if use_tangents:
-            tangent1 = curve.tangent(ts[0])
-            tangent2 = curve.tangent(ts[-1])
-            new_segment = interpolate_nurbs_curve_with_end_tangents(degree, points,
-                                                                    tangent1, tangent2,
+            target_tangents = curve.tangent_array(ts)
+            target_tangents_dirs = target_tangents / np.linalg.norm(target_tangents, axis=1, keepdims=True)
+            interpolated = interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, metric=metric, t_range=t_range, logger=logger)
+            interpolated_tangents = interpolated.tangent_array(ts)
+            interpolated_tangents_lens = np.linalg.norm(interpolated_tangents, axis=1, keepdims=True)
+            target_tangents = interpolated_tangents_lens * target_tangents_dirs
+            print("T", interpolated_tangents, target_tangents_dirs)
+            new_segment = interpolate_nurbs_curve_with_tangents(degree, points, target_tangents,
                                                                     metric=metric,
                                                                     t_range=t_range,
                                                                     logger=logger)
