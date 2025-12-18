@@ -19,8 +19,9 @@ from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolve
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots, concatenate_nurbs_curves
 from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveCotangents, SvNurbsCurveSolver
+from sverchok.utils.sv_logging import get_logger
 
-def adjust_curve_points(curve, us_bar, points, preserve_tangents=False):
+def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, logger=None):
     """
     Modify NURBS curve so that it would pass through specified points
     at specified parameter values.
@@ -33,6 +34,8 @@ def adjust_curve_points(curve, us_bar, points, preserve_tangents=False):
     Returns:
         an instance of SvNurbsCurve.
     """
+    if logger is None:
+        logger = get_logger()
     n_target_points = len(us_bar)
     if len(points) != n_target_points:
         raise Exception("Number of U parameters must be equal to number of points")
@@ -46,7 +49,8 @@ def adjust_curve_points(curve, us_bar, points, preserve_tangents=False):
     solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector())
     problem_type, residue, curve = solver.solve_ex(
                     problem_types = {SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED,
-                                     SvNurbsCurveSolver.PROBLEM_WELLDETERMINED}
+                                     SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                    logger = logger
                 )
     return curve
 

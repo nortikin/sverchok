@@ -2007,7 +2007,7 @@ def unify_surface_curve(surface, direction, curves, accuracy=6):
 
     return surface, curves
 
-def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False):
+def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False, logger=None):
     """
     Adjust NURBS surface in such a way that at specified value of U/V parameter
     it would pass through specified NURBS curve.
@@ -2023,6 +2023,8 @@ def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False):
     Returns:
         * SvNurbsSurface.
     """
+    if logger is None:
+        logger = get_logger()
     target_curves = [p[1] for p in targets]
     values = np.array([p[0] for p in targets])
     surface, target_curves = unify_surface_curve(surface, direction, target_curves)
@@ -2041,7 +2043,7 @@ def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False):
         for j, q_curve in enumerate(q_curves):
             controls = np.array([pts[j] for pts in target_controls])
             #print(f"U Values {len(values)}, controls {controls.shape}")
-            q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents)
+            q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents, logger = logger)
             q_controls.append(q_curve.get_control_points())
         q_controls = np.array(q_controls)
         return surface.copy(control_points = q_controls)
@@ -2054,7 +2056,7 @@ def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False):
         for j, q_curve in enumerate(q_curves):
             controls = np.array([pts[j] for pts in target_controls])
             #print(f"V Values {len(values)}, controls {controls.shape}")
-            q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents)
+            q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents, logger = logger)
             q_controls.append(q_curve.get_control_points())
         q_controls = np.transpose(q_controls, axes=(1,0,2))
         return surface.copy(control_points = q_controls)
