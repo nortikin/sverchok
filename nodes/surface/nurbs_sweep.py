@@ -192,7 +192,8 @@ class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
                                     metric = self.metric,
                                     implementation = self.nurbs_implementation,
                                     resolution = resolution,
-                                    normal = np.array(normal))
+                                    normal = np.array(normal),
+                                    logger = self.sv_logger)
                 new_surfaces.append(surface)
                 new_curves.extend(unified_curves)
                 new_v_curves.extend(v_curves)
