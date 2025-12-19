@@ -2040,25 +2040,20 @@ def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False, l
                         surface.get_degree_v(),
                         surface.get_knotvector_v(),
                         controls[j,:], weights[j,:]) for j in range(k_u)]
-        q_controls = []
-        for j, q_curve in enumerate(q_curves):
-            controls = np.array([pts[j] for pts in target_controls])
-            q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents, logger = logger)
-            q_controls.append(q_curve.get_control_points())
-        q_controls = np.array(q_controls)
-        return surface.copy(control_points = q_controls)
     else:
         q_curves = [SvNurbsMaths.build_curve(surface.get_nurbs_implementation(),
                         surface.get_degree_u(),
                         surface.get_knotvector_u(),
                         controls[:,j], weights[:,j]) for j in range(k_v)]
-        q_controls = []
-        for j, q_curve in enumerate(q_curves):
-            controls = np.array([pts[j] for pts in target_controls])
-            q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents, logger = logger)
-            q_controls.append(q_curve.get_control_points())
+    q_controls = []
+    for j, q_curve in enumerate(q_curves):
+        controls = np.array([pts[j] for pts in target_controls])
+        q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents, logger = logger)
+        q_controls.append(q_curve.get_control_points())
+    q_controls = np.array(q_controls)
+    if direction == SvNurbsSurface.U:
         q_controls = np.transpose(q_controls, axes=(1,0,2))
-        return surface.copy(control_points = q_controls)
+    return surface.copy(control_points = q_controls)
 
 SvNurbsMaths.surface_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsSurface
 if geomdl is not None:
