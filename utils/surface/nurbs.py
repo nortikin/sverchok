@@ -1932,28 +1932,29 @@ def unify_surface_curve(surface, direction, curves, accuracy=6):
     Returns:
         * Tuple: SvNurbsSurface and a list of SvNurbsCurve.
     """
+    second_direction = SvNurbsSurface.U if direction == SvNurbsSurface.V else SvNurbsSurface.V
     curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
     curves = unify_curves(curves, accuracy=accuracy)
     u_min, u_max = surface.get_u_bounds()
     v_min, v_max = surface.get_v_bounds()
-    if direction == SvNurbsSurface.U:
+    if direction == SvNurbsSurface.V:
         surface = surface.reparametrize(0.0, 1.0, v_min, v_max)
     else:
         surface = surface.reparametrize(u_min, u_max, 0.0, 1.0)
 
     curve_degree = curves[0].get_degree()
-    if direction == SvNurbsSurface.U:
+    if direction == SvNurbsSurface.V:
         surface_degree = surface.get_degree_u()
     else:
         surface_degree = surface.get_degree_v()
 
     degree = max(curve_degree, surface_degree)
-    surface = surface.elevate_degree(direction, target=degree)
+    surface = surface.elevate_degree(second_direction, target=degree)
     curves = [curve.elevate_degree(target=degree) for curve in curves]
 
     tolerance = 10**(-accuracy)
     dst_knots = sv_knotvector.KnotvectorDict(tolerance)
-    if direction == SvNurbsSurface.U:
+    if direction == SvNurbsSurface.V:
         surface_kv = surface.get_knotvector_u()
     else:
         surface_kv = surface.get_knotvector_v()
@@ -1995,7 +1996,7 @@ def unify_surface_curve(surface, direction, curves, accuracy=6):
             updated_ms.append((knot, multiplicity))
     ms = dict(updated_ms)
     updated_kv = sv_knotvector.from_multiplicity(updated_ms)
-    if direction == SvNurbsSurface.U:
+    if direction == SvNurbsSurface.V:
         surface = surface.copy(knotvector_u = updated_kv)
     else:
         surface = surface.copy(knotvector_v = updated_kv)
@@ -2003,7 +2004,7 @@ def unify_surface_curve(surface, direction, curves, accuracy=6):
     surface_insertions = dst_knots.get_insertions(ms)
     for knot, diff in surface_insertions.items():
         if diff > 0:
-            surface = surface.insert_knot(direction, knot, count=diff)
+            surface = surface.insert_knot(second_direction, knot, count=diff)
 
     return surface, curves
 
@@ -2034,7 +2035,7 @@ def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False, l
 
     target_controls = [curve.get_control_points() for curve in target_curves]
 
-    if direction == SvNurbsSurface.U:
+    if direction == SvNurbsSurface.V:
         q_curves = [SvNurbsMaths.build_curve(surface.get_nurbs_implementation(),
                         surface.get_degree_v(),
                         surface.get_knotvector_v(),
@@ -2042,7 +2043,6 @@ def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False, l
         q_controls = []
         for j, q_curve in enumerate(q_curves):
             controls = np.array([pts[j] for pts in target_controls])
-            #print(f"U Values {len(values)}, controls {controls.shape}")
             q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents, logger = logger)
             q_controls.append(q_curve.get_control_points())
         q_controls = np.array(q_controls)
@@ -2055,7 +2055,6 @@ def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False, l
         q_controls = []
         for j, q_curve in enumerate(q_curves):
             controls = np.array([pts[j] for pts in target_controls])
-            #print(f"V Values {len(values)}, controls {controls.shape}")
             q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents, logger = logger)
             q_controls.append(q_curve.get_control_points())
         q_controls = np.transpose(q_controls, axes=(1,0,2))
