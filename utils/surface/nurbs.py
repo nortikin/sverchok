@@ -2058,7 +2058,7 @@ def adjust_nurbs_surface_for_curves(surface, direction, targets, preserve_tangen
 ORDER_UV = 'UV'
 ORDER_VU = 'VU'
 
-def adjust_nurbs_surface_for_points(surface, targets, preserve_tangents_u=False, preserve_tangents_v=False, directions_order=ORDER_UV, logger=None):
+def adjust_nurbs_surface_for_points_iso(surface, targets, preserve_tangents_u=False, preserve_tangents_v=False, directions_order=ORDER_UV, logger=None):
     curve_targets = []
     for target_u, target_v, target_pt in targets:
         if directions_order == ORDER_UV:
@@ -2074,6 +2074,45 @@ def adjust_nurbs_surface_for_points(surface, targets, preserve_tangents_u=False,
             curve_targets.append((target_v, target_curve))
             second_direction = SvNurbsSurface.U
     return adjust_nurbs_surface_for_curves(surface, second_direction, curve_targets, preserve_tangents = preserve_tangents_adjust, logger = logger)
+
+def adjust_nurbs_surface_for_points(surface, targets):
+    us = np.array([t[0] for t in targets])
+    vs = np.array([t[1] for t in targets])
+    pts = np.array([t[2] for t in targets])
+    basis_u = SvNurbsBasisFunctions(surface.get_knotvector_u())
+    basis_v = SvNurbsBasisFunctions(surface.get_knotvector_v())
+    n_cpts_u, n_cpts_v, ndim = surface.get_control_points().shape
+    n_cpts = n_cpts_u * n_cpts_v
+    n_points = len(targets)
+    n_equations = ndim * n_points
+    n_unknowns = ndim * n_cpts
+    p_u = surface.get_degree_u()
+    p_v = surface.get_degree_v()
+
+    alphas_u = np.array([basis_u.function(k, p_u)(us) for k in range(n_cpts_u)])
+    alphas_v = np.array([basis_v.function(k, p_v)(vs) for k in range(n_cpts_v)])
+
+    A = np.zeros((n_equations, n_unknowns))
+    for pt_idx in range(n_points):
+        for cpt_u_idx in range(n_cpts_u):
+            for cpt_v_idx in range(n_cpts_v):
+                cpt_idx = n_cpts_v * cpt_u_idx + cpt_v_idx
+                alpha_u = alphas_u[cpt_u_idx][pt_idx]
+                alpha_v = alphas_v[cpt_v_idx][pt_idx]
+                for dim_idx in range(ndim):
+                    A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = alpha_u * alpha_v
+
+    src_points = surface.evaluate_array(us, vs)
+    B = np.zeros((n_equations, 1))
+    for pt_idx, point in enumerate(pts):
+        point = point - src_points[pt_idx]
+        B[pt_idx*ndim:pt_idx*ndim+ndim, 0] = point[np.newaxis]
+
+    A1 = np.linalg.pinv(A)
+    X = (A1 @ B).T
+    d_cpts = X.reshape((n_cpts_u, n_cpts_v, ndim))
+    cpts = surface.get_control_points() + d_cpts
+    return surface.copy(control_points = cpts)
 
 SvNurbsMaths.surface_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsSurface
 if geomdl is not None:
