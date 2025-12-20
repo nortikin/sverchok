@@ -14,7 +14,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface import SvSurface, UnsupportedSurfaceTypeException
-from sverchok.utils.surface.nurbs import SvNurbsSurface, adjust_nurbs_surface
+from sverchok.utils.surface.nurbs import SvNurbsSurface, adjust_nurbs_surface_for_curves
 
 class SvAdjustNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -85,7 +85,7 @@ class SvAdjustNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                     raise UnsupportedCurveTypeException("One of curves is not NURBS")
 
                 targets = list(zip_long_repeat(p_values, curves))
-                surface = adjust_nurbs_surface(surface, self.direction, targets,
+                surface = adjust_nurbs_surface_for_curves(surface, self.direction, targets,
                                                preserve_tangents = self.preserve_tangents,
                                                logger = self.sv_logger)
                 new_surfaces.append(surface)

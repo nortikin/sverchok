@@ -2008,7 +2008,7 @@ def unify_surface_curve(surface, direction, curves, accuracy=6):
 
     return surface, curves
 
-def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False, logger=None):
+def adjust_nurbs_surface_for_curves(surface, direction, targets, preserve_tangents=False, logger=None):
     """
     Adjust NURBS surface in such a way that at specified value of U/V parameter
     it would pass through specified NURBS curve.
@@ -2054,6 +2054,26 @@ def adjust_nurbs_surface(surface, direction, targets, preserve_tangents=False, l
     if direction == SvNurbsSurface.U:
         q_controls = np.transpose(q_controls, axes=(1,0,2))
     return surface.copy(control_points = q_controls)
+
+ORDER_UV = 'UV'
+ORDER_VU = 'VU'
+
+def adjust_nurbs_surface_for_points(surface, targets, preserve_tangents_u=False, preserve_tangents_v=False, directions_order=ORDER_UV, logger=None):
+    curve_targets = []
+    for target_u, target_v, target_pt in targets:
+        if directions_order == ORDER_UV:
+            target_curve = surface.iso_curve(fixed_direction = SvNurbsSurface.U, param = target_u)
+            target_curve = adjust_curve_points(target_curve, [target_v], [target_pt], preserve_tangents = preserve_tangents_u, logger = logger)
+            preserve_tangents_adjust = preserve_tangents_v
+            curve_targets.append((target_u, target_curve))
+            second_direction = SvNurbsSurface.V
+        else:
+            target_curve = surface.iso_curve(fixed_direction = SvNurbsSurface.V, param = target_v)
+            target_curve = adjust_curve_points(target_curve, [target_u], [target_pt], preserve_tangents = preserve_tangents_v, logger = logger)
+            preserve_tangents_adjust = preserve_tangents_u
+            curve_targets.append((target_v, target_curve))
+            second_direction = SvNurbsSurface.U
+    return adjust_nurbs_surface_for_curves(surface, second_direction, curve_targets, preserve_tangents = preserve_tangents_adjust, logger = logger)
 
 SvNurbsMaths.surface_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsSurface
 if geomdl is not None:
