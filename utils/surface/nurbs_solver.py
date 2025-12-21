@@ -82,8 +82,10 @@ class SvNurbsSurfaceSolver:
         if self.src_control_points is None:
             n_cpts_u, n_cpts_v = self.n_cpts_u, self.n_cpts_v
             ndim = 3
+            weights = np.ones((n_cpts_u, n_cpts_v))
         else:
             n_cpts_u, n_cpts_v, ndim = self.src_control_points.shape
+            weights = self.src_weights
         n_cpts = n_cpts_u * n_cpts_v
         n_points = len(targets)
         n_equations = ndim * n_points
@@ -101,8 +103,14 @@ class SvNurbsSurfaceSolver:
                     cpt_idx = n_cpts_v * cpt_u_idx + cpt_v_idx
                     alpha_u = alphas_u[cpt_u_idx][pt_idx]
                     alpha_v = alphas_v[cpt_v_idx][pt_idx]
+                    weight = weights[cpt_u_idx,cpt_v_idx]
+                    alpha = weight * alpha_u * alpha_v
                     for dim_idx in range(ndim):
-                        A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = alpha_u * alpha_v
+                        A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = alpha
+
+            denominator = A[ndim*pt_idx, :].sum()
+            for dim_idx in range(ndim):
+                A[ndim*pt_idx + dim_idx, :] /= denominator
 
         if self.src_surface is not None:
             src_points = self.src_surface.evaluate_array(us, vs)
