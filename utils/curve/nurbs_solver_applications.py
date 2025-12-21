@@ -46,7 +46,7 @@ def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, logger=N
     if preserve_tangents:
         zeros = np.zeros((n_target_points,3))
         solver.add_goal(SvNurbsCurveTangents(us_bar, zeros, relative=True))
-    solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector())
+    solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector(), weights=curve.get_weights())
     problem_type, residue, curve = solver.solve_ex(
                     problem_types = {SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED,
                                      SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},

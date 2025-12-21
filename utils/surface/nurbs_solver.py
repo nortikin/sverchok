@@ -280,14 +280,18 @@ def adjust_nurbs_surface_for_curves(surface, direction, targets, preserve_tangen
                         surface.get_knotvector_u(),
                         controls[:,j], weights[:,j]) for j in range(k_v)]
     q_controls = []
+    q_weights = []
     for j, q_curve in enumerate(q_curves):
         controls = np.array([pts[j] for pts in target_controls])
         q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents, logger = logger)
         q_controls.append(q_curve.get_control_points())
+        q_weights.append(q_curve.get_weights())
     q_controls = np.array(q_controls)
+    q_weights = np.array(q_weights)
     if direction == SvNurbsSurface.U:
         q_controls = np.transpose(q_controls, axes=(1,0,2))
-    return surface.copy(control_points = q_controls)
+        q_weights = np.transpose(q_weights, axes=(1,0))
+    return surface.copy(control_points = q_controls, weights = q_weights)
 
 ORDER_UV = 'UV'
 ORDER_VU = 'VU'
