@@ -71,8 +71,12 @@ class SvAdjustNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvSurfaceSocket', "Surface")
         self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "Parameter").prop_name = 'p_value'
-        self.inputs.new('SvVerticesSocket', "UVPoint")
-        self.inputs.new('SvVerticesSocket', "Point")
+        p = self.inputs.new('SvVerticesSocket', "UVPoint")
+        p.use_prop = True
+        p.default_property = (0.5, 0.5, 0.0)
+        p = self.inputs.new('SvVerticesSocket', "Point")
+        p.use_prop = True
+        p.default_property = (0.0, 0.0, 1.0)
         self.outputs.new('SvSurfaceSocket', "Surface")
         self.update_sockets(context)
 
