@@ -331,6 +331,8 @@
             - ---
             - SvSurfaceElevateDegreeNode
             - SvSurfaceReduceDegreeNode
+            - ---
+            - SvAdjustNurbsSurfaceNode
         - SvRevolutionSurfaceNodeMK2
         - SvExTaperSweepSurfaceNode
         - SvBendCurveSurfaceNode

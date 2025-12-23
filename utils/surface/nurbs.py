@@ -1,10 +1,8 @@
 
 import numpy as np
-from collections import defaultdict
 
 from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputException, SvUnsupportedOptionException
 from sverchok.utils.geom import Spline
-from sverchok.utils.math import np_dot
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths, SvNurbsBasisFunctions,
         nurbs_divide, from_homogenous,
