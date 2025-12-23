@@ -64,15 +64,28 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         items = reparametrize_methods,
         update = updateNode)
 
+    reparametrize_remove_knots : BoolProperty(
+        name = "Remove knots",
+        description = "Remove some of additional knots during reparametrization",
+        default = False,
+        update = updateNode)
+
     reparametrize_accuracy : IntProperty(
         name = "Reparametrization accuracy",
         default = 6,
         min = 1, max = 10,
         update = updateNode)
 
-    reparametrize_samples : IntProperty(
-        name = "Samples",
-        description = "Reparametrization samples along U/V direction",
+    reparametrize_samples_u : IntProperty(
+        name = "Samples U",
+        description = "Reparametrization samples along U direction",
+        default = 50,
+        min = 3,
+        update = updateNode)
+
+    reparametrize_samples_v : IntProperty(
+        name = "Samples V",
+        description = "Reparametrization samples along V direction",
         default = 50,
         min = 3,
         update = updateNode)
@@ -86,8 +99,12 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'knotvector_accuracy')
         layout.prop(self, 'reparametrize_method')
         if self.reparametrize_method == 'MONOTONE':
-            layout.prop(self, 'reparametrize_samples')
-        layout.prop(self, 'reparametrize_accuracy')
+            row = layout.row()
+            row.prop(self, 'reparametrize_samples_u')
+            row.prop(self, 'reparametrize_samples_v')
+        layout.prop(self, 'reparametrize_remove_knots')
+        if self.reparametrize_remove_knots:
+            layout.prop(self, 'reparametrize_accuracy')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "CurvesU")
@@ -116,10 +133,14 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         reparametrize_tolerance = 10**(-self.reparametrize_accuracy)
 
         if scipy is None or self.reparametrize_method == 'SEGMENTS':
-            reparametrizer = SegmentsReparametrizer(reparametrize_tolerance)
+            reparametrizer = SegmentsReparametrizer(
+                                remove_knots = self.reparametrize_remove_knots,
+                                tolerance = reparametrize_tolerance)
         else:
             reparametrizer = MonotoneReparametrizer(
-                                n_samples = self.reparametrize_samples,
+                                n_samples_u = self.reparametrize_samples_u,
+                                n_samples_v = self.reparametrize_samples_v,
+                                remove_knots = self.reparametrize_remove_knots,
                                 tolerance = reparametrize_tolerance,
                                 logger = self.sv_logger)
 

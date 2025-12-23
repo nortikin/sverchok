@@ -17,10 +17,11 @@ class Reparametrizer:
     pass
 
 class SegmentsReparametrizer(Reparametrizer):
-    def __init__(self, tolerance = 1e-6):
+    def __init__(self, remove_knots = False, tolerance = 1e-6):
         self.tolerance = tolerance
+        self.remove_knots = remove_knots
 
-    def reparametrize(self, curve, t_values, target_t_values):
+    def reparametrize(self, direction, curve, t_values, target_t_values):
         # Reparametrize given curve so that parameter values from t_values parameter
         # would map to 1.0, 2.0, 3.0...
 
@@ -40,18 +41,27 @@ class SegmentsReparametrizer(Reparametrizer):
             if segment is not None:
                 result = result.concatenate(segment, remove_knots=False)
         
-        return remove_excessive_knots(result, tolerance = self.tolerance)
+        if self.remove_knots:
+            return remove_excessive_knots(result, tolerance = self.tolerance)
+        else:
+            return result
 
 class MonotoneReparametrizer(Reparametrizer):
-    def __init__(self, n_samples = 50, tolerance = 1e-6, logger = None):
-        self.n_samples = n_samples
+    def __init__(self, n_samples_u = 50, n_samples_v = 50, remove_knots = False, tolerance = 1e-6, logger = None):
+        self.n_samples_u = n_samples_u
+        self.n_samples_v = n_samples_v
+        self.remove_knots = remove_knots
         self.tolerance = tolerance
         self.logger = logger
 
-    def reparametrize(self, curve, t_values, target_t_values):
+    def reparametrize(self, direction, curve, t_values, target_t_values):
+        if direction == SvNurbsSurface.U:
+            n_samples = self.n_samples_u
+        else:
+            n_samples = self.n_samples_v
         #print(f"Reparametrize: {t_values} => {target_t_values}")
         segment_deltas = t_values[1:] - t_values[:-1]
-        t_counts = distribute_int(self.n_samples - 1, segment_deltas)
+        t_counts = distribute_int(n_samples - 1, segment_deltas)
         ts = []
         for t1, t2, cnt in zip(t_values[:-1], t_values[1:], t_counts):
             local_ts = np.linspace(t1, t2, num=cnt, endpoint=False)
@@ -65,7 +75,10 @@ class MonotoneReparametrizer(Reparametrizer):
         curve_pts = curve.evaluate_array(ts)
         new_curve = interpolate_nurbs_curve(curve.get_degree(), curve_pts,
                                             tknots = target_ts, logger = self.logger)
-        return remove_excessive_knots(new_curve, tolerance = self.tolerance)
+        if self.remove_knots:
+            return remove_excessive_knots(new_curve, tolerance = self.tolerance)
+        else:
+            return new_curve
 
 class GordonUnificationException(ArgumentError):
     """Raised when we cannot unify curves provided to Gordon algorithm."""
@@ -123,8 +136,8 @@ def gordon_surface(u_curves, v_curves, intersections,
         loft_v_kwargs = {'tknots': avg_v_knots}
         interpolate_kwargs = {'uknots': avg_v_knots, 'vknots': avg_u_knots}
 
-        u_curves = [reparametrizer.reparametrize(c, knots, avg_u_knots) for c, knots in zip(u_curves, u_knots)]
-        v_curves = [reparametrizer.reparametrize(c, knots, avg_v_knots) for c, knots in zip(v_curves, v_knots)]
+        u_curves = [reparametrizer.reparametrize(SvNurbsSurface.U, c, knots, avg_u_knots) for c, knots in zip(u_curves, u_knots)]
+        v_curves = [reparametrizer.reparametrize(SvNurbsSurface.V, c, knots, avg_v_knots) for c, knots in zip(v_curves, v_knots)]
         #print("U", u_curves)
         #print("V", v_curves)
 
