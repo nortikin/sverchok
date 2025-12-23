@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.surface.nurbs_solver API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.surface.nurbs_solver</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.surface.nurbs_solver.adjust_nurbs_surface_for_curves"><code class="name flex">
+<span>def <span class="ident">adjust_nurbs_surface_for_curves</span></span>(<span>surface, direction, targets, preserve_tangents=False, logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjust_nurbs_surface_for_curves(surface, direction, targets, preserve_tangents=False, logger=None):
+    &#34;&#34;&#34;
+    Adjust NURBS surface in such a way that at specified value of U/V parameter
+    it would pass through specified NURBS curve.
+
+    Args:
+        * surface: SvNurbsSurface
+        * direction: SvNurbsSurface.U or SvNurbsSurface.V
+        * targets: list of 2-tuples; in each tuple, first component must be the
+            value of U/V surface parameter, and the second component must be a
+            SvNurbsCurve to pass through.
+        * preserve_tangents: if True, then preserve surface tangents along second parameter.
+
+    Returns:
+        * SvNurbsSurface.
+    &#34;&#34;&#34;
+    if logger is None:
+        logger = get_logger()
+    target_curves = [p[1] for p in targets]
+    values = np.array([p[0] for p in targets])
+    surface, target_curves = unify_surface_curve(surface, direction, target_curves)
+    controls = surface.get_control_points()
+    weights = surface.get_weights()
+    k_u,k_v = weights.shape
+
+    target_controls = [curve.get_control_points() for curve in target_curves]
+
+    if direction == SvNurbsSurface.V:
+        q_curves = [SvNurbsMaths.build_curve(surface.get_nurbs_implementation(),
+                        surface.get_degree_v(),
+                        surface.get_knotvector_v(),
+                        controls[j,:], weights[j,:]) for j in range(k_u)]
+    else:
+        q_curves = [SvNurbsMaths.build_curve(surface.get_nurbs_implementation(),
+                        surface.get_degree_u(),
+                        surface.get_knotvector_u(),
+                        controls[:,j], weights[:,j]) for j in range(k_v)]
+    q_controls = []
+    q_weights = []
+    for j, q_curve in enumerate(q_curves):
+        controls = np.array([pts[j] for pts in target_controls])
+        q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents, logger = logger)
+        q_controls.append(q_curve.get_control_points())
+        q_weights.append(q_curve.get_weights())
+    q_controls = np.array(q_controls)
+    q_weights = np.array(q_weights)
+    if direction == SvNurbsSurface.U:
+        q_controls = np.transpose(q_controls, axes=(1,0,2))
+        q_weights = np.transpose(q_weights, axes=(1,0))
+    return surface.copy(control_points = q_controls, weights = q_weights)</code></pre>
+</details>
+<div class="desc"><p>Adjust NURBS surface in such a way that at specified value of U/V parameter
+it would pass through specified NURBS curve.</p>
+<h2 id="args">Args</h2>
+<ul>
+<li>surface: SvNurbsSurface</li>
+<li>direction: SvNurbsSurface.U or SvNurbsSurface.V</li>
+<li>targets: list of 2-tuples; in each tuple, first component must be the
+value of U/V surface parameter, and the second component must be a
+SvNurbsCurve to pass through.</li>
+<li>preserve_tangents: if True, then preserve surface tangents along second parameter.</li>
+</ul>
+<h2 id="returns">Returns</h2>
+<ul>
+<li>SvNurbsSurface.</li>
+</ul></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs_solver.adjust_nurbs_surface_for_points"><code class="name flex">
+<span>def <span class="ident">adjust_nurbs_surface_for_points</span></span>(<span>surface, targets, implementation='NATIVE', logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjust_nurbs_surface_for_points(surface, targets, implementation = SvNurbsMaths.NATIVE, logger = None):
+    solver = SvNurbsSurfaceSolver.from_surface(surface)
+    solver.add_goals(targets)
+    problem_type, residue, surface = solver.solve_ex(implementation = implementation, logger = logger)
+    return surface</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs_solver.adjust_nurbs_surface_for_points_iso"><code class="name flex">
+<span>def <span class="ident">adjust_nurbs_surface_for_points_iso</span></span>(<span>surface,<br>targets,<br>preserve_tangents_u=False,<br>preserve_tangents_v=False,<br>directions_order='UV',<br>logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjust_nurbs_surface_for_points_iso(surface, targets, preserve_tangents_u=False, preserve_tangents_v=False, directions_order=ORDER_UV, logger=None):
+    curve_targets = []
+    for target_u, target_v, target_pt in targets:
+        if directions_order == ORDER_UV:
+            target_curve = surface.iso_curve(fixed_direction = SvNurbsSurface.U, param = target_u)
+            target_curve = adjust_curve_points(target_curve, [target_v], [target_pt], preserve_tangents = preserve_tangents_u, logger = logger)
+            preserve_tangents_adjust = preserve_tangents_v
+            curve_targets.append((target_u, target_curve))
+            second_direction = SvNurbsSurface.V
+        else:
+            target_curve = surface.iso_curve(fixed_direction = SvNurbsSurface.V, param = target_v)
+            target_curve = adjust_curve_points(target_curve, [target_u], [target_pt], preserve_tangents = preserve_tangents_v, logger = logger)
+            preserve_tangents_adjust = preserve_tangents_u
+            curve_targets.append((target_v, target_curve))
+            second_direction = SvNurbsSurface.U
+    return adjust_nurbs_surface_for_curves(surface, second_direction, curve_targets, preserve_tangents = preserve_tangents_adjust, logger = logger)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs_solver.unify_surface_curve"><code class="name flex">
+<span>def <span class="ident">unify_surface_curve</span></span>(<span>surface, direction, curves, accuracy=6)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unify_surface_curve(surface, direction, curves, accuracy=6):
+    &#34;&#34;&#34;
+    Unify degree and knotvector of a NURBS surface (in one direction)
+    with a list of NURBS curves.
+
+    Args:
+        * surface: SvNurbsSurface
+        * direction: SvNurbsSurface.U or SvNurbsSurface.V
+        * curves: list of SvNurbsCurve
+        * accuracy: precision of knotvectors unification (number of digits after decimal point)
+
+    Returns:
+        * Tuple: SvNurbsSurface and a list of SvNurbsCurve.
+    &#34;&#34;&#34;
+    second_direction = SvNurbsSurface.U if direction == SvNurbsSurface.V else SvNurbsSurface.V
+    curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
+    curves = unify_curves(curves, accuracy=accuracy)
+    u_min, u_max = surface.get_u_bounds()
+    v_min, v_max = surface.get_v_bounds()
+    if direction == SvNurbsSurface.V:
+        surface = surface.reparametrize(0.0, 1.0, v_min, v_max)
+    else:
+        surface = surface.reparametrize(u_min, u_max, 0.0, 1.0)
+
+    curve_degree = curves[0].get_degree()
+    if direction == SvNurbsSurface.V:
+        surface_degree = surface.get_degree_u()
+    else:
+        surface_degree = surface.get_degree_v()
+
+    degree = max(curve_degree, surface_degree)
+    surface = surface.elevate_degree(second_direction, target=degree)
+    curves = [curve.elevate_degree(target=degree) for curve in curves]
+
+    tolerance = 10**(-accuracy)
+    dst_knots = sv_knotvector.KnotvectorDict(tolerance)
+    if direction == SvNurbsSurface.V:
+        surface_kv = surface.get_knotvector_u()
+    else:
+        surface_kv = surface.get_knotvector_v()
+    curve_kv = curves[0].get_knotvector()
+
+    curve_ms = sv_knotvector.to_multiplicity(curve_kv, tolerance=None)
+    for u, count in curve_ms:
+        dst_knots.put(u, count)
+    surface_ms = sv_knotvector.to_multiplicity(surface_kv, tolerance=None)
+    for u, count in surface_ms:
+        dst_knots.put(u, count)
+    dst_knots.calc_averages()
+
+    curve_ms = dict(curve_ms)
+    surface_ms = dict(surface_ms)
+
+    curve_updates = dst_knots.get_updates(curve_ms.keys())
+    updated_ms = []
+    for knot_idx, (knot, multiplicity) in enumerate(curve_ms.items()):
+        if knot_idx in curve_updates:
+            updated_ms.append((curve_updates[knot_idx], multiplicity))
+        else:
+            updated_ms.append((knot, multiplicity))
+    ms = dict(updated_ms)
+    updated_kv = sv_knotvector.from_multiplicity(updated_ms)
+    curves = [curve.copy(knotvector = updated_kv) for curve in curves]
+
+    curve_insertions = dst_knots.get_insertions(ms)
+    for knot, diff in curve_insertions.items():
+        if diff &gt; 0:
+            curves = [curve.insert_knot(knot, diff) for curve in curves]
+
+    surface_updates = dst_knots.get_updates(surface_ms.keys())
+    updated_ms = []
+    for knot_idx, (knot, multiplicity) in enumerate(surface_ms.items()):
+        if knot_idx in surface_updates:
+            updated_ms.append((surface_updates[knot_idx], multiplicity))
+        else:
+            updated_ms.append((knot, multiplicity))
+    ms = dict(updated_ms)
+    updated_kv = sv_knotvector.from_multiplicity(updated_ms)
+    if direction == SvNurbsSurface.V:
+        surface = surface.copy(knotvector_u = updated_kv)
+    else:
+        surface = surface.copy(knotvector_v = updated_kv)
+
+    surface_insertions = dst_knots.get_insertions(ms)
+    for knot, diff in surface_insertions.items():
+        if diff &gt; 0:
+            surface = surface.insert_knot(second_direction, knot, count=diff)
+
+    return surface, curves</code></pre>
+</details>
+<div class="desc"><p>Unify degree and knotvector of a NURBS surface (in one direction)
+with a list of NURBS curves.</p>
+<h2 id="args">Args</h2>
+<ul>
+<li>surface: SvNurbsSurface</li>
+<li>direction: SvNurbsSurface.U or SvNurbsSurface.V</li>
+<li>curves: list of SvNurbsCurve</li>
+<li>accuracy: precision of knotvectors unification (number of digits after decimal point)</li>
+</ul>
+<h2 id="returns">Returns</h2>
+<ul>
+<li>Tuple: SvNurbsSurface and a list of SvNurbsCurve.</li>
+</ul></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver"><code class="flex name class">
+<span>class <span class="ident">SvNurbsSurfaceSolver</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvNurbsSurfaceSolver:
+    def __init__(self):
+        self.degree_u = None
+        self.degree_v = None
+        self.knotvector_u = None
+        self.knotvector_v = None
+        self.src_control_points = None
+        self.src_surface = None
+        self.src_weights = None
+        self.n_cpts_u = None
+        self.n_cpts_v = None
+        self.goals = []
+
+    PROBLEM_WELLDETERMINED = &#39;WELLDETERMINED&#39;
+    PROBLEM_UNDERDETERMINED = &#39;UNDERDETERMINED&#39;
+    PROBLEM_OVERDETERMINED = &#39;OVERDETERMINED&#39;
+    PROBLEM_ANY = {PROBLEM_WELLDETERMINED, PROBLEM_UNDERDETERMINED, PROBLEM_OVERDETERMINED}
+
+    @staticmethod
+    def from_surface(surface):
+        solver = SvNurbsSurfaceSolver()
+        solver.degree_u = surface.get_degree_u()
+        solver.degree_v = surface.get_degree_v()
+        solver.knotvector_u = surface.get_knotvector_u()
+        solver.knotvector_v = surface.get_knotvector_v()
+        solver.src_control_points = surface.get_control_points().copy()
+        solver.n_cpts_u, solver.n_cpts_v, _ = solver.src_control_points.shape
+        solver.src_weights = surface.get_weights().copy()
+        solver.src_surface = surface
+        return solver
+
+    @staticmethod
+    def from_parameters(degree_u, degree_v, n_cpts_u, n_cpts_v, knotvector_u, knotvector_v):
+        solver = SvNurbsSurfaceSolver()
+        solver.degree_u = degree_u
+        solver.degree_v = degree_v
+        solver.knotvector_u = knotvector_u
+        solver.knotvector_v = knotvector_v
+        solver.n_cpts_u = n_cpts_u
+        solver.n_cpts_v = n_cpts_v
+        return solver
+
+    def add_goal(self, u, v, point):
+        self.goals.append((u, v, point))
+
+    def add_goals(self, goals):
+        for goal in goals:
+            self.add_goal(*goal)
+
+    def solve(self, logger = None):
+        problem_type, residue, surface = self.solve_ex(logger = logger)
+        return surface
+
+    def solve_ex(self, problem_types = PROBLEM_ANY, implementation = SvNurbsMaths.NATIVE, logger = None):
+        if logger is None:
+            logger = get_logger()
+        targets = self.goals
+        us = np.array([t[0] for t in targets])
+        vs = np.array([t[1] for t in targets])
+        pts = np.array([t[2] for t in targets])
+        basis_u = SvNurbsBasisFunctions(self.knotvector_u)
+        basis_v = SvNurbsBasisFunctions(self.knotvector_v)
+        if self.src_control_points is None:
+            n_cpts_u, n_cpts_v = self.n_cpts_u, self.n_cpts_v
+            ndim = 3
+            weights = np.ones((n_cpts_u, n_cpts_v))
+        else:
+            n_cpts_u, n_cpts_v, ndim = self.src_control_points.shape
+            weights = self.src_weights
+        n_cpts = n_cpts_u * n_cpts_v
+        n_points = len(targets)
+        n_equations = ndim * n_points
+        n_unknowns = ndim * n_cpts
+        p_u = self.degree_u
+        p_v = self.degree_v
+
+        alphas_u = np.array([basis_u.function(k, p_u)(us) for k in range(n_cpts_u)])
+        alphas_v = np.array([basis_v.function(k, p_v)(vs) for k in range(n_cpts_v)])
+
+        A = np.zeros((n_equations, n_unknowns))
+        for pt_idx in range(n_points):
+            for cpt_u_idx in range(n_cpts_u):
+                for cpt_v_idx in range(n_cpts_v):
+                    cpt_idx = n_cpts_v * cpt_u_idx + cpt_v_idx
+                    alpha_u = alphas_u[cpt_u_idx][pt_idx]
+                    alpha_v = alphas_v[cpt_v_idx][pt_idx]
+                    weight = weights[cpt_u_idx,cpt_v_idx]
+                    alpha = weight * alpha_u * alpha_v
+                    for dim_idx in range(ndim):
+                        A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = alpha
+
+            denominator = A[ndim*pt_idx, :].sum()
+            for dim_idx in range(ndim):
+                A[ndim*pt_idx + dim_idx, :] /= denominator
+
+        if self.src_surface is not None:
+            src_points = self.src_surface.evaluate_array(us, vs)
+        else:
+            src_points = None
+
+        B = np.zeros((n_equations, 1))
+        for pt_idx, point in enumerate(pts):
+            if src_points is not None:
+                point = point - src_points[pt_idx]
+            B[pt_idx*ndim:pt_idx*ndim+ndim, 0] = point[np.newaxis]
+
+        residue = None
+        if n_equations == n_unknowns:
+            problem_type = SvNurbsSurfaceSolver.PROBLEM_WELLDETERMINED
+            if problem_type not in problem_types:
+                raise AlgorithmError(&#34;The problem is well-determined&#34;)
+            try:
+                A1 = np.linalg.inv(A)
+                X = (A1 @ B).T
+            except np.linalg.LinAlgError as e:
+                logger.error(f&#34;Matrix: {self.A}&#34;)
+                raise AlgorithmError(f&#34;Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}&#34;) from e
+        elif n_equations &lt; n_unknowns:
+            problem_type = SvNurbsSurfaceSolver.PROBLEM_UNDERDETERMINED
+            A1 = np.linalg.pinv(A)
+            X = (A1 @ B).T
+        else: # n_equations &gt; n_unknowns
+            problem_type = SvNurbsSurfaceSolver.PROBLEM_OVERDETERMINED
+            if problem_type not in problem_types:
+                raise AlgorithmError(&#34;The system is overdetermined&#34;)
+            X, residues, rank, singval = np.linalg.lstsq(self.A, self.B)
+            residue = residues.sum()
+
+        d_cpts = X.reshape((n_cpts_u, n_cpts_v, ndim))
+        if self.src_control_points is None:
+            cpts = d_cpts
+        else:
+            cpts = self.src_control_points + d_cpts
+
+        surface = SvNurbsMaths.build_surface(implementation=implementation,
+                                          degree_u = self.degree_u,
+                                          degree_v = self.degree_v,
+                                          knotvector_u = self.knotvector_u,
+                                          knotvector_v = self.knotvector_v,
+                                          control_points = cpts,
+                                          weights = self.src_weights)
+        return problem_type, residue, surface</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_ANY"><code class="name">var <span class="ident">PROBLEM_ANY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_OVERDETERMINED"><code class="name">var <span class="ident">PROBLEM_OVERDETERMINED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_UNDERDETERMINED"><code class="name">var <span class="ident">PROBLEM_UNDERDETERMINED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_WELLDETERMINED"><code class="name">var <span class="ident">PROBLEM_WELLDETERMINED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.from_parameters"><code class="name flex">
+<span>def <span class="ident">from_parameters</span></span>(<span>degree_u, degree_v, n_cpts_u, n_cpts_v, knotvector_u, knotvector_v)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def from_parameters(degree_u, degree_v, n_cpts_u, n_cpts_v, knotvector_u, knotvector_v):
+    solver = SvNurbsSurfaceSolver()
+    solver.degree_u = degree_u
+    solver.degree_v = degree_v
+    solver.knotvector_u = knotvector_u
+    solver.knotvector_v = knotvector_v
+    solver.n_cpts_u = n_cpts_u
+    solver.n_cpts_v = n_cpts_v
+    return solver</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.from_surface"><code class="name flex">
+<span>def <span class="ident">from_surface</span></span>(<span>surface)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def from_surface(surface):
+    solver = SvNurbsSurfaceSolver()
+    solver.degree_u = surface.get_degree_u()
+    solver.degree_v = surface.get_degree_v()
+    solver.knotvector_u = surface.get_knotvector_u()
+    solver.knotvector_v = surface.get_knotvector_v()
+    solver.src_control_points = surface.get_control_points().copy()
+    solver.n_cpts_u, solver.n_cpts_v, _ = solver.src_control_points.shape
+    solver.src_weights = surface.get_weights().copy()
+    solver.src_surface = surface
+    return solver</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.add_goal"><code class="name flex">
+<span>def <span class="ident">add_goal</span></span>(<span>self, u, v, point)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_goal(self, u, v, point):
+    self.goals.append((u, v, point))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.add_goals"><code class="name flex">
+<span>def <span class="ident">add_goals</span></span>(<span>self, goals)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_goals(self, goals):
+    for goal in goals:
+        self.add_goal(*goal)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.solve"><code class="name flex">
+<span>def <span class="ident">solve</span></span>(<span>self, logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve(self, logger = None):
+    problem_type, residue, surface = self.solve_ex(logger = logger)
+    return surface</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.solve_ex"><code class="name flex">
+<span>def <span class="ident">solve_ex</span></span>(<span>self,<br>problem_types={'WELLDETERMINED', 'OVERDETERMINED', 'UNDERDETERMINED'},<br>implementation='NATIVE',<br>logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_ex(self, problem_types = PROBLEM_ANY, implementation = SvNurbsMaths.NATIVE, logger = None):
+    if logger is None:
+        logger = get_logger()
+    targets = self.goals
+    us = np.array([t[0] for t in targets])
+    vs = np.array([t[1] for t in targets])
+    pts = np.array([t[2] for t in targets])
+    basis_u = SvNurbsBasisFunctions(self.knotvector_u)
+    basis_v = SvNurbsBasisFunctions(self.knotvector_v)
+    if self.src_control_points is None:
+        n_cpts_u, n_cpts_v = self.n_cpts_u, self.n_cpts_v
+        ndim = 3
+        weights = np.ones((n_cpts_u, n_cpts_v))
+    else:
+        n_cpts_u, n_cpts_v, ndim = self.src_control_points.shape
+        weights = self.src_weights
+    n_cpts = n_cpts_u * n_cpts_v
+    n_points = len(targets)
+    n_equations = ndim * n_points
+    n_unknowns = ndim * n_cpts
+    p_u = self.degree_u
+    p_v = self.degree_v
+
+    alphas_u = np.array([basis_u.function(k, p_u)(us) for k in range(n_cpts_u)])
+    alphas_v = np.array([basis_v.function(k, p_v)(vs) for k in range(n_cpts_v)])
+
+    A = np.zeros((n_equations, n_unknowns))
+    for pt_idx in range(n_points):
+        for cpt_u_idx in range(n_cpts_u):
+            for cpt_v_idx in range(n_cpts_v):
+                cpt_idx = n_cpts_v * cpt_u_idx + cpt_v_idx
+                alpha_u = alphas_u[cpt_u_idx][pt_idx]
+                alpha_v = alphas_v[cpt_v_idx][pt_idx]
+                weight = weights[cpt_u_idx,cpt_v_idx]
+                alpha = weight * alpha_u * alpha_v
+                for dim_idx in range(ndim):
+                    A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = alpha
+
+        denominator = A[ndim*pt_idx, :].sum()
+        for dim_idx in range(ndim):
+            A[ndim*pt_idx + dim_idx, :] /= denominator
+
+    if self.src_surface is not None:
+        src_points = self.src_surface.evaluate_array(us, vs)
+    else:
+        src_points = None
+
+    B = np.zeros((n_equations, 1))
+    for pt_idx, point in enumerate(pts):
+        if src_points is not None:
+            point = point - src_points[pt_idx]
+        B[pt_idx*ndim:pt_idx*ndim+ndim, 0] = point[np.newaxis]
+
+    residue = None
+    if n_equations == n_unknowns:
+        problem_type = SvNurbsSurfaceSolver.PROBLEM_WELLDETERMINED
+        if problem_type not in problem_types:
+            raise AlgorithmError(&#34;The problem is well-determined&#34;)
+        try:
+            A1 = np.linalg.inv(A)
+            X = (A1 @ B).T
+        except np.linalg.LinAlgError as e:
+            logger.error(f&#34;Matrix: {self.A}&#34;)
+            raise AlgorithmError(f&#34;Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}&#34;) from e
+    elif n_equations &lt; n_unknowns:
+        problem_type = SvNurbsSurfaceSolver.PROBLEM_UNDERDETERMINED
+        A1 = np.linalg.pinv(A)
+        X = (A1 @ B).T
+    else: # n_equations &gt; n_unknowns
+        problem_type = SvNurbsSurfaceSolver.PROBLEM_OVERDETERMINED
+        if problem_type not in problem_types:
+            raise AlgorithmError(&#34;The system is overdetermined&#34;)
+        X, residues, rank, singval = np.linalg.lstsq(self.A, self.B)
+        residue = residues.sum()
+
+    d_cpts = X.reshape((n_cpts_u, n_cpts_v, ndim))
+    if self.src_control_points is None:
+        cpts = d_cpts
+    else:
+        cpts = self.src_control_points + d_cpts
+
+    surface = SvNurbsMaths.build_surface(implementation=implementation,
+                                      degree_u = self.degree_u,
+                                      degree_v = self.degree_v,
+                                      knotvector_u = self.knotvector_u,
+                                      knotvector_v = self.knotvector_v,
+                                      control_points = cpts,
+                                      weights = self.src_weights)
+    return problem_type, residue, surface</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.surface" href="index.html">sverchok.utils.surface</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.nurbs_solver.adjust_nurbs_surface_for_curves" href="#sverchok.utils.surface.nurbs_solver.adjust_nurbs_surface_for_curves">adjust_nurbs_surface_for_curves</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.adjust_nurbs_surface_for_points" href="#sverchok.utils.surface.nurbs_solver.adjust_nurbs_surface_for_points">adjust_nurbs_surface_for_points</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.adjust_nurbs_surface_for_points_iso" href="#sverchok.utils.surface.nurbs_solver.adjust_nurbs_surface_for_points_iso">adjust_nurbs_surface_for_points_iso</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.unify_surface_curve" href="#sverchok.utils.surface.nurbs_solver.unify_surface_curve">unify_surface_curve</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver">SvNurbsSurfaceSolver</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_ANY" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_ANY">PROBLEM_ANY</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_OVERDETERMINED" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_OVERDETERMINED">PROBLEM_OVERDETERMINED</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_UNDERDETERMINED" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_UNDERDETERMINED">PROBLEM_UNDERDETERMINED</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_WELLDETERMINED" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.PROBLEM_WELLDETERMINED">PROBLEM_WELLDETERMINED</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.add_goal" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.add_goal">add_goal</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.add_goals" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.add_goals">add_goals</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.from_parameters" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.from_parameters">from_parameters</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.from_surface" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.from_surface">from_surface</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.solve" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.solve">solve</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.solve_ex" href="#sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.solve_ex">solve_ex</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
