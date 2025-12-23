@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Build NURBS surface &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Adjust NURBS Surface &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/surface/nurbs_surface';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/surface/adjust_nurbs_surface';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="NURBS Sweep" href="nurbs_sweep.html" />
-    <link rel="prev" title="NURBS Loft" href="nurbs_loft.html" />
+    <link rel="next" title="Apply Field to Surface" href="apply_field_to_surface.html" />
+    <link rel="prev" title="Adaptive Tessellate Surface" href="adaptive_tessellate.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -168,7 +168,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="surface_index.html">Surfaces</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="adaptive_tessellate.html">Adaptive Tessellate Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="adjust_nurbs_surface.html">Adjust NURBS Surface</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Adjust NURBS Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apply_field_to_surface.html">Apply Field to Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_surface.html">Approximate NURBS Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="blend_surface.html">Blend Surfaces</a></li>
@@ -192,7 +192,7 @@
 <li class="toctree-l3"><a class="reference internal" href="normals.html">Surface Frame</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_birail.html">NURBS Birail</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_loft.html">NURBS Loft</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Build NURBS surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_surface.html">Build NURBS surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_sweep.html">NURBS Sweep</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pipe.html">Pipe Surface Along Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plane.html">Plane (Surface)</a></li>
@@ -308,7 +308,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/surface/nurbs_surface.rst" target="_blank"
+      <li><a href="../../_sources/nodes/surface/adjust_nurbs_surface.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -392,7 +392,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Build NURBS surface</h1>
+    <h1>Adjust NURBS Surface</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -402,12 +402,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
             </nav>
         </div>
@@ -419,92 +417,76 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="build-nurbs-surface">
-<h1>Build NURBS surface<a class="headerlink" href="#build-nurbs-surface" title="Link to this heading">#</a></h1>
-<img alt="../../_images/node_build_nurbs_surface.png" src="../../_images/node_build_nurbs_surface.png" />
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
-<p>This node can optionally use <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library; also it can optionally use <a class="reference external" href="https://www.freecadweb.org/">FreeCAD</a> libraries.</p>
-</section>
+  <section id="adjust-nurbs-surface">
+<h1>Adjust NURBS Surface<a class="headerlink" href="#adjust-nurbs-surface" title="Link to this heading">#</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node generates a <a class="reference external" href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline">NURBS</a> Surface, given all it’s details: control points, weights and knot vector.</p>
-<p>To build a NURBS surface, one needs an array of M x N control points (like “3 rows by 4 control points”). There are two modes of providing this array supported:</p>
+<p>The node can do two things:</p>
 <ul class="simple">
-<li><p>You can provide a list of lists of control points for each surface;</p></li>
-<li><p>Or you can provide a flat list of control points, and instruct the node to
-subdivide it into sublists of N control points each.</p></li>
+<li><p>Adjust a surface in such a way that it would pass through a specified curve
+at specified value of surface’s U or V parameter; i.e., the curve would
+become one of the surface’s iso-curves.</p></li>
+<li><p>Adjust a surface in such a way that it would pass through a specified point
+at specified values of surface’s U and V parameters.</p></li>
 </ul>
+<p>This node can work with NURBS or NURBS-like surfaces and curves only.</p>
+<p>During adjustment, the topology of the surface (number of control points and
+The adjustment is performed in such a way, that the total amount of control
+points movement is minimal.
+Thus, the topology of initial surface (number of control points and knotvector)
+is important for the shape of the resulting surface. One can control the result
+by inserting additional knots into the surface before applying “Adjust NURBS
+Surface” node.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
-<p>This node has the following input:</p>
+<p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>ControlPloints</strong>. The control points determine the shape of the curve. Depending on <strong>Input mode</strong> parameter, it expects either list of lists of control points per surface, or a flat list of control points per surface.
-Typically, each point of the curve is computed by taking a weighted sum of a number of control points.</p></li>
-<li><p><strong>Weights</strong>. Weights of surface control points. This input is not available
-if <strong>Surface type</strong> parameter is set to <strong>BSpline</strong>. If this input is not
-linked, it will be assumed that all control points have equal weight of 1.</p></li>
-<li><p><strong>KnotsU</strong>, <strong>KnotsV</strong>. Knot vectors for U and V directions, correspondingly.
-These inputs are available and mandatory when <strong>Knots</strong> parameter is set to
-<strong>Explicit</strong>. Otherwise, the node will use automatically generated knot
-vectors.</p></li>
-<li><p><strong>Degree U</strong>, <strong>Degree V</strong>. Degree of the surface along U and V directions,
-correspondingly. The default value is 3.</p></li>
-<li><p><strong>U Size</strong>. This input is only available when <strong>Input mode</strong> parameter is set
-to <strong>Single list</strong>. The number of control points in a row. The default value
-is 5.</p></li>
+<li><p><strong>Surface</strong>. The surface to be adjusted. This input is mandatory.</p></li>
+<li><p><strong>Curve</strong>. The target curve. This input is only available and mandatory when
+the <strong>Mode</strong> parameter is set to <strong>Iso U/V Curve</strong>.</p></li>
+<li><p><strong>Parameter</strong>. The value of surface’s U or V parameter, iso-curve at which is
+to be moved to coincide with the target curve. This input is only available
+when the <strong>Mode</strong> parameter is set to <strong>Iso U/V Curve</strong>. The default value is
+0.5.</p></li>
+<li><p><strong>UVPoint</strong>. The point in surafce’s U/V space, which is to be moved to
+coincide with the target point. X and Y coordinates of this point are
+interpreted as U and V parameters on the surface, correspondingly; Z
+coordinate is ignored. This input is only available and mandatory when the
+<strong>Mode</strong> parameter is set to <strong>Point</strong>.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <p>This node has the following parameters:</p>
+<ul class="simple">
+<li><p><strong>Mode</strong>. The available modes are:</p>
 <ul>
-<li><p><strong>Implementation</strong>. This defines the implementation of NURBS mathematics to be used. The available options are:</p>
-<ul class="simple">
-<li><p><strong>Geomdl</strong>. Use <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library. This option is available only when Geomdl package is installed.</p></li>
-<li><p><strong>Sverchok</strong>. Use built-in Sverchok implementation.</p></li>
-<li><p><strong>FreCAD</strong>. Use <a class="reference external" href="https://www.freecadweb.org/">FreeCAD</a> libraries. This option is available only when FreeCAD libraries are installed.</p></li>
-</ul>
-<p>In general, built-in implementation should be faster; but Geomdl implementation is better tested.
-The default option is <strong>Geomdl</strong>, when it is available; otherwise, built-in implementation is used.</p>
-</li>
-<li><p><strong>Surface mode</strong>. Values: NURBS, BSpline</p></li>
-<li><p><strong>Input mode</strong>. The available values are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><strong>Single list</strong>. The node expects a flat list of points for each surface.
-It will be subdivided into rows according to <strong>USize</strong> input value.</p></li>
-<li><p><strong>Separate Lists</strong>. The node expects a list of lists of points for each
-surface.</p></li>
-</ul>
-</div></blockquote>
-</li>
-<li><p><strong>Knots</strong>. This defines how the knot vectors are specified:</p>
-<ul class="simple">
-<li><p><strong>Auto</strong>: Knot vectors are generated automatically (the curve will be clamped and periodic).</p></li>
-<li><p><strong>Explicit</strong>: Knot vectors are explicitly defined in the <strong>KnotsU</strong>, <strong>KnotsV</strong> inputs of the node.</p></li>
+<li><p><strong>Iso U/V Curve</strong>. Adjust the surface in such a way that it would pass
+through the specified curve at specified value of U or V surface parameter.
+This is the default mode.</p></li>
+<li><p><strong>Point</strong>. Adjust the surface in such a way that it would pass trhough the
+specified point in 3D space at specified values of surface’s U and V
+parameters.</p></li>
 </ul>
 </li>
-<li><p><strong>Normalize knots</strong>. If checked, all knotvector values will be rescaled to
-<code class="docutils literal notranslate"><span class="pre">[0</span> <span class="pre">..</span> <span class="pre">1]</span></code> range; so, the curve domain will always be from 0 to 1. If not
-checked, the curve domain will be defined by knotvector.</p></li>
-<li><p><strong>Cyclic U</strong>, <strong>Cyclic V</strong>. Whether the surface should be cyclic (closed) in
-the U and V direction, correspondingly. These parameters are only available
-when <strong>Knots</strong> parameter is set to <strong>Auto</strong>.</p></li>
+<li><p><strong>Direction</strong>. This parameter is only available when <strong>Mode</strong> parameter is
+set to <strong>Isu U/V Curve</strong>. The available options are <strong>U</strong> and <strong>V</strong>. If this
+parameter is set to <strong>U</strong>, then the surface will be adjusted in such a way
+that it would pass through the specified curve at specified value of <strong>U</strong>
+parameter; and similarly for the <strong>V</strong> direction. The default option is <strong>U</strong>.</p></li>
+<li><p><strong>Preserve tangents</strong>. This parameter is only available when <strong>Mode</strong> parameter is
+set to <strong>Isu U/V Curve</strong>. If checked, then, when adjusting the surface, the
+node will try to preserve surface’s tangents along the second direction.
+Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
-<li><p><strong>Surface</strong>. The generated surface.</p></li>
+<li><p><strong>Surface</strong>. The resulting surface.</p></li>
 </ul>
-</section>
-<section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
-<img alt="../../_images/nurbs_surface_01.png" src="../../_images/nurbs_surface_01.png" />
-<p>These example use a plane as control points.</p>
 </section>
 </section>
 
@@ -520,20 +502,20 @@ when <strong>Knots</strong> parameter is set to <strong>Auto</strong>.</p></li>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="nurbs_loft.html"
+       href="adaptive_tessellate.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">NURBS Loft</p>
+        <p class="prev-next-title">Adaptive Tessellate Surface</p>
       </div>
     </a>
     <a class="right-next"
-       href="nurbs_sweep.html"
+       href="apply_field_to_surface.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">NURBS Sweep</p>
+        <p class="prev-next-title">Apply Field to Surface</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -553,12 +535,10 @@ when <strong>Knots</strong> parameter is set to <strong>Auto</strong>.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
   </nav></div>
 
