@@ -15,7 +15,8 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.math import supported_metrics
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.surface.gordon import gordon_surface
+from sverchok.utils.surface.gordon import gordon_surface, SegmentsReparametrizer, MonotoneReparametrizer
+from sverchok.dependencies import scipy
 
 class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -48,6 +49,34 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         min = 1, max = 10,
         update = updateNode)
 
+    def reparametrize_methods(self, context):
+        result = [
+            ('SEGMENTS', "Picewise Linear", "Simpler algorithm based on picewise linear reparametrization", 0)
+        ]
+        if scipy is not None:
+            result.append(
+                ('MONOTONE', "Monotone Spline", "Reparametrization algorithm using monotone spline", 1)
+            )
+        return result
+
+    reparametrize_method : EnumProperty(
+        name = "Reparametrization",
+        items = reparametrize_methods,
+        update = updateNode)
+
+    reparametrize_accuracy : IntProperty(
+        name = "Reparametrization accuracy",
+        default = 6,
+        min = 1, max = 10,
+        update = updateNode)
+
+    reparametrize_samples : IntProperty(
+        name = "Samples",
+        description = "Reparametrization samples along U/V direction",
+        default = 50,
+        min = 3,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'explicit_t_values')
 
@@ -55,6 +84,10 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         if not self.explicit_t_values:
             layout.prop(self, 'metric')
         layout.prop(self, 'knotvector_accuracy')
+        layout.prop(self, 'reparametrize_method')
+        if self.reparametrize_method == 'MONOTONE':
+            layout.prop(self, 'reparametrize_samples')
+        layout.prop(self, 'reparametrize_accuracy')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "CurvesU")
@@ -79,6 +112,16 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             t1_s = [[[]]]
             t2_s = [[[]]]
+
+        reparametrize_tolerance = 10**(-self.reparametrize_accuracy)
+
+        if scipy is None or self.reparametrize_method == 'SEGMENTS':
+            reparametrizer = SegmentsReparametrizer(reparametrize_tolerance)
+        else:
+            reparametrizer = MonotoneReparametrizer(
+                                n_samples = self.reparametrize_samples,
+                                tolerance = reparametrize_tolerance,
+                                logger = self.sv_logger)
 
         u_curves_s = ensure_nesting_level(u_curves_s, 2, data_types=(SvCurve,))
         v_curves_s = ensure_nesting_level(v_curves_s, 2, data_types=(SvCurve,))
@@ -116,7 +159,12 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                 kwargs = {'u_knots': np.array(t1s), 'v_knots': np.array(t2s)}
             else:
                 kwargs = dict()
-            _, _, _, surface = gordon_surface(u_curves, v_curves, intersections, metric=self.metric, knotvector_accuracy = self.knotvector_accuracy, **kwargs)
+            _, _, _, surface = gordon_surface(u_curves, v_curves,
+                                              intersections,
+                                              metric=self.metric,
+                                              knotvector_accuracy = self.knotvector_accuracy,
+                                              reparametrizer = reparametrizer,
+                                              **kwargs)
             surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)
