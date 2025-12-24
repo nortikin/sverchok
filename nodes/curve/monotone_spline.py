@@ -20,6 +20,7 @@ class SvMonotoneSplineNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvMonotoneSplineNode'
     bl_label = 'Monotone Spline'
     bl_icon = 'CON_SPLINEIK'
+    sv_dependencies = {'scipy'}
 
     planes = [
         ('XY', "XY", "XY plane", 0),
