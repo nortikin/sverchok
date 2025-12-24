@@ -28,12 +28,23 @@ class SvMonotoneSplineNode(SverchCustomTreeNode, bpy.types.Node):
         ('YZ', "YZ", "YZ plane", 2)
     ]
 
+    def update_sockets(self, context):
+        if self.plane == 'XY':
+            x_label, y_label = "X", "Y"
+        elif self.plane == 'XZ':
+            x_label, y_label = "X", "Z"
+        else: # YZ
+            x_label, y_label = "Y", "Z"
+        self.inputs['X'].label = x_label
+        self.inputs['Y'].label = y_label
+        updateNode(self, context)
+
     plane : EnumProperty(
         name = "Plane",
         description = "Coordinate plane",
         items = planes,
         default = 'XY',
-        update = updateNode)
+        update = update_sockets)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "plane", expand=True)
