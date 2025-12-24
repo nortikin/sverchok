@@ -260,6 +260,7 @@
         - SvExRbfCurveNode
         - SvExCirclifyNode
         - ---
+        - SvMonotoneSplineNode
         - SvPointCurveNode
     - Generate Bezier Curve:
         - icon_name: EVENT_B

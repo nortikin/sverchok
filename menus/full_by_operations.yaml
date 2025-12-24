@@ -84,6 +84,7 @@
             - SvBiArcNode
             - SvPolyArcNode
             - ---
+            - SvMonotoneSplineNode
             - SvPointCurveNode
         - GC BEZIER:
             - icon_name: MESH_CUBE
