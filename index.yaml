@@ -577,6 +577,7 @@
     - SvMatrixNormalNode
     - SvMatrixTrackToNode
     - SvMatrixMathNode
+    - SvMatrixMathSuperNode
     - MatrixInterpolationNode
 
 - Quaternion:
