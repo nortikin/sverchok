@@ -41,8 +41,24 @@ EXTRA_ADDONS = {
     'archive_link':'https://github.com/vicdoval/sverchok-open3d/archive/',
     'branch': 'master',
     'self_instalable': True
-    }
+    },
+'Sverchok Bmesh': {
+    'name': 'sverchok_bmesh',
+    'description': 'Bmesh nodes for Sverchok addon (not suppported more)',
+    'archive_link':'https://github.com/nortikin/Sverchok-Bmesh/archive/',
+    'branch': 'main',
+    'self_instalable': True
+    },
+'Sverchok Mega-Polis': {
+    'name': 'mega_polis',
+    'description': 'MEGA-POLIS is a Data-Driven Urban Design Toolkit. GIS CSV LAS DEM OSM other',
+    'archive_link':'https://github.com/victorcalixto/mega-polis/archive/',
+    'branch': 'main',
+    'self_instalable': True
+    },
+
 }
+
 
 ARCHIVE_LINK = 'https://github.com/nortikin/sverchok/archive/'
 MASTER_BRANCH_NAME = 'master'
