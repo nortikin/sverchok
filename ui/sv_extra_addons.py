@@ -56,7 +56,27 @@ EXTRA_ADDONS = {
     'branch': 'main',
     'self_instalable': True
     },
-
+'Sverchok IFC': {
+    'name': 'sverchok_ifc',
+    'description': 'IfcSverchok is a Sverchok plugin that allows you to create native IFC models alongside your parametric Sverchok geometry.',
+    'archive_link':'https://github.com/nortikin/sverchok_ifc/archive/',
+    'branch': 'main',
+    'self_instalable': True
+    },
+'Sverchok ladybug': {
+    'name': 'sverchok_ifc',
+    'description': 'IfcSverchok is a Sverchok plugin that allows you to create native IFC models alongside your parametric Sverchok geometry.',
+    'archive_link':'https://github.com/nortikin/sverchok_ladybug/archive/',
+    'branch': 'main',
+    'self_instalable': True
+    },
+'Sverchok topologic (windows only)': {
+    'name': 'sverchok_topologic',
+    'description': 'Topologic is (windows only) a Sverchok plugin that allows you to create and manage topologu of architectural spaces.',
+    'archive_link':'https://github.com/nortikin/sverchok_topologic/archive/',
+    'branch': 'main',
+    'self_instalable': True
+    },
 }
 
 
