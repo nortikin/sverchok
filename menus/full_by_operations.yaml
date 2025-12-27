@@ -560,6 +560,8 @@
         - ---
         - SvStraightSkeleton2DOffset
         - SvStraightSkeleton2DExtrude
+        - ---
+        - SvSpyrrowNesterNode
         
     - C CURVES:
         - icon_name: OUTLINER_OB_CURVE
