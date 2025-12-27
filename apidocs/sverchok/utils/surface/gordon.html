@@ -45,7 +45,7 @@ el.replaceWith(d);
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sverchok.utils.surface.gordon.gordon_surface"><code class="name flex">
-<span>def <span class="ident">gordon_surface</span></span>(<span>u_curves,<br>v_curves,<br>intersections,<br>metric='POINTS',<br>u_knots=None,<br>v_knots=None,<br>knots_unification_method='UNIFY',<br>knotvector_accuracy=6,<br>reparametrize_tolerance=0.01,<br>implementation='NATIVE',<br>logger=None)</span>
+<span>def <span class="ident">gordon_surface</span></span>(<span>u_curves,<br>v_curves,<br>intersections,<br>metric='POINTS',<br>u_knots=None,<br>v_knots=None,<br>knots_unification_method='UNIFY',<br>knotvector_accuracy=6,<br>reparametrizer=None,<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -57,7 +57,7 @@ el.replaceWith(d);
         u_knots=None, v_knots=None,
         knots_unification_method = &#39;UNIFY&#39;,
         knotvector_accuracy=6,
-        reparametrize_tolerance=1e-2,
+        reparametrizer = None,
         implementation = SvNurbsSurface.NATIVE,
         logger=None):
     &#34;&#34;&#34;
@@ -90,6 +90,9 @@ el.replaceWith(d);
     if logger is None:
         logger = get_logger()
 
+    if reparametrizer is None:
+        reparametrizer = SegmentsReparametrizer(tolerance = 1e-6)
+
     intersections = np.array(intersections)
 
     if u_knots is not None:
@@ -100,8 +103,8 @@ el.replaceWith(d);
         loft_v_kwargs = {&#39;tknots&#39;: avg_v_knots}
         interpolate_kwargs = {&#39;uknots&#39;: avg_v_knots, &#39;vknots&#39;: avg_u_knots}
 
-        u_curves = [reparametrize_by_segments(c, knots, avg_u_knots, reparametrize_tolerance) for c, knots in zip(u_curves, u_knots)]
-        v_curves = [reparametrize_by_segments(c, knots, avg_v_knots, reparametrize_tolerance) for c, knots in zip(v_curves, v_knots)]
+        u_curves = [reparametrizer.reparametrize(SvNurbsSurface.U, c, knots, avg_u_knots) for c, knots in zip(u_curves, u_knots)]
+        v_curves = [reparametrizer.reparametrize(SvNurbsSurface.V, c, knots, avg_v_knots) for c, knots in zip(v_curves, v_knots)]
         #print(&#34;U&#34;, u_curves)
         #print(&#34;V&#34;, v_curves)
 
@@ -156,7 +159,7 @@ el.replaceWith(d);
                         lofted_v.get_control_points() - \
                         interpolated.get_control_points()
 
-    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
+    surface = SvNurbsSurface.build(implementation,
                 interpolated.get_degree_u(), interpolated.get_degree_v(),
                 interpolated.get_knotvector_u(), interpolated.get_knotvector_v(),
                 control_points, weights=None)
@@ -176,7 +179,7 @@ intersections from their positions.
 <p>See also: The NURBS Book, 2nd ed., p.10.5.</p></div>
 </dd>
 <dt id="sverchok.utils.surface.gordon.nurbs_birail_by_gordon"><code class="name flex">
-<span>def <span class="ident">nurbs_birail_by_gordon</span></span>(<span>path1,<br>path2,<br>profiles,<br>ts1=None,<br>ts2=None,<br>length_resolution=None,<br>min_profiles=2,<br>degree_v=None,<br>metric='POINTS',<br>scale_uniform=True,<br>auto_rotate=False,<br>use_tangents='PATHS_AVG',<br>y_axis=None,<br>knots_unification_method='UNIFY',<br>knotvector_accuracy=6,<br>implementation='NATIVE',<br>logger=None)</span>
+<span>def <span class="ident">nurbs_birail_by_gordon</span></span>(<span>path1,<br>path2,<br>profiles,<br>ts1=None,<br>ts2=None,<br>length_resolution=None,<br>min_profiles=2,<br>degree_v=None,<br>metric='POINTS',<br>scale_uniform=True,<br>auto_rotate=False,<br>use_tangents='PATHS_AVG',<br>y_axis=None,<br>knots_unification_method='UNIFY',<br>knotvector_accuracy=6,<br>reparametrizer=None,<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -195,6 +198,7 @@ intersections from their positions.
         y_axis = None,
         knots_unification_method = &#39;UNIFY&#39;,
         knotvector_accuracy = 6,
+        reparametrizer = None,
         implementation = SvNurbsSurface.NATIVE,
         logger = None):
 
@@ -228,6 +232,7 @@ intersections from their positions.
         logger=logger,
         knots_unification_method=knots_unification_method,
         knotvector_accuracy=knotvector_accuracy,
+        reparametrizer = reparametrizer
     )[-1]
     return u_curves, v_curves, surface</code></pre>
 </details>
@@ -299,59 +304,6 @@ intersections from their positions.
 </details>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.surface.gordon.reparametrize_by_segments"><code class="name flex">
-<span>def <span class="ident">reparametrize_by_segments</span></span>(<span>curve, t_values, target_t_values, tolerance=1e-06)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def reparametrize_by_segments(curve, t_values, target_t_values, tolerance=1e-6):
-    # Reparametrize given curve so that parameter values from t_values parameter
-    # would map to 1.0, 2.0, 3.0...
-
-    # This algorithm is somewhat rude, reparametrization function
-    # is not smooth. And this algorithm can produce additional
-    # control points.
-
-    t_min, t_max = curve.get_u_bounds()
-    #print(f&#34;Reparametrize: {t_min} - {t_max}: {t_values}&#34;)
-    #t_values = [t_min] + t_values + [t_max]
-
-    kv = curve.get_knotvector()
-
-    def adjust(t):
-        i = kv.searchsorted(t)
-        if i &gt; 0:
-            smaller = kv[i-1]
-            if (t - smaller) &lt; tolerance:
-                return smaller
-        if i &lt; len(kv):
-            greater = kv[i]
-            if (greater - t) &lt; tolerance:
-                return greater
-        return t
-
-    t_values = [adjust(t) for t in t_values]
-
-    segments = []
-    for t1, t2, tgt_t1, tgt_t2 in zip(t_values, t_values[1:], target_t_values, target_t_values[1:]):
-        segment = curve.cut_segment(t1, t2)
-        if segment is not None:
-            segment = segment.reparametrize(0.0, tgt_t2 - tgt_t1)
-            segments.append(segment)
-    
-    result = segments[0]
-    for segment in segments[1:]:
-        if segment is not None:
-            result = result.concatenate(segment, remove_knots=False)
-    
-    return result
-    #return remove_excessive_knots(result, tolerance=tolerance)</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 </dl>
 </section>
 <section>
@@ -379,6 +331,195 @@ intersections from their positions.
 <li>builtins.BaseException</li>
 </ul>
 </dd>
+<dt id="sverchok.utils.surface.gordon.MonotoneReparametrizer"><code class="flex name class">
+<span>class <span class="ident">MonotoneReparametrizer</span></span>
+<span>(</span><span>n_samples_u=50, n_samples_v=50, remove_knots=False, tolerance=1e-06, logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MonotoneReparametrizer(Reparametrizer):
+    def __init__(self, n_samples_u = 50, n_samples_v = 50, remove_knots = False, tolerance = 1e-6, logger = None):
+        self.n_samples_u = n_samples_u
+        self.n_samples_v = n_samples_v
+        self.remove_knots = remove_knots
+        self.tolerance = tolerance
+        self.logger = logger
+
+    def reparametrize(self, direction, curve, t_values, target_t_values):
+        if direction == SvNurbsSurface.U:
+            n_samples = self.n_samples_u
+        else:
+            n_samples = self.n_samples_v
+        #print(f&#34;Reparametrize: {t_values} =&gt; {target_t_values}&#34;)
+        segment_deltas = t_values[1:] - t_values[:-1]
+        t_counts = distribute_int(n_samples - 1, segment_deltas)
+        ts = []
+        for t1, t2, cnt in zip(t_values[:-1], t_values[1:], t_counts):
+            local_ts = np.linspace(t1, t2, num=cnt, endpoint=False)
+            ts.extend(local_ts)
+        ts.append(t_values[-1])
+        ts = np.array(ts)
+        #spline = SvMonotoneSpline(target_t_values, t_values)
+        spline = SvMonotoneSpline(t_values, target_t_values)
+        target_ts = spline.evaluate_array(ts)[:,1]
+        #print(f&#34;R: {ts} =&gt; {target_ts}&#34;)
+        curve_pts = curve.evaluate_array(ts)
+        new_curve = interpolate_nurbs_curve(curve.get_degree(), curve_pts,
+                                            tknots = target_ts, logger = self.logger)
+        if self.remove_knots:
+            return remove_excessive_knots(new_curve, tolerance = self.tolerance)
+        else:
+            return new_curve</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.gordon.Reparametrizer" href="#sverchok.utils.surface.gordon.Reparametrizer">Reparametrizer</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.gordon.MonotoneReparametrizer.reparametrize"><code class="name flex">
+<span>def <span class="ident">reparametrize</span></span>(<span>self, direction, curve, t_values, target_t_values)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reparametrize(self, direction, curve, t_values, target_t_values):
+    if direction == SvNurbsSurface.U:
+        n_samples = self.n_samples_u
+    else:
+        n_samples = self.n_samples_v
+    #print(f&#34;Reparametrize: {t_values} =&gt; {target_t_values}&#34;)
+    segment_deltas = t_values[1:] - t_values[:-1]
+    t_counts = distribute_int(n_samples - 1, segment_deltas)
+    ts = []
+    for t1, t2, cnt in zip(t_values[:-1], t_values[1:], t_counts):
+        local_ts = np.linspace(t1, t2, num=cnt, endpoint=False)
+        ts.extend(local_ts)
+    ts.append(t_values[-1])
+    ts = np.array(ts)
+    #spline = SvMonotoneSpline(target_t_values, t_values)
+    spline = SvMonotoneSpline(t_values, target_t_values)
+    target_ts = spline.evaluate_array(ts)[:,1]
+    #print(f&#34;R: {ts} =&gt; {target_ts}&#34;)
+    curve_pts = curve.evaluate_array(ts)
+    new_curve = interpolate_nurbs_curve(curve.get_degree(), curve_pts,
+                                        tknots = target_ts, logger = self.logger)
+    if self.remove_knots:
+        return remove_excessive_knots(new_curve, tolerance = self.tolerance)
+    else:
+        return new_curve</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.gordon.Reparametrizer"><code class="flex name class">
+<span>class <span class="ident">Reparametrizer</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Reparametrizer:
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.gordon.MonotoneReparametrizer" href="#sverchok.utils.surface.gordon.MonotoneReparametrizer">MonotoneReparametrizer</a></li>
+<li><a title="sverchok.utils.surface.gordon.SegmentsReparametrizer" href="#sverchok.utils.surface.gordon.SegmentsReparametrizer">SegmentsReparametrizer</a></li>
+</ul>
+</dd>
+<dt id="sverchok.utils.surface.gordon.SegmentsReparametrizer"><code class="flex name class">
+<span>class <span class="ident">SegmentsReparametrizer</span></span>
+<span>(</span><span>remove_knots=False, tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SegmentsReparametrizer(Reparametrizer):
+    def __init__(self, remove_knots = False, tolerance = 1e-6):
+        self.tolerance = tolerance
+        self.remove_knots = remove_knots
+
+    def reparametrize(self, direction, curve, t_values, target_t_values):
+        # Reparametrize given curve so that parameter values from t_values parameter
+        # would map to 1.0, 2.0, 3.0...
+
+        # This algorithm is somewhat rude, reparametrization function
+        # is not smooth. And this algorithm can produce additional
+        # control points.
+
+        segments = []
+        for t1, t2, tgt_t1, tgt_t2 in zip(t_values, t_values[1:], target_t_values, target_t_values[1:]):
+            segment = curve.cut_segment(t1, t2)
+            if segment is not None:
+                segment = segment.reparametrize(0.0, tgt_t2 - tgt_t1)
+                segments.append(segment)
+        
+        result = segments[0]
+        for segment in segments[1:]:
+            if segment is not None:
+                result = result.concatenate(segment, remove_knots=False)
+        
+        if self.remove_knots:
+            return remove_excessive_knots(result, tolerance = self.tolerance)
+        else:
+            return result</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.gordon.Reparametrizer" href="#sverchok.utils.surface.gordon.Reparametrizer">Reparametrizer</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.gordon.SegmentsReparametrizer.reparametrize"><code class="name flex">
+<span>def <span class="ident">reparametrize</span></span>(<span>self, direction, curve, t_values, target_t_values)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reparametrize(self, direction, curve, t_values, target_t_values):
+    # Reparametrize given curve so that parameter values from t_values parameter
+    # would map to 1.0, 2.0, 3.0...
+
+    # This algorithm is somewhat rude, reparametrization function
+    # is not smooth. And this algorithm can produce additional
+    # control points.
+
+    segments = []
+    for t1, t2, tgt_t1, tgt_t2 in zip(t_values, t_values[1:], target_t_values, target_t_values[1:]):
+        segment = curve.cut_segment(t1, t2)
+        if segment is not None:
+            segment = segment.reparametrize(0.0, tgt_t2 - tgt_t1)
+            segments.append(segment)
+    
+    result = segments[0]
+    for segment in segments[1:]:
+        if segment is not None:
+            result = result.concatenate(segment, remove_knots=False)
+    
+    if self.remove_knots:
+        return remove_excessive_knots(result, tolerance = self.tolerance)
+    else:
+        return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 </dl>
 </section>
 </article>
@@ -397,13 +538,27 @@ intersections from their positions.
 <li><code><a title="sverchok.utils.surface.gordon.gordon_surface" href="#sverchok.utils.surface.gordon.gordon_surface">gordon_surface</a></code></li>
 <li><code><a title="sverchok.utils.surface.gordon.nurbs_birail_by_gordon" href="#sverchok.utils.surface.gordon.nurbs_birail_by_gordon">nurbs_birail_by_gordon</a></code></li>
 <li><code><a title="sverchok.utils.surface.gordon.nurbs_blend_surfaces" href="#sverchok.utils.surface.gordon.nurbs_blend_surfaces">nurbs_blend_surfaces</a></code></li>
-<li><code><a title="sverchok.utils.surface.gordon.reparametrize_by_segments" href="#sverchok.utils.surface.gordon.reparametrize_by_segments">reparametrize_by_segments</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
 <h4><code><a title="sverchok.utils.surface.gordon.GordonUnificationException" href="#sverchok.utils.surface.gordon.GordonUnificationException">GordonUnificationException</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.gordon.MonotoneReparametrizer" href="#sverchok.utils.surface.gordon.MonotoneReparametrizer">MonotoneReparametrizer</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.gordon.MonotoneReparametrizer.reparametrize" href="#sverchok.utils.surface.gordon.MonotoneReparametrizer.reparametrize">reparametrize</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.gordon.Reparametrizer" href="#sverchok.utils.surface.gordon.Reparametrizer">Reparametrizer</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.gordon.SegmentsReparametrizer" href="#sverchok.utils.surface.gordon.SegmentsReparametrizer">SegmentsReparametrizer</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.gordon.SegmentsReparametrizer.reparametrize" href="#sverchok.utils.surface.gordon.SegmentsReparametrizer.reparametrize">reparametrize</a></code></li>
+</ul>
 </li>
 </ul>
 </li>

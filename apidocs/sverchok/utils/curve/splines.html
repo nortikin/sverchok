@@ -46,6 +46,299 @@ el.replaceWith(d);
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline"><code class="flex name class">
+<span>class <span class="ident">SvMonotoneSpline</span></span>
+<span>(</span><span>xs, ys, x_axis=0, y_axis=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvMonotoneSpline(SvCurve):
+    __description__ = &#34;Monotone Spline&#34;
+    def __init__(self, xs, ys, x_axis=0, y_axis=1):
+        self.xs = np.array(list(sorted(xs)))
+        self.ys = np.array(list(sorted(ys)))
+        self.interpolator = PchipInterpolator(self.xs, self.ys)
+        self.x_axis = x_axis
+        self.y_axis = y_axis
+
+    def get_u_bounds(self):
+        return self.xs[0], self.xs[-1]
+
+    def evaluate_array(self, ts):
+        ys = self.interpolator(ts)
+        n = len(ts)
+        pts = np.zeros((n, 3))
+        pts[:,self.y_axis] = ys
+        pts[:,self.x_axis] = ts
+        return pts
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def tangent_array(self, ts, tangent_delta = None):
+        ys = self.interpolator(ts, nu=1)
+        n = len(ts)
+        pts = np.zeros((n, 3))
+        pts[:,self.y_axis] = ys
+        pts[:,self.x_axis] = 1.0
+        return pts
+
+    def tangent(self, t):
+        return self.tangent_array(np.array([t]))[0]
+
+    def get_control_points(self):
+        return self.to_nurbs().get_control_points()
+
+    def is_line(self, tolerance=0.001):
+        return self.to_nurbs().is_line(tolerance = tolerance)
+
+    def is_rational(self):
+        return False
+
+    def get_degree(self):
+        return 3
+
+    def is_planar(self, tolerance=1e-6):
+        return True
+
+    def concatenate(self, curve2, tolerance=None):
+        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException(&#34;Second curve is not a NURBS&#34;)
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+    
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+
+    def reverse(self):
+        return self.to_nurbs().reverse()
+
+    def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
+        order, n_segments = self.interpolator.c.shape
+        segments = []
+        x_segments = zip(self.interpolator.x, self.interpolator.x[1:])
+        for i, x_segment in zip(range(n_segments), x_segments):
+            coeffs_y = self.interpolator.c[:,i][::-1]
+            coeffs = np.zeros((order, 3))
+            coeffs[0,self.x_axis] = x_segment[0]
+            coeffs[1,self.x_axis] = 1.0
+            coeffs[:,self.y_axis] = coeffs_y
+            segment = SvTaylorCurve.from_coefficients(coeffs)
+            segment.u_bounds = (0, x_segment[1] - x_segment[0])
+            segments.append(segment.to_nurbs(implementation = implementation))
+        return concatenate_nurbs_curves(segments)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.concatenate"><code class="name flex">
+<span>def <span class="ident">concatenate</span></span>(<span>self, curve2, tolerance=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def concatenate(self, curve2, tolerance=None):
+    curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
+    if curve2 is None:
+        raise UnsupportedCurveTypeException(&#34;Second curve is not a NURBS&#34;)
+    return self.to_nurbs().concatenate(curve2, tolerance=tolerance)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.extrude_along_vector"><code class="name flex">
+<span>def <span class="ident">extrude_along_vector</span></span>(<span>self, vector)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extrude_along_vector(self, vector):
+    return self.to_nurbs().extrude_along_vector(vector)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.extrude_to_point"><code class="name flex">
+<span>def <span class="ident">extrude_to_point</span></span>(<span>self, point)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extrude_to_point(self, point):
+    return self.to_nurbs().extrude_to_point(point)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.is_line"><code class="name flex">
+<span>def <span class="ident">is_line</span></span>(<span>self, tolerance=0.001)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_line(self, tolerance=0.001):
+    return self.to_nurbs().is_line(tolerance = tolerance)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.is_planar"><code class="name flex">
+<span>def <span class="ident">is_planar</span></span>(<span>self, tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_planar(self, tolerance=1e-6):
+    return True</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.is_rational"><code class="name flex">
+<span>def <span class="ident">is_rational</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_rational(self):
+    return False</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.lerp_to"><code class="name flex">
+<span>def <span class="ident">lerp_to</span></span>(<span>self, curve2, coefficient)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lerp_to(self, curve2, coefficient):
+    return self.to_nurbs().lerp_to(curve2, coefficient)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.make_revolution_surface"><code class="name flex">
+<span>def <span class="ident">make_revolution_surface</span></span>(<span>self, point, direction, v_min, v_max, global_origin)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+    return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.make_ruled_surface"><code class="name flex">
+<span>def <span class="ident">make_ruled_surface</span></span>(<span>self, curve2, vmin, vmax)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_ruled_surface(self, curve2, vmin, vmax):
+    return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reverse(self):
+    return self.to_nurbs().reverse()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvMonotoneSpline.to_nurbs"><code class="name flex">
+<span>def <span class="ident">to_nurbs</span></span>(<span>self, implementation='NATIVE')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
+    order, n_segments = self.interpolator.c.shape
+    segments = []
+    x_segments = zip(self.interpolator.x, self.interpolator.x[1:])
+    for i, x_segment in zip(range(n_segments), x_segments):
+        coeffs_y = self.interpolator.c[:,i][::-1]
+        coeffs = np.zeros((order, 3))
+        coeffs[0,self.x_axis] = x_segment[0]
+        coeffs[1,self.x_axis] = 1.0
+        coeffs[:,self.y_axis] = coeffs_y
+        segment = SvTaylorCurve.from_coefficients(coeffs)
+        segment.u_bounds = (0, x_segment[1] - x_segment[0])
+        segments.append(segment.to_nurbs(implementation = implementation))
+    return concatenate_nurbs_curves(segments)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.derivatives_array" href="core.html#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_by_plane_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative">third_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative_array">third_derivative_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
 <dt id="sverchok.utils.curve.splines.SvSplineCurve"><code class="flex name class">
 <span>class <span class="ident">SvSplineCurve</span></span>
 <span>(</span><span>spline)</span>
@@ -390,6 +683,22 @@ el.replaceWith(d);
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline" href="#sverchok.utils.curve.splines.SvMonotoneSpline">SvMonotoneSpline</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.concatenate" href="#sverchok.utils.curve.splines.SvMonotoneSpline.concatenate">concatenate</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.extrude_along_vector" href="#sverchok.utils.curve.splines.SvMonotoneSpline.extrude_along_vector">extrude_along_vector</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.extrude_to_point" href="#sverchok.utils.curve.splines.SvMonotoneSpline.extrude_to_point">extrude_to_point</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.is_line" href="#sverchok.utils.curve.splines.SvMonotoneSpline.is_line">is_line</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.is_planar" href="#sverchok.utils.curve.splines.SvMonotoneSpline.is_planar">is_planar</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.is_rational" href="#sverchok.utils.curve.splines.SvMonotoneSpline.is_rational">is_rational</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.lerp_to" href="#sverchok.utils.curve.splines.SvMonotoneSpline.lerp_to">lerp_to</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.make_revolution_surface" href="#sverchok.utils.curve.splines.SvMonotoneSpline.make_revolution_surface">make_revolution_surface</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.make_ruled_surface" href="#sverchok.utils.curve.splines.SvMonotoneSpline.make_ruled_surface">make_ruled_surface</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.reverse" href="#sverchok.utils.curve.splines.SvMonotoneSpline.reverse">reverse</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvMonotoneSpline.to_nurbs" href="#sverchok.utils.curve.splines.SvMonotoneSpline.to_nurbs">to_nurbs</a></code></li>
+</ul>
+</li>
 <li>
 <h4><code><a title="sverchok.utils.curve.splines.SvSplineCurve" href="#sverchok.utils.curve.splines.SvSplineCurve">SvSplineCurve</a></code></h4>
 <ul class="">
