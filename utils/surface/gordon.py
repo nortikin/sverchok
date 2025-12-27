@@ -274,6 +274,7 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
         y_axis = None,
         knots_unification_method = 'UNIFY',
         knotvector_accuracy = 6,
+        reparametrizer = None,
         implementation = SvNurbsSurface.NATIVE,
         logger = None):
 
@@ -307,6 +308,7 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
         logger=logger,
         knots_unification_method=knots_unification_method,
         knotvector_accuracy=knotvector_accuracy,
+        reparametrizer = reparametrizer
     )[-1]
     return u_curves, v_curves, surface
 
