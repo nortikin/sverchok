@@ -8,13 +8,17 @@
 import numpy as np
 
 from sverchok.utils.geom import LinearSpline, CubicSpline
-from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException, SvTaylorCurve
 from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import concatenate_curves, reparametrize_curve
 from sverchok.utils.curve.nurbs_algorithms import concatenate_nurbs_curves
+from sverchok.dependencies import scipy
+from sverchok.utils.nurbs_common import SvNurbsMaths
+if scipy is not None:
+    from scipy.interpolate import PchipInterpolator
 
 class SvSplineCurve(SvCurve):
     __description__ = "Spline"
@@ -120,4 +124,92 @@ class SvSplineCurve(SvCurve):
             return self.spline.pts
         else:
             raise UnsupportedCurveTypeException("Curve is not a polyline")
+
+class SvMonotoneSpline(SvCurve):
+    __description__ = "Monotone Spline"
+    def __init__(self, xs, ys, x_axis=0, y_axis=1):
+        self.xs = np.array(list(sorted(xs)))
+        self.ys = np.array(list(sorted(ys)))
+        self.interpolator = PchipInterpolator(self.xs, self.ys)
+        self.x_axis = x_axis
+        self.y_axis = y_axis
+
+    def get_u_bounds(self):
+        return self.xs[0], self.xs[-1]
+
+    def evaluate_array(self, ts):
+        ys = self.interpolator(ts)
+        n = len(ts)
+        pts = np.zeros((n, 3))
+        pts[:,self.y_axis] = ys
+        pts[:,self.x_axis] = ts
+        return pts
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def tangent_array(self, ts, tangent_delta = None):
+        ys = self.interpolator(ts, nu=1)
+        n = len(ts)
+        pts = np.zeros((n, 3))
+        pts[:,self.y_axis] = ys
+        pts[:,self.x_axis] = 1.0
+        return pts
+
+    def tangent(self, t):
+        return self.tangent_array(np.array([t]))[0]
+
+    def get_control_points(self):
+        return self.to_nurbs().get_control_points()
+
+    def is_line(self, tolerance=0.001):
+        return self.to_nurbs().is_line(tolerance = tolerance)
+
+    def is_rational(self):
+        return False
+
+    def get_degree(self):
+        return 3
+
+    def is_planar(self, tolerance=1e-6):
+        return True
+
+    def concatenate(self, curve2, tolerance=None):
+        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+    
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+
+    def reverse(self):
+        return self.to_nurbs().reverse()
+
+    def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
+        order, n_segments = self.interpolator.c.shape
+        segments = []
+        x_segments = zip(self.interpolator.x, self.interpolator.x[1:])
+        for i, x_segment in zip(range(n_segments), x_segments):
+            coeffs_y = self.interpolator.c[:,i][::-1]
+            coeffs = np.zeros((order, 3))
+            coeffs[0,self.x_axis] = x_segment[0]
+            coeffs[1,self.x_axis] = 1.0
+            coeffs[:,self.y_axis] = coeffs_y
+            segment = SvTaylorCurve.from_coefficients(coeffs)
+            segment.u_bounds = (0, x_segment[1] - x_segment[0])
+            segments.append(segment.to_nurbs(implementation = implementation))
+        return concatenate_nurbs_curves(segments)
 

@@ -75,6 +75,7 @@
         - SvBiArcNode
         - SvPolyArcNode
         - ---
+        - SvMonotoneSplineNode
         - SvPointCurveNode
     - SvExCurveFormulaNode
     - SvExCubicSplineNode

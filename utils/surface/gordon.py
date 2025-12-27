@@ -1,58 +1,84 @@
 import numpy as np
 
 from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputException
+from sverchok.utils.math import distribute_int
 from sverchok.utils.curve.bezier import SvBezierCurve
-from sverchok.utils.curve.nurbs_algorithms import CurvesUnificationException, unify_curves
+from sverchok.utils.curve.nurbs_algorithms import CurvesUnificationException, remove_excessive_knots, unify_curves
 from sverchok.utils.curve.algorithms import unify_curves_degree, curve_frame_on_surface_array, SvCurveOnSurfaceCurvaturesCalculator
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents, interpolate_nurbs_curve
+from sverchok.utils.curve.splines import SvMonotoneSpline
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface, prepare_nurbs_birail
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.sv_logging import get_logger
 
-def reparametrize_by_segments(curve, t_values, target_t_values, tolerance=1e-6):
-    # Reparametrize given curve so that parameter values from t_values parameter
-    # would map to 1.0, 2.0, 3.0...
+class Reparametrizer:
+    pass
 
-    # This algorithm is somewhat rude, reparametrization function
-    # is not smooth. And this algorithm can produce additional
-    # control points.
+class SegmentsReparametrizer(Reparametrizer):
+    def __init__(self, remove_knots = False, tolerance = 1e-6):
+        self.tolerance = tolerance
+        self.remove_knots = remove_knots
 
-    t_min, t_max = curve.get_u_bounds()
-    #print(f"Reparametrize: {t_min} - {t_max}: {t_values}")
-    #t_values = [t_min] + t_values + [t_max]
+    def reparametrize(self, direction, curve, t_values, target_t_values):
+        # Reparametrize given curve so that parameter values from t_values parameter
+        # would map to 1.0, 2.0, 3.0...
 
-    kv = curve.get_knotvector()
+        # This algorithm is somewhat rude, reparametrization function
+        # is not smooth. And this algorithm can produce additional
+        # control points.
 
-    def adjust(t):
-        i = kv.searchsorted(t)
-        if i > 0:
-            smaller = kv[i-1]
-            if (t - smaller) < tolerance:
-                return smaller
-        if i < len(kv):
-            greater = kv[i]
-            if (greater - t) < tolerance:
-                return greater
-        return t
+        segments = []
+        for t1, t2, tgt_t1, tgt_t2 in zip(t_values, t_values[1:], target_t_values, target_t_values[1:]):
+            segment = curve.cut_segment(t1, t2)
+            if segment is not None:
+                segment = segment.reparametrize(0.0, tgt_t2 - tgt_t1)
+                segments.append(segment)
+        
+        result = segments[0]
+        for segment in segments[1:]:
+            if segment is not None:
+                result = result.concatenate(segment, remove_knots=False)
+        
+        if self.remove_knots:
+            return remove_excessive_knots(result, tolerance = self.tolerance)
+        else:
+            return result
 
-    t_values = [adjust(t) for t in t_values]
+class MonotoneReparametrizer(Reparametrizer):
+    def __init__(self, n_samples_u = 50, n_samples_v = 50, remove_knots = False, tolerance = 1e-6, logger = None):
+        self.n_samples_u = n_samples_u
+        self.n_samples_v = n_samples_v
+        self.remove_knots = remove_knots
+        self.tolerance = tolerance
+        self.logger = logger
 
-    segments = []
-    for t1, t2, tgt_t1, tgt_t2 in zip(t_values, t_values[1:], target_t_values, target_t_values[1:]):
-        segment = curve.cut_segment(t1, t2)
-        if segment is not None:
-            segment = segment.reparametrize(0.0, tgt_t2 - tgt_t1)
-            segments.append(segment)
-    
-    result = segments[0]
-    for segment in segments[1:]:
-        if segment is not None:
-            result = result.concatenate(segment, remove_knots=False)
-    
-    return result
-    #return remove_excessive_knots(result, tolerance=tolerance)
+    def reparametrize(self, direction, curve, t_values, target_t_values):
+        if direction == SvNurbsSurface.U:
+            n_samples = self.n_samples_u
+        else:
+            n_samples = self.n_samples_v
+        #print(f"Reparametrize: {t_values} => {target_t_values}")
+        segment_deltas = t_values[1:] - t_values[:-1]
+        t_counts = distribute_int(n_samples - 1, segment_deltas)
+        ts = []
+        for t1, t2, cnt in zip(t_values[:-1], t_values[1:], t_counts):
+            local_ts = np.linspace(t1, t2, num=cnt, endpoint=False)
+            ts.extend(local_ts)
+        ts.append(t_values[-1])
+        ts = np.array(ts)
+        #spline = SvMonotoneSpline(target_t_values, t_values)
+        spline = SvMonotoneSpline(t_values, target_t_values)
+        target_ts = spline.evaluate_array(ts)[:,1]
+        #print(f"R: {ts} => {target_ts}")
+        curve_pts = curve.evaluate_array(ts)
+        new_curve = interpolate_nurbs_curve(curve.get_degree(), curve_pts,
+                                            tknots = target_ts, logger = self.logger)
+        if self.remove_knots:
+            return remove_excessive_knots(new_curve, tolerance = self.tolerance)
+        else:
+            return new_curve
 
 class GordonUnificationException(ArgumentError):
     """Raised when we cannot unify curves provided to Gordon algorithm."""
@@ -64,7 +90,7 @@ def gordon_surface(u_curves, v_curves, intersections,
         u_knots=None, v_knots=None,
         knots_unification_method = 'UNIFY',
         knotvector_accuracy=6,
-        reparametrize_tolerance=1e-2,
+        reparametrizer = None,
         implementation = SvNurbsSurface.NATIVE,
         logger=None):
     """
@@ -97,6 +123,9 @@ def gordon_surface(u_curves, v_curves, intersections,
     if logger is None:
         logger = get_logger()
 
+    if reparametrizer is None:
+        reparametrizer = SegmentsReparametrizer(tolerance = 1e-6)
+
     intersections = np.array(intersections)
 
     if u_knots is not None:
@@ -107,8 +136,8 @@ def gordon_surface(u_curves, v_curves, intersections,
         loft_v_kwargs = {'tknots': avg_v_knots}
         interpolate_kwargs = {'uknots': avg_v_knots, 'vknots': avg_u_knots}
 
-        u_curves = [reparametrize_by_segments(c, knots, avg_u_knots, reparametrize_tolerance) for c, knots in zip(u_curves, u_knots)]
-        v_curves = [reparametrize_by_segments(c, knots, avg_v_knots, reparametrize_tolerance) for c, knots in zip(v_curves, v_knots)]
+        u_curves = [reparametrizer.reparametrize(SvNurbsSurface.U, c, knots, avg_u_knots) for c, knots in zip(u_curves, u_knots)]
+        v_curves = [reparametrizer.reparametrize(SvNurbsSurface.V, c, knots, avg_v_knots) for c, knots in zip(v_curves, v_knots)]
         #print("U", u_curves)
         #print("V", v_curves)
 
@@ -163,7 +192,7 @@ def gordon_surface(u_curves, v_curves, intersections,
                         lofted_v.get_control_points() - \
                         interpolated.get_control_points()
 
-    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
+    surface = SvNurbsSurface.build(implementation,
                 interpolated.get_degree_u(), interpolated.get_degree_v(),
                 interpolated.get_knotvector_u(), interpolated.get_knotvector_v(),
                 control_points, weights=None)
@@ -245,6 +274,7 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
         y_axis = None,
         knots_unification_method = 'UNIFY',
         knotvector_accuracy = 6,
+        reparametrizer = None,
         implementation = SvNurbsSurface.NATIVE,
         logger = None):
 
@@ -278,6 +308,7 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
         logger=logger,
         knots_unification_method=knots_unification_method,
         knotvector_accuracy=knotvector_accuracy,
+        reparametrizer = reparametrizer
     )[-1]
     return u_curves, v_curves, surface
 
