@@ -49,15 +49,14 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         min = 1, max = 10,
         update = updateNode)
 
-    def reparametrize_methods(self, context):
-        result = [
+    reparametrize_methods = [
             ('SEGMENTS', "Picewise Linear", "Simpler algorithm based on picewise linear reparametrization", 0)
         ]
-        if scipy is not None:
-            result.append(
-                ('MONOTONE', "Monotone Spline", "Reparametrization algorithm using monotone spline", 1)
-            )
-        return result
+
+    if scipy is not None:
+        reparametrize_methods.append(
+            ('MONOTONE', "Monotone Spline", "Reparametrization algorithm using monotone spline", 1)
+        )
 
     reparametrize_method : EnumProperty(
         name = "Reparametrization",
