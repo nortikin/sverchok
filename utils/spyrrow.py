@@ -24,28 +24,37 @@ def rotate(points, angle):
 def translate(points, vector):
     return points + np.array(vector)
 
-def to_2d(verts):
-    return [(v[0], v[1]) for v in verts]
-
-def to_3d(verts):
-    return [(v[0], v[1], 0) for v in verts]
-
 class SpyrrowSolutionItem:
-    def __init__(self, placed_item, verts2d):
+    def __init__(self, placed_item, verts2d, plane = 'XY'):
         self.placed_item = placed_item
         self.verts2d = verts2d
+        self.plane = plane
+        if plane == 'XY':
+            self.axis = 'Z'
+        elif plane == 'XZ':
+            self.axis = 'Y'
+        else:
+            self.axis = 'X'
+
+    def to_3d(self, verts):
+        if self.plane == 'XY':
+            return [(v[0], v[1], 0) for v in verts]
+        elif self.plane == 'XZ':
+            return [(v[0], 0, v[1]) for v in verts]
+        else:
+            return [(0, v[0], v[1]) for v in verts]
 
     def get_index(self):
         return int(self.placed_item.id)
 
     def calc_verts(self):
         verts2d = translate(rotate(self.verts2d, self.placed_item.rotation), self.placed_item.translation)
-        return to_3d(verts2d)
+        return self.to_3d(verts2d)
     
     def calc_matrix(self):
-        rotation = Matrix.Rotation(radians(self.placed_item.rotation), 4, 'Z')
+        rotation = Matrix.Rotation(radians(self.placed_item.rotation), 4, self.axis)
         v = self.placed_item.translation
-        v = [v[0], v[1], 0]
+        v = self.to_3d([v])[0]
         translation = Matrix.Translation(v)
         return translation @ rotation
 
@@ -61,19 +70,28 @@ class SpyrrowSolution:
             yield from self._items[id]
 
 class SpyrrowSolver:
-    def __init__(self, config, strip_height):
+    def __init__(self, config, strip_height, plane = 'XY'):
         self.instance = None
         self.config = config
         self.strip_height = strip_height
         self.solution = None
         self.items = []
         self.verts2d = dict()
+        self.plane = plane
+
+    def to_2d(self, verts):
+        if self.plane == 'XY':
+            return [(v[0], v[1]) for v in verts]
+        elif self.plane == 'XZ':
+            return [(v[0], v[2]) for v in verts]
+        else: # YZ
+            return [(v[1], v[2]) for v in verts]
 
     def add_item(self, verts, count = 1, allowed_orientations = None):
         if self.instance is not None:
             raise InvalidStateError("Spyrrow instance has already been initialized")
         j = len(self.items)
-        verts = to_2d(verts)
+        verts = self.to_2d(verts)
         id = f"{j:08}"
         item = spyrrow.Item(
                 id, verts,

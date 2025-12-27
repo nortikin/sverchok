@@ -125,6 +125,107 @@ def polygons_to_edges_np(obj, unique_edges=False, output_numpy=False):
                     result.append(edges.tolist())
     return result
 
+def find_limits(verts_in, edges_in):
+    v_count = [[0, 0, 0] for i in range(len(verts_in))]
+    limits = []
+    for i, e in enumerate(edges_in):
+        v_count[e[0]][0] += 1
+        v_count[e[0]][1] = 0
+        v_count[e[0]][2] = i
+        v_count[e[1]][0] += 1
+        v_count[e[1]][1] = 1
+        v_count[e[1]][2] = i
+    for i, v in enumerate(v_count):
+        if v[0] == 1:
+            limits.append((i, v[1], v[2]))
+    return limits
+
+def sort_vertices_by_connections(verts_in, edges_in, limit_mode):
+
+    def pop_lower_level(a, index):
+        for co in a:
+            co.pop(index)
+
+    # prepare data and arrays
+    verts_out = []
+    edges_out = []
+    index = []
+
+    edges_len = len(edges_in)
+    edges_index = [j for j in range(edges_len)]
+    edges0 = [j[0] for j in edges_in]
+    edges1 = [j[1] for j in edges_in]
+    edges_copy = [edges0, edges1, edges_index]
+
+    # start point
+    limiting = False
+    if limit_mode:
+        limits = find_limits(verts_in, edges_in)
+        limiting = len(limits) > 0
+    if limiting:
+        ed_index = limits[0][2]
+        or_side = limits[0][1]
+        limits.pop(0)
+    else:
+        ed_index = 0
+        or_side = 0  # direction of the edge
+
+    pop_lower_level(edges_copy, ed_index)
+
+    for j in range(edges_len):
+        e = edges_in[ed_index]
+        ed = []
+        if or_side == 1:
+            e = [e[1], e[0]]
+
+        for side in e:
+            if verts_in[side] in verts_out:
+                ed.append(verts_out.index(verts_in[side]))
+            else:
+                verts_out.append(verts_in[side])
+                ed.append(verts_out.index(verts_in[side]))
+                index.append(side)
+
+        edges_out.append(ed)
+        # find next edge
+        ed_index_old = ed_index
+        v_index = e[1]
+        if v_index in edges_copy[0]:
+            k = edges_copy[0].index(v_index)
+            ed_index = edges_copy[2][k]
+            or_side = 0
+            pop_lower_level(edges_copy, k)
+
+        elif v_index in edges_copy[1]:
+            k = edges_copy[1].index(v_index)
+            ed_index = edges_copy[2][k]
+            or_side = 1
+            pop_lower_level(edges_copy, k)
+
+        # if not found take next point or next limit
+        if ed_index == ed_index_old and len(edges_copy[0]) > 0:
+            if not limiting:
+                ed_index = edges_copy[2][0]
+                or_side = 0
+                pop_lower_level(edges_copy, 0)
+            else:
+                for lim in limits:
+                    if not lim[0] in index:
+                        ed_index = lim[2]
+                        or_side = lim[1]
+                        k = edges_copy[0].index(lim[0]) if lim[0] in edges_copy[0] else edges_copy[1].index(lim[0])
+                        pop_lower_level(edges_copy, k)
+
+                        break
+    # add unconnected vertices
+    if len(verts_out) != len(verts_in):
+        for verts, i in zip(verts_in, range(len(verts_in))):
+            if verts not in verts_out:
+                verts_out.append(verts)
+                index.append(i)
+
+    return verts_out, edges_out, index
+
 def mask_vertices(verts, edges, faces, verts_mask):
     if any(not m for m in verts_mask):
         vert_indexes = [i for i, m in enumerate(verts_mask) if m]
