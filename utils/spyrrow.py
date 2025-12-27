@@ -7,6 +7,7 @@
 
 import numpy as np
 from math import sin, cos, radians
+from collections import defaultdict
 
 from mathutils import Matrix
 
@@ -34,6 +35,9 @@ class SpyrrowSolutionItem:
         self.placed_item = placed_item
         self.verts2d = verts2d
 
+    def get_index(self):
+        return int(self.placed_item.id)
+
     def calc_verts(self):
         verts2d = translate(rotate(self.verts2d, self.placed_item.rotation), self.placed_item.translation)
         return to_3d(verts2d)
@@ -44,6 +48,17 @@ class SpyrrowSolutionItem:
         v = [v[0], v[1], 0]
         translation = Matrix.Translation(v)
         return translation @ rotation
+
+class SpyrrowSolution:
+    def __init__(self):
+        self._items = defaultdict(list)
+
+    def add_item(self, item):
+        self._items[item.placed_item.id].append(item)
+
+    def items(self):
+        for id in sorted(self._items.keys()):
+            yield from self._items[id]
 
 class SpyrrowSolver:
     def __init__(self, config, strip_height):
@@ -59,7 +74,7 @@ class SpyrrowSolver:
             raise InvalidStateError("Spyrrow instance has already been initialized")
         j = len(self.items)
         verts = to_2d(verts)
-        id = f"object_{j}"
+        id = f"{j:08}"
         item = spyrrow.Item(
                 id, verts,
                 demand = count,
@@ -78,10 +93,10 @@ class SpyrrowSolver:
         print("Starting Spyrrow solver")
         self.solution = self.instance.solve(self.config)
         print("Spyrrow solver done")
-        result = []
+        result = SpyrrowSolution()
         for placed_item in self.solution.placed_items:
             verts = self.verts2d[placed_item.id]
             item = SpyrrowSolutionItem(placed_item, verts)
-            result.append(item)
+            result.add_item(item)
         return result
 

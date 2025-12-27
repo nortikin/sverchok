@@ -136,6 +136,8 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'random_seed'
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Faces')
+        self.outputs.new('SvStringsSocket', 'Indices')
+        self.outputs.new('SvMatrixSocket', 'Matrices')
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -191,6 +193,8 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
 
         verts_out = []
         faces_out = []
+        indices_out = []
+        matrices_out = []
         if self.activate:
             verts_s = self.inputs['Vertices'].sv_get()
             if self.inputs['Faces'].is_linked:
@@ -222,20 +226,30 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
 
                     problem_verts = []
                     problem_faces = []
-                    for item in solver.solve():
+                    problem_matrices = []
+                    problem_indices = []
+                    for item in solver.solve().items():
                         item_verts = item.calc_verts()
                         problem_verts.append(item_verts)
                         face = list(range(len(item_verts)))
                         faces = [face]
                         problem_faces.append(faces)
+                        problem_matrices.append(item.calc_matrix())
+                        problem_indices.append(item.get_index())
                     if self.flat_output:
                         verts_out.extend(problem_verts)
                         faces_out.extend(problem_faces)
+                        matrices_out.extend(problem_matrices)
+                        indices_out.extend([problem_indices])
                     else:
                         verts_out.append(problem_verts)
                         faces_out.append(problem_faces)
+                        matrices_out.append(problem_matrices)
+                        indices_out.append([problem_indices])
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Faces'].sv_set(faces_out)
+        self.outputs['Indices'].sv_set(indices_out)
+        self.outputs['Matrices'].sv_set(matrices_out)
 
 def register():
     bpy.utils.register_class(SvSpyrrowNesterNode)
