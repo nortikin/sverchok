@@ -50,6 +50,48 @@ then optimized only for speed, never for aesthetics or line count or cleverness.
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="sverchok.utils.geom.aligned_bounding_box_2d"><code class="name flex">
+<span>def <span class="ident">aligned_bounding_box_2d</span></span>(<span>points)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def aligned_bounding_box_2d(points):
+    points = np.asarray(points).T
+    ndim, n = points.shape
+    if ndim != 2:
+        raise ArgumentError(&#34;Points must be list of 2-tuples&#34;)
+    means = np.mean(points, axis=1)
+    points -= means[np.newaxis].T
+    cov = np.cov(points)
+    evalues, evec = np.linalg.eig(cov)
+    evec = evec.T
+    maxidx = np.argmax(abs(evalues))
+
+    vec1 = np.zeros((3,))
+    vec2 = np.zeros((3,))
+    vec1[:2] = evec[maxidx]
+    vec2[:2] = evec[1 - maxidx]
+
+    vec3 = np.cross(vec1, vec2)
+    vec2 = np.cross(vec3, vec1)
+
+    res = np.zeros((2, 2))
+    res[0,:] = vec1[:2]
+    res[1,:] = vec2[:2]
+    det = np.linalg.det(res)
+    if det &lt; 0:
+        res[1,:] = -vec2[:2]
+
+    rotated_pts = (res @ points).T
+    size_0 = rotated_pts[:,0].max() - rotated_pts[:,0].min()
+    size_1 = rotated_pts[:,1].max() - rotated_pts[:,1].min()
+    return rotated_pts, size_0, size_1</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.geom.are_points_coplanar"><code class="name flex">
 <span>def <span class="ident">are_points_coplanar</span></span>(<span>points, tolerance=1e-06)</span>
 </code></dt>
@@ -6396,6 +6438,7 @@ returns: an instance of Ellipse3D.</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="sverchok.utils.geom.aligned_bounding_box_2d" href="#sverchok.utils.geom.aligned_bounding_box_2d">aligned_bounding_box_2d</a></code></li>
 <li><code><a title="sverchok.utils.geom.are_points_coplanar" href="#sverchok.utils.geom.are_points_coplanar">are_points_coplanar</a></code></li>
 <li><code><a title="sverchok.utils.geom.autorotate_diff" href="#sverchok.utils.geom.autorotate_diff">autorotate_diff</a></code></li>
 <li><code><a title="sverchok.utils.geom.autorotate_householder" href="#sverchok.utils.geom.autorotate_householder">autorotate_householder</a></code></li>
