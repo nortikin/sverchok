@@ -34,6 +34,7 @@ import mathutils
 from mathutils import Matrix, Vector
 from mathutils.geometry import interpolate_bezier, intersect_line_line, intersect_point_line
 
+from sverchok.core.sv_custom_exceptions import ArgumentError
 from sverchok.utils.modules.geom_primitives import (
     circle, arc, quad, arc_slice, rect, grid, line)
 
@@ -116,6 +117,39 @@ def bounding_box_aligned(verts, evec_external=None, factor=1.0):
     mat_scale[0][0], mat_scale[1][1], mat_scale[2][2] = abbox_size
     mat = mathutils.Matrix.Translation(abbox_center) @ Matrix(evec_target).to_euler().to_matrix().to_4x4() @ mat_scale
     return rrc, mat, abbox_size  # verts, matrix (not use for a while)
+
+def aligned_bounding_box_2d(points):
+    points = np.asarray(points).T
+    ndim, n = points.shape
+    if ndim != 2:
+        raise ArgumentError("Points must be list of 2-tuples")
+    means = np.mean(points, axis=1)
+    points -= means[np.newaxis].T
+    cov = np.cov(points)
+    evalues, evec = np.linalg.eig(cov)
+    evec = evec.T
+    maxidx = np.argmax(abs(evalues))
+
+    vec1 = np.zeros((3,))
+    vec2 = np.zeros((3,))
+    vec1[:2] = evec[maxidx]
+    vec2[:2] = evec[1 - maxidx]
+
+    vec3 = np.cross(vec1, vec2)
+    vec2 = np.cross(vec3, vec1)
+
+    res = np.zeros((2, 2))
+    res[0,:] = vec1[:2]
+    res[1,:] = vec2[:2]
+    det = np.linalg.det(res)
+    if det < 0:
+        res[1,:] = -vec2[:2]
+
+    rotated_pts = (res @ points).T
+    size_0 = rotated_pts[:,0].max() - rotated_pts[:,0].min()
+    size_1 = rotated_pts[:,1].max() - rotated_pts[:,1].min()
+    return rotated_pts, size_0, size_1
+
 
 identity_matrix = Matrix()
 
