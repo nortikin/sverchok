@@ -2859,3 +2859,23 @@ def is_convex_2d(verts):
             return False
     return True
 
+def calc_polygon_area(points):
+    """
+    Calc area of the polygon.
+    It is assumed that all points are in the same plane
+    (one can check it with are_points_coplanar() method).
+
+    Args:
+        points: np.array of shape (n,3)
+
+    Returns:
+        number.
+    """
+    points = np.asarray(points)
+    p0 = points[0]
+    vectors = points - p0
+    sum_cross = np.zeros((3,))
+    for v1, v2 in zip(vectors[1:], vectors[2:]):
+        sum_cross += np.cross(v1, v2)
+    return np.linalg.norm(sum_cross) / 2.0
+

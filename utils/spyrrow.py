@@ -11,8 +11,12 @@ from collections import defaultdict
 
 from mathutils import Matrix
 
-from sverchok.core.sv_custom_exceptions import InvalidStateError
+from sverchok.core.sv_custom_exceptions import InvalidStateError, SvInvalidInputException
+from sverchok.utils.geom import calc_polygon_area, diameter
 from sverchok.dependencies import spyrrow
+
+EPSILON_Z = 1e-4
+EPSILON_AREA = 1e-4
 
 def rotate(points, angle):
     angle = radians(angle)
@@ -81,17 +85,33 @@ class SpyrrowSolver:
 
     def to_2d(self, verts):
         if self.plane == 'XY':
+            if any(abs(v[2]) >= EPSILON_Z for v in verts):
+                raise SvInvalidInputException("Z value for one of points is not zero")
             return [(v[0], v[1]) for v in verts]
         elif self.plane == 'XZ':
+            if any(abs(v[1]) >= EPSILON_Z for v in verts):
+                raise SvInvalidInputException("Y value for one of points is not zero")
             return [(v[0], v[2]) for v in verts]
         else: # YZ
+            if any(abs(v[0]) >= EPSILON_Z for v in verts):
+                raise SvInvalidInputException("X value for one of points is not zero")
             return [(v[1], v[2]) for v in verts]
 
     def add_item(self, verts, count = 1, allowed_orientations = None):
         if self.instance is not None:
             raise InvalidStateError("Spyrrow instance has already been initialized")
+        # These checks are required, because currently spyrrow
+        # reacts on such polygons very badly: not only raises an exception,
+        # but stops to work at all.
+        if calc_polygon_area(verts) <= EPSILON_AREA:
+            raise SvInvalidInputException("Polygon area is too small")
+        if diameter(verts, axis=None) > self.strip_height:
+            raise SvInvalidInputException("Polygon is too large for this strip height")
         j = len(self.items)
         verts = self.to_2d(verts)
+        # This format is required in order to
+        # 1) be able to sort objects by ID properly
+        # 2) recover object's ID as integer
         id = f"{j:08}"
         item = spyrrow.Item(
                 id, verts,
@@ -109,12 +129,16 @@ class SpyrrowSolver:
                     items = self.items
                 )
         print("Starting Spyrrow solver")
-        self.solution = self.instance.solve(self.config)
+        try:
+            self.solution = self.instance.solve(self.config)
+        except Exception as e:
+            print(f"Spyrrow exception: {e}")
+            raise
         print("Spyrrow solver done")
         result = SpyrrowSolution()
         for placed_item in self.solution.placed_items:
             verts = self.verts2d[placed_item.id]
-            item = SpyrrowSolutionItem(placed_item, verts)
+            item = SpyrrowSolutionItem(placed_item, verts, plane = self.plane)
             result.add_item(item)
         return result
 
