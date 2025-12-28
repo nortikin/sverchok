@@ -22,10 +22,11 @@ from bpy.props import EnumProperty, BoolProperty, FloatProperty, IntProperty
 from sverchok.core.sv_custom_exceptions import SvInvalidInputException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import ensure_nesting_level, zip_long_repeat, updateNode
+from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 from sverchok.utils.spyrrow import SpyrrowSolver
 from sverchok.dependencies import spyrrow
 
-class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
+class SvSpyrrowNesterNode(SverchCustomTreeNode, DraftMode, bpy.types.Node):
     """
     Triggers: Spyrrow Nesting Packing
     Tooltip: Solve strip packing (nesting) problems
@@ -54,6 +55,13 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
         min = 1, max = 8,
         update = updateNode)
 
+    quadtree_depth_draft : IntProperty(
+        name = "[D] Quadtree depth",
+        description = "Maximum depth of the quadtree used by the collision detection engine jagua-rs, for draft mode",
+        default = 2,
+        min = 1, max = 8,
+        update = updateNode)
+
     min_separation : FloatProperty(
         name = "Separation",
         description = "Minimum required distance between packed items",
@@ -66,6 +74,13 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
         description = "Total time budget in seconds",
         min = 1,
         default = 10,
+        update = updateNode)
+
+    total_time_draft : IntProperty(
+        name = "[D] Total time",
+        description = "Total time budget in seconds, for draft mode",
+        min = 1,
+        default = 1,
         update = updateNode)
 
     use_all_cores : BoolProperty(
@@ -144,6 +159,20 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
         default = True,
         update = updateNode)
 
+    draft_properties_mapping = dict(
+            total_time = 'total_time_draft',
+            quadtree_depth = 'quadtree_depth_draft'
+        )
+
+    def does_support_draft_mode(self):
+        return True
+
+    def draw_label(self):
+        label = self.label or self.name
+        if self.id_data.sv_draft:
+            label = "[D] " + label
+        return label
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Edges')
@@ -170,7 +199,10 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "plane", expand=True)
         layout.label(text="Rotation:")
         layout.prop(self, 'rotation_mode', text='')
-        layout.prop(self, 'total_time')
+        if self.id_data.sv_draft:
+            layout.prop(self, 'total_time_draft')
+        else:
+            layout.prop(self, 'total_time')
         layout.prop(self, 'early_termination')
         layout.prop(self, 'use_all_cores')
         if not self.use_all_cores:
@@ -180,14 +212,17 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.prop(self, 'keep_topology')
-        layout.prop(self, 'quadtree_depth')
+        if self.id_data.sv_draft:
+            layout.prop(self, 'quadtree_depth_draft')
+        else:
+            layout.prop(self, 'quadtree_depth')
 
     def get_config(self, min_separation, seed):
         return spyrrow.StripPackingConfig(
                 early_termination = self.early_termination,
-                quadtree_depth = self.quadtree_depth,
+                quadtree_depth = self.quadtree_depth_draft if self.id_data.sv_draft else self.quadtree_depth,
                 min_items_separation = min_separation,
-                total_computation_time = self.total_time,
+                total_computation_time = self.total_time_draft if self.id_data.sv_draft else self.total_time,
                 num_workers = self.num_workers if not self.use_all_cores else None,
                 seed = seed)
 
