@@ -140,7 +140,10 @@ class SpyrrowSolver:
 
         if faces_for_sort:
             if len(faces_for_sort) != 1:
-                raise SvInvalidInputException("Each item must have exactly one face")
+                if self.keep_topology:
+                    raise SvInvalidInputException("Could not reduce one of items to `one piece'; probably it has holes, which is not supported.")
+                else:
+                    raise SvInvalidInputException("Each item must have exactly one face")
             face = faces_for_sort[0]
             verts = [verts_for_sort[j] for j in face]
         elif edges_for_sort:
