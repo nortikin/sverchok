@@ -144,7 +144,7 @@ class SpyrrowSolver:
             face = faces_for_sort[0]
             verts = [verts_for_sort[j] for j in face]
         elif edges_for_sort:
-            verts, _, _ = sv_mesh.sort_vertices_by_connections(edges_for_sort, edges_for_sort, True)
+            verts, e, idx = sv_mesh.sort_vertices_by_connections(verts_for_sort, edges_for_sort, True)
 
         if not self.keep_topology:
             edges = SpyrrowSolution.make_edges(verts)
@@ -177,8 +177,9 @@ class SpyrrowSolver:
         # but stops to work at all.
         if calc_polygon_area(sorted_verts) <= EPSILON_AREA:
             raise SvInvalidInputException("Polygon area is too small")
-        if diameter(sorted_verts, axis=None) > self.strip_height:
-            raise SvInvalidInputException("Polygon is too large for this strip height")
+        diam = diameter(sorted_verts, axis=None)
+        if diam > self.strip_height:
+            raise SvInvalidInputException(f"Polygon is too large ({diam}) for this strip height ({self.strip_height})")
         j = len(self.items)
         sorted_verts = SpyrrowSolver.to_2d(self.plane, sorted_verts)
         # This format is required in order to

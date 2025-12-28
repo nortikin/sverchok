@@ -224,12 +224,12 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
                 edges_s = self.inputs['Edges'].sv_get()
                 edges_s = ensure_nesting_level(edges_s, 5)
             else:
-                edges_s = [[[0]]]
+                edges_s = [[[[]]]]
             if self.inputs['Faces'].is_linked:
                 faces_s = self.inputs['Faces'].sv_get()
                 faces_s = ensure_nesting_level(faces_s, 5)
             else:
-                faces_s = [[[0]]]
+                faces_s = [[[[]]]]
             height_s = self.inputs['StripeHeight'].sv_get()
             min_separation_s = self.inputs['MinSeparation'].sv_get()
             seed_s = self.inputs['Seed'].sv_get()
