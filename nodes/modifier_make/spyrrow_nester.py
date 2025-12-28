@@ -203,7 +203,6 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, DraftMode, bpy.types.Node):
             layout.prop(self, 'total_time_draft')
         else:
             layout.prop(self, 'total_time')
-        layout.prop(self, 'early_termination')
         layout.prop(self, 'use_all_cores')
         if not self.use_all_cores:
             layout.prop(self, 'num_workers')
@@ -211,6 +210,7 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, DraftMode, bpy.types.Node):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        layout.prop(self, 'early_termination')
         layout.prop(self, 'keep_topology')
         if self.id_data.sv_draft:
             layout.prop(self, 'quadtree_depth_draft')
