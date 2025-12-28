@@ -224,7 +224,7 @@ try:
     import spyrrow
     spyrrow_d.module = spyrrow
 except ImportError:
-    pySVCGAL = None 
+    spyrrow = None 
 
 settings.pip = pip
 settings.sv_dependencies = sv_dependencies
