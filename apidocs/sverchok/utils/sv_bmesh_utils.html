@@ -609,6 +609,24 @@ iterate over any edges or do index lookups</p></div>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.sv_bmesh_utils.dissolve_internal_edges"><code class="name flex">
+<span>def <span class="ident">dissolve_internal_edges</span></span>(<span>bm, use_verts=True, use_face_split=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dissolve_internal_edges(bm, use_verts=True, use_face_split=True):
+    internal_edges = [e for e in bm.edges if e.is_manifold and not e.is_boundary]
+    bmesh.ops.dissolve_edges(bm,
+                             edges = internal_edges,
+                             use_verts = use_verts,
+                             use_face_split = use_face_split)
+    return bm</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.sv_bmesh_utils.dual_mesh"><code class="name flex">
 <span>def <span class="ident">dual_mesh</span></span>(<span>bm, recalc_normals=True, keep_boundaries=False)</span>
 </code></dt>
@@ -1757,6 +1775,7 @@ new manager class each call</p>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.bmesh_join" href="#sverchok.utils.sv_bmesh_utils.bmesh_join">bmesh_join</a></code></li>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.calc_center_mass_bmesh" href="#sverchok.utils.sv_bmesh_utils.calc_center_mass_bmesh">calc_center_mass_bmesh</a></code></li>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.diamond_mesh" href="#sverchok.utils.sv_bmesh_utils.diamond_mesh">diamond_mesh</a></code></li>
+<li><code><a title="sverchok.utils.sv_bmesh_utils.dissolve_internal_edges" href="#sverchok.utils.sv_bmesh_utils.dissolve_internal_edges">dissolve_internal_edges</a></code></li>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.dual_mesh" href="#sverchok.utils.sv_bmesh_utils.dual_mesh">dual_mesh</a></code></li>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.edge_data_from_bmesh_edges" href="#sverchok.utils.sv_bmesh_utils.edge_data_from_bmesh_edges">edge_data_from_bmesh_edges</a></code></li>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.empty_bmesh" href="#sverchok.utils.sv_bmesh_utils.empty_bmesh">empty_bmesh</a></code></li>

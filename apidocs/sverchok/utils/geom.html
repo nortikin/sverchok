@@ -415,6 +415,45 @@ all resulting tris will be returned.</p>
 <h2 id="returns">Returns</h2>
 <p>mathutils.Vector.</p></div>
 </dd>
+<dt id="sverchok.utils.geom.calc_polygon_area"><code class="name flex">
+<span>def <span class="ident">calc_polygon_area</span></span>(<span>points)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_polygon_area(points):
+    &#34;&#34;&#34;
+    Calc area of the polygon.
+    It is assumed that all points are in the same plane
+    (one can check it with are_points_coplanar() method).
+
+    Args:
+        points: np.array of shape (n,3)
+
+    Returns:
+        number.
+    &#34;&#34;&#34;
+    points = np.asarray(points)
+    p0 = points[0]
+    vectors = points - p0
+    sum_cross = np.zeros((3,))
+    for v1, v2 in zip(vectors[1:], vectors[2:]):
+        sum_cross += np.cross(v1, v2)
+    return np.linalg.norm(sum_cross) / 2.0</code></pre>
+</details>
+<div class="desc"><p>Calc area of the polygon.
+It is assumed that all points are in the same plane
+(one can check it with are_points_coplanar() method).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong></dt>
+<dd>np.array of shape (n,3)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>number.</p></div>
+</dd>
 <dt id="sverchok.utils.geom.center"><code class="name flex">
 <span>def <span class="ident">center</span></span>(<span>data)</span>
 </code></dt>
@@ -6448,6 +6487,7 @@ returns: an instance of Ellipse3D.</p></div>
 <li><code><a title="sverchok.utils.geom.bounding_sphere" href="#sverchok.utils.geom.bounding_sphere">bounding_sphere</a></code></li>
 <li><code><a title="sverchok.utils.geom.calc_bounds" href="#sverchok.utils.geom.calc_bounds">calc_bounds</a></code></li>
 <li><code><a title="sverchok.utils.geom.calc_normal" href="#sverchok.utils.geom.calc_normal">calc_normal</a></code></li>
+<li><code><a title="sverchok.utils.geom.calc_polygon_area" href="#sverchok.utils.geom.calc_polygon_area">calc_polygon_area</a></code></li>
 <li><code><a title="sverchok.utils.geom.center" href="#sverchok.utils.geom.center">center</a></code></li>
 <li><code><a title="sverchok.utils.geom.circle_approximation" href="#sverchok.utils.geom.circle_approximation">circle_approximation</a></code></li>
 <li><code><a title="sverchok.utils.geom.circle_approximation_2d" href="#sverchok.utils.geom.circle_approximation_2d">circle_approximation_2d</a></code></li>
