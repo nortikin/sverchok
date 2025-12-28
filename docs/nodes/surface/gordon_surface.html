@@ -402,6 +402,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
@@ -420,6 +421,10 @@ document.write(`
                   
   <section id="nurbs-surface-from-curves-net">
 <h1>NURBS Surface from Curves Net<a class="headerlink" href="#nurbs-surface-from-curves-net" title="Link to this heading">#</a></h1>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
+<p>This node can optionally use SciPy library.</p>
+</section>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
 <p>Given a net of intersecting curves, this node generates a surface which passes
@@ -458,10 +463,20 @@ then in input curves list, <cite>C_u1</cite> must be provided before <cite>C_u2<
 will pass through the curves only approximately.</p>
 <p>If intersections of your curves are located arbitrarily in parameter spaces of
 curves, the node can try to reparametrize curves in order to make intersections
-located “even” in parameter spaces. Note that reparametrization algorithm is
-somewhat rude, so it can produce unwanted additional control points, and/or
-create “bad” parametrization of resulting surface. In some cases, it is
-possible to get a better parametrization by manually removing excessive knots.</p>
+located “even” in parameter spaces. There are two algorithms implemented:</p>
+<ul class="simple">
+<li><p>Picewise-linear algorithm. This reparametrization algorithm is somewhat rude,
+so it can produce unwanted additional control points, and/or create “bad”
+parametrization of resulting surface; sometimes it can produce not very
+smooth surfaces. In some cases, it is possible to get a better
+parametrization by manually removing excessive knots.</p></li>
+<li><p>Monotone spline algorithm. This algorithm requires SciPy library to work.
+This algorithm is more precise, because it generates smoother
+reparametrization; as a result, usually more smooth surfaces are generated,
+even for badly parametrized original curves. But this algorithm also
+generates more control points. Probably you will want to use “Remove
+excessive knots” node afterwards.</p></li>
+</ul>
 <p>To clear the issue of intersections location in parameter space, let’s draw some pictures.</p>
 <p>Good parametrization: (first number is parameter of U-curve at the intersection
 point, the second number is parameter of V-curve at the intersection point):</p>
@@ -522,6 +537,30 @@ round values in resulting surface’s knot vectors. More decimal digits will
 give more exact results, but can produce a number of knots / control points
 located very close to each other, most of them being just an artefact of
 floating-point precision issues. The default value is 4.</p></li>
+<li><p><strong>Reparametrization algorithm</strong>. This parameter is only avaialble in the N
+panel. The available options are:</p>
+<ul class="simple">
+<li><p><strong>Picewise Linear</strong>. This is the default option.</p></li>
+<li><p><strong>Monotone Spline</strong>. This option is only available when SciPy library is
+available.</p></li>
+</ul>
+<p>See discussion of reparametrization above in the <strong>Functionality</strong> section.</p>
+</li>
+<li><p><strong>SamplesU</strong>, <strong>SamplesV</strong>. These parameters are available in the N panel
+only, and only when the <strong>Reparametrization algorithm</strong> parameter is set to
+<strong>Monotone Spline</strong>. Number of samples along U and V surface directions,
+which are used for interpolation during the reparametrization procedure.
+Bigger values usually generate more precise surfaces; however, have in mind
+that the surface will have at least <strong>SamplesU * SamplesV</strong> control points
+(usually more). The default value is 50 for both parameters.</p></li>
+<li><p><strong>Remove knots</strong>. This parameter is available in the N panel only. If this
+parameter is checked, then after reparametrization the node will try to
+remove excessively generated knots from base curves. This reduces the number
+of generates control points, but reduces the precision. Unchecked by default.</p></li>
+<li><p><strong>Reparametrization accuracy</strong>. This parameter is available in the N panel
+only, and only when the <strong>Remove knots</strong> parameter is checked. Accuracy
+(number of decimal digits ager decimal point) of excessive knots removing
+procedure. The default value is 4.</p></li>
 </ul>
 </section>
 <section id="outputs">
@@ -584,6 +623,7 @@ floating-point precision issues. The default value is 4.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>

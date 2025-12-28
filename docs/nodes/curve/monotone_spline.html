@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reparametrize Curve &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Monotone Spline &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/curve/reparametrize';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/curve/monotone_spline';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Rounded Rectangle" href="rounded_rectangle.html" />
-    <link rel="prev" title="Remove Knot (NURBS Curve)" href="remove_knot.html" />
+    <link rel="next" title="Move NURBS Curve Point" href="move_nurbs_curve_point.html" />
+    <link rel="prev" title="Marching Squares on Surface" href="marching_squares_on_surface.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -218,7 +218,7 @@
 <li class="toctree-l3"><a class="reference internal" href="line.html">Line (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="marching_squares.html">Marching Squares</a></li>
 <li class="toctree-l3"><a class="reference internal" href="marching_squares_on_surface.html">Marching Squares on Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="monotone_spline.html">Monotone Spline</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Monotone Spline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="move_nurbs_curve_point.html">Move NURBS Curve Point</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nearest_point.html">Nearest Point on Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_curve.html">Build NURBS Curve</a></li>
@@ -237,7 +237,7 @@
 <li class="toctree-l3"><a class="reference internal" href="refine_nurbs_curve.html">Refine NURBS Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="remove_excessive_knots.html">Remove Excessive Knots (NURBS Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="remove_knot.html">Remove Knot (NURBS Curve)</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Reparametrize Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reparametrize.html">Reparametrize Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rounded_rectangle.html">Rounded Rectangle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="snap_curves.html">Snap Curves</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sort_curves.html">Sort Curves</a></li>
@@ -339,7 +339,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/curve/reparametrize.rst" target="_blank"
+      <li><a href="../../_sources/nodes/curve/monotone_spline.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -423,7 +423,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Reparametrize Curve</h1>
+    <h1>Monotone Spline</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -433,9 +433,12 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
             </nav>
         </div>
@@ -447,41 +450,71 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="reparametrize-curve">
-<h1>Reparametrize Curve<a class="headerlink" href="#reparametrize-curve" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211383863-f90734a0-00fc-4fc9-88f2-03eb641d0ea9.png"><img alt="https://user-images.githubusercontent.com/14288520/211383863-f90734a0-00fc-4fc9-88f2-03eb641d0ea9.png" src="https://user-images.githubusercontent.com/14288520/211383863-f90734a0-00fc-4fc9-88f2-03eb641d0ea9.png" />
-</a>
+  <section id="monotone-spline">
+<h1>Monotone Spline<a class="headerlink" href="#monotone-spline" title="Link to this heading">#</a></h1>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
+<p>This node requires SciPy library to function.</p>
+</section>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>Given a Curve, this node generates another Curve object, which represents the
-same curve with another parametrization. The parametrization of the curve is
-changed so that the domain of the curve would be equal to specified <code class="docutils literal notranslate"><span class="pre">[T_min;</span>
-<span class="pre">T_max]</span></code> interval.</p>
-<p>This node may be useful, for example, if you have a curve with domain <code class="docutils literal notranslate"><span class="pre">[-1;</span>
-<span class="pre">5]</span></code>, but another node expects a curve with domain <code class="docutils literal notranslate"><span class="pre">[0;</span> <span class="pre">1]</span></code>.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211384676-4811e872-5fed-4ba1-bb6e-a91ce61d617c.png"><img alt="https://user-images.githubusercontent.com/14288520/211384676-4811e872-5fed-4ba1-bb6e-a91ce61d617c.png" src="https://user-images.githubusercontent.com/14288520/211384676-4811e872-5fed-4ba1-bb6e-a91ce61d617c.png" />
-</a>
-<ul class="simple">
-<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
-<li><p>Curves-&gt; <a class="reference internal" href="curve_range.html"><span class="doc">Curve Domain</span></a></p></li>
-<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
-</ul>
+<p>A monotone spline is a smooth curve, which interpolates input set of X and Y
+values, with additional property: interpolated values of Y are strictly
+increasing when X is increasing.</p>
+<p>As a consequence, Y values of whole curve lie within the span between the first
+and last values of Y provided.</p>
+<p>One of possible applications of monotone splines is reparametrization of
+curves. In original curve, you have some dependency of the point on the curve
+from curve T parameter; when T is increasing, the point on the curve goes in
+one direction along the curve. When you do reparametrization, you change this
+dependency in such a way that the speed at which the point travels along the
+curve when T is changing, becomes different from original curve. But you still
+want the point to travel always in one direction.</p>
+<p>This node takes two sets of numbers, for X (independent variable) and Y
+(dependent variable). Both sets are sorted. The node builds a monotone spline,
+which is a curve third degree. First derivative is continuous, but the second
+derivative can have discontinuities. This curve is “NURBS-like”, i.e. can be
+automatically converted to NURBS by nodes which work with NURBS curves.</p>
+<p>Curve parametrization: according to provided set of X values.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Curve</strong>. Original curve. This input is mandatory.</p></li>
-<li><p><strong>NewTMin</strong>, <strong>NewTMax</strong>. Lower and upper bounds of the new curve domain.
-Default values are 0 and 1.</p></li>
+<li><p><strong>X</strong>. Set of independent variable values. This input is mandatory.</p></li>
+<li><p><strong>Y</strong>. Set of dependent variable values. This input is mandatory.</p></li>
+</ul>
+<p>The inputs are automatically renamed according to selected value of the <strong>Plane</strong> parameter.</p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<p>This node has the following parameter:</p>
+<ul>
+<li><p><strong>Plane</strong>. The coordinate plane in which the spline will be drawn. The available options are:</p>
+<ul class="simple">
+<li><p><strong>XY</strong>. It is assumed that Y depends on X.</p></li>
+<li><p><strong>XZ</strong>. It is assumed that Z depends on X.</p></li>
+<li><p><strong>YZ</strong>. It is assumed that Z depends on Y.</p></li>
+</ul>
+<p>The default option is <strong>XY</strong>.</p>
+</li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
-<li><p><strong>Curve</strong>. Reparametrized curve.</p></li>
+<li><p><strong>Curve</strong>. The generated monotone spline curve.</p></li>
 </ul>
+</section>
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
+<p>In the following example, green line is a cubic spline, and you can see that
+for these points the cubic spline is decreasing in the beginning and in the end
+of curve; and it also goes outside of the range between first and last Y
+values.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7c1afb23-e24c-4498-a676-e47e50b9137c"><img alt="https://github.com/user-attachments/assets/7c1afb23-e24c-4498-a676-e47e50b9137c" src="https://github.com/user-attachments/assets/7c1afb23-e24c-4498-a676-e47e50b9137c" />
+</a>
 </section>
 </section>
 
@@ -497,20 +530,20 @@ Default values are 0 and 1.</p></li>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="remove_knot.html"
+       href="marching_squares_on_surface.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Remove Knot (NURBS Curve)</p>
+        <p class="prev-next-title">Marching Squares on Surface</p>
       </div>
     </a>
     <a class="right-next"
-       href="rounded_rectangle.html"
+       href="move_nurbs_curve_point.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Rounded Rectangle</p>
+        <p class="prev-next-title">Move NURBS Curve Point</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -530,9 +563,12 @@ Default values are 0 and 1.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
   </nav></div>
 
