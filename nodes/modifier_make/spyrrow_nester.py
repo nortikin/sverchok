@@ -17,13 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolVectorProperty, EnumProperty, BoolProperty, FloatProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, FloatProperty, IntProperty
 
-from sverchok.core.sv_custom_exceptions import SvInvalidInputException, SvInvalidResultException
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import ensure_nesting_level, zip_long_repeat, updateNode
-import sverchok.utils.sv_mesh_utils as sv_mesh
-from sverchok.utils.spyrrow import SpyrrowSolver, SpyrrowSolutionItem
+from sverchok.utils.spyrrow import SpyrrowSolver
 from sverchok.dependencies import spyrrow
 
 class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
@@ -140,6 +139,11 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
         default = 'XY',
         update = updateNode)
 
+    keep_topology : BoolProperty(
+        name = "Support non-trivial topology",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Edges')
@@ -175,6 +179,7 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        layout.prop(self, 'keep_topology')
         layout.prop(self, 'quadtree_depth')
 
     def get_config(self, min_separation, seed):
@@ -185,19 +190,6 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
                 total_computation_time = self.total_time,
                 num_workers = self.num_workers if not self.use_all_cores else None,
                 seed = seed)
-
-    def sort_verts(self, verts, edges, faces):
-        if faces:
-            if len(faces) != 1:
-                raise SvInvalidInputException("Each item must have exactly one face")
-            face = faces[0]
-            verts = [verts[j] for j in face]
-            return verts
-        elif edges:
-            verts, _, _ = sv_mesh.sort_vertices_by_connections(verts, edges, True)
-            return verts
-        else:
-            return verts
 
     def prepare_angles(self, angles):
         #print("Src A", angles)
@@ -259,11 +251,10 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
                 new_strip_faces = []
                 for verts_l, edges_l, faces_l, angle_l, count_l, height, min_separation, seed in zip_long_repeat(*params):
                     config = self.get_config(min_separation, seed)
-                    solver = SpyrrowSolver(config, height, plane = self.plane)
+                    solver = SpyrrowSolver(config, height, plane = self.plane, keep_topology = self.keep_topology)
                     for verts, edges, faces, angles, count in zip_long_repeat(verts_l, edges_l, faces_l, angle_l, count_l):
-                        verts = self.sort_verts(verts, edges, faces)
                         angles = self.prepare_angles(angles)
-                        solver.add_item(verts, count = count, allowed_orientations = angles)
+                        solver.add_item(verts, edges, faces, count = count, allowed_orientations = angles)
 
                     problem_verts = []
                     problem_edges = []
