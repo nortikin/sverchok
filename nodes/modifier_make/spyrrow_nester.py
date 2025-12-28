@@ -243,6 +243,8 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
             verts_s = ensure_nesting_level(verts_s, 5)
             angle_s = ensure_nesting_level(angle_s, 4)
 
+            keep_topology = self.keep_topology and (self.inputs['Edges'].is_linked or self.inputs['Faces'].is_linked)
+
             for params in zip_long_repeat(verts_s, edges_s, faces_s, angle_s, count_s, height_s, min_separation_s, seed_s):
                 new_widths = []
                 new_densities = []
@@ -251,7 +253,7 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
                 new_strip_faces = []
                 for verts_l, edges_l, faces_l, angle_l, count_l, height, min_separation, seed in zip_long_repeat(*params):
                     config = self.get_config(min_separation, seed)
-                    solver = SpyrrowSolver(config, height, plane = self.plane, keep_topology = self.keep_topology)
+                    solver = SpyrrowSolver(config, height, plane = self.plane, keep_topology = keep_topology)
                     for verts, edges, faces, angles, count in zip_long_repeat(verts_l, edges_l, faces_l, angle_l, count_l):
                         angles = self.prepare_angles(angles)
                         solver.add_item(verts, edges, faces, count = count, allowed_orientations = angles)
