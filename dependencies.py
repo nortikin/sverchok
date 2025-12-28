@@ -218,6 +218,14 @@ try:
 except ImportError:
     pySVCGAL = None 
 
+spyrrow_d = sv_dependencies["spyrrow"] = SvDependency("Spyrrow","https://github.com/PaulDL-RS/spyrrow")
+spyrrow_d.pip_installable = True
+try:
+    import spyrrow
+    spyrrow_d.module = spyrrow
+except ImportError:
+    pySVCGAL = None 
+
 settings.pip = pip
 settings.sv_dependencies = sv_dependencies
 settings.ensurepip = ensurepip
