@@ -40,10 +40,11 @@ class SpyrrowSolutionItem:
         else:
             self.axis = 'X'
 
-    def to_3d(self, verts):
-        if self.plane == 'XY':
+    @staticmethod
+    def to_3d(plane, verts):
+        if plane == 'XY':
             return [(v[0], v[1], 0) for v in verts]
-        elif self.plane == 'XZ':
+        elif plane == 'XZ':
             return [(v[0], 0, v[1]) for v in verts]
         else:
             return [(0, v[0], v[1]) for v in verts]
@@ -53,18 +54,27 @@ class SpyrrowSolutionItem:
 
     def calc_verts(self):
         verts2d = translate(rotate(self.verts2d, self.placed_item.rotation), self.placed_item.translation)
-        return self.to_3d(verts2d)
+        return SpyrrowSolutionItem.to_3d(self.plane, verts2d)
+
+    def calc_polygons(self):
+        verts = self.calc_verts()
+        edges = SpyrrowSolution.make_edges(verts)
+        faces = SpyrrowSolution.make_faces(verts)
+        return verts, edges, faces
     
     def calc_matrix(self):
         rotation = Matrix.Rotation(radians(self.placed_item.rotation), 4, self.axis)
         v = self.placed_item.translation
-        v = self.to_3d([v])[0]
+        v = SpyrrowSolutionItem.to_3d(self.plane, [v])[0]
         translation = Matrix.Translation(v)
         return translation @ rotation
 
 class SpyrrowSolution:
-    def __init__(self):
+    def __init__(self, instance, solution, plane):
         self._items = defaultdict(list)
+        self.solution = solution
+        self.instance = instance
+        self.plane = plane
 
     def add_item(self, item):
         self._items[item.placed_item.id].append(item)
@@ -73,12 +83,32 @@ class SpyrrowSolution:
         for id in sorted(self._items.keys()):
             yield from self._items[id]
 
+    @staticmethod
+    def make_faces(verts):
+        face = list(range(len(verts)))
+        return [face]
+
+    @staticmethod
+    def make_edges(verts):
+        n_verts = len(verts)
+        edges = [(i, i+1) for i in range(n_verts-1)]
+        edges.append((n_verts-1, 0))
+        return edges
+
+    def make_strip(self):
+        height = self.instance.strip_height
+        width = self.solution.width
+        verts = [[0,0], [width, 0], [width, height], [0, height]]
+        verts = SpyrrowSolutionItem.to_3d(self.plane, verts)
+        edges = SpyrrowSolution.make_edges(verts)
+        faces = SpyrrowSolution.make_faces(verts)
+        return verts, edges, faces
+
 class SpyrrowSolver:
     def __init__(self, config, strip_height, plane = 'XY'):
         self.instance = None
         self.config = config
         self.strip_height = strip_height
-        self.solution = None
         self.items = []
         self.verts2d = dict()
         self.plane = plane
@@ -130,15 +160,15 @@ class SpyrrowSolver:
                 )
         print("Starting Spyrrow solver")
         try:
-            self.solution = self.instance.solve(self.config)
+            solution = self.instance.solve(self.config)
+            print("Spyrrow solver done")
+            result = SpyrrowSolution(self.instance, solution, plane = self.plane)
+            for placed_item in solution.placed_items:
+                verts = self.verts2d[placed_item.id]
+                item = SpyrrowSolutionItem(placed_item, verts, plane = self.plane)
+                result.add_item(item)
+            return result
         except Exception as e:
             print(f"Spyrrow exception: {e}")
             raise
-        print("Spyrrow solver done")
-        result = SpyrrowSolution()
-        for placed_item in self.solution.placed_items:
-            verts = self.verts2d[placed_item.id]
-            item = SpyrrowSolutionItem(placed_item, verts, plane = self.plane)
-            result.add_item(item)
-        return result
 

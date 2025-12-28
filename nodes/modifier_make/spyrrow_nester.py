@@ -23,13 +23,8 @@ from sverchok.core.sv_custom_exceptions import SvInvalidInputException, SvInvali
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import ensure_nesting_level, zip_long_repeat, updateNode
 import sverchok.utils.sv_mesh_utils as sv_mesh
-from sverchok.utils.spyrrow import SpyrrowSolver
+from sverchok.utils.spyrrow import SpyrrowSolver, SpyrrowSolutionItem
 from sverchok.dependencies import spyrrow
-
-def make_edges(n_verts):
-    edges = [(i, i+1) for i in range(n_verts-1)]
-    edges.append((n_verts-1, 0))
-    return edges
 
 class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -159,6 +154,11 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Faces')
         self.outputs.new('SvStringsSocket', 'Indices')
         self.outputs.new('SvMatrixSocket', 'Matrices')
+        self.outputs.new('SvStringsSocket', 'StripWidth')
+        self.outputs.new('SvStringsSocket', 'Density')
+        self.outputs.new('SvVerticesSocket', 'StripVertices')
+        self.outputs.new('SvStringsSocket', 'StripEdges')
+        self.outputs.new('SvStringsSocket', 'StripFaces')
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -221,6 +221,11 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
         faces_out = []
         indices_out = []
         matrices_out = []
+        width_out = []
+        density_out = []
+        strip_verts_out = []
+        strip_edges_out = []
+        strip_faces_out = []
         if self.activate:
             verts_s = self.inputs['Vertices'].sv_get()
             if self.inputs['Edges'].is_linked:
@@ -247,6 +252,11 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
             angle_s = ensure_nesting_level(angle_s, 4)
 
             for params in zip_long_repeat(verts_s, edges_s, faces_s, angle_s, count_s, height_s, min_separation_s, seed_s):
+                new_widths = []
+                new_densities = []
+                new_strip_verts = []
+                new_strip_edges = []
+                new_strip_faces = []
                 for verts_l, edges_l, faces_l, angle_l, count_l, height, min_separation, seed in zip_long_repeat(*params):
                     config = self.get_config(min_separation, seed)
                     solver = SpyrrowSolver(config, height, plane = self.plane)
@@ -260,16 +270,25 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
                     problem_faces = []
                     problem_matrices = []
                     problem_indices = []
-                    for item in solver.solve().items():
-                        item_verts = item.calc_verts()
+
+                    solution = solver.solve()
+                    for item in solution.items():
+                        item_verts, edges, faces = item.calc_polygons()
                         problem_verts.append(item_verts)
-                        edges = make_edges(len(item_verts))
                         problem_edges.append(edges)
-                        face = list(range(len(item_verts)))
-                        faces = [face]
                         problem_faces.append(faces)
                         problem_matrices.append(item.calc_matrix())
                         problem_indices.append(item.get_index())
+                    
+                    new_widths.append(solution.solution.width)
+                    new_densities.append(solution.solution.density)
+
+                    strip_verts, strip_edges, strip_faces = solution.make_strip()
+
+                    new_strip_verts.append(strip_verts)
+                    new_strip_edges.append(strip_edges)
+                    new_strip_faces.append(strip_faces)
+
                     if self.flat_output:
                         verts_out.extend(problem_verts)
                         edges_out.extend(problem_edges)
@@ -282,11 +301,28 @@ class SvSpyrrowNesterNode(SverchCustomTreeNode, bpy.types.Node):
                         faces_out.append(problem_faces)
                         matrices_out.append(problem_matrices)
                         indices_out.append([problem_indices])
+
+                width_out.append(new_widths)
+                density_out.append(new_densities)
+                if self.flat_output:
+                    strip_verts_out.extend(new_strip_verts)
+                    strip_edges_out.extend(new_strip_edges)
+                    strip_faces_out.extend(new_strip_faces)
+                else:
+                    strip_verts_out.append(new_strip_verts)
+                    strip_edges_out.append(new_strip_edges)
+                    strip_faces_out.append(new_strip_faces)
+
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)
         self.outputs['Indices'].sv_set(indices_out)
         self.outputs['Matrices'].sv_set(matrices_out)
+        self.outputs['StripWidth'].sv_set(width_out)
+        self.outputs['Density'].sv_set(density_out)
+        self.outputs['StripVertices'].sv_set(strip_verts_out)
+        self.outputs['StripEdges'].sv_set(strip_edges_out)
+        self.outputs['StripFaces'].sv_set(strip_faces_out)
 
 def register():
     bpy.utils.register_class(SvSpyrrowNesterNode)
