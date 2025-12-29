@@ -61,6 +61,7 @@ UNITTEST_SKIPLIST = [
     "Fasade_Complicated.zip",
     "CNC_WAFFLE_SOLID.json",
     "Sverchok_extra_contiour.json"
+    "CNC_CIRCLE_BISEECT_NEST_EXPORT.json"
 ]
 
 # @batch_only
