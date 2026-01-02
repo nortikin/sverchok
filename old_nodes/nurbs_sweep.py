@@ -16,18 +16,20 @@ from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, NORMAL_DIR, NONE, TRACK_NORMAL
-from sverchok.utils.surface.nurbs import nurbs_sweep, SWEEP_GREVILLE
+from sverchok.utils.surface.nurbs import nurbs_sweep
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
-class SvNurbsSweepMk2Node(SverchCustomTreeNode, bpy.types.Node):
+class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Sweep / Monorail
     Tooltip: Generate a NURBS surface by sweeping one curve along another (a.k.a monorail)
     """
-    bl_idname = 'SvNurbsSweepMk2Node'
+    bl_idname = 'SvNurbsSweepNode'
     bl_label = 'NURBS Sweep'
     bl_icon = 'GP_MULTIFRAME_EDITING'
+
+    replacement_nodes = [('SvNurbsSweepMk2Node', None, None)]
 
     u_knots_modes = [
             ('UNIFY', "Unify", "Unify knot vectors of curves by inserting knots into curves where needed", 0),
@@ -79,29 +81,17 @@ class SvNurbsSweepMk2Node(SverchCustomTreeNode, bpy.types.Node):
         (NORMAL_DIR, "Specified Y", "Use plane defined by normal vector in Normal input; i.e., offset in direction perpendicular to Normal input", 7)
     ]
 
-    v_modes = [
-        ('GREVILLE', "Greville points", "Use Greville abscissaes (curve nodes)", 0),
-        ('EVEN', "Even V values", "Use specified number of V sections", 1),
-        ('EXPLICIT', "Explicit V", "Use explicit V values", 2)
-    ]
-
     def update_sockets(self, context):
         self.inputs['Resolution'].hide_safe = self.algorithm not in {ZERO, TRACK_NORMAL}
         self.inputs['Normal'].hide_safe = self.algorithm != NORMAL_DIR
-        self.inputs['V'].hide_safe = self.v_mode != 'EXPLICIT'
-        self.inputs['VSections'].hide_safe = self.v_mode != 'EVEN'
+        self.inputs['V'].hide_safe = not self.explicit_v
+        #self.inputs['VSections'].hide_safe = self.explicit_v
         updateNode(self, context)
 
     algorithm : EnumProperty(
             name = "Algorithm",
             items = modes,
             default = NONE,
-            update = update_sockets)
-
-    v_mode : EnumProperty(
-            name = "V values",
-            items = v_modes,
-            default = 'GREVILLE',
             update = update_sockets)
 
     resolution : IntProperty(
@@ -117,6 +107,12 @@ class SvNurbsSweepMk2Node(SverchCustomTreeNode, bpy.types.Node):
         default = 10,
         update = updateNode)
 
+    explicit_v : BoolProperty(
+        name = "Explicit V values",
+        description = "Provide values of V parameter (along path curve) for profile curves explicitly",
+        default = False,
+        update = update_sockets)
+
     use_tangents : BoolProperty(
         name = "Use path tangents",
         default = False,
@@ -125,8 +121,8 @@ class SvNurbsSweepMk2Node(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
         layout.prop(self, "algorithm")
-        layout.prop(self, "v_mode")
         layout.prop(self, "use_tangents")
+        layout.prop(self, "explicit_v")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -148,20 +144,13 @@ class SvNurbsSweepMk2Node(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvCurveSocket', "VCurves")
         self.update_sockets(context)
 
-    def migrate_from(self, old_node):
-        if old_node.bl_idname == 'SvNurbsSweepNode':
-            if old_node.explicit_v:
-                self.v_mode = 'EXPLICIT'
-            else:
-                self.v_mode = 'EVEN'
-
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
         path_s = self.inputs['Path'].sv_get()
         profile_s = self.inputs['Profile'].sv_get()
-        if self.v_mode == 'EXPLICIT':
+        if self.explicit_v:
             v_s = self.inputs['V'].sv_get()
             v_s = ensure_nesting_level(v_s, 3)
         else:
@@ -183,6 +172,7 @@ class SvNurbsSweepMk2Node(SverchCustomTreeNode, bpy.types.Node):
             new_surfaces = []
             new_curves = []
             new_v_curves = []
+            new_profiles = []
             for path, profiles, vs, profiles_count, resolution, normal in zip_long_repeat(*params):
                 path = SvNurbsCurve.to_nurbs(path)
                 if path is None:
@@ -190,10 +180,8 @@ class SvNurbsSweepMk2Node(SverchCustomTreeNode, bpy.types.Node):
                 profiles = [SvNurbsCurve.to_nurbs(profile) for profile in profiles]
                 if any(p is None for p in profiles):
                     raise Exception("Some of profiles are not NURBS curves!")
-                if self.v_mode == 'EXPLICIT':
+                if self.explicit_v:
                     ts = np.array(vs)
-                elif self.v_mode == 'GREVILLE':
-                    ts = SWEEP_GREVILLE
                 else:
                     ts = None
                 _, unified_curves, v_curves, surface = nurbs_sweep(path, profiles,
@@ -222,8 +210,8 @@ class SvNurbsSweepMk2Node(SverchCustomTreeNode, bpy.types.Node):
             self.outputs['VCurves'].sv_set(v_curves_out)
 
 def register():
-    bpy.utils.register_class(SvNurbsSweepMk2Node)
+    bpy.utils.register_class(SvNurbsSweepNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvNurbsSweepMk2Node)
+    bpy.utils.unregister_class(SvNurbsSweepNode)
 

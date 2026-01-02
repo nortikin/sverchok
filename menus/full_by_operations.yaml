@@ -123,7 +123,7 @@
             - SvExApproxNurbsSurfaceNodeMK2
             - SvExInterpolateNurbsSurfaceNodeMK2
             - SvNurbsLoftNode
-            - SvNurbsSweepNode
+            - SvNurbsSweepMk2Node
             - SvNurbsBirailMk2Node
             - SvGordonSurfaceNode
             - SvExQuadsToNurbsNode

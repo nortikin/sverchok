@@ -1256,7 +1256,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knots_v = 'AVERAGE',
         if knots_v == 'AVERAGE':
             tknots_vs[:] = np.mean(tknots_vs, axis=0)
     else:
-        tknots_vs = np.zeros((len(curves), 3))
+        tknots_vs = np.zeros((len(src_points), len(tknots)))
         tknots_vs[:] = tknots
 
     v_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_v, points, metric=metric, tknots=tknots_vs[j], logger=logger) for j, points in enumerate(src_points)]
@@ -1264,7 +1264,6 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knots_v = 'AVERAGE',
         v_curves = unify_curves(v_curves, accuracy = knotvector_accuracy)
     control_points = [curve.get_homogenous_control_points() for curve in v_curves]
     control_points = np.array(control_points)
-    print(f"Ctrlpts: {control_points.shape}")
     #weights = [curve.get_weights() for curve in v_curves]
     #weights = np.array([curve.get_weights() for curve in curves]).T
     n,m,ndim = control_points.shape
@@ -1585,6 +1584,8 @@ def nurbs_sweep_with_tangents_impl(path, profiles, ts, frame_calculator,
                 control_points, weights)
     return None, placed_profiles, v_curves, surface
 
+SWEEP_GREVILLE = object()
+
 def nurbs_sweep(
     path,
     profiles,
@@ -1629,14 +1630,13 @@ def nurbs_sweep(
         logger = get_logger()
 
     n_profiles = len(profiles)
-    use_greville = ts is 'GREVILLE'
+    use_greville = ts is SWEEP_GREVILLE
     have_ts = ts is not None and not use_greville and len(ts) > 0
     if have_ts and n_profiles != len(ts):
         raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts)})")
 
     t_min, t_max = path.get_u_bounds()
     if not have_ts and not use_greville:
-        print("Calc linear ts 1")
         ts = np.linspace(t_min, t_max, num=n_profiles)
     elif use_greville:
         ts = path.calc_greville_ts()
@@ -1644,17 +1644,16 @@ def nurbs_sweep(
 
     if n_profiles == 1:
         p = profiles[0]
-        print(f"Have ts {have_ts}, ts {ts}")
         if not have_ts and not use_greville:
-            print("Calc ts 2")
+            logger.debug("N profiles == 1, T values are not provided, Greville points are not used: calculate T vlaues linearly")
             ts = np.linspace(t_min, t_max, num=min_profiles)
         profiles = [p] * len(ts)
-        print(f"Profiles {len(profiles)}, ts {ts.shape}")
     elif n_profiles == 2 and n_profiles < min_profiles:
         coeffs = np.linspace(0.0, 1.0, num=min_profiles)
         p0, p1 = profiles
         profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
         if not use_greville:
+            logger.debug("N profiles == 2, T values are not provided, Greville points are not used: calculate T vlaues linearly")
             ts = np.linspace(t_min, t_max, num=min_profiles)
     elif n_profiles < min_profiles:
         if use_greville:
@@ -1663,7 +1662,7 @@ def nurbs_sweep(
             src_profile_ts = ts
         target_vs = np.linspace(0.0, 1.0, num=min_profiles)
         max_degree = n_profiles - 1
-        print(f"N: Ps {len(profiles)}, Ts {len(src_profile_ts)}, Vs {len(target_vs)}")
+        logger.debug(f"N profiles {n_profiles} < min_profiles {min_profiles}, interpolate profiles")
         profiles = interpolate_nurbs_curves(profiles, src_profile_ts, target_vs,
                     degree_v = min(max_degree, path.get_degree()),
                     knots_u = knots_u,
@@ -1671,6 +1670,7 @@ def nurbs_sweep(
                     implementation = implementation,
                     logger = logger)
         if not use_greville:
+            logger.debug("Greville points are not used, calculate T values linearly")
             ts = np.linspace(t_min, t_max, num=min_profiles)
     else:
         profiles = repeat_last_for_length(profiles, min_profiles)
