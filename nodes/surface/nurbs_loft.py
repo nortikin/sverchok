@@ -103,6 +103,7 @@ class SvNurbsLoftNode(SverchCustomTreeNode, bpy.types.Node):
                 unified_curves, v_curves, new_surface = simple_loft(curves, 
                                     degree_v = degree_v,
                                     knots_u = self.u_knots_mode,
+                                    knots_v = 'AVERAGE',
                                     metric = self.metric,
                                     knotvector_accuracy = self.knotvector_accuracy,
                                     implementation = self.nurbs_implementation)

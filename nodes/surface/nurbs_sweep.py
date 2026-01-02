@@ -111,6 +111,11 @@ class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
         default = False,
         update = update_sockets)
 
+    use_greville_pts : BoolProperty(
+        name = "Use Greville points",
+        default = False,
+        update = updateNode)
+
     use_tangents : BoolProperty(
         name = "Use path tangents",
         default = False,
@@ -119,6 +124,7 @@ class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
         layout.prop(self, "algorithm")
+        layout.prop(self, "use_greville_pts")
         layout.prop(self, "use_tangents")
         layout.prop(self, "explicit_v")
 
@@ -181,7 +187,10 @@ class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
                 if self.explicit_v:
                     ts = np.array(vs)
                 else:
-                    ts = None
+                    if self.use_greville_pts:
+                        ts = 'GREVILLE'
+                    else:
+                        ts = None
                 _, unified_curves, v_curves, surface = nurbs_sweep(path, profiles,
                                     ts = ts,
                                     min_profiles = profiles_count,
