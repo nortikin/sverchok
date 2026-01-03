@@ -124,8 +124,10 @@ class SvNurbsSweepMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
-        layout.prop(self, "algorithm")
-        layout.prop(self, "v_mode")
+        layout.label(text='Algorithm:')
+        layout.prop(self, "algorithm", text='')
+        layout.label(text='Key V values:')
+        layout.prop(self, "v_mode", text='')
         layout.prop(self, "use_tangents")
 
     def draw_buttons_ext(self, context, layout):
