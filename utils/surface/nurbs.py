@@ -1693,31 +1693,43 @@ def nurbs_sweep(
                     implementation=implementation,
                     logger = logger)
 
-def prepare_nurbs_birail(path1, path2, profiles,
-        ts1 = None, ts2 = None,
-        length_resolution = None,
-        min_profiles = 10,
-        knots_u = 'UNIFY',
-        knotvector_accuracy = 6,
-        degree_v = None,
-        metric = 'DISTANCE',
-        scale_uniform = True,
-        auto_rotate = False,
-        use_tangents = 'PATHS_AVG',
-        y_axis = None,
-        implementation=SvNurbsSurface.NATIVE,
-        logger = None):
-
+def nurbs_birail_copy_profiles(profiles, min_profiles, degree_v,
+                               knots_u = 'UNIFY', knotvector_accuracy = 6,
+                               implementation = SvNurbsMaths.NATIVE,
+                               logger = None):
     n_profiles = len(profiles)
+    if n_profiles == 1:
+        p = profiles[0]
+        profiles = [p] * min_profiles
+    elif n_profiles == 2 and n_profiles < min_profiles:
+        coeffs = np.linspace(0.0, 1.0, num=min_profiles)
+        p0, p1 = profiles
+        profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
+    elif n_profiles < min_profiles:
+        target_vs = np.linspace(0.0, 1.0, num=min_profiles)
+        max_degree = n_profiles - 1
+        ts = np.linspace(0.0, 1.0, num=n_profiles)
+        profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
+                    degree_v = min(max_degree, degree_v),
+                    knots_u = knots_u,
+                    knotvector_accuracy = knotvector_accuracy,
+                    implementation = implementation,
+                    logger = logger)
+    else:
+        profiles = repeat_last_for_length(profiles, min_profiles)
+        profiles = unify_curves(profiles)
+    return profiles
+
+def nurbs_birail_calc_key_points(path1, path2, n_profiles,
+        ts1 = None, ts2 = None,
+        length_resolution = None):
+
     have_ts1 = ts1 is not None and len(ts1) > 0
     have_ts2 = ts2 is not None and len(ts2) > 0
     if have_ts1 and n_profiles != len(ts1):
         raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T1 values ({len(ts1)})")
     if have_ts2 and n_profiles != len(ts2):
         raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T2 values ({len(ts2)})")
-
-    if degree_v is None:
-        degree_v = path1.get_degree()
 
     if length_resolution is not None:
         solver1 = SvCurveLengthSolver(path1)
@@ -1749,34 +1761,18 @@ def prepare_nurbs_birail(path1, path2, profiles,
     if not have_ts2:
         ts2 = calc_ts2(n_profiles)
 
-    if n_profiles == 1:
-        p = profiles[0]
-        profiles = [p] * min_profiles
-        ts1 = calc_ts1(min_profiles)
-        ts2 = calc_ts2(min_profiles)
-    elif n_profiles == 2 and n_profiles < min_profiles:
-        coeffs = np.linspace(0.0, 1.0, num=min_profiles)
-        p0, p1 = profiles
-        profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
-        ts1 = calc_ts1(min_profiles)
-        ts2 = calc_ts2(min_profiles)
-    elif n_profiles < min_profiles:
-        target_vs = np.linspace(0.0, 1.0, num=min_profiles)
-        max_degree = n_profiles - 1
-        ts = np.linspace(0.0, 1.0, num=n_profiles)
-        profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
-                    degree_v = min(max_degree, degree_v),
-                    knots_u = knots_u,
-                    knotvector_accuracy = knotvector_accuracy,
-                    implementation = implementation,
-                    logger = logger)
-        ts1 = calc_ts1(min_profiles)
-        ts2 = calc_ts2(min_profiles)
-    else:
-        profiles = repeat_last_for_length(profiles, min_profiles)
-
     points1 = path1.evaluate_array(ts1)
     points2 = path2.evaluate_array(ts2)
+
+    return ts1, ts2, points1, points2
+
+
+def nurbs_birail_place_profiles(path1, path2, profiles,
+        ts1, ts2, points1, points2,
+        scale_uniform = True,
+        auto_rotate = False,
+        use_tangents = 'PATHS_AVG',
+        y_axis = None):
 
     orig_profiles = profiles[:]
 
@@ -1831,7 +1827,6 @@ def prepare_nurbs_birail(path1, path2, profiles,
 
     scales = scales.flatten()
     placed_profiles = []
-    prev_normal = None
     for pt1, pt2, profile, tangent, scale, matrix in zip(points1, points2, profiles, tangents, scales, matrices):
 
         if auto_rotate:
@@ -1853,7 +1848,6 @@ def prepare_nurbs_birail(path1, path2, profiles,
                 (0, 0, 1)
             ])
 
-        src_scale = scale
         scale /= pr_length
         if scale_uniform:
             scale_m = np.array([
@@ -1873,6 +1867,89 @@ def prepare_nurbs_birail(path1, path2, profiles,
         profile = profile.copy(control_points = cpts)
         placed_profiles.append(profile)
     return ts1, ts2, placed_profiles
+
+def prepare_nurbs_birail(path1, path2, profiles,
+        ts1 = None, ts2 = None,
+        length_resolution = None,
+        min_profiles = 10,
+        knots_u = 'UNIFY',
+        knotvector_accuracy = 6,
+        degree_v = None,
+        scale_uniform = True,
+        auto_rotate = False,
+        use_tangents = 'PATHS_AVG',
+        y_axis = None,
+        implementation=SvNurbsSurface.NATIVE,
+        logger = None):
+
+    if degree_v is None:
+        degree_v = path1.get_degree()
+
+    profiles = nurbs_birail_copy_profiles(profiles, min_profiles, degree_v,
+                                          knots_u = knots_u,
+                                          knotvector_accuracy = knotvector_accuracy,
+                                          implementation = implementation,
+                                          logger = logger)
+
+    ts1, ts2, points1, points2 = nurbs_birail_calc_key_points(path1, path2, len(profiles),
+                                        ts1 = ts1, ts2 = ts2,
+                                       length_resolution = length_resolution)
+
+    return nurbs_birail_place_profiles(path1, path2, profiles,
+                                       ts1 = ts1, ts2 = ts2,
+                                       points1 = points1, points2 = points2,
+                                       scale_uniform = scale_uniform,
+                                       auto_rotate = auto_rotate,
+                                       use_tangents = use_tangents,
+                                       y_axis = y_axis)
+
+def nurbs_birail_by_ctrlpts(path1, path2, profiles,
+        degree_v = None,
+        knots_u = 'UNIFY',
+        knotvector_accuracy = 6,
+        scale_uniform = True,
+        auto_rotate = False,
+        use_tangents = 'PATHS_AVG',
+        y_axis = None,
+        implementation = SvNurbsMaths.NATIVE,
+        logger = None):
+
+    path1, path2 = unify_curves_degree([path1, path2])
+    path1, path2 = unify_curves([path1, path2])
+
+    if degree_v is None:
+        degree_v = path1.get_degree()
+    profiles = nurbs_birail_copy_profiles(profiles,
+                                          min_profiles = len(path1.get_control_points()),
+                                          degree_v = degree_v,
+                                          knots_u = knots_u,
+                                          knotvector_accuracy = knotvector_accuracy,
+                                          implementation = implementation,
+                                          logger = logger)
+    ts1 = path1.calc_greville_ts()
+    ts2 = path2.calc_greville_ts()
+    points1 = path1.get_control_points()
+    points2 = path2.get_control_points()
+
+    ts1, ts2, profiles = nurbs_birail_place_profiles(path1, path2, profiles,
+                                       ts1 = ts1, ts2 = ts2,
+                                       points1 = points1, points2 = points2,
+                                       scale_uniform = scale_uniform,
+                                       auto_rotate = auto_rotate,
+                                       use_tangents = use_tangents,
+                                       y_axis = y_axis)
+    control_points = [curve.get_control_points() for curve in profiles]
+    control_points = np.array(control_points)
+    control_points = np.transpose(control_points, axes=(1,0,2))
+    knotvector_u = profiles[0].get_knotvector()
+    knotvector_v = path1.get_knotvector()
+    degree_u = profiles[0].get_degree()
+    degree_v = path1.get_degree()
+    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights=None)
+    return surface
 
 def nurbs_birail(path1, path2, profiles,
         ts1 = None, ts2 = None,
@@ -1919,6 +1996,16 @@ def nurbs_birail(path1, path2, profiles,
     """
     if logger is None:
         logger = get_logger()
+
+    path1, path2 = unify_curves_degree([path1, path2])
+    path1, path2 = unify_curves([path1, path2])
+
+    if (ts1 is SWEEP_GREVILLE) != (ts2 is SWEEP_GREVILLE):
+        raise ArgumentError("Both ts1 and ts2 must be either both SWEEP_GREVILLE, or both have another value")
+    if ts1 is SWEEP_GREVILLE:
+        ts1 = path1.calc_greville_ts()
+        ts2 = path2.calc_greville_ts()
+        min_profiles = len(ts1)
 
     _, _, placed_profiles = prepare_nurbs_birail(path1, path2, profiles,
             ts1 = ts1, ts2 = ts2,

@@ -15,10 +15,11 @@ from sverchok.utils.math import supported_metrics
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.surface.nurbs import nurbs_birail
-from sverchok.utils.surface.gordon import nurbs_birail_by_gordon
+from sverchok.utils.surface.nurbs import nurbs_birail, nurbs_birail_by_ctrlpts, SWEEP_GREVILLE
+from sverchok.utils.surface.gordon import nurbs_birail_by_gordon, MonotoneReparametrizer, SegmentsReparametrizer
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
+from sverchok.dependencies import scipy
 
 class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -44,7 +45,8 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
     v_modes = [
             ('PARAM', "Path parameter uniform", "Distribute profile curves uniformly according to path curve parametrization", 0),
             ('LEN', "Path length uniform", "Distribute profile curves uniformly according to path curve length segments (natural parametrization)", 1),
-            ('EXPLICIT', "Explicit values", "Provide values of V parameter (along path curve) for profile curves explicitly", 2)
+            ('EXPLICIT', "Explicit values", "Provide values of V parameter (along path curve) for profile curves explicitly", 2),
+            ('GREVILLE', "Greville points", "Use Greville abscissae", 3)
         ]
 
     knotvector_accuracy : IntProperty(
@@ -139,7 +141,8 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
     algorithms = [
             ('GORDON', "Gordon Surface", "Use Gordon Surface algorithm to follow path curves precisely", 0),
-            ('LOFT', "Loft", "Use legacy Loft algorithm; the surface can follow path curves not quite exactly; but this generates less control points", 1)
+            ('LOFT', "Loft", "Use legacy Loft algorithm; the surface can follow path curves not quite exactly; but this generates less control points", 1),
+            ('CTRLPTS', "Control points", "Control points", 2)
         ]
 
     algorithm : EnumProperty(
@@ -147,6 +150,46 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
             items = algorithms,
             default = 'GORDON',
             update = update_sockets)
+
+    reparametrize_methods = [
+            ('SEGMENTS', "Picewise Linear", "Simpler algorithm based on picewise linear reparametrization", 0)
+        ]
+
+    if scipy is not None:
+        reparametrize_methods.append(
+            ('MONOTONE', "Monotone Spline", "Reparametrization algorithm using monotone spline", 1)
+        )
+
+    reparametrize_method : EnumProperty(
+        name = "Reparametrization",
+        items = reparametrize_methods,
+        update = updateNode)
+
+    reparametrize_remove_knots : BoolProperty(
+        name = "Remove knots",
+        description = "Remove some of additional knots during reparametrization",
+        default = False,
+        update = updateNode)
+
+    reparametrize_accuracy : IntProperty(
+        name = "Reparametrization accuracy",
+        default = 6,
+        min = 1, max = 10,
+        update = updateNode)
+
+    reparametrize_samples_u : IntProperty(
+        name = "Samples U",
+        description = "Reparametrization samples along U direction",
+        default = 20,
+        min = 3,
+        update = updateNode)
+
+    reparametrize_samples_v : IntProperty(
+        name = "Samples V",
+        description = "Reparametrization samples along V direction",
+        default = 20,
+        min = 3,
+        update = updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
@@ -165,6 +208,14 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'knotvector_accuracy')
         if self.algorithm == 'LOFT':
             layout.prop(self, 'metric')
+        layout.prop(self, 'reparametrize_method')
+        if self.reparametrize_method == 'MONOTONE':
+            row = layout.row()
+            row.prop(self, 'reparametrize_samples_u')
+            row.prop(self, 'reparametrize_samples_v')
+        layout.prop(self, 'reparametrize_remove_knots')
+        if self.reparametrize_remove_knots:
+            layout.prop(self, 'reparametrize_accuracy')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Path1")
@@ -211,6 +262,20 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         y_axis_s = ensure_nesting_level(y_axis_s, 3)
         resolution_s = ensure_nesting_level(resolution_s, 2)
 
+        reparametrize_tolerance = 10**(-self.reparametrize_accuracy)
+
+        if scipy is None or self.reparametrize_method == 'SEGMENTS':
+            reparametrizer = SegmentsReparametrizer(
+                                remove_knots = self.reparametrize_remove_knots,
+                                tolerance = reparametrize_tolerance)
+        else:
+            reparametrizer = MonotoneReparametrizer(
+                                n_samples_u = self.reparametrize_samples_u,
+                                n_samples_v = self.reparametrize_samples_v,
+                                remove_knots = self.reparametrize_remove_knots,
+                                tolerance = reparametrize_tolerance,
+                                logger = self.sv_logger)
+
         surfaces_out = []
         curves_out = []
         v_curves_out = []
@@ -232,6 +297,9 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
                 if self.v_mode == 'EXPLICIT':
                     ts1 = np.array(vs1)
                     ts2 = np.array(vs2)
+                elif self.v_mode == 'GREVILLE':
+                    ts1 = SWEEP_GREVILLE
+                    ts2 = SWEEP_GREVILLE
                 else:
                     ts1 = None
                     ts2 = None
@@ -252,9 +320,23 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
                             y_axis = np.array(y_axis),
                             implementation = self.nurbs_implementation,
                             knots_unification_method = self.u_knots_mode,
+                            reparametrizer = reparametrizer,
                             knotvector_accuracy = self.knotvector_accuracy,
                             logger = self.sv_logger
                         )
+                elif self.algorithm == 'CTRLPTS':
+                    unified_curves = []
+                    v_curves = []
+                    surface = nurbs_birail_by_ctrlpts(path1, path2, profiles,
+                                    knots_u = self.u_knots_mode,
+                                    knotvector_accuracy = self.knotvector_accuracy,
+                                    scale_uniform = self.scale_uniform,
+                                    auto_rotate = self.auto_rotate_profiles,
+                                    use_tangents = self.profile_rotation,
+                                    y_axis = np.array(y_axis),
+                                    implementation = self.nurbs_implementation,
+                                    logger = self.sv_logger)
+
                 else: # LOFT
                     _, unified_curves, v_curves, surface = nurbs_birail(path1, path2,
                                         profiles,
