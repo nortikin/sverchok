@@ -80,6 +80,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
     def update_sockets(self, context):
         self.inputs['V1'].hide_safe = self.v_mode != 'EXPLICIT'
         self.inputs['V2'].hide_safe = self.v_mode != 'EXPLICIT'
+        self.inputs['VSections'].hide_safe = self.algorithm == 'CTRLPTS' or self.v_mode == 'GREVILLE'
         self.inputs['DegreeV'].hide_safe = self.algorithm != 'LOFT'
         self.inputs['Normal'].hide_safe = self.profile_rotation != 'CUSTOM'
         self.inputs['LengthResolution'].hide_safe = self.v_mode != 'LEN'
@@ -142,7 +143,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
     algorithms = [
             ('GORDON', "Gordon Surface", "Use Gordon Surface algorithm to follow path curves precisely", 0),
             ('LOFT', "Loft", "Use legacy Loft algorithm; the surface can follow path curves not quite exactly; but this generates less control points", 1),
-            ('CTRLPTS', "Control points", "Control points", 2)
+            ('CTRLPTS', "Tensor Product", "Tensor Product algorithm", 2)
         ]
 
     algorithm : EnumProperty(
@@ -199,8 +200,9 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "auto_rotate_profiles")
         layout.label(text="Profile rotation:")
         layout.prop(self, "profile_rotation", text='')
-        layout.label(text="Profile V values:")
-        layout.prop(self, "v_mode", text='')
+        if self.algorithm != 'CTRLPTS':
+            layout.label(text="Profile V values:")
+            layout.prop(self, "v_mode", text='')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -208,14 +210,15 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'knotvector_accuracy')
         if self.algorithm == 'LOFT':
             layout.prop(self, 'metric')
-        layout.prop(self, 'reparametrize_method')
-        if self.reparametrize_method == 'MONOTONE':
-            row = layout.row()
-            row.prop(self, 'reparametrize_samples_u')
-            row.prop(self, 'reparametrize_samples_v')
-        layout.prop(self, 'reparametrize_remove_knots')
-        if self.reparametrize_remove_knots:
-            layout.prop(self, 'reparametrize_accuracy')
+        if self.algorithm != 'CTRLPTS':
+            layout.prop(self, 'reparametrize_method')
+            if self.reparametrize_method == 'MONOTONE':
+                row = layout.row()
+                row.prop(self, 'reparametrize_samples_u')
+                row.prop(self, 'reparametrize_samples_v')
+            layout.prop(self, 'reparametrize_remove_knots')
+            if self.reparametrize_remove_knots:
+                layout.prop(self, 'reparametrize_accuracy')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Path1")
