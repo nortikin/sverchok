@@ -149,7 +149,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
     algorithm : EnumProperty(
             name = "Algorithm",
             items = algorithms,
-            default = 'GORDON',
+            default = 'CTRLPTS',
             update = update_sockets)
 
     reparametrize_methods = [
