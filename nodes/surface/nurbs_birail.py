@@ -15,7 +15,7 @@ from sverchok.utils.math import supported_metrics
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.surface.nurbs import nurbs_birail, nurbs_birail_by_ctrlpts, SWEEP_GREVILLE
+from sverchok.utils.surface.nurbs_algorithms import nurbs_birail, nurbs_birail_by_tensor_product, SWEEP_GREVILLE
 from sverchok.utils.surface.gordon import nurbs_birail_by_gordon, MonotoneReparametrizer, SegmentsReparametrizer
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
@@ -327,7 +327,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
                 elif self.algorithm == 'CTRLPTS':
                     unified_curves = []
                     v_curves = []
-                    surface = nurbs_birail_by_ctrlpts(path1, path2, profiles,
+                    surface = nurbs_birail_by_tensor_product(path1, path2, profiles,
                                     knots_u = self.u_knots_mode,
                                     knotvector_accuracy = self.knotvector_accuracy,
                                     scale_uniform = self.scale_uniform,

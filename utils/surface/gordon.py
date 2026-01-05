@@ -4,12 +4,11 @@ from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputExce
 from sverchok.utils.math import distribute_int
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import CurvesUnificationException, remove_excessive_knots, unify_curves
-from sverchok.utils.curve.algorithms import unify_curves_degree, curve_frame_on_surface_array, SvCurveOnSurfaceCurvaturesCalculator
-from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents, interpolate_nurbs_curve
+from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveOnSurfaceCurvaturesCalculator
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve
 from sverchok.utils.curve.splines import SvMonotoneSpline
-from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
-from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
-from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface, prepare_nurbs_birail, SWEEP_GREVILLE
+from sverchok.utils.surface.nurbs import SvNurbsSurface
+from sverchok.utils.surface.nurbs_algorithms import simple_loft, interpolate_nurbs_surface, prepare_nurbs_birail, SWEEP_GREVILLE
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.sv_logging import get_logger
 

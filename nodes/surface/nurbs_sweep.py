@@ -16,7 +16,7 @@ from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, NORMAL_DIR, NONE, TRACK_NORMAL
-from sverchok.utils.surface.nurbs import nurbs_sweep, SWEEP_GREVILLE
+from sverchok.utils.surface.nurbs_algorithms import nurbs_sweep, SWEEP_GREVILLE
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
