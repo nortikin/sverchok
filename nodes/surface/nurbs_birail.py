@@ -142,7 +142,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
     algorithms = [
             ('GORDON', "Gordon Surface", "Use Gordon Surface algorithm to follow path curves precisely", 0),
-            ('LOFT', "Loft", "Use legacy Loft algorithm; the surface can follow path curves not quite exactly; but this generates less control points", 1),
+            ('LOFT', "Lofting", "Use legacy Loft algorithm; the surface can follow path curves not quite exactly; but this generates less control points", 1),
             ('CTRLPTS', "Tensor Product", "Tensor Product algorithm", 2)
         ]
 

@@ -369,3 +369,11 @@ iso-curves go much more straight:
 .. image:: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37
   :target: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37
 
+Tensor Product algorithm. Here iso-curves are "skewed" again, as for Lofting
+algorithm; but this time, the number of profile curve copies is calculated
+automatically (based on number of path curves control points), and the surface
+follows path curves exactly:
+
+.. image:: https://github.com/user-attachments/assets/51ce0963-d694-45ef-97c1-f1ccb3dfbf03
+  :target: https://github.com/user-attachments/assets/51ce0963-d694-45ef-97c1-f1ccb3dfbf03
+
