@@ -771,6 +771,75 @@ the more precise the offset will be). If None, Greville nodes will be used.
 * algorithm
 * algorithm_resolution</p></div>
 </dd>
+<dt id="sverchok.utils.curve.nurbs_algorithms.optimize_nurbs_curve_parametrization"><code class="name flex">
+<span>def <span class="ident">optimize_nurbs_curve_parametrization</span></span>(<span>curve)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def optimize_nurbs_curve_parametrization(curve):
+    src_knots = curve.get_knotvector()
+    uniq_knots = np.unique(src_knots)
+    p = curve.get_degree()
+    n_params = len(uniq_knots) - 1
+    src_weights = curve.get_weights()
+    ctr = center(curve.get_control_points())
+    src_ctrlpts = curve.get_control_points() - ctr
+    curve = curve.copy(control_points = src_ctrlpts)
+
+    def apply_transform(rhos):
+        lambdas = np.exp(rhos)
+        ctrlpts = src_ctrlpts.copy()
+        weights = src_weights.copy()
+        lambda_idx = 0
+        for knot_idx, (u1, u2) in enumerate(zip(src_knots[:-1], src_knots[1:])):
+            if u1 &lt; u2:
+                weight_idx = knot_idx - p
+                while weight_idx &lt;= knot_idx:
+                    weights[weight_idx] *= lambdas[lambda_idx]
+                    ctrlpts[weight_idx] /= lambdas[lambda_idx]
+                    weight_idx += 1
+                lambda_idx += 1
+        return ctrlpts, weights
+
+    def objective(rhos):
+        new_ctrlpts, new_weights = apply_transform(rhos)
+        tmp_curve = curve.copy(control_points = new_ctrlpts, weights = new_weights)
+        return parametrization_uniformity_knot_derivatives(tmp_curve)
+
+    rho_init = np.zeros(n_params)
+    solution = scipy.optimize.minimize(objective, rho_init, method=&#39;L-BFGS-B&#39;)
+    #options = {&#39;gtol&#39;: 1e-6, &#39;disp&#39;: True})
+    if not solution.success:
+        raise AlgorithmError(&#34;Did not converge: &#34; + solution.message)
+    optimal_rhos = solution.x
+    optimal_ctrlpts, optimal_weights = apply_transform(optimal_rhos)
+    return curve.copy(control_points = optimal_ctrlpts, weights = optimal_weights)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_algorithms.parametrization_uniformity_knot_derivatives"><code class="name flex">
+<span>def <span class="ident">parametrization_uniformity_knot_derivatives</span></span>(<span>curve)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parametrization_uniformity_knot_derivatives(curve):
+    knots = np.unique(curve.get_knotvector())
+    #knots = knots[1:-1]
+    derivatives = curve.tangent_array(knots)
+    speeds = np.linalg.norm(derivatives, axis=1)
+    mean = np.mean(speeds)
+    if abs(mean) &lt; 1e-6:
+        return float(&#39;inf&#39;)
+    return np.std(speeds) / mean</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.refine_curve"><code class="name flex">
 <span>def <span class="ident">refine_curve</span></span>(<span>curve,<br>samples,<br>t_min=None,<br>t_max=None,<br>algorithm='DISTRIBUTE',<br>refine_max=False,<br>solver=None,<br>output_new_knots=False)</span>
 </code></dt>
@@ -1276,6 +1345,8 @@ specified tolerance.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.nurbs_curve_matrix" href="#sverchok.utils.curve.nurbs_algorithms.nurbs_curve_matrix">nurbs_curve_matrix</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.nurbs_curve_to_xoy" href="#sverchok.utils.curve.nurbs_algorithms.nurbs_curve_to_xoy">nurbs_curve_to_xoy</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.offset_nurbs_curve" href="#sverchok.utils.curve.nurbs_algorithms.offset_nurbs_curve">offset_nurbs_curve</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_algorithms.optimize_nurbs_curve_parametrization" href="#sverchok.utils.curve.nurbs_algorithms.optimize_nurbs_curve_parametrization">optimize_nurbs_curve_parametrization</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_algorithms.parametrization_uniformity_knot_derivatives" href="#sverchok.utils.curve.nurbs_algorithms.parametrization_uniformity_knot_derivatives">parametrization_uniformity_knot_derivatives</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.refine_curve" href="#sverchok.utils.curve.nurbs_algorithms.refine_curve">refine_curve</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.remove_excessive_knots" href="#sverchok.utils.curve.nurbs_algorithms.remove_excessive_knots">remove_excessive_knots</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.self_intersect_nurbs_curve" href="#sverchok.utils.curve.nurbs_algorithms.self_intersect_nurbs_curve">self_intersect_nurbs_curve</a></code></li>

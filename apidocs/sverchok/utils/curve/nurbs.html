@@ -440,6 +440,28 @@ el.replaceWith(d);
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
         return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
 
+    # def copy(self, implementation = None, knotvector = None, control_points = None, weights = None, normalize_knots=False):
+    #     if (implementation is None or implementation == SvNurbsMaths.NATIVE) and knotvector is None:
+    #         # If knotvector is not changed, then we can reuse the same basis functions.
+    #         if control_points is None:
+    #             control_points = self.get_control_points()
+    #         if weights is None:
+    #             weights = self.get_weights()
+    #         curve = SvNativeNurbsCurve(
+    #                     self.degree,
+    #                     self.knotvector,
+    #                     self.control_points,
+    #                     self.weights,
+    #                     normalize_knots)
+    #         curve.basis = self.basis
+    #         return curve
+    #     else:
+    #         return super().copy(implementation = implementation,
+    #                             knotvector = knotvector,
+    #                             control_points = control_points,
+    #                             weights = weights,
+    #                             normalize_knots = normalize_knots)
+    #
     @classmethod
     def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyclic=False, logger=None):
         return interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)

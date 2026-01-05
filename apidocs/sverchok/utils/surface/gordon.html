@@ -202,6 +202,15 @@ intersections from their positions.
         implementation = SvNurbsSurface.NATIVE,
         logger = None):
 
+    if (ts1 is SWEEP_GREVILLE) != (ts2 is SWEEP_GREVILLE):
+        raise ArgumentError(&#34;Both ts1 and ts2 must be either both SWEEP_GREVILLE, or both have another value&#34;)
+    if ts1 is SWEEP_GREVILLE:
+        path1, path2 = unify_curves_degree([path1, path2])
+        path1, path2 = unify_curves([path1, path2])
+        ts1 = path1.calc_greville_ts()
+        ts2 = path2.calc_greville_ts()
+        min_profiles = len(ts1)
+
     placed_ts1, placed_ts2, u_curves = prepare_nurbs_birail(path1, path2, profiles,
                 ts1 = ts1, ts2 = ts2,
                 length_resolution = length_resolution,
