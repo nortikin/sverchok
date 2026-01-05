@@ -80,9 +80,9 @@ class SvNurbsSweepMk2Node(SverchCustomTreeNode, bpy.types.Node):
     ]
 
     v_modes = [
-        ('GREVILLE', "Greville points", "Use Greville abscissaes (curve nodes)", 0),
-        ('EVEN', "Even V values", "Use specified number of V sections", 1),
-        ('EXPLICIT', "Explicit V", "Use explicit V values", 2)
+        ('GREVILLE', "Greville abscissae", "Use Greville abscissae (curve nodes)", 0),
+        ('EVEN', "Even T values", "Use specified number of V sections", 1),
+        ('EXPLICIT', "Explicit", "Use explicit V values", 2)
     ]
 
     def update_sockets(self, context):
