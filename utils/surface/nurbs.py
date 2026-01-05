@@ -1801,7 +1801,7 @@ def nurbs_birail_place_profiles(path1, path2, profiles,
     binormals = points2 - points1
     scales = np.linalg.norm(binormals, axis=1, keepdims=True)
     if scales.min() < 1e-6:
-        raise Exception("Paths go too close")
+        raise SvInvalidInputException("Paths go too close")
     binormals /= scales
 
     if use_tangents != 'CUSTOM':
@@ -1812,9 +1812,9 @@ def nurbs_birail_place_profiles(path1, path2, profiles,
         tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
     else:
         if y_axis is None:
-            raise Exception("Y axis is not provided for custom orientation")
+            raise SvInvalidInputException("Y axis is not provided for custom orientation")
         if np.linalg.norm(y_axis) < 1e-6:
-            raise Exception("Y axis is too small")
+            raise SvInvalidInputException("Y axis is too small")
         y_axis /= np.linalg.norm(y_axis)
         tangents = np.cross(binormals, y_axis)
         tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
@@ -1838,7 +1838,7 @@ def nurbs_birail_place_profiles(path1, path2, profiles,
         pr_vector = pr_end - pr_start
         pr_length = np.linalg.norm(pr_vector)
         if pr_length < 1e-6:
-            raise Exception(f"One of profiles is closed: t={t_min} {pr_start} - t={t_max} {pr_end}")
+            raise SvInvalidInputException(f"One of profiles is closed: t={t_min} {pr_start} - t={t_max} {pr_end}")
         pr_dir = pr_vector / pr_length
         pr_x, pr_y, _ = tuple(pr_dir)
 
@@ -1941,14 +1941,28 @@ def nurbs_birail_by_ctrlpts(path1, path2, profiles,
     control_points = [curve.get_control_points() for curve in profiles]
     control_points = np.array(control_points)
     control_points = np.transpose(control_points, axes=(1,0,2))
+
+    # Calc Greville Ts for each profile, and scale them all to [0..1].
+    # These values will be used to interpolate weights.
+    betas = [profile.calc_greville_ts() for profile in profiles]
+    betas = np.array(betas)
+    betas /= betas[:,-1][np.newaxis].T
+    
+    weights1 = path1.get_weights()[np.newaxis].T
+    weights2 = path2.get_weights()[np.newaxis].T
+    interpolated_weights = weights1 * (1 - betas) + weights2 * betas
+    profile_weights = [profile.get_weights() for profile in profiles]
+    profile_weights = np.array(profile_weights)
+    weights = interpolated_weights * profile_weights
+
     knotvector_u = profiles[0].get_knotvector()
     knotvector_v = path1.get_knotvector()
     degree_u = profiles[0].get_degree()
     degree_v = path1.get_degree()
-    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
-                degree_u, degree_v,
-                knotvector_u, knotvector_v,
-                control_points, weights=None)
+    surface = SvNurbsSurface.build(implementation = implementation,
+                degree_u = degree_u, degree_v = degree_v,
+                knotvector_u = knotvector_u, knotvector_v = knotvector_v,
+                control_points = control_points, weights=weights.T)
     return surface
 
 def nurbs_birail(path1, path2, profiles,

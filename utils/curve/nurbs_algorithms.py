@@ -9,8 +9,10 @@ from audioop import mul
 import numpy as np
 from collections import defaultdict
 
+from sverchok.core.sv_custom_exceptions import AlgorithmError
 from sverchok.utils.math import distribute_int, solve_quadratic, solve_cubic, np_dot, FRENET
 from sverchok.utils.geom import (
+    center,
     LineEquation,
     linear_approximation,
     intersect_segment_segment,
@@ -34,7 +36,6 @@ from sverchok.dependencies import scipy
 
 if scipy is not None:
     import scipy.optimize
-
 
 def unify_two_curves(curve1, curve2):
     return unify_curves([curve1, curve2])
@@ -1133,3 +1134,57 @@ def nurbs_curve_extremes(curve, direction, sign=1, global_only=False):
         return np.array([ts[idx]])
     else:
         return ts
+
+#def normalize_curve_weights(curve):
+#    ctrlpts = curve.get_homogenous_control_points()
+
+def parametrization_uniformity_knot_derivatives(curve):
+    knots = np.unique(curve.get_knotvector())
+    #knots = knots[1:-1]
+    derivatives = curve.tangent_array(knots)
+    speeds = np.linalg.norm(derivatives, axis=1)
+    mean = np.mean(speeds)
+    if abs(mean) < 1e-6:
+        return float('inf')
+    return np.std(speeds) / mean
+
+def optimize_nurbs_curve_parametrization(curve):
+    src_knots = curve.get_knotvector()
+    uniq_knots = np.unique(src_knots)
+    p = curve.get_degree()
+    n_params = len(uniq_knots) - 1
+    src_weights = curve.get_weights()
+    ctr = center(curve.get_control_points())
+    src_ctrlpts = curve.get_control_points() - ctr
+    curve = curve.copy(control_points = src_ctrlpts)
+
+    def apply_transform(rhos):
+        lambdas = np.exp(rhos)
+        ctrlpts = src_ctrlpts.copy()
+        weights = src_weights.copy()
+        lambda_idx = 0
+        for knot_idx, (u1, u2) in enumerate(zip(src_knots[:-1], src_knots[1:])):
+            if u1 < u2:
+                weight_idx = knot_idx - p
+                while weight_idx <= knot_idx:
+                    weights[weight_idx] *= lambdas[lambda_idx]
+                    ctrlpts[weight_idx] /= lambdas[lambda_idx]
+                    weight_idx += 1
+                lambda_idx += 1
+        return ctrlpts, weights
+
+    def objective(rhos):
+        new_ctrlpts, new_weights = apply_transform(rhos)
+        tmp_curve = curve.copy(control_points = new_ctrlpts, weights = new_weights)
+        return parametrization_uniformity_knot_derivatives(tmp_curve)
+
+    rho_init = np.zeros(n_params)
+    solution = scipy.optimize.minimize(objective, rho_init, method='L-BFGS-B')
+    #options = {'gtol': 1e-6, 'disp': True})
+    if not solution.success:
+        raise AlgorithmError("Did not converge: " + solution.message)
+    optimal_rhos = solution.x
+    optimal_ctrlpts, optimal_weights = apply_transform(optimal_rhos)
+    return curve.copy(control_points = optimal_ctrlpts, weights = optimal_weights)
+
+
