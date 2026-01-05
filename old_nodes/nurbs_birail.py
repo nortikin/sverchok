@@ -15,7 +15,7 @@ from sverchok.utils.math import supported_metrics
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.surface.nurbs import nurbs_birail
+from sverchok.utils.surface.nurbs_algorithms import nurbs_birail
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 

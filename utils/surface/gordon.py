@@ -4,12 +4,11 @@ from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputExce
 from sverchok.utils.math import distribute_int
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import CurvesUnificationException, remove_excessive_knots, unify_curves
-from sverchok.utils.curve.algorithms import unify_curves_degree, curve_frame_on_surface_array, SvCurveOnSurfaceCurvaturesCalculator
-from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents, interpolate_nurbs_curve
+from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveOnSurfaceCurvaturesCalculator
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve
 from sverchok.utils.curve.splines import SvMonotoneSpline
-from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
-from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
-from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface, prepare_nurbs_birail
+from sverchok.utils.surface.nurbs import SvNurbsSurface
+from sverchok.utils.surface.nurbs_algorithms import simple_loft, interpolate_nurbs_surface, prepare_nurbs_birail, SWEEP_GREVILLE
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.sv_logging import get_logger
 
@@ -277,6 +276,15 @@ def nurbs_birail_by_gordon(path1, path2, profiles,
         reparametrizer = None,
         implementation = SvNurbsSurface.NATIVE,
         logger = None):
+
+    if (ts1 is SWEEP_GREVILLE) != (ts2 is SWEEP_GREVILLE):
+        raise ArgumentError("Both ts1 and ts2 must be either both SWEEP_GREVILLE, or both have another value")
+    if ts1 is SWEEP_GREVILLE:
+        path1, path2 = unify_curves_degree([path1, path2])
+        path1, path2 = unify_curves([path1, path2])
+        ts1 = path1.calc_greville_ts()
+        ts2 = path2.calc_greville_ts()
+        min_profiles = len(ts1)
 
     placed_ts1, placed_ts2, u_curves = prepare_nurbs_birail(path1, path2, profiles,
                 ts1 = ts1, ts2 = ts2,
