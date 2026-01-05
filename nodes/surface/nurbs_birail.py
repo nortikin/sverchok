@@ -46,7 +46,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
             ('PARAM', "Path parameter uniform", "Distribute profile curves uniformly according to path curve parametrization", 0),
             ('LEN', "Path length uniform", "Distribute profile curves uniformly according to path curve length segments (natural parametrization)", 1),
             ('EXPLICIT', "Explicit values", "Provide values of V parameter (along path curve) for profile curves explicitly", 2),
-            ('GREVILLE', "Greville points", "Use Greville abscissae", 3)
+            ('GREVILLE', "Greville abscissae", "Use Greville abscissae", 3)
         ]
 
     knotvector_accuracy : IntProperty(
@@ -101,7 +101,7 @@ class SvNurbsBirailMk2Node(SverchCustomTreeNode, bpy.types.Node):
         update = updateNode)
 
     v_mode : EnumProperty(
-        name = "V values",
+        name = "Key V values",
         description = "How to place copies of profile curves along the path curves",
         items = v_modes,
         default = 'PARAM',
