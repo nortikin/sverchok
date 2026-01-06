@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Exchange &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Export GLB &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/exchange/exchange_index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/exchange/glb_exporter_viewer';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="FCStd Read (Exchange)" href="FCStd_read.html" />
-    <link rel="prev" title="Pulga Vortex Force" href="../pulga_physics/pulga_vortex_force.html" />
+    <link rel="next" title="JSON to NURBS" href="import_rw3dm_json.html" />
+    <link rel="prev" title="Export G-code" href="gcode_exporter.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -194,7 +194,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
-<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Exchange</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="exchange_index.html">Exchange</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="FCStd_read.html">FCStd Read (Exchange)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="FCStd_read_mod.html">FCStd Read Mod (Exchange)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="FCStd_sketch.html">FCStd Sketch (Exchange)</a></li>
@@ -203,7 +203,7 @@
 <li class="toctree-l3"><a class="reference internal" href="bezier_in.html">Bezier Input</a></li>
 <li class="toctree-l3"><a class="reference internal" href="export_rw3dm_json.html">NURBS to JSON</a></li>
 <li class="toctree-l3"><a class="reference internal" href="gcode_exporter.html">Export G-code</a></li>
-<li class="toctree-l3"><a class="reference internal" href="glb_exporter_viewer.html">Export GLB</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Export GLB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="import_rw3dm_json.html">JSON to NURBS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_in.html">NURBS Input</a></li>
 <li class="toctree-l3"><a class="reference internal" href="receive_from_sorcar.html">Receive From Sorcar</a></li>
@@ -270,7 +270,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/exchange/exchange_index.rst" target="_blank"
+      <li><a href="../../_sources/nodes/exchange/glb_exporter_viewer.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -341,7 +341,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -352,11 +354,23 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Exchange</h1>
+    <h1>Export GLB</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#properties">Properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of usage</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -366,24 +380,47 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="exchange">
-<h1>Exchange<a class="headerlink" href="#exchange" title="Link to this heading">#</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="FCStd_read.html">FCStd Read (Exchange)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FCStd_read_mod.html">FCStd Read Mod (Exchange)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FCStd_sketch.html">FCStd Sketch (Exchange)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FCStd_spreadsheet.html">FCStd Spreadsheet (Exchange)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FCStd_write.html">FCStd Write (Exchange)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bezier_in.html">Bezier Input</a></li>
-<li class="toctree-l1"><a class="reference internal" href="export_rw3dm_json.html">NURBS to JSON</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gcode_exporter.html">Export G-code</a></li>
-<li class="toctree-l1"><a class="reference internal" href="glb_exporter_viewer.html">Export GLB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="import_rw3dm_json.html">JSON to NURBS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="nurbs_in.html">NURBS Input</a></li>
-<li class="toctree-l1"><a class="reference internal" href="receive_from_sorcar.html">Receive From Sorcar</a></li>
+  <section id="export-glb">
+<h1>Export GLB<a class="headerlink" href="#export-glb" title="Link to this heading">#</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
+<p>Export file in GLB format and view it in HTML</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Vertices</strong> - Vertices</p></li>
+<li><p><strong>Faces</strong> - Polygons</p></li>
 </ul>
-</div>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Export Path</strong> - Information to check correctness</p></li>
+<li><p><strong>Status</strong> - Information to check correctness</p></li>
+</ul>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>View as HTML</strong> - Exports GLB &amp; Opens web browser and look at model</p></li>
+<li><p><strong>Export GLB</strong> - Only export GLB model to path</p></li>
+<li><p><strong>Filename</strong> - File name for model</p></li>
+</ul>
+<hr class="docutils" />
+<ul class="simple">
+<li><p><strong>Shoiw grid</strong> - HTML View feature</p></li>
+<li><p><strong>Show axes</strong> - HTML View feature</p></li>
+<li><p><strong>Auto rotate</strong> - HTML View feature</p></li>
+<li><p><strong>Background</strong> - HTML View background color</p></li>
+<li><p><strong>Mesh</strong> - HTML View object color</p></li>
+</ul>
+</section>
+<section id="example-of-usage">
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">#</a></h2>
+<img alt="HTML Viewer" src="https://github.com/user-attachments/assets/92366892-72c2-49cb-9500-ba5fa5a433c3" />
+<img alt="Node GLB" src="https://github.com/user-attachments/assets/70cd43f4-0d5e-4f3c-8192-ef0cc94bfabe" />
+</section>
 </section>
 
 
@@ -398,20 +435,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../pulga_physics/pulga_vortex_force.html"
+       href="gcode_exporter.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Pulga Vortex Force</p>
+        <p class="prev-next-title">Export G-code</p>
       </div>
     </a>
     <a class="right-next"
-       href="FCStd_read.html"
+       href="import_rw3dm_json.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">FCStd Read (Exchange)</p>
+        <p class="prev-next-title">JSON to NURBS</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -421,6 +458,25 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#properties">Properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of usage</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
