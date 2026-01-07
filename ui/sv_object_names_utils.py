@@ -1266,7 +1266,7 @@ class SvONCustomPropertyAddToOutputSocketMK4(bpy.types.Operator):
     '''Add Custom Property to Output Socket'''
     bl_idname = "node.sv_on_custom_property_add_to_output_socket_mk4"
     bl_label = "Add Socket?"
-    bl_description = "Add Custom Property to Output Socket of node"
+    bl_description = "Add Custom Property to Output Socket of node and copy custom property to all objects of node too"
 
     node_group      : bpy.props.StringProperty(default='')
     node_name       : bpy.props.StringProperty(default='')

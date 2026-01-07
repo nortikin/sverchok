@@ -425,26 +425,31 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                 if elem.socket_type=='OBJECT':
                     #obj_custom_properties[elem.socket_inner_name] = obj[elem.custom_property_name]
                     value = get_prop_value(obj, elem)
+                    if value is not None:
+                        value = [value]
                     custom_properties_data[elem.socket_inner_name].append( value )
                     obj_custom_properties[elem.custom_property_name] = value
                 elif elem.socket_type=='DATA':
                     value = get_prop_value(obj.data, elem)
+                    if value is not None:
+                        value = [value]
                     custom_properties_data[elem.socket_inner_name].append( value )
                     obj_custom_properties[elem.custom_property_name] = value
                 elif elem.socket_type=='MATERIAL':
-                    materials_custom_properties = []
-                    if obj.material_slots:
-                        materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), material=(None if obj.material_slots[id].material is None else obj.material_slots[id].material),)) for id in range(len(obj.material_slots))])
-                        for I, k in enumerate(materials_info):
-                            material_name = materials_info[k]['material_name']
-                            mi = materials_info[k]['material']
-                            value = get_prop_value(mi, elem)
-                            materials_custom_properties.append(value)
-                            # При чтении материалов
-                            obj_custom_properties.setdefault(elem.custom_property_name, []).append(value)
-                            pass
-                        pass
-                    custom_properties_data[elem.socket_inner_name].append(materials_custom_properties)
+                    # not used
+                    # materials_custom_properties = []
+                    # if obj.material_slots:
+                    #     materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), material=(None if obj.material_slots[id].material is None else obj.material_slots[id].material),)) for id in range(len(obj.material_slots))])
+                    #     for I, k in enumerate(materials_info):
+                    #         material_name = materials_info[k]['material_name']
+                    #         mi = materials_info[k]['material']
+                    #         value = get_prop_value(mi, elem)
+                    #         materials_custom_properties.append(value)
+                    #         # При чтении материалов
+                    #         obj_custom_properties.setdefault(elem.custom_property_name, []).append(value)
+                    #         pass
+                    #     pass
+                    # custom_properties_data[elem.socket_inner_name].append(materials_custom_properties)
                     pass
                 pass
             #custom_properties_data.append(obj_custom_properties)
