@@ -21,7 +21,7 @@ from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
 import numpy as np
-from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, ReadingObjectDataError, get_objects_from_item
+from sverchok.ui.sv_object_names_utils import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, SV_PT_ViewportDisplayCustomPropertiesDialogMK4, ReadingObjectDataError, get_objects_from_item
 
 numpy_socket_names = ['vertices', 'edges', 'vertex_normals', 'material_idx', 'polygon_areas', 'polygon_centers', 'polygon_normals']
 
@@ -74,6 +74,8 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     bl_label = 'Get Objects Data'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+
+    node_protected_socket_names = ['vertices', 'edges', 'polygons', 'vertices_select', 'vertices_crease', 'vertices_bevel_weight', 'edges_select', 'edges_crease', 'edges_seams', 'edges_sharps', 'edges_bevel_weight', 'polygon_selects', 'polygon_smooth', 'vertex_normals', 'material_idx', 'material_names', 'polygon_areas', 'polygon_centers', 'polygon_normals', 'object_names', 'matrices', 'objects', 'Vers_grouped']
 
     @property
     def is_scene_dependent(self):
@@ -266,8 +268,8 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         self.outputs['polygon_selects']         .label = '(+) Polygons Select'
         self.outputs['polygon_smooth']          .label = '(+) Polygons Smooth'
         self.outputs['vertex_normals']          .label = 'Vertex Normals'
-        self.outputs['material_idx']            .label = 'Material Idx'
-        self.outputs['material_names']          .label = 'Material Names'
+        self.outputs['material_idx']            .label = 'Used Material Slot Id'
+        self.outputs['material_names']          .label = 'Material Slot Names'
         self.outputs['polygon_areas']           .label = 'Polygon Areas'
         self.outputs['polygon_centers']         .label = 'Polygon Centers'
         self.outputs['polygon_normals']         .label = 'Polygon Normals'
@@ -319,6 +321,8 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         row0 = grid.row(align=True)
         row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK4.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
         row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
+        row0.separator()
+        op = row0.column(align=True).operator(SV_PT_ViewportDisplayCustomPropertiesDialogMK4.bl_idname, icon='SHORTDISPLAY', text="", emboss=True)
         # row0.separator()
         # row0.row().prop(self, 'display_type', expand=True, text='')
 
@@ -372,33 +376,65 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
 
     def process(self):
         #self.update_display_type(None)
-        objs = self.inputs[0].sv_get(default=[[]])
-        if not self.object_names and not objs[0]:
-            return
-        
-        data_objects = bpy.data.objects
+        objs = self.get_objects('objects')
+        self.apply_custom_property(objs)
+
+        # objs = self.inputs[0].sv_get(default=[[]])
+        # if not self.object_names and not objs[0]:
+        #     return
+        # if isinstance(objs[0], list):
+        #     objs = objs[0]
+        # if not objs:
+        #     objs = []
+        #     for o in self.object_names:
+        #         if o.exclude==False and (o.name in bpy.context.scene.objects or o.pointer_type=='COLLECTION'): # objects can be in object_pointer but absent in the scene
+        #             _obj = get_objects_from_item(o)
+        #             objs.extend(_obj)
+        #         pass
+        #     pass
+
+        #data_objects = bpy.data.objects
         outputs = self.outputs
 
         vers_out_grouped = []
 
-        lst_output_sockets = ['vertices', 'edges', 'polygons', 'vertices_select', 'vertices_crease', 'vertices_bevel_weight', 'edges_select', 'edges_crease', 'edges_seams', 'edges_sharps', 'edges_bevel_weight', 'polygon_selects', 'polygon_smooth', 'vertex_normals', 'material_idx', 'material_names', 'polygon_areas', 'polygon_centers', 'polygon_normals', 'object_names', 'matrices', 'objects']
-        o_vertices, o_edges, o_polygons, o_vertices_select, o_vertices_crease, o_vertices_bevel_weight, o_edges_select, o_edges_crease, o_edges_seams, o_edges_sharps, o_edges_bevel_weight, o_polygon_selects, o_polygon_smooth, o_vertex_normals, o_material_idx, o_material_names, o_polygon_areas, o_polygon_centers, o_polygon_normals, o_object_names, o_matrices, o_objects = [ (self.outputs[socket_name].is_linked if socket_name in self.outputs else False) for socket_name in lst_output_sockets]
-        l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_crease, l_edges_seams, l_edges_sharps, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_material_names, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_object_names, l_matrices            = [[]                                  for socket_name in lst_output_sockets if socket_name not in 'objects']
+        #lst_output_sockets = ['vertices', 'edges', 'polygons', 'vertices_select', 'vertices_crease', 'vertices_bevel_weight', 'edges_select', 'edges_crease', 'edges_seams', 'edges_sharps', 'edges_bevel_weight', 'polygon_selects', 'polygon_smooth', 'vertex_normals', 'material_idx', 'material_names', 'polygon_areas', 'polygon_centers', 'polygon_normals', 'object_names', 'matrices', 'objects', 'Vers_grouped']
+        o_vertices, o_edges, o_polygons, o_vertices_select, o_vertices_crease, o_vertices_bevel_weight, o_edges_select, o_edges_crease, o_edges_seams, o_edges_sharps, o_edges_bevel_weight, o_polygon_selects, o_polygon_smooth, o_vertex_normals, o_material_idx, o_material_names, o_polygon_areas, o_polygon_centers, o_polygon_normals, o_object_names, o_matrices, o_objects = [ (self.outputs[socket_name].is_linked if socket_name in self.outputs else False) for socket_name in self.node_protected_socket_names if socket_name not in ['Vers_grouped']]
+        l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_crease, l_edges_seams, l_edges_sharps, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_material_names, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_object_names, l_matrices            = [[]                                  for socket_name in self.node_protected_socket_names if socket_name not in ['objects', 'Vers_grouped']]
         sv_depsgraph = None
         if self.modifiers:
             sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
         out_np = self.out_np if not self.output_np_all else [True for i in range(7)]
-        if isinstance(objs[0], list):
-            objs = objs[0]
-        if not objs:
-            objs = []
-            for o in self.object_names:
-                if o.exclude==False and o.name in bpy.context.scene.objects: # objects can be in object_pointer but absent in the scene
-                    _obj = get_objects_from_item(o)
-                    objs.extend(_obj)
-                pass
-            pass
+
+        # Список для загрузки custom properties по object, data и materials
+        custom_properties_data = dict()
+        for elem in self.custom_properties_sockets:
+            custom_properties_data[elem.socket_inner_name] = []
+
+        def get_prop_value(obj, elem):
+            '''Получение value custrom property с учётом того, что иногда свойство может быть типом IDPropertyArray
+               и тогда его надо преобразовать в list. Если свойства нет (Хотя обычно перет чтением свойств они создаются
+               со значениями типа default), то вернуть None'''
+            value = None
+            if obj:
+                if elem.custom_property_name in obj:
+                    value = obj[elem.custom_property_name]
+                    if isinstance(value, (int, float, bool, str))==False:
+                        value = list(value)
+                else:
+                    if elem.custom_property_is_array:
+                        value = []
+                    else:
+                        value = None
+            else:
+                if elem.custom_property_is_array:
+                    # Если объект не поддерживает это custom property, но при этом заявлено. что custom property
+                    # должно быть, и оно типа array, то вернуть его как пустой массив 
+                    value = []
+                else:
+                    value = None
+            return value
 
         # iterate through references
         for I, obj in enumerate(objs):
@@ -407,6 +443,36 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                 continue
 
             mtrx = obj.matrix_world
+
+            # Прочитать данные custom properties объекта в соответствии с массивом дополнительных сокетов:
+            obj_custom_properties = dict({})
+            for elem in self.custom_properties_sockets:
+                if elem.socket_type=='OBJECT':
+                    #obj_custom_properties[elem.socket_inner_name] = obj[elem.custom_property_name]
+                    value = get_prop_value(obj, elem)
+                    custom_properties_data[elem.socket_inner_name].append( value )
+                    obj_custom_properties[elem.custom_property_name] = value
+                elif elem.socket_type=='DATA':
+                    value = get_prop_value(obj.data, elem)
+                    custom_properties_data[elem.socket_inner_name].append( value )
+                    obj_custom_properties[elem.custom_property_name] = value
+                elif elem.socket_type=='MATERIAL':
+                    materials_custom_properties = []
+                    if obj.material_slots:
+                        materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), material=(None if obj.material_slots[id].material is None else obj.material_slots[id].material),)) for id in range(len(obj.material_slots))])
+                        for I, k in enumerate(materials_info):
+                            material_name = materials_info[k]['material_name']
+                            mi = materials_info[k]['material']
+                            value = get_prop_value(mi, elem)
+                            materials_custom_properties.append(value)
+                            # При чтении материалов
+                            obj_custom_properties.setdefault(elem.custom_property_name, []).append(value)
+                            pass
+                        pass
+                    custom_properties_data[elem.socket_inner_name].append(materials_custom_properties)
+                    pass
+                pass
+            #custom_properties_data.append(obj_custom_properties)
 
             if o_object_names:
                 l_object_names.append([obj.name])
@@ -520,18 +586,56 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                             vertex_normals = [ v.normal[:] for v in bm.verts] # v.normal is a Vector()
                         if o_material_idx or o_material_names:
                             if obj.material_slots:
+                                #material_indexes = read_materials_idx(obj_data, out_np[3])
                                 material_indexes = self.get_materials_from_bmesh(bm)
                                 material_socket_ids = set(material_indexes)
                                 # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
-                                materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
+                                #materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
+                                materials_info = dict()
+                                # Комбинирование слотов по одному материалу. Считать одинаковые материалы по первому слоту, в котором этот материал появился
+                                materials_name_id = dict()
+                                for id in range(len(obj.material_slots)):
+                                    is_faces = (id in material_socket_ids),
+                                    material_name = (None if obj.material_slots[id].material is None else obj.material_slots[id].material.name)
+                                    if material_name in materials_name_id:
+                                        _id = materials_name_id[material_name]
+                                        # Не все слоты могут быть назначены faces. Если оказывается, что один из слотов с тем же материалом назначен faces, а другие нет,
+                                        # то это надо учесть и сделать признак, что этот материал всё-таки назначен faces:
+                                        materials_info[_id]['is_faces'] = materials_info[_id]['is_faces'] or is_faces
+                                        for I, index in enumerate(material_indexes):
+                                            if index==id:
+                                                material_indexes[I] = _id
+                                        pass
+                                    else:
+                                        #_id = id
+                                        _id = len(materials_name_id)
+                                        materials_name_id[material_name] = _id
+                                        materials_info[_id] = dict(material_name = material_name,
+                                                                    is_faces = (id in material_socket_ids),
+                                                                    custom_properties = dict()
+                                                                )
+                                        for I, index in enumerate(material_indexes):
+                                            if index==id:
+                                                material_indexes[I] = _id
+                                        # Прочитать custom property для динамических сокетов
+                                        for elem in self.custom_properties_sockets:
+                                            if elem.socket_type=='MATERIAL':
+                                                mi = obj.material_slots[id].material
+                                                materials_info[_id]['custom_properties'][elem.custom_property_name] = get_prop_value(mi, elem)
+                                                pass
+                                            pass
+                                        pass
+                                    pass
+                                pass
                             else:
                                 if bm.faces:
                                     material_indexes = [0]*len(bm.faces)
-                                    materials_info = dict( [(0,dict(material_name=None, is_faces=True))] )
+                                    materials_info = dict( [(0,dict(material_name=None, is_faces=True, custom_properties = dict()))] )
                                 else:
+                                    # POINT_CLOUDS has no polygons
                                     material_indexes = []
                                     materials_info = dict()
-                            pass
+                                pass
 
                         if o_polygon_areas:
                             polygons_areas = [ p.calc_area() for p in bm.faces ]
@@ -548,27 +652,42 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                         if obj.type == 'CURVE' and obj.mode == 'EDIT' and bpy.app.version[:2] == (3, 2):
                             raise ReadingObjectDataError("Does not support curves in edit mode in Blender 3.2")
                         elif self.modifiers:
-                            if obj.type in ['POINTCLOUD']:
-                                if sv_depsgraph is None:
-                                    sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-                                obj = sv_depsgraph.objects[obj.name]
-                                obj_eval = obj.evaluated_get(sv_depsgraph)
-                                obj_data = obj_eval.data
-                            else:
-                                obj = sv_depsgraph.objects[obj.name]
-                                obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-                        else:
                             if obj.type in ['META']:
+                                # if sv_depsgraph is None:
+                                #     sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                # obj = sv_depsgraph.objects[obj.name]
+                                # obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                                 if sv_depsgraph is None:
                                     sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-                                obj = sv_depsgraph.objects[obj.name]
-                                obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                                obj_data = sv_depsgraph.objects[obj.name].to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                             elif obj.type in ['POINTCLOUD']:
                                 if sv_depsgraph is None:
                                     sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-                                obj = sv_depsgraph.objects[obj.name]
-                                #obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-                                obj_eval = obj.evaluated_get(sv_depsgraph)
+                                #obj = sv_depsgraph.objects[obj.name]
+                                obj_eval = sv_depsgraph.objects[obj.name].evaluated_get(sv_depsgraph)
+                                obj_data = obj_eval.data
+                            else:
+                                # obj = sv_depsgraph.objects[obj.name]
+                                # obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                                obj_data = sv_depsgraph.objects[obj.name].to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                        else:
+                            if obj.type in ['META']:
+                                # if sv_depsgraph is None:
+                                #     sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                # obj = sv_depsgraph.objects[obj.name]
+                                # obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                                if sv_depsgraph is None:
+                                    sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                obj_data = sv_depsgraph.objects[obj.name].to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                            elif obj.type in ['POINTCLOUD']:
+                                # if sv_depsgraph is None:
+                                #     sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                # obj = sv_depsgraph.objects[obj.name]
+                                # obj_eval = obj.evaluated_get(sv_depsgraph)
+                                # obj_data = obj_eval.data
+                                if sv_depsgraph is None:
+                                    sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                obj_eval = sv_depsgraph.objects[obj.name].evaluated_get(sv_depsgraph)
                                 obj_data = obj_eval.data
                             else:
                                 obj_data = obj.to_mesh()
@@ -610,14 +729,55 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                                 vertex_normals   = [] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
                             if o_material_idx or o_material_names:
                                 if obj.material_slots:
-                                    material_indexes = []
+                                    material_indexes = read_materials_idx(obj_data, out_np[3])
                                     material_socket_ids = set(material_indexes)
                                     # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
-                                    materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
-                                else:
-                                    # POINT_CLOUDS has no polygons
-                                    material_indexes = []
+                                    #materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
                                     materials_info = dict()
+                                    # Комбинирование слотов по одному материалу. Считать одинаковые материалы по первому слоту, в котором этот материал появился
+                                    materials_name_id = dict()
+                                    for id in range(len(obj.material_slots)):
+                                        is_faces = (id in material_socket_ids),
+                                        material_name = (None if obj.material_slots[id].material is None else obj.material_slots[id].material.name)
+                                        if material_name in materials_name_id:
+                                            _id = materials_name_id[material_name]
+                                            # Не все слоты могут быть назначены faces. Если оказывается, что один из слотов с тем же материалом назначен faces, а другие нет,
+                                            # то это надо учесть и сделать признак, что этот материал всё-таки назначен faces:
+                                            materials_info[_id]['is_faces'] = materials_info[_id]['is_faces'] or is_faces
+                                            for I, index in enumerate(material_indexes):
+                                                if index==id:
+                                                    material_indexes[I] = _id
+                                            pass
+                                        else:
+                                            #_id = id
+                                            _id = len(materials_name_id)
+                                            materials_name_id[material_name] = _id
+                                            materials_info[_id] = dict(material_name = material_name,
+                                                                      is_faces = (id in material_socket_ids),
+                                                                      custom_properties = dict()
+                                                                    )
+                                            for I, index in enumerate(material_indexes):
+                                                if index==id:
+                                                    material_indexes[I] = _id
+                                            # Прочитать custom property для динамических сокетов
+                                            for elem in self.custom_properties_sockets:
+                                                if elem.socket_type=='MATERIAL':
+                                                    mi = obj.material_slots[id].material
+                                                    materials_info[_id]['custom_properties'][elem.custom_property_name] = get_prop_value(mi, elem)
+                                                    pass
+                                                pass
+                                            pass
+                                        pass
+                                    pass
+                                else:
+                                    if obj_data.polygons:
+                                        material_indexes = [0]*len(obj_data.polygons)
+                                        materials_info = dict( [(0,dict(material_name=None, is_faces=True, custom_properties = dict()))] )
+                                    else:
+                                        # POINT_CLOUDS has no polygons
+                                        material_indexes = []
+                                        materials_info = dict()
+                                    pass
 
                             if o_polygon_areas:
                                 polygons_areas   = []
@@ -707,14 +867,52 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
                                     material_indexes = read_materials_idx(obj_data, out_np[3])
                                     material_socket_ids = set(material_indexes)
                                     # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
-                                    materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
+                                    #materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), is_faces=id in material_socket_ids )) for id in range(len(obj.material_slots))])
+                                    materials_info = dict()
+                                    # Комбинирование слотов по одному материалу. Считать одинаковые материалы по первому слоту, в котором этот материал появился
+                                    materials_name_id = dict()
+                                    for id in range(len(obj.material_slots)):
+                                        is_faces = (id in material_socket_ids),
+                                        material_name = (None if obj.material_slots[id].material is None else obj.material_slots[id].material.name)
+                                        if material_name in materials_name_id:
+                                            _id = materials_name_id[material_name]
+                                            # Не все слоты могут быть назначены faces. Если оказывается, что один из слотов с тем же материалом назначен faces, а другие нет,
+                                            # то это надо учесть и сделать признак, что этот материал всё-таки назначен faces:
+                                            materials_info[_id]['is_faces'] = materials_info[_id]['is_faces'] or is_faces
+                                            for I, index in enumerate(material_indexes):
+                                                if index==id:
+                                                    material_indexes[I] = _id
+                                            pass
+                                        else:
+                                            #_id = id
+                                            _id = len(materials_name_id)
+                                            materials_name_id[material_name] = _id
+                                            materials_info[_id] = dict(material_name = material_name,
+                                                                      is_faces = (id in material_socket_ids),
+                                                                      custom_properties = dict()
+                                                                    )
+                                            for I, index in enumerate(material_indexes):
+                                                if index==id:
+                                                    material_indexes[I] = _id
+                                            # Прочитать custom property для динамических сокетов
+                                            for elem in self.custom_properties_sockets:
+                                                if elem.socket_type=='MATERIAL':
+                                                    mi = obj.material_slots[id].material
+                                                    materials_info[_id]['custom_properties'][elem.custom_property_name] = get_prop_value(mi, elem)
+                                                    pass
+                                                pass
+                                            pass
+                                        pass
+                                    pass
                                 else:
                                     if obj_data.polygons:
                                         material_indexes = [0]*len(obj_data.polygons)
-                                        materials_info = dict( [(0,dict(material_name=None, is_faces=True))] )
+                                        materials_info = dict( [(0,dict(material_name=None, is_faces=True, custom_properties = dict()))] )
                                     else:
+                                        # POINT_CLOUDS has no polygons
                                         material_indexes = []
                                         materials_info = dict()
+                                    pass
 
                             if o_polygon_areas:
                                 polygons_areas   = [ polygon.area for polygon in obj_data.polygons]
@@ -779,18 +977,30 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             
             pass
 
+            
+
         if self.mesh_join:
             offset = 0
             _vertices, _edges, _polygons, _vertices_select, _vertices_crease, _vertices_bevel_weight, _edges_select, _edges_seams, _edges_sharps, _edges_crease, _edges_bevel_weight, _polygon_selects, _polygon_smooth, _vertex_normals, _polygon_areas, _polygon_centers, _polygon_normals, _vg = [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
 
             # Create dict of unique materials before join polygons
             _materials_ids = []
+            _materials_custom_properties = []
             _l_materials_names_unique = set()  # Unique materials names before sorting: {'Material.002.Red', None, 'Material.005.Green', 'Material.001.Blue'}
+            _materials_custom_properties_unique = dict()
             for l_material in l_material_names:
                 for K in l_material:
                     # do not use material if it has no faces
                     if l_material[K]['is_faces']==True:
-                        _l_materials_names_unique.update( [l_material[K]['material_name']] )
+                        len_0 = len(_l_materials_names_unique)
+                        l_material_K = l_material[K]
+                        material_K_material_name = l_material_K['material_name']
+                        material_K_custom_properties = l_material_K['custom_properties']
+                        _l_materials_names_unique.update( [material_K_material_name] )
+                        len_1 = len(_l_materials_names_unique)
+                        if(len_1>len_0):
+                            _materials_custom_properties_unique[material_K_material_name] = material_K_custom_properties
+                            pass
                     pass
                 pass
             _l_materials_names_unique_sorted = sorted(_l_materials_names_unique, key=lambda x: (x is None, x)) # # sorted unique names, None is a last element (for convinience reading, has no influence for mesh join): ['Material.001.Blue', 'Material.002.Red', 'Material.005.Green', None]
@@ -853,13 +1063,21 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             [_edges_select], [_edges_seams], [_edges_sharps], [_edges_crease], [_edges_bevel_weight],
             [_polygon_selects], [_polygon_smooth], [_vertex_normals], [_materials_ids], [ list(_l_materials_names_uniques.keys())], [_polygon_areas], [_polygon_centers],
             [_polygon_normals], [_vg])
+
+            l_materials_custom_properties = []
+            for l in l_material_names:
+                l_materials_custom_properties.append([_materials_custom_properties_unique[mn] for mn in l])
+            pass
         else:
             _t = []
+            l_materials_custom_properties = []
             for materials_of_object in l_material_names:
-                _to = []
-                for material_socket in sorted(materials_of_object.keys()):
-                    _to.append(materials_of_object[material_socket]['material_name'])
+                #_to = []
+                _to = [materials_of_object[material_socket]['material_name'] for material_socket in sorted(materials_of_object.keys())]
+                # for material_socket in sorted(materials_of_object.keys()):
+                #     _to.append(materials_of_object[material_socket]['material_name'])
                 _t.append(_to)
+                l_materials_custom_properties.append([materials_of_object[material_socket]['custom_properties'] for material_socket in sorted(materials_of_object.keys())])
             l_material_names = _t
             pass
 
@@ -882,7 +1100,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         if o_polygon_normals and (out_np[6]):
             l_polygon_normals = [np.array(polygon_normals) for polygon_normals in l_polygon_normals]
 
-        for socket_name, values in zip([socket_name for socket_name in lst_output_sockets if socket_name not in ['objects']] , [l_vertices, l_edges, l_polygons,
+        for socket_name, values in zip([socket_name for socket_name in self.node_protected_socket_names if socket_name not in ['objects']] , [l_vertices, l_edges, l_polygons,
                                         l_vertices_select, l_vertices_crease, l_vertices_bevel_weight,
                                         l_edges_select, l_edges_crease, l_edges_seams, l_edges_sharps, l_edges_bevel_weight,
                                         l_polygon_selects, l_polygon_smooth, l_vertex_normals,
@@ -895,11 +1113,25 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
             if 'Vers_grouped' in outputs and self.vergroups:
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)
         if o_objects:
-            if self.by_input:
-                outputs['objects'].sv_set(objs)
-            else:
-                outputs['objects'].sv_set([data_objects.get(o.name) for o in self.object_names])
+            # if self.by_input:
+            #     outputs['objects'].sv_set(objs)
+            # else:
+            #     outputs['objects'].sv_set([data_objects.get(o.name) for o in self.object_names])
+            outputs['objects'].sv_set(objs)
             pass
+        
+        # Вывести динамические данные в динамические сокеты:
+        for elem in self.custom_properties_sockets:
+            if elem.socket_inner_name in self.outputs:
+                if elem.socket_type=='MATERIAL':
+                    socket_material_custom_property=[]
+                    for I,l_material_names_I in enumerate(l_material_names):
+                        cp_I = l_materials_custom_properties[I]
+                        socket_material_custom_property.append( [cp_I_elem[elem.custom_property_name] if cp_I_elem and elem.custom_property_name in cp_I_elem else None for cp_I_elem in cp_I] )
+                    self.outputs[elem.socket_inner_name].sv_set(socket_material_custom_property)
+                    pass
+                else:
+                    self.outputs[elem.socket_inner_name].sv_set(custom_properties_data[elem.socket_inner_name])
         pass
     pass
 

@@ -9,6 +9,7 @@ import bpy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.blender_mesh import read_materials_idx
 import json
 
 # object properties in Blender viewport -> Object Properties -> Viewport Display
@@ -151,6 +152,14 @@ def get_pointers_from_node(object_names, with_exclude=False):
             pass
     return objects_set
 
+def ShowMessageBox(message = "", title = "Message Box", icon = 'INFO'):
+    # The inner draw function defines the layout of the popup
+    def draw(self, context):
+        self.layout.label(text=message)
+    
+    # Call the popup_menu method from the window manager
+    bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+
 class SvONDataCollectionMK4(bpy.types.PropertyGroup):
     '''One item of pointer to a Collection or an object'''
     pointer_types = [
@@ -232,6 +241,61 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
         get=_get_description,
         options={'SKIP_SAVE'},
     )
+
+class SvONSocketDataMK4(bpy.types.PropertyGroup):
+    '''Custom properties Socket Info'''
+    socket_types = [
+            ('OBJECT'   , "Object"  , 'Object Custom Property', 0),
+            ('DATA'     , "Data"    , 'Data Custom property', 1),
+            ('MATERIAL' , "Material", 'Material Custom Property', 2),
+            ('SOCKET'   , "Material", 'Only socket, no custom property', 3),
+        ]
+    # what type of socket are using for this item.
+    socket_type : bpy.props.EnumProperty(
+        name = "Socket Type",
+        default = 'OBJECT',
+        description = "Socket Type",
+        items = socket_types,
+        #update = updateNode
+        )
+    socket_inner_name: bpy.props.StringProperty(
+        name="Node Socket Inner Name",
+    )
+    custom_property_name: bpy.props.StringProperty(
+        name="Custom Property Name",
+        description="What custom property name",
+    )
+    socket_ui_name: bpy.props.StringProperty(
+        name="Socket Name",
+        description="Socket Name in UI",
+    )
+    socket_ui_label: bpy.props.StringProperty(
+        name="Socket Label",
+    )
+    remove: bpy.props.BoolProperty(
+        default=False,
+        description='Remove socket',
+    )
+
+    # Определение свойств:
+    #custom_property_name: bpy.props.StringProperty()
+    custom_property_type            : bpy.props.StringProperty()
+    custom_property_description     : bpy.props.StringProperty()
+    custom_property_subtype         : bpy.props.StringProperty()
+    custom_property_is_array        : bpy.props.BoolProperty()
+    custom_property_array_size      : bpy.props.IntProperty(min=0, max=32)
+    custom_property_min_str         : bpy.props.StringProperty()
+    custom_property_max_str         : bpy.props.StringProperty()
+    custom_property_min_float       : bpy.props.FloatProperty()
+    custom_property_max_float       : bpy.props.FloatProperty()
+    custom_property_min_int         : bpy.props.IntProperty()
+    custom_property_max_int         : bpy.props.IntProperty()
+    custom_property_min_bool        : bpy.props.BoolProperty()
+    custom_property_max_bool        : bpy.props.BoolProperty()
+    custom_property_default_str     : bpy.props.StringProperty()
+    custom_property_default_float   : bpy.props.FloatVectorProperty(size=32)
+    custom_property_default_int     : bpy.props.IntVectorProperty(size=32)
+    custom_property_default_bool    : bpy.props.BoolVectorProperty(size=32)
 
 class ReadingObjectDataError(Exception):
     pass
@@ -561,6 +625,16 @@ class SvONClearObjectsFromListMK4(bpy.types.Operator, SvGenericNodeLocator):
         '''passes the operator's 'self' too to allow calling self.report()'''
         node.clear_objects_from_list(self)
 
+class SvONLoadActiveObjectCustomPropertiesMK4(bpy.types.Operator, SvGenericNodeLocator):
+    '''Clear items in object_names list'''
+    bl_idname = "node.sv_on_load_active_object_custom_properties_mk4"
+    bl_label = "Load Custom Properties"
+    bl_options = {'INTERNAL'}
+
+    def sv_execute(self, context, node):
+        '''passes the operator's 'self' too to allow calling self.report()'''
+        node.load_active_objects_custom_properties(self)
+
 class SvONHighlightProcessedObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeLocator):
     '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
     bl_idname = "node.sv_on_highlight_proc_objects_in_list_scene_mk4"
@@ -837,11 +911,452 @@ class SV_PT_ViewportDisplayPropertiesDialogMK4(bpy.types.Operator):
         self.node_name = context.node.name
         self.node_group = context.annotation_data_owner.name_full
         return context.window_manager.invoke_props_dialog(self, width=500)
-        #return context.window_manager.invoke_popup(self, width=400)
 
     def draw(self, context):
         draw_properties(self.layout, self.node_group, self.node_name)
         pass
+
+class SvONCurrentObjectCustomPropertiesCollectionMK4(bpy.types.PropertyGroup):
+    '''One item of pointer to a custom property'''
+    name: bpy.props.StringProperty(default="", options={'SKIP_SAVE'},)
+    apply: bpy.props.BoolProperty(
+        default=False,
+        description='Apply to all objects in node',
+        options={'SKIP_SAVE'},
+    )
+    socket_type : bpy.props.EnumProperty(
+        name = "Socket Type",
+        default = 'OBJECT',
+        description = "Socket Type",
+        items = SvONSocketDataMK4.socket_types,
+        #update = updateNode
+    )
+    value: bpy.props.StringProperty(default="", options={'SKIP_SAVE'},)
+
+class SVON_UL_CurrentObjectCustomPropertiesListMK4(bpy.types.UIList):
+    '''Show objects in list item with controls'''
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        # grid = layout.grid_flow(row_major=False, columns=3, align=True)
+        # grid.column(align=True).prop(item, 'apply')
+        # grid.column(align=True).label(text=item.name)
+        # grid.column(align=True).label(text=item.value)
+
+        row = layout.row(align=True)
+        elem1 = row.split(factor=0.3)
+        elem1.label(text=item.name)
+        elem2 = elem1.split(factor=0.6)
+        elem2.label(text=item.value)
+        #elem1.column().prop(item, 'apply')
+        op = elem2.column(align=True).operator(SvONCustomPropertyAddToOutputSocketMK4.bl_idname, icon='ADD', text='', emboss=False)
+        op.node_name  = data.name
+        op.node_group = context.annotation_data_owner.name_full
+        op.idx = index
+        op.socket_type = data.custom_properties_mode
+        #op.socket_inner_name = unique_name
+        op.custom_property_name = item.name
+        op.socket_ui_name = item.name
+        op.socket_ui_label = item.name
+
+class SVON_UL_CustomPropertiesSocketsListMK4(bpy.types.UIList):
+    '''Show custom properties sockets list'''
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        row = layout.row(align=True)
+        elem1 = row.split(factor=0.3)
+        elem1.label(text=item.socket_type)
+        elem2 = elem1.split(factor=0.6)
+        elem2.label(text=item.socket_ui_name)
+        op = elem2.column(align=True).operator(SvONCustomPropertySocketRemoveMK4.bl_idname, icon='X', text='', emboss=False)
+        op.node_name  = data.name
+        op.node_group = context.annotation_data_owner.name_full
+        op.idx = index
+
+custom_property_suffix = "custom_property_"
+def get_next_unique_socket_name(node_group, node_name):
+    node = bpy.data.node_groups[node_group].nodes[node_name]
+    lst_names = [cp.socket_inner_name for cp in node.custom_properties_sockets]
+    I=0
+    while(True):
+        socket_inner_name=custom_property_suffix+str(I)
+        if socket_inner_name in lst_names:
+            I+=1
+            continue
+        break
+    return socket_inner_name
+
+class SV_PT_ViewportDisplayCustomPropertiesDialogMK4(bpy.types.Operator):
+    '''Copy objects custom properties dialog\nYou can pan dialog window out of node.'''
+    # this combination do not show this panel on the right side panel
+    bl_idname="sv.viewport_display_custom_properties_dialog"
+    bl_label = "Copy Objects custom properties into all objects in node"
+
+    # horizontal size
+    # bl_ui_units_x = 40 - Has no influence in Dialog mode
+
+    description_text: bpy.props.StringProperty(default='')
+    node_group      : bpy.props.StringProperty(default='')
+    node_name       : bpy.props.StringProperty(default='')
+
+    # dynamic table element description: (appear on mouseover), but do not work on bpy.props.PointerProperty
+    def _get_description(self):
+        s = 'TODO: return description'
+        return s
+    
+    get_description: bpy.props.StringProperty(
+        get=_get_description,
+        options={'SKIP_SAVE'},
+    )
+
+    # def is_extended():
+    #     return True
+
+    # def get_next_unique_socket_name(self):
+    #     node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+    #     lst_names = [cp.socket_inner_name for cp in node.custom_properties_sockets]
+    #     I=0
+    #     while(True):
+    #         socket_inner_name=custom_property_suffix+str(I)
+    #         if socket_inner_name in lst_names:
+    #             I+=1
+    #             continue
+    #         break
+    #     return socket_inner_name
+
+    def execute(self, context):
+        # Обработка 'OK':
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        # Сначала удалить отмеченные сокеты:
+        lst_remove_indexes = []
+        for I, cp in enumerate(node.custom_properties_sockets):
+            if cp.remove==True:
+                lst_remove_indexes.append(I)
+            pass
+        
+        for I in reversed(lst_remove_indexes):
+            elem = node.custom_properties_sockets[I]
+            socket_inner_name = elem.socket_inner_name
+            if socket_inner_name in node.outputs:
+                # Удалить сокет
+                try:
+                    node.outputs.remove( node.outputs[socket_inner_name])
+                except Exception as _ex:
+                    # Если сокет удалить не удалось, то не удалять его из таблицы
+                    # custom properties
+                    continue
+            node.custom_properties_sockets.remove(I)
+            
+        # Проверить, какие параметры отмечены как apply и добавить их в список сокетов:
+        for elem in node.active_object_custom_properties:
+            if elem.apply:
+                socket_with_custom_property_exists=False
+                for cp in node.custom_properties_sockets:
+                    if cp.socket_type=="OBJECT" and elem.name==cp.custom_property_name:
+                        socket_with_custom_property_exists=True
+                        break
+                    pass
+                if socket_with_custom_property_exists==False:
+                    unique_name = get_next_unique_socket_name(self.node_group, self.node_name)
+                    item = node.custom_properties_sockets.add()
+                    item.socket_type="OBJECT"
+                    item.socket_inner_name = unique_name
+                    item.custom_property_name = elem.name
+                    item.socket_ui_name = elem.name
+                    item.socket_ui_label = elem.name
+                    item.remove = False
+                    pass
+                pass
+        for elem in node.active_object_data_custom_properties:
+            if elem.apply:
+                socket_with_custom_property_exists=False
+                for cp in node.custom_properties_sockets:
+                    if cp.socket_type=="DATA" and elem.name==cp.custom_property_name:
+                        socket_with_custom_property_exists=True
+                        break
+                    pass
+                if socket_with_custom_property_exists==False:
+                    unique_name = get_next_unique_socket_name(self.node_group, self.node_name)
+                    item = node.custom_properties_sockets.add()
+                    item.socket_type="DATA"
+                    item.socket_inner_name = unique_name
+                    item.custom_property_name = elem.name
+                    item.socket_ui_name = elem.name
+                    item.socket_ui_label = elem.name
+                    item.remove = False
+                    pass
+                pass
+        for elem in node.active_object_material_custom_properties:
+            if elem.apply:
+                socket_with_custom_property_exists=False
+                for cp in node.custom_properties_sockets:
+                    if cp.socket_type=="MATERIAL" and elem.name==cp.custom_property_name:
+                        socket_with_custom_property_exists=True
+                        break
+                    pass
+                if socket_with_custom_property_exists==False:
+                    unique_name = get_next_unique_socket_name(self.node_group, self.node_name)
+                    item = node.custom_properties_sockets.add()
+                    item.socket_type="MATERIAL"
+                    item.socket_inner_name = unique_name
+                    item.custom_property_name = elem.name
+                    item.socket_ui_name = elem.name
+                    item.socket_ui_label = elem.name
+                    item.remove = False
+                    pass
+                pass
+
+        # Пройтись по сокетам и проверить, какие из них ещё не созданы:
+        for item in node.custom_properties_sockets:
+            if item.socket_inner_name not in node.outputs:
+                node.outputs.new('SvVerticesSocket', item.socket_inner_name)
+                node.outputs[item.socket_inner_name].label = item.socket_ui_label
+                node.outputs[item.socket_inner_name].custom_draw = 'custom_property_socket_draw'
+
+        return {'FINISHED'}
+    
+    def cancel(self, context):
+        # Обработка 'Cancel':
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        # Снять отметку Remove
+        for I, cp in enumerate(node.custom_properties_sockets):
+            cp.remove=False
+        pass
+    
+    def invoke(self, context, event):
+        self.node_name = context.node.name
+        self.node_group = context.annotation_data_owner.name_full
+        #self.custom_properties_mode = 'OBJECT'
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        node.load_active_object_custom_properties()
+        return context.window_manager.invoke_props_dialog(self, width=500)
+        #return context.window_manager.invoke_popup(self, width=400)
+
+    def draw(self, context):
+        self.draw_custom_properties            (self.layout, self.node_group, self.node_name)
+        self.draw_custom_properties_socket_info(self.layout, self.node_group, self.node_name)
+        pass
+
+    def draw_custom_properties(self, layout, node_group, node_name):
+        node = bpy.data.node_groups[node_group].nodes[node_name]
+        #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
+        root_grid = layout.grid_flow(row_major=False, columns=2, align=True)
+        root_grid.alignment = 'EXPAND'
+        grid1 = root_grid.grid_flow(row_major=False, columns=1, align=True)
+        grid1.label(text=f'Custom properties of object \'{node.active_object_name}\' ({node.active_object_type}):')
+        grid1.row(align=True).prop(node, 'custom_properties_mode', expand=True)
+        if node.custom_properties_mode=='OBJECT':
+            grid1.template_list("SVON_UL_CurrentObjectCustomPropertiesListMK4", f"uniq_active_object_custom_properties_object_{  self.name}", node, "active_object_custom_properties"         , node, "active_object_custom_properties_index"     , rows=3, item_dyntip_propname='get_description')
+        elif node.custom_properties_mode=='DATA':
+            grid1.template_list("SVON_UL_CurrentObjectCustomPropertiesListMK4", f"uniq_active_object_data_custom_properties_{    self.name}", node, "active_object_data_custom_properties"    , node, "active_object_data_custom_properties_index", rows=3, item_dyntip_propname='get_description')
+        elif node.custom_properties_mode=='MATERIAL':
+            grid1.template_list("SVON_UL_CurrentObjectCustomPropertiesListMK4", f"uniq_active_object_material_custom_properties_{self.name}", node, "active_object_material_custom_properties", node, "active_object_material_custom_properties_index"   , rows=3, item_dyntip_propname='get_description')
+        pass
+
+    def draw_custom_properties_socket_info(self, layout, node_group, node_name):
+        node = bpy.data.node_groups[node_group].nodes[node_name]
+        row = layout.row(align=True)
+        row.column(align=True).label(text="Custom Properties sockets:")
+        node.wrapper_tracked_ui_draw_op(row, SvONCustomPropertySocketMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
+        node.wrapper_tracked_ui_draw_op(row, SvONCustomPropertySocketMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
+        grid1 = layout.grid_flow(row_major=False, columns=1, align=True)
+        grid1.template_list("SVON_UL_CustomPropertiesSocketsListMK4", f"uniq_sockets_custom_properties_{self.name}", node, "custom_properties_sockets", node, "custom_properties_sockets_index", rows=3, ) # item_dyntip_propname='get_description')
+        pass
+
+class SvONCustomPropertySocketMoveUpMK4(bpy.types.Operator, SvGenericNodeLocator):
+    '''Move Custom Property Socket up'''
+    bl_idname = "node.sv_on_custom_property_socket_moveup_mk4"
+    bl_label = "Move Custom Property Socket up"
+    bl_options = {'INTERNAL'}
+
+    def sv_execute(self, context, node):
+        '''passes the operator's 'self' too to allow calling self.report()'''
+        node.move_custom_property_socket_up(self)
+
+class SvONCustomPropertySocketMoveDownMK4(bpy.types.Operator, SvGenericNodeLocator):
+    '''Move Custom Property Socket down'''
+    bl_idname = "node.sv_on_custom_property_socket_movedown_mk4"
+    bl_label = "Move Custom Property Socket down"
+    bl_options = {'INTERNAL'}
+
+    def sv_execute(self, context, node):
+        '''passes the operator's 'self' too to allow calling self.report()'''
+        node.move_custom_property_socket_down(self)
+
+
+class SvONCustomPropertySocketRemoveMK4(bpy.types.Operator):
+    '''Remove Socket'''
+    bl_idname = "node.sv_on_custom_property_socket_remove_mk4"
+    bl_label = "Remove Socket?"
+    bl_description = "Remove Socket from node"
+
+    node_group      : bpy.props.StringProperty(default='')
+    node_name       : bpy.props.StringProperty(default='')
+    idx             : bpy.props.IntProperty(default=0)
+    remove_objects_custom_property: bpy.props.BoolProperty(default=False, name='Remove custom property without active object', description='Remove custom property and keep  active object custom property') # Удалить custom property у всех объектов, кроме активного
+    remove_active_object_custom_property: bpy.props.BoolProperty(default=False, name='Remove custom property of active object', description='Remove custom property of active object too') # Удалить custom property и у активного объекта тоже
+    remove_active_object_active_material_custom_property: bpy.props.BoolProperty(default=False, name='Remove custom property of active object', description='Remove custom property of active object too') # Удалить custom property и у активного объекта тоже
+
+    def invoke(self, context, event):
+        self.remove_objects_custom_property = False
+        self.remove_active_object_custom_property = False
+        return context.window_manager.invoke_props_dialog(self)
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        if self.idx <= len(node.custom_properties_sockets)-1:
+            elem = node.custom_properties_sockets[self.idx]
+            objs = node.get_objects(input_socket_name='objects')
+            safe_materials = []
+            if bpy.context.active_object and bpy.context.active_object.material_slots:
+                obj = bpy.context.active_object
+                safe_materials = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), material=(None if obj.material_slots[id].material is None else obj.material_slots[id].material),)) for id in range(len(obj.material_slots))])
+            if self.remove_objects_custom_property==True:
+                for obj in objs:
+                    if elem.socket_type=='OBJECT':
+                        if obj==bpy.context.active_object and self.remove_active_object_custom_property==False:
+                            # Если активный объект не подлежит очистке, то пропустить очистку его свойств. 
+                            continue
+                        if elem.custom_property_name in obj:
+                            del obj[elem.custom_property_name]
+                            pass
+                        pass
+                    elif elem.socket_type=='DATA':
+                        if bpy.context.active_object and bpy.context.active_object.data and bpy.context.active_object.data==obj.data and self.remove_active_object_custom_property==False:
+                            # Если активный объект не подлежит очистве, то и его свойства
+                            # в разных ссылках также не подлежат очистке 
+                            continue
+                        if obj.data:
+                            if elem.custom_property_name in obj.data:
+                                del obj.data[elem.custom_property_name]
+                        pass
+                    elif elem.socket_type=='MATERIAL':
+                        if obj.material_slots:
+                            # Получить список материалов объекта:
+                            materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), material=(None if obj.material_slots[id].material is None else obj.material_slots[id].material),)) for id in range(len(obj.material_slots))])
+                            for k in materials_info:
+                                material_name = materials_info[k]['material_name']
+                                if any(safe_materials[mat]['material_name']==material_name for mat in safe_materials) and self.remove_active_object_custom_property==False:
+                                    # Если материал из списка материалов активного объекта и
+                                    # активный объект не подлежит очистке, то и его материалы не подлежат
+                                    # очистке, даже если они используются в других объектах 
+                                    continue
+                                mi = materials_info[k]['material']
+                                if mi and elem.custom_property_name in mi:
+                                    del mi[elem.custom_property_name]
+                                pass
+                            pass
+                        pass
+                pass
+            socket_inner_name = node.custom_properties_sockets[self.idx].socket_inner_name
+            node.custom_properties_sockets.remove(self.idx)
+            if socket_inner_name in node.outputs:
+                s = node.outputs[socket_inner_name]
+                node.outputs.remove(s)
+
+
+            #context.node.process_node(None)
+        return {'FINISHED'}
+    
+    def draw(self, context):
+        self.layout.prop(self, 'remove_objects_custom_property')
+        self.layout.prop(self, 'remove_active_object_custom_property')
+        pass
+
+class SvONCustomPropertyAddToOutputSocketMK4(bpy.types.Operator):
+    '''Add Custom Property to Output Socket'''
+    bl_idname = "node.sv_on_custom_property_add_to_output_socket_mk4"
+    bl_label = "Add Socket?"
+    bl_description = "Add Custom Property to Output Socket of node"
+
+    node_group      : bpy.props.StringProperty(default='')
+    node_name       : bpy.props.StringProperty(default='')
+    idx             : bpy.props.IntProperty(default=0)
+
+    socket_type : bpy.props.EnumProperty(
+        name = "Socket Type",
+        default = 'OBJECT',
+        description = "Socket Type",
+        items = SvONSocketDataMK4.socket_types,
+        )
+    socket_inner_name: bpy.props.StringProperty(
+        name="Node Socket Inner Name",
+    )
+    custom_property_name: bpy.props.StringProperty(
+        name="Custom Property Name",
+        description="What custom property name",
+    )
+    socket_ui_name: bpy.props.StringProperty(
+        name="Socket Name",
+        description="Socket Name in UI",
+    )
+    socket_ui_label: bpy.props.StringProperty(
+        name="Socket Label",
+    )
+
+    def invoke(self, context, event):
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+        lst_socket_info = [custom_property_info for custom_property_info in node.custom_properties_sockets if self.custom_property_name==custom_property_info.custom_property_name and self.socket_type==custom_property_info.socket_type]
+        if len(lst_socket_info)>0:
+            lst_socket_info_0 = lst_socket_info[0]
+            for s in node.outputs:
+                if s.name==lst_socket_info_0.socket_inner_name:
+                    ShowMessageBox(f"Socket '{self.custom_property_name}'({self.socket_type}) already exitsts for this custom property", 'Error', 'ERROR')
+                    return {'CANCELLED'}
+                else:
+                    continue
+            pass
+
+        return context.window_manager.invoke_confirm(self, event)
+
+    def execute(self, context):
+        # Проверить, а не создан ли уже для этого параметра сокет:
+        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
+    
+        lst_socket_info = [custom_property_info for custom_property_info in node.custom_properties_sockets if self.custom_property_name==custom_property_info.custom_property_name and self.socket_type==custom_property_info.socket_type]
+        if len(lst_socket_info)>0:
+            lst_socket_info_0 = lst_socket_info[0]
+            for s in node.outputs:
+                if s.name==lst_socket_info_0.socket_inner_name:
+                    # если сокет с этим свойством уже создан, то не создавать такой сокет второй раз
+                    self.report({'WARNING'}, f"Socket '{self.custom_property_name}'({self.socket_type}) already exitsts for this custom property")
+                    return {'CANCELLED'}
+                else:
+                    continue
+            pass
+
+        if len(lst_socket_info)>0:
+            # Если запись в таблице есть, но сокета нет, то запись в таблицу не заносить
+            item = lst_socket_info_0
+        else:
+            # Если и записи нет, то занести запись в таблицу:
+            socket_inner_name = get_next_unique_socket_name(self.node_group, self.node_name)
+            item = node.custom_properties_sockets.add()
+            item.socket_type=self.socket_type
+            item.socket_inner_name = socket_inner_name
+            item.custom_property_name = self.custom_property_name
+            item.socket_ui_name = self.custom_property_name
+            item.socket_ui_label = self.custom_property_name
+            item.remove = False
+
+            elem = node.custom_properties_of_active_object[self.socket_type][self.idx]
+            item.custom_property_type           = elem['type']
+            item.custom_property_description    = elem['description']
+            item.custom_property_subtype        = elem['subtype']
+            item.custom_property_is_array       = elem['is_array']
+            item.custom_property_array_size     = elem['array_size']
+            if elem['type'] not in ['str', 'bool']:
+                setattr(item, f"custom_property_min_{elem['type']}", elem['min'])
+                setattr(item, f"custom_property_max_{elem['type']}", elem['max'])
+            setattr(item, f"custom_property_default_{elem['type']}", 
+                    elem['default'][0] if elem['type']=='str'
+                    else elem['default'][0] if elem['type']=='str' else (elem['default']+[elem['default'][-1]]*32)[:32] 
+                )
+            pass
+
+        node.outputs.new('SvVerticesSocket', item.socket_inner_name)
+        node.outputs[socket_inner_name].label = item.socket_ui_label
+        node.outputs[socket_inner_name].custom_draw = 'custom_property_socket_draw'
+        return {'FINISHED'}
 
 class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
     '''Additional objects properties'''
@@ -866,18 +1381,66 @@ class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
             draw_properties(self.layout, node_group, node_name)
         pass
 
+# Получить value для вывода в диалоговом окне выбора параметров:
+def get_value_as_str(value):
+    if type(value).__name__ == "IDPropertyArray":
+        name = type(value[0]).__name__
+        if name=='float':
+            res = ""+name+"["+str(len(value))+']:['+", ".join([f"{x:.3f}" for x in value])+']'
+        else:
+            res = ""+name+"["+str(len(value))+']:['+", ".join([str(x) for x in value])+']'
+    else:
+        if type(value).__name__=='float':
+            res = f"{value:.3f}"
+        else:
+            res = str(value)
+    return res
+
 class SvNodeInDataMK4(SverchCustomTreeNode):
-    object_names: bpy.props.CollectionProperty(type=SvONDataCollectionMK4)
-    minimal_node_ui: bpy.props.BoolProperty(default=False)
-    object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view, show only used/enabled objects')
-    active_obj_index: bpy.props.IntProperty()
+    object_names        : bpy.props.CollectionProperty(type=SvONDataCollectionMK4)
+    active_obj_index    : bpy.props.IntProperty()
+
+    custom_properties_sockets    : bpy.props.CollectionProperty(type=SvONSocketDataMK4)
+    custom_properties_sockets_index  : bpy.props.IntProperty()
+
+    active_object_name                              : bpy.props.StringProperty(default='')
+    active_object_type                              : bpy.props.StringProperty(default='')
+    active_object_custom_properties                 : bpy.props.CollectionProperty(type=SvONCurrentObjectCustomPropertiesCollectionMK4)
+    active_object_custom_properties_index           : bpy.props.IntProperty()
+    active_object_data_custom_properties            : bpy.props.CollectionProperty(type=SvONCurrentObjectCustomPropertiesCollectionMK4)
+    active_object_data_custom_properties_exists     : bpy.props.BoolProperty(default=False,options={'SKIP_SAVE'},) # Существуют ли custom properties в data у активного объекта
+    active_object_data_custom_properties_index      : bpy.props.IntProperty()
+    active_object_material_custom_properties        : bpy.props.CollectionProperty(type=SvONCurrentObjectCustomPropertiesCollectionMK4)
+    active_object_material_custom_properties_index  : bpy.props.IntProperty()
+    active_object_material_custom_properties_exists : bpy.props.BoolProperty(default=False,options={'SKIP_SAVE'},) # Существуют ли custom properties в material у активного объекта
+
+    # Cache of active object properties
+    custom_properties_of_active_object = dict({'OBJECT':[], 'DATA':[], 'MATERIAL':[],})
+    
+    custom_properties_modes = [
+        ('OBJECT'   , "Object"  , "Object custom properties"    , 0),
+        ('DATA'     , "Data"    , "Data custom properties"      , 1),
+        ('MATERIAL' , "Material", "Material custom properties"  , 2),
+    ]
+    custom_properties_mode : bpy.props.EnumProperty(
+        name    = "Custom properties mode",
+        items   = custom_properties_modes,
+        default = 'OBJECT',
+        #update = updateNode
+    )
+
+
+    minimal_node_ui         : bpy.props.BoolProperty(default=False)
+    object_names_ui_minimal : bpy.props.BoolProperty(default=False, description='Minimize table view, show only used/enabled objects')
 
     apply_matrix: bpy.props.BoolProperty(
-        name = "Apply matrices",
+        name        = "Apply matrices",
         description = "Apply objects matrices",
-        default = True,
-        update = updateNode,
+        default     = True,
+        update      = updateNode,
     )
+
+    node_protected_socket_names = []
 
     def update_viewport_display(self, context):
         objs = get_objects_from_node(self.object_names)
@@ -975,6 +1538,24 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         update = update_render_type)
         
     frame_selected: bpy.props.BoolProperty(default=True, description='Frame selected: magnify Local View')
+
+    def custom_property_socket_draw(self, socket, context, layout):
+        '''Draw custom property socket label'''
+        socket_info = [socket_info for socket_info in self.custom_properties_sockets if socket_info.socket_inner_name==socket.name]
+        if socket_info:
+            socket_info_0 = socket_info[0]
+            layout.label(text=f'({socket_info_0.socket_type[0]}) {socket_info_0.socket_ui_label} ')
+            if socket.is_linked:  # linked INPUT or OUTPUT
+                layout.label(text=f". {socket.objects_number or ''}")
+            pass
+        else:
+            layout.label(text=f'- {socket.label} ')
+            if socket.is_linked:  # linked INPUT or OUTPUT
+                layout.label(text=f". {socket.objects_number or ''}")
+            elif socket.is_output:  # unlinked OUTPUT
+                layout.separator()
+
+        pass
     
     def remove_duplicates_objects_in_list(self, ops):
         lst=[]
@@ -1081,9 +1662,236 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         '''Clear list of objects'''
         self.object_names.clear()
         self.process_node(None)
+    
+    def load_active_object_custom_properties(self):
+        '''Load Object Custom Properties'''
+        #elem = self.object_names[self.active_obj_index]
+        #if elem.pointer_type=='OBJECT':
+
+        # Независимо от наличия текущего объекта дополнительно проверить
+        # в таблице custom properties есть ли в ней какие-то сокеты,
+        # которые не относятся к обязательным. Если есть, то вывести их.
+
+        socket_inner_name = {i.socket_inner_name for i in self.custom_properties_sockets}
+        lst_not_custom_properties_sockets = [
+            s for s in self.outputs
+            if s.name not in self.node_protected_socket_names
+            and s.name not in socket_inner_name
+        ]
+        if lst_not_custom_properties_sockets:
+            for s in lst_not_custom_properties_sockets:
+                elem = self.custom_properties_sockets.add()
+                elem.socket_type='SOCKET'
+                elem.socket_inner_name = s.name
+                elem.socket_ui_name = s.label if s.label else s.name
+                elem.socket_ui_label = s.label if s.label else s.name
+            pass
+
+        self.active_object_name=''
+        self.active_object_type=''
+        obj = bpy.context.active_object
+        if obj:
+            def load_custom_property_info(custom_properties, props, mi):
+                '''Кэширование custom properties при открытом диалоговом окне (нужно только на момент открытия диалогового окна)'''
+                for key, value in mi.items():
+                    # системные служебные пропускаем
+                    if key.startswith("_"):
+                        continue
+
+                    ui = mi.id_properties_ui(key)
+                    meta = ui.as_dict()
+
+                    type_value_name = type(value).__name__
+                    is_array = False
+                    array_size=0
+                    if type_value_name=='IDPropertyArray':
+                        type_value_name = type(value[0]).__name__
+                        is_array = True
+                        array_size = len(value)
+                    # Разрешены только массивы или примитивные типы:
+                    if type_value_name not in ['str', 'float', 'int', 'bool', 'array']:
+                        continue
+                    # Не добавлять дубликаты
+                    if any(prop['name'] == key for prop in props):
+                        continue
+                    props.append({
+                        "name": key,
+                        "type": type_value_name,
+                        "is_array": is_array,
+                        "array_size": array_size,
+                        "min": meta.get("min"),
+                        "max": meta.get("max"),
+                        "default": meta.get("default") if is_array==True else [meta.get("default")], # Все элементы хранить как array
+                        "description": meta.get("description"),
+                        "subtype": meta.get("subtype"),
+                    })
+                    item = custom_properties.add()
+                    item.name = key
+                    item.socket_type = 'OBJECT'
+                    item.apply=False
+                    item.value = get_value_as_str(value)
+                pass
+                
+            self.active_object_name=obj.name
+            self.active_object_type=obj.type
+            # props_obj = []
+            self.active_object_custom_properties.clear()
+            self.active_object_data_custom_properties.clear()
+            self.active_object_material_custom_properties.clear()
+
+            # Очистить закешированные свойства предыдущего активного объекта:
+            for elem in self.custom_properties_of_active_object:
+                self.custom_properties_of_active_object[elem].clear()
+
+            load_custom_property_info(self.active_object_custom_properties, self.custom_properties_of_active_object['OBJECT'], obj)
+            if obj.data:
+                load_custom_property_info(self.active_object_data_custom_properties, self.custom_properties_of_active_object['DATA'], obj.data)
+                self.active_object_data_custom_properties_exists = True
+            else:
+                # Не у всех есть obj.data, например, obj.data отсутствует у объектов типа empty и
+                # force fields (Хотя это и кажется странным), а вот у lamp - есть
+                self.active_object_data_custom_properties_exists = False
+            
+            if obj.material_slots:
+                # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
+                materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), material=(None if obj.material_slots[id].material is None else obj.material_slots[id].material),)) for id in range(len(obj.material_slots))])
+                for k in materials_info:
+                    material_name = materials_info[k]['material_name']
+                    mi = materials_info[k]['material']
+                    if mi:
+                        load_custom_property_info(self.active_object_material_custom_properties, self.custom_properties_of_active_object['MATERIAL'], mi)
+                    else:
+                        # иногда слот материала пустой
+                        pass
+                    pass
+                self.active_object_material_custom_properties_exists = True
+            else:
+                # Не у всех объектов есть материалы
+                self.active_object_material_custom_properties_exists = False
+                pass
+            
+            # mi = obj
+            # for key, value in mi.items():
+            #     # системные служебные пропускаем
+            #     if key.startswith("_"):
+            #         continue
+
+            #     ui = mi.id_properties_ui(key)
+            #     meta = ui.as_dict()
+
+            #     type_value_name = type(value).__name__
+            #     is_array = False
+            #     array_size=0
+            #     if type_value_name=='IDPropertyArray':
+            #         type_value_name = type(value[0]).__name__
+            #         is_array = True
+            #         array_size = len(value)
+            #     # Разрешены только массивы или примитивные типы:
+            #     if type_value_name not in ['str', 'float', 'int', 'bool', 'array']:
+            #         continue
+            #     props_obj.append({
+            #         "name": key,
+            #         "type": type_value_name,
+            #         "is_array": is_array,
+            #         "array_size": array_size,
+            #         "min": meta.get("min"),
+            #         "max": meta.get("max"),
+            #         "default": meta.get("default") if is_array==True else [meta.get("default")], # Все элементы хранить как array
+            #         "description": meta.get("description"),
+            #         "subtype": meta.get("subtype"),
+            #     })
+            #     item = self.active_object_custom_properties.add()
+            #     item.name = key
+            #     item.socket_type = 'OBJECT'
+            #     item.apply=False
+            #     item.value = get_value_as_str(value)
+
+            # props_data = []
+            # if obj.data:
+            #     mi = obj.data
+            #     for key, value in mi.items():
+            #         # системные служебные пропускаем
+            #         if key.startswith("_"):
+            #             continue
+
+            #         ui = mi.id_properties_ui(key)
+            #         meta = ui.as_dict()
+
+            #         props_data.append({
+            #             "name": key,
+            #             "value": value,
+            #             "type": type(value).__name__,
+            #             "min": meta.get("min"),
+            #             "max": meta.get("max"),
+            #             "default": meta.get("default"),
+            #             "description": meta.get("description"),
+            #             "subtype": meta.get("subtype"),
+            #         })
+            #         item = self.active_object_data_custom_properties.add()
+            #         item.name = key
+            #         item.socket_type = 'DATA'
+            #         item.apply=False
+            #         item.value = get_value_as_str(value)
+            #     pass
+            #     self.active_object_data_custom_properties_exists = True
+            # else:
+            #     # Не у всех есть obj.data, например, obj.data отсутствует у объектов типа empty и
+            #     # force fields (Хотя это и кажется странным), а вот у lamp - есть
+            #     self.active_object_data_custom_properties_exists = False
+            #     pass
+
+            # props_material_data = dict()
+            # if obj.material_slots:
+            #     # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
+            #     materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), material=(None if obj.material_slots[id].material is None else obj.material_slots[id].material),)) for id in range(len(obj.material_slots))])
+            #     for k in materials_info:
+            #         material_name = materials_info[k]['material_name']
+            #         mi = materials_info[k]['material']
+            #         for key, value in mi.items():
+            #             # системные служебные пропускаем
+            #             if key.startswith("_"):
+            #                 continue
+
+            #             # TODO: Требуется проверить, что эти свойства одинаковые. Если разные, то нужно вывести оба материала с предупреждением, что материалы не совпадают:
+            #             if key in props_material_data:
+            #                 continue
+
+            #             ui = mi.id_properties_ui(key)
+            #             meta = ui.as_dict()
+
+            #             props_material_data[key] = {
+            #                 "name"          : key,
+            #                 "value"         : value,
+            #                 "type"          : type(value).__name__,
+            #                 "min"           : meta.get("min"),
+            #                 "max"           : meta.get("max"),
+            #                 "default"       : meta.get("default"),
+            #                 "description"   : meta.get("description"),
+            #                 "subtype"       : meta.get("subtype"),
+            #             }
+            #             item = self.active_object_material_custom_properties.add()
+            #             item.name = key
+            #             item.socket_type = 'MATERIAL'
+            #             item.apply=False
+            #             #item.value = ", ".join(repr(x) for x in value) if type(value).__name__ == "IDPropertyArray" else repr(value)
+            #             item.value = get_value_as_str(value)
+            #         pass
+            #     self.active_object_material_custom_properties_exists = True
+            # else:
+            #     # Не у всех объектов есть материалы
+            #     self.active_object_material_custom_properties_exists = False
+            #     pass
+
+            # self.custom_properties_of_active_object['OBJECT']   = props_obj
+            # self.custom_properties_of_active_object['DATA']     = props_data
+            # self.custom_properties_of_active_object['MATERIAL'] = props_material_data
+            # return props_obj, props_data
+            return
+
+        return None, None
 
     def move_current_object_up(self, ops):
-        '''Move current obbect in list up'''
+        '''Move current object in list up'''
 
         if self.active_obj_index>0:
             self.object_names.move(self.active_obj_index, self.active_obj_index-1)
@@ -1101,6 +1909,102 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         if self.active_obj_index<=len(self.object_names)-2:
             self.object_names.move(self.active_obj_index, self.active_obj_index+1)
             self.active_obj_index+=1
+
+        self.process_node(None)
+
+    def move_custom_property_socket_up(self, ops):
+        '''Move Custom Property Socket up'''
+
+        if self.custom_properties_sockets_index>0:
+            socket_links = dict()
+            for I in range(self.custom_properties_sockets_index-1, len(self.custom_properties_sockets)):
+                custom_properties_sockets_I = self.custom_properties_sockets[I]
+                if custom_properties_sockets_I.socket_inner_name in self.outputs:
+                    s = self.outputs[custom_properties_sockets_I.socket_inner_name]
+                    links = []
+                    for link in s.links:
+                        links.append({'to_node': link.to_node, 'to_socket': link.to_socket, 'socket_name': s.name})
+                    socket_links[custom_properties_sockets_I.socket_inner_name] = links
+                pass
+
+            self.custom_properties_sockets.move(self.custom_properties_sockets_index, self.custom_properties_sockets_index-1)
+            self.custom_properties_sockets_index-=1
+            # Удалить сокеты ниже текущего:
+            for I in range(self.custom_properties_sockets_index, len(self.custom_properties_sockets)):
+                custom_properties_sockets_I = self.custom_properties_sockets[I]
+                if custom_properties_sockets_I.socket_inner_name in self.outputs:
+                    s = self.outputs[custom_properties_sockets_I.socket_inner_name]
+                    self.outputs.remove(s)
+                pass
+            # Пересоздать сокеты:
+            for I in range(self.custom_properties_sockets_index, len(self.custom_properties_sockets)):
+                item = self.custom_properties_sockets[I]
+                if item.socket_inner_name not in self.outputs:
+                    self.outputs.new('SvVerticesSocket', item.socket_inner_name)
+                    self.outputs[item.socket_inner_name].label = item.socket_ui_label
+                    self.outputs[item.socket_inner_name].custom_draw = 'custom_property_socket_draw'
+            # Пересоздать links:
+            for socket_name in socket_links:
+                if socket_name in self.outputs:
+                    s = self.outputs[socket_name]
+                    for link in socket_links[socket_name]:
+                        restored_link = self.id_data.links.new(s, link['to_socket'])
+                    pass
+                else:
+                    # Очень странная ситуация. Не знаю пока что делать.
+                    pass
+
+        if not self.custom_properties_sockets:
+            ops.report({'WARNING'}, "Warning, no selected objects in the scene")
+            return
+
+        self.process_node(None)
+
+    def move_custom_property_socket_down(self, ops):
+        '''Move Custom Property Socket down'''
+
+        if self.custom_properties_sockets_index<=len(self.custom_properties_sockets)-2:
+            socket_links = dict()
+            for I in range(self.custom_properties_sockets_index, len(self.custom_properties_sockets)):
+                custom_properties_sockets_I = self.custom_properties_sockets[I]
+                if custom_properties_sockets_I.socket_inner_name in self.outputs:
+                    s = self.outputs[custom_properties_sockets_I.socket_inner_name]
+                    links = []
+                    for link in s.links:
+                        links.append({'to_node': link.to_node, 'to_socket': link.to_socket, 'socket_name': s.name})
+                    socket_links[custom_properties_sockets_I.socket_inner_name] = links
+                pass
+
+            self.custom_properties_sockets.move(self.custom_properties_sockets_index, self.custom_properties_sockets_index+1)
+            self.custom_properties_sockets_index+=1
+            # Удалить сокеты ниже текущего:
+            for I in range(self.custom_properties_sockets_index, len(self.custom_properties_sockets)):
+                custom_properties_sockets_I = self.custom_properties_sockets[I]
+                if custom_properties_sockets_I.socket_inner_name in self.outputs:
+                    s = self.outputs[custom_properties_sockets_I.socket_inner_name]
+                    self.outputs.remove(s)
+                pass
+            # Пересоздать сокеты и их links:
+            for I in range(self.custom_properties_sockets_index, len(self.custom_properties_sockets)):
+                item = self.custom_properties_sockets[I]
+                if item.socket_inner_name not in self.outputs:
+                    self.outputs.new('SvVerticesSocket', item.socket_inner_name)
+                    self.outputs[item.socket_inner_name].label = item.socket_ui_label
+                    self.outputs[item.socket_inner_name].custom_draw = 'custom_property_socket_draw'
+            # Пересоздать links:
+            for socket_name in socket_links:
+                if socket_name in self.outputs:
+                    s = self.outputs[socket_name]
+                    for link in socket_links[socket_name]:
+                        restored_link = self.id_data.links.new(s, link['to_socket'])
+                    pass
+                else:
+                    # Очень странная ситуация. Не знаю пока что делать.
+                    pass
+
+        if not self.custom_properties_sockets:
+            ops.report({'WARNING'}, "Warning, no selected objects in the scene")
+            return
 
         self.process_node(None)
 
@@ -1189,11 +2093,173 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
 
     pass
 
+    def get_objects(self, input_socket_name=None):
+        if input_socket_name and input_socket_name in self.inputs:
+            objs = self.inputs[input_socket_name].sv_get(default=[[]])
+            if not self.object_names and not objs[0]:
+                return
+            if isinstance(objs[0], list):
+                objs = objs[0]
+        if not objs:
+            objs = []
+            for o in self.object_names:
+                if o.exclude==False and (o.name in bpy.context.scene.objects or o.pointer_type=='COLLECTION'): # objects can be in object_pointer but absent in the scene
+                    _obj = get_objects_from_item(o)
+                    objs.extend(_obj)
+                pass
+            pass
+        return objs
+    
+    def apply_custom_property(self, objs):
+        def _apply_custom_property(obj_elem, cp):
+            default = getattr(cp, f"custom_property_default_{cp.custom_property_type}")
+            if cp.custom_property_type=='str':
+                pass
+            else:
+                if cp.custom_property_is_array==False:
+                    default = default[0]
+                else:
+                    default = default[:cp.custom_property_array_size]
+                pass
+            # update(*, subtype=None, min=None, max=None, soft_min=None, soft_max=None, precision=None, step=None, default=None, id_type=None, items=None, description=None)
+            meta = dict({
+                #'name'          : cp.custom_property_name,
+                #'id_type'          : 'IDPropertyArray' if cp.custom_property_is_array else cp.custom_property_type,
+                'description'   : cp.custom_property_description,
+                'subtype'       : cp.custom_property_subtype,
+                'default'       : default,
+            })
+            if cp.custom_property_type not in ['str', 'bool']:
+                meta['min'] = getattr(cp, f"custom_property_min_{cp.custom_property_type}")
+                meta['max'] = getattr(cp, f"custom_property_max_{cp.custom_property_type}")
+
+            if cp.custom_property_name in obj_elem:
+                if (cp.custom_property_is_array==True):
+                    # Если свойство заявлено как массив и текущее свойство является массивом
+                    # и их размеры равны и их типы равны, то пропустить
+                    if (type(obj_elem[cp.custom_property_name]).__name__=='IDPropertyArray'
+                        and cp.custom_property_type==type(obj_elem[cp.custom_property_name][0]).__name__
+                        and cp.custom_property_array_size==len(obj_elem[cp.custom_property_name])
+                    ):
+                        pass
+                    else:
+                        # иначе при любом отклонении и несоответствии данных
+                        # требуется переопределение свойств:
+                        # TODO: сделать проверку анимации и копирование ключей анимации
+                        #       на новое свойство
+                        del obj_elem[cp.custom_property_name]
+                    pass
+                else:
+                    if type(obj_elem[cp.custom_property_name]).__name__=='IDPropertyArray':
+                        # Если новый тип не массив, а старый был массивом, то требуется
+                        # переопределение свойства:
+                        del obj_elem[cp.custom_property_name]
+                    else:
+                        # Если и новый и старый тип не массивы, то проверить,
+                        # если их типы не одинаковые, то удалить свойство,
+                        # т.к. требуется его переопределение: 
+                        if cp.custom_property_type!=type(obj_elem[cp.custom_property_name]).__name__:
+                            del obj_elem[cp.custom_property_name]
+                        pass
+                    pass
+                pass
+
+            if cp.custom_property_name not in obj_elem:
+                obj_elem[cp.custom_property_name] = default
+                pass
+            obj_elem.id_properties_ui(cp.custom_property_name).update(**meta)
+            pass
+        # Применить кастомные свойства к объектам и материалам:
+        for obj in objs:
+            for cp in self.custom_properties_sockets:
+                if cp.socket_type=='OBJECT':
+                    _apply_custom_property(obj, cp)
+                    # default = getattr(cp, f"custom_property_default_{cp.custom_property_type}")
+                    # if cp.custom_property_type=='str':
+                    #     pass
+                    # else:
+                    #     if cp.custom_property_is_array==False:
+                    #         default = default[0]
+                    #     else:
+                    #         default = default[:cp.custom_property_array_size]
+                    #     pass
+                    # # update(*, subtype=None, min=None, max=None, soft_min=None, soft_max=None, precision=None, step=None, default=None, id_type=None, items=None, description=None)
+                    # meta = dict({
+                    #     #'name'          : cp.custom_property_name,
+                    #     #'id_type'          : 'IDPropertyArray' if cp.custom_property_is_array else cp.custom_property_type,
+                    #     'min'           : '' if cp.custom_property_type=='str' else getattr(cp, f"custom_property_min_{cp.custom_property_type}"),
+                    #     'max'           : '' if cp.custom_property_type=='str' else getattr(cp, f"custom_property_max_{cp.custom_property_type}"),
+                    #     'description'   : cp.custom_property_description,
+                    #     'subtype'       : cp.custom_property_subtype,
+                    #     'default'       : default,
+                    # })
+                    # if cp.custom_property_name in obj:
+                    #     if (cp.custom_property_is_array==True):
+                    #         # Если свойство заявлено как массив и текущее свойство является массивом
+                    #         # и их размеры равны и их типы равны, то пропустить
+                    #         if (type(obj[cp.custom_property_name]).__name__=='IDPropertyArray'
+                    #             and cp.custom_property_type==type(obj[cp.custom_property_name]).__name__
+                    #             and cp.custom_property_array_size==len(obj[cp.custom_property_name])
+                    #         ):
+                    #             pass
+                    #         else:
+                    #             # иначе при любом отклонении и несоответствии данных
+                    #             # требуется переопределение свойств:
+                    #             # TODO: сделать проверку анимации и копирование ключей анимации
+                    #             #       на новое свойство
+                    #             del obj[cp.custom_property_name]
+                    #         pass
+                    #     else:
+                    #         if type(obj[cp.custom_property_name]).__name__=='IDPropertyArray':
+                    #             # Если новый тип не массив, а старый был массивом, то требуется
+                    #             # переопределение свойства:
+                    #             del obj[cp.custom_property_name]
+                    #         else:
+                    #             # Если и новый и старый тип не массивы, то проверить,
+                    #             # если их типы не одинаковые, то удалить свойство,
+                    #             # т.к. требуется его переопределение: 
+                    #             if cp.custom_property_type!=type(obj[cp.custom_property_name]).__name__:
+                    #                 del obj[cp.custom_property_name]
+                    #             pass
+                    #         pass
+                    #     pass
+
+                    # if cp.custom_property_name not in obj:
+                    #     obj[cp.custom_property_name] = default
+                    #     pass
+                    # obj.id_properties_ui(cp.custom_property_name).update(**meta)
+                    pass
+                elif cp.socket_type=='DATA':
+                    if obj.data:
+                        _apply_custom_property(obj.data, cp)
+                    pass
+                elif cp.socket_type=='MATERIAL':
+                    if obj.material_slots:
+                        # Получить список материалов объекта:
+                        materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), material=(None if obj.material_slots[id].material is None else obj.material_slots[id].material),)) for id in range(len(obj.material_slots))])
+                        for k in materials_info:
+                            material_name = materials_info[k]['material_name']
+                            mi = materials_info[k]['material']
+                            if mi:
+                                _apply_custom_property(mi, cp)
+                            else:
+                                # Бывает, что слот пустой, тогда это присвоение custom properties надо пропустить
+                                pass
+                            pass
+                    pass
+                else:
+                    # Неизвестный тип
+                    pass
+                pass
+            pass
+        return objs
+
 classes = [
     SvONItemEmptyOperatorMK4,
     SvONHighlightAllObjectsInSceneMK4,
     SvONHighlightProcessedObjectsInSceneMK4,
     SvONClearObjectsFromListMK4,
+    SvONLoadActiveObjectCustomPropertiesMK4,
     SvONSyncSceneObjectWithListMK4,
     SvONRemoveDuplicatesObjectsInListMK4,
     SVON_localview_objectsInListMK4,
@@ -1206,9 +2272,18 @@ classes = [
     SvONItemEnablerMK4,
     SvONItemRemoveMK4,
     SvONItemOperatorMK4,
-    SvONDataCollectionMK4,
+    SvONDataCollectionMK4,  # TODO: rename to SvONObjectDataMK4
+    SvONSocketDataMK4,
+    SvONCurrentObjectCustomPropertiesCollectionMK4,
+    SVON_UL_CurrentObjectCustomPropertiesListMK4,
+    SVON_UL_CustomPropertiesSocketsListMK4,
+    SvONCustomPropertySocketMoveUpMK4,
+    SvONCustomPropertySocketMoveDownMK4,
+    SvONCustomPropertyAddToOutputSocketMK4,
+    SvONCustomPropertySocketRemoveMK4,
     SVON_UL_NamesListMK4,
     SV_PT_ViewportDisplayPropertiesDialogMK4,
+    SV_PT_ViewportDisplayCustomPropertiesDialogMK4,
     SV_PT_ViewportDisplayPropertiesMK4,
 ]
 
