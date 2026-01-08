@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Range Switch &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Custom switcher &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/logic/range_switch';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/logic/switcher_mk2';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Switch" href="switch_MK2.html" />
-    <link rel="prev" title="Neuro Elman 1 Layer" href="neuro_elman.html" />
+    <link rel="next" title="List Main" href="../list_main/list_main_index.html" />
+    <link rel="prev" title="Switch" href="switch_MK2.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -188,9 +188,9 @@
 <li class="toctree-l3"><a class="reference internal" href="loop_in.html">Loop In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="loop_out.html">Loop Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="neuro_elman.html">Neuro Elman 1 Layer</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Range Switch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="range_switch.html">Range Switch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="switch_MK2.html">Switch</a></li>
-<li class="toctree-l3"><a class="reference internal" href="switcher_mk2.html">Custom switcher</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Custom switcher</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
@@ -268,7 +268,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/logic/range_switch.rst" target="_blank"
+      <li><a href="../../_sources/nodes/logic/switcher_mk2.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -352,7 +352,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Range Switch</h1>
+    <h1>Custom switcher</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -364,9 +364,10 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#n-panel">N panel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-panel">3D panel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
             </nav>
         </div>
@@ -378,100 +379,71 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="range-switch">
-<h1>Range Switch<a class="headerlink" href="#range-switch" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189755062-b5dd1b4e-f6a4-4ab3-8764-650d4a782ce9.png"><img alt="https://user-images.githubusercontent.com/14288520/189755062-b5dd1b4e-f6a4-4ab3-8764-650d4a782ce9.png" src="https://user-images.githubusercontent.com/14288520/189755062-b5dd1b4e-f6a4-4ab3-8764-650d4a782ce9.png" />
-</a>
+  <section id="custom-switcher">
+<h1>Custom switcher<a class="headerlink" href="#custom-switcher" title="Link to this heading">#</a></h1>
+<img alt="https://user-images.githubusercontent.com/28003269/59678662-11dd6500-91de-11e9-9b28-a08aebaea8b8.png" src="https://user-images.githubusercontent.com/28003269/59678662-11dd6500-91de-11e9-9b28-a08aebaea8b8.png" />
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node set a switch state to ON/OFF based on a driving value relative to a given value range.</p>
+<p>Simple node which convert input sequence to buttons. It is useful for creating custom switcher.
+Added Mask feature to handle switch templates. So you can have configuration switcher in 3D panel. For example, you have xls spreadsheet with configurations for your data, and this node allows you to apply with configuration index.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
-<p>All inputs will accept single or multiple values.</p>
 <ul class="simple">
-<li><p><strong>Value</strong></p></li>
-<li><p><strong>Boundary1</strong> <strong>[1]</strong></p></li>
-<li><p><strong>Boundary2</strong> <strong>[1]</strong></p></li>
-</ul>
-<p>Notes:</p>
-<ul class="simple">
-<li><p><strong>[1]</strong> : The boundary values do not have to be in increasing order or absolute.</p></li>
+<li><p><strong>Data</strong> - any data you wish. There is no limitation of length of input data but all items above <strong>32</strong> will be ignored.</p></li>
+<li><p><strong>Mask</strong> - Mask for selection templates.</p></li>
 </ul>
 </section>
-<section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
-<p>The <strong>Mode</strong> parameter allows to select one of the three switch modes: <strong>Inside ON</strong>, <strong>Inside OFF</strong> and <strong>Pass Through</strong>.</p>
-<ul>
-<li><p>For <strong>Inside ON</strong> mode the switch is ON when the value is inside the boundary range and OFF otherwise.</p></li>
-<li><p>For <strong>Inside OFF</strong> mode the switch is OFF when the value is inside the boundary range and ON otherwise.</p></li>
-<li><p>For <strong>Pass Through</strong> mode the switch will toggle between OFF/ON (or ON/OFF) when the value crosses the range from one side to the other.</p>
-<blockquote>
-<div><p>[0]– outside –&gt;[b1]&lt;– inside –&gt;[b2]&lt;– outside –&gt; (+)</p>
-<p>INSIDE ON mode:</p>
-<p>OFF —&gt; [b1] &lt;– ON –&gt; [b2] &lt;— OFF   # inside ON,  outside OFF</p>
-<p>INSIDE OFF mode:</p>
-<p>ON  —&gt; [b1] &lt;– OFF –&gt; [b2] &lt;— ON   # inside OFF, outside ON</p>
-<p>PASS THROUGH mode:</p>
-<p>ON  —&gt; [b1] – ON –&gt; [b2] —&gt; OFF    # passing through range switches state
-ON  &lt;— [b1] &lt;- OFF – [b2] &lt;— OFF    #</p>
-</div></blockquote>
-</li>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Item</strong> - index of selected items.</p></li>
 </ul>
+</section>
+<section id="n-panel">
+<h2>N panel<a class="headerlink" href="#n-panel" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>Param</p></th>
+<tr class="row-odd"><th class="head"><p>Parameters</p></th>
 <th class="head"><p>Type</p></th>
-<th class="head"><p>Default</p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><strong>Mode</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>Inside ON
-Inside OFF
-Pass Through</p>
-</dd>
-</dl>
-</td>
-<td><p>Pass Through</p></td>
-<td><p>The switching mode  <strong>[1]</strong></p></td>
+<tr class="row-even"><td><p>Multiple selection</p></td>
+<td><p>Bool</p></td>
+<td><p>Allowed to select several items simultaneously</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Value</strong></p></td>
-<td><p>Float</p></td>
-<td><p>1.0</p></td>
-<td><p>The driving value of the switch</p></td>
+<tr class="row-odd"><td><p>Show in 3d panel</p></td>
+<td><p>Bool</p></td>
+<td><p>Won’t be ignored for adding parameter of the node to 3d panel</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>Boundary1</strong></p></td>
-<td><p>Float</p></td>
-<td><p>2.0</p></td>
-<td><p>The first boundary of the range</p></td>
+<tr class="row-even"><td><p>Size of buttons</p></td>
+<td><p>float</p></td>
+<td><p>controlling of size of buttons</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Boundary2</strong></p></td>
-<td><p>Float</p></td>
-<td><p>3.0</p></td>
-<td><p>The second boundary of the range</p></td>
+<tr class="row-odd"><td><p>Masked</p></td>
+<td><p>Bool</p></td>
+<td><p>To use mask or not to use mask</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Notes:</p>
-<p><strong>[1]</strong> : When the mode is <strong>Pass Through</strong> a “Toggle State” button becomes available to allow you to set the initial state of the switch.</p>
 </section>
-<section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
-<p>Outputs will be generated when connected.</p>
-<p><strong>State</strong>
-This output is the current state of the switch. (ON = True, OFF = False)</p>
-<p><strong>Zone</strong>
-This output is the number of the zone (1,2,3) the driving value is in relative to the boundary values.</p>
-<p>Zone 1 (BELOW)  for value &lt; min(b1,b2)
-Zone 2 (INSIDE) for min(b1,b2) &lt;= value &lt;= max(b1,b2)
-Zone 3 (ABOVE)  for max(b1,b2) &lt; value</p>
+<section id="d-panel">
+<h2>3D panel<a class="headerlink" href="#d-panel" title="Link to this heading">#</a></h2>
+<p>It consists dropdown list of items and button for activation of multiple selection mode.</p>
 </section>
-<section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">#</a></h2>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<p><strong>Mask usage pipeline (new feature 2026)</strong></p>
+<img alt="https://github.com/user-attachments/assets/5bf6adf6-41fb-47fb-bbc9-f7be59f1e352" src="https://github.com/user-attachments/assets/5bf6adf6-41fb-47fb-bbc9-f7be59f1e352" />
+<p><strong>Controlling of light from 3d panel:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/59653042-7deda800-91a1-11e9-892f-f3e927612d72.gif" src="https://user-images.githubusercontent.com/28003269/59653042-7deda800-91a1-11e9-892f-f3e927612d72.gif" />
+<img alt="https://user-images.githubusercontent.com/28003269/59653046-80500200-91a1-11e9-8314-3c7ebe98d3f8.png" src="https://user-images.githubusercontent.com/28003269/59653046-80500200-91a1-11e9-8314-3c7ebe98d3f8.png" />
+<p><strong>controlling of material from 3d panel:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/59654477-5d285100-91a7-11e9-8a9b-f436d6de57db.gif" src="https://user-images.githubusercontent.com/28003269/59654477-5d285100-91a7-11e9-8a9b-f436d6de57db.gif" />
+<img alt="https://user-images.githubusercontent.com/28003269/59654483-644f5f00-91a7-11e9-92cb-70da3cc641b0.png" src="https://user-images.githubusercontent.com/28003269/59654483-644f5f00-91a7-11e9-92cb-70da3cc641b0.png" />
 </section>
 </section>
 
@@ -487,20 +459,20 @@ Zone 3 (ABOVE)  for max(b1,b2) &lt; value</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="neuro_elman.html"
+       href="switch_MK2.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Neuro Elman 1 Layer</p>
+        <p class="prev-next-title">Switch</p>
       </div>
     </a>
     <a class="right-next"
-       href="switch_MK2.html"
+       href="../list_main/list_main_index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Switch</p>
+        <p class="prev-next-title">List Main</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -522,9 +494,10 @@ Zone 3 (ABOVE)  for max(b1,b2) &lt; value</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#n-panel">N panel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-panel">3D panel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
   </nav></div>
 
