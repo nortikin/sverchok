@@ -5,14 +5,14 @@ Custom switcher
 
 Functionality
 -------------
-Simple node which convert input sequence to buttons. It is useful for creating custom switcher.  
-Added Mask feature to handle switch templates. So you can have configuration switcher in 3D panel.
+Simple node which convert input sequence to buttons. It is useful for creating custom switcher.   
+Added Mask feature to handle switch templates. So you can have configuration switcher in 3D panel. For example, you have xls spreadsheet with configurations for your data, and this node allows you to apply with configuration index.   
 
 
 Inputs
 ------
 
-- **Data** - any data you wish.There is no limitation of length of input data but all items above **32** will be ignored.
+- **Data** - any data you wish. There is no limitation of length of input data but all items above **32** will be ignored.
 - **Mask** - Mask for selection templates.
 
 Outputs

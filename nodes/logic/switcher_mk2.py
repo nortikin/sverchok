@@ -45,7 +45,7 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         description='Selection several items simultaneously')
 
     masked: bpy.props.BoolProperty(
-        name='Masked', default=False, update=update_mode,
+        name='Masked', default=False, update=updateNode,
         description='To use masks or not to use masks')
 
     ui_scale: bpy.props.FloatProperty(
@@ -106,7 +106,7 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         # Storing names of items
         if self.inputs['Data'].is_linked:
             data = self.inputs['Data'].sv_get()
-            if isinstance(data[0], (list, tuple)):
+            if data and isinstance(data[0], (list, tuple)):
                 data = [i for l in data for i in l]
             if len(data) != len(self.string_values):
                 self.string_values.clear()
@@ -120,7 +120,6 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         else:
             self.string_values.clear()
 
-        # --- Modification 2026.01.06: Update user_list based on Mask input ---
         if self.inputs['Mask'].is_linked and self.inputs['Data'].is_linked and self.masked:
             mask_data = self.inputs['Mask'].sv_get()
             # Check if mask_data is not empty to allow manual override when [] is passed
@@ -145,7 +144,6 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 if list(self['user_list']) != new_values:
                     self['user_list'] = new_values
                     self['previous_user_list'] = new_values
-        # --- Modification end ---
 
         self.outputs['Item'].sv_set([[i for i, b in enumerate(self.user_list[:len(self.string_values)]) if b]])
 
@@ -156,4 +154,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvCustomSwitcherMK2)
-if __name__ == '__main__': register()
+
+if __name__ == '__main__':
+    register()

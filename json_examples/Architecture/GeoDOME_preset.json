@@ -8,7 +8,7 @@
             -63.109554290771484,
             -74.7050552368164
           ],
-          "height": 1011.0,
+          "height": 1047.0,
           "width": 3381.0,
           "label": "STICKS"
         },
@@ -20,7 +20,7 @@
             394.69125747680664,
             868.6575546264648
           ],
-          "height": 633.9999389648438,
+          "height": 637.9999389648438,
           "width": 1715.0001220703125,
           "label": "ON FLOOR",
           "parent": {
@@ -36,8 +36,8 @@
             -407.73769760131836,
             -54.503841400146484
           ],
-          "height": 535.0,
-          "width": 697.9998779296875,
+          "height": 539.0,
+          "width": 698.0001220703125,
           "label": "OUTPUT",
           "parent": {
             "type": "NODE",
@@ -49,11 +49,11 @@
       "Frame.002": {
         "attributes": {
           "location": [
-            -118.97500228881836,
+            -118.97500610351562,
             48.613258361816406
           ],
-          "height": 416.0000305175781,
-          "width": 200.0,
+          "height": 420.0,
+          "width": 199.99993896484375,
           "label": "SORT",
           "parent": {
             "type": "NODE",
@@ -68,7 +68,7 @@
             -54.81245422363281,
             -70.90750122070312
           ],
-          "height": 951.0,
+          "height": 977.0,
           "width": 607.0,
           "label": "MAIN",
           "parent": {
@@ -84,7 +84,7 @@
             -429.83807373046875,
             34.816375732421875
           ],
-          "height": 739.0,
+          "height": 773.0,
           "width": 621.0,
           "label": "INPUT"
         },
@@ -96,7 +96,7 @@
             -263.9557800292969,
             -458.6011047363281
           ],
-          "height": 140.0,
+          "height": 144.0,
           "width": 460.0,
           "label": "nikitron 2022 - geodome preset"
         },
@@ -108,7 +108,7 @@
             143.3534698486328,
             -175.13558959960938
           ],
-          "height": 983.0,
+          "height": 997.0,
           "width": 3892.0,
           "label": "JOINTS"
         },
@@ -117,10 +117,10 @@
       "Frame.005": {
         "attributes": {
           "location": [
-            249.31861114501953,
+            249.318603515625,
             218.063720703125
           ],
-          "height": 360.9999694824219,
+          "height": 365.0,
           "width": 361.0,
           "label": "points",
           "parent": {
@@ -133,11 +133,11 @@
       "Frame.006": {
         "attributes": {
           "location": [
-            292.68455505371094,
+            292.6845703125,
             194.64212036132812
           ],
-          "height": 452.0000305175781,
-          "width": 406.9999694824219,
+          "height": 456.0000305175781,
+          "width": 407.0,
           "label": "LINKED TO POINTS",
           "parent": {
             "type": "NODE",
@@ -152,8 +152,8 @@
             171.29978942871094,
             249.32803344726562
           ],
-          "height": 461.0,
-          "width": 988.0,
+          "height": 465.0000305175781,
+          "width": 987.9999389648438,
           "label": "PREPARE FOR UVCONNECT",
           "parent": {
             "type": "NODE",
@@ -168,7 +168,7 @@
             -28.028213500976562,
             49.506195068359375
           ],
-          "height": 256.0000305175781,
+          "height": 250.0,
           "width": 560.0,
           "parent": {
             "type": "NODE",
@@ -183,8 +183,8 @@
             -41.8306884765625,
             41.598846435546875
           ],
-          "height": 256.0000305175781,
-          "width": 498.9998779296875,
+          "height": 250.0,
+          "width": 499.0,
           "parent": {
             "type": "NODE",
             "value": "Frame.008"
@@ -198,7 +198,7 @@
             1622.2626495361328,
             403.7400207519531
           ],
-          "height": 746.0,
+          "height": 750.0,
           "width": 817.0,
           "label": "ON FLOOR",
           "parent": {
@@ -214,7 +214,7 @@
             133.40960693359375,
             923.2533264160156
           ],
-          "height": 599.0,
+          "height": 633.0,
           "width": 608.0,
           "label": "TYPES",
           "parent": {
@@ -228,7 +228,7 @@
         "attributes": {
           "location": [
             859.747501373291,
-            -527.6541519165039
+            -527.654182434082
           ],
           "width": 264.5767822265625,
           "color": [
@@ -267,6 +267,12 @@
             2713.7825660705566,
             -433.04312896728516
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.011"
@@ -299,6 +305,12 @@
             2715.0176734924316,
             -264.89273834228516
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.011"
@@ -385,7 +397,7 @@
         "attributes": {
           "location": [
             2005.9880104064941,
-            -134.5284194946289
+            -134.52835845947266
           ],
           "color": [
             0.8966601490974426,
@@ -469,7 +481,7 @@
       "Matrix In.001": {
         "attributes": {
           "location": [
-            2254.7012672424316,
+            2254.701145172119,
             -223.90628814697266
           ],
           "parent": {
@@ -649,7 +661,7 @@
         "attributes": {
           "location": [
             1055.0324440002441,
-            -247.3033561706543
+            -247.30337142944336
           ],
           "color": [
             0.8966601490974426,
@@ -788,7 +800,6 @@
           }
         },
         "properties": {
-          "selected_draw_mode": "facet",
           "edge_color": [
             1.0,
             1.0,
@@ -922,6 +933,12 @@
             1053.7331275939941,
             -8.547687530517578
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.003"
@@ -967,9 +984,15 @@
       "List Match": {
         "attributes": {
           "location": [
-            837.5135231018066,
-            -6.585563659667969
+            837.5135803222656,
+            -6.5855560302734375
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.002"
@@ -1024,9 +1047,15 @@
       "Unique Items.001": {
         "attributes": {
           "location": [
-            411.4989471435547,
-            -233.52479553222656
+            411.4989776611328,
+            -233.52481079101562
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame"
@@ -1102,95 +1131,18 @@
         },
         "bl_idname": "SvPathLengthMk2Node"
       },
-      "Switcher": {
-        "attributes": {
-          "location": [
-            225.5437469482422,
-            -690.9659729003906
-          ],
-          "label": "\u041f\u041e\u041a\u0410\u0417\u042b\u0412\u0410\u0422\u042c \u0422\u0418\u041f\u042b \u0421\u0422\u0415\u0420\u0416\u041d\u0415\u0419",
-          "parent": {
-            "type": "NODE",
-            "value": "Frame"
-          }
-        },
-        "properties": {
-          "user_list": [
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            false,
-            true,
-            false,
-            true,
-            false,
-            true,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ],
-          "string_values": [
-            {
-              "name": "0"
-            },
-            {
-              "name": "1"
-            },
-            {
-              "name": "2"
-            },
-            {
-              "name": "3"
-            },
-            {
-              "name": "4"
-            },
-            {
-              "name": "5"
-            }
-          ],
-          "draw_3dpanel": true
-        },
-        "inputs": {
-          "Data": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Data"
-          }
-        },
-        "outputs": {
-          "Item": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Item"
-          }
-        },
-        "bl_idname": "SvCustomSwitcher"
-      },
       "Number Range": {
         "attributes": {
           "location": [
             225.9120330810547,
             -496.95257568359375
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame"
@@ -1239,6 +1191,12 @@
             222.5363006591797,
             -369.7648620605469
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame"
@@ -1261,9 +1219,15 @@
       "List Length": {
         "attributes": {
           "location": [
-            404.14109802246094,
-            -601.0215148925781
+            404.14112854003906,
+            -601.0214538574219
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame"
@@ -1289,6 +1253,12 @@
             594.4335174560547,
             -533.0382080078125
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame"
@@ -1338,7 +1308,7 @@
         "attributes": {
           "location": [
             219.6476287841797,
-            -224.0812530517578
+            -224.08126831054688
           ],
           "parent": {
             "type": "NODE",
@@ -1376,9 +1346,15 @@
       "List Split": {
         "attributes": {
           "location": [
-            430.1875457763672,
+            430.1875762939453,
             -419.2886657714844
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame"
@@ -1451,7 +1427,7 @@
       "Bisect": {
         "attributes": {
           "location": [
-            -345.8441925048828,
+            -345.84417724609375,
             36.466617584228516
           ],
           "parent": {
@@ -1544,7 +1520,7 @@
       "Viewer Draw.001": {
         "attributes": {
           "location": [
-            -530.1415252685547,
+            -530.1415405273438,
             -292.78338623046875
           ],
           "color": [
@@ -1681,7 +1657,7 @@
         "attributes": {
           "location": [
             -554.5820922851562,
-            85.6662483215332
+            85.66624450683594
           ],
           "color": [
             0.8966601490974426,
@@ -1825,7 +1801,7 @@
       "Note": {
         "attributes": {
           "location": [
-            -690.6230163574219,
+            -690.623046875,
             274.4330139160156
           ],
           "width": 400.0,
@@ -1841,7 +1817,6 @@
           }
         },
         "properties": {
-          "n_id": "-8660139869781441305",
           "text": "nikitron 2022 - geodome preset",
           "show_text": false
         },
@@ -1883,7 +1858,7 @@
           }
         },
         "properties": {
-          "location_theta": 1.0,
+          "location_theta": 1.0080000162124634,
           "num_elements": 91,
           "compact": true,
           "line_width": 161
@@ -1899,9 +1874,15 @@
       "List Split.001": {
         "attributes": {
           "location": [
-            357.2639617919922,
-            584.4106750488281
+            357.26397705078125,
+            584.41064453125
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.005"
@@ -1931,9 +1912,15 @@
       "List Length.002": {
         "attributes": {
           "location": [
-            195.90882110595703,
+            195.9088134765625,
             712.771240234375
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.005"
@@ -1959,6 +1946,12 @@
             196.27276611328125,
             585.857666015625
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.005"
@@ -2005,8 +1998,8 @@
       "Linked Verts": {
         "attributes": {
           "location": [
-            607.3225555419922,
-            566.2008361816406
+            607.3225708007812,
+            566.2008056640625
           ],
           "parent": {
             "type": "NODE",
@@ -2059,9 +2052,15 @@
       "List Item": {
         "attributes": {
           "location": [
-            606.8078765869141,
+            606.807861328125,
             742.8257141113281
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -2095,9 +2094,15 @@
       "List Match.001": {
         "attributes": {
           "location": [
-            813.8069305419922,
-            692.7339782714844
+            813.8069458007812,
+            692.7340087890625
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -2139,8 +2144,8 @@
       "Vector Math": {
         "attributes": {
           "location": [
-            1076.189193725586,
-            714.6442565917969
+            1076.1892547607422,
+            714.644287109375
           ],
           "parent": {
             "type": "NODE",
@@ -2336,8 +2341,14 @@
         "attributes": {
           "location": [
             1688.7151947021484,
-            684.3224792480469
+            684.322509765625
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.007"
@@ -2371,6 +2382,12 @@
             1864.1133880615234,
             625.3966674804688
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.007"
@@ -2396,8 +2413,8 @@
       "UV Connection": {
         "attributes": {
           "location": [
-            2116.4553985595703,
-            651.8842468261719
+            2116.455276489258,
+            651.8843078613281
           ],
           "parent": {
             "type": "NODE",
@@ -2433,9 +2450,15 @@
       "List Length.005": {
         "attributes": {
           "location": [
-            2483.3770599365234,
+            2483.3768157958984,
             343.73553466796875
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.013"
@@ -2458,9 +2481,15 @@
       "Number Range.003": {
         "attributes": {
           "location": [
-            2675.8238372802734,
+            2675.8235931396484,
             353.26812744140625
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.013"
@@ -2507,7 +2536,7 @@
       "Color In.001": {
         "attributes": {
           "location": [
-            2873.0843353271484,
+            2873.0840911865234,
             353.28350830078125
           ],
           "width": 110.0,
@@ -2562,7 +2591,7 @@
       "Scalar Math.002": {
         "attributes": {
           "location": [
-            2137.2271728515625,
+            2137.2269287109375,
             344.39813232421875
           ],
           "parent": {
@@ -2600,9 +2629,15 @@
       "List Length.006": {
         "attributes": {
           "location": [
-            1975.833984375,
+            1975.8338623046875,
             344.39813232421875
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.014"
@@ -2628,7 +2663,7 @@
       "Vector In": {
         "attributes": {
           "location": [
-            3641.7324981689453,
+            3641.732376098633,
             492.5510559082031
           ],
           "width": 100.0,
@@ -2675,7 +2710,7 @@
         "attributes": {
           "location": [
             3827.604934692383,
-            906.7651672363281
+            906.76513671875
           ],
           "color": [
             0.7966601252555847,
@@ -2761,8 +2796,8 @@
       "Viewer Index+.001": {
         "attributes": {
           "location": [
-            3609.0801544189453,
-            745.9938049316406
+            3609.080032348633,
+            745.9937744140625
           ],
           "color": [
             0.7966601252555847,
@@ -2810,8 +2845,8 @@
       "Line": {
         "attributes": {
           "location": [
-            3396.1934356689453,
-            651.0050354003906
+            3396.193313598633,
+            651.0050048828125
           ],
           "hide": true,
           "color": [
@@ -2896,8 +2931,8 @@
       "Matrix Deform": {
         "attributes": {
           "location": [
-            3411.0093536376953,
-            860.4866638183594
+            3411.009231567383,
+            860.4866943359375
           ],
           "parent": {
             "type": "NODE",
@@ -2937,8 +2972,8 @@
       "Vector X/Y/Z": {
         "attributes": {
           "location": [
-            3244.3369903564453,
-            798.2516784667969
+            3244.336868286133,
+            798.251708984375
           ],
           "width": 100.0,
           "parent": {
@@ -2961,8 +2996,8 @@
       "Linear Approximation": {
         "attributes": {
           "location": [
-            3423.6099395751953,
-            573.9851379394531
+            3423.609817504883,
+            573.985107421875
           ],
           "parent": {
             "type": "NODE",
@@ -3012,9 +3047,15 @@
       "List Item.001": {
         "attributes": {
           "location": [
-            3229.7764434814453,
-            527.2797546386719
+            3229.776321411133,
+            527.27978515625
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.004"
@@ -3051,9 +3092,15 @@
       "List Item.002": {
         "attributes": {
           "location": [
-            3233.2847442626953,
+            3233.284622192383,
             369.7262268066406
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.004"
@@ -3090,9 +3137,15 @@
       "List Length.003": {
         "attributes": {
           "location": [
-            3211.4844512939453,
-            679.0884094238281
+            3211.484329223633,
+            679.08837890625
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.004"
@@ -3116,7 +3169,7 @@
         "attributes": {
           "location": [
             2558.4432983398438,
-            761.9764709472656
+            761.9764404296875
           ],
           "color": [
             0.8966601490974426,
@@ -3130,7 +3183,7 @@
           }
         },
         "properties": {
-          "location_theta": 1.0,
+          "location_theta": 1.0080000162124634,
           "num_elements": 1
         },
         "inputs": {
@@ -3145,7 +3198,7 @@
         "attributes": {
           "location": [
             2372.5297241210938,
-            956.4486541748047
+            956.4486694335938
           ],
           "parent": {
             "type": "NODE",
@@ -3200,7 +3253,7 @@
         "attributes": {
           "location": [
             2368.2919311523438,
-            798.4622039794922
+            798.4622192382812
           ],
           "parent": {
             "type": "NODE",
@@ -3239,8 +3292,14 @@
         "attributes": {
           "location": [
             2559.9662475585938,
-            942.9222106933594
+            942.9222412109375
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.009"
@@ -3288,7 +3347,7 @@
         "attributes": {
           "location": [
             2771.5563354492188,
-            1010.9922180175781
+            1010.9921875
           ],
           "color": [
             0.7966601252555847,
@@ -3338,7 +3397,7 @@
         "attributes": {
           "location": [
             2775.5206909179688,
-            765.8398742675781
+            765.83984375
           ],
           "color": [
             0.7966601252555847,
@@ -3425,7 +3484,7 @@
       "Color In.002": {
         "attributes": {
           "location": [
-            2304.9107666015625,
+            2304.9105224609375,
             344.39813232421875
           ],
           "width": 110.0,
@@ -3617,6 +3676,12 @@
             2694.9395484924316,
             -65.4493179321289
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.011"
@@ -3687,8 +3752,14 @@
         "attributes": {
           "location": [
             1821.2790260314941,
-            -106.4450454711914
+            -106.44498443603516
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.011"
@@ -3714,6 +3785,12 @@
             3122.7154273986816,
             -218.75516510009766
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.011"
@@ -3779,7 +3856,7 @@
           }
         },
         "properties": {
-          "location_theta": 1.0,
+          "location_theta": 1.0080000162124634,
           "num_elements": 6
         },
         "inputs": {
@@ -3850,7 +3927,7 @@
         "attributes": {
           "location": [
             3823.869583129883,
-            592.9884338378906
+            592.9884033203125
           ],
           "color": [
             0.7966601252555847,
@@ -3901,6 +3978,93 @@
           }
         },
         "bl_idname": "SvIDXViewer28"
+      },
+      "Switcher.001": {
+        "attributes": {
+          "location": [
+            225.54371643066406,
+            -690.9658508300781
+          ],
+          "label": "\u041f\u041e\u041a\u0410\u0417\u042b\u0412\u0410\u0422\u042c \u0422\u0418\u041f\u042b \u0421\u0422\u0415\u0420\u0416\u041d\u0415\u0419",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "user_list": [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "string_values": [
+            {
+              "name": "0"
+            },
+            {
+              "name": "1"
+            },
+            {
+              "name": "2"
+            },
+            {
+              "name": "3"
+            },
+            {
+              "name": "4"
+            },
+            {
+              "name": "5"
+            }
+          ],
+          "draw_3dpanel": true
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          },
+          "Mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Mask"
+          }
+        },
+        "outputs": {
+          "Item": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Item"
+          }
+        },
+        "bl_idname": "SvCustomSwitcherMK2"
       }
     },
     "links": [
@@ -4085,12 +4249,6 @@
         "to_socket": "Edges"
       },
       {
-        "from_node": "Number Range",
-        "from_socket": "Range",
-        "to_node": "Switcher",
-        "to_socket": "Data"
-      },
-      {
         "from_node": "List Length.001",
         "from_socket": "Length",
         "to_node": "Number Range",
@@ -4103,7 +4261,7 @@
         "to_socket": "Data"
       },
       {
-        "from_node": "Switcher",
+        "from_node": "Switcher.001",
         "from_socket": "Item",
         "to_node": "List Length",
         "to_socket": "Data"
@@ -4121,7 +4279,7 @@
         "to_socket": "x"
       },
       {
-        "from_node": "Switcher",
+        "from_node": "Switcher.001",
         "from_socket": "Item",
         "to_node": "List Split",
         "to_socket": "Data"
@@ -4617,6 +4775,12 @@
         "from_socket": "Counts",
         "to_node": "Viewer Index+.003",
         "to_socket": "text"
+      },
+      {
+        "from_node": "Number Range",
+        "from_socket": "Range",
+        "to_node": "Switcher.001",
+        "to_socket": "Data"
       }
     ]
   }
