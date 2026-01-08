@@ -45,7 +45,7 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         description='Selection several items simultaneously')
 
     masked: bpy.props.BoolProperty(
-        name='Masked', default=False, update=update_mode,
+        name='Masked', default=False, update=updateNode,
         description='To use masks or not to use masks')
 
     ui_scale: bpy.props.FloatProperty(
