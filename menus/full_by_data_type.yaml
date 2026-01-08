@@ -647,7 +647,7 @@
     - SvSwitchNodeMK2
     - SvInputSwitchNodeMOD
     - SvNeuroElman1LNode
-    - SvCustomSwitcher
+    - SvCustomSwitcherMK2
     - SvRangeSwitchNode
     - ---
     - SvLoopInNode

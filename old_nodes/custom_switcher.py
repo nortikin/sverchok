@@ -22,6 +22,7 @@ class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvCustomSwitcher'
     bl_label = 'Switcher'
     bl_icon = 'HAND'
+    replacement_nodes = [('SvCustomSwitcherMK2', None, None)]
 
     def update_mode(self, context):
         # Select only one item in non multiple selection mode
