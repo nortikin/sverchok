@@ -419,7 +419,9 @@ Some nodes which can displayed its properties on th 3D panel:
  - Color input
  - List Input
  - Objects in
- - Viewer BMesh
+ - Viewer Mesh
+ - Switcher
+ - Simple Text
 
 **Scan for props** - Nodes which should display their properties on the panel will be added 
 and which should not will be removed from the panel. Order of existing items will be unchanged.
