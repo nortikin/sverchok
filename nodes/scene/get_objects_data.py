@@ -278,6 +278,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
         self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
         self.outputs['edges']   .custom_draw = 'draw_edges_out_socket'
         self.outputs['polygons'].custom_draw = 'draw_polygons_out_socket'
+        pass
 
     @property
     def by_input(self):
@@ -1122,6 +1123,7 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     def migrate_links_from(self, old_node, operator):
         '''replace socket names to lowercase'''
         # copy of "ui\nodes_replacement.py"
+        self.recreate_custom_properties_socket_with_socket()
 
         tree = self.id_data
         # Copy incoming / outgoing links
