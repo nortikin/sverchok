@@ -711,7 +711,7 @@ class SvONSyncSceneObjectWithListMK5(bpy.types.Operator, SvGenericNodeLocator):
 
 class SvONRemoveDuplicatesObjectsInListMK5(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_on_remove_duplicates_objects_in_list"
+    bl_idname = "node.sv_on_remove_duplicates_objects_in_list_mk5"
     bl_label = ""
     bl_options = {'INTERNAL'}
 
@@ -887,7 +887,7 @@ def draw_properties(layout, node_group, node_name):
 class SV_PT_ViewportDisplayPropertiesDialogMK5(bpy.types.Operator):
     '''Additional objects properties\nYou can pan dialog window out of node.'''
     # this combination do not show this panel on the right side panel
-    bl_idname="sv.viewport_display_properties_dialog"
+    bl_idname="sv.viewport_display_properties_dialog_mk5"
     bl_label = "Objects 3DViewport properties as Dialog Window."
 
     # horizontal size
@@ -968,7 +968,7 @@ class SVON_UL_CustomPropertiesSocketsListMK5(bpy.types.UIList):
 class SV_PT_ViewportDisplayCustomPropertiesDialogMK5(bpy.types.Operator):
     '''Copy objects custom properties dialog\nYou can pan dialog window out of node.'''
     # this combination do not show this panel on the right side panel
-    bl_idname="sv.viewport_display_custom_properties_dialog"
+    bl_idname="sv.viewport_display_custom_properties_dialog_mk5"
     bl_label = "Copy Objects custom properties into all objects in node"
 
     # horizontal size

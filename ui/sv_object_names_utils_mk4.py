@@ -641,7 +641,7 @@ class SvONSyncSceneObjectWithListMK4(bpy.types.Operator, SvGenericNodeLocator):
 
 class SvONRemoveDuplicatesObjectsInListMK4(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_on_remove_duplicates_objects_in_list"
+    bl_idname = "node.sv_on_remove_duplicates_objects_in_list_mk4"
     bl_label = ""
     bl_options = {'INTERNAL'}
 
@@ -674,7 +674,7 @@ class SvONRemoveDuplicatesObjectsInListMK4(bpy.types.Operator, SvGenericNodeLoca
         return {'FINISHED'}
 
 class SVON_localview_objectsInListMK4(bpy.types.Operator):
-    bl_idname = "sv.localview_objects_in_listmk4"
+    bl_idname = "sv.localview_objects_in_list_mk4"
     bl_label = '' #"Local View Selected"
 
     #frame_selected  : bpy.props.BoolProperty(default=False)
@@ -817,7 +817,7 @@ def draw_properties(layout, node_group, node_name):
 class SV_PT_ViewportDisplayPropertiesDialogMK4(bpy.types.Operator):
     '''Additional objects properties\nYou can pan dialog window out of node.'''
     # this combination do not show this panel on the right side panel
-    bl_idname="sv.viewport_display_properties_dialog"
+    bl_idname="sv.viewport_display_properties_dialog_mk4"
     bl_label = "Objects 3DViewport properties as Dialog Window."
 
     # horizontal size

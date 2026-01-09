@@ -21,7 +21,7 @@ from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
 import numpy as np
-from sverchok.old_nodes.__sv_object_names_utils_mk4 import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, ReadingObjectDataError, get_objects_from_item
+from sverchok.ui.sv_object_names_utils_mk4 import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, ReadingObjectDataError, get_objects_from_item
 
 numpy_socket_names = ['vertices', 'edges', 'vertex_normals', 'material_idx', 'polygon_areas', 'polygon_centers', 'polygon_normals']
 

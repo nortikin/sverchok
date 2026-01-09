@@ -17,7 +17,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.dependencies import geomdl
 
-from sverchok.old_nodes.__sv_object_names_utils_mk4 import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, SV_PT_ViewportDisplayPropertiesMK4, ReadingObjectDataError, get_objects_from_item
+from sverchok.ui.sv_object_names_utils_mk4 import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, SV_PT_ViewportDisplayPropertiesMK4, ReadingObjectDataError, get_objects_from_item
 
 if geomdl is not None:
     from geomdl import NURBS
@@ -94,6 +94,8 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     sv_icon = 'SV_OBJECTS_IN'
     is_scene_dependent = True
     is_animation_dependent = True
+
+    replacement_nodes = [('SvExNurbsInNodeMK3', None, None)]
 
     
     legacy_mode: bpy.props.BoolProperty(
