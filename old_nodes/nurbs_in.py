@@ -49,7 +49,7 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     is_scene_dependent = True
     is_animation_dependent = True
 
-    replacement_nodes = [('SvExNurbsInNodeMK2', None, None)]
+    replacement_nodes = [('SvExNurbsInNodeMK3', None, None)]
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 

@@ -74,12 +74,12 @@ class SvBezierInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
         node.get_objects_from_scene(self)
         pass
 
-class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
+class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
     """
     Triggers: Input Bezier
     Tooltip: Get Bezier Curve objects from scene
     """
-    bl_idname = 'SvBezierInNodeMK2'
+    bl_idname = 'SvBezierInNodeMK3'
     bl_label = 'Bezier Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
@@ -545,6 +545,6 @@ class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
 
 classes = [
         SvBezierInCallbackOpMK2,
-        SvBezierInNodeMK2
+        SvBezierInNodeMK3
     ]
 register, unregister = bpy.utils.register_classes_factory(classes)

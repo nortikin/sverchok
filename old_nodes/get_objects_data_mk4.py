@@ -75,6 +75,8 @@ class SvGetObjectsDataMK4(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
 
+    replacement_nodes = [('SvGetObjectsDataMK5', None, None)]
+
     @property
     def is_scene_dependent(self):
         return (not self.inputs['objects'].is_linked) and (self.inputs['objects'].object_ref_pointer

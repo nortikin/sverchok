@@ -83,12 +83,12 @@ class SvExNurbsInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
         """
         getattr(node, self.fn_name)(self)
 
-class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
+class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
     """
     Triggers: Input NURBS
     Tooltip: Get NURBS curve or surface objects from scene
     """
-    bl_idname = 'SvExNurbsInNodeMK2'
+    bl_idname = 'SvExNurbsInNodeMK3'
     bl_label = 'NURBS Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
@@ -478,6 +478,6 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
 
 classes = [
     SvExNurbsInCallbackOpMK2,
-    SvExNurbsInNodeMK2
+    SvExNurbsInNodeMK3
 ]
 register, unregister = bpy.utils.register_classes_factory(classes)
