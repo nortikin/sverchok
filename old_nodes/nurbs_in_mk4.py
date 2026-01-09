@@ -17,7 +17,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.dependencies import geomdl
 
-from sverchok.ui.sv_object_names_utils import SvNodeInDataMK5, SV_PT_ViewportDisplayPropertiesDialogMK5, ReadingObjectDataError, get_objects_from_item
+from sverchok.old_nodes.__sv_object_names_utils_mk4 import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, ReadingObjectDataError, get_objects_from_item
 
 if geomdl is not None:
     from geomdl import NURBS
@@ -83,7 +83,7 @@ class SvExNurbsInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
         """
         getattr(node, self.fn_name)(self)
 
-class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
+class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     """
     Triggers: Input NURBS
     Tooltip: Get NURBS curve or surface objects from scene
@@ -181,8 +181,8 @@ class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         row.alignment = 'LEFT'
         row.prop(self, 'implementation', expand=True)
         row0 = grid.row(align=True)
-        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
-        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK5", icon='DOWNARROW_HLT', text="")
+        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK4.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
+        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
 
         if not self.by_input:
             if self.object_names:

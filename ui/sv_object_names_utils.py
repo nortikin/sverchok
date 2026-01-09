@@ -160,7 +160,7 @@ def ShowMessageBox(message = "", title = "Message Box", icon = 'INFO'):
     # Call the popup_menu method from the window manager
     bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
 
-class SvONDataCollectionMK4(bpy.types.PropertyGroup):
+class SvONDataCollectionMK5(bpy.types.PropertyGroup):
     '''One item of pointer to a Collection or an object'''
     pointer_types = [
             ('OBJECT'     , "Object"    , 'Use as Object Pointer', 0),
@@ -242,7 +242,7 @@ class SvONDataCollectionMK4(bpy.types.PropertyGroup):
         options={'SKIP_SAVE'},
     )
 
-class SvONSocketDataMK4(bpy.types.PropertyGroup):
+class SvONSocketDataMK5(bpy.types.PropertyGroup):
     '''Custom properties Socket Info'''
     socket_types = [
             ('OBJECT'   , "Object"  , 'Object Custom Property'          , 'OBJECT_DATA', 0),
@@ -300,9 +300,9 @@ class SvONSocketDataMK4(bpy.types.PropertyGroup):
 class ReadingObjectDataError(Exception):
     pass
 
-class SvONSwitchOffUnlinkedSocketsMK4(bpy.types.Operator):
+class SvONSwitchOffUnlinkedSocketsMK5(bpy.types.Operator):
     '''Hide all unlinked sockets'''
-    bl_idname = "node.sv_on_switch_off_unlinked_sockets_mk4"
+    bl_idname = "node.sv_on_switch_off_unlinked_sockets_mk5"
     bl_label = "Select object as active"
     description_text: bpy.props.StringProperty(default='Only hide unlinked output sockets.\nTo hide linked socket you have to unlink it first.')
 
@@ -326,9 +326,9 @@ class SvONSwitchOffUnlinkedSocketsMK4(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvONItemSelectObjectMK4(bpy.types.Operator):
+class SvONItemSelectObjectMK5(bpy.types.Operator):
     '''Select object as active in 3D Viewport. Use shift to add object into current selection of objects in scene.'''
-    bl_idname = "node.sv_on_item_select_object_mk4"
+    bl_idname = "node.sv_on_item_select_object_mk5"
     bl_label = "Select object as active"
 
     node_name: bpy.props.StringProperty(default='')
@@ -361,9 +361,9 @@ class SvONItemSelectObjectMK4(bpy.types.Operator):
             pass
         return {'FINISHED'}
     
-class SvONItemEnablerMK4(bpy.types.Operator):
+class SvONItemEnablerMK5(bpy.types.Operator):
     '''Enable/Disable object to process.\nCtrl button to disable all objects first\nShift button to inverse list.'''
-    bl_idname = "node.sv_on_item_enabler_mk4"
+    bl_idname = "node.sv_on_item_enabler_mk5"
     bl_label = "Processed"
 
     fn_name: bpy.props.StringProperty(default='')
@@ -387,14 +387,10 @@ class SvONItemEnablerMK4(bpy.types.Operator):
                 context.node.process_node(None)
         return {'FINISHED'}
 
-class SvONItemEmptyOperatorMK4(bpy.types.Operator):
+class SvONItemEmptyOperatorMK5(bpy.types.Operator):
     '''Empty operator to fill empty cells in grid of object_names'''
 
-    # example of usage to show dynamic description onmouseover:
-    # op = row0.column(align=True).operator(SvONItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
-    # op.description_text='Object pointer is empty'
-
-    bl_idname = "node.sv_on_item_empty_operator_mk4"
+    bl_idname = "node.sv_on_item_empty_operator_mk5"
     bl_label = ""
 
     fn_name         : bpy.props.StringProperty(default='')
@@ -409,9 +405,9 @@ class SvONItemEmptyOperatorMK4(bpy.types.Operator):
     def invoke(self, context, event):
         return {'FINISHED'}
 
-class SvONItemRemoveMK4(bpy.types.Operator):
+class SvONItemRemoveMK5(bpy.types.Operator):
     '''Remove object from list'''
-    bl_idname = "node.sv_on_item_remove_mk4"
+    bl_idname = "node.sv_on_item_remove_mk5"
     bl_label = "Remove"
 
     idx    : bpy.props.IntProperty(default=0)
@@ -427,7 +423,7 @@ class SvONItemRemoveMK4(bpy.types.Operator):
             context.node.process_node(None)
         return {'FINISHED'}
 
-class SVON_UL_NamesListMK4(bpy.types.UIList):
+class SVON_UL_NamesListMK5(bpy.types.UIList):
     '''Show objects in list item with controls'''
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
@@ -481,10 +477,10 @@ class SVON_UL_NamesListMK4(bpy.types.UIList):
                 UI2.alignment = 'RIGHT'
 
                 if _object_pointer:
-                    op = UI2.column(align=True).operator(SvONItemSelectObjectMK4.bl_idname, icon='CURSOR', text='', emboss=False)
+                    op = UI2.column(align=True).operator(SvONItemSelectObjectMK5.bl_idname, icon='CURSOR', text='', emboss=False)
                     op.idx = index
                 else:
-                    op = UI2.column(align=True).operator(SvONItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+                    op = UI2.column(align=True).operator(SvONItemEmptyOperatorMK5.bl_idname, icon='BLANK1', text='', emboss=False)
                     op.description_text='Object pointer is empty'
                     pass
                 if item.exclude:
@@ -493,15 +489,15 @@ class SVON_UL_NamesListMK4(bpy.types.UIList):
                     exclude_icon='CHECKBOX_HLT'
 
                 if _object_pointer:
-                    op = UI2.column(align=True).operator(SvONItemEnablerMK4.bl_idname, icon=exclude_icon, text='', emboss=False)
+                    op = UI2.column(align=True).operator(SvONItemEnablerMK5.bl_idname, icon=exclude_icon, text='', emboss=False)
                     op.fn_name = 'ENABLER'
                     op.idx = index
                 else:
-                    op = UI2.column(align=True).operator(SvONItemEmptyOperatorMK4.bl_idname, icon='BLANK1', text='', emboss=False)
+                    op = UI2.column(align=True).operator(SvONItemEmptyOperatorMK5.bl_idname, icon='BLANK1', text='', emboss=False)
                     op.description_text='Object pointer is empty'
                     pass
                 
-                op = UI2.column(align=True).operator(SvONItemRemoveMK4.bl_idname, icon='X', text='', emboss=False)
+                op = UI2.column(align=True).operator(SvONItemRemoveMK5.bl_idname, icon='X', text='', emboss=False)
                 op.idx = index
 
                 # find duplicated (objects or collection names)
@@ -562,9 +558,9 @@ class SVON_UL_NamesListMK4(bpy.types.UIList):
         return flt_flags, flt_neworder
 
 
-class SvONItemOperatorMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONItemOperatorMK5(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_on_collection_operator_mk4"
+    bl_idname = "node.sv_on_collection_operator_mk5"
     bl_label = "generic bladibla"
 
     fn_name: bpy.props.StringProperty(default='')
@@ -575,9 +571,9 @@ class SvONItemOperatorMK4(bpy.types.Operator, SvGenericNodeLocator):
             node.object_names.remove(self.idx)
         node.process_node(None)
 
-class SvONAddObjectsFromSceneUpMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONAddObjectsFromSceneUpMK5(bpy.types.Operator, SvGenericNodeLocator):
     '''Select objects in 3DView and add them into current list.'''
-    bl_idname = "node.sv_on_add_objects_from_scene_up_mk4"
+    bl_idname = "node.sv_on_add_objects_from_scene_up_mk5"
     bl_label = "Add selected objects from scene into the list"
     bl_options = {'INTERNAL'}
 
@@ -585,9 +581,9 @@ class SvONAddObjectsFromSceneUpMK4(bpy.types.Operator, SvGenericNodeLocator):
         '''passes the operator's 'self' too to allow calling self.report()'''
         node.add_objects_from_scene(self)
 
-class SvONAddEmptyCollectionMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONAddEmptyCollectionMK5(bpy.types.Operator, SvGenericNodeLocator):
     '''Select collection after'''
-    bl_idname = "node.sv_on_add_empty_collection_mk4"
+    bl_idname = "node.sv_on_add_empty_collection_mk5"
     bl_label = "Add empty collection into the list"
     bl_options = {'INTERNAL'}
 
@@ -595,9 +591,9 @@ class SvONAddEmptyCollectionMK4(bpy.types.Operator, SvGenericNodeLocator):
         '''passes the operator's 'self' too to allow calling self.report()'''
         node.add_empty_collection(self)
 
-class SvONItemMoveUpMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONItemMoveUpMK5(bpy.types.Operator, SvGenericNodeLocator):
     '''Move item in object_names list'''
-    bl_idname = "node.sv_on_item_moveup_mk4"
+    bl_idname = "node.sv_on_item_moveup_mk5"
     bl_label = "Move current object up"
     bl_options = {'INTERNAL'}
 
@@ -605,9 +601,9 @@ class SvONItemMoveUpMK4(bpy.types.Operator, SvGenericNodeLocator):
         '''passes the operator's 'self' too to allow calling self.report()'''
         node.move_current_object_up(self)
 
-class SvONItemMoveDownMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONItemMoveDownMK5(bpy.types.Operator, SvGenericNodeLocator):
     '''Move item in object_names list'''
-    bl_idname = "node.sv_on_item_movedown_mk4"
+    bl_idname = "node.sv_on_item_movedown_mk5"
     bl_label = "Move current object down"
     bl_options = {'INTERNAL'}
 
@@ -615,9 +611,9 @@ class SvONItemMoveDownMK4(bpy.types.Operator, SvGenericNodeLocator):
         '''passes the operator's 'self' too to allow calling self.report()'''
         node.move_current_object_down(self)
 
-class SvONClearObjectsFromListMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONClearObjectsFromListMK5(bpy.types.Operator, SvGenericNodeLocator):
     '''Clear items in object_names list'''
-    bl_idname = "node.sv_on_clear_objects_from_list_mk4"
+    bl_idname = "node.sv_on_clear_objects_from_list_mk5"
     bl_label = "Clear list of objects"
     bl_options = {'INTERNAL'}
 
@@ -625,9 +621,9 @@ class SvONClearObjectsFromListMK4(bpy.types.Operator, SvGenericNodeLocator):
         '''passes the operator's 'self' too to allow calling self.report()'''
         node.clear_objects_from_list(self)
 
-class SvONLoadActiveObjectCustomPropertiesMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONLoadActiveObjectCustomPropertiesMK5(bpy.types.Operator, SvGenericNodeLocator):
     '''Clear items in object_names list'''
-    bl_idname = "node.sv_on_load_active_object_custom_properties_mk4"
+    bl_idname = "node.sv_on_load_active_object_custom_properties_mk5"
     bl_label = "Load Custom Properties"
     bl_options = {'INTERNAL'}
 
@@ -635,9 +631,9 @@ class SvONLoadActiveObjectCustomPropertiesMK4(bpy.types.Operator, SvGenericNodeL
         '''passes the operator's 'self' too to allow calling self.report()'''
         node.load_active_objects_custom_properties(self)
 
-class SvONHighlightProcessedObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONHighlightProcessedObjectsInSceneMK5(bpy.types.Operator, SvGenericNodeLocator):
     '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
-    bl_idname = "node.sv_on_highlight_proc_objects_in_list_scene_mk4"
+    bl_idname = "node.sv_on_highlight_proc_objects_in_list_scene_mk5"
     bl_label = "Highlight processed objects in scene"
 
     def invoke(self, context, event):
@@ -665,9 +661,9 @@ class SvONHighlightProcessedObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeL
         return {'FINISHED'}
 
 
-class SvONHighlightAllObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONHighlightAllObjectsInSceneMK5(bpy.types.Operator, SvGenericNodeLocator):
     '''Select all objects in this node.'''
-    bl_idname = "node.sv_on_highlight_all_objects_in_list_scene_mk4"
+    bl_idname = "node.sv_on_highlight_all_objects_in_list_scene_mk5"
     bl_label = "Select all objects in scene"
 
     fn_name: bpy.props.StringProperty(default='')
@@ -697,9 +693,9 @@ class SvONHighlightAllObjectsInSceneMK4(bpy.types.Operator, SvGenericNodeLocator
 
         return {'FINISHED'}
 
-class SvONSyncSceneObjectWithListMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONSyncSceneObjectWithListMK5(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_on_sync_scene_object_with_list_mk4"
+    bl_idname = "node.sv_on_sync_scene_object_with_list_mk5"
     bl_label = ""
     bl_options = {'INTERNAL'}
 
@@ -713,7 +709,7 @@ class SvONSyncSceneObjectWithListMK4(bpy.types.Operator, SvGenericNodeLocator):
     def sv_execute(self, context, node):
         node.sync_active_object_in_scene_with_list(self)
 
-class SvONRemoveDuplicatesObjectsInListMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONRemoveDuplicatesObjectsInListMK5(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_on_remove_duplicates_objects_in_list"
     bl_label = ""
@@ -747,8 +743,8 @@ class SvONRemoveDuplicatesObjectsInListMK4(bpy.types.Operator, SvGenericNodeLoca
         node.process_node(None)
         return {'FINISHED'}
 
-class SVON_localview_objectsInListMK4(bpy.types.Operator):
-    bl_idname = "sv.localview_objects_in_listmk4"
+class SVON_localview_objectsInListMK5(bpy.types.Operator):
+    bl_idname = "sv.localview_objects_in_list_mk5"
     bl_label = '' #"Local View Selected"
 
     #frame_selected  : bpy.props.BoolProperty(default=False)
@@ -851,7 +847,7 @@ def draw_properties(layout, node_group, node_name):
     row1.label(text='Local View:')
     #grid2.row(align=True).prop(node, 'align_3dview_type', expand=True, )
     row11 = grid2.row(align=True)
-    op1 = row11.operator(SVON_localview_objectsInListMK4.bl_idname, text='', icon='PIVOT_CURSOR')
+    op1 = row11.operator(SVON_localview_objectsInListMK5.bl_idname, text='', icon='PIVOT_CURSOR')
     op1.local_view_mode = True
     op1.description_text = 'Turn Local View ON/OFF'
     op1.node_group = node_group
@@ -872,7 +868,7 @@ def draw_properties(layout, node_group, node_name):
     grid2.separator()
     row_op = grid2.row(align=True)
     row_op.alignment = "LEFT"
-    op = row_op.operator(SvONSwitchOffUnlinkedSocketsMK4.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
+    op = row_op.operator(SvONSwitchOffUnlinkedSocketsMK5.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
     op.node_group = node_group
     op.node_name  = node_name
 
@@ -883,12 +879,12 @@ def draw_properties(layout, node_group, node_name):
 
     row_op = grid2.row(align=True)
     row_op.alignment = "LEFT"
-    op = row_op.operator(SvONSwitchOffUnlinkedSocketsMK4.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
+    op = row_op.operator(SvONSwitchOffUnlinkedSocketsMK5.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
     op.node_group = node_group
     op.node_name  = node_name
     pass
 
-class SV_PT_ViewportDisplayPropertiesDialogMK4(bpy.types.Operator):
+class SV_PT_ViewportDisplayPropertiesDialogMK5(bpy.types.Operator):
     '''Additional objects properties\nYou can pan dialog window out of node.'''
     # this combination do not show this panel on the right side panel
     bl_idname="sv.viewport_display_properties_dialog"
@@ -916,7 +912,7 @@ class SV_PT_ViewportDisplayPropertiesDialogMK4(bpy.types.Operator):
         draw_properties(self.layout, self.node_group, self.node_name)
         pass
 
-class SvONCurrentObjectCustomPropertiesCollectionMK4(bpy.types.PropertyGroup):
+class SvONCurrentObjectCustomPropertiesCollectionMK5(bpy.types.PropertyGroup):
     '''One item of pointer to a custom property'''
     name: bpy.props.StringProperty(default="", options={'SKIP_SAVE'},)
     apply: bpy.props.BoolProperty(
@@ -928,55 +924,48 @@ class SvONCurrentObjectCustomPropertiesCollectionMK4(bpy.types.PropertyGroup):
         name = "Socket Type",
         default = 'OBJECT',
         description = "Socket Type",
-        items = SvONSocketDataMK4.socket_types,
+        items = SvONSocketDataMK5.socket_types,
         #update = updateNode
     )
     value: bpy.props.StringProperty(default="", options={'SKIP_SAVE'},)
 
-class SVON_UL_CurrentObjectCustomPropertiesListMK4(bpy.types.UIList):
+class SVON_UL_CurrentObjectCustomPropertiesListMK5(bpy.types.UIList):
     '''Show objects in list item with controls'''
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        # grid = layout.grid_flow(row_major=False, columns=3, align=True)
-        # grid.column(align=True).prop(item, 'apply')
-        # grid.column(align=True).label(text=item.name)
-        # grid.column(align=True).label(text=item.value)
-
         row = layout.row(align=True)
         elem1 = row.split(factor=0.3)
-        elem1.label(text=item.name, icon=[cp for cp in SvNodeInDataMK4.custom_properties_modes if item.socket_type==cp[0]][0][3])
+        elem1.label(text=item.name, icon=[cp for cp in SvNodeInDataMK5.custom_properties_modes if item.socket_type==cp[0]][0][3])
         elem2 = elem1.split(factor=0.9)
         elem2.label(text=item.value)
-        #elem1.column().prop(item, 'apply')
         row2 = elem2.row(align=True)
         row2.alignment='RIGHT'
-        op = row2.operator(SvONCustomPropertyAddToOutputSocketMK4.bl_idname, icon='ADD', text='', emboss=True)
+        op = row2.operator(SvONCustomPropertyAddToOutputSocketMK5.bl_idname, icon='ADD', text='', emboss=True)
         op.node_name  = data.name
         op.node_group = context.annotation_data_owner.name_full
         op.idx = index
         op.socket_type = data.custom_properties_mode
-        #op.socket_inner_name = unique_name
         op.custom_property_name = item.name
         op.socket_ui_name = item.name
         op.socket_ui_label = item.name
 
-class SVON_UL_CustomPropertiesSocketsListMK4(bpy.types.UIList):
+class SVON_UL_CustomPropertiesSocketsListMK5(bpy.types.UIList):
     '''Show custom properties sockets list'''
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         row = layout.row(align=True)
         elem1 = row.split(factor=0.3)
-        elem1.label(text=item.socket_type, icon=[cp for cp in SvNodeInDataMK4.custom_properties_modes if item.socket_type==cp[0]][0][3])
+        elem1.label(text=item.socket_type, icon=[cp for cp in SvNodeInDataMK5.custom_properties_modes if item.socket_type==cp[0]][0][3])
         elem2 = elem1.split(factor=0.6)
         elem2.label(text=item.socket_ui_name)
         row2 = elem2.row(align=True)
         row2.alignment='RIGHT'
-        op = row2.operator(SvONCustomPropertySocketRemoveMK4.bl_idname, icon='X', text='', emboss=True)
+        op = row2.operator(SvONCustomPropertySocketRemoveMK5.bl_idname, icon='X', text='', emboss=True)
         op.node_name  = data.name
         op.node_group = context.annotation_data_owner.name_full
         op.idx = index
 
-class SV_PT_ViewportDisplayCustomPropertiesDialogMK4(bpy.types.Operator):
+class SV_PT_ViewportDisplayCustomPropertiesDialogMK5(bpy.types.Operator):
     '''Copy objects custom properties dialog\nYou can pan dialog window out of node.'''
     # this combination do not show this panel on the right side panel
     bl_idname="sv.viewport_display_custom_properties_dialog"
@@ -1035,26 +1024,26 @@ class SV_PT_ViewportDisplayCustomPropertiesDialogMK4(bpy.types.Operator):
         r.row(align=True).prop(node, 'custom_properties_mode', expand=True)
 
         if node.custom_properties_mode=='OBJECT':
-            grid1.template_list("SVON_UL_CurrentObjectCustomPropertiesListMK4", f"uniq_active_object_custom_properties_object_{  self.name}", node, "active_object_custom_properties"         , node, "active_object_custom_properties_index"     , rows=3, item_dyntip_propname='get_description')
+            grid1.template_list("SVON_UL_CurrentObjectCustomPropertiesListMK5", f"uniq_active_object_custom_properties_object_{  self.name}", node, "active_object_custom_properties"         , node, "active_object_custom_properties_index"     , rows=3, item_dyntip_propname='get_description')
         elif node.custom_properties_mode=='DATA':
-            grid1.template_list("SVON_UL_CurrentObjectCustomPropertiesListMK4", f"uniq_active_object_data_custom_properties_{    self.name}", node, "active_object_data_custom_properties"    , node, "active_object_data_custom_properties_index", rows=3, item_dyntip_propname='get_description')
+            grid1.template_list("SVON_UL_CurrentObjectCustomPropertiesListMK5", f"uniq_active_object_data_custom_properties_{    self.name}", node, "active_object_data_custom_properties"    , node, "active_object_data_custom_properties_index", rows=3, item_dyntip_propname='get_description')
         elif node.custom_properties_mode=='MATERIAL':
-            grid1.template_list("SVON_UL_CurrentObjectCustomPropertiesListMK4", f"uniq_active_object_material_custom_properties_{self.name}", node, "active_object_material_custom_properties", node, "active_object_material_custom_properties_index"   , rows=3, item_dyntip_propname='get_description')
+            grid1.template_list("SVON_UL_CurrentObjectCustomPropertiesListMK5", f"uniq_active_object_material_custom_properties_{self.name}", node, "active_object_material_custom_properties", node, "active_object_material_custom_properties_index"   , rows=3, item_dyntip_propname='get_description')
         pass
 
     def draw_custom_properties_socket_info(self, layout, node_group, node_name):
         node = bpy.data.node_groups[node_group].nodes[node_name]
         row = layout.row(align=True)
         row.column(align=True).label(text="Custom Properties sockets:")
-        node.wrapper_tracked_ui_draw_op(row, SvONCustomPropertySocketMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
-        node.wrapper_tracked_ui_draw_op(row, SvONCustomPropertySocketMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
+        node.wrapper_tracked_ui_draw_op(row, SvONCustomPropertySocketMoveUpMK5.bl_idname, text='', icon='TRIA_UP')
+        node.wrapper_tracked_ui_draw_op(row, SvONCustomPropertySocketMoveDownMK5.bl_idname, text='', icon='TRIA_DOWN')
         grid1 = layout.grid_flow(row_major=False, columns=1, align=True)
-        grid1.template_list("SVON_UL_CustomPropertiesSocketsListMK4", f"uniq_sockets_custom_properties_{self.name}", node, "custom_properties_sockets", node, "custom_properties_sockets_index", rows=3, ) # item_dyntip_propname='get_description')
+        grid1.template_list("SVON_UL_CustomPropertiesSocketsListMK5", f"uniq_sockets_custom_properties_{self.name}", node, "custom_properties_sockets", node, "custom_properties_sockets_index", rows=3, ) # item_dyntip_propname='get_description')
         pass
 
-class SvONCustomPropertySocketMoveUpMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONCustomPropertySocketMoveUpMK5(bpy.types.Operator, SvGenericNodeLocator):
     '''Move Custom Property Socket up'''
-    bl_idname = "node.sv_on_custom_property_socket_moveup_mk4"
+    bl_idname = "node.sv_on_custom_property_socket_moveup_mk5"
     bl_label = "Move Custom Property Socket up"
     bl_options = {'INTERNAL'}
 
@@ -1062,9 +1051,9 @@ class SvONCustomPropertySocketMoveUpMK4(bpy.types.Operator, SvGenericNodeLocator
         '''passes the operator's 'self' too to allow calling self.report()'''
         node.move_custom_property_socket_up(self)
 
-class SvONCustomPropertySocketMoveDownMK4(bpy.types.Operator, SvGenericNodeLocator):
+class SvONCustomPropertySocketMoveDownMK5(bpy.types.Operator, SvGenericNodeLocator):
     '''Move Custom Property Socket down'''
-    bl_idname = "node.sv_on_custom_property_socket_movedown_mk4"
+    bl_idname = "node.sv_on_custom_property_socket_movedown_mk5"
     bl_label = "Move Custom Property Socket down"
     bl_options = {'INTERNAL'}
 
@@ -1073,9 +1062,9 @@ class SvONCustomPropertySocketMoveDownMK4(bpy.types.Operator, SvGenericNodeLocat
         node.move_custom_property_socket_down(self)
 
 
-class SvONCustomPropertySocketRemoveMK4(bpy.types.Operator):
+class SvONCustomPropertySocketRemoveMK5(bpy.types.Operator):
     '''Remove Socket'''
-    bl_idname = "node.sv_on_custom_property_socket_remove_mk4"
+    bl_idname = "node.sv_on_custom_property_socket_remove_mk5"
     bl_label = "Remove Socket?"
     bl_description = "Remove Socket from node"
 
@@ -1152,9 +1141,9 @@ class SvONCustomPropertySocketRemoveMK4(bpy.types.Operator):
         self.layout.prop(self, 'remove_active_object_custom_property')
         pass
 
-class SvONCustomPropertyAddToOutputSocketMK4(bpy.types.Operator):
+class SvONCustomPropertyAddToOutputSocketMK5(bpy.types.Operator):
     '''Add Custom Property to Output Socket'''
-    bl_idname = "node.sv_on_custom_property_add_to_output_socket_mk4"
+    bl_idname = "node.sv_on_custom_property_add_to_output_socket_mk5"
     bl_label = "Add Socket?"
     bl_description = "Add Custom Property to Output Socket of node and copy custom property to all objects of node too"
 
@@ -1166,7 +1155,7 @@ class SvONCustomPropertyAddToOutputSocketMK4(bpy.types.Operator):
         name = "Socket Type",
         default = 'OBJECT',
         description = "Socket Type",
-        items = SvONSocketDataMK4.socket_types,
+        items = SvONSocketDataMK5.socket_types,
         )
     socket_inner_name: bpy.props.StringProperty(
         name="Node Socket Inner Name",
@@ -1200,10 +1189,10 @@ class SvONCustomPropertyAddToOutputSocketMK4(bpy.types.Operator):
             self.report({message_type}, message_text)
         return {res}
 
-class SV_PT_ViewportDisplayPropertiesMK4(bpy.types.Panel):
+class SV_PT_ViewportDisplayPropertiesMK5(bpy.types.Panel):
     '''Additional objects properties'''
     # this combination do not show this panel on the right side panel
-    bl_idname="SV_PT_ViewportDisplayPropertiesMK4"
+    bl_idname="SV_PT_ViewportDisplayPropertiesMK5"
     bl_label = "Objects 3DViewport properties"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
@@ -1238,21 +1227,21 @@ def get_value_as_str(value):
             res = str(value)
     return res
 
-class SvNodeInDataMK4(SverchCustomTreeNode):
-    object_names        : bpy.props.CollectionProperty(type=SvONDataCollectionMK4)
+class SvNodeInDataMK5(SverchCustomTreeNode):
+    object_names        : bpy.props.CollectionProperty(type=SvONDataCollectionMK5)
     active_obj_index    : bpy.props.IntProperty()
 
-    custom_properties_sockets    : bpy.props.CollectionProperty(type=SvONSocketDataMK4)
+    custom_properties_sockets    : bpy.props.CollectionProperty(type=SvONSocketDataMK5)
     custom_properties_sockets_index  : bpy.props.IntProperty()
 
     active_object_name                              : bpy.props.StringProperty(default='')
     active_object_type                              : bpy.props.StringProperty(default='')
-    active_object_custom_properties                 : bpy.props.CollectionProperty(type=SvONCurrentObjectCustomPropertiesCollectionMK4)
+    active_object_custom_properties                 : bpy.props.CollectionProperty(type=SvONCurrentObjectCustomPropertiesCollectionMK5)
     active_object_custom_properties_index           : bpy.props.IntProperty()
-    active_object_data_custom_properties            : bpy.props.CollectionProperty(type=SvONCurrentObjectCustomPropertiesCollectionMK4)
+    active_object_data_custom_properties            : bpy.props.CollectionProperty(type=SvONCurrentObjectCustomPropertiesCollectionMK5)
     active_object_data_custom_properties_exists     : bpy.props.BoolProperty(default=False,options={'SKIP_SAVE'},) # Существуют ли custom properties в data у активного объекта
     active_object_data_custom_properties_index      : bpy.props.IntProperty()
-    active_object_material_custom_properties        : bpy.props.CollectionProperty(type=SvONCurrentObjectCustomPropertiesCollectionMK4)
+    active_object_material_custom_properties        : bpy.props.CollectionProperty(type=SvONCurrentObjectCustomPropertiesCollectionMK5)
     active_object_material_custom_properties_index  : bpy.props.IntProperty()
     active_object_material_custom_properties_exists : bpy.props.BoolProperty(default=False,options={'SKIP_SAVE'},) # Существуют ли custom properties в material у активного объекта
 
@@ -1386,7 +1375,7 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         socket_info = [socket_info for socket_info in self.custom_properties_sockets if socket_info.socket_inner_name==socket.name]
         if socket_info:
             socket_info_0 = socket_info[0]
-            layout.label(text=f'{socket_info_0.socket_ui_label}', icon=[cp for cp in SvNodeInDataMK4.custom_properties_modes if socket_info_0.socket_type==cp[0]][0][3])
+            layout.label(text=f'{socket_info_0.socket_ui_label}', icon=[cp for cp in SvNodeInDataMK5.custom_properties_modes if socket_info_0.socket_type==cp[0]][0][3])
             if socket.is_linked:  # linked INPUT or OUTPUT
                 layout.label(text=f". {socket.objects_number or ''}")
             pass
@@ -1711,13 +1700,13 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
 
     def draw_controls(self, elem):
         elem.alignment='RIGHT'
-        self.wrapper_tracked_ui_draw_op(elem, SvONAddObjectsFromSceneUpMK4.bl_idname, text='', icon='ADD')
-        self.wrapper_tracked_ui_draw_op(elem, SvONAddEmptyCollectionMK4.bl_idname, text='', icon='GROUP')
-        self.wrapper_tracked_ui_draw_op(elem, SvONItemMoveUpMK4.bl_idname, text='', icon='TRIA_UP')
-        self.wrapper_tracked_ui_draw_op(elem, SvONItemMoveDownMK4.bl_idname, text='', icon='TRIA_DOWN')
-        self.wrapper_tracked_ui_draw_op(elem, SvONHighlightProcessedObjectsInSceneMK4.bl_idname, text='', icon='GROUP_VERTEX')
-        self.wrapper_tracked_ui_draw_op(elem, SvONHighlightAllObjectsInSceneMK4.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
-        self.wrapper_tracked_ui_draw_op(elem, SvONSyncSceneObjectWithListMK4.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
+        self.wrapper_tracked_ui_draw_op(elem, SvONAddObjectsFromSceneUpMK5.bl_idname, text='', icon='ADD')
+        self.wrapper_tracked_ui_draw_op(elem, SvONAddEmptyCollectionMK5.bl_idname, text='', icon='GROUP')
+        self.wrapper_tracked_ui_draw_op(elem, SvONItemMoveUpMK5.bl_idname, text='', icon='TRIA_UP')
+        self.wrapper_tracked_ui_draw_op(elem, SvONItemMoveDownMK5.bl_idname, text='', icon='TRIA_DOWN')
+        self.wrapper_tracked_ui_draw_op(elem, SvONHighlightProcessedObjectsInSceneMK5.bl_idname, text='', icon='GROUP_VERTEX')
+        self.wrapper_tracked_ui_draw_op(elem, SvONHighlightAllObjectsInSceneMK5.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
+        self.wrapper_tracked_ui_draw_op(elem, SvONSyncSceneObjectWithListMK5.bl_idname, icon='TRACKING_BACKWARDS_SINGLE', text='', emboss=True, description_text = 'Select the scene active object in list\n(Cycle between duplicates if there are any)')
         
         objects_set = get_pointers_from_node(self.object_names)
         if len(objects_set)<len(self.object_names):
@@ -1727,9 +1716,9 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
             icon = 'AUTOMERGE_OFF'
             description_text = 'Remove any duplicates objects in list.\nNo duplicates objects in list now'
         description_text += "\n\nShift-Cliсk - skip confirmation dialog"
-        self.wrapper_tracked_ui_draw_op(elem, SvONRemoveDuplicatesObjectsInListMK4.bl_idname, text='', icon=icon, description_text=description_text)
+        self.wrapper_tracked_ui_draw_op(elem, SvONRemoveDuplicatesObjectsInListMK5.bl_idname, text='', icon=icon, description_text=description_text)
         elem.separator()
-        self.wrapper_tracked_ui_draw_op(elem, SvONClearObjectsFromListMK4.bl_idname, text='', icon='CANCEL')
+        self.wrapper_tracked_ui_draw_op(elem, SvONClearObjectsFromListMK5.bl_idname, text='', icon='CANCEL')
         elem.separator()
         if self.object_names_ui_minimal:
             elem.prop(self, "object_names_ui_minimal", text='', toggle=True, icon='FULLSCREEN_EXIT')
@@ -1738,7 +1727,7 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         pass
 
     def draw_object_names(self, layout):
-        layout.template_list("SVON_UL_NamesListMK4", f"uniq_{self.name}", self, "object_names", self, "active_obj_index", rows=3, item_dyntip_propname='test_text1')
+        layout.template_list("SVON_UL_NamesListMK5", f"uniq_{self.name}", self, "object_names", self, "active_obj_index", rows=3, item_dyntip_propname='test_text1')
         pass
 
     def load_from_json(self, node_data: dict, import_version: float):
@@ -1921,7 +1910,6 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
             lst_socket_info_0 = lst_socket_info[0]
             for s in self.outputs:
                 if s.name==lst_socket_info_0.socket_inner_name:
-                    #ShowMessageBox(f"Socket '{self.custom_property_name}'({self.socket_type}) already exitsts for this custom property", 'Error', 'ERROR')
                     return 'CANCELLED', f"Socket '{_custom_property_name}'({_socket_type}) already exitsts for this node {self.name}", 'Error', 'ERROR'
                 else:
                     continue
@@ -1980,36 +1968,36 @@ class SvNodeInDataMK4(SverchCustomTreeNode):
         return 'FINISHED', 'INFO', ''
 
 classes = [
-    SvONItemEmptyOperatorMK4,
-    SvONHighlightAllObjectsInSceneMK4,
-    SvONHighlightProcessedObjectsInSceneMK4,
-    SvONClearObjectsFromListMK4,
-    SvONLoadActiveObjectCustomPropertiesMK4,
-    SvONSyncSceneObjectWithListMK4,
-    SvONRemoveDuplicatesObjectsInListMK4,
-    SVON_localview_objectsInListMK4,
-    SvONItemMoveDownMK4,
-    SvONItemMoveUpMK4,
-    SvONAddObjectsFromSceneUpMK4,
-    SvONAddEmptyCollectionMK4,
-    SvONSwitchOffUnlinkedSocketsMK4,
-    SvONItemSelectObjectMK4,
-    SvONItemEnablerMK4,
-    SvONItemRemoveMK4,
-    SvONItemOperatorMK4,
-    SvONDataCollectionMK4,  # TODO: rename to SvONObjectDataMK4
-    SvONSocketDataMK4,
-    SvONCurrentObjectCustomPropertiesCollectionMK4,
-    SVON_UL_CurrentObjectCustomPropertiesListMK4,
-    SVON_UL_CustomPropertiesSocketsListMK4,
-    SvONCustomPropertySocketMoveUpMK4,
-    SvONCustomPropertySocketMoveDownMK4,
-    SvONCustomPropertyAddToOutputSocketMK4,
-    SvONCustomPropertySocketRemoveMK4,
-    SVON_UL_NamesListMK4,
-    SV_PT_ViewportDisplayPropertiesDialogMK4,
-    SV_PT_ViewportDisplayCustomPropertiesDialogMK4,
-    SV_PT_ViewportDisplayPropertiesMK4,
+    SvONItemEmptyOperatorMK5,
+    SvONHighlightAllObjectsInSceneMK5,
+    SvONHighlightProcessedObjectsInSceneMK5,
+    SvONClearObjectsFromListMK5,
+    SvONLoadActiveObjectCustomPropertiesMK5,
+    SvONSyncSceneObjectWithListMK5,
+    SvONRemoveDuplicatesObjectsInListMK5,
+    SVON_localview_objectsInListMK5,
+    SvONItemMoveDownMK5,
+    SvONItemMoveUpMK5,
+    SvONAddObjectsFromSceneUpMK5,
+    SvONAddEmptyCollectionMK5,
+    SvONSwitchOffUnlinkedSocketsMK5,
+    SvONItemSelectObjectMK5,
+    SvONItemEnablerMK5,
+    SvONItemRemoveMK5,
+    SvONItemOperatorMK5,
+    SvONDataCollectionMK5,
+    SvONSocketDataMK5,
+    SvONCurrentObjectCustomPropertiesCollectionMK5,
+    SVON_UL_CurrentObjectCustomPropertiesListMK5,
+    SVON_UL_CustomPropertiesSocketsListMK5,
+    SvONCustomPropertySocketMoveUpMK5,
+    SvONCustomPropertySocketMoveDownMK5,
+    SvONCustomPropertyAddToOutputSocketMK5,
+    SvONCustomPropertySocketRemoveMK5,
+    SVON_UL_NamesListMK5,
+    SV_PT_ViewportDisplayPropertiesDialogMK5,
+    SV_PT_ViewportDisplayCustomPropertiesDialogMK5,
+    SV_PT_ViewportDisplayPropertiesMK5,
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)
