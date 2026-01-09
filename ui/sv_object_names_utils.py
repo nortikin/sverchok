@@ -1784,14 +1784,13 @@ class SvNodeInDataMK5(SverchCustomTreeNode):
     pass
 
     def get_objects(self, input_socket_name=None):
+        objs = []
         if input_socket_name and input_socket_name in self.inputs:
             objs = self.inputs[input_socket_name].sv_get(default=[[]])
-            if not self.object_names and not objs[0]:
-                return
-            if isinstance(objs[0], list):
-                objs = objs[0]
+            if len(objs)>0:
+                if isinstance(objs[0], list):
+                    objs = objs[0]
         if not objs:
-            objs = []
             for o in self.object_names:
                 if o.exclude==False and (o.object_pointer and o.object_pointer.name in bpy.context.scene.objects or o.pointer_type=='COLLECTION'): # objects can be in object_pointer but absent in the scene
                     _obj = get_objects_from_item(o)
