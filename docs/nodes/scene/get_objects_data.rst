@@ -1,8 +1,8 @@
 Get Objects Data
 ================
 
-.. image:: https://github.com/user-attachments/assets/d291d5cf-c65d-467b-938a-5f32ac4d2b36
-  :target: https://github.com/user-attachments/assets/d291d5cf-c65d-467b-938a-5f32ac4d2b36
+.. image:: https://github.com/user-attachments/assets/63ffe714-6aec-4d23-b575-c0519abd7298
+  :target: https://github.com/user-attachments/assets/63ffe714-6aec-4d23-b575-c0519abd7298
 
 Functionality
 -------------
@@ -212,6 +212,107 @@ After Mesh Join:
     :target: https://github.com/user-attachments/assets/2ade627a-a965-478e-9ee6-e3b6b3c6964b
 
 Material Idx can be used to calculate the area of materials.
+
+Custom Properties out to the sockets
+------------------------------------
+
+Custom properties can be out to the output sockets:
+
+  .. image:: https://github.com/user-attachments/assets/10bffb4a-2ea8-48a1-a149-323a260c42e4
+    :target: https://github.com/user-attachments/assets/10bffb4a-2ea8-48a1-a149-323a260c42e4
+
+Description custom properties
+-----------------------------
+
+Blender has several kinds of custom properties, associated with different parts of an object:
+
+- directly with the object in the scene
+- with the object’s data (the Data section)
+- with materials
+
+.. image:: https://github.com/user-attachments/assets/749d639d-ae29-47d6-965a-1645d11af777
+  :target: https://github.com/user-attachments/assets/749d639d-ae29-47d6-965a-1645d11af777
+
+Some objects may be different. Lamp has no materials, Empty has no Data and Materials, Point Cloud has no Mesh (only verts), but has all types of Custom Properties.
+
+  .. image:: https://github.com/user-attachments/assets/98510555-106a-4632-b3c0-ad6da160de80
+    :target: https://github.com/user-attachments/assets/98510555-106a-4632-b3c0-ad6da160de80
+
+
+Lets create prices for every material. Create two object: a Suzanne and a Sphere with materials. As you can see there are no custom property in materials:
+
+  .. image:: https://github.com/user-attachments/assets/4bb81e03-bdb9-470b-8a18-54b0b81bc44f
+    :target: https://github.com/user-attachments/assets/4bb81e03-bdb9-470b-8a18-54b0b81bc44f
+
+Create a Price custom attribute for one material. For example for an Icosphere:
+
+  .. image:: https://github.com/user-attachments/assets/16b9e511-1d8f-48b2-91ac-737e5f2ced4d
+    :target: https://github.com/user-attachments/assets/16b9e511-1d8f-48b2-91ac-737e5f2ced4d
+
+As you can see no "Price" custom attribute in another materials for a while. Add Suzanne and Icosphere into "Get Object Data". Select Icosphere only after:
+
+  .. image:: https://github.com/user-attachments/assets/a4172654-c977-4394-8a06-de8066e45508
+    :target: https://github.com/user-attachments/assets/a4172654-c977-4394-8a06-de8066e45508
+
+Create new socket:
+
+.. image:: https://github.com/user-attachments/assets/40f5002a-3c29-4571-be61-e5f5e83ae415
+  :target: https://github.com/user-attachments/assets/40f5002a-3c29-4571-be61-e5f5e83ae415
+
+This action will copy Price into another materials:
+
+  .. image:: https://github.com/user-attachments/assets/3da07b40-e8dd-4286-8b3c-5ddf4d8d27fd
+    :target: https://github.com/user-attachments/assets/3da07b40-e8dd-4286-8b3c-5ddf4d8d27fd
+
+Set different prices for materials:
+
+  .. image:: https://github.com/user-attachments/assets/4bdfa5ca-8f83-41bc-a77b-fbb7ad23e84d
+    :target: https://github.com/user-attachments/assets/4bdfa5ca-8f83-41bc-a77b-fbb7ad23e84d
+
+And check prices in the socket:
+
+  .. image:: https://github.com/user-attachments/assets/bee70087-a6e1-4e52-a0ab-ac57eb02e787
+    :target: https://github.com/user-attachments/assets/bee70087-a6e1-4e52-a0ab-ac57eb02e787
+
+Calc Areas by materials:
+
+  .. image:: https://github.com/user-attachments/assets/f6e49f48-8b36-4051-b4e3-c1b8a56e2b06
+    :target: https://github.com/user-attachments/assets/f6e49f48-8b36-4051-b4e3-c1b8a56e2b06
+
+Calc Price of materials:
+
+  .. image:: https://github.com/user-attachments/assets/dc496857-cd2c-4ab9-8b66-dd51c72ecc84
+    :target: https://github.com/user-attachments/assets/dc496857-cd2c-4ab9-8b66-dd51c72ecc84
+
+Now you know that Suzanne's eyes has a price 13.923$. 
+
+Custom property animation
+-------------------------
+
+Create Cube and create 2 custom property in Object mode:
+
+  .. image:: https://github.com/user-attachments/assets/1bdf8a21-9eb6-43fb-adcf-e4ae79624693
+    :target: https://github.com/user-attachments/assets/1bdf8a21-9eb6-43fb-adcf-e4ae79624693
+
+Create next node scheme and add X and Y custom properties:
+
+  .. image:: https://github.com/user-attachments/assets/6ccd7b82-be4f-4c9f-8216-8afcf8663c2c
+    :target: https://github.com/user-attachments/assets/6ccd7b82-be4f-4c9f-8216-8afcf8663c2c
+
+Create F-curve modifier animation:
+
+.. image:: https://github.com/user-attachments/assets/4dad105d-d902-45d5-ae2f-9f9fd66f8ed9
+  :target: https://github.com/user-attachments/assets/4dad105d-d902-45d5-ae2f-9f9fd66f8ed9
+
+.. raw:: html
+
+   <video width="700" controls>
+     <source src="https://github.com/user-attachments/assets/ce39820a-a789-4776-bd66-e1ff537cf8e2" type="video/mp4">
+    Your browser does not support the video tag.
+   </video>
+
+Now you can do animation of Sverchok Scheme with custom properties and custom properties animation, animation keys and animation modifiers.
+Additionally: The animation of Sverchok Nodes with Blender is not possible.
 
 Examples
 --------

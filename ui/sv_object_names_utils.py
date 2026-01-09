@@ -1947,7 +1947,7 @@ class SvNodeInDataMK5(SverchCustomTreeNode):
 
             elem = self.custom_properties_of_active_object[_socket_type][_idx]
             item.custom_property_type           = elem['type']
-            item.custom_property_description    = elem['description']
+            item.custom_property_description    = elem['description'] if elem['description'] else ''
             item.custom_property_subtype        = elem['subtype']
             item.custom_property_is_array       = elem['is_array']
             item.custom_property_array_size     = elem['array_size']
