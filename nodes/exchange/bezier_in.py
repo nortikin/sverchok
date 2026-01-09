@@ -61,10 +61,10 @@ def get_object_data_spline_info(object_pointer):
 
     return object_exists, curve_object, splines_bezier, splines_non_bezier, chars
 
-class SvBezierInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
+class SvBezierInCallbackOpMK3(bpy.types.Operator, SvGenericNodeLocator):
     '''Select objects from scene into this node. Objects selected erlier will be removed'''
-    bl_idname = "node.sv_bezier_in_callback_mk2"
-    bl_label = "Bezier In Callback mk2"
+    bl_idname = "node.sv_bezier_in_callback_mk3"
+    bl_label = "Bezier In Callback"
     bl_options = {'INTERNAL'}
 
     def sv_execute(self, context, node):
@@ -172,7 +172,7 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
-        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK2.bl_idname, text='GET')
+        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK3.bl_idname, text='GET')
         self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
 
     @property
@@ -190,7 +190,7 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
             row.scale_y = 4.0
             op_text = "G E T"
 
-        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK2.bl_idname, text=op_text, icon='IMPORT')
+        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK3.bl_idname, text=op_text, icon='IMPORT')
         
         grid = layout.grid_flow(row_major=False, columns=2, align=True)
         grid.column(align=True).prop(self, 'sort')
@@ -544,7 +544,7 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         pass
 
 classes = [
-        SvBezierInCallbackOpMK2,
+        SvBezierInCallbackOpMK3,
         SvBezierInNodeMK3
     ]
 register, unregister = bpy.utils.register_classes_factory(classes)

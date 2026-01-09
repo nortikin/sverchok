@@ -68,9 +68,9 @@ def get_object_data_curve_info(object_pointer):
 
     return object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE
 
-class SvExNurbsInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
+class SvExNurbsInCallbackOpMK3(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_ex_nurbs_in_callback_mk2"
+    bl_idname = "node.sv_ex_nurbs_in_callback_mk3"
     bl_label = "Nurbs In Callback"
     bl_options = {'INTERNAL'}
 
@@ -103,10 +103,6 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         update=updateNode
         )
     
-    # object_names: bpy.props.CollectionProperty(type=SvExNurbsInDataCollectionMK2)
-    # active_obj_index: bpy.props.IntProperty()
-    # object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
-
     sort: bpy.props.BoolProperty(
         name='Sort',
         description='Sorting inserted objects by names',
@@ -170,7 +166,7 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
             row.scale_y = 4.0
             op_text = "G E T"
 
-        callback = SvExNurbsInCallbackOpMK2.bl_idname
+        callback = SvExNurbsInCallbackOpMK3.bl_idname
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text, icon='IMPORT').fn_name = 'get_objects_from_scene'
 
         grid = layout.grid_flow(row_major=False, columns=2, align=False)
@@ -202,7 +198,7 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
-        callback = SvExNurbsInCallbackOpMK2.bl_idname
+        callback = SvExNurbsInCallbackOpMK3.bl_idname
         row.prop(self, 'implementation', text='')
         self.wrapper_tracked_ui_draw_op(row, callback, text='GET').fn_name = 'get_objects_from_scene'
         self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
@@ -477,7 +473,7 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         pass
 
 classes = [
-    SvExNurbsInCallbackOpMK2,
+    SvExNurbsInCallbackOpMK3,
     SvExNurbsInNodeMK3
 ]
 register, unregister = bpy.utils.register_classes_factory(classes)
