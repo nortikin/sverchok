@@ -9,7 +9,7 @@ import numpy as np
 from math import sqrt
 
 from sverchok.data_structure import zip_long_repeat
-from sverchok.utils.math import binomial
+from sverchok.utils.math import binomial, binomial_array, sphere
 from sverchok.utils.geom import Spline, bounding_box, are_points_coplanar, get_common_plane, PlaneEquation, LineEquation
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
@@ -70,7 +70,65 @@ class SvBezierSplitMixin:
         segment2 = self.cut_segment(t, 1.0)
         return segment1, segment2
 
-class SvBezierCurve(SvCurve, SvBezierSplitMixin):
+_binom_square_matrices_cache = dict()
+
+def _get_binom_square_matrix(p):
+    global _binom_square_matrices_cache
+    if p not in _binom_square_matrices_cache:
+        binom = binomial_array(2*p+1)
+        A = np.zeros((2*p+1, p+1, p+1))
+        for k in range(2*p+1):
+            I = np.arange(k+1)
+            J = k - I
+            good_ij = np.logical_and(I <= p, J <= p) 
+            I = I[good_ij]
+            J = J[good_ij]
+            A[k, I, J] = binom[p, I] * binom[p, J]
+        _binom_square_matrices_cache[p] = A
+    return _binom_square_matrices_cache[p]
+
+class SvBezierCommon:
+    def bezier_distance_curve(self, src_point):
+        p = self.get_degree()
+        cpts = self.get_control_points() - np.array(src_point)
+        ndim = cpts.shape[-1]
+        binom = binomial_array(2*p+1)
+
+        def calc_square(cs):
+            ds = np.zeros((2*p+1,))
+            cT = cs[np.newaxis].T
+            A = _get_binom_square_matrix(p)
+            for k in range(2*p+1):
+                ds[k] = cs @ A[k] @ cT
+            denominator = binom[2*p, :]
+            return ds / denominator
+        
+        new_cpts = np.zeros((2*p+1, 1))
+        for i in range(ndim):
+            sq = calc_square(cpts[:,i])
+            #print("Sq", sq)
+            new_cpts[:,0] += sq
+        return SvBezierCurve.from_control_points(new_cpts)
+
+    def is_inside_sphere(self, sphere_center, sphere_radius):
+        """
+        Check that the whole curve lies inside the specified sphere
+        """
+        # Because of NURBS curve's "strong convex hull property",
+        # if all control points of the curve lie inside the sphere,
+        # then the whole curve lies inside the sphere too.
+        # This relies on the fact that the sphere is a convex set of points.
+        cpts = self.get_control_points()
+        distances = np.linalg.norm(sphere_center - cpts, axis=1)
+        return (distances < sphere_radius).all()
+
+    def bezier_is_strongly_outside_sphere(self, sphere_center, sphere_radius):
+        # See comment for SvNurbsCurve.bezier_is_strongly_outside_sphere()
+        square_curve = self.bezier_distance_curve(sphere_center)
+        square_coeffs = square_curve.get_control_points()[:,0]
+        return (square_coeffs >= sphere_radius**2).all()
+
+class SvBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
     """
     Bezier curve of arbitrary degree.
     """
@@ -518,7 +576,7 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
     def reverse(self):
         return SvBezierCurve(self.points[::-1])
 
-class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
+class SvCubicBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
     __description__ = "Bezier[3*]"
     def __init__(self, p0, p1, p2, p3):
         self.p0 = np.array(p0)

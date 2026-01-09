@@ -1554,4 +1554,86 @@ def symmetrize_curve(
     else:
         return result
 
+def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=1e-6, max_subdivisions=6):
+    ctr = np.array(ctr)
+    
+    def goal(orig_segment):
+        nonlocal ctr
+        #distance_curve = orig_segment.bezier_distance_curve(ctr).to_bezier()
+        #t1, t2 = orig_segment.get_u_bounds()
+        #print(f"Calc distance curve: {distance_curve}")
+        def function(t):
+            pt = orig_segment.evaluate(t)
+            dv = pt - ctr
+            return np.dot(dv, dv) - radius**2
+            #return np.linalg.norm(pt - ctr) - radius
+            #u = (t - t1) / (t2 - t1)
+            #rho2 = distance_curve.evaluate(u)[0]
+            #return rho2 - radius**2
+        return function
+
+    def is_good(t1, t2, segment):
+        if segment.is_inside_sphere(ctr, radius):
+            #print(f"{t1} - {t2}: fully inside sphere")
+            return False
+        if segment.bezier_is_strongly_outside_sphere(ctr, radius):
+            #print(f"{t1} - {t2}: strongly outside sphere")
+            return False
+        return True
+
+    segments1 = []
+
+    goal_fns = dict()
+    def get_goal(segment):
+        nonlocal goal_fns
+        if segment not in goal_fns:
+            goal_fn = goal(segment)
+            goal_fns[segment] = goal_fn
+        return goal_fns[segment]
+
+    def add_split(t1, t2, orig_segment, segment, depth):
+        nonlocal segments1
+        if not is_good(t1, t2, segment):
+            return
+
+        goal_fn = get_goal(orig_segment)
+        value1 = goal_fn(t1)
+        value2 = goal_fn(t2)
+        if (value1 > 0) == (value2 > 0):
+            if depth < max_subdivisions:
+                bbox_size = segment.get_bounding_box().size() 
+                if bbox_size >= tolerance:
+                    #print(f"Split: {t1} - {t2}: v1 {value1} vs v2 {value2}, bbox_size {bbox_size}")
+                    t_mid = (t1 + t2) * 0.5
+                    s1, s2 = segment.split_at(0.5)
+                    add_split(t1, t_mid, orig_segment, s1, depth=depth+1)
+                    add_split(t_mid, t2, orig_segment, s2, depth=depth+1)
+        else:
+            #print(f"Append: {segment.get_u_bounds()}")
+            segments1.append((t1, t2, orig_segment, segment))
+
+    # u_min, u_max = curve.get_u_bounds()
+    # if init_samples <= 1:
+    #     segments = [curve]
+    # else:
+    #     u_range = np.linspace(u_min, u_max, num=init_samples)
+    #     segments = [curve.cut_segment(u1,u2) for u1, u2 in zip(u_range, u_range[1:])]
+
+    for sg in curve.to_bezier_segments(to_bezier_class=False):
+        bezier_segment = sg.to_bezier()
+        u1, u2 = sg.get_u_bounds()
+        add_split(u1, u2, sg, bezier_segment, depth=1)
+
+    result = []
+    for t1, t2, orig_segment, segment in segments1:
+        print(f"Run: {t1} - {t2}")
+        solution = root_scalar(get_goal(orig_segment), method='ridder',
+                               bracket = (t1, t2),
+                               xtol = tolerance)
+        if solution.converged:
+            t = solution.root
+            #u = (t2 - t1) * t + t1
+            result.append(t)
+    return result
+
 

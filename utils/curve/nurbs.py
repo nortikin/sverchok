@@ -831,13 +831,16 @@ class SvNurbsCurve(SvCurve):
         # then the whole curve lies inside the sphere too.
         # This relies on the fact that the sphere is a convex set of points.
         cpts = self.get_control_points()
-        distances = np.linalg.norm(sphere_center - cpts)
+        distances = np.linalg.norm(sphere_center - cpts, axis=1)
         return (distances < sphere_radius).all()
 
-    def bezier_distance_curve(self, src_point):
+    def bezier_distance_curve(self, src_point, nurbs=True):
         taylor = self.bezier_to_taylor()
         taylor.start[:3] -= src_point
-        return taylor.square(to_axis=0).to_nurbs()
+        if nurbs:
+            return taylor.square(to_axis=0).to_nurbs()
+        else:
+            return taylor.square(to_axis=0)
 
     def bezier_distance_coeffs(self, src_point):
         distance_curve = self.bezier_distance_curve(src_point)
