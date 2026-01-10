@@ -128,6 +128,21 @@ class SvBezierCommon:
         square_coeffs = square_curve.get_control_points()[:,0]
         return (square_coeffs >= sphere_radius**2).all()
 
+    def bezier_has_one_nearest_point(self, src_point):
+        distance_curve = self.bezier_distance_curve(src_point)
+        square_cpts = distance_curve.get_control_points()
+        square_coeffs = square_cpts[:,0]
+
+        should_grow = False
+        result = True
+        for p1, p2 in zip(square_coeffs, square_coeffs[1:]):
+            if not should_grow and not (p1 > p2):
+                should_grow = True
+            elif should_grow and not (p1 < p2):
+                result = False
+                break
+        return result
+
 class SvBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
     """
     Bezier curve of arbitrary degree.

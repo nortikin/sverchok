@@ -877,7 +877,7 @@ class SvNurbsCurve(SvCurve):
         lie inside the sphere, or may not touch it at all.
         """
         # See comment to bezier_is_strongly_outside_sphere()
-        return all(segment.bezier_is_strongly_outside_sphere(sphere_center, sphere_radius) for segment in self.to_bezier_segments(to_bezier_class=False))
+        return all(segment.bezier_is_strongly_outside_sphere(sphere_center, sphere_radius) for segment in self.to_bezier_segments(to_bezier_class=True))
 
     def bezier_has_one_nearest_point(self, src_point):
         square_coeffs = self.bezier_distance_coeffs(src_point)
@@ -894,7 +894,7 @@ class SvNurbsCurve(SvCurve):
 
     def has_exactly_one_nearest_point(self, src_point):
         # This implements Property 2 from the paper [1]
-        segments = self.to_bezier_segments(to_bezier_class=False)
+        segments = self.to_bezier_segments(to_bezier_class=True)
         if len(segments) > 1:
             return False
         return segments[0].bezier_has_one_nearest_point(src_point)
