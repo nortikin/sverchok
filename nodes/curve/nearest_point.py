@@ -33,6 +33,7 @@ class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
         default = True,
         update = updateNode)
 
+    # Not shown, as currently this implementation is too slow
     use_nurbs : BoolProperty(
         name = "Use NURBS algorithm",
         default = False,
@@ -57,7 +58,7 @@ class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'method')
-        layout.prop(self, 'use_nurbs')
+        #layout.prop(self, 'use_nurbs')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
