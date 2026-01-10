@@ -449,18 +449,22 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
     else:
         return result_ts
 
-def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, method='Brent', linearity_threshold=1e-4):
+def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, method='Brent', linearity_threshold=1e-4, logger=None):
     """
     Find nearest point on a NURBS curve.
     At the moment, this method is not, in general, faster than generic
     nearest_point_on_curve() method; although this method can be more precise.
     """
 
+    if logger is None:
+        logger = get_logger()
+
+    MAX_SUBDIVISIONS = 6
+
     src_point = np.asarray(src_point)
-    default_splits = splits
 
     def farthest(cpts):
-        distances = np.linalg.norm(src_point - cpts)
+        distances = np.linalg.norm(src_point - cpts, axis=1)
         return distances.max()
 
     def too_far(segment, distance):
@@ -471,6 +475,8 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         #return (distance_to_ctr > bbox.radius() + distance)
 
     def split(segment, n_splits=splits):
+        if n_splits <= 1:
+            return [segment]
         u_min, u_max = segment.get_u_bounds()
         us = np.linspace(u_min, u_max, num=n_splits+1)
         segments = [segment.cut_segment(u1, u2) for u1, u2 in zip(us, us[1:])]
@@ -497,11 +503,12 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
                 message = result.message
             else:
                 message = repr(result)
-            print(f"No solution for {u_min} - {u_max}: {message}")
+            logger.debug(f"No solution for {u_min} - {u_max}: {message}")
             return None
         else:
             t0 = result.x
             if u_min <= t0 <= u_max:
+                logger.debug(f"Numeric search result for {segment} => T={t0}, F={result.fun}")
                 return t0, result.fun
             else:
                 return None
@@ -512,13 +519,10 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         result_us = []
         prev_start, prev_end = segments[0].get_u_bounds()
         current_pair = [prev_start, prev_end]
-        to_end_last = False
         for segment in segments[1:]:
-            to_end_last = False
             u1, u2 = segment.get_u_bounds()
             if u1 == current_pair[1]:
                 current_pair[1] = u2
-                to_end_last = True
             else:
                 result_us.append(current_pair)
                 current_pair = list(segment.get_u_bounds())
@@ -526,7 +530,7 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         result_us.append(current_pair)
 
         result = [curve.cut_segment(u1,u2) for u1, u2 in result_us]
-        #print(f"Merge: {[s.get_u_bounds() for s in segments]} => {[s.get_u_bounds() for s in result]}")
+        #logger.debug(f"Merge: {[s.get_u_bounds() for s in segments]} => {[s.get_u_bounds() for s in result]}")
         return result
 
     def linear_search(segment):
@@ -538,6 +542,7 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         if 0.0 <= t <= 1.0:
             u1, u2 = segment.get_u_bounds()
             u = (1-t)*u1 + t*u2
+            logger.debug(f"Linear search result on {segment} => {u}")
             return u
         else:
             return None
@@ -546,26 +551,26 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         if not segments:
             return []
 
-        #print("Consider: ", [s.get_u_bounds() for s in segments])
+        #logger.debug("Consider: ", [s.get_u_bounds() for s in segments])
 
         to_remove = set()
         for segment1_idx, segment1 in enumerate(segments):
             if segment1_idx in to_remove:
                 continue
             farthest_distance = farthest(segment1.get_control_points())
-            #print(f"S1: {segment1_idx}, {segment1.get_u_bounds()}: farthest = {farthest_distance}, min_distance={min_distance}")
+            #logger.debug(f"S1: {segment1_idx}, {segment1.get_u_bounds()}: farthest = {farthest_distance}, min_distance={min_distance}")
             for segment2_idx, segment2 in enumerate(segments):
                 if segment1_idx == segment2_idx:
                     continue
                 if segment2_idx in to_remove:
                     continue
                 if too_far(segment2, min(farthest_distance, min_distance)):
-                    print(f"S2: {segment2_idx} {segment2.get_u_bounds()} - too far, remove")
+                    logger.debug(f"S2: {segment2_idx} {segment2.get_u_bounds()} - too far, remove")
                     to_remove.add(segment2_idx)
 
-        stop_subdivide = step > 6
+        stop_subdivide = step > MAX_SUBDIVISIONS
         #if stop_subdivide:
-            #print("Will not subdivide anymore")
+            #logger.debug("Will not subdivide anymore")
         if len(to_remove) == 0:
             n_splits += 2
         #else:
@@ -579,26 +584,26 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         for segment in segments_to_consider:
             if segment.is_line(linearity_threshold):
                 # find nearest on line
-                print(f"Linear search for {segment.get_u_bounds()}")
+                logger.debug(f"Linear search for {segment.get_u_bounds()}")
                 approx = linear_search(segment)
                 if approx is not None:
                     result = numeric_method(segment, approx)
                     if result:
                         results.append(result)
             elif stop_subdivide:
-                print(f"Schedule for numeric, subdivision is stopped: {segment.get_u_bounds()}")
+                logger.debug(f"Schedule for numeric, subdivision is stopped: {segment.get_u_bounds()}")
                 for_numeric.append(segment)
             elif segment.has_exactly_one_nearest_point(src_point):
-                print(f"Schedule for numeric, it has one nearest point: {segment.get_u_bounds()}")
+                logger.debug(f"Schedule for numeric, it has one nearest point: {segment.get_u_bounds()}")
                 for_numeric.append(segment)
             else:
-                #print(f"Subdivide {segment.get_u_bounds()} at step {step}, into {n_splits} segments")
+                #logger.debug(f"Subdivide {segment.get_u_bounds()} at step {step}, into {n_splits} segments")
                 sub_segments = split(segment, n_splits)
                 new_segments.extend(sub_segments)
 
-        for_numeric = merge(for_numeric)
+        #for_numeric = merge(for_numeric)
         for segment in for_numeric:
-            print(f"Run numeric method on {segment.get_u_bounds()}")
+            logger.info(f"Run numeric method on {segment.get_u_bounds()}")
             result = numeric_method(segment)
             if result:
                 results.append(result)
@@ -619,7 +624,9 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
     init_distances = np.linalg.norm(init_points - src_point, axis=1)
     min_distance = init_distances.min()
 
-    segments = split(curve)#, init_samples)
+    segments = []
+    for sg in split(curve, init_samples):
+        segments.extend(sg.to_bezier_segments(to_bezier_class=False))
     rs = process(segments, min_distance=min_distance)
     rs = postprocess(rs)
     return rs
@@ -1554,7 +1561,10 @@ def symmetrize_curve(
     else:
         return result
 
-def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=1e-6, max_subdivisions=6):
+def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=1e-6, max_subdivisions=6, logger = None):
+    if logger is None:
+        logger = get_logger()
+
     ctr = np.array(ctr)
     
     def goal(orig_segment):
@@ -1574,10 +1584,10 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=
 
     def is_good(t1, t2, segment):
         if segment.is_inside_sphere(ctr, radius):
-            #print(f"{t1} - {t2}: fully inside sphere")
+            logger.debug(f"{t1} - {t2}: fully inside sphere")
             return False
         if segment.bezier_is_strongly_outside_sphere(ctr, radius):
-            #print(f"{t1} - {t2}: strongly outside sphere")
+            logger.debug(f"{t1} - {t2}: strongly outside sphere")
             return False
         return True
 
@@ -1603,7 +1613,7 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=
             if depth < max_subdivisions:
                 bbox_size = segment.get_bounding_box().size() 
                 if bbox_size >= tolerance:
-                    #print(f"Split: {t1} - {t2}: v1 {value1} vs v2 {value2}, bbox_size {bbox_size}")
+                    logger.debug(f"Split: {t1} - {t2}: v1 {value1} vs v2 {value2}, bbox_size {bbox_size}")
                     t_mid = (t1 + t2) * 0.5
                     s1, s2 = segment.split_at(0.5)
                     add_split(t1, t_mid, orig_segment, s1, depth=depth+1)
@@ -1626,12 +1636,13 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=
 
     result = []
     for t1, t2, orig_segment, segment in segments1:
-        print(f"Run: {t1} - {t2}")
+        logger.info(f"Run numeric method: {t1} - {t2}")
         solution = root_scalar(get_goal(orig_segment), method='ridder',
                                bracket = (t1, t2),
                                xtol = tolerance)
         if solution.converged:
             t = solution.root
+            logger.info(f"--> Found: t = {t}")
             #u = (t2 - t1) * t + t1
             result.append(t)
     return result
