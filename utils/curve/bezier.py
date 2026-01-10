@@ -31,24 +31,24 @@ class SvBezierSplitMixin:
                 dpts[j,k] = dpts[j-1, k] * (1 - t) + dpts[j-1, k+1] * t
         return dpts
     
-#     DeCasteljau variant
-#     def split_at(self, t):
-#         dpts = self.de_casteljau_points(t)
-#         cpts1 = dpts[:,0]
-#         cpts2 = dpts[-1,:]
-#         return SvBezierCurve.from_control_points(cpts1), SvBezierCurve.from_control_points(cpts2)
-
-#   def cut_segment(self, new_t_min, new_t_max, rescale=False):
-#         if new_t_min >= 0:
-#             c1, c2 = self.split_at(new_t_min)
-#         else:
-#             c2 = self
-#         if new_t_max <= 1.0:
-#             t1 = (new_t_max - new_t_min) / (1.0 - new_t_min)
-#             c3, c4 = c2.split_at(t1)
-#         else:
-#             c3 = c2
-#         return c3
+    # #DeCasteljau variant
+    # def split_at(self, t):
+    #     dpts = self.de_casteljau_points(t)
+    #     cpts1 = dpts[:,0]
+    #     cpts2 = dpts[-1,:]
+    #     return SvBezierCurve.from_control_points(cpts1), SvBezierCurve.from_control_points(cpts2)
+    #
+    # def cut_segment(self, new_t_min, new_t_max, rescale=False):
+    #         if new_t_min >= 0:
+    #             c1, c2 = self.split_at(new_t_min)
+    #         else:
+    #             c2 = self
+    #         if new_t_max <= 1.0:
+    #             t1 = (new_t_max - new_t_min) / (1.0 - new_t_min)
+    #             c3, c4 = c2.split_at(t1)
+    #         else:
+    #             c3 = c2
+    #         return c3
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
         ndim = 3

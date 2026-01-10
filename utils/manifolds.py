@@ -1,5 +1,6 @@
 
 import numpy as np
+from math import sqrt
 
 from mathutils import kdtree, Matrix, Vector
 from mathutils.bvhtree import BVHTree
@@ -1561,11 +1562,39 @@ def symmetrize_curve(
     else:
         return result
 
-def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=1e-6, max_subdivisions=6, logger = None):
+def intersect_nurbs_curve_sphere(curve, ctr, radius,
+                                 max_results = None,
+                                 direction = 1,
+                                 tolerance=1e-6,
+                                 max_subdivisions=6,
+                                 logger = None):
+    """
+    Find intersections between a NURBS curve and a sphere.
+    Only non-rational curves are supported at the moment.
+
+    Args:
+        * curve: an instance of SvNurbsCurve.
+        * ctr: sphere center; 3-tuple or np.array of shape (3,).
+        * radius: sphere radius - float.
+        * max_results: maximum number of intersections to return. None means return all of them.
+        * direction: 1 or -1. Direction > 0 means scan the curve from beginning to the end,
+            direction < 0 - scan in the opposite direction. Results will be returned in corresponding order.
+            If max_results is not None, then direction defines which intersections will be returned - the first
+            or the last ones.
+        * tolerance: numeric method tolerance.
+        * max_subdivisions: maximum number of recursive segment subdivisions allowed in case when both ends of
+            the segment lie on the same side of the sphere, but there is a possibility that some part of the
+            segment lies on the other side. In usual cases 1 or 2 subdivisions are enough.
+
+    Returns:
+        np.array of T values of intersection.
+    """
     if logger is None:
         logger = get_logger()
+    #logger.debug("Start intersect_nurbs_curve_sphere")
 
     ctr = np.array(ctr)
+    p = curve.get_degree()
     
     def goal(orig_segment):
         nonlocal ctr
@@ -1582,7 +1611,9 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=
             #return rho2 - radius**2
         return function
 
-    def is_good(t1, t2, segment):
+    def is_interesting(t1, t2, segment):
+        # Check that the segment does not lie within the sphere completely,
+        # and does not lie too far outside the sphere.
         if segment.is_inside_sphere(ctr, radius):
             logger.debug(f"{t1} - {t2}: fully inside sphere")
             return False
@@ -1590,8 +1621,6 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=
             logger.debug(f"{t1} - {t2}: strongly outside sphere")
             return False
         return True
-
-    segments1 = []
 
     goal_fns = dict()
     def get_goal(segment):
@@ -1601,43 +1630,114 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=
             goal_fns[segment] = goal_fn
         return goal_fns[segment]
 
-    def add_split(t1, t2, orig_segment, segment, depth):
-        nonlocal segments1
-        if not is_good(t1, t2, segment):
-            return
+    def solve_segment(orig_segment, t1, t2, s1, s2, cpt1, cpt2):
+        # Find intersection of control polygon segment cpt1 - cpt2 with the sphere.
+        goal_fn = get_goal(orig_segment)
+        v1 = goal_fn((t2 - t1)*s1 + t1)
+        v2 = goal_fn((t2 - t1)*s2 + t1)
+        if v1 * v2 >= 0:
+            #logger.debug(f"Linear: T {t1} - {t2}, S {s1} - {s2} => value {v1}, {v2} => no init guess")
+            return None
+        p1 = cpt1 - ctr
+        p2 = cpt2 - ctr
 
+        # If we connect cpt1 and cpt2 with a straight line segment parametrized as
+        # C(t) = (1-t) cpt1 + t cpt2,
+        # then (C(t) - ctr)^2 == radius^2
+        # is a quadratic equation, which can be solved by classical formula with
+        # discriminant. The following is an implementation of that formula.
+        dp = p2 - p1
+        a = np.dot(dp, dp)
+        b = 2*np.dot(p1, dp)
+        c = np.dot(p1, p1) - radius**2
+        D = b*b - 4*a*c
+        if D < 0:
+            #logger.debug(f"Linear: T {t1} - {t2}, S {s1} - {s2} => D = {D} < 0, no init guess")
+            return None
+        ss = []
+        if abs(D) < 1e-6:
+            s = -b / (2*a)
+            ss.append(s)
+        else:
+            v1 = (-b - sqrt(D)) / (2*a)
+            ss.append(v1)
+            v2 = (-b + sqrt(D)) / (2*a)
+            ss.append(v2)
+        ss = [s for s in ss if 0 <= s <= 1]
+        if not ss:
+            return None
+        # Take any one of results, it should be enough for initial guess.
+        s = ss[0]
+        result = (s2 - s1)*s + s1
+        #logger.debug(f"Linear: T {t1} - {t2}, S {s1} - {s2}, cpt {p1} - {p2} => ss = {ss} => init guess on segment = {result}")
+        return result
+
+    def init_guess(orig_segment, t1, t2, segment):
+        # Find initial guess by approximating the Bezier curve segment
+        # by it's control polygon. This gives pretty good results
+        # (usually two exact digits after decimal point in my experiments);
+        # however, in current implementation this is too slow: the gain we
+        # get from narrowing the segment for scipy method is not big enough
+        # to justify the time we spend on calculation of initial guess.
+        # So currently the use of this is commented out.
+        cpts = segment.get_control_points()
+        ts = np.linspace(0.0, 1.0, num = p+1)
+        for s1, s2, cpt1, cpt2 in zip(ts[:-1], ts[1:], cpts[:-1], cpts[1:]):
+            s = solve_segment(orig_segment, t1, t2, s1, s2, cpt1, cpt2)
+            if s is not None:
+                return (t2 - t1)*s + t1
+        return None
+
+    def check_signs(orig_segment, t1, t2):
         goal_fn = get_goal(orig_segment)
         value1 = goal_fn(t1)
         value2 = goal_fn(t2)
-        if (value1 > 0) == (value2 > 0):
+        #logger.debug(f"Check signs: {t1} => {value1}, {t2} => {value2}")
+        return value1 * value2 < 0
+
+    def split_segment(t1, t2, orig_segment, segment, depth):
+        if not is_interesting(t1, t2, segment):
+            return
+
+        if not check_signs(orig_segment, t1, t2):
             if depth < max_subdivisions:
                 bbox_size = segment.get_bounding_box().size() 
                 if bbox_size >= tolerance:
-                    logger.debug(f"Split: {t1} - {t2}: v1 {value1} vs v2 {value2}, bbox_size {bbox_size}")
+                    logger.debug(f"Split: {t1} - {t2} - goal function has the same sign on both ends; bbox_size {bbox_size}")
                     t_mid = (t1 + t2) * 0.5
                     s1, s2 = segment.split_at(0.5)
-                    add_split(t1, t_mid, orig_segment, s1, depth=depth+1)
-                    add_split(t_mid, t2, orig_segment, s2, depth=depth+1)
+                    if direction > 0:
+                        yield from split_segment(t1, t_mid, orig_segment, s1, depth=depth+1)
+                        yield from split_segment(t_mid, t2, orig_segment, s2, depth=depth+1)
+                    else:
+                        yield from split_segment(t_mid, t2, orig_segment, s2, depth=depth+1)
+                        yield from split_segment(t1, t_mid, orig_segment, s1, depth=depth+1)
         else:
-            #print(f"Append: {segment.get_u_bounds()}")
-            segments1.append((t1, t2, orig_segment, segment))
+            # See comment for init_guess()
+            #t0 = init_guess(orig_segment, t1, t2, segment)
+            t0 = None
+            if t0 is None:
+                yield (t1, t2, orig_segment, segment)
+            else:
+                logger.debug(f"Split {t1} - {t2} by init guess: {t0}")
+                if check_signs(orig_segment, t1, t0):
+                    yield (t1, t0, orig_segment, segment)
+                if check_signs(orig_segment, t0, t2):
+                    yield (t0, t2, orig_segment, segment)
 
-    # u_min, u_max = curve.get_u_bounds()
-    # if init_samples <= 1:
-    #     segments = [curve]
-    # else:
-    #     u_range = np.linspace(u_min, u_max, num=init_samples)
-    #     segments = [curve.cut_segment(u1,u2) for u1, u2 in zip(u_range, u_range[1:])]
-
-    for sg in curve.to_bezier_segments(to_bezier_class=False):
-        bezier_segment = sg.to_bezier()
-        u1, u2 = sg.get_u_bounds()
-        add_split(u1, u2, sg, bezier_segment, depth=1)
+    def get_segments():
+        bezier_segments = curve.to_bezier_segments(to_bezier_class=False)
+        if direction < 0:
+            bezier_segments = reversed(bezier_segments)
+        for sg in bezier_segments:
+            bezier_segment = sg.to_bezier()
+            u1, u2 = sg.get_u_bounds()
+            yield from split_segment(u1, u2, sg, bezier_segment, depth=1)
 
     result = []
-    for t1, t2, orig_segment, segment in segments1:
+    for t1, t2, orig_segment, segment in get_segments():
         logger.info(f"Run numeric method: {t1} - {t2}")
-        solution = root_scalar(get_goal(orig_segment), method='ridder',
+        solution = root_scalar(get_goal(orig_segment), method='brentq',
                                bracket = (t1, t2),
                                xtol = tolerance)
         if solution.converged:
@@ -1645,6 +1745,9 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius, init_samples=10, tolerance=
             logger.info(f"--> Found: t = {t}")
             #u = (t2 - t1) * t + t1
             result.append(t)
+            if max_results is not None and len(result) >= max_results:
+                break
+    #logger.debug(f"intersect_nurbs_curve_sphere => {result}")
     return result
 
 
