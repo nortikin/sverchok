@@ -314,6 +314,8 @@ Create F-curve modifier animation:
 Now you can do animation of Sverchok Scheme with custom properties and custom properties animation, animation keys and animation modifiers.
 Additionally: The animation of Sverchok Nodes with Blender is not possible.
 
+Animated custom property example: [GetObjectsData.MK5.002.Blender.3.0.0.blend.zip](https://github.com/user-attachments/files/24540889/GetObjectsData.MK5.002.Blender.3.0.0.blend.zip)
+
 Examples
 --------
 
