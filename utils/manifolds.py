@@ -12,6 +12,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import reverse_curve, concatenate_curves, curve_segment
 from sverchok.utils.field.vector import SvMatrixVectorField
 from sverchok.utils.sv_logging import sv_logger, get_logger
+from sverchok.utils.math import np_dot
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
 
@@ -1562,6 +1563,80 @@ def symmetrize_curve(
     else:
         return result
 
+def intersect_curve_sphere(curve, ctr, radius,
+                            init_samples = 10,
+                            max_results = None,
+                            direction = 1,
+                            tolerance=1e-6,
+                            max_subdivisions=1,
+                            logger = None):
+    """
+    Find intersections between a (generic) Curve and a sphere.
+
+    Dependencies: scipy.
+
+    Args:
+        * curve: an instance of SvCurve.
+        * ctr: sphere center; 3-tuple or np.array of shape (3,).
+        * radius: sphere radius - float.
+        * init_samples: initial number of segments to split the curve into.
+        * max_results: maximum number of intersections to return. None means return all of them.
+        * direction: 1 or -1. Direction > 0 means scan the curve from beginning to the end,
+            direction < 0 - scan in the opposite direction. Results will be returned in corresponding order.
+            If max_results is not None, then direction defines which intersections will be returned - the first
+            or the last ones.
+        * tolerance: numeric method tolerance.
+        * max_subdivisions: maximum number of recursive segment subdivisions allowed in case when both ends of
+            the segment lie on the same side of the sphere.
+
+    Returns:
+        np.array of T values of intersection.
+    """
+    if logger is None:
+        logger = get_logger()
+
+    secondary_samples = 10
+
+    def goal(t):
+        pt = curve.evaluate(t)
+        dv = pt - ctr
+        return np.dot(dv, dv) - radius**2
+
+    def goal_array(ts):
+        pts = curve.evaluate_array(ts)
+        dvs = pts - ctr
+        return np_dot(dvs, dvs) - radius**2
+
+    def get_segments(t_min, t_max, depth=1, samples=init_samples):
+        if depth > max_subdivisions:
+            return
+        ts = np.linspace(t_min, t_max, num=samples)
+        vals = goal_array(ts)
+        t_pairs = zip(ts[:-1], ts[1:], vals[:-1], vals[1:])
+        if direction < 0:
+            t_pairs = reversed(t_pairs)
+        for t1, t2, val1, val2 in t_pairs:
+            if val1 * val2 < 0:
+                yield (t1, t2)
+            else:
+                logger.debug(f"Split: {t1} - {t2} - goal function has the same sign on both ends")
+                yield from get_segments(t1, t2, depth=depth+1, samples=secondary_samples)
+
+    result = []
+    t_min, t_max = curve.get_u_bounds()
+    for t1, t2 in get_segments(t_min, t_max):
+        logger.info(f"Run numeric method: {t1} - {t2}")
+        solution = root_scalar(goal, method='brentq',
+                               bracket = (t1, t2),
+                               xtol = tolerance)
+        if solution.converged:
+            t = solution.root
+            logger.info(f"--> Found: t = {t}")
+            result.append(t)
+            if max_results is not None and len(result) >= max_results:
+                break
+    return np.array(result)
+
 def intersect_nurbs_curve_sphere(curve, ctr, radius,
                                  max_results = None,
                                  direction = 1,
@@ -1570,7 +1645,10 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
                                  logger = None):
     """
     Find intersections between a NURBS curve and a sphere.
-    Only non-rational curves are supported at the moment.
+    This method uses properties of NURBS curve to effectively cut the parts of the curve
+    where intersections can not appear.
+
+    Dependencies: scipy.
 
     Args:
         * curve: an instance of SvNurbsCurve.
@@ -1748,6 +1826,6 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
             if max_results is not None and len(result) >= max_results:
                 break
     #logger.debug(f"intersect_nurbs_curve_sphere => {result}")
-    return result
+    return np.array(result)
 
 
