@@ -115,6 +115,7 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         update = updateNode)
 
     def sv_init(self, context):
+        self.width = 230
         self.outputs.new('SvCurveSocket'  , 'curves')
         self.outputs.new('SvSurfaceSocket', 'surfaces')
         self.outputs.new('SvStringsSocket', 'object_names')
@@ -159,9 +160,10 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         col = layout.column(align=True)
         col.alignment='RIGHT'
         row = col.row(align=True)
-        row.alignment = 'EXPAND'
+        row.alignment='EXPAND'
 
         op_text = "Get selection"  # fallback
+
         if self.prefs_over_sized_buttons:
             row.scale_y = 4.0
             op_text = "G E T"
@@ -169,16 +171,18 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         callback = SvExNurbsInCallbackOpMK3.bl_idname
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text, icon='IMPORT').fn_name = 'get_objects_from_scene'
 
-        grid = layout.grid_flow(row_major=False, columns=2, align=False)
-        grid.column(align=True).prop(self, 'sort')
-        grid.column(align=True).prop(self, 'apply_matrix')
-        grid.column(align=True).prop(self, 'legacy_mode')
-        row = grid.row(align=True)
-        row.alignment = 'LEFT'
-        row.prop(self, 'implementation', expand=True)
-        row0 = grid.row(align=True)
-        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
-        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK5", icon='DOWNARROW_HLT', text="")
+        grid = layout.grid_flow(row_major=False, columns=2, align=True)
+        elem0 = grid.column(align=True)
+        elem0.prop(self, 'sort')
+        elem0.prop(self, 'apply_matrix')
+        elem1 = grid.column()
+        elem1.prop(self, 'legacy_mode')
+        elem2 = elem1.row(align=True)
+        elem2.operator(SV_PT_ViewportDisplayPropertiesDialogMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
+        elem2.popover(panel="SV_PT_ViewportDisplayPropertiesMK5", icon='DOWNARROW_HLT', text="")
+        elem3 = layout.row()
+        elem3.column().label(text='Implementation:')
+        elem3.column().prop(self, 'implementation', expand=True,)
 
         if not self.by_input:
             if self.object_names:

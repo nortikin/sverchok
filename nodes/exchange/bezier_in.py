@@ -139,7 +139,7 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         pass
     
     def sv_init(self, context):
-        self.width = 300
+        self.width = 230
         self.outputs.new('SvCurveSocket', 'curves')
         self.outputs.new('SvStringsSocket', 'use_cyclic_u').label='Cyclic U'
         self.outputs.new('SvVerticesSocket', 'control_points_c0')
@@ -181,6 +181,7 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
 
     def sv_draw_buttons(self, context, layout):
         col = layout.column(align=True)
+        col.alignment='RIGHT'
         row = col.row(align=True)
         row.alignment='EXPAND'
 
@@ -191,6 +192,7 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
             op_text = "G E T"
 
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK3.bl_idname, text=op_text, icon='IMPORT')
+        
         
         grid = layout.grid_flow(row_major=False, columns=2, align=True)
         grid.column(align=True).prop(self, 'sort')

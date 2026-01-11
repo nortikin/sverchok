@@ -81,6 +81,7 @@ class SvGetObjectsDataMK5(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
 
         if self.vergroups and not showing_vg:
             outs.new('SvStringsSocket', 'Vers_grouped')
+            outs['Vers_grouped'].label = 'Vertex Groups'
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
@@ -90,7 +91,7 @@ class SvGetObjectsDataMK5(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         default=False, update=updateNode) # type: ignore
 
     vergroups: bpy.props.BoolProperty(
-        name='Verts Groups',
+        name='Vertex Groups',
         description='Use vertex groups to nesty insertion',
         default=False, update=hide_show_versgroups) # type: ignore
 
@@ -205,7 +206,7 @@ class SvGetObjectsDataMK5(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
             layout.separator()
 
     def sv_init(self, context):
-        self.width = 225
+        self.width = 230
         
         self.inputs.new('SvObjectSocket'   , "objects")
         self.inputs ['objects']         .label = 'Objects'
@@ -454,7 +455,7 @@ class SvGetObjectsDataMK5(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
             if obj.type in {'EMPTY', 'CAMERA', 'LAMP', 'LIGHT' }:
                 if o_matrices:
                     l_matrices.append(mtrx)
-                if o_vertices:
+                if o_vertices or o_edges or o_polygons or self.vergroups:
                     verts = []
                 if o_edges:
                     edgs = []
@@ -462,6 +463,9 @@ class SvGetObjectsDataMK5(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
                     pols = []
                 if o_vertices_select:
                     vertices_select1 = []
+                if self.vergroups:
+                    vert_groups = []
+
 
                 material_indexes = []
                 materials_info = dict()
