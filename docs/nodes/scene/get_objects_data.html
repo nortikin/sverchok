@@ -372,6 +372,9 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-panel">3D panel</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-material-idx-and-material-names">About Material Idx and Material Names</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-properties-out-to-the-sockets">Custom Properties out to the sockets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description-custom-properties">Description custom properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-property-animation">Custom property animation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
             </nav>
@@ -386,7 +389,7 @@ document.write(`
                   
   <section id="get-objects-data">
 <h1>Get Objects Data<a class="headerlink" href="#get-objects-data" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/d291d5cf-c65d-467b-938a-5f32ac4d2b36"><img alt="https://github.com/user-attachments/assets/d291d5cf-c65d-467b-938a-5f32ac4d2b36" src="https://github.com/user-attachments/assets/d291d5cf-c65d-467b-938a-5f32ac4d2b36" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/63ffe714-6aec-4d23-b575-c0519abd7298"><img alt="https://github.com/user-attachments/assets/63ffe714-6aec-4d23-b575-c0519abd7298" src="https://github.com/user-attachments/assets/63ffe714-6aec-4d23-b575-c0519abd7298" />
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
@@ -624,6 +627,96 @@ the sorting of Material Names, the value None is placed at the end of the sorted
 </div></blockquote>
 <p>Material Idx can be used to calculate the area of materials.</p>
 </section>
+<section id="custom-properties-out-to-the-sockets">
+<h2>Custom Properties out to the sockets<a class="headerlink" href="#custom-properties-out-to-the-sockets" title="Link to this heading">#</a></h2>
+<p>Custom properties can be out to the output sockets:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/10bffb4a-2ea8-48a1-a149-323a260c42e4"><img alt="https://github.com/user-attachments/assets/10bffb4a-2ea8-48a1-a149-323a260c42e4" src="https://github.com/user-attachments/assets/10bffb4a-2ea8-48a1-a149-323a260c42e4" />
+</a>
+</div></blockquote>
+</section>
+<section id="description-custom-properties">
+<h2>Description custom properties<a class="headerlink" href="#description-custom-properties" title="Link to this heading">#</a></h2>
+<p>Blender has several kinds of custom properties, associated with different parts of an object:</p>
+<ul class="simple">
+<li><p>directly with the object in the scene</p></li>
+<li><p>with the object’s data (the Data section)</p></li>
+<li><p>with materials</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/749d639d-ae29-47d6-965a-1645d11af777"><img alt="https://github.com/user-attachments/assets/749d639d-ae29-47d6-965a-1645d11af777" src="https://github.com/user-attachments/assets/749d639d-ae29-47d6-965a-1645d11af777" />
+</a>
+<p>Some objects may be different. Lamp has no materials, Empty has no Data and Materials, Point Cloud has no Mesh (only verts), but has all types of Custom Properties.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/98510555-106a-4632-b3c0-ad6da160de80"><img alt="https://github.com/user-attachments/assets/98510555-106a-4632-b3c0-ad6da160de80" src="https://github.com/user-attachments/assets/98510555-106a-4632-b3c0-ad6da160de80" />
+</a>
+</div></blockquote>
+<p>Lets create prices for every material. Create two object: a Suzanne and a Sphere with materials. As you can see there are no custom property in materials:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/4bb81e03-bdb9-470b-8a18-54b0b81bc44f"><img alt="https://github.com/user-attachments/assets/4bb81e03-bdb9-470b-8a18-54b0b81bc44f" src="https://github.com/user-attachments/assets/4bb81e03-bdb9-470b-8a18-54b0b81bc44f" />
+</a>
+</div></blockquote>
+<p>Create a Price custom attribute for one material. For example for an Icosphere:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/16b9e511-1d8f-48b2-91ac-737e5f2ced4d"><img alt="https://github.com/user-attachments/assets/16b9e511-1d8f-48b2-91ac-737e5f2ced4d" src="https://github.com/user-attachments/assets/16b9e511-1d8f-48b2-91ac-737e5f2ced4d" />
+</a>
+</div></blockquote>
+<p>As you can see no “Price” custom attribute in another materials for a while. Add Suzanne and Icosphere into “Get Object Data”. Select Icosphere only after:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/a4172654-c977-4394-8a06-de8066e45508"><img alt="https://github.com/user-attachments/assets/a4172654-c977-4394-8a06-de8066e45508" src="https://github.com/user-attachments/assets/a4172654-c977-4394-8a06-de8066e45508" />
+</a>
+</div></blockquote>
+<p>Create new socket:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/40f5002a-3c29-4571-be61-e5f5e83ae415"><img alt="https://github.com/user-attachments/assets/40f5002a-3c29-4571-be61-e5f5e83ae415" src="https://github.com/user-attachments/assets/40f5002a-3c29-4571-be61-e5f5e83ae415" />
+</a>
+<p>This action will copy Price into another materials:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/3da07b40-e8dd-4286-8b3c-5ddf4d8d27fd"><img alt="https://github.com/user-attachments/assets/3da07b40-e8dd-4286-8b3c-5ddf4d8d27fd" src="https://github.com/user-attachments/assets/3da07b40-e8dd-4286-8b3c-5ddf4d8d27fd" />
+</a>
+</div></blockquote>
+<p>Set different prices for materials:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/4bdfa5ca-8f83-41bc-a77b-fbb7ad23e84d"><img alt="https://github.com/user-attachments/assets/4bdfa5ca-8f83-41bc-a77b-fbb7ad23e84d" src="https://github.com/user-attachments/assets/4bdfa5ca-8f83-41bc-a77b-fbb7ad23e84d" />
+</a>
+</div></blockquote>
+<p>And check prices in the socket:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/bee70087-a6e1-4e52-a0ab-ac57eb02e787"><img alt="https://github.com/user-attachments/assets/bee70087-a6e1-4e52-a0ab-ac57eb02e787" src="https://github.com/user-attachments/assets/bee70087-a6e1-4e52-a0ab-ac57eb02e787" />
+</a>
+</div></blockquote>
+<p>Calc Areas by materials:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/f6e49f48-8b36-4051-b4e3-c1b8a56e2b06"><img alt="https://github.com/user-attachments/assets/f6e49f48-8b36-4051-b4e3-c1b8a56e2b06" src="https://github.com/user-attachments/assets/f6e49f48-8b36-4051-b4e3-c1b8a56e2b06" />
+</a>
+</div></blockquote>
+<p>Calc Price of materials:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/dc496857-cd2c-4ab9-8b66-dd51c72ecc84"><img alt="https://github.com/user-attachments/assets/dc496857-cd2c-4ab9-8b66-dd51c72ecc84" src="https://github.com/user-attachments/assets/dc496857-cd2c-4ab9-8b66-dd51c72ecc84" />
+</a>
+</div></blockquote>
+<p>Now you know that Suzanne’s eyes has a price 13.923$.</p>
+</section>
+<section id="custom-property-animation">
+<h2>Custom property animation<a class="headerlink" href="#custom-property-animation" title="Link to this heading">#</a></h2>
+<p>Create Cube and create 2 custom property in Object mode:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/1bdf8a21-9eb6-43fb-adcf-e4ae79624693"><img alt="https://github.com/user-attachments/assets/1bdf8a21-9eb6-43fb-adcf-e4ae79624693" src="https://github.com/user-attachments/assets/1bdf8a21-9eb6-43fb-adcf-e4ae79624693" />
+</a>
+</div></blockquote>
+<p>Create next node scheme and add X and Y custom properties:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/6ccd7b82-be4f-4c9f-8216-8afcf8663c2c"><img alt="https://github.com/user-attachments/assets/6ccd7b82-be4f-4c9f-8216-8afcf8663c2c" src="https://github.com/user-attachments/assets/6ccd7b82-be4f-4c9f-8216-8afcf8663c2c" />
+</a>
+</div></blockquote>
+<p>Create F-curve modifier animation:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/4dad105d-d902-45d5-ae2f-9f9fd66f8ed9"><img alt="https://github.com/user-attachments/assets/4dad105d-d902-45d5-ae2f-9f9fd66f8ed9" src="https://github.com/user-attachments/assets/4dad105d-d902-45d5-ae2f-9f9fd66f8ed9" />
+</a>
+<video width="700" controls>
+  <source src="https://github.com/user-attachments/assets/ce39820a-a789-4776-bd66-e1ff537cf8e2" type="video/mp4">
+ Your browser does not support the video tag.
+</video><p>Now you can do animation of Sverchok Scheme with custom properties and custom properties animation, animation keys and animation modifiers.
+Additionally: The animation of Sverchok Nodes with Blender is not possible.</p>
+<p>Animated custom property example: [GetObjectsData.MK5.002.Blender.3.0.0.blend.zip](<a class="github reference external" href="https://github.com/user-attachments/files/24540889/GetObjectsData.MK5.002.Blender.3.0.0.blend.zip">user-attachments/files</a>)</p>
+</section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
 <img alt="https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png" src="https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png" />
@@ -701,6 +794,9 @@ the sorting of Material Names, the value None is placed at the end of the sorted
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-panel">3D panel</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-material-idx-and-material-names">About Material Idx and Material Names</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-properties-out-to-the-sockets">Custom Properties out to the sockets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description-custom-properties">Description custom properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-property-animation">Custom property animation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
   </nav></div>
