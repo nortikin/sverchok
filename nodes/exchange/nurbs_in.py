@@ -99,7 +99,7 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
     legacy_mode: bpy.props.BoolProperty(
         name='Legacy Mode',
         description='Flats output lists (affects all sockets)',
-        default=False,
+        default=True,
         update=updateNode
         )
     
