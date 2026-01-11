@@ -205,8 +205,7 @@ class SvGetObjectsDataMK5(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         elif socket.is_output:  # unlinked OUTPUT
             layout.separator()
 
-    def sv_init(self, context):
-        
+    def sv_init(self, context):        
         self.width = 230
         
         self.inputs.new('SvObjectSocket'   , "objects")
