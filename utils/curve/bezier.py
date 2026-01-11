@@ -6,12 +6,13 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from math import sqrt
+#from math import sqrt
 
 from sverchok.data_structure import zip_long_repeat
-from sverchok.utils.math import binomial, binomial_array, sphere
+from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputException
+from sverchok.utils.math import binomial, binomial_array
 from sverchok.utils.geom import Spline, bounding_box, are_points_coplanar, get_common_plane, PlaneEquation, LineEquation
-from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.nurbs_common import SvNurbsMaths, nurbs_divide, to_homogenous, from_homogenous
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -51,7 +52,8 @@ class SvBezierSplitMixin:
     #         return c3
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
-        ndim = 3
+        if new_t_min == new_t_max:
+            return None
         p = self.get_degree()
         cpts = self.get_control_points()
 
@@ -87,27 +89,75 @@ def _get_binom_square_matrix(p):
         _binom_square_matrices_cache[p] = A
     return _binom_square_matrices_cache[p]
 
-class SvBezierCommon:
-    def bezier_distance_curve(self, src_point):
-        p = self.get_degree()
-        cpts = self.get_control_points() - np.array(src_point)
-        ndim = cpts.shape[-1]
-        binom = binomial_array(2*p+1)
+def calc_bezier_square_cpts(cpts, return_sum = True):
+    p = len(cpts) - 1
+    ndim = cpts.shape[-1]
+    binom = binomial_array(2*p+1)
 
-        def calc_square(cs):
-            ds = np.zeros((2*p+1,))
-            cT = cs[np.newaxis].T
-            A = _get_binom_square_matrix(p)
-            for k in range(2*p+1):
-                ds[k] = cs @ A[k] @ cT
-            denominator = binom[2*p, :]
-            return ds / denominator
-        
+    def calc_square(cs):
+        ds = np.zeros((2*p+1,))
+        cT = cs[np.newaxis].T
+        A = _get_binom_square_matrix(p)
+        for k in range(2*p+1):
+            ds[k] = cs @ A[k] @ cT
+        denominator = binom[2*p, :]
+        return ds / denominator
+
+    if return_sum:
         new_cpts = np.zeros((2*p+1, 1))
         for i in range(ndim):
             sq = calc_square(cpts[:,i])
-            #print("Sq", sq)
             new_cpts[:,0] += sq
+        return new_cpts
+    else:
+        new_cpts = np.zeros((2*p+1, ndim))
+        for i in range(ndim):
+            new_cpts[:,i] = calc_square(cpts[:,i])
+        return new_cpts
+
+class SvBezierCommon:
+    def is_bezier(self):
+        return True
+
+    def to_bezier(self):
+        return self
+
+    def to_bezier_segments(self, to_bezier_class=True):
+        return [self]
+
+    def get_bounding_box(self):
+        return bounding_box(self.get_control_points())
+
+    def reparametrize(self, new_t_min, new_t_max):
+        return self.to_nurbs().reparametrize(new_t_min, new_t_max)
+
+    def concatenate(self, curve2, tolerance=None):
+        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+    
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def is_planar(self, tolerance=1e-6):
+        return are_points_coplanar(self.points, tolerance)
+
+    def get_plane(self, tolerance=1e-6):
+        return get_common_plane(self.points, tolerance)
+
+    def bezier_distance_curve(self, src_point):
+        cpts = self.get_control_points() - np.array(src_point)
+        new_cpts = calc_bezier_square_cpts(cpts)
         return SvBezierCurve.from_control_points(new_cpts)
 
     def is_inside_sphere(self, sphere_center, sphere_radius):
@@ -513,20 +563,11 @@ class SvBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
             result.append(third)
         return result
 
-    def reparametrize(self, new_t_min, new_t_max):
-        return self.to_nurbs().reparametrize(new_t_min, new_t_max)
-
     def get_degree(self):
         return self.degree
 
     def is_rational(self):
         return False
-
-    def is_planar(self, tolerance=1e-6):
-        return are_points_coplanar(self.points, tolerance)
-
-    def get_plane(self, tolerance=1e-6):
-        return get_common_plane(self.points, tolerance)
 
     def get_control_points(self):
         return self.points
@@ -548,45 +589,17 @@ class SvBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
         points = elevate_bezier_degree(self.degree, self.points, delta)
         return SvBezierCurve(points)
 
-    def get_bounding_box(self):
-        return bounding_box(self.get_control_points())
-
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(self.degree, len(self.points))
         return SvNurbsMaths.build_curve(implementation,
                 degree = self.degree, knotvector = knotvector,
                 control_points = self.points)
 
-    def concatenate(self, curve2, tolerance=None):
-        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
-        if curve2 is None:
-            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
-        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
-
-    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
-    
-    def extrude_along_vector(self, vector):
-        return self.to_nurbs().extrude_along_vector(vector)
-
-    def make_ruled_surface(self, curve2, vmin, vmax):
-        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
-
-    def extrude_to_point(self, point):
-        return self.to_nurbs().extrude_to_point(point)
-
     def lerp_to(self, curve2, coefficient):
         if isinstance(curve2, SvBezierCurve) and curve2.degree == self.degree:
             points = (1.0 - coefficient) * self.points + coefficient * curve2.points
             return SvBezierCurve(points)
         return self.to_nurbs().lerp_to(curve2, coefficient)
-    
-
-    def to_bezier(self):
-        return self
-
-    def to_bezier_segments(self):
-        return [self]
 
     def reverse(self):
         return SvBezierCurve(self.points[::-1])
@@ -736,27 +749,6 @@ class SvCubicBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
     def get_bounding_box(self):
         return bounding_box(self.get_control_points())
 
-    def reparametrize(self, new_t_min, new_t_max):
-        return self.to_nurbs().reparametrize(new_t_min, new_t_max)
-
-    def concatenate(self, curve2, tolerance=None):
-        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
-        if curve2 is None:
-            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
-        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
-
-    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
-
-    def extrude_along_vector(self, vector):
-        return self.to_nurbs().extrude_along_vector(vector)
-
-    def make_ruled_surface(self, curve2, vmin, vmax):
-        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
-    
-    def extrude_to_point(self, point):
-        return self.to_nurbs().extrude_to_point(point)
-
     def lerp_to(self, curve2, coefficient):
         if isinstance(curve2, SvCubicBezierCurve):
             p0 = (1.0 - coefficient) * self.p0 + coefficient * curve2.p0
@@ -799,4 +791,149 @@ class SvCubicBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
 
     def reverse(self):
         return SvCubicBezierCurve(self.p3, self.p2, self.p1, self.p0)
+
+def split_homogenous(homogenous_pts):
+    points = homogenous_pts[:,:-1]
+    weights = homogenous_pts[:,-1]
+    return points, weights
+
+class SvRationalBezierCurve(SvCurve, SvBezierCommon):
+    __description__ = "Rational Bezier"
+    def __init__(self, points, weights):
+        self.points = np.asarray(points)
+        self.weights = np.asarray(weights)
+        self.homogenous_curve = SvBezierCurve.from_control_points(to_homogenous(self.points, self.weights))
+
+    @classmethod
+    def build(cls, points, weights=None):
+        if weights is None:
+            n = len(points)
+            weights = np.ones((n,))
+        return SvRationalBezierCurve(points, weights)
+
+    @classmethod
+    def from_homogenous_curve(cls, homogenous_curve):
+        homogenous_cpts = homogenous_curve.get_control_points()
+        points, weights = from_homogenous(homogenous_cpts)
+        return SvRationalBezierCurve(points, weights)
+
+    def copy(self, control_points = None, weights = None):
+        if control_points is None:
+            control_points = self.points
+        if weights is None:
+            weights = self.weights
+        return SvRationalBezierCurve(control_points, weights)
+
+    def get_u_bounds(self):
+        return (0.0, 1.0)
+
+    def get_degree(self):
+        return len(self.points) - 1
+
+    def get_control_points(self):
+        return self.points
+
+    def get_weights(self):
+        return self.weights
+
+    def get_homogenous_control_points(self):
+        return self.homogenous_curve.get_control_points()
+
+    def get_end_points(self):
+        return self.points[0], self.points[-1]
+
+    def evaluate_array(self, ts):
+        homogenous = self.homogenous_curve.evaluate_array(ts)
+        points, weights = split_homogenous(homogenous)
+        return nurbs_divide(points, weights)
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def tangent_array(self, ts, tangent_delta=None):
+        # curve = numerator / denominator
+        # ergo:
+        # numerator = curve * denominator
+        # ergo:
+        # numerator' = curve' * denominator + curve * denominator'
+        # ergo:
+        # curve' = (numerator' - curve*denominator') / denominator
+        homogenous = self.homogenous_curve.evaluate_array(ts)
+        numerator, denominator = split_homogenous(homogenous)
+        curve = numerator / denominator
+        homogenous1 = self.homogenous_curve.tangent_array(ts)
+        numerator1, denominator1 = split_homogenous(homogenous1)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        return curve1
+
+    def tangent(self, t, tangent_delta=None):
+        return self.tangent_array(np.array([t]))[0]
+
+    def reparametrize(self, new_t_min, new_t_max):
+        return self.to_nurbs().reparametrize(new_t_min, new_t_max)
+
+    def is_rational(self, tolerance=1e-6):
+        weights = self.get_weights()
+        w, W = weights.min(), weights.max()
+        return (W - w) > tolerance
+
+    def elevate_degree(self, delta=None, target=None):
+        if delta is None and target is None:
+            delta = 1
+        if delta is not None and target is not None:
+            raise ArgumentError("Of delta and target, only one parameter can be specified")
+        degree = self.get_degree()
+        if delta is None:
+            delta = target - degree
+            if delta < 0:
+                raise SvInvalidInputException(f"Curve already has degree {degree}, which is greater than target {target}")
+        if delta == 0:
+            return self
+
+        control_points = self.homogenous_curve.get_control_points()
+        control_points = elevate_bezier_degree(degree, control_points, delta)
+        control_points, weights = from_homogenous(control_points)
+        return SvRationalBezierCurve(control_points, weights)
+
+    def bezier_distance_curve(self, src_point):
+        src_point = np.array(src_point)
+        cpts = self.points - src_point
+        homogenous = to_homogenous(cpts, self.weights)
+        homogenous_square_cpts = calc_bezier_square_cpts(homogenous, return_sum=False)
+        new_cpts, new_weights = from_homogenous(homogenous_square_cpts)
+        new_cpts_1d = new_cpts.sum(axis=1)[np.newaxis].T
+        return SvRationalBezierCurve(new_cpts_1d, new_weights)
+
+    def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
+        knotvector = sv_knotvector.generate(self.get_degree(), len(self.points))
+        return SvNurbsMaths.build_curve(implementation,
+                degree = self.get_degree(), knotvector = knotvector,
+                control_points = self.points, weights = self.weights)
+    
+    def reverse(self):
+        return SvRationalBezierCurve(self.points[::-1], self.weights[::-1])
+    
+    def split_at(self, t):
+        hom1, hom2 = self.homogenous_curve.split_at(t)
+        if hom1 is not None:
+            segment1 = SvRationalBezierCurve.from_homogenous_curve(hom1)
+        else:
+            segment1 = None
+        if hom2 is not None:
+            segment2 = SvRationalBezierCurve.from_homogenous_curve(hom2)
+        else:
+            segment2 = None
+        return segment1, segment2
+
+    def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        if new_t_min >= 0:
+            c1, c2 = self.split_at(new_t_min)
+        else:
+            c2 = self
+        if new_t_max <= 1.0:
+            t1 = (new_t_max - new_t_min) / (1.0 - new_t_min)
+            c3, c4 = c2.split_at(t1)
+        else:
+            c3 = c2
+        return c3
 

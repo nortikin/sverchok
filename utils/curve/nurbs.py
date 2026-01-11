@@ -15,7 +15,7 @@ from math import pi
 
 from sverchok.core.sv_custom_exceptions import AlgorithmError, SvExternalLibraryException, SvInvalidInputException, ArgumentError
 from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, CurveEndpointsNotMatchingException, calc_taylor_nurbs_matrices
-from sverchok.utils.curve.bezier import SvBezierCurve
+from sverchok.utils.curve.bezier import SvBezierCurve, SvRationalBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvPointCurve
 from sverchok.utils.curve.algorithms import unify_curves_degree
@@ -697,7 +697,11 @@ class SvNurbsCurve(SvCurve):
             n = len(points)
             p = self.get_degree()
             raise UnsupportedCurveTypeException(f"Curve with {n} control points and {p}'th degree can not be converted into Bezier curve")
-        return SvBezierCurve.from_control_points(points)
+        if self.is_rational():
+            weights = self.get_weights()
+            return SvRationalBezierCurve(points, weights)
+        else:
+            return SvBezierCurve.from_control_points(points)
 
     def to_bezier_segments(self, to_bezier_class=True):
         """
@@ -706,8 +710,6 @@ class SvNurbsCurve(SvCurve):
         Returns:
             If `to_bezier_class` is True, then a list of SvBezierCurve instances. Otherwise, a list of SvNurbsCurve instances.
         """
-        if to_bezier_class and self.is_rational():
-            raise UnsupportedCurveTypeException("Rational NURBS curve can not be converted into non-rational Bezier curves")
         if self.is_bezier():
             if to_bezier_class:
                 return [self.to_bezier()]
