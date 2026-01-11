@@ -5,6 +5,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+##########################################################################################################################
+####### DO NOT CHANGE!!! this file for old_nodes Get Objects Data MK4 Bezier In MK2 and NURBS In MK2 #####################
+##########################################################################################################################
+
 import bpy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
