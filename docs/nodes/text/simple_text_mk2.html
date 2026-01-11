@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Transform Select &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Simple Text &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/transforms/transform_select';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/text/simple_text_mk2';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Analyzers" href="../analyzer/analyzer_index.html" />
-    <link rel="prev" title="Transform mesh" href="transform_mesh.html" />
+    <link rel="next" title="Stethoscope" href="stethoscope_v28.html" />
+    <link rel="prev" title="Data Shape" href="shape.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -170,27 +170,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="transforms_index.html">Transforms</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apply.html">Matrix Apply (verts)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="barycentric_transform.html">Barycentric Transform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bend_along_path.html">Bend Object Along Path</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="move_mk3.html">Move</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="rotate_mk3.html">Rotate</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
-<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Transform Select</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
@@ -207,7 +187,20 @@
 <li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="text_index.html">Text</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="datetime_strings.html">Datetime Strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debug_print.html">Debug Print</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gtext.html">GText</a></li>
+<li class="toctree-l3"><a class="reference internal" href="note.html">Note</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shape.html">Data Shape</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Simple Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stethoscope_v28.html">Stethoscope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="string_tools.html">Strings Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="text_in_mk2.html">Text In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="text_out_mk2.html">Text Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_text_mk3.html">Viewer Text</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
@@ -276,7 +269,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/transforms/transform_select.rst" target="_blank"
+      <li><a href="../../_sources/nodes/text/simple_text_mk2.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -360,7 +353,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Transform Select</h1>
+    <h1>Simple Text</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -371,11 +364,6 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
             </nav>
         </div>
@@ -387,95 +375,12 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="transform-select">
-<h1>Transform Select<a class="headerlink" href="#transform-select" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191537927-f7fd8f0e-600f-4b4f-93c5-e4341bde9dee.png"><img alt="https://user-images.githubusercontent.com/14288520/191537927-f7fd8f0e-600f-4b4f-93c5-e4341bde9dee.png" src="https://user-images.githubusercontent.com/14288520/191537927-f7fd8f0e-600f-4b4f-93c5-e4341bde9dee.png" />
-</a>
+  <section id="simple-text">
+<h1>Simple Text<a class="headerlink" href="#simple-text" title="Link to this heading">#</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node splits the vertex data in two groups, applies one different matrix to each group and joins it again.
-It would work as a standard transformation of the selected geometry when working on “Edit Mode”.</p>
-</section>
-<section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
-<p>This node has the following inputs:</p>
-<ul class="simple">
-<li><p><strong>Mask</strong>: List of boolean or integer flags. If this input is not connected, a True, False, True.. mask will be created.</p></li>
-<li><p><strong>Verts</strong>: Vertex list.</p></li>
-<li><p><strong>PolyEdge</strong> : It can be Polygon or Edge data.</p></li>
-<li><p><strong>Matrix T</strong> : Matrix applied to the vertex flagged as true.</p></li>
-<li><p><strong>Matrix F</strong> : Matrix applied to the vertex flagged as false.</p></li>
-</ul>
-</section>
-<section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
-<p>This node has the following parameters:</p>
-<ul class="simple">
-<li><p><strong>Mask Type</strong>: Specifies if the supplied mask refers to the Vertex data or to the PoleEdge data</p></li>
-</ul>
-</section>
-<section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
-<p>This node has the following outputs:</p>
-<ul class="simple">
-<li><p><strong>Vertices</strong>. The whole group of vertices</p></li>
-<li><p><strong>PolyEdge</strong>. A copy of the PolyEdge data supplied</p></li>
-<li><p><strong>PolyEdge O</strong>. PolyEdge data with vertices which are true and false (index referred to “Vertices” output)</p></li>
-<li><p><strong>Vertices T</strong>. Only the vertices marked as true</p></li>
-<li><p><strong>PolyEdge T</strong>. PolyEdge data with vertices which are true (index referred to “Vertices T” output)</p></li>
-<li><p><strong>Vertices F</strong>. Only the vertices marked as false</p></li>
-<li><p><strong>PolyEdge F</strong>. PolyEdge data with vertices which are false (index referred to “Vertices F” output)</p></li>
-</ul>
-</section>
-<section id="see-also">
-<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask_convert.html"><span class="doc">List Mask Converter</span></a></p></li>
-</ul>
-</section>
-<section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191612450-9969c85e-a42e-4687-adc2-01c31a39b8d2.png"><img alt="https://user-images.githubusercontent.com/14288520/191612450-9969c85e-a42e-4687-adc2-01c31a39b8d2.png" src="https://user-images.githubusercontent.com/14288520/191612450-9969c85e-a42e-4687-adc2-01c31a39b8d2.png" />
-</a>
-<ul class="simple">
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
-<li><p>Transform-&gt; <a class="reference internal" href="apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
-<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/mesh_join_mk2.html"><span class="doc">Mesh Join</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
-<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
-<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
-<li><p>Logic-&gt; <a class="reference internal" href="../logic/switch_MK2.html"><span class="doc">Switch</span></a></p></li>
-<li><p>Text-&gt; <span class="xref std std-doc">Simple Text</span></p></li>
-<li><p>Text-&gt; <a class="reference internal" href="../text/string_tools.html"><span class="doc">String Tools</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
-</ul>
-<hr class="docutils" />
-<p>Showing the different edges groups:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191610452-cc661362-17f3-4b1d-91bb-3e1df0e332d6.png"><img alt="https://user-images.githubusercontent.com/14288520/191610452-cc661362-17f3-4b1d-91bb-3e1df0e332d6.png" src="https://user-images.githubusercontent.com/14288520/191610452-cc661362-17f3-4b1d-91bb-3e1df0e332d6.png" />
-</a>
-<ul class="simple">
-<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/bbox_mk3.html"><span class="doc">Bounding Box</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
-<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
-<li><p>List-&gt; <a class="reference internal" href="../list_masks/index_to_mask.html"><span class="doc">Index To Mask</span></a></p></li>
-<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
-</ul>
-<hr class="docutils" />
-<p>You can input multiple matrices and they will be paired with the verts:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191610875-d24c4088-f8f7-47b0-a5ef-f9b53117ed79.png"><img alt="https://user-images.githubusercontent.com/14288520/191610875-d24c4088-f8f7-47b0-a5ef-f9b53117ed79.png" src="https://user-images.githubusercontent.com/14288520/191610875-d24c4088-f8f7-47b0-a5ef-f9b53117ed79.png" />
-</a>
-<ul class="simple">
-<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
-<li><p>SINE X: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
-<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
-<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-</ul>
+<p>This node can be used to pass a single string into the Node Tree, through a Text socket.</p>
+<img alt="https://user-images.githubusercontent.com/619340/169515003-bb510280-686b-407d-a7a4-af1d8a633e56.png" src="https://user-images.githubusercontent.com/619340/169515003-bb510280-686b-407d-a7a4-af1d8a633e56.png" />
 </section>
 </section>
 
@@ -491,20 +396,20 @@ It would work as a standard transformation of the selected geometry when working
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="transform_mesh.html"
+       href="shape.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Transform mesh</p>
+        <p class="prev-next-title">Data Shape</p>
       </div>
     </a>
     <a class="right-next"
-       href="../analyzer/analyzer_index.html"
+       href="stethoscope_v28.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Analyzers</p>
+        <p class="prev-next-title">Stethoscope</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -525,11 +430,6 @@ It would work as a standard transformation of the selected geometry when working
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
   </nav></div>
 
