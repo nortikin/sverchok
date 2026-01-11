@@ -1625,13 +1625,13 @@ def intersect_curve_sphere(curve, ctr, radius,
     result = []
     t_min, t_max = curve.get_u_bounds()
     for t1, t2 in get_segments(t_min, t_max):
-        logger.info(f"Run numeric method: {t1} - {t2}")
+        logger.debug(f"Run numeric method: {t1} - {t2}")
         solution = root_scalar(goal, method='brentq',
                                bracket = (t1, t2),
                                xtol = tolerance)
         if solution.converged:
             t = solution.root
-            logger.info(f"--> Found: t = {t}")
+            logger.debug(f"--> Found: t = {t}")
             result.append(t)
             if max_results is not None and len(result) >= max_results:
                 break
@@ -1814,13 +1814,13 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
 
     result = []
     for t1, t2, orig_segment, segment in get_segments():
-        logger.info(f"Run numeric method: {t1} - {t2}")
+        logger.debug(f"Run numeric method: {t1} - {t2}")
         solution = root_scalar(get_goal(orig_segment), method='brentq',
                                bracket = (t1, t2),
                                xtol = tolerance)
         if solution.converged:
             t = solution.root
-            logger.info(f"--> Found: t = {t}")
+            logger.debug(f"--> Found: t = {t}")
             #u = (t2 - t1) * t + t1
             result.append(t)
             if max_results is not None and len(result) >= max_results:
