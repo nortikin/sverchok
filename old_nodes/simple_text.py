@@ -9,6 +9,7 @@ class SvSimpleTextNode(bpy.types.Node, sverchok.node_tree.SverchCustomTreeNode):
     bl_idname = 'SvSimpleTextNode'
     bl_label = 'Simple Text'
     bl_icon = 'FILE_TEXT'
+    replacement_nodes = [('SvSimpleTextNodeMK2', None, None)] 
     
     def sv_init(self, context):
         item = self.outputs.new('SvTextSocket', "Text")

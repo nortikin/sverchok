@@ -725,7 +725,7 @@
     - SvGTextNode
     - ---
     - SvStringsToolsNode
-    - SvSimpleTextNode
+    - SvSimpleTextNodeMK2
 
 - Scene:
     - icon_name: SCENE_DATA
