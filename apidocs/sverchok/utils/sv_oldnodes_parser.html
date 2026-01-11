@@ -96,7 +96,7 @@ el.replaceWith(d);
         classes = [n for n in node.body if isinstance(n, ast.ClassDef)]
         for c in classes:
             for k in c.bases:
-                if hasattr(k, &#39;id&#39;) and k.id == &#39;SverchCustomTreeNode&#39;:
+                if hasattr(k, &#39;id&#39;) and k.id == &#39;SverchCustomTreeNode&#39; or hasattr(k, &#39;attr&#39;) and k.attr == &#39;Node&#39;:
                     collection.append([c.name, old_node_file])
 
     return collection</code></pre>
