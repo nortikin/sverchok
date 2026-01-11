@@ -152,6 +152,7 @@
     - SvLengthRebuildCurveNode
     - SvExCrossCurvePlaneNode
     - SvExCrossCurveSurfaceNode
+    - SvCrossCurveSphereNode
     - ---
     - SvAdaptivePlotCurveNode
     - SvExEvalCurveNode

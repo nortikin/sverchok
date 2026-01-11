@@ -2,6 +2,8 @@ import numpy as np
 
 from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputException
 from sverchok.utils.math import distribute_int
+from sverchok.utils.geom import Spline
+from sverchok.utils.nurbs_common import SvNurbsMaths, from_homogenous
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import CurvesUnificationException, remove_excessive_knots, unify_curves
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveOnSurfaceCurvaturesCalculator
@@ -84,13 +86,205 @@ class GordonUnificationException(ArgumentError):
     __description__ = "Gordon algorithm: NURBS unification exception"
     pass
 
+def _loft_impl(curves, tknots = None, degree = None,
+               metric = 'DISTANCE',
+               implementation = SvNurbsMaths.NATIVE,
+               logger = None):
+    degree_u = curves[0].get_degree()
+    if degree is None:
+        degree = degree_u
+
+    src_points = [curve.get_homogenous_control_points() for curve in curves]
+    src_points = np.array(src_points)
+    src_points = np.transpose(src_points, axes=(1,0,2))
+
+    if tknots is None:
+        tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(src_points.shape[0])]
+        tknots_vs = np.array(tknots_vs)
+        tknots = np.mean(tknots_vs, axis=0)
+
+    v_curves = [interpolate_nurbs_curve(degree, points, tknots=tknots, logger=logger) for points in src_points]
+
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
+    control_points = np.array(control_points)
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
+
+    knotvector_u = curves[0].get_knotvector()
+    knotvector_v = v_curves[0].get_knotvector()
+
+    surface = SvNurbsMaths.build_surface(implementation,
+                degree_u, degree,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+    surface.u_bounds = curves[0].get_u_bounds()
+    return surface
+
+def loft_on_knotvector(curves, knotvector, tknots = None, degree = None, metric = 'DISTANCE',
+                       implementation = SvNurbsMaths.NATIVE,
+                       logger = None):
+    degree_u = curves[0].get_degree()
+    if degree is None:
+        degree = degree_u
+
+    src_points = [curve.get_homogenous_control_points() for curve in curves]
+    src_points = np.array(src_points)
+    src_points = np.transpose(src_points, axes=(1,0,2))
+
+    if tknots is None:
+        tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(src_points.shape[0])]
+        tknots_vs = np.array(tknots_vs)
+        tknots = np.mean(tknots_vs, axis=0)
+
+    v_curves = [interpolate_nurbs_curve(degree, points, tknots=tknots, knotvector = knotvector, logger=logger) for points in src_points]
+
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
+    control_points = np.array(control_points)
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
+
+    knotvector_u = curves[0].get_knotvector()
+    if knotvector is None:
+        knotvector_v = v_curves[0].get_knotvector()
+    else:
+        knotvector_v = knotvector
+
+    surface = SvNurbsMaths.build_surface(implementation,
+                degree_u, degree,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+    surface.u_bounds = curves[0].get_u_bounds()
+    return surface
+
+def _gordon_surface_impl_new_knotvector(u_curves, v_curves, intersections,
+                                       loft_u_kwargs, loft_v_kwargs,
+                                       interpolate_kwargs,
+                                       knotvector_accuracy = 6,
+                                       implementation = SvNurbsMaths.NATIVE):
+    """
+    Gordon Surface algorithm - original implementation.
+    This implementation creates new U and V knotvectors.
+    """
+    u_curves_degree = u_curves[0].get_degree()
+    v_curves_degree = v_curves[0].get_degree()
+    n = len(intersections)
+    m = len(intersections[0])
+
+    loft_v_degree = min(len(u_curves)-1, v_curves_degree)
+    loft_u_degree = min(len(v_curves)-1, u_curves_degree)
+
+    lofted_v = _loft_impl(u_curves, degree=loft_v_degree, **loft_v_kwargs)
+    lofted_u = _loft_impl(v_curves, degree=loft_u_degree, **loft_u_kwargs)
+    lofted_u = lofted_u.swap_uv()
+
+    int_degree_u = min(m-1, u_curves_degree)
+    int_degree_v = min(n-1, v_curves_degree)
+    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections, **interpolate_kwargs)
+    interpolated = interpolated.swap_uv()
+
+    lofted_u, lofted_v, interpolated = unify_nurbs_surfaces([lofted_u, lofted_v, interpolated], knotvector_accuracy=knotvector_accuracy)
+
+    control_points = lofted_u.get_control_points() + \
+                        lofted_v.get_control_points() - \
+                        interpolated.get_control_points()
+
+    surface = SvNurbsSurface.build(implementation,
+                interpolated.get_degree_u(), interpolated.get_degree_v(),
+                interpolated.get_knotvector_u(), interpolated.get_knotvector_v(),
+                control_points, weights=None)
+    #print(f"Result: {surface}")
+
+    return lofted_u, lofted_v, interpolated, surface
+
+def _gordon_surface_impl_orig_knotvector(u_curves, v_curves, intersections,
+                                       metric = 'DISTANCE',
+                                       u_knots = None, v_knots = None,
+                                       implementation = SvNurbsMaths.NATIVE,
+                                       logger = None):
+    """
+    Gordon Surface algorithm - original implementation.
+    This implementation creates new U and V knotvectors.
+    """
+    u_curves_degree = u_curves[0].get_degree()
+    v_curves_degree = v_curves[0].get_degree()
+    n = len(intersections)
+    m = len(intersections[0])
+
+    loft_v_degree = min(len(u_curves)-1, v_curves_degree)
+    loft_u_degree = min(len(v_curves)-1, u_curves_degree)
+
+    print(f"Degree U {u_curves_degree}, N V-curves {len(v_curves)}")
+    if u_curves_degree + 1 > len(v_curves):
+        knotvector_u = None
+    else:
+        knotvector_u = u_curves[0].get_knotvector()
+    print(f"Degree V {v_curves_degree}, N U-curves {len(u_curves)}")
+    if v_curves_degree + 1 > len(u_curves):
+        knotvector_v = None
+    else:
+        knotvector_v = v_curves[0].get_knotvector()
+    print(f"KV U {len(knotvector_u)}, KV V {len(knotvector_v)}")
+
+    if u_knots is None:
+        loft_u_knots = None
+    else:
+        loft_u_knots = np.mean(u_knots, axis=0)
+    if v_knots is None:
+        loft_v_knots = None
+    else:
+        loft_v_knots = np.mean(v_knots, axis=0)
+
+    print(f"U knots {loft_u_knots}, V knots {loft_v_knots}")
+    lofted_v = loft_on_knotvector(u_curves, knotvector_v,
+                                  degree = loft_v_degree,
+                                  tknots = loft_v_knots,
+                                  metric = metric,
+                                  logger = logger)
+    lofted_u = loft_on_knotvector(v_curves, knotvector_u,
+                                  degree = loft_u_degree,
+                                  tknots = loft_u_knots,
+                                  metric = metric,
+                                  logger = logger)
+    lofted_u = lofted_u.swap_uv()
+
+    int_degree_u = min(m-1, u_curves_degree)
+    int_degree_v = min(n-1, v_curves_degree)
+    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections,
+                                             metric = metric,
+                                             uknots = loft_v_knots, vknots = loft_u_knots,
+                                             knotvector_u = knotvector_v,
+                                             knotvector_v = knotvector_u,
+                                             implementation = implementation,
+                                             logger = logger)
+    interpolated = interpolated.swap_uv()
+
+    lofted_u, lofted_v, interpolated = unify_nurbs_surfaces([lofted_u, lofted_v, interpolated], knotvector_accuracy=6)
+
+    control_points = lofted_u.get_control_points() + \
+                        lofted_v.get_control_points() - \
+                        interpolated.get_control_points()
+
+    surface = SvNurbsSurface.build(implementation,
+                interpolated.get_degree_u(), interpolated.get_degree_v(),
+                interpolated.get_knotvector_u(), interpolated.get_knotvector_v(),
+                control_points, weights=None)
+    #print(f"Result: {surface}")
+
+    return lofted_u, lofted_v, interpolated, surface
+
 def gordon_surface(u_curves, v_curves, intersections,
         metric='POINTS',
         u_knots=None, v_knots=None,
         knots_unification_method = 'UNIFY',
         knotvector_accuracy=6,
         reparametrizer = None,
-        implementation = SvNurbsSurface.NATIVE,
+        implementation = SvNurbsMaths.NATIVE,
         logger=None):
     """
     Generate a NURBS surface from a net of NURBS curves, by use of Gordon's algorithm.
@@ -143,6 +337,7 @@ def gordon_surface(u_curves, v_curves, intersections,
     else:
         loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': metric}
     interpolate_kwargs['logger'] = logger
+    loft_u_kwargs['logger'] = loft_v_kwargs['logger'] = logger
 
     u_curves = unify_curves_degree(u_curves)
     try:
@@ -162,42 +357,18 @@ def gordon_surface(u_curves, v_curves, intersections,
         else:
             explain = ""
         raise GordonUnificationException(f"Cannot unify V curves{explain}: {e}") from e
+    
+    # return _gordon_surface_impl_orig_knotvector(u_curves, v_curves, intersections,
+    #                                             metric = metric,
+    #                                             u_knots = u_knots, v_knots = v_knots,
+    #                                             implementation = implementation,
+    #                                             logger = logger)
 
-    u_curves_degree = u_curves[0].get_degree()
-    v_curves_degree = v_curves[0].get_degree()
-    n = len(intersections)
-    m = len(intersections[0])
-
-    loft_v_degree = min(len(u_curves)-1, v_curves_degree)
-    loft_u_degree = min(len(v_curves)-1, u_curves_degree)
-
-    _,_,lofted_v = simple_loft(u_curves, degree_v=loft_v_degree, knotvector_accuracy = knotvector_accuracy, **loft_v_kwargs)
-    _,_,lofted_u = simple_loft(v_curves, degree_v=loft_u_degree, knotvector_accuracy = knotvector_accuracy, **loft_u_kwargs)
-    lofted_u = lofted_u.swap_uv()
-
-    int_degree_u = min(m-1, u_curves_degree)
-    int_degree_v = min(n-1, v_curves_degree)
-    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections, **interpolate_kwargs)
-    interpolated = interpolated.swap_uv()
-    #print(f"Loft.U: {lofted_u}")
-    #print(f"Loft.V: {lofted_v}")
-    #print(f"Interp: {interpolated}")
-    #print(f"        {interpolated.get_knotvector_u()}")
-    #print(f"        {interpolated.get_knotvector_v()}")
-
-    lofted_u, lofted_v, interpolated = unify_nurbs_surfaces([lofted_u, lofted_v, interpolated], knotvector_accuracy=knotvector_accuracy)
-
-    control_points = lofted_u.get_control_points() + \
-                        lofted_v.get_control_points() - \
-                        interpolated.get_control_points()
-
-    surface = SvNurbsSurface.build(implementation,
-                interpolated.get_degree_u(), interpolated.get_degree_v(),
-                interpolated.get_knotvector_u(), interpolated.get_knotvector_v(),
-                control_points, weights=None)
-    #print(f"Result: {surface}")
-
-    return lofted_u, lofted_v, interpolated, surface
+    return _gordon_surface_impl_new_knotvector(u_curves, v_curves, intersections,
+                                              loft_u_kwargs=loft_u_kwargs, loft_v_kwargs=loft_v_kwargs,
+                                              interpolate_kwargs=interpolate_kwargs,
+                                              knotvector_accuracy=knotvector_accuracy,
+                                              implementation=implementation)
 
 TANGENCY_G1 = 'G1'
 TANGENCY_G2 = 'G2'

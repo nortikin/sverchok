@@ -332,6 +332,7 @@
         - SvCurveLengthParameterMk2Node
         - SvExCrossCurvePlaneNode
         - SvExCrossCurveSurfaceNode
+        - SvCrossCurveSphereNode
     - Analyze NURBS Curve:
         - icon_name: VIEWZOOM
         - SvIntersectNurbsCurvesNode

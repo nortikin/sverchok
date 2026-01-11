@@ -118,7 +118,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knots_v = 'AVERAGE',
     else:
         knotvectors = np.array([curve.get_knotvector() for curve in curves])
         knotvector_u = knotvectors.mean(axis=0)
-    print(f"Kv U: {knotvector_u.shape}, V: {knotvector_v.shape}")
+    #print(f"Kv U: {knotvector_u.shape}, V: {knotvector_v.shape}")
     
     surface = SvNurbsMaths.build_surface(implementation,
                 degree_u, degree_v,
@@ -280,7 +280,12 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
 
     return [curve.transform(None, back) for curve, back in zip(iso_curves, back_vectors)]
 
-def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', uknots=None, vknots=None, implementation = SvNurbsMaths.NATIVE, logger=None):
+def interpolate_nurbs_surface(degree_u, degree_v, points,
+                              metric='DISTANCE',
+                              uknots=None, vknots=None,
+                              knotvector_u = None, knotvector_v = None,
+                              implementation = SvNurbsMaths.NATIVE,
+                              logger=None):
     points = np.asarray(points)
     n = len(points)
     m = len(points[0])
@@ -298,8 +303,10 @@ def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', ukn
         knots = np.array([Spline.create_knots(points[:,j], metric=metric) for j in range(m)])
         vknots = knots.mean(axis=0)
 
-    knotvector_u = sv_knotvector.from_tknots(degree_u, uknots)
-    knotvector_v = sv_knotvector.from_tknots(degree_v, vknots)
+    if knotvector_u is None:
+        knotvector_u = sv_knotvector.from_tknots(degree_u, uknots)
+    if knotvector_v is None:
+        knotvector_v = sv_knotvector.from_tknots(degree_v, vknots)
 
     u_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_u, points[i,:], tknots=uknots, logger=logger) for i in range(n)]
     u_curves_cpts = np.array([curve.get_control_points() for curve in u_curves])

@@ -125,6 +125,7 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
 def prepare_solver_for_interpolation(degree, points,
                                      metric='DISTANCE',
                                      tknots=None,
+                                     knotvector = None,
                                      t_range = None,
                                      cyclic=False):
     n_points = len(points)
@@ -147,9 +148,11 @@ def prepare_solver_for_interpolation(degree, points,
         tangent = k*(points[1] - points[-2])
         solver.add_goal(SvNurbsCurveTangents.single(tknots[0], tangent))
         solver.add_goal(SvNurbsCurveTangents.single(tknots[-1], tangent))
-        knotvector = sv_knotvector.from_tknots(degree, tknots, include_endpoints=True)
-    else:
-        knotvector = sv_knotvector.from_tknots(degree, tknots)
+    if knotvector is None:
+        if cyclic:
+            knotvector = sv_knotvector.from_tknots(degree, tknots, include_endpoints=True)
+        else:
+            knotvector = sv_knotvector.from_tknots(degree, tknots)
 
     n_cpts = solver.guess_n_control_points()
     solver.set_curve_params(n_cpts, knotvector)
@@ -158,6 +161,7 @@ def prepare_solver_for_interpolation(degree, points,
 def interpolate_nurbs_curve(degree, points,
                             metric='DISTANCE',
                             tknots=None,
+                            knotvector=None,
                             t_range = None,
                             cyclic=False,
                             implementation=SvNurbsMaths.NATIVE, logger=None):
@@ -178,6 +182,7 @@ def interpolate_nurbs_curve(degree, points,
     """
     solver = prepare_solver_for_interpolation(degree, points,
                     metric = metric, tknots = tknots,
+                    knotvector = knotvector,
                     t_range = t_range,
                     cyclic = cyclic)
     problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
@@ -240,6 +245,7 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
     solver.add_goal(SvNurbsCurvePoints(tknots, points, relative=False))
     solver.add_goal(SvNurbsCurveTangents(tknots, tangents, relative=False))
     knotvector = knotvector_with_tangents_from_tknots(degree, tknots)
+    #print(f"Tknots {tknots} => Kv {knotvector}")
     n_cpts = solver.guess_n_control_points()
     solver.set_curve_params(n_cpts, knotvector)
     problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
