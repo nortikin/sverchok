@@ -17,7 +17,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.dependencies import geomdl
 
-from sverchok.ui.sv_object_names_utils import SvNodeInDataMK5, SV_PT_ViewportDisplayPropertiesDialogMK5, ReadingObjectDataError, get_objects_from_item
+from sverchok.ui.sv_object_names_utils_mk4 import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, SV_PT_ViewportDisplayPropertiesMK4, ReadingObjectDataError, get_objects_from_item
 
 if geomdl is not None:
     from geomdl import NURBS
@@ -68,9 +68,9 @@ def get_object_data_curve_info(object_pointer):
 
     return object_exists, SURFACE_CURVE_object, Nurbs_SURFACE, Nurbs_CURVE
 
-class SvExNurbsInCallbackOpMK3(bpy.types.Operator, SvGenericNodeLocator):
+class SvExNurbsInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_ex_nurbs_in_callback_mk3"
+    bl_idname = "node.sv_ex_nurbs_in_callback_mk2"
     bl_label = "Nurbs In Callback"
     bl_options = {'INTERNAL'}
 
@@ -83,26 +83,32 @@ class SvExNurbsInCallbackOpMK3(bpy.types.Operator, SvGenericNodeLocator):
         """
         getattr(node, self.fn_name)(self)
 
-class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
+class SvExNurbsInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     """
     Triggers: Input NURBS
     Tooltip: Get NURBS curve or surface objects from scene
     """
-    bl_idname = 'SvExNurbsInNodeMK3'
+    bl_idname = 'SvExNurbsInNodeMK2'
     bl_label = 'NURBS Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
     is_scene_dependent = True
     is_animation_dependent = True
 
+    replacement_nodes = [('SvExNurbsInNodeMK3', None, None)]
+
     
     legacy_mode: bpy.props.BoolProperty(
         name='Legacy Mode',
         description='Flats output lists (affects all sockets)',
-        default=True,
+        default=False,
         update=updateNode
         )
     
+    # object_names: bpy.props.CollectionProperty(type=SvExNurbsInDataCollectionMK2)
+    # active_obj_index: bpy.props.IntProperty()
+    # object_names_ui_minimal: bpy.props.BoolProperty(default=False, description='Minimize table view')
+
     sort: bpy.props.BoolProperty(
         name='Sort',
         description='Sorting inserted objects by names',
@@ -115,7 +121,6 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         update = updateNode)
 
     def sv_init(self, context):
-        self.width = 230
         self.outputs.new('SvCurveSocket'  , 'curves')
         self.outputs.new('SvSurfaceSocket', 'surfaces')
         self.outputs.new('SvStringsSocket', 'object_names')
@@ -160,29 +165,26 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         col = layout.column(align=True)
         col.alignment='RIGHT'
         row = col.row(align=True)
-        row.alignment='EXPAND'
+        row.alignment = 'EXPAND'
 
         op_text = "Get selection"  # fallback
-
         if self.prefs_over_sized_buttons:
             row.scale_y = 4.0
             op_text = "G E T"
 
-        callback = SvExNurbsInCallbackOpMK3.bl_idname
+        callback = SvExNurbsInCallbackOpMK2.bl_idname
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text, icon='IMPORT').fn_name = 'get_objects_from_scene'
 
-        grid = layout.grid_flow(row_major=False, columns=2, align=True)
-        elem0 = grid.column(align=True)
-        elem0.prop(self, 'sort')
-        elem0.prop(self, 'apply_matrix')
-        elem1 = grid.column()
-        elem1.prop(self, 'legacy_mode')
-        elem2 = elem1.row(align=True)
-        elem2.operator(SV_PT_ViewportDisplayPropertiesDialogMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
-        elem2.popover(panel="SV_PT_ViewportDisplayPropertiesMK5", icon='DOWNARROW_HLT', text="")
-        elem3 = layout.row()
-        elem3.column().label(text='Implementation:')
-        elem3.column().prop(self, 'implementation', expand=True,)
+        grid = layout.grid_flow(row_major=False, columns=2, align=False)
+        grid.column(align=True).prop(self, 'sort')
+        grid.column(align=True).prop(self, 'apply_matrix')
+        grid.column(align=True).prop(self, 'legacy_mode')
+        row = grid.row(align=True)
+        row.alignment = 'LEFT'
+        row.prop(self, 'implementation', expand=True)
+        row0 = grid.row(align=True)
+        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK4.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
+        row0.column(align=True).popover(panel=SV_PT_ViewportDisplayPropertiesMK4.bl_idname, icon='DOWNARROW_HLT', text="")
 
         if not self.by_input:
             if self.object_names:
@@ -202,7 +204,7 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
-        callback = SvExNurbsInCallbackOpMK3.bl_idname
+        callback = SvExNurbsInCallbackOpMK2.bl_idname
         row.prop(self, 'implementation', text='')
         self.wrapper_tracked_ui_draw_op(row, callback, text='GET').fn_name = 'get_objects_from_scene'
         self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
@@ -477,7 +479,7 @@ class SvExNurbsInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         pass
 
 classes = [
-    SvExNurbsInCallbackOpMK3,
-    SvExNurbsInNodeMK3
+    SvExNurbsInCallbackOpMK2,
+    SvExNurbsInNodeMK2
 ]
 register, unregister = bpy.utils.register_classes_factory(classes)

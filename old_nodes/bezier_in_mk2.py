@@ -16,7 +16,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 
-from sverchok.ui.sv_object_names_utils import SvNodeInDataMK5, SV_PT_ViewportDisplayPropertiesDialogMK5, ReadingObjectDataError, get_objects_from_item
+from sverchok.ui.sv_object_names_utils_mk4 import SvNodeInDataMK4, SV_PT_ViewportDisplayPropertiesDialogMK4, ReadingObjectDataError, get_objects_from_item
 
 def get_object_data_spline_info(object_pointer):
     '''Is object exists, has spline and bezier info?'''
@@ -61,10 +61,10 @@ def get_object_data_spline_info(object_pointer):
 
     return object_exists, curve_object, splines_bezier, splines_non_bezier, chars
 
-class SvBezierInCallbackOpMK3(bpy.types.Operator, SvGenericNodeLocator):
+class SvBezierInCallbackOpMK2(bpy.types.Operator, SvGenericNodeLocator):
     '''Select objects from scene into this node. Objects selected erlier will be removed'''
-    bl_idname = "node.sv_bezier_in_callback_mk3"
-    bl_label = "Bezier In Callback"
+    bl_idname = "node.sv_bezier_in_callback_mk2"
+    bl_label = "Bezier In Callback mk2"
     bl_options = {'INTERNAL'}
 
     def sv_execute(self, context, node):
@@ -74,15 +74,17 @@ class SvBezierInCallbackOpMK3(bpy.types.Operator, SvGenericNodeLocator):
         node.get_objects_from_scene(self)
         pass
 
-class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
+class SvBezierInNodeMK2(Show3DProperties, SvNodeInDataMK4, bpy.types.Node):
     """
     Triggers: Input Bezier
     Tooltip: Get Bezier Curve objects from scene
     """
-    bl_idname = 'SvBezierInNodeMK3'
+    bl_idname = 'SvBezierInNodeMK2'
     bl_label = 'Bezier Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+
+    replacement_nodes = [('SvBezierInNodeMK3', None, None)]
 
     @property
     def is_scene_dependent(self):
@@ -107,7 +109,7 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
     legacy_mode: BoolProperty(
         name='Legacy Mode',
         description='Flats output lists (affects all sockets)',
-        default=True,
+        default=False,
         update=updateNode
         )
 
@@ -139,7 +141,7 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         pass
     
     def sv_init(self, context):
-        self.width = 230
+        self.width = 300
         self.outputs.new('SvCurveSocket', 'curves')
         self.outputs.new('SvStringsSocket', 'use_cyclic_u').label='Cyclic U'
         self.outputs.new('SvVerticesSocket', 'control_points_c0')
@@ -172,7 +174,7 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
-        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK3.bl_idname, text='GET')
+        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK2.bl_idname, text='GET')
         self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
 
     @property
@@ -181,7 +183,6 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
 
     def sv_draw_buttons(self, context, layout):
         col = layout.column(align=True)
-        col.alignment='RIGHT'
         row = col.row(align=True)
         row.alignment='EXPAND'
 
@@ -191,16 +192,15 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
             row.scale_y = 4.0
             op_text = "G E T"
 
-        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK3.bl_idname, text=op_text, icon='IMPORT')
-        
+        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOpMK2.bl_idname, text=op_text, icon='IMPORT')
         
         grid = layout.grid_flow(row_major=False, columns=2, align=True)
         grid.column(align=True).prop(self, 'sort')
         grid.column(align=True).prop(self, 'apply_matrix')
         grid.column(align=True).prop(self, 'legacy_mode')
         row0 = grid.row(align=True)
-        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
-        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK5", icon='DOWNARROW_HLT', text="")
+        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK4.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
+        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK4", icon='DOWNARROW_HLT', text="")
         
         if not self.by_input:
             if self.object_names:
@@ -546,7 +546,7 @@ class SvBezierInNodeMK3(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         pass
 
 classes = [
-        SvBezierInCallbackOpMK3,
-        SvBezierInNodeMK3
+        SvBezierInCallbackOpMK2,
+        SvBezierInNodeMK2
     ]
 register, unregister = bpy.utils.register_classes_factory(classes)

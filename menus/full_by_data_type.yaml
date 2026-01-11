@@ -769,13 +769,13 @@
 - Scene:
     - icon_name: SCENE_DATA
     - extra_menu: ConnectionPartialMenu
-    - SvGetObjectsDataMK4
+    - SvGetObjectsDataMK5
     - SvObjInLite
     - SvCurveInputNode
     - SvFCurveInNodeMK1
     - SvCollectionPicker
-    - SvBezierInNodeMK2
-    - SvExNurbsInNodeMK2
+    - SvBezierInNodeMK3
+    - SvExNurbsInNodeMK3
     - SvParticlesMK2Node
     - ---
     - SvSelectionGrabberLite
