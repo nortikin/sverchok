@@ -42,6 +42,7 @@ class SvListInputNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'List Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_LIST_INPUT'
+    replacement_nodes = [('SvListInputNodeMK2', None, None)]
 
     defaults = [0 for i in range(32)]
 

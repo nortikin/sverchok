@@ -45,7 +45,7 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         description='Selection several items simultaneously')
 
     masked: bpy.props.BoolProperty(
-        name='Masked', default=False, update=updateNode,
+        name='Use Mask', default=False, update=updateNode,
         description='To use masks or not to use masks')
 
     ui_scale: bpy.props.FloatProperty(
@@ -63,8 +63,10 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         self['previous_user_list'] = [False for _ in range(32)]
         self.inputs.new('SvStringsSocket', 'Data')
         self.inputs.new('SvStringsSocket', 'Mask')
+        self.inputs.new('SvStringsSocket', 'UseMask')
 
         self.outputs.new('SvStringsSocket', 'Item')
+        self.outputs.new('SvStringsSocket', 'Data')
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
@@ -97,10 +99,10 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             row.prop(self, 'multiple_selection', toggle=True, text='multiselect',
                      icon='SNAP_ON' if self.multiple_selection else 'SNAP_OFF')
             row.prop(self, 'masked', toggle=True, text='use mask',
-                     icon='VIEW_PAN' if self.masked else 'SPREADSHEET')
-            if not self.masked:
-                for i, val in enumerate(self.string_values):
-                    col.prop(self, "user_list", toggle=True, index=i, text=val.name)
+                     icon='SPREADSHEET' if self.masked else 'VIEW_PAN')
+            #if not self.masked:
+            for i, val in enumerate(self.string_values):
+                col.prop(self, "user_list", toggle=True, index=i, text=val.name)
 
     def process(self):
         # Storing names of items
@@ -119,6 +121,11 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     str_val.name = str(val)
         else:
             self.string_values.clear()
+
+        if self.inputs['UseMask'].is_linked:
+            mas = self.inputs['UseMask'].sv_get()
+            if mas[0]:
+                self.masked = bool(mas[0][0])
 
         if self.inputs['Mask'].is_linked and self.inputs['Data'].is_linked and self.masked:
             mask_data = self.inputs['Mask'].sv_get()
@@ -144,8 +151,11 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 if list(self['user_list']) != new_values:
                     self['user_list'] = new_values
                     self['previous_user_list'] = new_values
-
-        self.outputs['Item'].sv_set([[i for i, b in enumerate(self.user_list[:len(self.string_values)]) if b]])
+        #print(self.user_list[:len(self.string_values)],self.string_values)
+        out = [i for i, b in enumerate(self.user_list[:len(self.string_values)]) if b]
+        datas = [data[i] for i in out]
+        self.outputs['Item'].sv_set([out])
+        self.outputs['Data'].sv_set([datas])
 
 
 def register():
