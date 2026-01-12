@@ -772,8 +772,8 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies, NodeDocumen
     @classmethod
     def poll(cls, ntree):
         """Can be overridden to make impossible to add certain nodes either to
-        main trees or to group trees. Also since Blender 3.4 presence of this
-        method is preventing Sverchok nodes from appearing in build-in tree
+        main trees or to group trees. Also since Blender 3.4, presence of this
+        method is preventing Sverchok nodes from appearing in built-in tree
         editors. See [details](https://developer.blender.org/T101259#1423746)."""
         return ntree.bl_idname in ['SverchCustomTreeType', 'SvGroupTree']
 

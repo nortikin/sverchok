@@ -236,7 +236,7 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
         mass_center_general = None
 
         # If density is one level list and objects are many then
-        # spead list of density for every mesh. ex.: [[mesh1],[mesh2],[mesh3]], [density:d1,d2,d3] ] => [[mesh1],[mesh2],[mesh3]], [density:[d1],[d2],[d3]] ]
+        # spread list of density for every mesh. ex.: [[mesh1],[mesh2],[mesh3]], [density:d1,d2,d3] ] => [[mesh1],[mesh2],[mesh3]], [density:[d1],[d2],[d3]] ]
         if len(input_density_s_2)==1 and len(input_vertices_s_3)>1:
             input_density_s_2 = [[d] for d in input_density_s_2[0]]
 

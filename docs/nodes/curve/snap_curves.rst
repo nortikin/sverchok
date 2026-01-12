@@ -57,8 +57,8 @@ This node has the following parameters:
   * **Curve 1**. First curve will be considered "main", so it's end point will
     not be moved; start point of the second curve will be moved to end point of
     the first curve.
-  * **Curve 2**. Second curve will be considered "main", so it's start point
-    will not be moved; end point fo the first curve will be moved to start
+  * **Curve 2**. Second curve will be considered "main", so its start point
+    will not be moved; end point of the first curve will be moved to start
     point of the second curve.
 
   The default option is **Middle**.
