@@ -82,7 +82,7 @@ class SvCrossCurveSphereNode(SverchCustomTreeNode, bpy.types.Node):
 
     max_subdivisions : IntProperty(
         name = "Max Subdivisions",
-        default = 2,
+        default = 3,
         min = 1,
         update = updateNode)
 
