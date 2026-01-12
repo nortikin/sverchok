@@ -158,7 +158,20 @@ class SvBezierCommon:
     def bezier_distance_curve(self, src_point):
         cpts = self.get_control_points() - np.array(src_point)
         new_cpts = calc_bezier_square_cpts(cpts)
+        #print(f"Square: {cpts} => {new_cpts}")
         return SvBezierCurve.from_control_points(new_cpts)
+
+    def bezier_distance_n_sign_changes(self, src_point):
+        cpts = self.get_control_points() - np.array(src_point)
+        square_cvalues = calc_bezier_square_cpts(cpts)[:,0]
+        #print(f"Cvalues: {square_cvalues}")
+        cvalue_deltas = square_cvalues[1:] - square_cvalues[:-1]
+        #print(f"Deltas: {cvalue_deltas}")
+        result = 0
+        for delta1, delta2 in zip(cvalue_deltas[:-1], cvalue_deltas[1:]):
+            if delta1 * delta2 < 0:
+                result += 1
+        return result
 
     def is_inside_sphere(self, sphere_center, sphere_radius):
         """
@@ -176,7 +189,8 @@ class SvBezierCommon:
         # See comment for SvNurbsCurve.bezier_is_strongly_outside_sphere()
         square_curve = self.bezier_distance_curve(sphere_center)
         square_coeffs = square_curve.get_control_points()[:,0]
-        return (square_coeffs >= sphere_radius**2).all()
+        #print(f"Check: {square_coeffs - sphere_radius**2}")
+        return (square_coeffs > sphere_radius**2).all()
 
     def bezier_has_one_nearest_point(self, src_point):
         distance_curve = self.bezier_distance_curve(src_point)
@@ -786,7 +800,7 @@ class SvCubicBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
     def to_bezier(self):
         return self
 
-    def to_bezier_segments(self):
+    def to_bezier_segments(self, to_bezier_class=True):
         return [self]
 
     def reverse(self):

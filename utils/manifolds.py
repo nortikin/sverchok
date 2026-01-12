@@ -1616,7 +1616,7 @@ def intersect_curve_sphere(curve, ctr, radius,
         if direction < 0:
             t_pairs = reversed(t_pairs)
         for t1, t2, val1, val2 in t_pairs:
-            if val1 * val2 < 0:
+            if val1 * val2 <= 0:
                 yield (t1, t2)
             else:
                 logger.debug(f"Split: {t1} - {t2} - goal function has the same sign on both ends")
@@ -1771,7 +1771,7 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
         value1 = goal_fn(t1)
         value2 = goal_fn(t2)
         #logger.debug(f"Check signs: {t1} => {value1}, {t2} => {value2}")
-        return value1 * value2 < 0
+        return value1 * value2 <= 0
 
     def split_segment(t1, t2, orig_segment, segment, depth):
         if not is_interesting(t1, t2, segment):
@@ -1795,7 +1795,20 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
             #t0 = init_guess(orig_segment, t1, t2, segment)
             t0 = None
             if t0 is None:
-                yield (t1, t2, orig_segment, segment)
+                n_changes = segment.bezier_distance_n_sign_changes(ctr)
+                n_roots = n_changes + 1
+                if n_roots <= 1:
+                    yield (t1, t2, orig_segment, segment)
+                else:
+                    logger.debug(f"Expected number of solutions at {t1} - {t2} = {n_roots}, subdivide")
+                    ts = np.linspace(t1, t2, num = n_roots+1)
+                    t_ranges = zip(ts[:-1], ts[1:])
+                    if direction < 0:
+                        t_ranges = reversed(t_ranges)
+                    for st1, st2 in t_ranges:
+                        sg = orig_segment.cut_segment(st1, st2).to_bezier()
+                        yield from split_segment(st1, st2, orig_segment, sg, depth=depth+1)
+                        #yield (st1, st2, orig_segment, sg)
             else:
                 logger.debug(f"Split {t1} - {t2} by init guess: {t0}")
                 if check_signs(orig_segment, t1, t0):
