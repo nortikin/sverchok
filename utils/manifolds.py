@@ -1790,6 +1790,10 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
                     else:
                         yield from split_segment(t_mid, t2, orig_segment, s2, depth=depth+1)
                         yield from split_segment(t1, t_mid, orig_segment, s1, depth=depth+1)
+                else:
+                    logger.debug(f"Do not consider {t1} - {t2}: bbox_size {bbox_size} too small")
+            else:
+                logger.debug(f"Do not consider {t1} - {t2}: too much detph")
         else:
             # See comment for init_guess()
             #t0 = init_guess(orig_segment, t1, t2, segment)
