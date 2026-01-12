@@ -1843,6 +1843,14 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
             if max_results is not None and len(result) >= max_results:
                 break
     #logger.debug(f"intersect_nurbs_curve_sphere => {result}")
-    return np.array(result)
+
+    uniq_tolerance_factor = 3
+    uniq_tolerance = uniq_tolerance_factor * tolerance
+    uniq_roots = []
+    for root in sorted(result):
+        if not any(np.isclose(root, r, atol=uniq_tolerance) for r in uniq_roots):
+            uniq_roots.append(root)
+
+    return np.array(uniq_roots)
 
 
