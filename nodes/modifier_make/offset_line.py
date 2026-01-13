@@ -23,6 +23,7 @@ from bpy.props import FloatProperty
 from mathutils import Vector, Matrix
 from mathutils.geometry import normal
 
+from sverchok.core.sockets import SvLinkNewNodeInput
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.core.sv_custom_exceptions import SvNotFullyConnected
@@ -35,14 +36,18 @@ def calc_angle(p1,p2):
     angle = p1.angle_signed(p2)
     return angle + TWO_PI if angle < 0 else angle
 
-def offset_edges(verts_in, edges_in, shift_in):
+def offset_edges(verts_in, edges_in, shift_in, mat, mat_is_linked):
     # take an input mesh (verts + edges ) and an offset property and generate the resulting geometry
 
     verts_out = []
     faces_out = []
     
     verts_z = verts_in[:]
-    verts_in = [Vector(v).to_2d() for v in verts_in]
+    if mat and mat_is_linked==False:
+        Minv = mat.inverted()
+        verts_in = [ Vector(Minv @ Vector(v)).to_2d() for v in verts_in]
+    else:
+        verts_in = [Vector(v).to_2d() for v in verts_in]
 
     diff_shift = len(verts_in) - len(shift_in)
     if diff_shift >= 0:
@@ -178,36 +183,71 @@ def offset_edges(verts_in, edges_in, shift_in):
         
         faces_out.extend(new_edges)
 
-    verts_out = [(v.x, v.y, z) for v, z in zip(verts_out, z_co)]
-    return verts_out, faces_out, outer_edges, vers_mask
+    if mat:
+        verts_out = [mat @ Vector((v.x, v.y, 0.0)) for v in verts_out]
+    else:
+        verts_out = [(v.x, v.y, z) for v, z in zip(verts_out, z_co)]
+    if not mat:
+        mat = Matrix() # use horizontal matrix
+    return verts_out, faces_out, outer_edges, vers_mask, mat
 
 
-class SvOffsetLineNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.Node):
+class SvOffsetLineNodeMK2(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Offset Line 2D
     Tooltip: Offsetting a Line into 2D space
 
     Only X and Y dimensions of input points will be taken for work.
     """
-    bl_idname = 'SvOffsetLineNode'
-    bl_label = 'Offset Line'
+    bl_idname = 'SvOffsetLineNodeMK2'
+    bl_label = 'Offset Line 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OFFSET_LINE'
 
     offset: FloatProperty(
         name='offset', description='Distance of offset (greater than zero. Zero will be replaced by 0.001)',
         default=0.1, update=updateNode)
+    
+    matrix_mode_auto: bpy.props.BoolProperty(
+        default=True,
+        name='Auto',
+        description='True: Calc matrix automatically with first face/polygon to get horizontal plane to work with Offset Line\nFalse - use World XY plane for matrix',
+        update=updateNode,
+    )
+    
+    def draw_in_socket_matrices(self, socket, context, layout):
+        layout.operator(SvLinkNewNodeInput.bl_idname, text="", icon="PLUGIN")
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
+        else:
+            row1 = layout.row(align=True)
+            row1.alignment='EXPAND'
+            row1.label(text=f"{socket.label}.")
+            row2=row1.column(align=True).row(align=True)
+            row2.alignment='RIGHT'
+            row2.label(text=f"{'Auto' if self.matrix_mode_auto else 'Horizontal'}:")
+            row2.column(align=True).prop(self, 'matrix_mode_auto', text='')
+        pass
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vers')
         self.inputs.new('SvStringsSocket', "Edgs")
         self.inputs.new('SvStringsSocket', "Offset").prop_name = 'offset'
+        self.inputs.new('SvMatrixSocket', "matrices")
+        self.inputs["matrices"].label = 'Matrices'
+        self.inputs["matrices"].custom_draw = 'draw_in_socket_matrices'
+
         self.outputs.new('SvVerticesSocket', 'Vers')
         self.outputs.new('SvStringsSocket', "Faces")
         self.outputs.new('SvStringsSocket', "OuterEdges")
         self.outputs.new('SvStringsSocket', "VersMask")
+        self.outputs.new('SvMatrixSocket', "matrices")
+        self.outputs["matrices"].label = 'Matrices'
 
     def process(self):
+
+        if not any(socket.is_linked for socket in list(self.outputs)+list(self.inputs)):
+            return
 
         if not all(socket.is_linked for socket in self.inputs[:2]):
             raise SvNotFullyConnected(self, sockets=["Vers", "Edgs"])
@@ -218,12 +258,61 @@ class SvOffsetLineNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.No
         verts_in = self.inputs['Vers'].sv_get()
         edges_in = self.inputs['Edgs'].sv_get()
         shifter = self.inputs['Offset'].sv_get()
+        matrices = self.inputs['matrices'].sv_get(default=[[Matrix()]], deepcopy=False)
         
         # verts_out, faces_out, outer_edges, vers_mask
-        out_geometry = [[], [], [], []]
+        out_geometry = [[], [], [], [], []]
+
         
-        for verts,edges,shift in zip_long_repeat(verts_in, edges_in, shifter):
-            geometry = offset_edges(verts, edges, shift)
+        for I, (verts,edges,shift,mat) in enumerate(zip_long_repeat(verts_in, edges_in, shifter, matrices)):
+            
+            if self.inputs['matrices'].is_linked==True:
+                pass
+            else:
+                if self.matrix_mode_auto==True:
+                    eps = 1e-6 # norm for float32
+                    # get matrix with vertices
+                    vert0 = Vector(verts[0])
+                    vert01 = Vector(verts[1])-vert0
+                    len_verts = len(verts)
+                    IJ1 = 1
+                    if vert01.magnitude<eps:
+                        for IJ1 in range(1, len_verts):
+                            vert01 = (Vector(verts[IJ1])-vert0).normalized()
+                            if vert01.magnitude>eps:
+                                break
+                            pass
+                        pass
+                    if vert01.magnitude<eps:
+                        raise Exception(f"Cannot calc matrix auto. All vertices too close each other in object {I} (1).")
+                    
+                    vert012 = None
+                    for IJ2 in range(IJ1+1, len_verts):
+                        vert02 = (Vector(verts[IJ2])-vert0).normalized()
+                        if vert02.magnitude>eps:
+                            vert012 = vert01.cross(vert02)
+                            if vert012.magnitude>eps:
+                                break
+                        pass
+                    if vert012==None:
+                        raise Exception(f"Cannot calc matrix auto. All vertices too close each other in object {I} (2).")
+                    Z = vert012.normalized()
+                    X = vert01 .normalized()
+                    Y = Z.cross(X)
+                    M = Matrix((
+                        (X.x, Y.x, Z.x, vert0.x),
+                        (X.y, Y.y, Z.y, vert0.y),
+                        (X.z, Y.z, Z.z, vert0.z),
+                        (0.0, 0.0, 0.0, 1.0),
+                    ))
+                    mat = M
+                    
+                else:
+                    # use matrix as horizontal
+                    mat = None
+                    pass
+
+            geometry = offset_edges(verts, edges, shift, mat, self.inputs['matrices'].is_linked)
             _ = [out_geometry[idx].append(data) for idx, data in enumerate(geometry)]
         
         # nothing done
@@ -234,10 +323,11 @@ class SvOffsetLineNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.No
         self.outputs['Faces'].sv_set(out_geometry[1])
         self.outputs['OuterEdges'].sv_set(out_geometry[2])
         self.outputs['VersMask'].sv_set(out_geometry[3])
+        self.outputs['matrices'].sv_set(out_geometry[4])
 
 def register():
-    bpy.utils.register_class(SvOffsetLineNode)
+    bpy.utils.register_class(SvOffsetLineNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvOffsetLineNode)
+    bpy.utils.unregister_class(SvOffsetLineNodeMK2)
