@@ -38,8 +38,8 @@
   <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="../../_static/documentation_options.js?v=c14129a0"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/modifier_make/offset_line';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -382,6 +382,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#p-s">P.S.</a></li>
 </ul>
             </nav>
         </div>
@@ -395,19 +396,25 @@ document.write(`
                   
   <section id="offset-line">
 <h1>Offset Line<a class="headerlink" href="#offset-line" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200897605-00613b3c-10ba-4e23-8d32-cfa51dec461d.png"><img alt="https://user-images.githubusercontent.com/14288520/200897605-00613b3c-10ba-4e23-8d32-cfa51dec461d.png" src="https://user-images.githubusercontent.com/14288520/200897605-00613b3c-10ba-4e23-8d32-cfa51dec461d.png" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/c305d462-a021-4cfb-8c6f-2d3574a3f895"><img alt="https://github.com/user-attachments/assets/c305d462-a021-4cfb-8c6f-2d3574a3f895" src="https://github.com/user-attachments/assets/c305d462-a021-4cfb-8c6f-2d3574a3f895" />
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node works only in XY surface. It takes X and Y coordinate from vectors input. Also Z coordinate is used now but this node is still work like 2D node. Z coordinate of the new points is equal z coordinate of the nearest old points. So if you use z coordinate you have to remember:</p>
+<p>This node works only as plane surface surface. If Auto is On then node set verts as horizontal plane then takes X and Y coordinate from vectors input and restore position back.
+If auto is Off then Z coordinate is used now but this node is still work like 2D node. Z coordinate of the new points is equal z coordinate of the nearest old points. So if you use z coordinate you have to remember:</p>
 <ul class="simple">
 <li><p>All points are projected to the XY surface so you can use Z coordinate for showing different levels of a flat mesh.</p></li>
 <li><p>Vertical edges will broke down work of the node.</p></li>
 <li><p>Normals of all faces always look to up.</p></li>
 </ul>
+<p>If link to Matrices is connected then node will use vertices in objects as XY plane in process and will restore position to matrix socket data after process.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">loose</span></code> node before if your input mesh has points without edges. You will receive surface along an input mesh edges with width equal offset value. It is also available to receive outer edges and mask of new and old points.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200904381-29e18316-91d6-4cb0-ad7a-a3e3190f1bf6.png"><img alt="https://user-images.githubusercontent.com/14288520/200904381-29e18316-91d6-4cb0-ad7a-a3e3190f1bf6.png" src="https://user-images.githubusercontent.com/14288520/200904381-29e18316-91d6-4cb0-ad7a-a3e3190f1bf6.png" />
+<blockquote>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200904381-29e18316-91d6-4cb0-ad7a-a3e3190f1bf6.png"><img alt="https://user-images.githubusercontent.com/14288520/200904381-29e18316-91d6-4cb0-ad7a-a3e3190f1bf6.png" src="https://user-images.githubusercontent.com/14288520/200904381-29e18316-91d6-4cb0-ad7a-a3e3190f1bf6.png" />
 </a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b7b4f8b3-526a-441c-b44f-ba9a94af8ef2"><img alt="https://github.com/user-attachments/assets/b7b4f8b3-526a-441c-b44f-ba9a94af8ef2" src="https://github.com/user-attachments/assets/b7b4f8b3-526a-441c-b44f-ba9a94af8ef2" />
+</a>
+</div></blockquote>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
@@ -416,6 +423,7 @@ document.write(`
 <li><p><strong>Vers</strong> - vertices of objects.</p></li>
 <li><p><strong>Edgs</strong> - polygons of objects.</p></li>
 <li><p><strong>offset</strong> - offset values - available multiple value per object (greater than 0. 0 will replace by 0.001).</p></li>
+<li><p><strong>Matrices</strong> - Matrices of objects to align Offset Line to objects</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -436,6 +444,11 @@ document.write(`
 <td><p>0.10</p></td>
 <td><p>offset values.</p></td>
 </tr>
+<tr class="row-odd"><td><p><strong>apply</strong></p></td>
+<td><p>Boolean</p></td>
+<td><p>True</p></td>
+<td><p>get plane matrix automatically</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -448,6 +461,7 @@ document.write(`
 <li><p><strong>Faces</strong></p></li>
 <li><p><strong>OuterEdges</strong> - get outer edges, use together with <code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">loose</span></code> node after or <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">verts</span></code>. The list of edges is unordered.</p></li>
 <li><p><strong>VersMask</strong> - 0 for new points and 1 for old.</p></li>
+<li><p><strong>Matrices</strong> - what matrixes used to process Offset Line in 3D planes</p></li>
 </ul>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200906483-088c0f6c-c5de-4718-8f25-31dbba173e97.png"><img alt="https://user-images.githubusercontent.com/14288520/200906483-088c0f6c-c5de-4718-8f25-31dbba173e97.png" src="https://user-images.githubusercontent.com/14288520/200906483-088c0f6c-c5de-4718-8f25-31dbba173e97.png" />
 </a>
@@ -499,6 +513,17 @@ document.write(`
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
+<hr class="docutils" />
+<p>Using Plane in 3D:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/7d563780-a6d0-4d88-8274-d5a979200c03"><img alt="https://github.com/user-attachments/assets/7d563780-a6d0-4d88-8274-d5a979200c03" src="https://github.com/user-attachments/assets/7d563780-a6d0-4d88-8274-d5a979200c03" />
+</a>
+</div></blockquote>
+<p>Additionally: use Shift-Numpad7 to set view to plane in Edit Mode.</p>
+</section>
+<section id="p-s">
+<h2>P.S.<a class="headerlink" href="#p-s" title="Link to this heading">#</a></h2>
+<p>If mesh is not plane then you will get ambiguous results</p>
 </section>
 </section>
 
@@ -552,6 +577,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#p-s">P.S.</a></li>
 </ul>
   </nav></div>
 
