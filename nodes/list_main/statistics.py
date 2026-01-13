@@ -178,7 +178,7 @@ class SvListStatisticsNode(SverchCustomTreeNode, bpy.types.Node):
             self.outputs[0].name = "Name"
             self.outputs[1].name = "Value"
 
-        self.label = self.function.replace("_", " ").title()
+        self.label = f'{SvListStatisticsNode.bl_label}: {self.function.replace("_", " ").title()}'
         updateNode(self, context)
 
     def update_normalize(self, context):
