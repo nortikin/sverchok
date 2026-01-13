@@ -1677,10 +1677,13 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
     def goal(orig_segment):
         nonlocal ctr
         #distance_curve = orig_segment.bezier_distance_curve(ctr).to_bezier()
-        #t1, t2 = orig_segment.get_u_bounds()
+        ut1, ut2 = orig_segment.get_u_bounds()
+        orig_bezier = orig_segment.to_bezier()
         #print(f"Calc distance curve: {distance_curve}")
         def function(t):
-            pt = orig_segment.evaluate(t)
+            u = (t - ut1) / (ut2 - ut1)
+            pt = orig_bezier.evaluate(u)
+            #pt = orig_segment.evaluate(t)
             dv = pt - ctr
             return np.dot(dv, dv) - radius**2
             #return np.linalg.norm(pt - ctr) - radius
@@ -1774,6 +1777,7 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
         return value1 * value2 <= 0
 
     def split_segment(t1, t2, orig_segment, segment, depth):
+        #logger.debug(f"Split_segment({t1}, {t2})")
         if not is_interesting(t1, t2, segment):
             return
 
@@ -1805,12 +1809,15 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
                     yield (t1, t2, orig_segment, segment)
                 else:
                     logger.debug(f"Expected number of solutions at {t1} - {t2} = {n_roots}, subdivide")
+                    ot1, ot2 = orig_segment.get_u_bounds()
+                    orig_bezier = orig_segment.to_bezier()
                     ts = np.linspace(t1, t2, num = n_roots+1)
-                    t_ranges = zip(ts[:-1], ts[1:])
+                    rs = (ts - ot1) / (ot2 - ot1)
+                    t_ranges = zip(ts[:-1], ts[1:], rs[:-1], rs[1:])
                     if direction < 0:
                         t_ranges = reversed(list(t_ranges))
-                    for st1, st2 in t_ranges:
-                        sg = orig_segment.cut_segment(st1, st2).to_bezier()
+                    for st1, st2, st1p, st2p in t_ranges:
+                        sg = orig_bezier.cut_segment(st1p, st2p)
                         yield from split_segment(st1, st2, orig_segment, sg, depth=depth+1)
                         #yield (st1, st2, orig_segment, sg)
             else:

@@ -10,7 +10,7 @@ import numpy as np
 
 from sverchok.data_structure import zip_long_repeat
 from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputException
-from sverchok.utils.math import binomial, binomial_array
+from sverchok.utils.math import binomial, binomial_array, np_dot
 from sverchok.utils.geom import Spline, bounding_box, are_points_coplanar, get_common_plane, PlaneEquation, LineEquation
 from sverchok.utils.nurbs_common import SvNurbsMaths, nurbs_divide, to_homogenous, from_homogenous
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
@@ -19,6 +19,22 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import elevate_bezier_degree
 
 # Pure-python (+ numpy) Bezier curves implementation
+
+def de_casteljau_matrices(n, t):
+    binom = binomial_array(n)
+    L = binom.copy()
+    R = binom.copy()
+    R = R[::-1,::-1]
+    I = np.arange(n)
+    ts = t ** I
+    t1s = (1 - t) ** I
+    t1s = t1s[::-1]
+    for k in range(n):
+        L[k,:k+1] *= ts[:k+1]
+        L[k,:k+1] *= t1s[n-k-1:]
+        R[k,k:] *= ts[:n-k]
+        R[k,k:] *= t1s[k:]
+    return L, R
 
 class SvBezierSplitMixin:
     def de_casteljau_points(self, t):
@@ -31,46 +47,56 @@ class SvBezierSplitMixin:
             for k in range(n - j):
                 dpts[j,k] = dpts[j-1, k] * (1 - t) + dpts[j-1, k+1] * t
         return dpts
-    
-    # #DeCasteljau variant
-    # def split_at(self, t):
-    #     dpts = self.de_casteljau_points(t)
-    #     cpts1 = dpts[:,0]
-    #     cpts2 = dpts[-1,:]
-    #     return SvBezierCurve.from_control_points(cpts1), SvBezierCurve.from_control_points(cpts2)
-    #
-    # def cut_segment(self, new_t_min, new_t_max, rescale=False):
-    #         if new_t_min >= 0:
-    #             c1, c2 = self.split_at(new_t_min)
-    #         else:
-    #             c2 = self
-    #         if new_t_max <= 1.0:
-    #             t1 = (new_t_max - new_t_min) / (1.0 - new_t_min)
-    #             c3, c4 = c2.split_at(t1)
-    #         else:
-    #             c3 = c2
-    #         return c3
+
+    #DeCasteljau variant
+    def split_at(self, t):
+        L, R = de_casteljau_matrices(self.get_degree()+1, t)
+        cpts = self.get_control_points()
+        cpts_L = L @ cpts
+        cpts_R = R @ cpts
+        curve_L = SvBezierCurve.from_control_points(cpts_L)
+        curve_R = SvBezierCurve.from_control_points(cpts_R)
+        return curve_L, curve_R
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
-        if new_t_min == new_t_max:
-            return None
-        p = self.get_degree()
+        t2p = (new_t_max - new_t_min) / (1 - new_t_min)
+        n = self.get_degree() + 1
+        _, B = de_casteljau_matrices(n, new_t_min)
+        A, _ = de_casteljau_matrices(n, t2p)
         cpts = self.get_control_points()
+        cpts_res = A @ B @ cpts
+        return SvBezierCurve.from_control_points(cpts_res)
+        # if new_t_min >= 0:
+        #     c1, c2 = self.split_at(new_t_min)
+        # else:
+        #     c2 = self
+        # if new_t_max <= 1.0:
+        #     t1 = (new_t_max - new_t_min) / (1.0 - new_t_min)
+        #     c3, c4 = c2.split_at(t1)
+        # else:
+        #     c3 = c2
+        # return c3
 
-        matrices = calc_taylor_nurbs_matrices(p, u_bounds=(new_t_min, new_t_max), calc_M=True, calc_R=True, calc_M1=True, calc_R1=True)
-        M = matrices['M']
-        R1 = matrices['R1']
-        M1 = matrices['M1']
-
-        MR1M = M1 @ R1 @ M
-
-        new_cpts = MR1M @ cpts
-        return SvBezierCurve.from_control_points(new_cpts)
-
-    def split_at(self, t):
-        segment1 = self.cut_segment(0.0, t)
-        segment2 = self.cut_segment(t, 1.0)
-        return segment1, segment2
+    # def cut_segment(self, new_t_min, new_t_max, rescale=False):
+    #     if new_t_min == new_t_max:
+    #         return None
+    #     p = self.get_degree()
+    #     cpts = self.get_control_points()
+    #
+    #     matrices = calc_taylor_nurbs_matrices(p, u_bounds=(new_t_min, new_t_max), calc_M=True, calc_R=True, calc_M1=True, calc_R1=True)
+    #     M = matrices['M']
+    #     R1 = matrices['R1']
+    #     M1 = matrices['M1']
+    #
+    #     MR1M = M1 @ R1 @ M
+    #
+    #     new_cpts = MR1M @ cpts
+    #     return SvBezierCurve.from_control_points(new_cpts)
+    #
+    # def split_at(self, t):
+    #     segment1 = self.cut_segment(0.0, t)
+    #     segment2 = self.cut_segment(t, 1.0)
+    #     return segment1, segment2
 
 _binom_square_matrices_cache = dict()
 
@@ -95,11 +121,13 @@ def calc_bezier_square_cpts(cpts, return_sum = True):
     binom = binomial_array(2*p+1)
 
     def calc_square(cs):
-        ds = np.zeros((2*p+1,))
+        #ds = np.zeros((2*p+1,))
         cT = cs[np.newaxis].T
         A = _get_binom_square_matrix(p)
-        for k in range(2*p+1):
-            ds[k] = cs @ A[k] @ cT
+        #for k in range(2*p+1):
+        #    ds[k] = cs @ A[k] @ cT
+        #print("Ds", ds)
+        ds = (cs @ A[:] @ cT)[:,0]
         denominator = binom[2*p, :]
         return ds / denominator
 
@@ -182,8 +210,11 @@ class SvBezierCommon:
         # then the whole curve lies inside the sphere too.
         # This relies on the fact that the sphere is a convex set of points.
         cpts = self.get_control_points()
-        distances = np.linalg.norm(sphere_center - cpts, axis=1)
-        return (distances < sphere_radius).all()
+        #distances = np.linalg.norm(cpts - sphere_center, axis=1)
+        #return (distances < sphere_radius).all()
+        dvs = cpts - sphere_center
+        distances2 = (dvs * dvs).sum(axis=1)
+        return (distances2 < sphere_radius**2).all()
 
     def bezier_is_strongly_outside_sphere(self, sphere_center, sphere_radius):
         # See comment for SvNurbsCurve.bezier_is_strongly_outside_sphere()
@@ -874,9 +905,11 @@ class SvRationalBezierCurve(SvCurve, SvBezierCommon):
         # curve' = (numerator' - curve*denominator') / denominator
         homogenous = self.homogenous_curve.evaluate_array(ts)
         numerator, denominator = split_homogenous(homogenous)
+        denominator = denominator[np.newaxis].T
         curve = numerator / denominator
         homogenous1 = self.homogenous_curve.tangent_array(ts)
         numerator1, denominator1 = split_homogenous(homogenous1)
+        denominator1 = denominator1[np.newaxis].T
         curve1 = (numerator1 - curve*denominator1) / denominator
         return curve1
 
@@ -940,14 +973,18 @@ class SvRationalBezierCurve(SvCurve, SvBezierCommon):
         return segment1, segment2
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
-        if new_t_min >= 0:
-            c1, c2 = self.split_at(new_t_min)
-        else:
-            c2 = self
-        if new_t_max <= 1.0:
-            t1 = (new_t_max - new_t_min) / (1.0 - new_t_min)
-            c3, c4 = c2.split_at(t1)
-        else:
-            c3 = c2
-        return c3
+        hom = self.homogenous_curve.cut_segment(new_t_min, new_t_max)
+        if hom is None:
+            return None
+        return SvRationalBezierCurve.from_homogenous_curve(hom)
+        # if new_t_min >= 0:
+        #     c1, c2 = self.split_at(new_t_min)
+        # else:
+        #     c2 = self
+        # if new_t_max <= 1.0:
+        #     t1 = (new_t_max - new_t_min) / (1.0 - new_t_min)
+        #     c3, c4 = c2.split_at(t1)
+        # else:
+        #     c3 = c2
+        # return c3
 
