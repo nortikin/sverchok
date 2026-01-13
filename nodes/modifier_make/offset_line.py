@@ -200,7 +200,7 @@ class SvOffsetLineNodeMK2(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types
     Only X and Y dimensions of input points will be taken for work.
     """
     bl_idname = 'SvOffsetLineNodeMK2'
-    bl_label = 'Offset Line'
+    bl_label = 'Offset Line 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OFFSET_LINE'
 
@@ -270,7 +270,7 @@ class SvOffsetLineNodeMK2(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types
                 pass
             else:
                 if self.matrix_mode_auto==True:
-                    eps = 1e-8
+                    eps = 1e-6 # norm for float32
                     # get matrix with vertices
                     vert0 = Vector(verts[0])
                     vert01 = Vector(verts[1])-vert0
@@ -278,7 +278,7 @@ class SvOffsetLineNodeMK2(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types
                     IJ1 = 1
                     if vert01.magnitude<eps:
                         for IJ1 in range(1, len_verts):
-                            vert01 = Vector(verts[IJ1])-vert0
+                            vert01 = (Vector(verts[IJ1])-vert0).normalized()
                             if vert01.magnitude>eps:
                                 break
                             pass
@@ -287,8 +287,8 @@ class SvOffsetLineNodeMK2(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types
                         raise Exception(f"Cannot calc matrix auto. All vertices too close each other in object {I} (1).")
                     
                     vert012 = None
-                    for IJ2 in range(IJ1, len_verts):
-                        vert02 = Vector(verts[IJ2])-vert0
+                    for IJ2 in range(IJ1+1, len_verts):
+                        vert02 = (Vector(verts[IJ2])-vert0).normalized()
                         if vert02.magnitude>eps:
                             vert012 = vert01.cross(vert02)
                             if vert012.magnitude>eps:
