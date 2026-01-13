@@ -278,7 +278,7 @@
             - SvSubdivideNodeMK2
             - SvSubdivideToQuadsNode
             - SvUnsubdivideNode
-            - SvOffsetLineNode
+            - SvOffsetLineNodeMK2
             - SvContourNode
             - ---
             - SvQuadriFlowNode
