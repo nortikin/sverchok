@@ -1614,7 +1614,7 @@ def intersect_curve_sphere(curve, ctr, radius,
         vals = goal_array(ts)
         t_pairs = zip(ts[:-1], ts[1:], vals[:-1], vals[1:])
         if direction < 0:
-            t_pairs = reversed(t_pairs)
+            t_pairs = reversed(list(t_pairs))
         for t1, t2, val1, val2 in t_pairs:
             if val1 * val2 <= 0:
                 yield (t1, t2)
@@ -1808,7 +1808,7 @@ def intersect_nurbs_curve_sphere(curve, ctr, radius,
                     ts = np.linspace(t1, t2, num = n_roots+1)
                     t_ranges = zip(ts[:-1], ts[1:])
                     if direction < 0:
-                        t_ranges = reversed(t_ranges)
+                        t_ranges = reversed(list(t_ranges))
                     for st1, st2 in t_ranges:
                         sg = orig_segment.cut_segment(st1, st2).to_bezier()
                         yield from split_segment(st1, st2, orig_segment, sg, depth=depth+1)
