@@ -209,7 +209,7 @@ class SvOffsetLineNodeMK2(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types
         default=0.1, update=updateNode)
     
     matrix_mode_auto: bpy.props.BoolProperty(
-        default=False,
+        default=True,
         name='Auto',
         description='True: Calc matrix automatically with first face/polygon to get horizontal plane to work with Offset Line\nFalse - use World XY plane for matrix',
         update=updateNode,
