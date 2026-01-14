@@ -1099,8 +1099,9 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
             config.polygons = polygons
             config.matrix = matrix
             config.face_culling_set = self.face_culling_set
-            if not inputs['Edges'].is_linked and self.display_edges:
-                config.edges = polygons_to_edges_np(polygons, unique_edges=True)
+            if not inputs['Edges'].is_linked and self.display_edges or (not edges or len(edges)==1 and len(edges[0])==0):
+                if polygons and (not edges or len(edges)==1 and len(edges[0])==0):
+                    config.edges = polygons_to_edges_np(polygons, unique_edges=True)
 
             geom = generate_mesh_geom(config, vecs)
 
