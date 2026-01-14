@@ -141,7 +141,7 @@ class SvCrossCurveSphereNode(SverchCustomTreeNode, bpy.types.Node):
                     nurbs_curve = SvNurbsCurve.to_nurbs(curve)
                     if nurbs_curve is None:
                         raise UnsupportedCurveTypeException("Curve is not a NURBS")
-                    ts = intersect_nurbs_curve_sphere(curve, center, radius,
+                    ts = intersect_nurbs_curve_sphere(nurbs_curve, center, radius,
                                                       max_results = max_results,
                                                       direction = int(self.direction),
                                                       tolerance = tolerance,
