@@ -1080,7 +1080,11 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
             if not total_verts:
                 raise LookupError("Empty vertices list")
             edges = inputs['Edges'].sv_get(deepcopy=False, default=[[]])
+            if len(edges)==0:
+                edges=[[]]
             polygons = inputs['Polygons'].sv_get(deepcopy=False, default=[[]])
+            if len(polygons)==0:
+                polygons=[[]]
             matrix = inputs['Matrix'].sv_get(deepcopy=False, default=[[]])
             vector_color = inputs['Vector Color'].sv_get(deepcopy=False, default=[[self.vector_color]])
             edge_color = inputs['Edge Color'].sv_get(deepcopy=False, default=[[self.edge_color]])
