@@ -184,7 +184,7 @@ def offset_edges(verts_in, edges_in, shift_in, mat, mat_is_linked):
         faces_out.extend(new_edges)
 
     if mat:
-        verts_out = [mat @ Vector((v.x, v.y, 0.0)) for v in verts_out]
+        verts_out = [ tuple(mat @ Vector((v.x, v.y, 0.0))) for v in verts_out]
     else:
         verts_out = [(v.x, v.y, z) for v, z in zip(verts_out, z_co)]
     if not mat:
