@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Curve Formula &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Intersect Curve with Sphere &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/curve/curve_formula';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/curve/intersect_curve_sphere';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Curve Frame" href="curve_frame.html" />
-    <link rel="prev" title="Circle (Curve)" href="curve_circle.html" />
+    <link rel="next" title="Intersect NURBS Curves" href="intersect_curves.html" />
+    <link rel="prev" title="Intersect Curve with Plane" href="intersect_curve_plane.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -184,7 +184,7 @@
 <li class="toctree-l3"><a class="reference internal" href="cubic_spline.html">Cubic Spline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curvature.html">Curve Curvature</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_circle.html">Circle (Curve)</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Curve Formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_formula.html">Curve Formula</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_frame.html">Curve Frame</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_frame_on_surface.html">Curve Frame on Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_length.html">Curve Length</a></li>
@@ -210,7 +210,7 @@
 <li class="toctree-l3"><a class="reference internal" href="interpolate_frame.html">Interpolate Curve Frame</a></li>
 <li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_curve.html">Interpolate NURBS Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="intersect_curve_plane.html">Intersect Curve with Plane</a></li>
-<li class="toctree-l3"><a class="reference internal" href="intersect_curve_sphere.html">Intersect Curve with Sphere</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Intersect Curve with Sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="intersect_curves.html">Intersect NURBS Curves</a></li>
 <li class="toctree-l3"><a class="reference internal" href="iso_uv_curve.html">Iso U/V Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="kinky_curve.html">Kinked Curve</a></li>
@@ -340,7 +340,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/curve/curve_formula.rst" target="_blank"
+      <li><a href="../../_sources/nodes/curve/intersect_curve_sphere.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -424,7 +424,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Curve Formula</h1>
+    <h1>Intersect Curve with Sphere</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -434,12 +434,12 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expression-syntax">Expression syntax</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of Usage</a></li>
 </ul>
             </nav>
         </div>
@@ -451,133 +451,78 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="curve-formula">
-<h1>Curve Formula<a class="headerlink" href="#curve-formula" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205702554-dd853e84-851a-437a-bb2c-7ceb56d234e6.png"><img alt="https://user-images.githubusercontent.com/14288520/205702554-dd853e84-851a-437a-bb2c-7ceb56d234e6.png" src="https://user-images.githubusercontent.com/14288520/205702554-dd853e84-851a-437a-bb2c-7ceb56d234e6.png" />
-</a>
+  <section id="intersect-curve-with-sphere">
+<h1>Intersect Curve with Sphere<a class="headerlink" href="#intersect-curve-with-sphere" title="Link to this heading">#</a></h1>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
+<p>This node reqiures <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
+</section>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node generates a curve, defined by some user-provided formula.</p>
-<p>The formula should map the curve’s T parameters into one of supported 3D coordinate systems: (X, Y, Z), (Rho, Phi, Z) or (Rho, Phi, Theta).</p>
-<p>It is possible to use additional parameters in the formula, they will become inputs of the node.</p>
-<p>Curve domain / parametrization specifics: defined by node settings.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205707613-de8d5100-d872-450a-a999-92c678021aca.png"><img alt="https://user-images.githubusercontent.com/14288520/205707613-de8d5100-d872-450a-a999-92c678021aca.png" src="https://user-images.githubusercontent.com/14288520/205707613-de8d5100-d872-450a-a999-92c678021aca.png" />
-</a>
-</section>
-<section id="expression-syntax">
-<h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Link to this heading">#</a></h2>
-<p>Syntax being used for formulas is standard Python’s syntax for expressions.
-For exact syntax definition, please refer to <a class="reference external" href="https://docs.python.org/3/reference/expressions.html">https://docs.python.org/3/reference/expressions.html</a>.</p>
-<p>In short, you can use usual mathematical operations (<cite>+</cite>, <cite>-</cite>, <cite>*</cite>, <cite>/</cite>, <cite>**</cite> for power), numbers, variables, parenthesis, and function call, such as <cite>sin(x)</cite>.</p>
-<p>One difference with Python’s syntax is that you can call only restricted number of Python’s functions. Allowed are:</p>
-<ul class="simple">
-<li><p>Functions from math module:</p>
-<ul>
-<li><p>acos, acosh, asin, asinh, atan, atan2,
-atanh, ceil, copysign, cos, cosh, degrees,
-erf, erfc, exp, expm1, fabs, factorial, floor,
-fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
-isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
-pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
-</ul>
-</li>
-<li><p>Constants from math module: pi, e;</p></li>
-<li><p>Additional functions: abs, sign;</p></li>
-<li><p>From mathutlis module: Vector, Matrix;</p></li>
-<li><p>Python type conversions: tuple, list, dict.</p></li>
-</ul>
-<p>This restriction is for security reasons. However, Python’s ecosystem does not guarantee that no one can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.</p>
-<p>Examples of valid expressions are:</p>
-<ul class="simple">
-<li><p>1.0</p></li>
-<li><p>x</p></li>
-<li><p>x+1</p></li>
-<li><p>0.75*X + 0.25*Y</p></li>
-<li><p>R * sin(phi)</p></li>
-</ul>
+<p>This node tries to find all intersections of the specified Curve with the
+specified sphere; i.e.it searches for all points on the curve, that lie on
+specified distance from the center point.</p>
+<p>To find all intersections, the node splits the curve into several segments and
+then searches for single intersection in each segment.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>TMin</strong>. Minimum value of the curve’s T parameter (corresponding to the beginning of the curve). The default value is 0.0.</p></li>
-<li><p><strong>TMax</strong>. Maximum value of the curve’s T parameter (corresponding to the end of the curve). The default value is 2*pi.</p></li>
+<li><p><strong>Curve</strong>. The curve to find intersections with. This input is mandatory.</p></li>
+<li><p><strong>Center</strong>. Center point of the sphere. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p></li>
+<li><p><strong>Radius</strong>. Radius of the sphere. The default value is 1.0.</p></li>
+<li><p><strong>MaxResults</strong>. This input is available only when the <strong>Set max.results</strong>
+parameter is checked. Defines the maximum number of intersection points this
+node can find. The default value is 1.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205713440-6b3c6170-bfe0-44b9-8268-83eec5a69325.png"><img alt="https://user-images.githubusercontent.com/14288520/205713440-6b3c6170-bfe0-44b9-8268-83eec5a69325.png" src="https://user-images.githubusercontent.com/14288520/205713440-6b3c6170-bfe0-44b9-8268-83eec5a69325.png" />
-</a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
-<li><p><strong>Formula 1</strong>, <strong>Formula 2</strong>, <strong>Formula 3</strong>. Formulas for 3 components
-defining curve points in the used coordinate system. Default values define
-simple helix curve in the cartesian coordinates. Each variable used in formulas,
-except for <cite>t</cite>, also becomes an additional input. Example variable ‘c’:</p></li>
+<li><p><strong>Use NURBS algorithm</strong>. If checked, the node will use a special version of
+algorithm for NURBS and NURBS-like curves. This algorithm can be about 5x
+faster. But, if you pass a curve which is not NURBS, the node will raise an
+error (become red). If not checked, the node will use a generic algorithm,
+which can work with both NURBS and non-NURBS curve. Checked by default.</p></li>
+<li><p><strong>Init Resolution</strong>. This parameter is only available when <strong>Use NURBS
+algorithm</strong> parameter is not checked. This specifies the initial number of
+segmetns the node will try to split the curve into, to find some
+intersections into each of them. If the node finds it necessary, it can split
+some of these segments further. The default value is 10, which is usually
+enough.</p></li>
+<li><p><strong>Set max. results</strong>. If checked, the node allows to specify how many
+intersections do you wish to find. If not checked, the node will try to find
+all intersections. Unchecked by default.</p></li>
+<li><p><strong>Direction</strong>. The direction on curve in which the node will search for
+intersections. The available options are <strong>Forward by T</strong> and <strong>Backward by
+T</strong>. THe default option is <strong>Forward by T</strong>. The order in which the node
+produces the points is defined by this parameter. For example, if you need
+only the first intersection with the sphere (with smallest value of curve’s T
+parameter), you can check <strong>Set max. results</strong>, and set <strong>MaxResults</strong> input
+to 1.</p></li>
+<li><p><strong>Accuracy</strong>. This parameter is available in the N panel only. This defines
+the accuracy level - number of exact digits after decimal point. The default
+value is 4.</p></li>
+<li><p><strong>Max Subdivisions</strong>. Maximum number of recursive segment subdivisions
+allowed in case when both ends of the segment lie on the same side of the
+sphere, but there is a possibility that some part of the segment lies on the
+other side. The default value of 3 is usually enough.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205709029-bdc14a67-c9e4-4021-81c2-ecb613dbfb34.png"><img alt="https://user-images.githubusercontent.com/14288520/205709029-bdc14a67-c9e4-4021-81c2-ecb613dbfb34.png" src="https://user-images.githubusercontent.com/14288520/205709029-bdc14a67-c9e4-4021-81c2-ecb613dbfb34.png" />
-</a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205708728-bcad3139-1681-4b7b-b396-e563e88ce442.gif"><img alt="https://user-images.githubusercontent.com/14288520/205708728-bcad3139-1681-4b7b-b396-e563e88ce442.gif" src="https://user-images.githubusercontent.com/14288520/205708728-bcad3139-1681-4b7b-b396-e563e88ce442.gif" />
-</a>
-<p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p>
-<ul>
-<li><p><strong>Output</strong>. This defined the coordinate system being used, and thus it
-defines the exact meaning of formula parameters. The available modes are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><strong>Cartesian</strong>. Three formulas will define correspondingly X, Y and Z coordinates.</p></li>
-<li><p><strong>Cylindrical</strong>. Three formulas will define correspondingly Rho, Phi and Z coordinates.</p></li>
-<li><p><strong>Spherical</strong>. Three formulas will define correspondingly Rho, Phi and Theta coordinates.</p></li>
-</ul>
-<p>The default mode is <strong>Cartesian</strong>.</p>
-</div></blockquote>
-</li>
-<li><p><strong>Vectorize</strong>. This parameter is available in the N panel only. If enabled,
-then to evaluate formulas for a series of input values, the node will use
-NumPy functions to perform several computations at a time; otherwise, the
-formulas will be evaluated separately for each input value. The use of
-vectorization usually makes computations a lot faster (2x to 100x). The
-parameter is enabled by default. If you experience some kind of troubles with
-calculating some of functions (errors or not good enough precision), you can
-disable this parameter.</p></li>
-</ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205857380-728f7515-bdaa-477e-a70c-72c2d5eae51d.png"><img alt="https://user-images.githubusercontent.com/14288520/205857380-728f7515-bdaa-477e-a70c-72c2d5eae51d.png" src="https://user-images.githubusercontent.com/14288520/205857380-728f7515-bdaa-477e-a70c-72c2d5eae51d.png" />
-</a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205712865-a3274f3b-b488-4686-bec3-0c425991e936.gif"><img alt="https://user-images.githubusercontent.com/14288520/205712865-a3274f3b-b488-4686-bec3-0c425991e936.gif" src="https://user-images.githubusercontent.com/14288520/205712865-a3274f3b-b488-4686-bec3-0c425991e936.gif" />
-</a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
-<p>This node has the following output:</p>
+<p>This node has the following outputs:</p>
 <ul class="simple">
-<li><p><strong>Curve</strong>. The generated curve.</p></li>
+<li><p><strong>Point</strong>. Intersection points.</p></li>
+<li><p><strong>T</strong>. Curve T parameters corresponding to intersection points.</p></li>
 </ul>
 </section>
-<section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
-<p>The default example - a helix:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205733677-585957c5-51f2-41b9-b635-3396797e5659.png"><img alt="https://user-images.githubusercontent.com/14288520/205733677-585957c5-51f2-41b9-b635-3396797e5659.png" src="https://user-images.githubusercontent.com/14288520/205733677-585957c5-51f2-41b9-b635-3396797e5659.png" />
+<section id="example-of-usage">
+<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/c507f35c-bbc5-4f4b-b540-5c44fb3afbeb"><img alt="https://github.com/user-attachments/assets/c507f35c-bbc5-4f4b-b540-5c44fb3afbeb" src="https://github.com/user-attachments/assets/c507f35c-bbc5-4f4b-b540-5c44fb3afbeb" />
 </a>
-<ul class="simple">
-<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-</ul>
-<hr class="docutils" />
-<p>Another example - Viviani’s curve (an intersection of a sphere with a cylinder):</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205734503-8a818e6f-b60c-43d4-a860-4db6c7e78cda.png"><img alt="https://user-images.githubusercontent.com/14288520/205734503-8a818e6f-b60c-43d4-a860-4db6c7e78cda.png" src="https://user-images.githubusercontent.com/14288520/205734503-8a818e6f-b60c-43d4-a860-4db6c7e78cda.png" />
-</a>
-<ul class="simple">
-<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-</ul>
-<hr class="docutils" />
-<p>A spiral in spherical coordinates:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205735619-5edb0b81-d2a0-490e-b4de-e5692b87f0d5.png"><img alt="https://user-images.githubusercontent.com/14288520/205735619-5edb0b81-d2a0-490e-b4de-e5692b87f0d5.png" src="https://user-images.githubusercontent.com/14288520/205735619-5edb0b81-d2a0-490e-b4de-e5692b87f0d5.png" />
-</a>
-<ul class="simple">
-<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-</ul>
 </section>
 </section>
 
@@ -593,20 +538,20 @@ disable this parameter.</p></li>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="curve_circle.html"
+       href="intersect_curve_plane.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Circle (Curve)</p>
+        <p class="prev-next-title">Intersect Curve with Plane</p>
       </div>
     </a>
     <a class="right-next"
-       href="curve_frame.html"
+       href="intersect_curves.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Curve Frame</p>
+        <p class="prev-next-title">Intersect NURBS Curves</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -626,12 +571,12 @@ disable this parameter.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expression-syntax">Expression syntax</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of Usage</a></li>
 </ul>
   </nav></div>
 
