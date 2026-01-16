@@ -1,5 +1,6 @@
 
 import numpy as np
+from math import sqrt
 
 from mathutils import kdtree, Matrix, Vector
 from mathutils.bvhtree import BVHTree
@@ -11,6 +12,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import reverse_curve, concatenate_curves, curve_segment
 from sverchok.utils.field.vector import SvMatrixVectorField
 from sverchok.utils.sv_logging import sv_logger, get_logger
+from sverchok.utils.math import np_dot
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
 
@@ -449,18 +451,22 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
     else:
         return result_ts
 
-def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, method='Brent', linearity_threshold=1e-4):
+def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, method='Brent', linearity_threshold=1e-4, logger=None):
     """
     Find nearest point on a NURBS curve.
     At the moment, this method is not, in general, faster than generic
     nearest_point_on_curve() method; although this method can be more precise.
     """
 
+    if logger is None:
+        logger = get_logger()
+
+    MAX_SUBDIVISIONS = 6
+
     src_point = np.asarray(src_point)
-    default_splits = splits
 
     def farthest(cpts):
-        distances = np.linalg.norm(src_point - cpts)
+        distances = np.linalg.norm(src_point - cpts, axis=1)
         return distances.max()
 
     def too_far(segment, distance):
@@ -471,6 +477,8 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         #return (distance_to_ctr > bbox.radius() + distance)
 
     def split(segment, n_splits=splits):
+        if n_splits <= 1:
+            return [segment]
         u_min, u_max = segment.get_u_bounds()
         us = np.linspace(u_min, u_max, num=n_splits+1)
         segments = [segment.cut_segment(u1, u2) for u1, u2 in zip(us, us[1:])]
@@ -497,11 +505,12 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
                 message = result.message
             else:
                 message = repr(result)
-            print(f"No solution for {u_min} - {u_max}: {message}")
+            logger.debug(f"No solution for {u_min} - {u_max}: {message}")
             return None
         else:
             t0 = result.x
             if u_min <= t0 <= u_max:
+                logger.debug(f"Numeric search result for {segment} => T={t0}, F={result.fun}")
                 return t0, result.fun
             else:
                 return None
@@ -512,13 +521,10 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         result_us = []
         prev_start, prev_end = segments[0].get_u_bounds()
         current_pair = [prev_start, prev_end]
-        to_end_last = False
         for segment in segments[1:]:
-            to_end_last = False
             u1, u2 = segment.get_u_bounds()
             if u1 == current_pair[1]:
                 current_pair[1] = u2
-                to_end_last = True
             else:
                 result_us.append(current_pair)
                 current_pair = list(segment.get_u_bounds())
@@ -526,7 +532,7 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         result_us.append(current_pair)
 
         result = [curve.cut_segment(u1,u2) for u1, u2 in result_us]
-        #print(f"Merge: {[s.get_u_bounds() for s in segments]} => {[s.get_u_bounds() for s in result]}")
+        #logger.debug(f"Merge: {[s.get_u_bounds() for s in segments]} => {[s.get_u_bounds() for s in result]}")
         return result
 
     def linear_search(segment):
@@ -538,6 +544,7 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         if 0.0 <= t <= 1.0:
             u1, u2 = segment.get_u_bounds()
             u = (1-t)*u1 + t*u2
+            logger.debug(f"Linear search result on {segment} => {u}")
             return u
         else:
             return None
@@ -546,26 +553,26 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         if not segments:
             return []
 
-        #print("Consider: ", [s.get_u_bounds() for s in segments])
+        #logger.debug("Consider: ", [s.get_u_bounds() for s in segments])
 
         to_remove = set()
         for segment1_idx, segment1 in enumerate(segments):
             if segment1_idx in to_remove:
                 continue
             farthest_distance = farthest(segment1.get_control_points())
-            #print(f"S1: {segment1_idx}, {segment1.get_u_bounds()}: farthest = {farthest_distance}, min_distance={min_distance}")
+            #logger.debug(f"S1: {segment1_idx}, {segment1.get_u_bounds()}: farthest = {farthest_distance}, min_distance={min_distance}")
             for segment2_idx, segment2 in enumerate(segments):
                 if segment1_idx == segment2_idx:
                     continue
                 if segment2_idx in to_remove:
                     continue
                 if too_far(segment2, min(farthest_distance, min_distance)):
-                    print(f"S2: {segment2_idx} {segment2.get_u_bounds()} - too far, remove")
+                    logger.debug(f"S2: {segment2_idx} {segment2.get_u_bounds()} - too far, remove")
                     to_remove.add(segment2_idx)
 
-        stop_subdivide = step > 6
+        stop_subdivide = step > MAX_SUBDIVISIONS
         #if stop_subdivide:
-            #print("Will not subdivide anymore")
+            #logger.debug("Will not subdivide anymore")
         if len(to_remove) == 0:
             n_splits += 2
         #else:
@@ -579,26 +586,26 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
         for segment in segments_to_consider:
             if segment.is_line(linearity_threshold):
                 # find nearest on line
-                print(f"Linear search for {segment.get_u_bounds()}")
+                logger.debug(f"Linear search for {segment.get_u_bounds()}")
                 approx = linear_search(segment)
                 if approx is not None:
                     result = numeric_method(segment, approx)
                     if result:
                         results.append(result)
             elif stop_subdivide:
-                print(f"Schedule for numeric, subdivision is stopped: {segment.get_u_bounds()}")
+                logger.debug(f"Schedule for numeric, subdivision is stopped: {segment.get_u_bounds()}")
                 for_numeric.append(segment)
             elif segment.has_exactly_one_nearest_point(src_point):
-                print(f"Schedule for numeric, it has one nearest point: {segment.get_u_bounds()}")
+                logger.debug(f"Schedule for numeric, it has one nearest point: {segment.get_u_bounds()}")
                 for_numeric.append(segment)
             else:
-                #print(f"Subdivide {segment.get_u_bounds()} at step {step}, into {n_splits} segments")
+                #logger.debug(f"Subdivide {segment.get_u_bounds()} at step {step}, into {n_splits} segments")
                 sub_segments = split(segment, n_splits)
                 new_segments.extend(sub_segments)
 
-        for_numeric = merge(for_numeric)
+        #for_numeric = merge(for_numeric)
         for segment in for_numeric:
-            print(f"Run numeric method on {segment.get_u_bounds()}")
+            logger.info(f"Run numeric method on {segment.get_u_bounds()}")
             result = numeric_method(segment)
             if result:
                 results.append(result)
@@ -619,7 +626,9 @@ def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, me
     init_distances = np.linalg.norm(init_points - src_point, axis=1)
     min_distance = init_distances.min()
 
-    segments = split(curve)#, init_samples)
+    segments = []
+    for sg in split(curve, init_samples):
+        segments.extend(sg.to_bezier_segments(to_bezier_class=False))
     rs = process(segments, min_distance=min_distance)
     rs = postprocess(rs)
     return rs
@@ -1553,5 +1562,302 @@ def symmetrize_curve(
         return result, mirror_result
     else:
         return result
+
+def intersect_curve_sphere(curve, ctr, radius,
+                            init_samples = 10,
+                            max_results = None,
+                            direction = 1,
+                            tolerance=1e-6,
+                            max_subdivisions=1,
+                            logger = None):
+    """
+    Find intersections between a (generic) Curve and a sphere.
+
+    Dependencies: scipy.
+
+    Args:
+        * curve: an instance of SvCurve.
+        * ctr: sphere center; 3-tuple or np.array of shape (3,).
+        * radius: sphere radius - float.
+        * init_samples: initial number of segments to split the curve into.
+        * max_results: maximum number of intersections to return. None means return all of them.
+        * direction: 1 or -1. Direction > 0 means scan the curve from beginning to the end,
+            direction < 0 - scan in the opposite direction. Results will be returned in corresponding order.
+            If max_results is not None, then direction defines which intersections will be returned - the first
+            or the last ones.
+        * tolerance: numeric method tolerance.
+        * max_subdivisions: maximum number of recursive segment subdivisions allowed in case when both ends of
+            the segment lie on the same side of the sphere.
+
+    Returns:
+        np.array of T values of intersection.
+    """
+    if logger is None:
+        logger = get_logger()
+
+    secondary_samples = 10
+
+    def goal(t):
+        pt = curve.evaluate(t)
+        dv = pt - ctr
+        return np.dot(dv, dv) - radius**2
+
+    def goal_array(ts):
+        pts = curve.evaluate_array(ts)
+        dvs = pts - ctr
+        return np_dot(dvs, dvs) - radius**2
+
+    def get_segments(t_min, t_max, depth=1, samples=init_samples):
+        if depth > max_subdivisions:
+            return
+        ts = np.linspace(t_min, t_max, num=samples)
+        vals = goal_array(ts)
+        t_pairs = zip(ts[:-1], ts[1:], vals[:-1], vals[1:])
+        if direction < 0:
+            t_pairs = reversed(list(t_pairs))
+        for t1, t2, val1, val2 in t_pairs:
+            if val1 * val2 <= 0:
+                yield (t1, t2)
+            else:
+                logger.debug(f"Split: {t1} - {t2} - goal function has the same sign on both ends")
+                yield from get_segments(t1, t2, depth=depth+1, samples=secondary_samples)
+
+    result = []
+    t_min, t_max = curve.get_u_bounds()
+    for t1, t2 in get_segments(t_min, t_max):
+        logger.debug(f"Run numeric method: {t1} - {t2}")
+        solution = root_scalar(goal, method='brentq',
+                               bracket = (t1, t2),
+                               xtol = tolerance)
+        if solution.converged:
+            t = solution.root
+            logger.debug(f"--> Found: t = {t}")
+            result.append(t)
+            if max_results is not None and len(result) >= max_results:
+                break
+    return np.array(result)
+
+def intersect_nurbs_curve_sphere(curve, ctr, radius,
+                                 max_results = None,
+                                 direction = 1,
+                                 tolerance=1e-6,
+                                 max_subdivisions=6,
+                                 logger = None):
+    """
+    Find intersections between a NURBS curve and a sphere.
+    This method uses properties of NURBS curve to effectively cut the parts of the curve
+    where intersections can not appear.
+
+    Dependencies: scipy.
+
+    Args:
+        * curve: an instance of SvNurbsCurve.
+        * ctr: sphere center; 3-tuple or np.array of shape (3,).
+        * radius: sphere radius - float.
+        * max_results: maximum number of intersections to return. None means return all of them.
+        * direction: 1 or -1. Direction > 0 means scan the curve from beginning to the end,
+            direction < 0 - scan in the opposite direction. Results will be returned in corresponding order.
+            If max_results is not None, then direction defines which intersections will be returned - the first
+            or the last ones.
+        * tolerance: numeric method tolerance.
+        * max_subdivisions: maximum number of recursive segment subdivisions allowed in case when both ends of
+            the segment lie on the same side of the sphere, but there is a possibility that some part of the
+            segment lies on the other side. In usual cases 1 or 2 subdivisions are enough.
+
+    Returns:
+        np.array of T values of intersection.
+    """
+    if logger is None:
+        logger = get_logger()
+    #logger.debug("Start intersect_nurbs_curve_sphere")
+
+    ctr = np.array(ctr)
+    p = curve.get_degree()
+    
+    def goal(orig_segment):
+        nonlocal ctr
+        #distance_curve = orig_segment.bezier_distance_curve(ctr).to_bezier()
+        ut1, ut2 = orig_segment.get_u_bounds()
+        orig_bezier = orig_segment.to_bezier()
+        #print(f"Calc distance curve: {distance_curve}")
+        def function(t):
+            u = (t - ut1) / (ut2 - ut1)
+            pt = orig_bezier.evaluate(u)
+            #pt = orig_segment.evaluate(t)
+            dv = pt - ctr
+            return np.dot(dv, dv) - radius**2
+            #return np.linalg.norm(pt - ctr) - radius
+            #u = (t - t1) / (t2 - t1)
+            #rho2 = distance_curve.evaluate(u)[0]
+            #return rho2 - radius**2
+        return function
+
+    def is_interesting(t1, t2, segment):
+        # Check that the segment does not lie within the sphere completely,
+        # and does not lie too far outside the sphere.
+        if segment.is_inside_sphere(ctr, radius):
+            logger.debug(f"{t1} - {t2}: fully inside sphere")
+            return False
+        if segment.bezier_is_strongly_outside_sphere(ctr, radius):
+            logger.debug(f"{t1} - {t2}: strongly outside sphere")
+            return False
+        return True
+
+    goal_fns = dict()
+    def get_goal(segment):
+        nonlocal goal_fns
+        if segment not in goal_fns:
+            goal_fn = goal(segment)
+            goal_fns[segment] = goal_fn
+        return goal_fns[segment]
+
+    def solve_segment(orig_segment, t1, t2, s1, s2, cpt1, cpt2):
+        # Find intersection of control polygon segment cpt1 - cpt2 with the sphere.
+        goal_fn = get_goal(orig_segment)
+        v1 = goal_fn((t2 - t1)*s1 + t1)
+        v2 = goal_fn((t2 - t1)*s2 + t1)
+        if v1 * v2 >= 0:
+            #logger.debug(f"Linear: T {t1} - {t2}, S {s1} - {s2} => value {v1}, {v2} => no init guess")
+            return None
+        p1 = cpt1 - ctr
+        p2 = cpt2 - ctr
+
+        # If we connect cpt1 and cpt2 with a straight line segment parametrized as
+        # C(t) = (1-t) cpt1 + t cpt2,
+        # then (C(t) - ctr)^2 == radius^2
+        # is a quadratic equation, which can be solved by classical formula with
+        # discriminant. The following is an implementation of that formula.
+        dp = p2 - p1
+        a = np.dot(dp, dp)
+        b = 2*np.dot(p1, dp)
+        c = np.dot(p1, p1) - radius**2
+        D = b*b - 4*a*c
+        if D < 0:
+            #logger.debug(f"Linear: T {t1} - {t2}, S {s1} - {s2} => D = {D} < 0, no init guess")
+            return None
+        ss = []
+        if abs(D) < 1e-6:
+            s = -b / (2*a)
+            ss.append(s)
+        else:
+            v1 = (-b - sqrt(D)) / (2*a)
+            ss.append(v1)
+            v2 = (-b + sqrt(D)) / (2*a)
+            ss.append(v2)
+        ss = [s for s in ss if 0 <= s <= 1]
+        if not ss:
+            return None
+        # Take any one of results, it should be enough for initial guess.
+        s = ss[0]
+        result = (s2 - s1)*s + s1
+        #logger.debug(f"Linear: T {t1} - {t2}, S {s1} - {s2}, cpt {p1} - {p2} => ss = {ss} => init guess on segment = {result}")
+        return result
+
+    def init_guess(orig_segment, t1, t2, segment):
+        # Find initial guess by approximating the Bezier curve segment
+        # by it's control polygon. This gives pretty good results
+        # (usually two exact digits after decimal point in my experiments);
+        # however, in current implementation this is too slow: the gain we
+        # get from narrowing the segment for scipy method is not big enough
+        # to justify the time we spend on calculation of initial guess.
+        # So currently the use of this is commented out.
+        cpts = segment.get_control_points()
+        ts = np.linspace(0.0, 1.0, num = p+1)
+        for s1, s2, cpt1, cpt2 in zip(ts[:-1], ts[1:], cpts[:-1], cpts[1:]):
+            s = solve_segment(orig_segment, t1, t2, s1, s2, cpt1, cpt2)
+            if s is not None:
+                return (t2 - t1)*s + t1
+        return None
+
+    def check_signs(orig_segment, t1, t2):
+        goal_fn = get_goal(orig_segment)
+        value1 = goal_fn(t1)
+        value2 = goal_fn(t2)
+        #logger.debug(f"Check signs: {t1} => {value1}, {t2} => {value2}")
+        return value1 * value2 <= 0
+
+    def split_segment(t1, t2, orig_segment, segment, depth):
+        #logger.debug(f"Split_segment({t1}, {t2})")
+        if not is_interesting(t1, t2, segment):
+            return
+
+        if not check_signs(orig_segment, t1, t2):
+            if depth < max_subdivisions:
+                bbox_size = segment.get_bounding_box().size() 
+                if bbox_size >= tolerance:
+                    logger.debug(f"Split: {t1} - {t2} - goal function has the same sign on both ends; bbox_size {bbox_size}")
+                    t_mid = (t1 + t2) * 0.5
+                    s1, s2 = segment.split_at(0.5)
+                    if direction > 0:
+                        yield from split_segment(t1, t_mid, orig_segment, s1, depth=depth+1)
+                        yield from split_segment(t_mid, t2, orig_segment, s2, depth=depth+1)
+                    else:
+                        yield from split_segment(t_mid, t2, orig_segment, s2, depth=depth+1)
+                        yield from split_segment(t1, t_mid, orig_segment, s1, depth=depth+1)
+                else:
+                    logger.debug(f"Do not consider {t1} - {t2}: bbox_size {bbox_size} too small")
+            else:
+                logger.debug(f"Do not consider {t1} - {t2}: too much detph")
+        else:
+            # See comment for init_guess()
+            #t0 = init_guess(orig_segment, t1, t2, segment)
+            t0 = None
+            if t0 is None:
+                n_changes = segment.bezier_distance_n_sign_changes(ctr)
+                n_roots = n_changes + 1
+                if n_roots <= 1:
+                    yield (t1, t2, orig_segment, segment)
+                else:
+                    logger.debug(f"Expected number of solutions at {t1} - {t2} = {n_roots}, subdivide")
+                    ot1, ot2 = orig_segment.get_u_bounds()
+                    orig_bezier = orig_segment.to_bezier()
+                    ts = np.linspace(t1, t2, num = n_roots+1)
+                    rs = (ts - ot1) / (ot2 - ot1)
+                    t_ranges = zip(ts[:-1], ts[1:], rs[:-1], rs[1:])
+                    if direction < 0:
+                        t_ranges = reversed(list(t_ranges))
+                    for st1, st2, st1p, st2p in t_ranges:
+                        sg = orig_bezier.cut_segment(st1p, st2p)
+                        yield from split_segment(st1, st2, orig_segment, sg, depth=depth+1)
+                        #yield (st1, st2, orig_segment, sg)
+            else:
+                logger.debug(f"Split {t1} - {t2} by init guess: {t0}")
+                if check_signs(orig_segment, t1, t0):
+                    yield (t1, t0, orig_segment, segment)
+                if check_signs(orig_segment, t0, t2):
+                    yield (t0, t2, orig_segment, segment)
+
+    def get_segments():
+        bezier_segments = curve.to_bezier_segments(to_bezier_class=False)
+        if direction < 0:
+            bezier_segments = reversed(bezier_segments)
+        for sg in bezier_segments:
+            bezier_segment = sg.to_bezier()
+            u1, u2 = sg.get_u_bounds()
+            yield from split_segment(u1, u2, sg, bezier_segment, depth=1)
+
+    result = []
+    for t1, t2, orig_segment, segment in get_segments():
+        logger.debug(f"Run numeric method: {t1} - {t2}")
+        solution = root_scalar(get_goal(orig_segment), method='brentq',
+                               bracket = (t1, t2),
+                               xtol = tolerance)
+        if solution.converged:
+            t = solution.root
+            logger.debug(f"--> Found: t = {t}")
+            #u = (t2 - t1) * t + t1
+            result.append(t)
+            if max_results is not None and len(result) >= max_results:
+                break
+    #logger.debug(f"intersect_nurbs_curve_sphere => {result}")
+
+    uniq_tolerance_factor = 3
+    uniq_tolerance = uniq_tolerance_factor * tolerance
+    uniq_roots = []
+    for root in sorted(result):
+        if not any(np.isclose(root, r, atol=uniq_tolerance) for r in uniq_roots):
+            uniq_roots.append(root)
+
+    return np.array(uniq_roots)
 
 

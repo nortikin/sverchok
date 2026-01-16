@@ -305,6 +305,7 @@
         - SvLengthRebuildCurveNode
         - SvExCrossCurvePlaneNode
         - SvExCrossCurveSurfaceNode
+        - SvCrossCurveSphereNode
         - SvExMarchingSquaresNode
         - SvExMSquaresOnSurfaceNode
         - ---

@@ -73,6 +73,7 @@ def prepare_curves_net(u_curves, v_curves,
         if mode == EXPLICIT:
             target_pts = [c.evaluate_array(t) for c, t in zip(curves, t_values)]
             target_pts = np.array(target_pts)
+            t_values = np.array(t_values)
         elif mode == UNIFORM:
             t_values, target_pts = prepare_t_by_count(curves, n)
         else: # FIT
