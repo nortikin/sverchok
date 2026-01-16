@@ -202,7 +202,6 @@ class SvBezierCommon:
                 result += 1
         return result
 
-class SvBezierCurve(SvCurve, SvBezierSplitMixin):
     def is_inside_sphere(self, sphere_center, sphere_radius):
         """
         Check that the whole curve lies inside the specified sphere
