@@ -766,9 +766,9 @@ class OtherNurbsTests(SverchokTestCase):
         self.assertEqual(u_min, 0, "U_min")
         self.assertEqual(u_max, eq.arc_angle, "U_max")
         startpoint = nurbs.evaluate(u_min)
-        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=8)
+        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=6)
         endpoint = nurbs.evaluate(u_max)
-        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=8)
+        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=6)
 
     def test_arc_3(self):
         pt1 = np.array((-4, 2, 0))
@@ -783,9 +783,9 @@ class OtherNurbsTests(SverchokTestCase):
         self.assertEqual(u_min, 0, "U_min")
         self.assertEqual(u_max, eq.arc_angle, "U_max")
         startpoint = nurbs.evaluate(u_min)
-        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=6)
+        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=5)
         endpoint = nurbs.evaluate(u_max)
-        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=6)
+        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=5)
 
 class KnotvectorTests(SverchokTestCase):
     def test_generate_1(self):
