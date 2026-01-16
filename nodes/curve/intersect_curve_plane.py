@@ -36,7 +36,7 @@ class SvExCrossCurvePlaneNode(SverchCustomTreeNode, bpy.types.Node):
         update = updateNode)
 
     use_nurbs : BoolProperty(
-        name = "NURBS",
+        name = "Use NURBS algorithm",
         description = "Use special algorithm for NURBS curves",
         default = False,
         update = updateNode)
