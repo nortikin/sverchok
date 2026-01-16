@@ -217,6 +217,22 @@ el.replaceWith(d);
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.nurbs_common.to_homogenous"><code class="name flex">
+<span>def <span class="ident">to_homogenous</span></span>(<span>control_points, weights)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_homogenous(control_points, weights):
+    if weights.ndim &lt; 2:
+        weights = weights[np.newaxis].T
+    weighted = weights * control_points
+    return np.concatenate((weighted, weights), axis=1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 </dl>
 </section>
 <section>
@@ -847,6 +863,7 @@ def to_nurbs_surface(surface, implementation = NATIVE):
 <li><code><a title="sverchok.utils.nurbs_common.nurbs_divide_flat" href="#sverchok.utils.nurbs_common.nurbs_divide_flat">nurbs_divide_flat</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.reduce_bezier_degree" href="#sverchok.utils.nurbs_common.reduce_bezier_degree">reduce_bezier_degree</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.reduce_bezier_degree_once" href="#sverchok.utils.nurbs_common.reduce_bezier_degree_once">reduce_bezier_degree_once</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.to_homogenous" href="#sverchok.utils.nurbs_common.to_homogenous">to_homogenous</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

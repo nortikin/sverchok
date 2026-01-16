@@ -239,17 +239,21 @@ el.replaceWith(d);
         self.coeffs = np.asarray(coeffs, dtype=np.float64)
 
     def __repr__(self):
+        if self.is_zero():
+            return &#34;0&#34;
         first = True
         result = &#34;&#34;
-        for d, c in reversed(enumerate(self.coeffs)):
+        for d, c in reversed(list(enumerate(self.coeffs))):
             if not first:
                 result += &#34; + &#34;
             first = False
-            if c == 0:
+            if isinstance(c, (int, float, np.float64)) and c == 0:
+                continue
+            if isinstance(c, np.ndarray) and (c == 0).all():
                 continue
             elif d == 0:
                 result += str(c)
-            elif c == 1.0:
+            elif isinstance(c, (int, float, np.float64)) and c == 1.0:
                 result += &#34;x^&#34; + str(d)
             else:
                 result += f&#34;{c}*x^{d}&#34;
@@ -314,6 +318,19 @@ el.replaceWith(d);
         coeffs *= c ** (degree - j)
         return Polynomial(coeffs)
 
+    def is_zero(self):
+        if len(self.coeffs) == 0:
+            return True
+        ndim = self.get_ndim()
+        for coeff in self.coeffs:
+            if ndim is None:
+                if coeff != 0:
+                    return False
+            else:
+                if (coeff != 0).any():
+                    return False
+        return True
+
     def get_degree(self):
         return len(self.coeffs) - 1
 
@@ -324,9 +341,7 @@ el.replaceWith(d);
             return self.coeffs.shape[-1]
 
     def evaluate(self, x):
-        n = len(self.coeffs)
-        ds = np.arange(n)
-        return (self.coeffs * x ** ds).sum()
+        return self.evaluate_array(np.array([x]))[0]
 
     def evaluate_array(self, xs):
         n = len(self.coeffs)
@@ -347,6 +362,28 @@ el.replaceWith(d);
             xs = xs.sum(axis=1)
             #print(&#34;X shape&#34;, xs.shape)
             return xs
+
+    def derivative(self):
+        shape = self.coeffs.shape
+        if len(shape) == 1:
+            n = shape[0]
+            shape = (n-1,)
+        else:
+            n = shape[0]
+            if n &lt; 1:
+                n = 1
+            ndim = shape[-1]
+            shape = (n-1, ndim)
+        coeffs = np.zeros(shape)
+        for i in range(self.get_degree()):
+            coeffs[i] = (i+1) * self.coeffs[i+1]
+        return Polynomial(coeffs)
+
+    def nth_derivative(self, order=1):
+        poly = self
+        for i in range(order):
+            poly = poly.derivative()
+        return poly
 
     def linear_substitute(self, k, c):
         poly = Polynomial.Zero(ndim=self.get_ndim())
@@ -395,6 +432,27 @@ el.replaceWith(d);
             other = Polynomial.Constant(other, ndim=self.get_ndim())
         return self.add(other.negate())
 
+    def mul(self, other):
+        d1 = self.get_degree()
+        d2 = other.get_degree()
+        if self.coeffs.ndim != other.coeffs.ndim:
+            raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+        if self.get_ndim() != other.get_ndim():
+            raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+        ndim = self.get_ndim()
+        if ndim is None:
+            coeffs = np.zeros((d1+d2+1,))
+        else:
+            dim = self.coeffs.shape[-1]
+            coeffs = np.zeros((d1+d2+1, dim))
+        #print(&#34;Mul&#34;, coeffs.shape)
+        for i in range(d1+1):
+            for j in range(d2+1):
+                d = i + j
+                #print(f&#34;C[{i} + {j} = {d}] += {self.coeffs[i] * other.coeffs[j]}&#34;)
+                coeffs[d] += self.coeffs[i] * other.coeffs[j]
+        return Polynomial(coeffs)
+
     def __mul__(self, other):
         if isinstance(other, COEFF_TYPES):
             return self.scale(other)
@@ -406,7 +464,45 @@ el.replaceWith(d);
             coeffs[1:] = self.coeffs
             coeffs *= other.coeffs[1]
             return Polynomial(coeffs) + Polynomial(other.coeffs[0] * self.coeffs)
-        raise ValueError(f&#34;Multiplication by arbitrary degree polynomial is not implemented yet: {self.coeffs.shape} x {other.coeffs.shape}&#34;)
+        return self.mul(other)
+
+    def cross(self, other):
+        d1 = self.get_degree()
+        d2 = other.get_degree()
+        if self.coeffs.ndim != other.coeffs.ndim:
+            raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+        if self.get_ndim() != other.get_ndim():
+            raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+        dim = self.coeffs.shape[-1]
+        coeffs = np.zeros((d1+d2+1, dim))
+        for i in range(d1+1):
+            for j in range(d2+1):
+                d = i + j
+                coeffs[d] += np.cross(self.coeffs[i], other.coeffs[j])
+        return Polynomial(coeffs)
+
+    def dot(self, other):
+        d1 = self.get_degree()
+        d2 = other.get_degree()
+        if self.coeffs.ndim != other.coeffs.ndim:
+            raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+        if self.get_ndim() != other.get_ndim():
+            raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+        coeffs = np.zeros((d1+d2+1, 1))
+        for i in range(d1+1):
+            for j in range(d2+1):
+                d = i + j
+                coeffs[d] += np.dot(self.coeffs[i], other.coeffs[j])
+        return Polynomial(coeffs)
+
+    def scalar_square(self):
+        return self.dot(self)
+
+    def power(self, d):
+        poly = self
+        for i in range(d-1):
+            poly = poly.mul(self)
+        return poly
 
     def roughen(self, tolerance):
         sums = np.cumsum(abs(self.coeffs[::-1]))
@@ -416,7 +512,41 @@ el.replaceWith(d);
 
     def truncate(self, max_degree):
         n = min(len(self.coeffs), max_degree+1)
-        return Polynomial(self.coeffs[:n])</code></pre>
+        return Polynomial(self.coeffs[:n])
+
+    def to_1d(self):
+        ndim = self.get_ndim()
+        if ndim is None:
+            return self
+        elif ndim == 1:
+            coeffs = self.coeffs[:,0]
+            return Polynomial(coeffs)
+        else:
+            raise Exception(f&#34;Root finding is supported for 1D-polynomials only, got {ndim}&#34;)
+
+    def roots(self, domain=None, real_only=True):
+        poly = np_Polynomial(self.to_1d().coeffs)
+        roots = poly.roots()
+        if domain is not None:
+            x1, x2 = domain
+            roots = [r for r in roots if x1 &lt;= r.real &lt;= x2]
+        if real_only:
+            roots = [r.real for r in roots if np.isreal(r)]
+        return np.array(roots)
+    
+    def find_all_extremes(self, domain, sign=-1):
+        poly = self.to_1d()
+        derivative_roots = poly.derivative().roots(domain)
+        candidates = derivative_roots
+        candidates = np.append(candidates, domain)
+        second_derivative = poly.nth_derivative(2)
+        result = []
+        for x in candidates:
+            #print(&#34;X&#34;, x)
+            second_derivative_value = second_derivative.evaluate(x)
+            if second_derivative_value * sign &lt; 0:
+                result.append(x)
+        return np.array(sorted(result))</code></pre>
 </details>
 <div class="desc"></div>
 <h3>Static methods</h3>
@@ -554,6 +684,81 @@ def Zero(ndim=None):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.polynomial.Polynomial.cross"><code class="name flex">
+<span>def <span class="ident">cross</span></span>(<span>self, other)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cross(self, other):
+    d1 = self.get_degree()
+    d2 = other.get_degree()
+    if self.coeffs.ndim != other.coeffs.ndim:
+        raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+    if self.get_ndim() != other.get_ndim():
+        raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+    dim = self.coeffs.shape[-1]
+    coeffs = np.zeros((d1+d2+1, dim))
+    for i in range(d1+1):
+        for j in range(d2+1):
+            d = i + j
+            coeffs[d] += np.cross(self.coeffs[i], other.coeffs[j])
+    return Polynomial(coeffs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.derivative"><code class="name flex">
+<span>def <span class="ident">derivative</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative(self):
+    shape = self.coeffs.shape
+    if len(shape) == 1:
+        n = shape[0]
+        shape = (n-1,)
+    else:
+        n = shape[0]
+        if n &lt; 1:
+            n = 1
+        ndim = shape[-1]
+        shape = (n-1, ndim)
+    coeffs = np.zeros(shape)
+    for i in range(self.get_degree()):
+        coeffs[i] = (i+1) * self.coeffs[i+1]
+    return Polynomial(coeffs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.dot"><code class="name flex">
+<span>def <span class="ident">dot</span></span>(<span>self, other)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dot(self, other):
+    d1 = self.get_degree()
+    d2 = other.get_degree()
+    if self.coeffs.ndim != other.coeffs.ndim:
+        raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+    if self.get_ndim() != other.get_ndim():
+        raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+    coeffs = np.zeros((d1+d2+1, 1))
+    for i in range(d1+1):
+        for j in range(d2+1):
+            d = i + j
+            coeffs[d] += np.dot(self.coeffs[i], other.coeffs[j])
+    return Polynomial(coeffs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.polynomial.Polynomial.evaluate"><code class="name flex">
 <span>def <span class="ident">evaluate</span></span>(<span>self, x)</span>
 </code></dt>
@@ -563,9 +768,7 @@ def Zero(ndim=None):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def evaluate(self, x):
-    n = len(self.coeffs)
-    ds = np.arange(n)
-    return (self.coeffs * x ** ds).sum()</code></pre>
+    return self.evaluate_array(np.array([x]))[0]</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -599,6 +802,30 @@ def Zero(ndim=None):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.polynomial.Polynomial.find_all_extremes"><code class="name flex">
+<span>def <span class="ident">find_all_extremes</span></span>(<span>self, domain, sign=-1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_all_extremes(self, domain, sign=-1):
+    poly = self.to_1d()
+    derivative_roots = poly.derivative().roots(domain)
+    candidates = derivative_roots
+    candidates = np.append(candidates, domain)
+    second_derivative = poly.nth_derivative(2)
+    result = []
+    for x in candidates:
+        #print(&#34;X&#34;, x)
+        second_derivative_value = second_derivative.evaluate(x)
+        if second_derivative_value * sign &lt; 0:
+            result.append(x)
+    return np.array(sorted(result))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.polynomial.Polynomial.get_degree"><code class="name flex">
 <span>def <span class="ident">get_degree</span></span>(<span>self)</span>
 </code></dt>
@@ -628,6 +855,29 @@ def Zero(ndim=None):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.polynomial.Polynomial.is_zero"><code class="name flex">
+<span>def <span class="ident">is_zero</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_zero(self):
+    if len(self.coeffs) == 0:
+        return True
+    ndim = self.get_ndim()
+    for coeff in self.coeffs:
+        if ndim is None:
+            if coeff != 0:
+                return False
+        else:
+            if (coeff != 0).any():
+                return False
+    return True</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.polynomial.Polynomial.linear_substitute"><code class="name flex">
 <span>def <span class="ident">linear_substitute</span></span>(<span>self, k, c)</span>
 </code></dt>
@@ -644,6 +894,37 @@ def Zero(ndim=None):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.polynomial.Polynomial.mul"><code class="name flex">
+<span>def <span class="ident">mul</span></span>(<span>self, other)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mul(self, other):
+    d1 = self.get_degree()
+    d2 = other.get_degree()
+    if self.coeffs.ndim != other.coeffs.ndim:
+        raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+    if self.get_ndim() != other.get_ndim():
+        raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+    ndim = self.get_ndim()
+    if ndim is None:
+        coeffs = np.zeros((d1+d2+1,))
+    else:
+        dim = self.coeffs.shape[-1]
+        coeffs = np.zeros((d1+d2+1, dim))
+    #print(&#34;Mul&#34;, coeffs.shape)
+    for i in range(d1+1):
+        for j in range(d2+1):
+            d = i + j
+            #print(f&#34;C[{i} + {j} = {d}] += {self.coeffs[i] * other.coeffs[j]}&#34;)
+            coeffs[d] += self.coeffs[i] * other.coeffs[j]
+    return Polynomial(coeffs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.polynomial.Polynomial.negate"><code class="name flex">
 <span>def <span class="ident">negate</span></span>(<span>self)</span>
 </code></dt>
@@ -654,6 +935,58 @@ def Zero(ndim=None):
 </summary>
 <pre><code class="python">def negate(self):
     return Polynomial(-1 * self.coeffs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.nth_derivative"><code class="name flex">
+<span>def <span class="ident">nth_derivative</span></span>(<span>self, order=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nth_derivative(self, order=1):
+    poly = self
+    for i in range(order):
+        poly = poly.derivative()
+    return poly</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.power"><code class="name flex">
+<span>def <span class="ident">power</span></span>(<span>self, d)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def power(self, d):
+    poly = self
+    for i in range(d-1):
+        poly = poly.mul(self)
+    return poly</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.roots"><code class="name flex">
+<span>def <span class="ident">roots</span></span>(<span>self, domain=None, real_only=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def roots(self, domain=None, real_only=True):
+    poly = np_Polynomial(self.to_1d().coeffs)
+    roots = poly.roots()
+    if domain is not None:
+        x1, x2 = domain
+        roots = [r for r in roots if x1 &lt;= r.real &lt;= x2]
+    if real_only:
+        roots = [r.real for r in roots if np.isreal(r)]
+    return np.array(roots)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -670,6 +1003,19 @@ def Zero(ndim=None):
     k = sums.searchsorted(tolerance)
     n = len(self.coeffs)
     return Polynomial(self.coeffs[:n-k])</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.scalar_square"><code class="name flex">
+<span>def <span class="ident">scalar_square</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scalar_square(self):
+    return self.dot(self)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -692,6 +1038,26 @@ def Zero(ndim=None):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.polynomial.Polynomial.to_1d"><code class="name flex">
+<span>def <span class="ident">to_1d</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_1d(self):
+    ndim = self.get_ndim()
+    if ndim is None:
+        return self
+    elif ndim == 1:
+        coeffs = self.coeffs[:,0]
+        return Polynomial(coeffs)
+    else:
+        raise Exception(f&#34;Root finding is supported for 1D-polynomials only, got {ndim}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.polynomial.Polynomial.truncate"><code class="name flex">
 <span>def <span class="ident">truncate</span></span>(<span>self, max_degree)</span>
 </code></dt>
@@ -703,6 +1069,179 @@ def Zero(ndim=None):
 <pre><code class="python">def truncate(self, max_degree):
     n = min(len(self.coeffs), max_degree+1)
     return Polynomial(self.coeffs[:n])</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.polynomial.Rational"><code class="flex name class">
+<span>class <span class="ident">Rational</span></span>
+<span>(</span><span>numerator, denominator)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Rational:
+    def __init__(self, numerator, denominator):
+        if isinstance(numerator, np.ndarray):
+            numerator = Polynomial(numerator)
+        self.numerator = numerator
+        if isinstance(denominator, np.ndarray):
+            denominator = Polynomial(denominator)
+        self.denominator = denominator
+
+    def evaluate(self, t):
+        n = self.numerator.evaluate(t)
+        d = self.denominator.evaluate(t)
+        return n / d
+
+    def evaluate_array(self, ts):
+        n = self.numerator.evaluate_array(ts)
+        d = self.denominator.evaluate_array(ts)
+        return n / d
+    
+    def derivative(self):
+        n = self.numerator.derivative() * self.denominator - self.numerator * self.denominator.derivative()
+        d = self.denominator.power(2)
+        return Rational(n, d)
+
+    def nth_derivative(self, order=1):
+        ratio = self
+        for i in range(order):
+            ratio = ratio.derivative()
+        return ratio
+
+    def roots(self, domain=None, real_only=True):
+        return self.numerator.roots(domain=domain, real_only=real_only)
+
+    def to_1d(self):
+        return Rational(self.numerator.to_1d(), self.denominator.to_1d())
+
+    def find_all_extremes(self, domain, sign=-1):
+        ratio = self.to_1d()
+        derivative_roots = ratio.derivative().roots(domain)
+        candidates = derivative_roots
+        candidates = np.append(candidates, domain)
+        second_derivative = ratio.nth_derivative(2)
+        result = []
+        for x in candidates:
+            second_derivative_value = second_derivative.evaluate(x)
+            if second_derivative_value * sign &lt; 0:
+                result.append(x)
+        return np.array(sorted(result))</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.polynomial.Rational.derivative"><code class="name flex">
+<span>def <span class="ident">derivative</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative(self):
+    n = self.numerator.derivative() * self.denominator - self.numerator * self.denominator.derivative()
+    d = self.denominator.power(2)
+    return Rational(n, d)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Rational.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    n = self.numerator.evaluate(t)
+    d = self.denominator.evaluate(t)
+    return n / d</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Rational.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    n = self.numerator.evaluate_array(ts)
+    d = self.denominator.evaluate_array(ts)
+    return n / d</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Rational.find_all_extremes"><code class="name flex">
+<span>def <span class="ident">find_all_extremes</span></span>(<span>self, domain, sign=-1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_all_extremes(self, domain, sign=-1):
+    ratio = self.to_1d()
+    derivative_roots = ratio.derivative().roots(domain)
+    candidates = derivative_roots
+    candidates = np.append(candidates, domain)
+    second_derivative = ratio.nth_derivative(2)
+    result = []
+    for x in candidates:
+        second_derivative_value = second_derivative.evaluate(x)
+        if second_derivative_value * sign &lt; 0:
+            result.append(x)
+    return np.array(sorted(result))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Rational.nth_derivative"><code class="name flex">
+<span>def <span class="ident">nth_derivative</span></span>(<span>self, order=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nth_derivative(self, order=1):
+    ratio = self
+    for i in range(order):
+        ratio = ratio.derivative()
+    return ratio</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Rational.roots"><code class="name flex">
+<span>def <span class="ident">roots</span></span>(<span>self, domain=None, real_only=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def roots(self, domain=None, real_only=True):
+    return self.numerator.roots(domain=domain, real_only=real_only)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Rational.to_1d"><code class="name flex">
+<span>def <span class="ident">to_1d</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_1d(self):
+    return Rational(self.numerator.to_1d(), self.denominator.to_1d())</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -743,15 +1282,38 @@ def Zero(ndim=None):
 <li><code><a title="sverchok.utils.polynomial.Polynomial.Monomial" href="#sverchok.utils.polynomial.Polynomial.Monomial">Monomial</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.Zero" href="#sverchok.utils.polynomial.Polynomial.Zero">Zero</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.add" href="#sverchok.utils.polynomial.Polynomial.add">add</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.cross" href="#sverchok.utils.polynomial.Polynomial.cross">cross</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.derivative" href="#sverchok.utils.polynomial.Polynomial.derivative">derivative</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.dot" href="#sverchok.utils.polynomial.Polynomial.dot">dot</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.evaluate" href="#sverchok.utils.polynomial.Polynomial.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.evaluate_array" href="#sverchok.utils.polynomial.Polynomial.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.find_all_extremes" href="#sverchok.utils.polynomial.Polynomial.find_all_extremes">find_all_extremes</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.get_degree" href="#sverchok.utils.polynomial.Polynomial.get_degree">get_degree</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.get_ndim" href="#sverchok.utils.polynomial.Polynomial.get_ndim">get_ndim</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.is_zero" href="#sverchok.utils.polynomial.Polynomial.is_zero">is_zero</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.linear_substitute" href="#sverchok.utils.polynomial.Polynomial.linear_substitute">linear_substitute</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.mul" href="#sverchok.utils.polynomial.Polynomial.mul">mul</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.negate" href="#sverchok.utils.polynomial.Polynomial.negate">negate</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.nth_derivative" href="#sverchok.utils.polynomial.Polynomial.nth_derivative">nth_derivative</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.power" href="#sverchok.utils.polynomial.Polynomial.power">power</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.roots" href="#sverchok.utils.polynomial.Polynomial.roots">roots</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.roughen" href="#sverchok.utils.polynomial.Polynomial.roughen">roughen</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.scalar_square" href="#sverchok.utils.polynomial.Polynomial.scalar_square">scalar_square</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.scale" href="#sverchok.utils.polynomial.Polynomial.scale">scale</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.to_1d" href="#sverchok.utils.polynomial.Polynomial.to_1d">to_1d</a></code></li>
 <li><code><a title="sverchok.utils.polynomial.Polynomial.truncate" href="#sverchok.utils.polynomial.Polynomial.truncate">truncate</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.polynomial.Rational" href="#sverchok.utils.polynomial.Rational">Rational</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.polynomial.Rational.derivative" href="#sverchok.utils.polynomial.Rational.derivative">derivative</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Rational.evaluate" href="#sverchok.utils.polynomial.Rational.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Rational.evaluate_array" href="#sverchok.utils.polynomial.Rational.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Rational.find_all_extremes" href="#sverchok.utils.polynomial.Rational.find_all_extremes">find_all_extremes</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Rational.nth_derivative" href="#sverchok.utils.polynomial.Rational.nth_derivative">nth_derivative</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Rational.roots" href="#sverchok.utils.polynomial.Rational.roots">roots</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Rational.to_1d" href="#sverchok.utils.polynomial.Rational.to_1d">to_1d</a></code></li>
 </ul>
 </li>
 </ul>

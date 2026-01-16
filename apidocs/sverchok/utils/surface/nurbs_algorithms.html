@@ -130,14 +130,19 @@ input. M must be equal to len(curves).
 Returns: list of SvNurbsCurve of length N.</p></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs_algorithms.interpolate_nurbs_surface"><code class="name flex">
-<span>def <span class="ident">interpolate_nurbs_surface</span></span>(<span>degree_u,<br>degree_v,<br>points,<br>metric='DISTANCE',<br>uknots=None,<br>vknots=None,<br>implementation='NATIVE',<br>logger=None)</span>
+<span>def <span class="ident">interpolate_nurbs_surface</span></span>(<span>degree_u,<br>degree_v,<br>points,<br>metric='DISTANCE',<br>uknots=None,<br>vknots=None,<br>knotvector_u=None,<br>knotvector_v=None,<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def interpolate_nurbs_surface(degree_u, degree_v, points, metric=&#39;DISTANCE&#39;, uknots=None, vknots=None, implementation = SvNurbsMaths.NATIVE, logger=None):
+<pre><code class="python">def interpolate_nurbs_surface(degree_u, degree_v, points,
+                              metric=&#39;DISTANCE&#39;,
+                              uknots=None, vknots=None,
+                              knotvector_u = None, knotvector_v = None,
+                              implementation = SvNurbsMaths.NATIVE,
+                              logger=None):
     points = np.asarray(points)
     n = len(points)
     m = len(points[0])
@@ -155,8 +160,10 @@ Returns: list of SvNurbsCurve of length N.</p></div>
         knots = np.array([Spline.create_knots(points[:,j], metric=metric) for j in range(m)])
         vknots = knots.mean(axis=0)
 
-    knotvector_u = sv_knotvector.from_tknots(degree_u, uknots)
-    knotvector_v = sv_knotvector.from_tknots(degree_v, vknots)
+    if knotvector_u is None:
+        knotvector_u = sv_knotvector.from_tknots(degree_u, uknots)
+    if knotvector_v is None:
+        knotvector_v = sv_knotvector.from_tknots(degree_v, vknots)
 
     u_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_u, points[i,:], tknots=uknots, logger=logger) for i in range(n)]
     u_curves_cpts = np.array([curve.get_control_points() for curve in u_curves])
@@ -1149,7 +1156,7 @@ returns np.array((n, 3, 3)) of curve frames.
     else:
         knotvectors = np.array([curve.get_knotvector() for curve in curves])
         knotvector_u = knotvectors.mean(axis=0)
-    print(f&#34;Kv U: {knotvector_u.shape}, V: {knotvector_v.shape}&#34;)
+    #print(f&#34;Kv U: {knotvector_u.shape}, V: {knotvector_v.shape}&#34;)
     
     surface = SvNurbsMaths.build_surface(implementation,
                 degree_u, degree_v,

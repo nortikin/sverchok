@@ -58,7 +58,7 @@ el.replaceWith(d);
         knots_unification_method = &#39;UNIFY&#39;,
         knotvector_accuracy=6,
         reparametrizer = None,
-        implementation = SvNurbsSurface.NATIVE,
+        implementation = SvNurbsMaths.NATIVE,
         logger=None):
     &#34;&#34;&#34;
     Generate a NURBS surface from a net of NURBS curves, by use of Gordon&#39;s algorithm.
@@ -111,6 +111,7 @@ el.replaceWith(d);
     else:
         loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {&#39;metric&#39;: metric}
     interpolate_kwargs[&#39;logger&#39;] = logger
+    loft_u_kwargs[&#39;logger&#39;] = loft_v_kwargs[&#39;logger&#39;] = logger
 
     u_curves = unify_curves_degree(u_curves)
     try:
@@ -130,42 +131,18 @@ el.replaceWith(d);
         else:
             explain = &#34;&#34;
         raise GordonUnificationException(f&#34;Cannot unify V curves{explain}: {e}&#34;) from e
+    
+    # return _gordon_surface_impl_orig_knotvector(u_curves, v_curves, intersections,
+    #                                             metric = metric,
+    #                                             u_knots = u_knots, v_knots = v_knots,
+    #                                             implementation = implementation,
+    #                                             logger = logger)
 
-    u_curves_degree = u_curves[0].get_degree()
-    v_curves_degree = v_curves[0].get_degree()
-    n = len(intersections)
-    m = len(intersections[0])
-
-    loft_v_degree = min(len(u_curves)-1, v_curves_degree)
-    loft_u_degree = min(len(v_curves)-1, u_curves_degree)
-
-    _,_,lofted_v = simple_loft(u_curves, degree_v=loft_v_degree, knotvector_accuracy = knotvector_accuracy, **loft_v_kwargs)
-    _,_,lofted_u = simple_loft(v_curves, degree_v=loft_u_degree, knotvector_accuracy = knotvector_accuracy, **loft_u_kwargs)
-    lofted_u = lofted_u.swap_uv()
-
-    int_degree_u = min(m-1, u_curves_degree)
-    int_degree_v = min(n-1, v_curves_degree)
-    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections, **interpolate_kwargs)
-    interpolated = interpolated.swap_uv()
-    #print(f&#34;Loft.U: {lofted_u}&#34;)
-    #print(f&#34;Loft.V: {lofted_v}&#34;)
-    #print(f&#34;Interp: {interpolated}&#34;)
-    #print(f&#34;        {interpolated.get_knotvector_u()}&#34;)
-    #print(f&#34;        {interpolated.get_knotvector_v()}&#34;)
-
-    lofted_u, lofted_v, interpolated = unify_nurbs_surfaces([lofted_u, lofted_v, interpolated], knotvector_accuracy=knotvector_accuracy)
-
-    control_points = lofted_u.get_control_points() + \
-                        lofted_v.get_control_points() - \
-                        interpolated.get_control_points()
-
-    surface = SvNurbsSurface.build(implementation,
-                interpolated.get_degree_u(), interpolated.get_degree_v(),
-                interpolated.get_knotvector_u(), interpolated.get_knotvector_v(),
-                control_points, weights=None)
-    #print(f&#34;Result: {surface}&#34;)
-
-    return lofted_u, lofted_v, interpolated, surface</code></pre>
+    return _gordon_surface_impl_new_knotvector(u_curves, v_curves, intersections,
+                                              loft_u_kwargs=loft_u_kwargs, loft_v_kwargs=loft_v_kwargs,
+                                              interpolate_kwargs=interpolate_kwargs,
+                                              knotvector_accuracy=knotvector_accuracy,
+                                              implementation=implementation)</code></pre>
 </details>
 <div class="desc"><p>Generate a NURBS surface from a net of NURBS curves, by use of Gordon's algorithm.</p>
 <p>:param u_curves - list of NURBS curves along U direction (length N)
@@ -177,6 +154,55 @@ intersections from their positions.
 :param v_knots - np.array, T values of curves intersection for each curve from v_curves</p>
 <p>return value: a NURBS surface.</p>
 <p>See also: The NURBS Book, 2nd ed., p.10.5.</p></div>
+</dd>
+<dt id="sverchok.utils.surface.gordon.loft_on_knotvector"><code class="name flex">
+<span>def <span class="ident">loft_on_knotvector</span></span>(<span>curves,<br>knotvector,<br>tknots=None,<br>degree=None,<br>metric='DISTANCE',<br>implementation='NATIVE',<br>logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def loft_on_knotvector(curves, knotvector, tknots = None, degree = None, metric = &#39;DISTANCE&#39;,
+                       implementation = SvNurbsMaths.NATIVE,
+                       logger = None):
+    degree_u = curves[0].get_degree()
+    if degree is None:
+        degree = degree_u
+
+    src_points = [curve.get_homogenous_control_points() for curve in curves]
+    src_points = np.array(src_points)
+    src_points = np.transpose(src_points, axes=(1,0,2))
+
+    if tknots is None:
+        tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(src_points.shape[0])]
+        tknots_vs = np.array(tknots_vs)
+        tknots = np.mean(tknots_vs, axis=0)
+
+    v_curves = [interpolate_nurbs_curve(degree, points, tknots=tknots, knotvector = knotvector, logger=logger) for points in src_points]
+
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
+    control_points = np.array(control_points)
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
+
+    knotvector_u = curves[0].get_knotvector()
+    if knotvector is None:
+        knotvector_v = v_curves[0].get_knotvector()
+    else:
+        knotvector_v = knotvector
+
+    surface = SvNurbsMaths.build_surface(implementation,
+                degree_u, degree,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+    surface.u_bounds = curves[0].get_u_bounds()
+    return surface</code></pre>
+</details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.gordon.nurbs_birail_by_gordon"><code class="name flex">
 <span>def <span class="ident">nurbs_birail_by_gordon</span></span>(<span>path1,<br>path2,<br>profiles,<br>ts1=None,<br>ts2=None,<br>length_resolution=None,<br>min_profiles=2,<br>degree_v=None,<br>metric='POINTS',<br>scale_uniform=True,<br>auto_rotate=False,<br>use_tangents='PATHS_AVG',<br>y_axis=None,<br>knots_unification_method='UNIFY',<br>knotvector_accuracy=6,<br>reparametrizer=None,<br>implementation='NATIVE',<br>logger=None)</span>
@@ -545,6 +571,7 @@ intersections from their positions.
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="sverchok.utils.surface.gordon.gordon_surface" href="#sverchok.utils.surface.gordon.gordon_surface">gordon_surface</a></code></li>
+<li><code><a title="sverchok.utils.surface.gordon.loft_on_knotvector" href="#sverchok.utils.surface.gordon.loft_on_knotvector">loft_on_knotvector</a></code></li>
 <li><code><a title="sverchok.utils.surface.gordon.nurbs_birail_by_gordon" href="#sverchok.utils.surface.gordon.nurbs_birail_by_gordon">nurbs_birail_by_gordon</a></code></li>
 <li><code><a title="sverchok.utils.surface.gordon.nurbs_blend_surfaces" href="#sverchok.utils.surface.gordon.nurbs_blend_surfaces">nurbs_blend_surfaces</a></code></li>
 </ul>

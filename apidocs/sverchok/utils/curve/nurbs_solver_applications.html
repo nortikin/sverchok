@@ -364,7 +364,7 @@ transformation.</dd>
 <p>an instance of SvNurbsCurve.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve"><code class="name flex">
-<span>def <span class="ident">interpolate_nurbs_curve</span></span>(<span>degree,<br>points,<br>metric='DISTANCE',<br>tknots=None,<br>t_range=None,<br>cyclic=False,<br>implementation='NATIVE',<br>logger=None)</span>
+<span>def <span class="ident">interpolate_nurbs_curve</span></span>(<span>degree,<br>points,<br>metric='DISTANCE',<br>tknots=None,<br>knotvector=None,<br>t_range=None,<br>cyclic=False,<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -374,6 +374,7 @@ transformation.</dd>
 <pre><code class="python">def interpolate_nurbs_curve(degree, points,
                             metric=&#39;DISTANCE&#39;,
                             tknots=None,
+                            knotvector=None,
                             t_range = None,
                             cyclic=False,
                             implementation=SvNurbsMaths.NATIVE, logger=None):
@@ -394,6 +395,7 @@ transformation.</dd>
     &#34;&#34;&#34;
     solver = prepare_solver_for_interpolation(degree, points,
                     metric = metric, tknots = tknots,
+                    knotvector = knotvector,
                     t_range = t_range,
                     cyclic = cyclic)
     problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
@@ -503,6 +505,7 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
     solver.add_goal(SvNurbsCurvePoints(tknots, points, relative=False))
     solver.add_goal(SvNurbsCurveTangents(tknots, tangents, relative=False))
     knotvector = knotvector_with_tangents_from_tknots(degree, tknots)
+    #print(f&#34;Tknots {tknots} =&gt; Kv {knotvector}&#34;)
     n_cpts = solver.guess_n_control_points()
     solver.set_curve_params(n_cpts, knotvector)
     problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
@@ -549,7 +552,7 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.prepare_solver_for_interpolation"><code class="name flex">
-<span>def <span class="ident">prepare_solver_for_interpolation</span></span>(<span>degree, points, metric='DISTANCE', tknots=None, t_range=None, cyclic=False)</span>
+<span>def <span class="ident">prepare_solver_for_interpolation</span></span>(<span>degree,<br>points,<br>metric='DISTANCE',<br>tknots=None,<br>knotvector=None,<br>t_range=None,<br>cyclic=False)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -559,6 +562,7 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
 <pre><code class="python">def prepare_solver_for_interpolation(degree, points,
                                      metric=&#39;DISTANCE&#39;,
                                      tknots=None,
+                                     knotvector = None,
                                      t_range = None,
                                      cyclic=False):
     n_points = len(points)
@@ -581,9 +585,11 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
         tangent = k*(points[1] - points[-2])
         solver.add_goal(SvNurbsCurveTangents.single(tknots[0], tangent))
         solver.add_goal(SvNurbsCurveTangents.single(tknots[-1], tangent))
-        knotvector = sv_knotvector.from_tknots(degree, tknots, include_endpoints=True)
-    else:
-        knotvector = sv_knotvector.from_tknots(degree, tknots)
+    if knotvector is None:
+        if cyclic:
+            knotvector = sv_knotvector.from_tknots(degree, tknots, include_endpoints=True)
+        else:
+            knotvector = sv_knotvector.from_tknots(degree, tknots)
 
     n_cpts = solver.guess_n_control_points()
     solver.set_curve_params(n_cpts, knotvector)
