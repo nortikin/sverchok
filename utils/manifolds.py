@@ -1023,7 +1023,7 @@ ORTHO = 'ortho'
 EQUATION = 'equation'
 NURBS = 'nurbs'
 
-def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10, tolerance=1e-3, maxiter=50):
+def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10, tolerance=1e-3, maxiter=50, logger=None):
     """
     Find intersections of curve and a plane, by combination of orthogonal projections with tangent projections.
     inputs:
@@ -1105,7 +1105,7 @@ def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10,
 
     return solutions
 
-def intersect_curve_plane_equation(curve, plane, init_samples=10, tolerance=1e-3, maxiter=50):
+def intersect_curve_plane_equation(curve, plane, init_samples=10, tolerance=1e-3, maxiter=50, logger=None):
     """
     Find intersections of curve and a plane, by directly solving an equation.
     inputs:
@@ -1142,6 +1142,7 @@ def intersect_curve_plane_equation(curve, plane, init_samples=10, tolerance=1e-3
         return value
 
     solutions = []
+    logger.debug(f"Segments to be considered: {good_ranges}")
     for u1, u2 in good_ranges:
         sol = root_scalar(goal, method='ridder',
                 bracket = (u1, u2),
@@ -1153,13 +1154,14 @@ def intersect_curve_plane_equation(curve, plane, init_samples=10, tolerance=1e-3
 
     return solutions
 
-def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, maxiter=50):
-    def cut_to_segments(curve):
-        u_min, u_max = curve.get_u_bounds()
-        u_range = np.linspace(u_min, u_max, num=init_samples)
-        return [curve.cut_segment(u1,u2) for u1, u2 in zip(u_range, u_range[1:])]
+def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, maxiter=50, logger=None):
+    if logger is None:
+        logger = get_logger()
 
     def check_signs(segment):
+        # if check_signs() returns False, there can not be any solutions
+        # on this segment. Otherwise solutions are possible, but not
+        # necessarily present.
         cpts = segment.get_control_points()
         signs = plane.side_of_points(cpts)
         all_one_side = (signs > 0).all() or (signs < 0).all()
@@ -1197,28 +1199,41 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
         u1, u2 = segment.get_u_bounds()
         if u >= 0 and u <= 1.0:
             v = (1-u)*u1 + u*u2
+            logger.debug(f"Linear search on {u1} - {u2}: result = {v}")
             return v
         else:
+            logger.debug(f"Linear search on {u1} - {u2}: no solutions")
             return None
 
-    plane_inv_matrix = np.linalg.inv(np.array(plane.get_matrix()))
-    is_rational = curve.is_rational()
+    #is_rational = curve.is_rational()
+    #plane_inv_matrix = np.linalg.inv(np.array(plane.get_matrix()))
 
     normalized_plane = plane.normalized()
-    delta_z = normalized_plane.d
+    #delta_z = normalized_plane.d
+    plane_normal = normalized_plane.normal
+    plane_ctr = np.array(normalized_plane.nearest_point_to_origin())
 
     def get_taylor_coeffs(segment):
+            #if is_rational:
+            #cpts = segment.get_homogenous_control_points()[:,:3]
+        #else:
         cpts = segment.get_control_points()
-        cpts = np.array([plane_inv_matrix @ pt for pt in cpts])
-        segment = segment.copy(control_points = cpts)
+        oriented_cpts = ((cpts - plane_ctr) @ plane_normal)[np.newaxis].T
+        #oriented_cpts = np.array([plane_inv_matrix @ pt for pt in cpts])
+        #print("Cpts", cpts)
+        #print("Cpts_n", cpts_n)
+        #n = len(cpts)
+        #ones = np.ones((n,))
+        segment = segment.copy(control_points = oriented_cpts)#.to_bezier()
         taylor = segment.bezier_to_taylor()
-        coeffs = taylor.get_coefficients()[:,2]
+        coeffs = taylor.get_coefficients()[:,0]
+        #logger.debug(f"Cpts\n{cpts}\nOriented cpts\n{oriented_cpts}\nTaylor coeffs\n{coeffs}")
         return coeffs
 
     def solve_quadric(segment):
         coeffs = get_taylor_coeffs(segment)
         c,b,a = coeffs
-        c += delta_z
+        #c += delta_z
         D = b*b - 4*a*c
         if D < 0:
             return []
@@ -1238,7 +1253,7 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
         t_min, t_max = segment.get_u_bounds()
         coeffs = get_taylor_coeffs(segment)
         d,c,b,a = coeffs
-        d += delta_z
+        #d += delta_z
         p = (3*a*c - b*b) / (3*a*a)
         q = (2*b**3 - 9*a*b*c + 27*a*a*d)/(27*a**3)
         Q = (p/3)**3 + (q/2)**2
@@ -1262,36 +1277,44 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
     def solve(segment, i=0):
         if segment is None:
             return []
+        if not check_signs(segment):
+            return []
         if is_small(segment):
-            cpts = segment.get_control_points()
-            p1, p2 = cpts[0], cpts[-1]
-            p = 0.5*(p1 + p2)
+            #cpts = segment.get_control_points()
+            #p1, p2 = cpts[0], cpts[-1]
+            #p = 0.5*(p1 + p2)
             u = middle(segment)
+            logger.debug(f"Segment is too small: {segment.get_u_bounds()} => return it's middle, {u}")
             #print(f"I: small segment: {u} - {p}")
             return [u]
-        elif not is_rational and (segment.get_degree() == 1 or segment.is_line(tolerance)):
+        elif segment.get_degree() == 1 or segment.is_line(tolerance):
             r = intersect_line(segment)
             if r is None:
                 return []
             else:
-                #print(f"I: linear: {r}")
                 return [r]
-        elif not is_rational and segment.get_degree() == 2:
-            return solve_quadric(segment)
-        elif not is_rational and segment.get_degree() == 3:
-            return solve_cubic(segment)
+        elif segment.get_degree() == 2:
+            result = solve_quadric(segment)
+            logger.debug(f"Solve quadratic: {segment.get_u_bounds()} => {result}")
+            return result
+        elif segment.get_degree() == 3:
+            result = solve_cubic(segment)
+            logger.debug(f"Solve cubic: {segment.get_u_bounds()} => {result}")
+            return result
         else:
             if i > maxiter:
                 raise Exception(f"Maximum number of subdivision iterations ({maxiter}) reached; last segment size is {segment.get_bounding_box().size()}")
+            logger.debug(f"Segment {segment.get_u_bounds()}: could not solve, split")
             s1, s2 = split(segment)
             return solve(s1, i+1) + solve(s2, i+1)
 
-    if is_rational:
-        segments = cut_to_segments(curve)
-    else:
-        segments = curve.to_bezier_segments(to_bezier_class=False)
+    # if is_rational:
+    #     segments = cut_to_segments(curve)
+    # else:
+    segments = curve.to_bezier_segments(to_bezier_class=False)
 
     segments = [segment for segment in segments if segment is not None and check_signs(segment)]
+    logger.debug(f"Segments to be considered: {[segment.get_u_bounds() for segment in segments]}")
     solutions = [solve(segment) for segment in segments]
     #print(f"Intersect: segments {[s.get_control_points()[0] for s in segments]}")
     solutions = sum(solutions, [])
