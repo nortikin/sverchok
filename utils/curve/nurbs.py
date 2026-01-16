@@ -737,14 +737,15 @@ class SvNurbsCurve(SvCurve):
 
         p = self.get_degree()
         cpts = self.get_homogenous_control_points()
-        #print(f"Cpts {cpts}")
+        ndim = cpts.shape[-1]
+        #print(f"bezier_to_taylor Cpts {cpts}")
 
         mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
         M, R = mr['M'], mr['R']
         #print(f"T {self.get_u_bounds()},\nR {R}\nM {M}")
 
-        coeffs = np.zeros((4, p+1))
-        for k in range(4):
+        coeffs = np.zeros((ndim, p+1))
+        for k in range(ndim):
             coeffs[k] = R @ M @ cpts[:,k]
         #print(f"T: {self.get_u_bounds()} => {coeffs.T}")
         #print(f"C: {c}, D: {d} => R {R}")

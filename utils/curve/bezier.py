@@ -13,7 +13,8 @@ from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputExce
 from sverchok.utils.math import binomial, binomial_array, np_dot
 from sverchok.utils.geom import Spline, bounding_box, are_points_coplanar, get_common_plane, PlaneEquation, LineEquation
 from sverchok.utils.nurbs_common import SvNurbsMaths, nurbs_divide, to_homogenous, from_homogenous
-from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
+from sverchok.utils.nurbs_common import SvNurbsMaths, nurbs_divide, to_homogenous, from_homogenous
+from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import elevate_bezier_degree
@@ -201,6 +202,7 @@ class SvBezierCommon:
                 result += 1
         return result
 
+class SvBezierCurve(SvCurve, SvBezierSplitMixin):
     def is_inside_sphere(self, sphere_center, sphere_radius):
         """
         Check that the whole curve lies inside the specified sphere
@@ -649,6 +651,24 @@ class SvBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
     def reverse(self):
         return SvBezierCurve(self.points[::-1])
 
+    def bezier_to_taylor(self):
+        # Refer to The NURBS Book, 2nd ed., p. 6.6
+        p = self.get_degree()
+        cpts = self.get_homogenous_control_points()
+        ndim = cpts.shape[-1]
+        #print(f"Cpts {cpts}")
+
+        mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds(), calc_R = False)
+        M = mr['M']
+
+        coeffs = np.zeros((ndim, p+1))
+        for k in range(ndim):
+            coeffs[k] = M @ cpts[:,k]
+
+        taylor = SvTaylorCurve.from_coefficients(coeffs.T)
+        taylor.u_bounds = self.get_u_bounds()
+        return taylor
+
 class SvCubicBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
     __description__ = "Bezier[3*]"
     def __init__(self, p0, p1, p2, p3):
@@ -766,6 +786,11 @@ class SvCubicBezierCurve(SvCurve, SvBezierCommon, SvBezierSplitMixin):
 
     def get_control_points(self):
         return np.array([self.p0, self.p1, self.p2, self.p3])
+
+    def get_homogenous_control_points(self):
+        hom_cpts = np.ones((4, 4))
+        hom_cpts[:,:3] = self.get_control_points()
+        return hom_cpts
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(3, 4)
