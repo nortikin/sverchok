@@ -924,7 +924,25 @@ el.replaceWith(d);
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
     def reverse(self):
-        return SvBezierCurve(self.points[::-1])</code></pre>
+        return SvBezierCurve(self.points[::-1])
+
+    def bezier_to_taylor(self):
+        # Refer to The NURBS Book, 2nd ed., p. 6.6
+        p = self.get_degree()
+        cpts = self.get_homogenous_control_points()
+        ndim = cpts.shape[-1]
+        #print(f&#34;Cpts {cpts}&#34;)
+
+        mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds(), calc_R = False)
+        M = mr[&#39;M&#39;]
+
+        coeffs = np.zeros((ndim, p+1))
+        for k in range(ndim):
+            coeffs[k] = M @ cpts[:,k]
+
+        taylor = SvTaylorCurve.from_coefficients(coeffs.T)
+        taylor.u_bounds = self.get_u_bounds()
+        return taylor</code></pre>
 </details>
 <div class="desc"><p>Bezier curve of arbitrary degree.</p></div>
 <h3>Ancestors</h3>
@@ -1009,6 +1027,34 @@ This is also called Hermite spline.</p>
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="sverchok.utils.curve.bezier.SvBezierCurve.bezier_to_taylor"><code class="name flex">
+<span>def <span class="ident">bezier_to_taylor</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bezier_to_taylor(self):
+    # Refer to The NURBS Book, 2nd ed., p. 6.6
+    p = self.get_degree()
+    cpts = self.get_homogenous_control_points()
+    ndim = cpts.shape[-1]
+    #print(f&#34;Cpts {cpts}&#34;)
+
+    mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds(), calc_R = False)
+    M = mr[&#39;M&#39;]
+
+    coeffs = np.zeros((ndim, p+1))
+    for k in range(ndim):
+        coeffs[k] = M @ cpts[:,k]
+
+    taylor = SvTaylorCurve.from_coefficients(coeffs.T)
+    taylor.u_bounds = self.get_u_bounds()
+    return taylor</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.bezier.SvBezierCurve.coeff"><code class="name flex">
 <span>def <span class="ident">coeff</span></span>(<span>self, k, ts)</span>
 </code></dt>
@@ -1584,6 +1630,11 @@ This is also called Hermite spline.</p>
     def get_control_points(self):
         return np.array([self.p0, self.p1, self.p2, self.p3])
 
+    def get_homogenous_control_points(self):
+        hom_cpts = np.ones((4, 4))
+        hom_cpts[:,:3] = self.get_control_points()
+        return hom_cpts
+
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(3, 4)
         control_points = np.array([self.p0, self.p1, self.p2, self.p3])
@@ -1724,6 +1775,21 @@ This is also called Hermite spline.</p>
 </summary>
 <pre><code class="python">def get_bounding_box(self):
     return bounding_box(self.get_control_points())</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.get_homogenous_control_points"><code class="name flex">
+<span>def <span class="ident">get_homogenous_control_points</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_homogenous_control_points(self):
+    hom_cpts = np.ones((4, 4))
+    hom_cpts[:,:3] = self.get_control_points()
+    return hom_cpts</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -2393,6 +2459,7 @@ This is also called Hermite spline.</p>
 <li>
 <h4><code><a title="sverchok.utils.curve.bezier.SvBezierCurve" href="#sverchok.utils.curve.bezier.SvBezierCurve">SvBezierCurve</a></code></h4>
 <ul class="">
+<li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.bezier_to_taylor" href="#sverchok.utils.curve.bezier.SvBezierCurve.bezier_to_taylor">bezier_to_taylor</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.blend_second_derivatives" href="#sverchok.utils.curve.bezier.SvBezierCurve.blend_second_derivatives">blend_second_derivatives</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.blend_third_derivatives" href="#sverchok.utils.curve.bezier.SvBezierCurve.blend_third_derivatives">blend_third_derivatives</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.build_tangent_curve" href="#sverchok.utils.curve.bezier.SvBezierCurve.build_tangent_curve">build_tangent_curve</a></code></li>
@@ -2426,11 +2493,12 @@ This is also called Hermite spline.</p>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve">SvCubicBezierCurve</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.copy" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.copy">copy</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.elevate_degree" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.elevate_degree">elevate_degree</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.from_four_points" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.from_four_points">from_four_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.get_bounding_box" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.get_bounding_box">get_bounding_box</a></code></li>
+<li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.get_homogenous_control_points" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.get_homogenous_control_points">get_homogenous_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.get_plane" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.get_plane">get_plane</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.is_line" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.is_line">is_line</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.is_planar" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.is_planar">is_planar</a></code></li>

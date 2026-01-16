@@ -1926,14 +1926,15 @@ el.replaceWith(d);
 
         p = self.get_degree()
         cpts = self.get_homogenous_control_points()
-        #print(f&#34;Cpts {cpts}&#34;)
+        ndim = cpts.shape[-1]
+        #print(f&#34;bezier_to_taylor Cpts {cpts}&#34;)
 
         mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
         M, R = mr[&#39;M&#39;], mr[&#39;R&#39;]
         #print(f&#34;T {self.get_u_bounds()},\nR {R}\nM {M}&#34;)
 
-        coeffs = np.zeros((4, p+1))
-        for k in range(4):
+        coeffs = np.zeros((ndim, p+1))
+        for k in range(ndim):
             coeffs[k] = R @ M @ cpts[:,k]
         #print(f&#34;T: {self.get_u_bounds()} =&gt; {coeffs.T}&#34;)
         #print(f&#34;C: {c}, D: {d} =&gt; R {R}&#34;)
@@ -2322,14 +2323,15 @@ if this curve can not be converted to NURBS.</p></div>
 
     p = self.get_degree()
     cpts = self.get_homogenous_control_points()
-    #print(f&#34;Cpts {cpts}&#34;)
+    ndim = cpts.shape[-1]
+    #print(f&#34;bezier_to_taylor Cpts {cpts}&#34;)
 
     mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
     M, R = mr[&#39;M&#39;], mr[&#39;R&#39;]
     #print(f&#34;T {self.get_u_bounds()},\nR {R}\nM {M}&#34;)
 
-    coeffs = np.zeros((4, p+1))
-    for k in range(4):
+    coeffs = np.zeros((ndim, p+1))
+    for k in range(ndim):
         coeffs[k] = R @ M @ cpts[:,k]
     #print(f&#34;T: {self.get_u_bounds()} =&gt; {coeffs.T}&#34;)
     #print(f&#34;C: {c}, D: {d} =&gt; R {R}&#34;)
