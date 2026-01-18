@@ -12,16 +12,17 @@ solver (`sverchok.utils.curve.nurbs_solver` module).
 
 import numpy as np
 
+from sverchok.core.sv_custom_exceptions import ArgumentError
 from sverchok.utils.math import falloff_array, distribute_int
 from sverchok.utils.geom import Spline
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolver, CurvatureIntegral
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots, concatenate_nurbs_curves
-from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveCotangents, SvNurbsCurveSolver
+from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveSolver
 from sverchok.utils.sv_logging import get_logger
 
-def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, logger=None):
+def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, tangents = None, logger=None):
     """
     Modify NURBS curve so that it would pass through specified points
     at specified parameter values.
@@ -38,14 +39,20 @@ def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, logger=N
         logger = get_logger()
     n_target_points = len(us_bar)
     if len(points) != n_target_points:
-        raise Exception("Number of U parameters must be equal to number of points")
+        raise ArgumentError("Number of U parameters must be equal to number of points")
+    if preserve_tangents and tangents is not None:
+        raise ArgumentError("preserve_tangents and tangents can not be provided simultaneously")
 
     solver = SvNurbsCurveSolver(src_curve=curve)
     orig_pts = curve.evaluate_array(us_bar)
     solver.add_goal(SvNurbsCurvePoints(us_bar, points - orig_pts, relative=True))
     if preserve_tangents:
+        #print("Add preserve_tangents")
         zeros = np.zeros((n_target_points,3))
         solver.add_goal(SvNurbsCurveTangents(us_bar, zeros, relative=True))
+    elif tangents is not None:
+        #print(f"Add: Us {len(us_bar)}, tangents {len(tangents)}, target pts {n_target_points}")
+        solver.add_goal(SvNurbsCurveTangents(us_bar, tangents, relative=False))
     solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector(), weights=curve.get_weights())
     problem_type, residue, curve = solver.solve_ex(
                     problem_types = {SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED,

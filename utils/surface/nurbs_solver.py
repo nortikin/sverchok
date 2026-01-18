@@ -7,7 +7,7 @@
 
 import numpy as np
 
-from sverchok.core.sv_custom_exceptions import AlgorithmError
+from sverchok.core.sv_custom_exceptions import AlgorithmError, ArgumentError
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths, SvNurbsBasisFunctions
     )
@@ -15,7 +15,7 @@ from sverchok.utils.sv_logging import get_logger
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.curve.nurbs_solver_applications import adjust_curve_points
+from sverchok.utils.curve.nurbs_solver_applications import adjust_curve_points, interpolate_nurbs_curve
 
 class SvNurbsSurfaceSolver:
     def __init__(self):
@@ -250,6 +250,25 @@ def unify_surface_curve(surface, direction, curves, accuracy=6):
 
     return surface, curves
 
+class SvNurbsSurfaceAdjustTarget:
+    def __init__(self, p_value, curve, tangents=None):
+        self.p_value = p_value
+        self.curve = curve
+        #if tangents is not None:
+        self.tangents = tangents
+        #else:
+        #    self.tangents = [None for _ in curve.get_control_points()]
+
+    def __repr__(self):
+        return f"<Target: p_value={self.p_value}, curve={self.curve}, tangents={self.tangents}>"
+
+def _interpolate_tangents(degree, vectors, src_ts, dst_ts, logger):
+    #print(f"Interpolate: {len(vectors)}: {len(src_ts)} => {len(dst_ts)}")
+    if len(src_ts) == len(dst_ts) and (src_ts == dst_ts).all():
+        return vectors
+    curve = interpolate_nurbs_curve(degree, vectors, tknots=src_ts, logger=logger)
+    return curve.evaluate_array(dst_ts)
+
 def adjust_nurbs_surface_for_curves(surface, direction, targets, preserve_tangents=False, logger=None):
     """
     Adjust NURBS surface in such a way that at specified value of U/V parameter
@@ -268,9 +287,23 @@ def adjust_nurbs_surface_for_curves(surface, direction, targets, preserve_tangen
     """
     if logger is None:
         logger = get_logger()
-    target_curves = [p[1] for p in targets]
-    values = np.array([p[0] for p in targets])
+    any_tangent_provided = any(p.tangents is not None for p in targets)
+    all_tangents_provided = all(p.tangents is not None for p in targets)
+    if preserve_tangents and any_tangent_provided:
+        raise ArgumentError("preserve_tangents and tangents can not be provided simultaneously")
+    if any_tangent_provided and not all_tangents_provided:
+        raise ArgumentError("Either all tangents or none of tangents must be provided")
+    target_curves = [p.curve for p in targets]
+    target_tangents = [p.tangents for p in targets]
+    values = np.array([p.p_value for p in targets])
     surface, target_curves = unify_surface_curve(surface, direction, target_curves)
+    if any_tangent_provided:
+        degree = surface.get_degree_u() if direction == SvNurbsSurface.U else surface.get_degree_v()
+        target_tangents = [_interpolate_tangents(degree, p.tangents, p.curve.calc_greville_ts(), fixed_curve.calc_greville_ts(), logger) for p, fixed_curve in zip(targets, target_curves)]
+        target_tangents = np.transpose(np.array(target_tangents), axes=(1,0,2))
+    else:
+        n_ctrlpts = len(target_curves[0].get_control_points())
+        target_tangents = [None for _ in range(n_ctrlpts)]
     controls = surface.get_control_points()
     weights = surface.get_weights()
     k_u,k_v = weights.shape
@@ -289,16 +322,23 @@ def adjust_nurbs_surface_for_curves(surface, direction, targets, preserve_tangen
                         controls[:,j], weights[:,j]) for j in range(k_v)]
     q_controls = []
     q_weights = []
-    for j, q_curve in enumerate(q_curves):
-        controls = np.array([pts[j] for pts in target_controls])
-        q_curve = adjust_curve_points(q_curve, values, controls, preserve_tangents = preserve_tangents, logger = logger)
-        q_controls.append(q_curve.get_control_points())
-        q_weights.append(q_curve.get_weights())
+    #print("Q curves", q_curves)
+    #print("Tgt tangents", target_tangents.shape)
+    for j, (q_curve, q_tangents) in enumerate(zip(q_curves, target_tangents)):
+        tgt_controls = np.array([pts[j] for pts in target_controls])
+        #tgt_tangents = np.array(q_tangents)
+        #tgt_tangents = np.array([vecs[j] for vecs in q_tangents])
+        #print("T", j, tgt_controls.shape, q_tangents is None, preserve_tangents)
+        new_q_curve = adjust_curve_points(q_curve, values, tgt_controls, preserve_tangents = preserve_tangents, tangents = q_tangents, logger = logger)
+        #print(f"Q {len(q_curve.get_control_points())} => {len(new_q_curve.get_control_points())}")
+        q_controls.append(new_q_curve.get_control_points())
+        q_weights.append(new_q_curve.get_weights())
     q_controls = np.array(q_controls)
     q_weights = np.array(q_weights)
     if direction == SvNurbsSurface.U:
         q_controls = np.transpose(q_controls, axes=(1,0,2))
         q_weights = np.transpose(q_weights, axes=(1,0))
+    #print(f"Old {surface} => {q_controls.shape}")
     return surface.copy(control_points = q_controls, weights = q_weights)
 
 ORDER_UV = 'UV'
