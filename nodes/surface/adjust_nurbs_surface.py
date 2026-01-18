@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from hmac import new
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty
 

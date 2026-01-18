@@ -402,6 +402,7 @@
         - SvSurfaceReduceDegreeNode
         - ---
         - SvAdjustNurbsSurfaceNode
+        - SvSnapSurfacesNode
     - Analyze Surface:
         - icon_name: VIEWZOOM
         - SvExSurfaceDomainNode
