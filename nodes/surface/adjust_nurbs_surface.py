@@ -15,7 +15,7 @@ from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.surface.nurbs_solver import adjust_nurbs_surface_for_curves, adjust_nurbs_surface_for_points
+from sverchok.utils.surface.nurbs_solver import adjust_nurbs_surface_for_curves, adjust_nurbs_surface_for_points, SvNurbsSurfaceAdjustTarget
 
 class SvAdjustNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -125,7 +125,7 @@ class SvAdjustNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                     if any(c is None for c in curves):
                         raise UnsupportedCurveTypeException("One of target curves is not NURBS")
 
-                    targets = list(zip_long_repeat(p_values, curves))
+                    targets = [SvNurbsSurfaceAdjustTarget(p_value, curve) for p_value, curve in zip_long_repeat(p_values, curves)]
                     surface = adjust_nurbs_surface_for_curves(surface, self.direction, targets,
                                                 preserve_tangents = self.preserve_tangents,
                                                 logger = self.sv_logger)
