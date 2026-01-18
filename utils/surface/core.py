@@ -225,6 +225,13 @@ class SvFlipSurface(SvSurface):
             self.normal_delta = 0.0001
         self.__description__ = "Flipped {}".format(surface)
 
+    @classmethod
+    def build(cls, surface, flip_u, flip_v):
+        if hasattr(surface, 'flip'):
+            return surface.flip(flip_u, flip_v)
+        else:
+            return SvFlipSurface(surface, flip_u, flip_v)
+
     def get_u_min(self):
         return self.surface.get_u_min()
 
@@ -244,7 +251,7 @@ class SvFlipSurface(SvSurface):
         if self.flip_u:
             u = max_u - u + min_u
         if self.flip_v:
-            v = max_v - v + max_v
+            v = max_v - v + min_v
         return u, v
 
     def evaluate(self, u, v):
