@@ -488,6 +488,8 @@ class SvNurbsSurface(SvSurface):
         cps2 = surface2.get_control_points()[0,:]
         dpts = np.linalg.norm(cps1 - cps2, axis=0)
         if (dpts > tolerance).any():
+            print("Cpts1", cps1)
+            print("Cpts2", cps2)
             raise UnsupportedSurfaceTypeException("Boundary control points do not match")
 
         ws1 = surface1.get_weights()[-1,:]
@@ -535,6 +537,8 @@ class SvNurbsSurface(SvSurface):
         cps2 = surface2.get_control_points()[:,0]
         dpts = np.linalg.norm(cps1 - cps2, axis=0)
         if (dpts > tolerance).any():
+            print("Cpts1", cps1)
+            print("Cpts2", cps2)
             raise UnsupportedSurfaceTypeException("Boundary control points do not match")
 
         ws1 = surface1.get_weights()[:,-1]

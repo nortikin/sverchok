@@ -420,9 +420,9 @@ def snap_nurbs_surfaces(input1, input2, bias = SnapSurfaceBias.MID, tangents = S
             return SvNurbsSurface.U
 
     unify_directions = set([other_direction(input1.direction), other_direction(input2.direction)])
-    print("Before unify:", input1.surface, input2.surface, unify_directions)
+    logger.debug("Before unify: %s %s %s", input1.surface, input2.surface, unify_directions)
     surface1, surface2 = unify_nurbs_surfaces([input1.surface, input2.surface], directions=unify_directions)
-    print("After unify:", surface1, surface2)
+    logger.debug("After unify: %s %s", surface1, surface2)
     surface1 = surface1.reparametrize(0, 1, 0, 1)
     surface2 = surface2.reparametrize(0, 1, 0, 1)
     s1p = get_parameter(input1.direction, input1.side, surface1)

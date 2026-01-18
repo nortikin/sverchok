@@ -11,6 +11,7 @@ import numpy as np
 
 from mathutils import Matrix, Vector
 
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException
 from sverchok.utils.math import (
         ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
         np_dot, np_multiply_matrices_vectors, sign
@@ -1251,7 +1252,7 @@ class SvConcatSurface(SvSurface):
         # TODO: numpy implementation
         return np.vectorize(self.evaluate, signature='(),()->(3)')(us, vs)
 
-def concatenate_surfaces(direction, surfaces):
+def concatenate_surfaces(direction, surfaces, native_only=False):
     if all(hasattr(s, 'concatenate') for s in surfaces):
         try:
             result = surfaces[0]
@@ -1259,7 +1260,12 @@ def concatenate_surfaces(direction, surfaces):
                 result = result.concatenate(direction, s)
             return result
         except UnsupportedSurfaceTypeException as e:
-            sv_logger.debug("Can't concatenate surfaces natively: %s", e)
+            if native_only:
+                raise SvInvalidInputException(f"Can't concatenate surfaces natively: {e}") from e
+            else:
+                sv_logger.debug("Can't concatenate surfaces natively: %s", e)
+    elif native_only:
+        raise SvInvalidInputException("Surface class does not support specific concatenation method")
     
     return SvConcatSurface(direction, surfaces)
 
