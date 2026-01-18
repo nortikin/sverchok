@@ -6,10 +6,11 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty
+from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException, SurfaceSide
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.nurbs_solver import snap_nurbs_surfaces, SnapSurfaceBias, SnapSurfaceTangents, SnapSurfaceInput
@@ -116,6 +117,12 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'tangent')
 
     def _process(self, surface1, surface2):
+        surface1 = SvNurbsMaths.to_nurbs_surface(surface1)
+        if surface1 is None:
+            raise UnsupportedSurfaceTypeException("First surface is not NURBS")
+        surface2 = SvNurbsMaths.to_nurbs_surface(surface2)
+        if surface2 is None:
+            raise UnsupportedSurfaceTypeException("Second surface is not NURBS")
         input1 = SnapSurfaceInput(surface1, self.direction1, SurfaceSide[self.side1], invert_tangents = self.invert1)
         input2 = SnapSurfaceInput(surface2, self.direction2, SurfaceSide[self.side2], invert_tangents = self.invert2)
         return snap_nurbs_surfaces(input1, input2,
