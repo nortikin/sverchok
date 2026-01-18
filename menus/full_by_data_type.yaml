@@ -384,6 +384,8 @@
         - SvGordonSurfaceNode
         - ---
         - SvExQuadsToNurbsNode
+        - ---
+        - SvConcatSurfacesNode
     - Modify Surface:
         - icon_name: TOOL_SETTINGS
         - SvExApplyFieldToSurfaceNode

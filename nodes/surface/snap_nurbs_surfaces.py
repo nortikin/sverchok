@@ -10,7 +10,6 @@ from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException, SurfaceSide
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.nurbs_solver import snap_nurbs_surfaces, SnapSurfaceBias, SnapSurfaceTangents, SnapSurfaceInput
@@ -45,8 +44,8 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         ]
 
     sides = [
-            (SurfaceSide.MIN.name, "Minimum", "Minimum value of surface parameter", 0),
-            (SurfaceSide.MAX.name, "Maximum", "Maximum value of surface parameter", 1)
+            (SurfaceSide.MIN.name, "Min", "Minimum value of surface parameter", 0),
+            (SurfaceSide.MAX.name, "Max", "Maximum value of surface parameter", 1)
         ]
 
     direction1 : EnumProperty(
@@ -101,11 +100,12 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
             side_name = 'side2'
             invert_name = 'invert2'
         row = layout.row()
-        row.prop(self, direction_name, text='')
-        row.prop(self, side_name, text='')
+        row.prop(self, direction_name, expand=True)
+        row.prop(self, side_name, expand=True)
         row.prop(self, invert_name, text='')
 
     def sv_init(self, context):
+        self.width = 250
         self.inputs.new('SvSurfaceSocket', "Surface1").custom_draw = 'draw_surface_in_socket'
         self.inputs.new('SvSurfaceSocket', "Surface2").custom_draw = 'draw_surface_in_socket'
         self.outputs.new('SvSurfaceSocket', "Surface1")
@@ -117,10 +117,10 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'tangent')
 
     def _process(self, surface1, surface2):
-        surface1 = SvNurbsMaths.to_nurbs_surface(surface1)
+        surface1 = SvNurbsSurface.get(surface1)
         if surface1 is None:
             raise UnsupportedSurfaceTypeException("First surface is not NURBS")
-        surface2 = SvNurbsMaths.to_nurbs_surface(surface2)
+        surface2 = SvNurbsSurface.get(surface2)
         if surface2 is None:
             raise UnsupportedSurfaceTypeException("Second surface is not NURBS")
         input1 = SnapSurfaceInput(surface1, self.direction1, SurfaceSide[self.side1], invert_tangents = self.invert1)
