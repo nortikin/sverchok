@@ -5,12 +5,17 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from sverchok.utils.surface.data import *
+import enum
 
+from sverchok.utils.surface.data import *
 
 class UnsupportedSurfaceTypeException(TypeError):
     __description__ = "Unsupported surface type"
     pass
+
+class SurfaceSide(enum.Enum):
+    MIN = enum.auto()
+    MAX = enum.auto()
 
 class SvSurface(object):
     def __repr__(self):
