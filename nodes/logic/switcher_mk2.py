@@ -75,7 +75,7 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             col.prop(self, "user_list", toggle=True, index=i, text=val.name)
         if self.inputs['Mask'].is_linked:
             row = layout.row(align=True)
-            row.prop(self, "masked", text='Use mask')
+            row.prop(self, "masked", text='UseMask')
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "draw_3dpanel", icon="PLUGIN")
@@ -98,7 +98,7 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             row.label(text=self.label or self.name)
             row.prop(self, 'multiple_selection', toggle=True, text='multiselect',
                      icon='SNAP_ON' if self.multiple_selection else 'SNAP_OFF')
-            row.prop(self, 'masked', toggle=True, text='use mask',
+            row.prop(self, 'masked', toggle=True, text='UseMask',
                      icon='SPREADSHEET' if self.masked else 'VIEW_PAN')
             #if not self.masked:
             for i, val in enumerate(self.string_values):
@@ -122,12 +122,17 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         else:
             self.string_values.clear()
 
+        use_mask_from_socket = False
         if self.inputs['UseMask'].is_linked:
-            mas = self.inputs['UseMask'].sv_get()
-            if mas[0]:
-                self.masked = bool(mas[0][0])
+            try:
+                use_mask_from_socket = bool(self.inputs['UseMask'].sv_get()[0][0])
+                self['masked'] = use_mask_from_socket
+            except:
+                use_mask_from_socket = self.masked
+                print('Switcher node use mask socket got wrong data')
 
-        if self.inputs['Mask'].is_linked and self.inputs['Data'].is_linked and self.masked:
+
+        if self.inputs['Mask'].is_linked and self.inputs['Data'].is_linked and use_mask_from_socket:
             mask_data = self.inputs['Mask'].sv_get()
             # Check if mask_data is not empty to allow manual override when [] is passed
             if mask_data and mask_data[0]:
@@ -161,9 +166,5 @@ class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 def register():
     bpy.utils.register_class(SvCustomSwitcherMK2)
 
-
 def unregister():
     bpy.utils.unregister_class(SvCustomSwitcherMK2)
-
-if __name__ == '__main__':
-    register()
