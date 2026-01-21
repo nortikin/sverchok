@@ -604,6 +604,7 @@ class SvNurbsCurveSolver(SvCurve):
         self.knotvector = None
         self.goals = []
         self.A = self.B = None
+        self._inited = False
 
     @staticmethod
     def _check_is_rational(weights):
@@ -713,6 +714,8 @@ class SvNurbsCurveSolver(SvCurve):
         self.goals = goals
 
     def _init(self):
+        if self._inited:
+            return
         if self.n_cpts is None:
             raise InvalidStateError("Number of control points is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()")
         if self.knotvector is None:
@@ -733,6 +736,21 @@ class SvNurbsCurveSolver(SvCurve):
             Bs.append(Bi)
         self.A = np.concatenate(As)
         self.B = np.concatenate(Bs)
+        self._inited = True
+
+    def get_matrices(self):
+        self._init()
+        return self.A, self.B
+
+    def get_problem_type(self):
+        self._init()
+        n_equations, n_unknowns = self.A.shape
+        if n_equations == n_unknowns:
+            return SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
+        elif n_equations < n_unknowns:
+            return SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
+        else: # n_equations > n_unknowns
+            return SvNurbsCurveSolver.PROBLEM_OVERDETERMINED
 
     PROBLEM_WELLDETERMINED = 'WELLDETERMINED'
     PROBLEM_UNDERDETERMINED = 'UNDERDETERMINED'
