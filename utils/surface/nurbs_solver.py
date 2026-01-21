@@ -18,7 +18,7 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.surface.core import SurfaceSide
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
-from sverchok.utils.surface.nurbs import SvNurbsSurface
+from sverchok.utils.surface.nurbs import SvNurbsSurface, other_direction
 from sverchok.utils.curve.nurbs_solver_applications import adjust_curve_points, interpolate_nurbs_curve
 
 class SvNurbsSurfaceSolver:
@@ -412,12 +412,6 @@ def snap_nurbs_surfaces(input1, input2, bias = SnapSurfaceBias.MID, tangents = S
         else:
             vecs = derivs.dv
         return vecs
-
-    def other_direction(direction):
-        if direction == SvNurbsSurface.U:
-            return SvNurbsSurface.V
-        else:
-            return SvNurbsSurface.U
 
     unify_directions = set([other_direction(input1.direction), other_direction(input2.direction)])
     logger.debug("Before unify: %s %s %s", input1.surface, input2.surface, unify_directions)

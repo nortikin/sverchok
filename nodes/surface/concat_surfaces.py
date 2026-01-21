@@ -10,12 +10,9 @@ from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException, SurfaceSide
-from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.surface.algorithms import concatenate_surfaces
-from sverchok.utils.surface.nurbs_solver import snap_nurbs_surfaces, SnapSurfaceBias, SnapSurfaceTangents, SnapSurfaceInput
-
+from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
+from sverchok.utils.surface.nurbs import SvNurbsSurface, other_direction
+from sverchok.utils.surface.algorithms import concatenate_surfaces, unify_nurbs_surfaces
 
 class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -61,6 +58,11 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
             items = directions,
             update = updateNode)
 
+    unify : BoolProperty(
+            name = "Unify surfaces",
+            default = True,
+            update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surfaces")
         self.inputs.new('SvSurfaceSocket', "Surface1")
@@ -72,6 +74,8 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'input_mode', text='')
         layout.prop(self, 'direction', expand=True)
         layout.prop(self, 'all_nurbs')
+        if self.all_nurbs:
+            layout.prop(self, 'unify')
 
     def get_inputs(self):
         surfaces_s = []
@@ -99,12 +103,16 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         nested_input, surfaces_in = self.get_inputs()
         surfaces_out = []
         for params in surfaces_in:
+            print("Params", params)
             new_surfaces = []
             for surfaces in zip_long_repeat(*params):
+                print("Surfaces", surfaces)
                 if self.all_nurbs:
                     surfaces = [SvNurbsSurface.get(s) for s in surfaces]
                     if any(s is None for s in surfaces):
                         raise UnsupportedSurfaceTypeException("Some of surfaces are not NURBS")
+                    if self.unify:
+                        surfaces = unify_nurbs_surfaces(surfaces, directions={other_direction(self.direction)})
                 new_surface = concatenate_surfaces(direction = self.direction, surfaces = surfaces, native_only = self.all_nurbs)
                 new_surfaces.append(new_surface)
             if nested_input:
