@@ -1307,6 +1307,7 @@ class SvLinkNewNodeInput(bpy.types.Operator):
     ''' Spawn and link new node to the left of the caller node'''
     bl_idname = "node.sv_quicklink_new_node_input"
     bl_label = "Add a new node to the left"
+    bl_options = {"UNDO"}
 
     @classmethod
     def poll(cls, context):
