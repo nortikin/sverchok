@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import EnumProperty, BoolProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
@@ -35,6 +35,12 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         ('N', "List of curves", "Process several curves", 1)
     ]
 
+    nurbs_modes = [
+        ('GENERIC', "Generic", "Create a generic Surface object", 0),
+        ('NURBS', "Always NURBS", "Create a NURBS surface from NURBS curves. Fail if it is not possible to generate a NURBS surface", 1),
+        ('NURBS_IF_POSSIBLE', "NURBS if possible",  "Try to create a NURBS surface from NURBS curves. If it is not possible, create a generic Surface object", 2)
+    ]
+
     def update_sockets(self, context):
         self.inputs['Surface1'].hide_safe = self.input_mode != 'TWO'
         self.inputs['Surface2'].hide_safe = self.input_mode != 'TWO'
@@ -58,10 +64,23 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
             items = directions,
             update = updateNode)
 
+    use_nurbs : EnumProperty(
+        name = "NURBS option",
+        description = "Whether to generate a NURBS or generic surface",
+        items = nurbs_modes,
+        default = 'NURBS_IF_POSSIBLE',
+        update = updateNode)
+
     unify : BoolProperty(
             name = "Unify surfaces",
             default = True,
             update = updateNode)
+
+    knotvector_accuracy : IntProperty(
+        name = "Knotvector accuracy",
+        default = 4,
+        min = 1, max = 10,
+        update = updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surfaces")
@@ -73,9 +92,13 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'input_mode', text='')
         layout.prop(self, 'direction', expand=True)
-        layout.prop(self, 'all_nurbs')
-        if self.all_nurbs:
+        layout.prop(self, 'use_nurbs')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        if self.use_nurbs != 'GENERIC':
             layout.prop(self, 'unify')
+            layout.prop(self, 'knotvector_accuracy')
 
     def get_inputs(self):
         surfaces_s = []
@@ -103,17 +126,19 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         nested_input, surfaces_in = self.get_inputs()
         surfaces_out = []
         for params in surfaces_in:
-            print("Params", params)
             new_surfaces = []
             for surfaces in zip_long_repeat(*params):
-                print("Surfaces", surfaces)
-                if self.all_nurbs:
-                    surfaces = [SvNurbsSurface.get(s) for s in surfaces]
-                    if any(s is None for s in surfaces):
-                        raise UnsupportedSurfaceTypeException("Some of surfaces are not NURBS")
+                if self.use_nurbs != 'GENERIC':
+                    nurbs_surfaces = [SvNurbsSurface.get(s) for s in surfaces]
+                    if any(s is None for s in nurbs_surfaces):
+                        if self.use_nurbs == 'NURBS':
+                            raise UnsupportedSurfaceTypeException("Some of surfaces are not NURBS")
+                    else:
+                        surfaces = nurbs_surfaces
                     if self.unify:
-                        surfaces = unify_nurbs_surfaces(surfaces, directions={other_direction(self.direction)})
-                new_surface = concatenate_surfaces(direction = self.direction, surfaces = surfaces, native_only = self.all_nurbs)
+                        surfaces = unify_nurbs_surfaces(surfaces, directions={other_direction(self.direction)},
+                                                        knotvector_accuracy = self.knotvector_accuracy)
+                new_surface = concatenate_surfaces(direction = self.direction, surfaces = surfaces, native_only = self.use_nurbs == 'NURBS')
                 new_surfaces.append(new_surface)
             if nested_input:
                 surfaces_out.append(new_surfaces)
