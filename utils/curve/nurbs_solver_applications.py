@@ -17,7 +17,7 @@ from sverchok.utils.math import falloff_array, distribute_int
 from sverchok.utils.geom import Spline
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolver, CurvatureIntegral
-from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.nurbs_common import SvNurbsMaths, to_homogenous
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots, concatenate_nurbs_curves
 from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveSolver
 from sverchok.utils.sv_logging import get_logger
@@ -38,22 +38,30 @@ def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, tangents
     if logger is None:
         logger = get_logger()
     n_target_points = len(us_bar)
+    ndim = points.shape[-1]
     if len(points) != n_target_points:
         raise ArgumentError("Number of U parameters must be equal to number of points")
     if preserve_tangents and tangents is not None:
         raise ArgumentError("preserve_tangents and tangents can not be provided simultaneously")
 
-    solver = SvNurbsCurveSolver(src_curve=curve)
-    orig_pts = curve.evaluate_array(us_bar)
+    solver = SvNurbsCurveSolver(src_curve=curve, ndim=ndim)
+    solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector(), weights=curve.get_weights())
+    if ndim == 4:
+        orig_pts = curve.evaluate_homogenous_array(us_bar)
+        #orig_pts = curve.evaluate_array(us_bar)
+        #weights = np.ones((n_target_points,))
+        #orig_pts = to_homogenous(orig_pts, weights)
+    else:
+        orig_pts = curve.evaluate_array(us_bar)
     solver.add_goal(SvNurbsCurvePoints(us_bar, points - orig_pts, relative=True))
+    print("Target delta: ", points - orig_pts)
     if preserve_tangents:
         #print("Add preserve_tangents")
-        zeros = np.zeros((n_target_points,3))
+        zeros = np.zeros((n_target_points,ndim))
         solver.add_goal(SvNurbsCurveTangents(us_bar, zeros, relative=True))
     elif tangents is not None:
         #print(f"Add: Us {len(us_bar)}, tangents {len(tangents)}, target pts {n_target_points}")
         solver.add_goal(SvNurbsCurveTangents(us_bar, tangents, relative=False))
-    solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector(), weights=curve.get_weights())
     problem_type, residue, curve = solver.solve_ex(
                     problem_types = {SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED,
                                      SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},

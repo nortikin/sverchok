@@ -804,18 +804,19 @@ class SvNurbsCurveSolver(SvCurve):
             
         d_cpts = X.reshape((n, ndim))
         if ndim == 4:
-            d_cpts, d_weights = from_homogenous(d_cpts)
+            print("D cpts 4", d_cpts)
             if self.src_curve is None:
-                weights = d_weights
+                cpts, weights = from_homogenous(d_cpts)
             else:
-                weights = self.curve_weights + d_weights
+                cpts, weights = from_homogenous(d_cpts + self.src_curve.get_homogenous_control_points())
+                print("Res_weights", weights)
         else:
+            if self.src_curve is None:
+                cpts = d_cpts
+            else:
+                cpts = self.src_curve.get_control_points() + d_cpts
             weights = self.curve_weights
-        if self.src_curve is None:
-            curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, d_cpts, weights)
-        else:
-            cpts = self.src_curve.get_control_points() + d_cpts
-            curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
+        curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
         return problem_type, residue, curve
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
