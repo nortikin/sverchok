@@ -25,6 +25,7 @@ then optimized only for speed, never for aesthetics or line count or cleverness.
 
 '''
 
+import enum
 import math
 from math import sin, cos, sqrt, acos, pi, atan
 import numpy as np
@@ -45,6 +46,10 @@ from sverchok.utils.sv_logging import sv_logger
 # njit is a light-wrapper around numba.njit, if found
 from sverchok.dependencies import numba  # not strictly needed i think...
 from sverchok.utils.decorators_compilation import njit
+
+class RangeBoundary(enum.Enum):
+    MIN = enum.auto()
+    MAX = enum.auto()
 
 def bounding_box_aligned(verts, evec_external=None, factor=1.0):
     ''' Build bounding box around vectors. If evec_external is not none then it can be used with factor.

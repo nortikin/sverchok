@@ -5,17 +5,42 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import enum
-
+from sverchok.utils.geom import RangeBoundary
 from sverchok.utils.surface.data import *
 
 class UnsupportedSurfaceTypeException(TypeError):
     __description__ = "Unsupported surface type"
     pass
 
-class SurfaceSide(enum.Enum):
-    MIN = enum.auto()
-    MAX = enum.auto()
+class SurfaceDirection:
+    U = 'U'
+    V = 'V'
+
+class SurfaceEdge:
+    def __init__(self, direction, boundary, name):
+        self.direction = direction
+        self.boundary = boundary
+        self.name = name
+
+    values = dict()
+
+    @classmethod
+    def _create(cls, direction, boundary, name):
+        edge = SurfaceEdge(direction, boundary, name)
+        cls.values[name] = edge
+        setattr(cls, name, edge)
+
+    @classmethod
+    def __class_getitem__(cls, name):
+        return cls.values[name]
+    
+    def __repr__(self):
+        return f"<{self.boundary}_{self.direction}>"
+
+SurfaceEdge._create(SurfaceDirection.U, RangeBoundary.MIN, 'MIN_U')
+SurfaceEdge._create(SurfaceDirection.U, RangeBoundary.MAX, 'MAX_U')
+SurfaceEdge._create(SurfaceDirection.V, RangeBoundary.MIN, 'MIN_V')
+SurfaceEdge._create(SurfaceDirection.V, RangeBoundary.MAX, 'MAX_V')
 
 class SvSurface(object):
     def __repr__(self):

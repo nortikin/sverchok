@@ -14,8 +14,9 @@ from sverchok.utils.nurbs_common import (
         SvNurbsMaths, SvNurbsBasisFunctions
     )
 from sverchok.utils.sv_logging import get_logger
+from sverchok.utils.geom import RangeBoundary
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.surface.core import SurfaceSide
+from sverchok.utils.surface.core import SurfaceEdge
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
 from sverchok.utils.surface.nurbs import SvNurbsSurface, other_direction
@@ -377,24 +378,23 @@ class SnapSurfaceTangents(enum.Enum):
 
 @dataclass
 class SnapSurfaceInput:
-    surface: SvNurbsSurface
-    direction : str
-    side : SurfaceSide
+    surface : SvNurbsSurface
+    edge : SurfaceEdge
     invert_tangents : bool
 
 def snap_nurbs_surfaces(input1, input2, bias = SnapSurfaceBias.MID, tangents = SnapSurfaceTangents.ANY, logger = None):
     if logger is None:
         logger = get_logger()
 
-    def get_range(direction, surface):
-        if direction == SvNurbsSurface.U:
+    def get_range(edge, surface):
+        if edge.direction == SvNurbsSurface.U:
             return surface.get_u_bounds()
         else:
             return surface.get_v_bounds()
 
-    def get_parameter(direction, side, surface):
-        p1, p2 = get_range(direction, surface)
-        if side is SurfaceSide.MIN:
+    def get_parameter(edge, surface):
+        p1, p2 = get_range(edge, surface)
+        if edge.boundary is RangeBoundary.MIN:
             return p1
         else:
             return p2
@@ -414,16 +414,16 @@ def snap_nurbs_surfaces(input1, input2, bias = SnapSurfaceBias.MID, tangents = S
             vecs = derivs.dv
         return vecs
 
-    unify_directions = set([other_direction(input1.direction), other_direction(input2.direction)])
+    unify_directions = set([other_direction(input1.edge.direction), other_direction(input2.edge.direction)])
     logger.debug("Before unify: %s %s %s", input1.surface, input2.surface, unify_directions)
     surface1, surface2 = unify_nurbs_surfaces([input1.surface, input2.surface], directions=unify_directions)
     logger.debug("After unify: %s %s", surface1, surface2)
     surface1 = surface1.reparametrize(0, 1, 0, 1)
     surface2 = surface2.reparametrize(0, 1, 0, 1)
-    s1p = get_parameter(input1.direction, input1.side, surface1)
-    s2p = get_parameter(input2.direction, input2.side, surface2)
-    iso1 = surface1.iso_curve(input1.direction, s1p)
-    iso2 = surface2.iso_curve(input2.direction, s2p)
+    s1p = get_parameter(input1.edge, surface1)
+    s2p = get_parameter(input2.edge, surface2)
+    iso1 = surface1.iso_curve(input1.edge.direction, s1p)
+    iso2 = surface2.iso_curve(input2.edge.direction, s2p)
 
     if bias is SnapSurfaceBias.MID:
         target_curve = iso1.lerp_to(iso2, 0.5)
@@ -432,14 +432,14 @@ def snap_nurbs_surfaces(input1, input2, bias = SnapSurfaceBias.MID, tangents = S
     else: # SURFACE2
         target_curve = iso2
     
-    us1, vs1 = get_greville_pts(input1.direction, iso1, s1p)
-    us2, vs2 = get_greville_pts(input2.direction, iso2, s2p)
+    us1, vs1 = get_greville_pts(input1.edge.direction, iso1, s1p)
+    us2, vs2 = get_greville_pts(input2.edge.direction, iso2, s2p)
     
     derivs1 = surface1.derivatives_data_array(us1, vs1)
     derivs2 = surface2.derivatives_data_array(us2, vs2)
     
-    tangents1 = get_tangents(input1.direction, derivs1)
-    tangents2 = get_tangents(input2.direction, derivs2)
+    tangents1 = get_tangents(input1.edge.direction, derivs1)
+    tangents2 = get_tangents(input2.edge.direction, derivs2)
     if input1.invert_tangents:
         tangents1 *= -1
     if input2.invert_tangents:
@@ -469,8 +469,8 @@ def snap_nurbs_surfaces(input1, input2, bias = SnapSurfaceBias.MID, tangents = S
     target1 = SvNurbsSurfaceAdjustTarget(s1p, target_curve, target_tangents1)
     target2 = SvNurbsSurfaceAdjustTarget(s2p, target_curve, target_tangents2)
     
-    new_surface1 = adjust_nurbs_surface_for_curves(surface1, input1.direction, [target1], preserve_tangents = preserve_tangents, logger=logger)
-    new_surface2 = adjust_nurbs_surface_for_curves(surface2, input2.direction, [target2], preserve_tangents = preserve_tangents, logger=logger)
+    new_surface1 = adjust_nurbs_surface_for_curves(surface1, input1.edge.direction, [target1], preserve_tangents = preserve_tangents, logger=logger)
+    new_surface2 = adjust_nurbs_surface_for_curves(surface2, input2.edge.direction, [target2], preserve_tangents = preserve_tangents, logger=logger)
     
     return new_surface1, new_surface2
 

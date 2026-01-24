@@ -10,7 +10,7 @@ from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException, SurfaceSide
+from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException, SurfaceEdge
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.nurbs_solver import snap_nurbs_surfaces, SnapSurfaceBias, SnapSurfaceTangents, SnapSurfaceInput
 
@@ -38,27 +38,12 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
             (SnapSurfaceTangents.SURFACE2.name, "Surface 2", "Preserve tangent vector of the second surface at it's end, and adjust the tangent vector of the first surface to match", 4)
         ]
 
-    directions = [
-            (SvNurbsSurface.U, "U", "U direction", 0),
-            (SvNurbsSurface.V, "V", "V direction", 1)
-        ]
-
     sides = [
-            (SurfaceSide.MIN.name, "Min", "Minimum value of surface parameter", 0),
-            (SurfaceSide.MAX.name, "Max", "Maximum value of surface parameter", 1)
+            (SurfaceEdge.MIN_U.name, "Min U", "Minimum value of surface U parameter", 0),
+            (SurfaceEdge.MAX_U.name, "Max U", "Maximum value of surface U parameter", 1),
+            (SurfaceEdge.MIN_V.name, "Min V", "Minimum value of surface V parameter", 2),
+            (SurfaceEdge.MAX_V.name, "Max V", "Maximum value of surface V parameter", 3)
         ]
-
-    direction1 : EnumProperty(
-            name = "Direction",
-            description = "Direction of the first surface",
-            items = directions,
-            update = updateNode)
-
-    direction2 : EnumProperty(
-            name = "Direction",
-            description = "Direction of the second surface",
-            items = directions,
-            update = updateNode)
 
     side1 : EnumProperty(
             name = "Side",
@@ -92,17 +77,14 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_surface_in_socket(self, socket, context, layout):
         if socket.name == 'Surface1':
-            direction_name = 'direction1'
             side_name = 'side1'
             invert_name = 'invert1'
         else:
-            direction_name = 'direction2'
             side_name = 'side2'
             invert_name = 'invert2'
         row = layout.row()
-        row.prop(self, direction_name, expand=True)
-        row.prop(self, side_name, expand=True)
-        row.prop(self, invert_name, text='')
+        row.prop(self, side_name, text='')
+        row.prop(self, invert_name, toggle=True)
 
     def sv_init(self, context):
         self.width = 250
@@ -123,8 +105,10 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         surface2 = SvNurbsSurface.get(surface2)
         if surface2 is None:
             raise UnsupportedSurfaceTypeException("Second surface is not NURBS")
-        input1 = SnapSurfaceInput(surface1, self.direction1, SurfaceSide[self.side1], invert_tangents = self.invert1)
-        input2 = SnapSurfaceInput(surface2, self.direction2, SurfaceSide[self.side2], invert_tangents = self.invert2)
+        edge1 = SurfaceEdge[self.side1]
+        edge2 = SurfaceEdge[self.side2]
+        input1 = SnapSurfaceInput(surface1, edge1, invert_tangents = self.invert1)
+        input2 = SnapSurfaceInput(surface2, edge2, invert_tangents = self.invert2)
         return snap_nurbs_surfaces(input1, input2,
                                    SnapSurfaceBias[self.bias],
                                    SnapSurfaceTangents[self.tangent],

@@ -43,7 +43,7 @@ from sverchok.core.sv_custom_exceptions import AlgorithmError, ArgumentError, In
 from sverchok.utils.sv_logging import get_logger
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
+from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, to_homogenous
 
 class SvNurbsCurveGoal(object):
     """
@@ -128,7 +128,10 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         return alphas
 
     def get_src_points(self, solver):
-        return solver.src_curve.evaluate_array(self.us)
+        if solver.ndim == 3:
+            return solver.src_curve.evaluate_array(self.us)
+        else:
+            return solver.src_curve.evaluate_homogenous_array(self.us)
 
     def get_n_defined_control_points(self):
         return len(self.us)
@@ -238,7 +241,11 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
         return numerator / denominator
     
     def get_src_points(self, solver):
-        return solver.src_curve.tangent_array(self.us)
+        tangents = solver.src_curve.tangent_array(self.us)
+        if solver.ndim == 4 and tangents.shape[-1] == 3:
+            ones = np.ones((len(tangents),))
+            tangents = to_homogenous(tangents, ones)
+        return tangents
 
 class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
     def __init__(self, order, us, vectors, weights = None, relative=False):
@@ -292,7 +299,11 @@ class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
         return betas
     
     def get_src_points(self, solver):
-        return solver.src_curve.tangent_array(self.us)
+        tangents = solver.src_curve.tangent_array(self.us)
+        if solver.ndim == 4 and tangents.shape[-1] == 3:
+            ones = np.ones((len(tangents),))
+            tangents = to_homogenous(tangents, ones)
+        return tangents
 
 class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
     """
