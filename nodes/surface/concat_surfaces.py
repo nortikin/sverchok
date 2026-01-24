@@ -92,7 +92,7 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'input_mode', text='')
         layout.prop(self, 'direction', expand=True)
-        layout.prop(self, 'use_nurbs')
+        layout.prop(self, 'use_nurbs', text='')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
