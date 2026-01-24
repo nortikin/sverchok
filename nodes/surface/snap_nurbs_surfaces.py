@@ -56,12 +56,14 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
             update = updateNode)
 
     invert1 : BoolProperty(
-            name = "Invert tangents",
+            name = "Invert",
+            description = "Invert surface tangents",
             default = False,
             update = updateNode)
 
     invert2 : BoolProperty(
-            name = "Invert tangents",
+            name = "Invert",
+            description = "Invert surface tangents",
             default = False,
             update = updateNode)
 
@@ -87,7 +89,6 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         row.prop(self, invert_name, toggle=True)
 
     def sv_init(self, context):
-        self.width = 250
         self.inputs.new('SvSurfaceSocket', "Surface1").custom_draw = 'draw_surface_in_socket'
         self.inputs.new('SvSurfaceSocket', "Surface2").custom_draw = 'draw_surface_in_socket'
         self.outputs.new('SvSurfaceSocket', "Surface1")
@@ -95,8 +96,10 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         #self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'bias')
-        layout.prop(self, 'tangent')
+        layout.label(text="Bias:")
+        layout.prop(self, 'bias', text='')
+        layout.label(text="Tangents:")
+        layout.prop(self, 'tangent', text='')
 
     def _process(self, surface1, surface2):
         surface1 = SvNurbsSurface.get(surface1)
