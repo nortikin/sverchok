@@ -117,7 +117,7 @@ el.replaceWith(d);
             self.edges = None
 
         self.control_points = None
-        if (node.draw_control_polygon or node.draw_control_points):
+        if (node.draw_control_polygon or node.draw_control_points or hasattr(node, &#39;draw_control_points_indexes&#39;) and node.draw_control_points_indexes or hasattr(node, &#39;draw_segments_indexes&#39;) and node.draw_segments_indexes):
             try:
                 if hasattr(curve, &#39;get_control_points&#39;):
                     cpts = curve.get_control_points().tolist()
