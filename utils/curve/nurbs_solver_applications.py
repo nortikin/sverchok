@@ -54,7 +54,7 @@ def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, tangents
     else:
         orig_pts = curve.evaluate_array(us_bar)
     solver.add_goal(SvNurbsCurvePoints(us_bar, points - orig_pts, relative=True))
-    print("Target delta: ", points - orig_pts)
+    #print("Target delta: ", points - orig_pts)
     if preserve_tangents:
         #print("Add preserve_tangents")
         zeros = np.zeros((n_target_points,ndim))
@@ -63,7 +63,7 @@ def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, tangents
         if ndim == 4 and tangents.shape[-1] == 3:
             ones = np.ones((len(tangents),))
             tangents = to_homogenous(tangents, ones)
-        print(f"Add: Us {len(us_bar)}, tangents {tangents.shape}, target pts {n_target_points}")
+        #print(f"Add: Us {len(us_bar)}, tangents {tangents.shape}, target pts {n_target_points}")
         solver.add_goal(SvNurbsCurveTangents(us_bar, tangents, relative=False))
     problem_type, residue, curve = solver.solve_ex(
                     problem_types = {SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED,

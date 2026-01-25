@@ -815,12 +815,12 @@ class SvNurbsCurveSolver(SvCurve):
             
         d_cpts = X.reshape((n, ndim))
         if ndim == 4:
-            print("D cpts 4", d_cpts)
+            #print("D cpts 4", d_cpts)
             if self.src_curve is None:
                 cpts, weights = from_homogenous(d_cpts)
             else:
                 cpts, weights = from_homogenous(d_cpts + self.src_curve.get_homogenous_control_points())
-                print("Res_weights", weights)
+                #print("Res_weights", weights)
         else:
             if self.src_curve is None:
                 cpts = d_cpts
