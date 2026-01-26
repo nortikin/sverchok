@@ -484,9 +484,9 @@ class SV_OT_splash_screen_simple(Operator):
                 return {'RUNNING_MODAL'}
             elif result == {'CANCELLED'}:
                 return {'CANCELLED'}
-        elif event.type in {'RIGHTMOUSE', 'ESC'}:
-            self.remove_handlers(context)
-            return {'CANCELLED'}
+        #elif event.type in {'RIGHTMOUSE', 'ESC'}:
+        #    self.remove_handlers(context)
+        #    return {'CANCELLED'}
 
         return {'PASS_THROUGH'}
 
