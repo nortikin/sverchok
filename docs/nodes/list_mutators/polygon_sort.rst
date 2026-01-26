@@ -55,7 +55,7 @@ Note: The output will be generated when the output sockets are connected.
 
 Modes
 -----
-The modes correspond to different sorting criteria and each one has a quanitity by which the polygons are sorted.
+The modes correspond to different sorting criteria and each one has a quantity by which the polygons are sorted.
 
 * **Point** (P) : In this mode the polygons are sorted by the distance from the center of each polygon to the given point P.
 * **Direction** (D) : In this mode the polygons are sorted by the projection component of polygon center vector along the given direction D.

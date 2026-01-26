@@ -62,7 +62,7 @@ def bounding_box_aligned(verts, evec_external=None, factor=1.0):
         # make evecs orthogonals each other:
         vecs = [[0,1,2], [1,2,0], [2,0,1]]
         evec_dots = np.array( [abs(np.dot( evec.T[ivect[0]], evec.T[ivect[1]] )) for ivect in vecs] )  # get dots product vectors each other
-        if np.all(evec_dots<1e-8):  # if all vectors are very close to orthonormals each other. May be replased by a future algorithm
+        if np.all(evec_dots<1e-8):  # if all vectors are very close to orthonormals each other. May be replaced by a future algorithm
             evec_dots_sort = [0]
         else:
             evec_dots_sort = np.argsort(evec_dots)

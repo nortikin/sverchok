@@ -34,7 +34,7 @@ Output
 - **Edges** - Edges of aligned bounding bpxes
 - **Faces** - Faces of aligned bounding bpxes
 - **Matrix** - Result matrix of calculated bounding box
-- **Length**, **Width**, **Height** - Size of aligned bounding box. Axises can be changed unpredictable.
+- **Length**, **Width**, **Height** - Size of aligned bounding box. Axes can be changed unpredictable.
 
 Examples
 --------

@@ -83,7 +83,7 @@ Note: filtering out all components will result in an identity matrix output.
 The inversion of a 4x4 homogeneous matrix A is a 4x4 homogeneous matrix A' for which A * A' is the identity matrix.
 
 **Basis**
-This operation extacts the basis vector from the rotation part of the 4x4 homogeneous matrix. Essentially these are the vectors the XYZ ortho-normal axes of a coordinate system would be if transformed by the 4x4 homogeneous matrix.
+This operation extracts the basis vector from the rotation part of the 4x4 homogeneous matrix. Essentially these are the vectors the XYZ ortho-normal axes of a coordinate system would be if transformed by the 4x4 homogeneous matrix.
 
 Outputs
 -------

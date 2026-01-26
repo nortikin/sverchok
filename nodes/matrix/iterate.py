@@ -31,7 +31,7 @@ from sverchok.data_structure import updateNode, match_long_repeat, Matrix_genera
 def concat(lists):
     return reduce(iadd, lists)
 
-# no longer used. scedule to delete
+# no longer used. schedule to delete
 def Matrix_degenerate(ms):
     return [[j[:] for j in M] for M in ms]
 

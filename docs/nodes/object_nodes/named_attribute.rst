@@ -23,7 +23,7 @@ Outputs
 -------
 
 - **Object** - Blender data blocks
-- **Attribute** - Values of the attriubte
+- **Attribute** - Values of the attribute
 
 Usage
 -----

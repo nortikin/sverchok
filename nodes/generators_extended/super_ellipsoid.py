@@ -108,7 +108,7 @@ def make_edges_polys(is_edges, is_polys, P, M, cap_bottom, cap_top):
     if is_edges:
         hspin_edges = np.dstack( (arr_verts[:N1  ,:N2], arr_verts[ :N1,1:N2+1] ))
         vspin_edges = np.dstack( (arr_verts[:N1-1,:N2], arr_verts[1:N1, :N2] ))
-        hs_edges    = np.concatenate( (hspin_edges,  vspin_edges ), axis=0)  # combine horisontal end vertical edges
+        hs_edges    = np.concatenate( (hspin_edges,  vspin_edges ), axis=0)  # combine horizontal end vertical edges
         hs_edges    = hs_edges.reshape(-1,2)
         list_edges  = hs_edges.tolist()
 

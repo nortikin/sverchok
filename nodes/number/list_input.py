@@ -3378,10 +3378,10 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                         if len_line>=9:
                             self.matrix_list_items[I].EULER_ANGLE_UI[:] = line[6:9]
                         else:
-                            raise f'not enought data in the {I}-th line.'
+                            raise f'not enough data in the {I}-th line.'
                     except Exception as _ex:
                         self.matrix_list_counter = I+1
-                        err = f'{I}-th elem has not enougth elements for EULER. {len(line)} is not enought. It has to be 9'
+                        err = f'{I}-th elem does not have enough elements for EULER. {len(line)} is not enough. It has to be 9'
                         ShowMessageBox(err)
                         raise Exception(err)
                         break
@@ -3398,10 +3398,10 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                         if len_line>=10:
                             self.matrix_list_items[I].AXISANGLE_ANGLE_UI = line[9]
                         else:
-                            raise f'not enought data in the {I}-th line.'
+                            raise f'not enough data in the {I}-th line.'
                     except Exception as _ex:
                         self.matrix_list_counter = I+1
-                        err = f'{I}-th elem has not enougth elements for AXISANGLE. {len(line)} is not enought. It has to be 10'
+                        err = f'{I}-th elem does not have enough elements for AXISANGLE. {len(line)} is not enough. It has to be 10'
                         ShowMessageBox(err)
                         raise Exception(err)
                         break

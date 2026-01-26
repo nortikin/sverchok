@@ -105,7 +105,7 @@ def get_sites_delaunay_params(np_sites, n_orig_sites, threshold=0):
                         continue
                     arr.append(sim)
                 elif simplex_size<4:
-                    # skip to lower dimenstion. simplices ordered by lower to the end.
+                    # skip to lower dimension. simplices ordered by lower to the end.
                     break
 
         if len(arr)==0 and len(simplices[0])>=3: # if no elems in arr and first elem in simplices array is more-eq than plane
@@ -117,7 +117,7 @@ def get_sites_delaunay_params(np_sites, n_orig_sites, threshold=0):
                         continue
                     arr.append(sim)
                 elif simplex_size<3:
-                    # skip to lower dimenstion. simplices ordered by lower to the end.
+                    # skip to lower dimension. simplices ordered by lower to the end.
                     break
                         
         if len(arr)==0 and len(simplices[0])>=2: # if no elems in arr and first elem in simplices array is more-eq than line
@@ -129,7 +129,7 @@ def get_sites_delaunay_params(np_sites, n_orig_sites, threshold=0):
                         continue
                     arr.append(sim)
                 elif simplex_size<2:
-                    # skip to lower dimenstion. simplices ordered by lower to the end.
+                    # skip to lower dimension. simplices ordered by lower to the end.
                     break
 
         # TODO: what todo if len(arr)==0 ?
@@ -185,7 +185,7 @@ def get_delaunay_simplices(vertices, threshold):
     plane_axis_bb_Y = axis_bb_order[1].tolist()
     plane_axis_bb_Z = axis_bb_order[2].tolist()
 
-    # to minimise approximation error orient max size of bbox to predifined dimensions
+    # to minimise approximation error orient max size of bbox to predefined dimensions
     if dim==3: # volume. (faces and edges)
         np_sites = vertices # no projection
     elif dim==2: # plane. (faces and edges)

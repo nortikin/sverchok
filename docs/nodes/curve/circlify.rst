@@ -60,7 +60,7 @@ This node has the following parameters:
 .. image:: https://user-images.githubusercontent.com/14288520/206105294-5576ef76-c48f-4573-bac7-84a47ae5a456.png
   :target: https://user-images.githubusercontent.com/14288520/206105294-5576ef76-c48f-4573-bac7-84a47ae5a456.png
 
-if **Show enclosure** is Off then **MajorRadius** and **Center** are not preset in outputs sockets data (Cicles, Centers and Radiuses)
+if **Show enclosure** is Off then **MajorRadius** and **Center** are not preset in outputs sockets data (Circles, Centers and Radiuses)
 
 Outputs
 -------

@@ -293,7 +293,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                     # [1]. Test if bbox_aligned outside a site_pair plane?
                     signs_verts_bbox_aligned = PlaneEquation.from_normal_and_point( plane_no, plane_co ).side_of_points(bbox_aligned)
                     # if all vertexes of bbox_aligned out of plane with negation normal then object will be erased anyway.
-                    # So one can skeep bisect operation
+                    # So one can skip bisect operation
                     if (signs_verts_bbox_aligned <= 0).all():
                         out_of_bbox = True
                         break
@@ -310,7 +310,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                         lst_ridges_to_bisect.append( [dist*sign, site_pair_idx, site_vert, site_pair_vert, middle, plane_co, plane_no, plane, ] )
                     
                     # [3]. for test if all (site, middle) dist are less 0.5 spacing?
-                    #    if spacing to big and eat all area [all (site-middle).lenght <= spacing/2]
+                    #    if spacing to big and eat all area [all (site-middle).length <= spacing/2]
                     # arr_dist_site_middle = np.append(arr_dist_site_middle, np.linalg.norm(site_vert-middle) )
 
                     # here is the place to extend optimization variants to exclude bisect from process.

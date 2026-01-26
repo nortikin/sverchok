@@ -89,7 +89,7 @@ class SvObjectsHelperCallback(bpy.types.Operator):
 
     fn_name: StringProperty(default='')
 
-    # The imformation of "which node this button was pressed on"
+    # The information of "which node this button was pressed on"
     # is not communicated unless you do it explicitly.
     tree_name: StringProperty(default='')
     node_name: StringProperty(default='')

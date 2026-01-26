@@ -57,8 +57,8 @@ Outputs
 Examples
 ========
 
-Rotation of source mesh are transfered to the adaptive mesh
------------------------------------------------------------
+Rotation of source mesh are transferred to the adaptive mesh
+------------------------------------------------------------
 
 .. image:: https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72
   :target: https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72
