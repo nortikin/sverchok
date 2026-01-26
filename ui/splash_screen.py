@@ -200,7 +200,7 @@ def draw_callback():
     img_height = tex.height
 
     # Scale image to fit while maintaining aspect ratio
-    scale_factor = min(width * 0.7 / img_width, height * 0.7 / img_height)
+    scale_factor = min(width * 0.8 / img_width, height * 0.8 / img_height)
     display_width = img_width * scale_factor
     display_height = img_height * scale_factor
 
