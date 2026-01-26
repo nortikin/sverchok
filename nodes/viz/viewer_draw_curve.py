@@ -5,72 +5,23 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-
 import bpy
 from mathutils import Matrix, Vector
 from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
 import gpu
-from gpu_extras.batch import batch_for_shader
 from types import SimpleNamespace
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, get_data_nesting_level, ensure_nesting_level, zip_long_repeat, node_id
 from sverchok.utils.curve.core import SvCurve
-from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.bakery import CurveData
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
 from sverchok.utils.modules.drawing_abstractions import drawing, shading_3d
 from sverchok.utils.sv_idx_viewer28_draw import draw_indices_2D_wbg, TextInfo
-from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
-
-def draw_edges(shader, points, edges, line_width, color, is_smooth=False):
-    if is_smooth:
-        draw_edges_colored(shader, points, edges, line_width, [color for i in range(len(points))])
-    else:
-        drawing.set_line_width(line_width)
-        batch = batch_for_shader(shader, 'LINES', {"pos": points}, indices=edges)
-        shader.bind()
-        shader.uniform_float('color', color)
-        batch.draw(shader)
-        drawing.reset_line_width()
-
-def draw_arrows(shader, tips, pts1, pts2, line_width, color):
-    n = len(tips)
-    points = np.concatenate((tips, pts1, pts2))
-    edges = [(i, i+n) for i in range(n-1)]
-    edges.extend([(i, i+2*n) for i in range(n-1)])
-    drawing.set_line_width(line_width)
-    batch = batch_for_shader(shader, 'LINES', {"pos": points.tolist()}, indices=edges)
-    shader.bind()
-    shader.uniform_float('color', color)
-    batch.draw(shader)
-    drawing.reset_line_width()
-
-def draw_edges_colored(shader, points, edges, line_width, colors):
-    drawing.set_line_width(line_width)
-    batch = batch_for_shader(shader, 'LINES', {"pos": points, "color": colors}, indices=edges)
-    shader.bind()
-    batch.draw(shader)
-    drawing.reset_line_width()
-
-def draw_points(shader, points, size, color):
-    drawing.set_point_size(size)
-    batch = batch_for_shader(shader, 'POINTS', {"pos": points})
-    shader.bind()
-    shader.uniform_float('color', color)
-    batch.draw(shader)
-    drawing.reset_point_size()
-
-def draw_points_colored(shader, points, size, colors):
-    drawing.set_point_size(size)
-    batch = batch_for_shader(shader, 'POINTS', {"pos": points, "color": colors})
-    shader.bind()
-    batch.draw(shader)
-    drawing.reset_point_size()
+from sverchok.utils.modules.drawing_utils import draw_edges, draw_edges_colored, draw_points, draw_arrows
 
 def draw_curves(context, args):
     node, draw_inputs, v_shader, e_shader = args

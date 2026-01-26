@@ -89,15 +89,16 @@ def calc_surface_data(light_vector, surface_colors, n_u, n_v, points):
 
 class SurfaceData(object):
     class IsoCurveConfig(object):
-        def __init__(self):
+        def __init__(self, draw_comb = False, comb_scale = 1.0, draw_arrows = False):
             self.draw_line = True
             self.draw_verts = False
             self.draw_control_polygon = False
             self.draw_control_points = False
             self.draw_nodes = False
-            self.draw_comb = False
+            self.draw_comb = draw_comb
             self.draw_curvature = False
-            self.draw_arrows = False
+            self.draw_arrows = draw_arrows
+            self.comb_scale = comb_scale
 
     def __init__(self, node, surface, resolution_u, resolution_v):
         self.node = node
@@ -179,7 +180,10 @@ class SurfaceData(object):
             nodes_v = surface.calc_greville_vs()
             node_u_isolines = [SvIsoUvCurve(surface, 'U', u) for u in nodes_u]
             node_v_isolines = [SvIsoUvCurve(surface, 'V', v) for v in nodes_v]
-            cfg = SurfaceData.IsoCurveConfig()
+            cfg = SurfaceData.IsoCurveConfig(
+                                draw_comb = node.draw_node_lines_comb,
+                                comb_scale = node.comb_scale,
+                                draw_arrows = node.draw_node_lines_arrows)
             self.node_u_isoline_data = [CurveData(cfg, isoline, resolution_v) for isoline in node_u_isolines]
             self.node_v_isoline_data = [CurveData(cfg, isoline, resolution_u) for isoline in node_v_isolines]
         else:
