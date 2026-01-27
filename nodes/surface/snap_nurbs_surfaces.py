@@ -10,9 +10,9 @@ from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException, SurfaceEdge
+from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.surface.nurbs_solver import snap_nurbs_surfaces, SnapSurfaceBias, SnapSurfaceTangents, SnapSurfaceInput
+from sverchok.utils.surface.nurbs_solver import snap_nurbs_surfaces, SnapSurfaceBias, SnapSurfaceTangents
 
 class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -38,33 +38,32 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
             (SnapSurfaceTangents.SURFACE2.name, "Surface 2", "Preserve tangent vector of the second surface at it's end, and adjust the tangent vector of the first surface to match", 4)
         ]
 
-    sides = [
-            (SurfaceEdge.MIN_U.name, "Min U", "Minimum value of surface U parameter", 0),
-            (SurfaceEdge.MAX_U.name, "Max U", "Maximum value of surface U parameter", 1),
-            (SurfaceEdge.MIN_V.name, "Min V", "Minimum value of surface V parameter", 2),
-            (SurfaceEdge.MAX_V.name, "Max V", "Maximum value of surface V parameter", 3)
+    input_modes = [
+        ('TWO', "Two curves", "Process two curves", 0),
+        ('N', "List of curves", "Process several curves", 1)
+    ]
+
+    def update_sockets(self, context):
+        self.inputs['Surface1'].hide_safe = self.input_mode != 'TWO'
+        self.inputs['Surface2'].hide_safe = self.input_mode != 'TWO'
+        self.inputs['Surfaces'].hide_safe = self.input_mode != 'N'
+        updateNode(self, context)
+
+    input_mode : EnumProperty(
+        name = "Input mode",
+        items = input_modes,
+        default = 'TWO',
+        update = update_sockets)
+
+    directions = [
+            (SvNurbsSurface.U, "U", "U direction", 0),
+            (SvNurbsSurface.V, "V", "V direction", 1)
         ]
 
-    side1 : EnumProperty(
-            name = "Side",
-            items = sides,
-            update = updateNode)
-
-    side2 : EnumProperty(
-            name = "Side",
-            items = sides,
-            update = updateNode)
-
-    invert1 : BoolProperty(
-            name = "Invert",
-            description = "Invert surface tangents",
-            default = False,
-            update = updateNode)
-
-    invert2 : BoolProperty(
-            name = "Invert",
-            description = "Invert surface tangents",
-            default = False,
+    direction : EnumProperty(
+            name = "Direction",
+            description = "Direction of concatenation",
+            items = directions,
             update = updateNode)
 
     bias : EnumProperty(
@@ -77,78 +76,76 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
             items = tangent_modes,
             update = updateNode)
 
-    def draw_surface_in_socket(self, socket, context, layout):
-        if socket.name == 'Surface1':
-            side_name = 'side1'
-            invert_name = 'invert1'
-        else:
-            side_name = 'side2'
-            invert_name = 'invert2'
-        row = layout.row()
-        row.prop(self, side_name, text='')
-        row.prop(self, invert_name, toggle=True)
+    is_cyclic : BoolProperty(
+            name = "Cyclic",
+            default = False,
+            update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvSurfaceSocket', "Surface1").custom_draw = 'draw_surface_in_socket'
-        self.inputs.new('SvSurfaceSocket', "Surface2").custom_draw = 'draw_surface_in_socket'
-        self.outputs.new('SvSurfaceSocket', "Surface1")
-        self.outputs.new('SvSurfaceSocket', "Surface2")
-        #self.update_sockets(context)
+        self.inputs.new('SvSurfaceSocket', "Surface1")
+        self.inputs.new('SvSurfaceSocket', "Surface2")
+        self.inputs.new('SvSurfaceSocket', "Surfaces")
+        self.outputs.new('SvSurfaceSocket', "Surfaces")
+        self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, 'input_mode', text='')
+        layout.prop(self, 'direction', expand=True)
         layout.label(text="Bias:")
         layout.prop(self, 'bias', text='')
         layout.label(text="Tangents:")
         layout.prop(self, 'tangent', text='')
+        layout.prop(self, 'is_cyclic')
 
-    def _process(self, surface1, surface2):
-        surface1 = SvNurbsSurface.get(surface1)
-        if surface1 is None:
-            raise UnsupportedSurfaceTypeException("First surface is not NURBS")
-        surface2 = SvNurbsSurface.get(surface2)
-        if surface2 is None:
-            raise UnsupportedSurfaceTypeException("Second surface is not NURBS")
-        edge1 = SurfaceEdge[self.side1]
-        edge2 = SurfaceEdge[self.side2]
-        input1 = SnapSurfaceInput(surface1, edge1, invert_tangents = self.invert1)
-        input2 = SnapSurfaceInput(surface2, edge2, invert_tangents = self.invert2)
-        return snap_nurbs_surfaces(input1, input2,
-                                   SnapSurfaceBias[self.bias],
-                                   SnapSurfaceTangents[self.tangent],
+    def _process(self, surfaces):
+        surfaces = [SvNurbsSurface.get(s) for s in surfaces]
+        if any(s is None for s in surfaces):
+            raise UnsupportedSurfaceTypeException("Surface is not NURBS")
+        return snap_nurbs_surfaces(surfaces,
+                                   direction = self.direction,
+                                   bias = SnapSurfaceBias[self.bias],
+                                   tangents = SnapSurfaceTangents[self.tangent],
+                                   cyclic = self.is_cyclic,
                                    logger = self.sv_logger)
+
+    def get_inputs(self):
+        surfaces_s = []
+        if self.input_mode == 'TWO':
+            surface1_s = self.inputs['Surface1'].sv_get()
+            surface2_s = self.inputs['Surface2'].sv_get()
+            level1 = get_data_nesting_level(surface1_s, data_types=(SvSurface,))
+            level2 = get_data_nesting_level(surface2_s, data_types=(SvSurface,))
+            nested_input = level1 > 2 or level2 > 2
+            surface1_s = ensure_nesting_level(surface1_s, 3, data_types=(SvSurface,))
+            surface2_s = ensure_nesting_level(surface2_s, 3, data_types=(SvSurface,))
+            for s1, s2 in zip_long_repeat(surface1_s, surface2_s):
+                surfaces_s.append( list( *zip_long_repeat(s1, s2) ) )
+        else:
+            surfaces_s = self.inputs['Surfaces'].sv_get()
+            level = get_data_nesting_level(surfaces_s, data_types=(SvSurface,))
+            nested_input = level > 2
+            surfaces_s = ensure_nesting_level(surfaces_s, 3, data_types=(SvSurface,))
+        return nested_input, surfaces_s
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        surface1_in = self.inputs['Surface1'].sv_get()
-        surface2_in = self.inputs['Surface2'].sv_get()
+        nested_input, surfaces_in = self.get_inputs()
+        flat_output = not nested_input
 
-        level1 = get_data_nesting_level(surface1_in, data_types=(SvSurface,))
-        level2 = get_data_nesting_level(surface2_in, data_types=(SvSurface,))
-        flat_output = max(level1, level2) < 2
-
-        surface1_in = ensure_nesting_level(surface1_in, 2, data_types=(SvSurface,))
-        surface2_in = ensure_nesting_level(surface2_in, 2, data_types=(SvSurface,))
-
-        surface1_out = []
-        surface2_out = []
-        for params in zip_long_repeat(surface1_in, surface2_in):
-            new_surface1 = []
-            new_surface2 = []
-            for surface1, surface2 in zip_long_repeat(*params):
-                r_surface1, r_surface2 = self._process(surface1, surface2)
-                new_surface1.append(r_surface1)
-                new_surface2.append(r_surface2)
+        surfaces_out = []
+        for params in surfaces_in:
+            new_surfaces = []
+            for surfaces in zip_long_repeat(*params):
+                r_surfaces = self._process(surfaces)
+                new_surfaces.append(r_surfaces)
             if flat_output:
-                surface1_out.extend(new_surface1)
-                surface2_out.extend(new_surface2)
+                surfaces_out.extend(new_surfaces)
             else:
-                surface1_out.append(new_surface1)
-                surface2_out.append(new_surface2)
+                surfaces_out.append(new_surfaces)
 
-        self.outputs['Surface1'].sv_set(surface1_out)
-        self.outputs['Surface2'].sv_set(surface2_out)
+        self.outputs['Surfaces'].sv_set(surfaces_out)
 
 def register():
     bpy.utils.register_class(SvSnapSurfacesNode)

@@ -376,30 +376,19 @@ class SnapSurfaceTangents(enum.Enum):
     SURFACE1 = enum.auto()
     SURFACE2 = enum.auto()
 
-@dataclass
-class SnapSurfaceInput:
-    surface : SvNurbsSurface
-    edge : SurfaceEdge
-    invert_tangents : bool
-
-def snap_nurbs_surfaces(input1, input2, bias = SnapSurfaceBias.MID, tangents = SnapSurfaceTangents.ANY, logger = None):
+def snap_nurbs_surfaces(surfaces, direction, bias = SnapSurfaceBias.MID, tangents = SnapSurfaceTangents.ANY, cyclic = False, logger = None):
     if logger is None:
         logger = get_logger()
 
-    def get_range(edge, surface):
-        if edge.direction == SvNurbsSurface.U:
+    second_direction = other_direction(direction)
+
+    def get_range(surface):
+        if direction == SvNurbsSurface.V:
             return surface.get_u_bounds()
         else:
             return surface.get_v_bounds()
 
-    def get_parameter(edge, surface):
-        p1, p2 = get_range(edge, surface)
-        if edge.boundary is RangeBoundary.MIN:
-            return p1
-        else:
-            return p2
-        
-    def get_greville_pts(direction, iso_curve, p):
+    def get_greville_pts(iso_curve, p):
         qs = iso_curve.calc_greville_ts()
         ps = np.array([p for _ in qs])
         if direction == SvNurbsSurface.U:
@@ -407,70 +396,91 @@ def snap_nurbs_surfaces(input1, input2, bias = SnapSurfaceBias.MID, tangents = S
         else:
             return qs, ps
         
-    def get_tangents(direction, derivs):
+    def get_tangents(derivs):
         if direction == SvNurbsSurface.U:
             vecs = derivs.du
         else:
             vecs = derivs.dv
         return vecs
 
-    unify_directions = set([other_direction(input1.edge.direction), other_direction(input2.edge.direction)])
-    logger.debug("Before unify: %s %s %s", input1.surface, input2.surface, unify_directions)
-    surface1, surface2 = unify_nurbs_surfaces([input1.surface, input2.surface], directions=unify_directions)
-    logger.debug("After unify: %s %s", surface1, surface2)
-    surface1 = surface1.reparametrize(0, 1, 0, 1)
-    surface2 = surface2.reparametrize(0, 1, 0, 1)
-    s1p = get_parameter(input1.edge, surface1)
-    s2p = get_parameter(input2.edge, surface2)
-    iso1 = surface1.iso_curve(input1.edge.direction, s1p)
-    iso2 = surface2.iso_curve(input2.edge.direction, s2p)
+    preserve_tangents = SnapSurfaceTangents.PRESERVE
 
-    if bias is SnapSurfaceBias.MID:
-        target_curve = iso1.lerp_to(iso2, 0.5)
-    elif bias is SnapSurfaceBias.SURFACE1:
-        target_curve = iso1
-    else: # SURFACE2
-        target_curve = iso2
-    
-    us1, vs1 = get_greville_pts(input1.edge.direction, iso1, s1p)
-    us2, vs2 = get_greville_pts(input2.edge.direction, iso2, s2p)
-    
-    derivs1 = surface1.derivatives_data_array(us1, vs1)
-    derivs2 = surface2.derivatives_data_array(us2, vs2)
-    
-    tangents1 = get_tangents(input1.edge.direction, derivs1)
-    tangents2 = get_tangents(input2.edge.direction, derivs2)
-    if input1.invert_tangents:
-        tangents1 *= -1
-    if input2.invert_tangents:
-        tangents2 *= -1
+    class Problem:
+        def __init__(self, surface):
+            self.surface = surface
+            self.param1, self.param2 = get_range(surface)
+            self.curve1 = None
+            self.curve2 = None
+            self.tangents1 = None
+            self.tangents2 = None
 
-    preserve_tangents = False
-    if tangents is SnapSurfaceTangents.MATCH:
-        target_tangents = (tangents1 + tangents2)*0.5
-    elif tangents is SnapSurfaceTangents.SURFACE1:
-        target_tangents = tangents1
-    elif tangents is SnapSurfaceTangents.SURFACE2:
-        target_tangents = tangents2
-    elif tangents is SnapSurfaceTangents.PRESERVE:
-        target_tangents = None
-        preserve_tangents = True
-    else: # ANY
-        target_tangents = None
-        preserve_tangents = False
+        def __repr__(self):
+            return f"<Problem surface={self.surface}, c1={self.curve1}, c2={self.curve2}>"
 
-    if target_tangents is not None:
-        target_tangents1 = target_tangents
-        target_tangents2 = -target_tangents
-    else:
-        target_tangents1 = None
-        target_tangents2 = None
+        def solve(self):
+            targets = []
+            if self.curve1 is not None:
+                target = SvNurbsSurfaceAdjustTarget(self.param1, self.curve1, self.tangents1)
+                targets.append(target)
+            if self.curve2 is not None:
+                target = SvNurbsSurfaceAdjustTarget(self.param2, self.curve2, self.tangents2)
+                targets.append(target)
+            print(f"Targets: {targets}")
+            return adjust_nurbs_surface_for_curves(self.surface, direction, targets, preserve_tangents = preserve_tangents, logger=logger)
+
+    def setup_problems(problem1, problem2):
+        iso1 = problem1.surface.iso_curve(direction, problem1.param2)
+        iso2 = problem2.surface.iso_curve(direction, problem2.param1)
+
+        if bias is SnapSurfaceBias.MID:
+            target_curve = iso1.lerp_to(iso2, 0.5)
+        elif bias is SnapSurfaceBias.SURFACE1:
+            target_curve = iso1
+        else: # SURFACE2
+            target_curve = iso2
+        problem1.curve2 = problem2.curve1 = target_curve
+        
+        us1, vs1 = get_greville_pts(iso1, problem1.param2)
+        us2, vs2 = get_greville_pts(iso2, problem2.param1)
+        
+        derivs1 = problem1.surface.derivatives_data_array(us1, vs1)
+        derivs2 = problem2.surface.derivatives_data_array(us2, vs2)
+        
+        tangents1 = get_tangents(derivs1)
+        tangents2 = get_tangents(derivs2)
+
+        if tangents is SnapSurfaceTangents.MATCH:
+            target_tangents = (tangents1 + tangents2)*0.5
+        elif tangents is SnapSurfaceTangents.SURFACE1:
+            target_tangents = tangents1
+        elif tangents is SnapSurfaceTangents.SURFACE2:
+            target_tangents = tangents2
+        elif tangents is SnapSurfaceTangents.PRESERVE:
+            target_tangents = None
+        else: # ANY
+            target_tangents = None
+
+        if target_tangents is not None:
+            target_tangents1 = target_tangents
+            target_tangents2 = -target_tangents
+        else:
+            target_tangents1 = None
+            target_tangents2 = None
+
+        problem1.tangents2 = target_tangents1
+        problem2.tangents1 = target_tangents2
     
-    target1 = SvNurbsSurfaceAdjustTarget(s1p, target_curve, target_tangents1)
-    target2 = SvNurbsSurfaceAdjustTarget(s2p, target_curve, target_tangents2)
-    
-    new_surface1 = adjust_nurbs_surface_for_curves(surface1, input1.edge.direction, [target1], preserve_tangents = preserve_tangents, logger=logger)
-    new_surface2 = adjust_nurbs_surface_for_curves(surface2, input2.edge.direction, [target2], preserve_tangents = preserve_tangents, logger=logger)
-    
-    return new_surface1, new_surface2
+    unify_directions = {other_direction(direction)}
+    logger.debug("Before unify: %s %s", surfaces, unify_directions)
+    surfaces = unify_nurbs_surfaces(surfaces, directions=unify_directions)
+    logger.debug("After unify: %s", surfaces)
+
+    problems = [Problem(s) for s in surfaces]
+    for p1, p2 in zip(problems[:-1], problems[1:]):
+        setup_problems(p1, p2)
+    if cyclic:
+        setup_problems(problems[-1], problems[0])
+    print("Problems:", problems)
+
+    return [p.solve() for p in problems]
 
