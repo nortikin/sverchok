@@ -399,7 +399,8 @@ class LineConnectNodeMK3(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         data_depth = levelsOflist(input_slots)
         
         output_vertices = []
-        output_data = []
+        output_edges = []
+        output_polygons = []
         
         if data_depth == 4:
             # Single level processing

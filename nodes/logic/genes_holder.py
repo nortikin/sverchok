@@ -35,6 +35,8 @@ class SvGenesHolderReset(bpy.types.Operator, SvGenericNodeLocator):
             node.fill_empty_dict()
         updateNode(node, context)
 
+# if you are preparing new MK node version, please:
+# change nodes/logic/evolver - GENE_NODES by adding new bl_idname
 class SvGenesHolderNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Store Number List

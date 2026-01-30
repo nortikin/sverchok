@@ -1601,6 +1601,8 @@ def invert_ListInput_Mask(self, context):
     updateNode(self, context)
     pass
 
+# if you are preparing new MK node version, please:
+# change nodes/logic/evolver - GENE_NODES by adding new bl_idname
 class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     ''' Create a flat list of Integers, Floats, or Vectors.
     int: [[1,5,42]],
@@ -1629,6 +1631,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         op.idx = idx
         return op
 
+    def get_list_limits(self):
+        if self.number_type == 'vector':
+            return [self.v_min_list[:], self.v_max_list[:]]
+
+        return self.int_limits if self.number_type == 'int' else self.float_limits
 
     def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
         """
