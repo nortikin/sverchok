@@ -14,8 +14,7 @@ from sverchok.utils.geom import RangeBoundary
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsDerivativesCalculator
-from sverchok.utils.surface.core import SurfaceDirection, SvSurface
-from sverchok.utils.surface.nurbs import other_direction
+from sverchok.utils.surface.core import SurfaceDirection, SvSurface, other_direction
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.surface.optimizer import Optimizer, Constraint, Summand
 
