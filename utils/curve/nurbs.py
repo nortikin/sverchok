@@ -1600,8 +1600,28 @@ class SvNurbsDerivativesCalculator:
         self.degree = degree
         self.basis = basis
         self._control_points = control_points
+        if weights is None and control_points is not None:
+            k = len(control_points)
+            weights = np.ones((k,))
         self._weights = weights
         self._fractions = dict()
+
+    @classmethod
+    def from_knotvector(cls, knotvector, degree, n_cpts, order, ts):
+        basis = SvNurbsBasisFunctions(knotvector).evaluate(degree, n_cpts, order, ts)
+        weights = np.ones((n_cpts,))
+        return SvNurbsDerivativesCalculator(degree, None, weights, basis)
+
+    def copy(self, control_points = None, weights = None):
+        if control_points is None and weights is None:
+            result = SvNurbsDerivativesCalculator(self.degree, self.control_points, self.weights, self.basis)
+            result._fractions = self._fractions
+            return result
+        if control_points is None:
+            control_points = self._control_points
+        if weights is None:
+            weights = self._weights
+        return SvNurbsDerivativesCalculator(self.degree, control_points, weights, self.basis)
 
     def fraction(self, order):
         if order not in self._fractions:

@@ -133,6 +133,8 @@ class Optimizer:
 
     def minimize(self, tol=None):
         self._init()
+        if self._goal is None:
+            raise InvalidStateError("Goal was not set")
         def goal(params):
             return self._goal(self._evaluate(params))
         init_values = np.zeros((self._calc_n_dimensions(),))
