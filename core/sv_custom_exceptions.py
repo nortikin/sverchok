@@ -126,3 +126,7 @@ class AlgorithmError(Exception):
     that indicates that there is a programming error"""
     __description__ = "Error in algorithm"
 
+class NoConvergenceException(AlgorithmError):
+    """Raised when some iterative optimization algorithm does not converge"""
+    __description__ = "Algorithm does not converge"
+

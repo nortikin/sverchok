@@ -1608,6 +1608,9 @@ class SvNurbsDerivativesCalculator:
 
     @classmethod
     def from_knotvector(cls, knotvector, degree, n_cpts, order, ts):
+        err = sv_knotvector.check(degree, knotvector, n_cpts)
+        if err:
+            raise Exception(err)
         basis = SvNurbsBasisFunctions(knotvector).evaluate(degree, n_cpts, order, ts)
         weights = np.ones((n_cpts,))
         return SvNurbsDerivativesCalculator(degree, None, weights, basis)
