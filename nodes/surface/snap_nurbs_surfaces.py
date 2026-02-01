@@ -9,7 +9,7 @@ import bpy
 from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, zip_long_repeat_recursive
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.nurbs_solver import snap_nurbs_surfaces, SnapSurfaceBias, SnapSurfaceTangents
@@ -118,8 +118,7 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
             nested_input = level1 > 2 or level2 > 2
             surface1_s = ensure_nesting_level(surface1_s, 3, data_types=(SvSurface,))
             surface2_s = ensure_nesting_level(surface2_s, 3, data_types=(SvSurface,))
-            for s1, s2 in zip_long_repeat(surface1_s, surface2_s):
-                surfaces_s.append( list( *zip_long_repeat(s1, s2) ) )
+            surfaces_s = zip_long_repeat_recursive(3, surface1_s, surface2_s)
         else:
             surfaces_s = self.inputs['Surfaces'].sv_get()
             level = get_data_nesting_level(surfaces_s, data_types=(SvSurface,))

@@ -9,7 +9,7 @@ import bpy
 from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, zip_long_repeat_recursive
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface, other_direction
 from sverchok.utils.surface.algorithms import concatenate_surfaces, unify_nurbs_surfaces
@@ -110,8 +110,7 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
             nested_input = level1 > 2 or level2 > 2
             surface1_s = ensure_nesting_level(surface1_s, 3, data_types=(SvSurface,))
             surface2_s = ensure_nesting_level(surface2_s, 3, data_types=(SvSurface,))
-            for inputs in zip_long_repeat(surface1_s, surface2_s):
-                surfaces_s.append( list( *zip_long_repeat(*inputs) ) )
+            surfaces_s = zip_long_repeat_recursive(3, surface1_s, surface2_s)
         else:
             surfaces_s = self.inputs['Surfaces'].sv_get()
             level = get_data_nesting_level(surfaces_s, data_types=(SvSurface,))
@@ -127,7 +126,8 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         surfaces_out = []
         for params in surfaces_in:
             new_surfaces = []
-            for surfaces in zip_long_repeat(*params):
+            for surfaces in params:
+                all_nurbs = False
                 if self.use_nurbs != 'GENERIC':
                     nurbs_surfaces = [SvNurbsSurface.get(s) for s in surfaces]
                     if any(s is None for s in nurbs_surfaces):
@@ -135,7 +135,8 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
                             raise UnsupportedSurfaceTypeException("Some of surfaces are not NURBS")
                     else:
                         surfaces = nurbs_surfaces
-                    if self.unify:
+                        all_nurbs = True
+                    if self.unify and all_nurbs:
                         surfaces = unify_nurbs_surfaces(surfaces, directions={other_direction(self.direction)},
                                                         knotvector_accuracy = self.knotvector_accuracy)
                 new_surface = concatenate_surfaces(direction = self.direction, surfaces = surfaces, native_only = self.use_nurbs == 'NURBS')

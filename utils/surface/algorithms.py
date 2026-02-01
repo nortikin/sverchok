@@ -31,7 +31,7 @@ from sverchok.utils.curve.algorithms import (
             reparametrize_curve,
             SvCurveOnSurface
         )
-from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
+from sverchok.utils.surface.core import SvReparametrizedSurface, SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths
