@@ -24,6 +24,7 @@ class BlendSurfaceInput:
     surface : SvSurface
     direction : SurfaceDirection
     boundary : RangeBoundary
+    invert : bool
 
 class BlendSurfaceConstraint(enum.Enum):
     G1 = enum.auto()
@@ -38,6 +39,8 @@ class BlendSurfaceOptimizer:
         self.surface2 = input2.surface
         self.direction2 = input2.direction
         self.boundary2 = input2.boundary
+        self.invert1 = input1.invert
+        self.invert2 = input2.invert
 
     def _get_cpts(self,surface, direction, side):
         cpts = surface.get_control_points()
@@ -165,16 +168,24 @@ class BlendSurfaceOptimizer:
 
         opt = Optimizer(self.n_across*self.n_along)
         for i in range(self.n_across):
-            opt.set_constraint(i, self.cpts1_last[i])
-            opt.set_constraint(self.n_across + i, self.cpts1_last[i], [self.cpts1_last[i] - self.cpts1_prev[i]], bounds = [(min_alpha,1)])
-            opt.set_constraint(2*self.n_across + i, self.cpts2_last[i], [self.cpts2_last[i] - self.cpts2_prev[i]], bounds = [(min_alpha,1)])
-            opt.set_constraint(3*self.n_across + i, self.cpts2_last[i])
+            gamma0 = self.cpts1_last[i]
+            gamma1 = self.cpts1_last[i] - self.cpts1_prev[i]
+            if self.invert1:
+                gamma1 *= -1
+            opt.set_constraint(i, gamma0)
+            opt.set_constraint(self.n_across + i, gamma0, [gamma1], bounds = [(min_alpha,1)])
+            gamma0 = self.cpts2_last[i]
+            gamma1 = self.cpts2_last[i] - self.cpts2_prev[i]
+            if self.invert2:
+                gamma1 *= -1
+            opt.set_constraint(2*self.n_across + i, gamma0, [gamma1], bounds = [(min_alpha,1)])
+            opt.set_constraint(3*self.n_across + i, gamma0)
         
         return opt
 
     def _setup_normals_match(self,
               min_alpha = 0.01,
-              min_beta = 0.01):
+              min_beta = 0.01, max_beta = None):
         self._init(n_along = 6)
 
         s1p = self._get_parameter(self.direction1, self.boundary1, self.surface1)
@@ -193,6 +204,9 @@ class BlendSurfaceOptimizer:
             gamma0 = self.cpts1_last[i]
             gamma1 = (self.cpts1_last[i] - self.cpts1_prev[i]) * 3
             gamma2 = gamma2_1_along[i]
+            if self.invert1:
+                gamma1 *= -1
+                gamma2 *= -1
             #print(f"S1: Gamma0 {gamma0}, Gamma1 {gamma1}, Gamma2 {gamma2}")
             alpha1 = opt.set_constraint(1*self.n_across + i, gamma0, [gamma1/9], bounds = [(min_alpha,9)])[0]
             beta1 = opt.allocate_parameters()[0]
@@ -200,11 +214,14 @@ class BlendSurfaceOptimizer:
                                                     Summand(alpha1, gamma1/3.0),
                                                     Summand(beta1, gamma2/27.0)
                                                 ])
-            #opt.bounds[beta1] = (min_beta, 27)
+            opt.bounds[beta1] = (min_beta, max_beta)
             
             gamma0 = self.cpts2_last[i]
             gamma1 = (self.cpts2_last[i] - self.cpts2_prev[i]) * 3 # / 9
             gamma2 = gamma2_2_along[i]
+            if self.invert2:
+                gamma1 *= -1
+                gamma2 *= -1
             #print(f"S2: Gamma0 {gamma0}, Gamma1 {gamma1}, Gamma2 {gamma2}")
             alpha2 = opt.set_constraint(4*self.n_across + i, gamma0, [gamma1/9], bounds = [(min_alpha,9)])[0]
             beta2 = opt.allocate_parameters()[0]
@@ -212,7 +229,7 @@ class BlendSurfaceOptimizer:
                                                     Summand(alpha2, gamma1/3.0),
                                                     Summand(beta2, gamma2/27.0)
                                                 ])
-            #opt.bounds[beta2] = (min_beta, 27)
+            opt.bounds[beta2] = (min_beta, max_beta)
             opt.set_constraint(5*self.n_across + i, self.cpts2_last[i])
                 
         return opt
