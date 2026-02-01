@@ -1270,8 +1270,7 @@ def concatenate_surfaces(direction, surfaces, native_only=False):
     return SvConcatSurface(direction, surfaces)
 
 def check_surface_edges_coincidence(surfaces, direction, n_pts=10, tolerance=1e-6):
-    pairs = zip(surfaces[:-1], surfaces[0:])
-    fixed_direction = other_direction(direction)
+    pairs = zip(surfaces[:-1], surfaces[1:])
     for idx, (surface1, surface2) in enumerate(pairs):
         if direction == SurfaceDirection.U:
             s1p2 = surface1.get_u_bounds()[1]
@@ -1279,8 +1278,8 @@ def check_surface_edges_coincidence(surfaces, direction, n_pts=10, tolerance=1e-
         else:
             s1p2 = surface1.get_v_bounds()[1]
             s2p1 = surface2.get_v_bounds()[0]
-        iso1 = surface1.iso_curve(fixed_direction, s1p2)
-        iso2 = surface2.iso_curve(fixed_direction, s2p1)
+        iso1 = surface1.iso_curve(direction, s1p2)
+        iso2 = surface2.iso_curve(direction, s2p1)
         c1t1, c1t2 = iso1.get_u_bounds()
         c2t1, c2t2 = iso2.get_u_bounds()
         c1ts = np.linspace(c1t1, c1t2, num=n_pts)
