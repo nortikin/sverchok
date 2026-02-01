@@ -136,7 +136,7 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         surfaces_out = []
         for params in surfaces_in:
             new_surfaces = []
-            for surfaces in zip_long_repeat(*params):
+            for surfaces in params:
                 r_surfaces = self._process(surfaces)
                 new_surfaces.append(r_surfaces)
             if flat_output:

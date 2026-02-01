@@ -400,7 +400,7 @@ def snap_nurbs_surfaces(surfaces, direction, bias = SnapSurfaceBias.MID, tangent
             vecs = derivs.dv
         return vecs
 
-    preserve_tangents = SnapSurfaceTangents.PRESERVE
+    preserve_tangents = tangents == SnapSurfaceTangents.PRESERVE
 
     class Problem:
         def __init__(self, surface):
@@ -459,7 +459,7 @@ def snap_nurbs_surfaces(surfaces, direction, bias = SnapSurfaceBias.MID, tangent
 
         if target_tangents is not None:
             target_tangents1 = target_tangents
-            target_tangents2 = -target_tangents
+            target_tangents2 = target_tangents
         else:
             target_tangents1 = None
             target_tangents2 = None
