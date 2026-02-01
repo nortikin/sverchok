@@ -600,12 +600,6 @@ class SvNurbsSurface(SvSurface):
                          control_points = ctrlpts,
                          weights = weights)
 
-def other_direction(direction):
-    if direction == SvNurbsSurface.U:
-        return SvNurbsSurface.V
-    else:
-        return SvNurbsSurface.U
-
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):
         self.surface = surface

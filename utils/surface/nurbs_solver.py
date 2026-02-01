@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 import enum
-from dataclasses import dataclass
 import numpy as np
 
 from sverchok.core.sv_custom_exceptions import AlgorithmError, ArgumentError
@@ -14,12 +13,10 @@ from sverchok.utils.nurbs_common import (
         SvNurbsMaths, SvNurbsBasisFunctions
     )
 from sverchok.utils.sv_logging import get_logger
-from sverchok.utils.geom import RangeBoundary
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.surface.core import SurfaceEdge
+from sverchok.utils.surface.core import other_direction, SurfaceDirection
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
-from sverchok.utils.surface.nurbs import SvNurbsSurface, other_direction
 from sverchok.utils.curve.nurbs_solver_applications import adjust_curve_points, interpolate_nurbs_curve
 
 class SvNurbsSurfaceSolver:
@@ -179,18 +176,18 @@ def unify_surface_curve(surface, direction, curves, accuracy=6):
     Returns:
         * Tuple: SvNurbsSurface and a list of SvNurbsCurve.
     """
-    second_direction = SvNurbsSurface.U if direction == SvNurbsSurface.V else SvNurbsSurface.V
+    second_direction = other_direction(direction)
     curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
     curves = unify_curves(curves, accuracy=accuracy)
     u_min, u_max = surface.get_u_bounds()
     v_min, v_max = surface.get_v_bounds()
-    if direction == SvNurbsSurface.V:
+    if direction == SurfaceDirection.V:
         surface = surface.reparametrize(0.0, 1.0, v_min, v_max)
     else:
         surface = surface.reparametrize(u_min, u_max, 0.0, 1.0)
 
     curve_degree = curves[0].get_degree()
-    if direction == SvNurbsSurface.V:
+    if direction == SurfaceDirection.V:
         surface_degree = surface.get_degree_u()
     else:
         surface_degree = surface.get_degree_v()
@@ -201,7 +198,7 @@ def unify_surface_curve(surface, direction, curves, accuracy=6):
 
     tolerance = 10**(-accuracy)
     dst_knots = sv_knotvector.KnotvectorDict(tolerance)
-    if direction == SvNurbsSurface.V:
+    if direction == SurfaceDirection.V:
         surface_kv = surface.get_knotvector_u()
     else:
         surface_kv = surface.get_knotvector_v()
@@ -243,7 +240,7 @@ def unify_surface_curve(surface, direction, curves, accuracy=6):
             updated_ms.append((knot, multiplicity))
     ms = dict(updated_ms)
     updated_kv = sv_knotvector.from_multiplicity(updated_ms)
-    if direction == SvNurbsSurface.V:
+    if direction == SurfaceDirection.V:
         surface = surface.copy(knotvector_u = updated_kv)
     else:
         surface = surface.copy(knotvector_v = updated_kv)
@@ -300,7 +297,7 @@ def adjust_nurbs_surface_for_curves(surface, direction, targets, preserve_tangen
     values = np.array([p.p_value for p in targets])
     surface, target_curves = unify_surface_curve(surface, direction, target_curves)
     if any_tangent_provided:
-        degree = surface.get_degree_u() if direction == SvNurbsSurface.U else surface.get_degree_v()
+        degree = surface.get_degree_u() if direction == SurfaceDirection.U else surface.get_degree_v()
         target_tangents = [_interpolate_tangents(degree, p.tangents, p.curve.calc_greville_ts(), fixed_curve.calc_greville_ts(), logger) for p, fixed_curve in zip(targets, target_curves)]
         target_tangents = np.transpose(np.array(target_tangents), axes=(1,0,2))
     else:
@@ -312,7 +309,7 @@ def adjust_nurbs_surface_for_curves(surface, direction, targets, preserve_tangen
 
     target_controls = [curve.get_homogenous_control_points() for curve in target_curves]
 
-    if direction == SvNurbsSurface.V:
+    if direction == SurfaceDirection.V:
         q_curves = [SvNurbsMaths.build_curve(surface.get_nurbs_implementation(),
                         surface.get_degree_v(),
                         surface.get_knotvector_v(),
@@ -332,7 +329,7 @@ def adjust_nurbs_surface_for_curves(surface, direction, targets, preserve_tangen
         q_weights.append(new_q_curve.get_weights())
     q_controls = np.array(q_controls)
     q_weights = np.array(q_weights)
-    if direction == SvNurbsSurface.U:
+    if direction == SurfaceDirection.U:
         q_controls = np.transpose(q_controls, axes=(1,0,2))
         q_weights = np.transpose(q_weights, axes=(1,0))
     #print(f"Out: {surface.get_control_points().shape} => {q_controls.shape}")
@@ -345,17 +342,17 @@ def adjust_nurbs_surface_for_points_iso(surface, targets, preserve_tangents_u=Fa
     curve_targets = []
     for target_u, target_v, target_pt in targets:
         if directions_order == ORDER_UV:
-            target_curve = surface.iso_curve(fixed_direction = SvNurbsSurface.U, param = target_u)
+            target_curve = surface.iso_curve(fixed_direction = SurfaceDirection.U, param = target_u)
             target_curve = adjust_curve_points(target_curve, [target_v], [target_pt], preserve_tangents = preserve_tangents_u, logger = logger)
             preserve_tangents_adjust = preserve_tangents_v
             curve_targets.append((target_u, target_curve))
-            second_direction = SvNurbsSurface.V
+            second_direction = SurfaceDirection.V
         else:
-            target_curve = surface.iso_curve(fixed_direction = SvNurbsSurface.V, param = target_v)
+            target_curve = surface.iso_curve(fixed_direction = SurfaceDirection.V, param = target_v)
             target_curve = adjust_curve_points(target_curve, [target_u], [target_pt], preserve_tangents = preserve_tangents_v, logger = logger)
             preserve_tangents_adjust = preserve_tangents_u
             curve_targets.append((target_v, target_curve))
-            second_direction = SvNurbsSurface.U
+            second_direction = SurfaceDirection.U
     return adjust_nurbs_surface_for_curves(surface, second_direction, curve_targets, preserve_tangents = preserve_tangents_adjust, logger = logger)
 
 def adjust_nurbs_surface_for_points(surface, targets, implementation = SvNurbsMaths.NATIVE, logger = None):
@@ -380,10 +377,10 @@ def snap_nurbs_surfaces(surfaces, direction, bias = SnapSurfaceBias.MID, tangent
     if logger is None:
         logger = get_logger()
 
-    second_direction = other_direction(direction)
+    #second_direction = other_direction(direction)
 
     def get_range(surface):
-        if direction == SvNurbsSurface.V:
+        if direction == SurfaceDirection.V:
             return surface.get_u_bounds()
         else:
             return surface.get_v_bounds()
@@ -391,13 +388,13 @@ def snap_nurbs_surfaces(surfaces, direction, bias = SnapSurfaceBias.MID, tangent
     def get_greville_pts(iso_curve, p):
         qs = iso_curve.calc_greville_ts()
         ps = np.array([p for _ in qs])
-        if direction == SvNurbsSurface.U:
+        if direction == SurfaceDirection.U:
             return ps, qs
         else:
             return qs, ps
         
     def get_tangents(derivs):
-        if direction == SvNurbsSurface.U:
+        if direction == SurfaceDirection.U:
             vecs = derivs.du
         else:
             vecs = derivs.dv

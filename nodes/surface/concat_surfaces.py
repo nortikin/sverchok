@@ -6,12 +6,12 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, zip_long_repeat_recursive
-from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
-from sverchok.utils.surface.nurbs import SvNurbsSurface, other_direction
+from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException, other_direction
+from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.algorithms import concatenate_surfaces, unify_nurbs_surfaces
 
 class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
@@ -82,6 +82,23 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         min = 1, max = 10,
         update = updateNode)
 
+    check_edges : BoolProperty(
+        name = "Check edges coincidence",
+        default = False,
+        update = updateNode)
+
+    check_edges_pts : IntProperty(
+        name = "Number of points to check",
+        default = 10,
+        update = updateNode)
+
+    check_edges_tolerance : FloatProperty(
+        name = "Tolerance",
+        default = 1e-6,
+        min = 0,
+        precision = 8,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surfaces")
         self.inputs.new('SvSurfaceSocket', "Surface1")
@@ -93,6 +110,10 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'input_mode', text='')
         layout.prop(self, 'direction', expand=True)
         layout.prop(self, 'use_nurbs', text='')
+        layout.prop(self, 'check_edges')
+        if self.check_edges:
+            layout.prop(self, 'check_edges_pts')
+            layout.prop(self, 'check_edges_tolerance')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -139,6 +160,10 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
                     if self.unify and all_nurbs:
                         surfaces = unify_nurbs_surfaces(surfaces, directions={other_direction(self.direction)},
                                                         knotvector_accuracy = self.knotvector_accuracy)
+                if self.check_edges:
+                    check_surface_edges_coincidence(surfaces, direction = self.direction,
+                                                    n_pts = self.check_edges_pts,
+                                                    tolerance = self.check_edges_tolerance)
                 new_surface = concatenate_surfaces(direction = self.direction, surfaces = surfaces, native_only = self.use_nurbs == 'NURBS')
                 new_surfaces.append(new_surface)
             if nested_input:

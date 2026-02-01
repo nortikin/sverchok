@@ -31,7 +31,7 @@ from sverchok.utils.curve.algorithms import (
             reparametrize_curve,
             SvCurveOnSurface
         )
-from sverchok.utils.surface.core import SvReparametrizedSurface, SvSurface, UnsupportedSurfaceTypeException
+from sverchok.utils.surface.core import SvReparametrizedSurface, SvSurface, UnsupportedSurfaceTypeException, other_direction
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths
@@ -1268,6 +1268,29 @@ def concatenate_surfaces(direction, surfaces, native_only=False):
         raise SvInvalidInputException("Surface class does not support specific concatenation method")
     
     return SvConcatSurface(direction, surfaces)
+
+def check_surface_edges_coincidence(surfaces, direction, n_pts=10, tolerance=1e-6):
+    pairs = zip(surfaces[:-1], surfaces[0:])
+    fixed_direction = other_direction(direction)
+    for idx, (surface1, surface2) in enumerate(pairs):
+        if direction == SurfaceDirection.U:
+            s1p2 = surface1.get_u_bounds()[1]
+            s2p1 = surface2.get_u_bounds()[0]
+        else:
+            s1p2 = surface1.get_v_bounds()[1]
+            s2p1 = surface2.get_v_bounds()[0]
+        iso1 = surface1.iso_curve(fixed_direction, s1p2)
+        iso2 = surface2.iso_curve(fixed_direction, s2p1)
+        c1t1, c1t2 = iso1.get_u_bounds()
+        c2t1, c2t2 = iso2.get_u_bounds()
+        c1ts = np.linspace(c1t1, c1t2, num=n_pts)
+        c2ts = np.linspace(c2t1, c2t2, num=n_pts)
+        c1pts = iso1.evaluate_array(c1ts)
+        c2pts = iso2.evaluate_array(c2ts)
+        delta = np.linalg.norm(c2pts - c1pts, axis=1).max()
+        if delta > tolerance:
+            raise SvInvalidInputException(f"Surfaces #{idx} and #{idx+1} edges do not match; maximum detected distance is {delta}")
+
 
 def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
     my_control_points = curve.get_control_points()

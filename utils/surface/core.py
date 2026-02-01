@@ -37,6 +37,12 @@ class SurfaceEdge:
     def __repr__(self):
         return f"<{self.boundary}_{self.direction}>"
 
+def other_direction(direction):
+    if direction == SurfaceDirection.U:
+        return SurfaceDirection.V
+    else:
+        return SurfaceDirection.U
+
 SurfaceEdge._create(SurfaceDirection.U, RangeBoundary.MIN, 'MIN_U')
 SurfaceEdge._create(SurfaceDirection.U, RangeBoundary.MAX, 'MAX_U')
 SurfaceEdge._create(SurfaceDirection.V, RangeBoundary.MIN, 'MIN_V')
