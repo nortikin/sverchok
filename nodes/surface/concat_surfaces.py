@@ -12,7 +12,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, zip_long_repeat_recursive
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException, other_direction
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.surface.algorithms import concatenate_surfaces, unify_nurbs_surfaces
+from sverchok.utils.surface.algorithms import concatenate_surfaces, unify_nurbs_surfaces, check_surface_edges_coincidence
 
 class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
     """
