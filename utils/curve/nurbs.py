@@ -1244,6 +1244,11 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         else:
             return numerator / denominator
 
+    def _evaluate_basis(self, order, ts):
+        p = self.degree
+        k = len(self.control_points)
+        return np.array([[self.basis.derivative(i, p, d)(ts) for i in range(k)] for d in range(order)]) # (order, k, n)
+
     def fraction(self, deriv_order, ts):
         n = len(ts)
         p = self.degree
@@ -1331,6 +1336,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
         curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
         return curve3
+
+    def derivatives_data(self, ts, order=1):
+        basis = self._evaluate_basis(order, ts)
+        return SvNurbsDerivativesCalculator(self.degree, self.control_points, self.weights, basis)
 
     def derivatives_array(self, n, ts, tangent_delta=None):
         result = []
@@ -1586,6 +1595,87 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             logger.debug(f"Removed knot t={u} for {removed_count} times")
         return curve
 
+class SvNurbsDerivativesCalculator:
+    def __init__(self, degree, control_points, weights, basis):
+        self.degree = degree
+        self.basis = basis
+        self._control_points = control_points
+        self._weights = weights
+        self._fractions = dict()
+
+    def fraction(self, order):
+        if order not in self._fractions:
+            #n = self.basis.shape[-1]
+            #p = self.degree
+            #k = len(self._control_points)
+            ns = self.basis[order] # (k, n)
+            coeffs = ns * self._weights[np.newaxis].T # (k, n)
+            coeffs_t = coeffs[np.newaxis].T # (n, k, 1)
+            numerator = (coeffs_t * self._control_points) # (n, k, 3)
+            numerator = numerator.sum(axis=1) # (n, 3)
+            denominator = coeffs.sum(axis=0) # (n,)
+            self._fractions[order] = numerator, denominator[np.newaxis].T
+        return self._fractions[order]
+
+    @property
+    def control_points(self):
+        return self._control_points
+
+    @control_points.setter
+    def control_points(self, points):
+        self._control_points = points
+        self._fractions = dict()
+
+    @property
+    def weights(self):
+        return self._weights
+
+    @weights.setter
+    def weights(self, weights):
+        self._weights = weights
+        self._fractions = dict()
+
+    def evaluate(self, order=0):
+        if order == 0:
+            return self.points()
+        elif order == 1:
+            return self.tangents()
+        elif order == 2:
+            return self.second_derivatives()
+        elif order == 3:
+            return self.third_derivatives()
+
+    def points(self):
+        numerator, denominator = self.fraction(0)
+        return nurbs_divide(numerator, denominator)
+    
+    def tangents(self):
+        numerator, denominator = self.fraction(0)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        return curve1
+    
+    def second_derivatives(self):
+        numerator, denominator = self.fraction(0)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        numerator2, denominator2 = self.fraction(2)
+        curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+        return curve2
+
+    def third_derivatives(self):
+        numerator, denominator = self.fraction(0)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        numerator2, denominator2 = self.fraction(2)
+        curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+        numerator3, denominator3 = self.fraction(3)
+
+        curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
+        return curve3
 
 SvNurbsMaths.curve_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsCurve
 if geomdl is not None:
