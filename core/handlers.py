@@ -101,7 +101,8 @@ def sv_scene_change_handler(scene):
     # should be suppressed because it repeats animation trigger. When Play
     # animation is on and user changes something in the scene this trigger is
     # only called if frame rate is equal to maximum.
-    if bpy.context.screen.is_animation_playing:
+    screen = bpy.context.screen
+    if screen and screen.is_animation_playing:
         return
 
     # scene handler can be triggered even when new node or its property
