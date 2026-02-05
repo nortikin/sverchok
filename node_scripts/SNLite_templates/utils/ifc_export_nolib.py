@@ -118,7 +118,7 @@ def make(self, context):
         return triangles
 
     # Функция для создания геометрических сущностей для одного объекта
-    def create_geometry_entities_for_object(verts, polys, start_index, obj_index):
+    def create_geometry_entities_for_object(verts, polys, start_index, obj_index, max_faces):
         """
         Создание геометрических сущностей IFC для одного объекта
         Возвращает строку с STEP-кодом и индекс для продолжения нумерации
@@ -221,7 +221,7 @@ def make(self, context):
         return "\n".join(entities) + "\n", obj_data
 
     # Функция создания полного IFC контента для нескольких объектов
-    def generate_ifc_content_multiple(objects_data, base_obj_name):
+    def generate_ifc_content_multiple(objects_data, base_obj_name,max_faces):
         """Генерация полного содержимого IFC файла для нескольких объектов"""
         timestamp = int(datetime.now().timestamp())
         iso_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
@@ -245,7 +245,7 @@ def make(self, context):
             
             # Создаем геометрию для объекта
             geometry_str, obj_geometry_data = create_geometry_entities_for_object(
-                verts, polys, current_index, obj_idx
+                verts, polys, current_index, obj_idx,max_faces
             )
             
             all_entities.append(geometry_str)
@@ -353,7 +353,7 @@ DATA;
         # Создаем директорию
         os.makedirs(os.path.dirname(os.path.abspath(final_filepath)), exist_ok=True)
         # Генерируем содержимое IFC
-        ifc_content = generate_ifc_content_multiple(objects_data, base_object_name)
+        ifc_content = generate_ifc_content_multiple(objects_data, base_object_name,max_faces)
         
         # Сохраняем файл
         with open(final_filepath, 'w', encoding='utf-8') as f:
