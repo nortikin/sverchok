@@ -202,6 +202,9 @@ class SvNurbsBasisFunctions(object):
         self.knotvector = np.array(knotvector)
         self._cache = dict()
 
+    def evaluate(self, degree, n_cpts, order, ts):
+        return np.array([[self.derivative(i, degree, d)(ts) for i in range(n_cpts)] for d in range(order)]) # (order, k, n)
+
     def function(self, i, p, reset_cache=True):
         if reset_cache:
             self._cache = dict()
