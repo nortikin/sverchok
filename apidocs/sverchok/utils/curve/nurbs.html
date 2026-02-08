@@ -499,6 +499,11 @@ el.replaceWith(d);
         else:
             return numerator / denominator
 
+    def _evaluate_basis(self, order, ts):
+        p = self.degree
+        k = len(self.control_points)
+        return np.array([[self.basis.derivative(i, p, d)(ts) for i in range(k)] for d in range(order)]) # (order, k, n)
+
     def fraction(self, deriv_order, ts):
         n = len(ts)
         p = self.degree
@@ -586,6 +591,10 @@ el.replaceWith(d);
 
         curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
         return curve3
+
+    def derivatives_data(self, ts, order=1):
+        basis = self._evaluate_basis(order, ts)
+        return SvNurbsDerivativesCalculator(self.degree, self.control_points, self.weights, basis)
 
     def derivatives_array(self, n, ts, tangent_delta=None):
         result = []
@@ -870,6 +879,20 @@ el.replaceWith(d);
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.derivatives_data"><code class="name flex">
+<span>def <span class="ident">derivatives_data</span></span>(<span>self, ts, order=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivatives_data(self, ts, order=1):
+    basis = self._evaluate_basis(order, ts)
+    return SvNurbsDerivativesCalculator(self.degree, self.control_points, self.weights, basis)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.evaluate_homogenous_array"><code class="name flex">
 <span>def <span class="ident">evaluate_homogenous_array</span></span>(<span>self, ts)</span>
 </code></dt>
@@ -3638,6 +3661,298 @@ lie inside the sphere, or may not touch it at all.</p></div>
 </li>
 </ul>
 </dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator"><code class="flex name class">
+<span>class <span class="ident">SvNurbsDerivativesCalculator</span></span>
+<span>(</span><span>degree, control_points, weights, basis)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvNurbsDerivativesCalculator:
+    def __init__(self, degree, control_points, weights, basis):
+        self.degree = degree
+        self.basis = basis
+        self._control_points = control_points
+        if weights is None and control_points is not None:
+            k = len(control_points)
+            weights = np.ones((k,))
+        self._weights = weights
+        self._fractions = dict()
+
+    @classmethod
+    def from_knotvector(cls, knotvector, degree, n_cpts, order, ts):
+        err = sv_knotvector.check(degree, knotvector, n_cpts)
+        if err:
+            raise Exception(err)
+        basis = SvNurbsBasisFunctions(knotvector).evaluate(degree, n_cpts, order, ts)
+        weights = np.ones((n_cpts,))
+        return SvNurbsDerivativesCalculator(degree, None, weights, basis)
+
+    def copy(self, control_points = None, weights = None):
+        if control_points is None and weights is None:
+            result = SvNurbsDerivativesCalculator(self.degree, self.control_points, self.weights, self.basis)
+            result._fractions = self._fractions
+            return result
+        if control_points is None:
+            control_points = self._control_points
+        if weights is None:
+            weights = self._weights
+        return SvNurbsDerivativesCalculator(self.degree, control_points, weights, self.basis)
+
+    def fraction(self, order):
+        if order not in self._fractions:
+            #n = self.basis.shape[-1]
+            #p = self.degree
+            #k = len(self._control_points)
+            ns = self.basis[order] # (k, n)
+            coeffs = ns * self._weights[np.newaxis].T # (k, n)
+            coeffs_t = coeffs[np.newaxis].T # (n, k, 1)
+            numerator = (coeffs_t * self._control_points) # (n, k, 3)
+            numerator = numerator.sum(axis=1) # (n, 3)
+            denominator = coeffs.sum(axis=0) # (n,)
+            self._fractions[order] = numerator, denominator[np.newaxis].T
+        return self._fractions[order]
+
+    @property
+    def control_points(self):
+        return self._control_points
+
+    @control_points.setter
+    def control_points(self, points):
+        self._control_points = points
+        self._fractions = dict()
+
+    @property
+    def weights(self):
+        return self._weights
+
+    @weights.setter
+    def weights(self, weights):
+        self._weights = weights
+        self._fractions = dict()
+
+    def evaluate(self, order=0):
+        if order == 0:
+            return self.points()
+        elif order == 1:
+            return self.tangents()
+        elif order == 2:
+            return self.second_derivatives()
+        elif order == 3:
+            return self.third_derivatives()
+
+    def points(self):
+        numerator, denominator = self.fraction(0)
+        return nurbs_divide(numerator, denominator)
+    
+    def tangents(self):
+        numerator, denominator = self.fraction(0)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        return curve1
+    
+    def second_derivatives(self):
+        numerator, denominator = self.fraction(0)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        numerator2, denominator2 = self.fraction(2)
+        curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+        return curve2
+
+    def third_derivatives(self):
+        numerator, denominator = self.fraction(0)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        numerator2, denominator2 = self.fraction(2)
+        curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+        numerator3, denominator3 = self.fraction(3)
+
+        curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
+        return curve3</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.from_knotvector"><code class="name flex">
+<span>def <span class="ident">from_knotvector</span></span>(<span>knotvector, degree, n_cpts, order, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.control_points"><code class="name">prop <span class="ident">control_points</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def control_points(self):
+    return self._control_points</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.weights"><code class="name">prop <span class="ident">weights</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def weights(self):
+    return self._weights</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self, control_points=None, weights=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self, control_points = None, weights = None):
+    if control_points is None and weights is None:
+        result = SvNurbsDerivativesCalculator(self.degree, self.control_points, self.weights, self.basis)
+        result._fractions = self._fractions
+        return result
+    if control_points is None:
+        control_points = self._control_points
+    if weights is None:
+        weights = self._weights
+    return SvNurbsDerivativesCalculator(self.degree, control_points, weights, self.basis)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, order=0)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, order=0):
+    if order == 0:
+        return self.points()
+    elif order == 1:
+        return self.tangents()
+    elif order == 2:
+        return self.second_derivatives()
+    elif order == 3:
+        return self.third_derivatives()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.fraction"><code class="name flex">
+<span>def <span class="ident">fraction</span></span>(<span>self, order)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fraction(self, order):
+    if order not in self._fractions:
+        #n = self.basis.shape[-1]
+        #p = self.degree
+        #k = len(self._control_points)
+        ns = self.basis[order] # (k, n)
+        coeffs = ns * self._weights[np.newaxis].T # (k, n)
+        coeffs_t = coeffs[np.newaxis].T # (n, k, 1)
+        numerator = (coeffs_t * self._control_points) # (n, k, 3)
+        numerator = numerator.sum(axis=1) # (n, 3)
+        denominator = coeffs.sum(axis=0) # (n,)
+        self._fractions[order] = numerator, denominator[np.newaxis].T
+    return self._fractions[order]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.points"><code class="name flex">
+<span>def <span class="ident">points</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def points(self):
+    numerator, denominator = self.fraction(0)
+    return nurbs_divide(numerator, denominator)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.second_derivatives"><code class="name flex">
+<span>def <span class="ident">second_derivatives</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def second_derivatives(self):
+    numerator, denominator = self.fraction(0)
+    curve = numerator / denominator
+    numerator1, denominator1 = self.fraction(1)
+    curve1 = (numerator1 - curve*denominator1) / denominator
+    numerator2, denominator2 = self.fraction(2)
+    curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+    return curve2</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.tangents"><code class="name flex">
+<span>def <span class="ident">tangents</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tangents(self):
+    numerator, denominator = self.fraction(0)
+    curve = numerator / denominator
+    numerator1, denominator1 = self.fraction(1)
+    curve1 = (numerator1 - curve*denominator1) / denominator
+    return curve1</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.third_derivatives"><code class="name flex">
+<span>def <span class="ident">third_derivatives</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def third_derivatives(self):
+    numerator, denominator = self.fraction(0)
+    curve = numerator / denominator
+    numerator1, denominator1 = self.fraction(1)
+    curve1 = (numerator1 - curve*denominator1) / denominator
+    numerator2, denominator2 = self.fraction(2)
+    curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+    numerator3, denominator3 = self.fraction(3)
+
+    curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
+    return curve3</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 </dl>
 </section>
 </article>
@@ -3670,6 +3985,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <h4><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve">SvNativeNurbsCurve</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.build" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.build">build</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.derivatives_data" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.derivatives_data">derivatives_data</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.evaluate_homogenous_array" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.evaluate_homogenous_array">evaluate_homogenous_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.extrude_along_vector" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction">fraction</a></code></li>
@@ -3741,6 +4057,21 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_taylor_segments" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_taylor_segments">to_taylor_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.transform" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.transform">transform</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.translate" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.translate">translate</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator">SvNurbsDerivativesCalculator</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.control_points" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.control_points">control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.copy" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.copy">copy</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.evaluate" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.fraction" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.fraction">fraction</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.from_knotvector" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.from_knotvector">from_knotvector</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.points" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.points">points</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.second_derivatives" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.second_derivatives">second_derivatives</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.tangents" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.tangents">tangents</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.third_derivatives" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.third_derivatives">third_derivatives</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.weights" href="#sverchok.utils.curve.nurbs.SvNurbsDerivativesCalculator.weights">weights</a></code></li>
 </ul>
 </li>
 </ul>

@@ -67,6 +67,10 @@ that indicates that there is a programming error</p></div>
 <li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.sv_custom_exceptions.NoConvergenceException" href="#sverchok.core.sv_custom_exceptions.NoConvergenceException">NoConvergenceException</a></li>
+</ul>
 </dd>
 <dt id="sverchok.core.sv_custom_exceptions.ArgumentError"><code class="flex name class">
 <span>class <span class="ident">ArgumentError</span></span>
@@ -185,6 +189,27 @@ invalid state; for example, it was not initialized prior
 to calling some method. This indicates a programming error.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="sverchok.core.sv_custom_exceptions.NoConvergenceException"><code class="flex name class">
+<span>class <span class="ident">NoConvergenceException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NoConvergenceException(AlgorithmError):
+    &#34;&#34;&#34;Raised when some iterative optimization algorithm does not converge&#34;&#34;&#34;
+    __description__ = &#34;Algorithm does not converge&#34;</code></pre>
+</details>
+<div class="desc"><p>Raised when some iterative optimization algorithm does not converge</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.sv_custom_exceptions.AlgorithmError" href="#sverchok.core.sv_custom_exceptions.AlgorithmError">AlgorithmError</a></li>
 <li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
@@ -455,6 +480,9 @@ options which is not going to work.</p></div>
 </li>
 <li>
 <h4><code><a title="sverchok.core.sv_custom_exceptions.InvalidStateError" href="#sverchok.core.sv_custom_exceptions.InvalidStateError">InvalidStateError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.core.sv_custom_exceptions.NoConvergenceException" href="#sverchok.core.sv_custom_exceptions.NoConvergenceException">NoConvergenceException</a></code></h4>
 </li>
 <li>
 <h4><code><a title="sverchok.core.sv_custom_exceptions.SvExternalLibraryException" href="#sverchok.core.sv_custom_exceptions.SvExternalLibraryException">SvExternalLibraryException</a></code></h4>

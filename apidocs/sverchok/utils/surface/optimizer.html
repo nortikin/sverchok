@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.surface.optimizer API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.surface.optimizer</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.surface.optimizer.Constraint"><code class="flex name class">
+<span>class <span class="ident">Constraint</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Constraint:
+    @staticmethod
+    def eye(param_idxs, ndim=3):
+        vectors = np.eye(len(param_idxs))
+        summands = [Summand(idx, vector) for idx, vector in zip(param_idxs, vectors)]
+        zero = np.zeros((ndim,))
+        return LinearConstraint(zero, summands)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.optimizer.LinearConstraint" href="#sverchok.utils.surface.optimizer.LinearConstraint">LinearConstraint</a></li>
+<li><a title="sverchok.utils.surface.optimizer.NonLinearConstraint" href="#sverchok.utils.surface.optimizer.NonLinearConstraint">NonLinearConstraint</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.optimizer.Constraint.eye"><code class="name flex">
+<span>def <span class="ident">eye</span></span>(<span>param_idxs, ndim=3)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def eye(param_idxs, ndim=3):
+    vectors = np.eye(len(param_idxs))
+    summands = [Summand(idx, vector) for idx, vector in zip(param_idxs, vectors)]
+    zero = np.zeros((ndim,))
+    return LinearConstraint(zero, summands)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.LinearConstraint"><code class="flex name class">
+<span>class <span class="ident">LinearConstraint</span></span>
+<span>(</span><span>point, summands=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LinearConstraint(Constraint):
+    def __init__(self, point, summands = None):
+        if summands is None:
+            summands = []
+        self.point = np.array(point)
+        self.summands = summands
+
+    def __repr__(self):
+        summands = [repr(s) for s in self.summands]
+        return f&#34;&lt;Linear: {self.point} + {&#39; + &#39;.join(summands)}&gt;&#34;
+
+    def get_last_parameter_idx(self):
+        if not self.summands:
+            return None
+        return max([s.param_idx for s in self.summands])</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.optimizer.Constraint" href="#sverchok.utils.surface.optimizer.Constraint">Constraint</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.optimizer.LinearConstraint.get_last_parameter_idx"><code class="name flex">
+<span>def <span class="ident">get_last_parameter_idx</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_last_parameter_idx(self):
+    if not self.summands:
+        return None
+    return max([s.param_idx for s in self.summands])</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.NonLinearConstraint"><code class="flex name class">
+<span>class <span class="ident">NonLinearConstraint</span></span>
+<span>(</span><span>function, param_idxs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NonLinearConstraint(Constraint):
+    def __init__(self, function, param_idxs):
+        self.function = function
+        self.param_idxs = np.array(param_idxs)
+
+    def get_last_parameter_idx(self):
+        return max(self.param_idxs)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.optimizer.Constraint" href="#sverchok.utils.surface.optimizer.Constraint">Constraint</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.optimizer.NonLinearConstraint.get_last_parameter_idx"><code class="name flex">
+<span>def <span class="ident">get_last_parameter_idx</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_last_parameter_idx(self):
+    return max(self.param_idxs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Optimizer"><code class="flex name class">
+<span>class <span class="ident">Optimizer</span></span>
+<span>(</span><span>n_pts, ndim=3)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Optimizer:
+    def __init__(self, n_pts, ndim=3):
+        self.n_pts = n_pts
+        self.constraints = dict()
+        self.bounds = dict()
+        self.init_values = dict()
+        self.ndim = ndim
+        self._orig_points = None
+        self._matrix = None
+        self._goal = None
+        self._last_parameter_idx = None
+        self._has_nonlinear_constraints = False
+        self._inited = False
+
+    def allocate_parameters(self, count=1):
+        if self._inited:
+            raise InvalidStateError(&#34;Optimizer was already initialized&#34;)
+        if self._last_parameter_idx is None:
+            self._last_parameter_idx = -1
+        params = np.arange(self._last_parameter_idx+1, self._last_parameter_idx + 1 + count)
+        self._last_parameter_idx = params[-1]
+        return params
+
+    def set_constraint(self, idx, point, vectors=None, bounds=None):
+        if self._inited:
+            raise InvalidStateError(&#34;Optimizer was already initialized&#34;)
+        summands = []
+        param_idxs = []
+        if vectors is not None:
+            if bounds is None:
+                bounds = [(None, None) for _ in vectors]
+            param_idxs = self.allocate_parameters(count = len(vectors))
+            for param_idx, vector, bounds in zip(param_idxs, vectors, bounds):
+                #print(f&#34;S[{param_idx}] = {vector}&#34;)
+                summand = Summand(param_idx, vector)
+                summands.append(summand)
+                self.bounds[param_idx] = bounds
+        self.constraints[idx] = LinearConstraint(point, summands)
+        #print(f&#34;Constraint[{idx}] = {self.constraints[idx]}&#34;)
+        return param_idxs
+
+    def bind_to_existing_parameter(self, point_idx, param_idx, point, vector=None):
+        if self._inited:
+            raise InvalidStateError(&#34;Optimizer was already initialized&#34;)
+        if vector is not None:
+            summands = [Summand(param_idx, vector)]
+        else:
+            summands = None
+        constraint = LinearConstraint(point, summands)
+        self.constraints[point_idx] = constraint
+
+    def set_nonlinear_constraint(self, idx, function, arity, bounds=None):
+        if self._inited:
+            raise InvalidStateError(&#34;Optimizer was already initialized&#34;)
+        param_idxs = self.allocate_parameters(arity)
+        constraint = NonLinearConstraint(function, param_idxs)
+        self.constraints[idx] = constraint
+        if bounds is not None:
+            for param_idx, bound in zip(param_idxs, bounds):
+                self.bounds[param_idx] = bound
+        return param_idx
+
+    def set_goal(self, goal):
+        self._goal = goal
+
+    def _calc_n_dimensions(self):
+        result = 0
+        for idx in self.constraints:
+            j = self.constraints[idx].get_last_parameter_idx()
+            if j is not None:
+                result = max(result, j)
+        return result+1
+
+    def _init(self):
+        if self._inited:
+            return
+        n_target = self.n_pts * self.ndim
+        orig_points = np.zeros((n_target,))
+        for idx in range(self.n_pts):
+            if idx not in self.constraints:
+                param_idxs = self.allocate_parameters(count = self.ndim)
+                self.constraints[idx] = Constraint.eye(param_idxs, ndim = self.ndim)
+        n_params = self._calc_n_dimensions()
+        A = np.zeros((n_target, n_params))
+        row_idx = 0
+        for constraint_idx in range(self.n_pts):
+            constraint = self.constraints[constraint_idx]
+            if isinstance(constraint, LinearConstraint):
+                n_rows = self.ndim
+                orig_points[row_idx : row_idx + n_rows] = constraint.point#[np.newaxis].T
+                for summand in constraint.summands:
+                    #print(f&#34;A[{row_idx}, {summand.param_idx}] = {summand.vector}&#34;)
+                    A[row_idx : row_idx + n_rows, summand.param_idx] = summand.vector
+            row_idx += n_rows
+        print(&#34;A&#34;, A.shape)
+        self._matrix = A
+        self._orig_points = orig_points
+
+    def _evaluate(self, params):
+        xs = self._orig_points + self._matrix @ np.array(params)
+        points = xs.reshape((self.n_pts, self.ndim))
+        #print(&#34;Pts&#34;, points)
+        for constraint_idx in self.constraints:
+            constraint = self.constraints[constraint_idx]
+            if not isinstance(constraint, NonLinearConstraint):
+                continue
+            param_values = params[constraint.param_idxs]
+            pt = constraint.function(param_values)
+            #print(f&#34;Pt[{constraint_idx}] = F({param_values}) = {pt}&#34;)
+            points[constraint_idx] = pt
+        return points
+
+    def minimize(self, tol=None):
+        self._init()
+        if self._goal is None:
+            raise InvalidStateError(&#34;Goal was not set&#34;)
+        def goal(params):
+            return self._goal(self._evaluate(params))
+        init_values = np.zeros((self._calc_n_dimensions(),))
+        for p_idx in self.init_values:
+            init_values[p_idx] = self.init_values[p_idx]
+        bounds = [self.bounds.get(i, (None, None)) for i in range(self._last_parameter_idx+1)]
+        sol = scipy.optimize.minimize(fun=goal, x0=init_values,
+                                       method = &#39;L-BFGS-B&#39;,
+                                       bounds = bounds,
+                                       tol = tol)
+        print(sol)
+        points = self._evaluate(sol.x)
+        solution = Solution(points, sol.x, sol.fun, sol.success, sol.message)
+        return solution</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.optimizer.Optimizer.allocate_parameters"><code class="name flex">
+<span>def <span class="ident">allocate_parameters</span></span>(<span>self, count=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def allocate_parameters(self, count=1):
+    if self._inited:
+        raise InvalidStateError(&#34;Optimizer was already initialized&#34;)
+    if self._last_parameter_idx is None:
+        self._last_parameter_idx = -1
+    params = np.arange(self._last_parameter_idx+1, self._last_parameter_idx + 1 + count)
+    self._last_parameter_idx = params[-1]
+    return params</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Optimizer.bind_to_existing_parameter"><code class="name flex">
+<span>def <span class="ident">bind_to_existing_parameter</span></span>(<span>self, point_idx, param_idx, point, vector=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bind_to_existing_parameter(self, point_idx, param_idx, point, vector=None):
+    if self._inited:
+        raise InvalidStateError(&#34;Optimizer was already initialized&#34;)
+    if vector is not None:
+        summands = [Summand(param_idx, vector)]
+    else:
+        summands = None
+    constraint = LinearConstraint(point, summands)
+    self.constraints[point_idx] = constraint</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Optimizer.minimize"><code class="name flex">
+<span>def <span class="ident">minimize</span></span>(<span>self, tol=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def minimize(self, tol=None):
+    self._init()
+    if self._goal is None:
+        raise InvalidStateError(&#34;Goal was not set&#34;)
+    def goal(params):
+        return self._goal(self._evaluate(params))
+    init_values = np.zeros((self._calc_n_dimensions(),))
+    for p_idx in self.init_values:
+        init_values[p_idx] = self.init_values[p_idx]
+    bounds = [self.bounds.get(i, (None, None)) for i in range(self._last_parameter_idx+1)]
+    sol = scipy.optimize.minimize(fun=goal, x0=init_values,
+                                   method = &#39;L-BFGS-B&#39;,
+                                   bounds = bounds,
+                                   tol = tol)
+    print(sol)
+    points = self._evaluate(sol.x)
+    solution = Solution(points, sol.x, sol.fun, sol.success, sol.message)
+    return solution</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Optimizer.set_constraint"><code class="name flex">
+<span>def <span class="ident">set_constraint</span></span>(<span>self, idx, point, vectors=None, bounds=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_constraint(self, idx, point, vectors=None, bounds=None):
+    if self._inited:
+        raise InvalidStateError(&#34;Optimizer was already initialized&#34;)
+    summands = []
+    param_idxs = []
+    if vectors is not None:
+        if bounds is None:
+            bounds = [(None, None) for _ in vectors]
+        param_idxs = self.allocate_parameters(count = len(vectors))
+        for param_idx, vector, bounds in zip(param_idxs, vectors, bounds):
+            #print(f&#34;S[{param_idx}] = {vector}&#34;)
+            summand = Summand(param_idx, vector)
+            summands.append(summand)
+            self.bounds[param_idx] = bounds
+    self.constraints[idx] = LinearConstraint(point, summands)
+    #print(f&#34;Constraint[{idx}] = {self.constraints[idx]}&#34;)
+    return param_idxs</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Optimizer.set_goal"><code class="name flex">
+<span>def <span class="ident">set_goal</span></span>(<span>self, goal)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_goal(self, goal):
+    self._goal = goal</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Optimizer.set_nonlinear_constraint"><code class="name flex">
+<span>def <span class="ident">set_nonlinear_constraint</span></span>(<span>self, idx, function, arity, bounds=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_nonlinear_constraint(self, idx, function, arity, bounds=None):
+    if self._inited:
+        raise InvalidStateError(&#34;Optimizer was already initialized&#34;)
+    param_idxs = self.allocate_parameters(arity)
+    constraint = NonLinearConstraint(function, param_idxs)
+    self.constraints[idx] = constraint
+    if bounds is not None:
+        for param_idx, bound in zip(param_idxs, bounds):
+            self.bounds[param_idx] = bound
+    return param_idx</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Solution"><code class="flex name class">
+<span>class <span class="ident">Solution</span></span>
+<span>(</span><span>control_points: numpy.ndarray,<br>parameters: numpy.ndarray,<br>goal_value: float,<br>success: bool,<br>message: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class Solution:
+    control_points : np.ndarray
+    parameters : np.ndarray
+    goal_value : float
+    success : bool
+    message : str</code></pre>
+</details>
+<div class="desc"><p>Solution(control_points: numpy.ndarray, parameters: numpy.ndarray, goal_value: float, success: bool, message: str)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.surface.optimizer.Solution.control_points"><code class="name">var <span class="ident">control_points</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Solution.goal_value"><code class="name">var <span class="ident">goal_value</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Solution.message"><code class="name">var <span class="ident">message</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Solution.parameters"><code class="name">var <span class="ident">parameters</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Solution.success"><code class="name">var <span class="ident">success</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Summand"><code class="flex name class">
+<span>class <span class="ident">Summand</span></span>
+<span>(</span><span>param_idx: int, vector: numpy.ndarray)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class Summand:
+    param_idx : int
+    vector : np.ndarray
+
+    def __repr__(self):
+        return f&#34;P[{self.param_idx}] * {self.vector}&#34;</code></pre>
+</details>
+<div class="desc"><p>Summand(param_idx: int, vector: numpy.ndarray)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.surface.optimizer.Summand.param_idx"><code class="name">var <span class="ident">param_idx</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.optimizer.Summand.vector"><code class="name">var <span class="ident">vector</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.surface" href="index.html">sverchok.utils.surface</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.surface.optimizer.Constraint" href="#sverchok.utils.surface.optimizer.Constraint">Constraint</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.optimizer.Constraint.eye" href="#sverchok.utils.surface.optimizer.Constraint.eye">eye</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.optimizer.LinearConstraint" href="#sverchok.utils.surface.optimizer.LinearConstraint">LinearConstraint</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.optimizer.LinearConstraint.get_last_parameter_idx" href="#sverchok.utils.surface.optimizer.LinearConstraint.get_last_parameter_idx">get_last_parameter_idx</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.optimizer.NonLinearConstraint" href="#sverchok.utils.surface.optimizer.NonLinearConstraint">NonLinearConstraint</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.optimizer.NonLinearConstraint.get_last_parameter_idx" href="#sverchok.utils.surface.optimizer.NonLinearConstraint.get_last_parameter_idx">get_last_parameter_idx</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.optimizer.Optimizer" href="#sverchok.utils.surface.optimizer.Optimizer">Optimizer</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.optimizer.Optimizer.allocate_parameters" href="#sverchok.utils.surface.optimizer.Optimizer.allocate_parameters">allocate_parameters</a></code></li>
+<li><code><a title="sverchok.utils.surface.optimizer.Optimizer.bind_to_existing_parameter" href="#sverchok.utils.surface.optimizer.Optimizer.bind_to_existing_parameter">bind_to_existing_parameter</a></code></li>
+<li><code><a title="sverchok.utils.surface.optimizer.Optimizer.minimize" href="#sverchok.utils.surface.optimizer.Optimizer.minimize">minimize</a></code></li>
+<li><code><a title="sverchok.utils.surface.optimizer.Optimizer.set_constraint" href="#sverchok.utils.surface.optimizer.Optimizer.set_constraint">set_constraint</a></code></li>
+<li><code><a title="sverchok.utils.surface.optimizer.Optimizer.set_goal" href="#sverchok.utils.surface.optimizer.Optimizer.set_goal">set_goal</a></code></li>
+<li><code><a title="sverchok.utils.surface.optimizer.Optimizer.set_nonlinear_constraint" href="#sverchok.utils.surface.optimizer.Optimizer.set_nonlinear_constraint">set_nonlinear_constraint</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.optimizer.Solution" href="#sverchok.utils.surface.optimizer.Solution">Solution</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.optimizer.Solution.control_points" href="#sverchok.utils.surface.optimizer.Solution.control_points">control_points</a></code></li>
+<li><code><a title="sverchok.utils.surface.optimizer.Solution.goal_value" href="#sverchok.utils.surface.optimizer.Solution.goal_value">goal_value</a></code></li>
+<li><code><a title="sverchok.utils.surface.optimizer.Solution.message" href="#sverchok.utils.surface.optimizer.Solution.message">message</a></code></li>
+<li><code><a title="sverchok.utils.surface.optimizer.Solution.parameters" href="#sverchok.utils.surface.optimizer.Solution.parameters">parameters</a></code></li>
+<li><code><a title="sverchok.utils.surface.optimizer.Solution.success" href="#sverchok.utils.surface.optimizer.Solution.success">success</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.optimizer.Summand" href="#sverchok.utils.surface.optimizer.Summand">Summand</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.optimizer.Summand.param_idx" href="#sverchok.utils.surface.optimizer.Summand.param_idx">param_idx</a></code></li>
+<li><code><a title="sverchok.utils.surface.optimizer.Summand.vector" href="#sverchok.utils.surface.optimizer.Summand.vector">vector</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
