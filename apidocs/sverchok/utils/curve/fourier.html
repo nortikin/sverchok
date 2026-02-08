@@ -339,6 +339,86 @@ def interpolate(verts, omega, metric=&#39;DISTANCE&#39;, is_cyclic=False):
 </li>
 </ul>
 </dd>
+<dt id="sverchok.utils.curve.fourier.SvSineCurve"><code class="flex name class">
+<span>class <span class="ident">SvSineCurve</span></span>
+<span>(</span><span>coeffs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvSineCurve(SvCurve):
+    def __init__(self, coeffs):
+        self.coeffs = np.array(coeffs)
+
+    def get_u_bounds(self):
+        return (0.0, 1.0)
+
+    def evaluate_array(self, ts):
+        n = len(ts)
+        ndim = self.coeffs.shape[-1]
+        points = np.zeros((n,ndim))
+        points[:,0] = ts
+        p = len(self.coeffs)
+        js = np.arange(1, p+1)
+        tsj = pi * ts[np.newaxis].T * js
+        rs = np.transpose(np.sin(tsj)[np.newaxis], axes=(1,2,0)) * self.coeffs
+        points += np.sum(rs, axis=1)
+        return points
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def tangent_array(self, ts, tangent_delta=None):
+        n = len(ts)
+        ndim = self.coeffs.shape[-1]
+        points = np.zeros((n,ndim))
+        points[:,0] = ts
+        js = np.arange(1, n+1)
+        tsj = pi * ts[np.newaxis].T * js
+        rs = np.transpose(np.cos(tsj)[np.newaxis], axes=(1,2,0)) * self.coeffs
+        points += np.sum(rs, axis=1)
+        return points
+
+    def tangent(self, t, tangent_delta=None):
+        return self.tangent_array(np.array([t]))[0]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.derivatives_array" href="core.html#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_by_plane_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative">third_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative_array">third_derivative_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
 </dl>
 </section>
 </article>
@@ -362,6 +442,9 @@ def interpolate(verts, omega, metric=&#39;DISTANCE&#39;, is_cyclic=False):
 <li><code><a title="sverchok.utils.curve.fourier.SvFourierCurve.basis_function" href="#sverchok.utils.curve.fourier.SvFourierCurve.basis_function">basis_function</a></code></li>
 <li><code><a title="sverchok.utils.curve.fourier.SvFourierCurve.interpolate" href="#sverchok.utils.curve.fourier.SvFourierCurve.interpolate">interpolate</a></code></li>
 </ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.fourier.SvSineCurve" href="#sverchok.utils.curve.fourier.SvSineCurve">SvSineCurve</a></code></h4>
 </li>
 </ul>
 </li>
