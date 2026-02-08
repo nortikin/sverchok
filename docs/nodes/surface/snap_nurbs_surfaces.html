@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Orthogonal Project on Surface &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Snap NURBS Surfaces &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/surface/surface_ortho_project';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/surface/snap_nurbs_surfaces';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Reduce Degree (NURBS Surface)" href="surface_reduce_degree.html" />
-    <link rel="prev" title="Nearest Point on Surface" href="surface_nearest_point.html" />
+    <link rel="next" title="Surface Subdomain" href="subdomain.html" />
+    <link rel="prev" title="Ruled Surface" href="ruled_surface.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -200,7 +200,7 @@
 <li class="toctree-l3"><a class="reference internal" href="raycast.html">Raycast on Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="revolution_surface.html">Revolution Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ruled_surface.html">Ruled Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="snap_nurbs_surfaces.html">Snap NURBS Surfaces</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Snap NURBS Surfaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subdomain.html">Surface Subdomain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="surface_bevel_curve.html">Bevel a Curve (Surface)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="surface_domain.html">Surface Domain</a></li>
@@ -210,7 +210,7 @@
 <li class="toctree-l3"><a class="reference internal" href="surface_insert_knot.html">Insert Knot (NURBS Surface)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="surface_lerp.html">Surface Lerp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="surface_nearest_point.html">Nearest Point on Surface</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Orthogonal Project on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_ortho_project.html">Orthogonal Project on Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="surface_reduce_degree.html">Reduce Degree (NURBS Surface)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="surface_remove_excessive_knots.html">Remove Excessive Knots (NURBS Surface)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="surface_remove_knot.html">Remove Knot (NURBS Surface)</a></li>
@@ -310,7 +310,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/surface/surface_ortho_project.rst" target="_blank"
+      <li><a href="../../_sources/nodes/surface/snap_nurbs_surfaces.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -394,7 +394,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Orthogonal Project on Surface</h1>
+    <h1>Snap NURBS Surfaces</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -404,12 +404,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
             </nav>
         </div>
@@ -421,75 +420,110 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="orthogonal-project-on-surface">
-<h1>Orthogonal Project on Surface<a class="headerlink" href="#orthogonal-project-on-surface" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/83c1004d-c510-4195-bdf2-898c77e2804d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/83c1004d-c510-4195-bdf2-898c77e2804d" src="https://github.com/nortikin/sverchok/assets/14288520/83c1004d-c510-4195-bdf2-898c77e2804d" />
-</a>
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
-<p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
-</section>
+  <section id="snap-nurbs-surfaces">
+<h1>Snap NURBS Surfaces<a class="headerlink" href="#snap-nurbs-surfaces" title="Link to this heading">#</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node finds an orthogonal projection of a point onto a surface, i.e. a
-point on a surface such that the vector connecting to the provided point and
-the point on surface is perpendicular to the surface.</p>
-<p>If there are several such points on a surface, the node will return the nearest
-of them. If there are several nearest points, the node will return any of them
-(not guaranteed which one).</p>
-<p>The node uses a numerical method to find such point, so it may be not very
-fast. If you happen to know how to find such point for your specific surface by
-formulas, that way will be faster and more precise.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b1d205cf-9adf-4d3a-b8b9-166744c8ae13"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b1d205cf-9adf-4d3a-b8b9-166744c8ae13" src="https://github.com/nortikin/sverchok/assets/14288520/b1d205cf-9adf-4d3a-b8b9-166744c8ae13" />
-</a>
+<p>This node can adjust two NURBS surfaces in such a way that their edges would
+coincide. Optionally, it can adjust their tangents along the seam.</p>
+<p>After snapping, it is possible to join surfaces into one Surface object with
+“Concatenate Surfaces” node.</p>
+<p>This node is somewhat similar to “Snap Curves” node.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Surface</strong>. The surface to find orthogonal projection onto. This input is
-mandatory.</p></li>
-<li><p><strong>Point</strong>. The point to find the orthogonal projection from. The default
-value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p></li>
+<li><p><strong>Surfaces</strong>. Surfaces to be adjusted. This input is only available when
+the <strong>Input mode</strong> parameter is set to <strong>List of Surfaces</strong>. The edges of
+surfaces which will be adjusted are selected according to the order the
+surfaces are present in this list.</p></li>
+<li><p><strong>Surface1</strong>, <strong>Surface2</strong>. Surfaces to be adjusted. These inputs are
+only available when the <strong>Input mode</strong> parameter is set to <strong>Two Surfaces</strong>.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
-<p>This node has the following parameter:</p>
+<p>This node has the following parameters:</p>
 <ul class="simple">
-<li><p><strong>Init Resolution</strong>. This defines the number of samples to use at the first
-stage of algorithm, to find the initial guess. The higher the value is, the
-more precise the initial guess will be, so less work for the numerical
-algorithm; but the more time will this initial step take. In most cases, you
-do not have to change this parameter. The default value is 5.</p></li>
+<li><p><strong>Input mode</strong>. The available modes are <strong>Two surfaces</strong> and <strong>List of
+surfaces</strong>. The default mode is <strong>Two surfaces</strong>.</p></li>
+<li><p><strong>Direction</strong>. Surface parameter direction along which the surfaces are
+arranged. The available options are <strong>U</strong> and <strong>V</strong>. The default option
+is <strong>U</strong>.</p></li>
+<li><p><strong>Bias</strong>. This defines where the seam curve, along which the edges of two
+surfaces will coincide, will be. The following options are available:</p>
+<ul>
+<li><p><strong>Middle line</strong>. Both surfaces will be adjusted, and the seam line will be
+the medium line between edges of two original surfaces. This is the default
+option.</p></li>
+<li><p><strong>Surface 1</strong>. The edge of the first surface will be left in place. The
+second surface will be adjusted in such a way that it’s edge coincides with
+the edge of the first surface.</p></li>
+<li><p><strong>Surface 2</strong>. The edge of the second surface will be left in place. The
+first surface will be adjusted in such a way that it’s edge coincides with
+the edge of the second surface.</p></li>
+</ul>
+</li>
+<li><p><strong>Tangents</strong>. This defines what should be done with tangents of the surfaces
+along the seam line. The available options are:</p>
+<ul>
+<li><p><strong>No matter</strong>. The surfaces will be adjusted in such a way that total
+movement of their control points is minimal; the procedure will not
+consider tangents at all. In some cases the tangents can be changed, in
+some they will not change. This is the default option.</p></li>
+<li><p><strong>Preserve</strong>. The surfaces will be adjusted in such a way that their
+tangents along the seam are not changed.</p></li>
+<li><p><strong>Medium</strong>. Tangents of both surfaces will be adjusted; the resulting
+tangent vectors will be average between tangent vectors of the first and
+the second surface.</p></li>
+<li><p><strong>Surface 1</strong>. Tangents of the first surface will be left as is. Tangents
+of the second surface will be adjusted in order to match the tangents of
+the first surface.</p></li>
+<li><p><strong>Surface 2</strong>. Tangents of the second surface will be left as is. Tangents
+of the first surface will be adjusted in order to match the tangents of the
+second surface.</p></li>
+</ul>
+</li>
+<li><p><strong>Cyclic</strong>. If checked, the node will snap surfaces in cycle, i.e. it will
+snap the last surface to the first one. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
-<p>This node has the following outputs:</p>
+<p>This node has the following output:</p>
 <ul class="simple">
-<li><p><strong>Point</strong>. The orthogonal projection point on a surface, in 3D space.</p></li>
-<li><p><strong>UVPoint</strong>. The point in surface’s U/V space, which corresponds to the found
-orthogonal projection point. Z coordinate of this output is always zero. X
-and Y correspond to U and V.</p></li>
+<li><p><strong>Surfaces</strong>. Adjusted surfaces.</p></li>
 </ul>
 </section>
-<section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1bb7f46d-9577-40ad-9607-b605156c492b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1bb7f46d-9577-40ad-9607-b605156c492b" src="https://github.com/nortikin/sverchok/assets/14288520/1bb7f46d-9577-40ad-9607-b605156c492b" />
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
+<p>Original surfaces:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/55777cb4-9e9b-479b-96bb-b68c309be362"><img alt="https://github.com/user-attachments/assets/55777cb4-9e9b-479b-96bb-b68c309be362" src="https://github.com/user-attachments/assets/55777cb4-9e9b-479b-96bb-b68c309be362" />
 </a>
-<ul class="simple">
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
-<li><p>Surfaces-&gt; <a class="reference internal" href="minimal_surface.html"><span class="doc">Minimal Surface</span></a></p></li>
-<li><p>Surfaces-&gt; <a class="reference internal" href="normals.html"><span class="doc">Surface Frame</span></a></p></li>
-<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
-<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
-<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
-<li><p>Matrix Multiply: Matrix-&gt; <a class="reference internal" href="../matrix/matrix_math.html"><span class="doc">Matrix Math</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-</ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/aeab6797-b6ba-4ce4-be12-3ab23370f3cd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/aeab6797-b6ba-4ce4-be12-3ab23370f3cd" src="https://github.com/nortikin/sverchok/assets/14288520/aeab6797-b6ba-4ce4-be12-3ab23370f3cd" />
+<p>Snap them with default settings - to middle line, not taking tangents into account:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/52783655-ed26-4922-bf9c-1cc310dec0b6"><img alt="https://github.com/user-attachments/assets/52783655-ed26-4922-bf9c-1cc310dec0b6" src="https://github.com/user-attachments/assets/52783655-ed26-4922-bf9c-1cc310dec0b6" />
+</a>
+<p>With “preserve tangents” option (tangent vectors of both original surfaces along V direction are horizontal):</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/3097e73f-c8a2-4ccb-9a35-09de28931909"><img alt="https://github.com/user-attachments/assets/3097e73f-c8a2-4ccb-9a35-09de28931909" src="https://github.com/user-attachments/assets/3097e73f-c8a2-4ccb-9a35-09de28931909" />
+</a>
+<p>Snap second surface to the first one, not taking tangents into account:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/db76fe80-5d02-456d-9bd7-8970d72d0933"><img alt="https://github.com/user-attachments/assets/db76fe80-5d02-456d-9bd7-8970d72d0933" src="https://github.com/user-attachments/assets/db76fe80-5d02-456d-9bd7-8970d72d0933" />
+</a>
+<p>Snap first surface to the second one, not taking tangents into account:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/1010e4a2-5c96-4450-9e8c-515a302d813a"><img alt="https://github.com/user-attachments/assets/1010e4a2-5c96-4450-9e8c-515a302d813a" src="https://github.com/user-attachments/assets/1010e4a2-5c96-4450-9e8c-515a302d813a" />
+</a>
+<p>Now match tangents as well:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7879dcd9-c1d6-46f0-b2a7-d34a61c057e9"><img alt="https://github.com/user-attachments/assets/7879dcd9-c1d6-46f0-b2a7-d34a61c057e9" src="https://github.com/user-attachments/assets/7879dcd9-c1d6-46f0-b2a7-d34a61c057e9" />
+</a>
+<p>Four original surfaces:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/cf96022b-56be-4311-8bef-4df5a15ab451"><img alt="https://github.com/user-attachments/assets/cf96022b-56be-4311-8bef-4df5a15ab451" src="https://github.com/user-attachments/assets/cf96022b-56be-4311-8bef-4df5a15ab451" />
+</a>
+<p>Snap them in cyclic manner, with “preserve tangents” option:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/914539d1-c6f8-4d1f-a024-ea9e6e45ba5b"><img alt="https://github.com/user-attachments/assets/914539d1-c6f8-4d1f-a024-ea9e6e45ba5b" src="https://github.com/user-attachments/assets/914539d1-c6f8-4d1f-a024-ea9e6e45ba5b" />
+</a>
+<p>With “medium tangents” mode:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/3a151a5f-6531-4339-a35f-2df64f2ff1c8"><img alt="https://github.com/user-attachments/assets/3a151a5f-6531-4339-a35f-2df64f2ff1c8" src="https://github.com/user-attachments/assets/3a151a5f-6531-4339-a35f-2df64f2ff1c8" />
 </a>
 </section>
 </section>
@@ -506,20 +540,20 @@ and Y correspond to U and V.</p></li>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="surface_nearest_point.html"
+       href="ruled_surface.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Nearest Point on Surface</p>
+        <p class="prev-next-title">Ruled Surface</p>
       </div>
     </a>
     <a class="right-next"
-       href="surface_reduce_degree.html"
+       href="subdomain.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Reduce Degree (NURBS Surface)</p>
+        <p class="prev-next-title">Surface Subdomain</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -539,12 +573,11 @@ and Y correspond to U and V.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
   </nav></div>
 
