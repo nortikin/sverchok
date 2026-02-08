@@ -39,8 +39,8 @@ class SvSnapSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         ]
 
     input_modes = [
-        ('TWO', "Two curves", "Process two curves", 0),
-        ('N', "List of curves", "Process several curves", 1)
+        ('TWO', "Two surfaces", "Process two surfaces", 0),
+        ('N', "List of surfaces", "Process several surfaces", 1)
     ]
 
     def update_sockets(self, context):
