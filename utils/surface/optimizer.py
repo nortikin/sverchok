@@ -15,24 +15,40 @@ class Summand:
     param_idx : int
     vector : np.ndarray
 
+    def __repr__(self):
+        return f"P[{self.param_idx}] * {self.vector}"
+
 class Constraint:
+    @staticmethod
+    def eye(param_idxs, ndim=3):
+        vectors = np.eye(len(param_idxs))
+        summands = [Summand(idx, vector) for idx, vector in zip(param_idxs, vectors)]
+        zero = np.zeros((ndim,))
+        return LinearConstraint(zero, summands)
+
+class LinearConstraint(Constraint):
     def __init__(self, point, summands = None):
         if summands is None:
             summands = []
         self.point = np.array(point)
         self.summands = summands
 
+    def __repr__(self):
+        summands = [repr(s) for s in self.summands]
+        return f"<Linear: {self.point} + {' + '.join(summands)}>"
+
     def get_last_parameter_idx(self):
         if not self.summands:
             return None
         return max([s.param_idx for s in self.summands])
 
-    @staticmethod
-    def eye(param_idxs, ndim=3):
-        vectors = np.eye(len(param_idxs))
-        summands = [Summand(idx, vector) for idx, vector in zip(param_idxs, vectors)]
-        zero = np.zeros((ndim,))
-        return Constraint(zero, summands)
+class NonLinearConstraint(Constraint):
+    def __init__(self, function, param_idxs):
+        self.function = function
+        self.param_idxs = np.array(param_idxs)
+
+    def get_last_parameter_idx(self):
+        return max(self.param_idxs)
 
 @dataclass
 class Solution:
@@ -53,6 +69,7 @@ class Optimizer:
         self._matrix = None
         self._goal = None
         self._last_parameter_idx = None
+        self._has_nonlinear_constraints = False
         self._inited = False
 
     def allocate_parameters(self, count=1):
@@ -78,7 +95,8 @@ class Optimizer:
                 summand = Summand(param_idx, vector)
                 summands.append(summand)
                 self.bounds[param_idx] = bounds
-        self.constraints[idx] = Constraint(point, summands)
+        self.constraints[idx] = LinearConstraint(point, summands)
+        #print(f"Constraint[{idx}] = {self.constraints[idx]}")
         return param_idxs
 
     def bind_to_existing_parameter(self, point_idx, param_idx, point, vector=None):
@@ -88,8 +106,19 @@ class Optimizer:
             summands = [Summand(param_idx, vector)]
         else:
             summands = None
-        constraint = Constraint(point, summands)
+        constraint = LinearConstraint(point, summands)
         self.constraints[point_idx] = constraint
+
+    def set_nonlinear_constraint(self, idx, function, arity, bounds=None):
+        if self._inited:
+            raise InvalidStateError("Optimizer was already initialized")
+        param_idxs = self.allocate_parameters(arity)
+        constraint = NonLinearConstraint(function, param_idxs)
+        self.constraints[idx] = constraint
+        if bounds is not None:
+            for param_idx, bound in zip(param_idxs, bounds):
+                self.bounds[param_idx] = bound
+        return param_idx
 
     def set_goal(self, goal):
         self._goal = goal
@@ -116,11 +145,12 @@ class Optimizer:
         row_idx = 0
         for constraint_idx in range(self.n_pts):
             constraint = self.constraints[constraint_idx]
-            n_rows = self.ndim
-            orig_points[row_idx : row_idx + n_rows] = constraint.point#[np.newaxis].T
-            for summand in constraint.summands:
-                #print(f"A[{row_idx}, {summand.param_idx}] = {summand.vector}")
-                A[row_idx : row_idx + n_rows, summand.param_idx] = summand.vector
+            if isinstance(constraint, LinearConstraint):
+                n_rows = self.ndim
+                orig_points[row_idx : row_idx + n_rows] = constraint.point#[np.newaxis].T
+                for summand in constraint.summands:
+                    #print(f"A[{row_idx}, {summand.param_idx}] = {summand.vector}")
+                    A[row_idx : row_idx + n_rows, summand.param_idx] = summand.vector
             row_idx += n_rows
         print("A", A.shape)
         self._matrix = A
@@ -129,6 +159,15 @@ class Optimizer:
     def _evaluate(self, params):
         xs = self._orig_points + self._matrix @ np.array(params)
         points = xs.reshape((self.n_pts, self.ndim))
+        #print("Pts", points)
+        for constraint_idx in self.constraints:
+            constraint = self.constraints[constraint_idx]
+            if not isinstance(constraint, NonLinearConstraint):
+                continue
+            param_values = params[constraint.param_idxs]
+            pt = constraint.function(param_values)
+            #print(f"Pt[{constraint_idx}] = F({param_values}) = {pt}")
+            points[constraint_idx] = pt
         return points
 
     def minimize(self, tol=None):

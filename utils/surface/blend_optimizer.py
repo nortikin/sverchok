@@ -16,7 +16,7 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsDerivativesCalculator
 from sverchok.utils.surface.core import SurfaceDirection, SvSurface, other_direction
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
-from sverchok.utils.surface.optimizer import Optimizer, Constraint, Summand
+from sverchok.utils.surface.optimizer import NonLinearConstraint, Optimizer, LinearConstraint, Summand
 
 @dataclass
 class BlendSurfaceInput:
@@ -28,6 +28,7 @@ class BlendSurfaceInput:
 class BlendSurfaceConstraint(enum.Enum):
     G1 = enum.auto()
     NORMALS_MATCH = enum.auto()
+    CURVATURE_MATCH = enum.auto()
 
 class BlendSurfaceOptimizer:
 
@@ -141,6 +142,8 @@ class BlendSurfaceOptimizer:
             opt = self._setup_g1(**kwargs)
         elif constraint is BlendSurfaceConstraint.NORMALS_MATCH:
             opt = self._setup_normals_match(**kwargs)
+        elif constraint is BlendSurfaceConstraint.CURVATURE_MATCH:
+            opt = self._setup_curvature_match(**kwargs)
         else:
             raise SvUnsupportedOptionException("Unsupported constraint: " + constraint)
 
@@ -152,6 +155,7 @@ class BlendSurfaceOptimizer:
         solution = opt.minimize(tol = tolerance)
         if not solution.success:
             raise NoConvergenceException(solution.message)
+        #print(solution.parameters)
         cpts = solution.control_points.reshape((self.n_along, self.n_across, 3))
         
         surface = SvNurbsMaths.build_surface(implementation,
@@ -209,7 +213,7 @@ class BlendSurfaceOptimizer:
             #print(f"S1: Gamma0 {gamma0}, Gamma1 {gamma1}, Gamma2 {gamma2}")
             alpha1 = opt.set_constraint(1*self.n_across + i, gamma0, [gamma1/9], bounds = [(min_alpha,9)])[0]
             beta1 = opt.allocate_parameters()[0]
-            opt.constraints[2*self.n_across + i] = Constraint(gamma0, [
+            opt.constraints[2*self.n_across + i] = LinearConstraint(gamma0, [
                                                     Summand(alpha1, gamma1/3.0),
                                                     Summand(beta1, gamma2/27.0)
                                                 ])
@@ -224,12 +228,72 @@ class BlendSurfaceOptimizer:
             #print(f"S2: Gamma0 {gamma0}, Gamma1 {gamma1}, Gamma2 {gamma2}")
             alpha2 = opt.set_constraint(4*self.n_across + i, gamma0, [gamma1/9], bounds = [(min_alpha,9)])[0]
             beta2 = opt.allocate_parameters()[0]
-            opt.constraints[3*self.n_across + i] = Constraint(gamma0, [
+            opt.constraints[3*self.n_across + i] = LinearConstraint(gamma0, [
                                                     Summand(alpha2, gamma1/3.0),
                                                     Summand(beta2, gamma2/27.0)
                                                 ])
             opt.bounds[beta2] = (min_beta, max_beta)
-            opt.set_constraint(5*self.n_across + i, self.cpts2_last[i])
+            opt.set_constraint(5*self.n_across + i, gamma0)
                 
         return opt
+
+    def _setup_curvature_match(self, min_alpha = 0.01):
+        self._init(n_along = 6)
+
+        s1p = self._get_parameter(self.direction1, self.boundary1, self.surface1)
+        s2p = self._get_parameter(self.direction2, self.boundary2, self.surface2)
         
+        nodes_across = sv_knotvector.calc_nodes(self.degree_across, self.n_across, self.kv_across)
+        iso_1_along = [self.surface1.iso_curve(other_direction(self.direction1), t) for t in nodes_across]
+        iso_2_along = [self.surface2.iso_curve(other_direction(self.direction2), t) for t in nodes_across]
+
+        def mk_curvature_constraint(orig_point, orig_tangent, normal, kappa0):
+            def function(params):
+                alpha = params[0]
+                beta = params[1]
+                gamma1 = alpha * orig_tangent * 9
+                d1 = kappa0 * (gamma1 * gamma1).sum() / 27
+                curvature_pt_base = orig_point + d1*normal
+                result = curvature_pt_base + beta * orig_tangent
+                #print(f"G0 {orig_point}, G1 {gamma1}, K0 {kappa0}, normal {normal}, d1 {d1}, pt_base {curvature_pt_base}, alpha {alpha}, beta {beta} => {result}")
+                return result
+            return function
+
+        opt = Optimizer(self.n_across*self.n_along)
+        for i in range(self.n_across):
+            gamma0 = self.cpts1_last[i]
+            opt.set_constraint(i, gamma0)
+
+            gamma1 = iso_1_along[i].tangent(s1p)
+            if self.invert1:
+                gamma1 *= -1
+            alpha1 = opt.set_constraint(1*self.n_across + i, gamma0, [gamma1], bounds = [(min_alpha,9)])[0]
+
+            kappa0 = iso_1_along[i].curvature(s1p)
+            normal1 = iso_1_along[i].main_normal(s1p)
+
+            beta1 = opt.allocate_parameters()[0]
+            opt.constraints[2*self.n_across + i] = NonLinearConstraint(
+                                mk_curvature_constraint(gamma0, gamma1, normal1, kappa0),
+                                [alpha1, beta1])
+            opt.bounds[beta1] = (min_alpha, None)
+
+
+            gamma0 = self.cpts2_last[i]
+            gamma1 = -iso_2_along[i].tangent(s2p)
+            if self.invert2:
+                gamma1 *= -1
+
+            alpha2 = opt.set_constraint(4*self.n_across + i, gamma0, [gamma1], bounds = [(min_alpha,9)])[0]
+
+            kappa0 = iso_2_along[i].curvature(s2p)
+            normal2 = iso_2_along[i].main_normal(s2p)
+            beta2 = opt.allocate_parameters()[0]
+            opt.constraints[3*self.n_across + i] = NonLinearConstraint(
+                                mk_curvature_constraint(gamma0, gamma1, normal2, kappa0),
+                                [alpha2, beta2])
+            opt.bounds[beta2] = (min_alpha, None)
+
+            opt.set_constraint(5*self.n_across + i, gamma0)
+        return opt
+
