@@ -422,7 +422,7 @@ def snap_nurbs_surfaces(surfaces, direction, bias = SnapSurfaceBias.MID, tangent
             if self.curve2 is not None:
                 target = SvNurbsSurfaceAdjustTarget(self.param2, self.curve2, self.tangents2)
                 targets.append(target)
-            print(f"Targets: {targets}")
+            logger.debug("Targets: %s", targets)
             return adjust_nurbs_surface_for_curves(self.surface, direction, targets, preserve_tangents = preserve_tangents, logger=logger)
 
     def setup_problems(problem1, problem2):
@@ -477,7 +477,7 @@ def snap_nurbs_surfaces(surfaces, direction, bias = SnapSurfaceBias.MID, tangent
         setup_problems(p1, p2)
     if cyclic:
         setup_problems(problems[-1], problems[0])
-    print("Problems:", problems)
+    logger.debug("Problems: %s", problems)
 
     return [p.solve() for p in problems]
 
