@@ -71,15 +71,46 @@ el.replaceWith(d);
 Sphere is defined here as a surface of revolution of
 half a circle.</p></div>
 </dd>
-<dt id="sverchok.utils.surface.algorithms.concatenate_surfaces"><code class="name flex">
-<span>def <span class="ident">concatenate_surfaces</span></span>(<span>direction, surfaces)</span>
+<dt id="sverchok.utils.surface.algorithms.check_surface_edges_coincidence"><code class="name flex">
+<span>def <span class="ident">check_surface_edges_coincidence</span></span>(<span>surfaces, direction, n_pts=10, tolerance=1e-06)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def concatenate_surfaces(direction, surfaces):
+<pre><code class="python">def check_surface_edges_coincidence(surfaces, direction, n_pts=10, tolerance=1e-6):
+    pairs = zip(surfaces[:-1], surfaces[1:])
+    for idx, (surface1, surface2) in enumerate(pairs):
+        if direction == SurfaceDirection.U:
+            s1p2 = surface1.get_u_bounds()[1]
+            s2p1 = surface2.get_u_bounds()[0]
+        else:
+            s1p2 = surface1.get_v_bounds()[1]
+            s2p1 = surface2.get_v_bounds()[0]
+        iso1 = surface1.iso_curve(direction, s1p2)
+        iso2 = surface2.iso_curve(direction, s2p1)
+        c1t1, c1t2 = iso1.get_u_bounds()
+        c2t1, c2t2 = iso2.get_u_bounds()
+        c1ts = np.linspace(c1t1, c1t2, num=n_pts)
+        c2ts = np.linspace(c2t1, c2t2, num=n_pts)
+        c1pts = iso1.evaluate_array(c1ts)
+        c2pts = iso2.evaluate_array(c2ts)
+        delta = np.linalg.norm(c2pts - c1pts, axis=1).max()
+        if delta &gt; tolerance:
+            raise SvInvalidInputException(f&#34;Surfaces #{idx} and #{idx+1} edges do not match; maximum detected distance is {delta}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.algorithms.concatenate_surfaces"><code class="name flex">
+<span>def <span class="ident">concatenate_surfaces</span></span>(<span>direction, surfaces, native_only=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def concatenate_surfaces(direction, surfaces, native_only=False):
     if all(hasattr(s, &#39;concatenate&#39;) for s in surfaces):
         try:
             result = surfaces[0]
@@ -87,7 +118,12 @@ half a circle.</p></div>
                 result = result.concatenate(direction, s)
             return result
         except UnsupportedSurfaceTypeException as e:
-            sv_logger.debug(&#34;Can&#39;t concatenate surfaces natively: %s&#34;, e)
+            if native_only:
+                raise SvInvalidInputException(f&#34;Can&#39;t concatenate surfaces natively: {e}&#34;) from e
+            else:
+                sv_logger.debug(&#34;Can&#39;t concatenate surfaces natively: %s&#34;, e)
+    elif native_only:
+        raise SvInvalidInputException(&#34;Surface class does not support specific concatenation method&#34;)
     
     return SvConcatSurface(direction, surfaces)</code></pre>
 </details>
@@ -568,14 +604,16 @@ space around surface's normal.</p>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.algorithms.unify_nurbs_surfaces"><code class="name flex">
-<span>def <span class="ident">unify_nurbs_surfaces</span></span>(<span>surfaces, knots_method='UNIFY', knotvector_accuracy=6)</span>
+<span>def <span class="ident">unify_nurbs_surfaces</span></span>(<span>surfaces, directions=None, knots_method='UNIFY', knotvector_accuracy=6)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def unify_nurbs_surfaces(surfaces, knots_method = &#39;UNIFY&#39;, knotvector_accuracy=6):
+<pre><code class="python">def unify_nurbs_surfaces(surfaces, directions = None, knots_method = &#39;UNIFY&#39;, knotvector_accuracy=6):
+    if directions is None:
+        directions = {SvNurbsSurface.U, SvNurbsSurface.V}
     # Unify surface degrees
 
     degrees_u = [surface.get_degree_u() for surface in surfaces]
@@ -585,8 +623,10 @@ space around surface's normal.</p>
     degree_v = max(degrees_v)
     #print(f&#34;Elevate everything to {degree_u}x{degree_v}&#34;)
 
-    surfaces = [surface.elevate_degree(SvNurbsSurface.U, target=degree_u) for surface in surfaces]
-    surfaces = [surface.elevate_degree(SvNurbsSurface.V, target=degree_v) for surface in surfaces]
+    if SvNurbsSurface.U in directions:
+        surfaces = [surface.elevate_degree(SvNurbsSurface.U, target=degree_u) for surface in surfaces]
+    if SvNurbsSurface.V in directions:
+        surfaces = [surface.elevate_degree(SvNurbsSurface.V, target=degree_v) for surface in surfaces]
 
     # Unify surface knotvectors
 
@@ -615,40 +655,40 @@ space around surface's normal.</p>
 
         result = []
         for surface in surfaces:
-            kv_u = surface.get_knotvector_u()
-            kv_v = surface.get_knotvector_v()
-            #print(f&#34;Orig kv_u: {kv_u}, orig kv_v: {kv_v}&#34;)
-            ms_u = dict(sv_knotvector.to_multiplicity(kv_u, tolerance=None))
-            ms_v = dict(sv_knotvector.to_multiplicity(kv_v, tolerance=None))
-            updates_u = dst_knots_u.get_updates(ms_u.keys())
-            updates_v = dst_knots_v.get_updates(ms_v.keys())
-            updated_ms_u = []
-            updated_ms_v = []
-            for knot_idx, (u, multiplicity) in enumerate(ms_u.items()):
-                if knot_idx in updates_u:
-                    updated_ms_u.append((updates_u[knot_idx], multiplicity))
-                else:
-                    updated_ms_u.append((u, multiplicity))
-            for knot_idx, (v, multiplicity) in enumerate(ms_v.items()):
-                if knot_idx in updates_v:
-                    updated_ms_v.append((updates_v[knot_idx], multiplicity))
-                else:
-                    updated_ms_v.append((v, multiplicity))
-            ms_u = dict(updated_ms_u)
-            ms_v = dict(updated_ms_v)
-            updated_kv_u = sv_knotvector.from_multiplicity(updated_ms_u)
-            updated_kv_v = sv_knotvector.from_multiplicity(updated_ms_v)
-            #print(f&#34;updated kv_u: {updated_kv_u}, kv_v: {updated_kv_v}&#34;)
-            surface = surface.copy(knotvector_u = updated_kv_u, knotvector_v = updated_kv_v)
-
-            insertions_u = dst_knots_u.get_insertions(ms_u)
-            insertions_v = dst_knots_v.get_insertions(ms_v)
-            for u, diff in insertions_u.items():
-                if diff &gt; 0:
-                    surface = surface.insert_knot(SvNurbsSurface.U, u, diff)
-            for v, diff in insertions_v.items():
-                if diff &gt; 0:
-                    surface = surface.insert_knot(SvNurbsSurface.V, v, diff)
+            if SvNurbsSurface.U in directions:
+                kv_u = surface.get_knotvector_u()
+                ms_u = dict(sv_knotvector.to_multiplicity(kv_u, tolerance=None))
+                updates_u = dst_knots_u.get_updates(ms_u.keys())
+                updated_ms_u = []
+                for knot_idx, (u, multiplicity) in enumerate(ms_u.items()):
+                    if knot_idx in updates_u:
+                        updated_ms_u.append((updates_u[knot_idx], multiplicity))
+                    else:
+                        updated_ms_u.append((u, multiplicity))
+                ms_u = dict(updated_ms_u)
+                updated_kv_u = sv_knotvector.from_multiplicity(updated_ms_u)
+                surface = surface.copy(knotvector_u = updated_kv_u)
+                insertions_u = dst_knots_u.get_insertions(ms_u)
+                for u, diff in insertions_u.items():
+                    if diff &gt; 0:
+                        surface = surface.insert_knot(SvNurbsSurface.U, u, diff)
+            if SvNurbsSurface.V in directions:
+                kv_v = surface.get_knotvector_v()
+                ms_v = dict(sv_knotvector.to_multiplicity(kv_v, tolerance=None))
+                updates_v = dst_knots_v.get_updates(ms_v.keys())
+                updated_ms_v = []
+                for knot_idx, (v, multiplicity) in enumerate(ms_v.items()):
+                    if knot_idx in updates_v:
+                        updated_ms_v.append((updates_v[knot_idx], multiplicity))
+                    else:
+                        updated_ms_v.append((v, multiplicity))
+                ms_v = dict(updated_ms_v)
+                updated_kv_v = sv_knotvector.from_multiplicity(updated_ms_v)
+                surface = surface.copy(knotvector_v = updated_kv_v)
+                insertions_v = dst_knots_v.get_insertions(ms_v)
+                for v, diff in insertions_v.items():
+                    if diff &gt; 0:
+                        surface = surface.insert_knot(SvNurbsSurface.V, v, diff)
             result.append(surface)
 
         return result
@@ -4427,6 +4467,7 @@ def v_size(self):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="sverchok.utils.surface.algorithms.build_nurbs_sphere" href="#sverchok.utils.surface.algorithms.build_nurbs_sphere">build_nurbs_sphere</a></code></li>
+<li><code><a title="sverchok.utils.surface.algorithms.check_surface_edges_coincidence" href="#sverchok.utils.surface.algorithms.check_surface_edges_coincidence">check_surface_edges_coincidence</a></code></li>
 <li><code><a title="sverchok.utils.surface.algorithms.concatenate_surfaces" href="#sverchok.utils.surface.algorithms.concatenate_surfaces">concatenate_surfaces</a></code></li>
 <li><code><a title="sverchok.utils.surface.algorithms.deform_nurbs_surface" href="#sverchok.utils.surface.algorithms.deform_nurbs_surface">deform_nurbs_surface</a></code></li>
 <li><code><a title="sverchok.utils.surface.algorithms.make_planar_surface" href="#sverchok.utils.surface.algorithms.make_planar_surface">make_planar_surface</a></code></li>

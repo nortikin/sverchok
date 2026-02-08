@@ -218,14 +218,16 @@ el.replaceWith(d);
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nurbs_common.to_homogenous"><code class="name flex">
-<span>def <span class="ident">to_homogenous</span></span>(<span>control_points, weights)</span>
+<span>def <span class="ident">to_homogenous</span></span>(<span>control_points, weights=None)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def to_homogenous(control_points, weights):
+<pre><code class="python">def to_homogenous(control_points, weights=None):
+    if weights is None:
+        weights = np.ones((len(control_points),))
     if weights.ndim &lt; 2:
         weights = weights[np.newaxis].T
     weighted = weights * control_points

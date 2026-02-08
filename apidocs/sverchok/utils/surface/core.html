@@ -42,10 +42,109 @@ el.replaceWith(d);
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.surface.core.other_direction"><code class="name flex">
+<span>def <span class="ident">other_direction</span></span>(<span>direction)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def other_direction(direction):
+    if direction == SurfaceDirection.U:
+        return SurfaceDirection.V
+    else:
+        return SurfaceDirection.U</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="sverchok.utils.surface.core.SurfaceDirection"><code class="flex name class">
+<span>class <span class="ident">SurfaceDirection</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SurfaceDirection:
+    U = &#39;U&#39;
+    V = &#39;V&#39;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SurfaceDirection.U"><code class="name">var <span class="ident">U</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.core.SurfaceDirection.V"><code class="name">var <span class="ident">V</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.core.SurfaceEdge"><code class="flex name class">
+<span>class <span class="ident">SurfaceEdge</span></span>
+<span>(</span><span>direction, boundary, name)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SurfaceEdge:
+    def __init__(self, direction, boundary, name):
+        self.direction = direction
+        self.boundary = boundary
+        self.name = name
+
+    values = dict()
+
+    @classmethod
+    def _create(cls, direction, boundary, name):
+        edge = SurfaceEdge(direction, boundary, name)
+        cls.values[name] = edge
+        setattr(cls, name, edge)
+
+    @classmethod
+    def __class_getitem__(cls, name):
+        return cls.values[name]
+    
+    def __repr__(self):
+        return f&#34;&lt;{self.boundary}_{self.direction}&gt;&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SurfaceEdge.MAX_U"><code class="name">var <span class="ident">MAX_U</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.core.SurfaceEdge.MAX_V"><code class="name">var <span class="ident">MAX_V</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.core.SurfaceEdge.MIN_U"><code class="name">var <span class="ident">MIN_U</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.core.SurfaceEdge.MIN_V"><code class="name">var <span class="ident">MIN_V</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.core.SurfaceEdge.values"><code class="name">var <span class="ident">values</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.surface.core.SvFlipSurface"><code class="flex name class">
 <span>class <span class="ident">SvFlipSurface</span></span>
 <span>(</span><span>surface, flip_u, flip_v)</span>
@@ -66,6 +165,13 @@ el.replaceWith(d);
             self.normal_delta = 0.0001
         self.__description__ = &#34;Flipped {}&#34;.format(surface)
 
+    @classmethod
+    def build(cls, surface, flip_u, flip_v):
+        if hasattr(surface, &#39;flip&#39;):
+            return surface.flip(flip_u, flip_v)
+        else:
+            return SvFlipSurface(surface, flip_u, flip_v)
+
     def get_u_min(self):
         return self.surface.get_u_min()
 
@@ -85,7 +191,7 @@ el.replaceWith(d);
         if self.flip_u:
             u = max_u - u + min_u
         if self.flip_v:
-            v = max_v - v + max_v
+            v = max_v - v + min_v
         return u, v
 
     def evaluate(self, u, v):
@@ -109,6 +215,15 @@ el.replaceWith(d);
 <ul class="hlist">
 <li><a title="sverchok.utils.surface.core.SvSurface" href="#sverchok.utils.surface.core.SvSurface">SvSurface</a></li>
 </ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvFlipSurface.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>surface, flip_u, flip_v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.surface.core.SvFlipSurface.evaluate"><code class="name flex">
@@ -154,7 +269,7 @@ el.replaceWith(d);
     if self.flip_u:
         u = max_u - u + min_u
     if self.flip_v:
-        v = max_v - v + max_v
+        v = max_v - v + min_v
     return u, v</code></pre>
 </details>
 <div class="desc"></div>
@@ -1723,11 +1838,34 @@ def build(surface):
 <li><code><a title="sverchok.utils.surface" href="index.html">sverchok.utils.surface</a></code></li>
 </ul>
 </li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.core.other_direction" href="#sverchok.utils.surface.core.other_direction">other_direction</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
+<h4><code><a title="sverchok.utils.surface.core.SurfaceDirection" href="#sverchok.utils.surface.core.SurfaceDirection">SurfaceDirection</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.core.SurfaceDirection.U" href="#sverchok.utils.surface.core.SurfaceDirection.U">U</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SurfaceDirection.V" href="#sverchok.utils.surface.core.SurfaceDirection.V">V</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.core.SurfaceEdge" href="#sverchok.utils.surface.core.SurfaceEdge">SurfaceEdge</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.core.SurfaceEdge.MAX_U" href="#sverchok.utils.surface.core.SurfaceEdge.MAX_U">MAX_U</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SurfaceEdge.MAX_V" href="#sverchok.utils.surface.core.SurfaceEdge.MAX_V">MAX_V</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SurfaceEdge.MIN_U" href="#sverchok.utils.surface.core.SurfaceEdge.MIN_U">MIN_U</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SurfaceEdge.MIN_V" href="#sverchok.utils.surface.core.SurfaceEdge.MIN_V">MIN_V</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SurfaceEdge.values" href="#sverchok.utils.surface.core.SurfaceEdge.values">values</a></code></li>
+</ul>
+</li>
+<li>
 <h4><code><a title="sverchok.utils.surface.core.SvFlipSurface" href="#sverchok.utils.surface.core.SvFlipSurface">SvFlipSurface</a></code></h4>
 <ul class="two-column">
+<li><code><a title="sverchok.utils.surface.core.SvFlipSurface.build" href="#sverchok.utils.surface.core.SvFlipSurface.build">build</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvFlipSurface.evaluate" href="#sverchok.utils.surface.core.SvFlipSurface.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvFlipSurface.evaluate_array" href="#sverchok.utils.surface.core.SvFlipSurface.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvFlipSurface.flip" href="#sverchok.utils.surface.core.SvFlipSurface.flip">flip</a></code></li>

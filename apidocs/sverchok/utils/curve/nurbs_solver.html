@@ -590,7 +590,11 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
         return betas
     
     def get_src_points(self, solver):
-        return solver.src_curve.tangent_array(self.us)</code></pre>
+        tangents = solver.src_curve.tangent_array(self.us)
+        if solver.ndim == 4 and tangents.shape[-1] == 3:
+            ones = np.ones((len(tangents),))
+            tangents = to_homogenous(tangents, ones)
+        return tangents</code></pre>
 </details>
 <div class="desc"><p>Goal which says that the curve must pass through the specified points at
 specified values of parameter.</p></div>
@@ -681,7 +685,11 @@ def single(order, u, tangent, weight=None, relative=False):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_src_points(self, solver):
-    return solver.src_curve.tangent_array(self.us)</code></pre>
+    tangents = solver.src_curve.tangent_array(self.us)
+    if solver.ndim == 4 and tangents.shape[-1] == 3:
+        ones = np.ones((len(tangents),))
+        tangents = to_homogenous(tangents, ones)
+    return tangents</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -850,7 +858,10 @@ def single(order, u, tangent, weight=None, relative=False):
         return alphas
 
     def get_src_points(self, solver):
-        return solver.src_curve.evaluate_array(self.us)
+        if solver.ndim == 3:
+            return solver.src_curve.evaluate_array(self.us)
+        else:
+            return solver.src_curve.evaluate_homogenous_array(self.us)
 
     def get_n_defined_control_points(self):
         return len(self.us)
@@ -1054,7 +1065,10 @@ def single(u, point, weight=None, relative=False):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_src_points(self, solver):
-    return solver.src_curve.evaluate_array(self.us)</code></pre>
+    if solver.ndim == 3:
+        return solver.src_curve.evaluate_array(self.us)
+    else:
+        return solver.src_curve.evaluate_homogenous_array(self.us)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1424,6 +1438,7 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
         self.knotvector = None
         self.goals = []
         self.A = self.B = None
+        self._inited = False
 
     @staticmethod
     def _check_is_rational(weights):
@@ -1533,6 +1548,8 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
         self.goals = goals
 
     def _init(self):
+        if self._inited:
+            return
         if self.n_cpts is None:
             raise InvalidStateError(&#34;Number of control points is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()&#34;)
         if self.knotvector is None:
@@ -1553,6 +1570,21 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
             Bs.append(Bi)
         self.A = np.concatenate(As)
         self.B = np.concatenate(Bs)
+        self._inited = True
+
+    def get_matrices(self):
+        self._init()
+        return self.A, self.B
+
+    def get_problem_type(self):
+        self._init()
+        n_equations, n_unknowns = self.A.shape
+        if n_equations == n_unknowns:
+            return SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
+        elif n_equations &lt; n_unknowns:
+            return SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
+        else: # n_equations &gt; n_unknowns
+            return SvNurbsCurveSolver.PROBLEM_OVERDETERMINED
 
     PROBLEM_WELLDETERMINED = &#39;WELLDETERMINED&#39;
     PROBLEM_UNDERDETERMINED = &#39;UNDERDETERMINED&#39;
@@ -1606,18 +1638,19 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
             
         d_cpts = X.reshape((n, ndim))
         if ndim == 4:
-            d_cpts, d_weights = from_homogenous(d_cpts)
+            #print(&#34;D cpts 4&#34;, d_cpts)
             if self.src_curve is None:
-                weights = d_weights
+                cpts, weights = from_homogenous(d_cpts)
             else:
-                weights = self.curve_weights + d_weights
+                cpts, weights = from_homogenous(d_cpts + self.src_curve.get_homogenous_control_points())
+                #print(&#34;Res_weights&#34;, weights)
         else:
+            if self.src_curve is None:
+                cpts = d_cpts
+            else:
+                cpts = self.src_curve.get_control_points() + d_cpts
             weights = self.curve_weights
-        if self.src_curve is None:
-            curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, d_cpts, weights)
-        else:
-            cpts = self.src_curve.get_control_points() + d_cpts
-            curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
+        curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
         return problem_type, residue, curve
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
@@ -1723,6 +1756,40 @@ def curve_weights(self):
 </summary>
 <pre><code class="python">def get_knotvector(self):
     return self.knotvector</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_matrices"><code class="name flex">
+<span>def <span class="ident">get_matrices</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_matrices(self):
+    self._init()
+    return self.A, self.B</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_problem_type"><code class="name flex">
+<span>def <span class="ident">get_problem_type</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_problem_type(self):
+    self._init()
+    n_equations, n_unknowns = self.A.shape
+    if n_equations == n_unknowns:
+        return SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
+    elif n_equations &lt; n_unknowns:
+        return SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
+    else: # n_equations &gt; n_unknowns
+        return SvNurbsCurveSolver.PROBLEM_OVERDETERMINED</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1847,7 +1914,7 @@ def curve_weights(self):
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_ex"><code class="name flex">
-<span>def <span class="ident">solve_ex</span></span>(<span>self,<br>problem_types={'OVERDETERMINED', 'UNDERDETERMINED', 'WELLDETERMINED'},<br>implementation='NATIVE',<br>logger=None)</span>
+<span>def <span class="ident">solve_ex</span></span>(<span>self,<br>problem_types={'WELLDETERMINED', 'UNDERDETERMINED', 'OVERDETERMINED'},<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -1892,18 +1959,19 @@ def curve_weights(self):
         
     d_cpts = X.reshape((n, ndim))
     if ndim == 4:
-        d_cpts, d_weights = from_homogenous(d_cpts)
+        #print(&#34;D cpts 4&#34;, d_cpts)
         if self.src_curve is None:
-            weights = d_weights
+            cpts, weights = from_homogenous(d_cpts)
         else:
-            weights = self.curve_weights + d_weights
+            cpts, weights = from_homogenous(d_cpts + self.src_curve.get_homogenous_control_points())
+            #print(&#34;Res_weights&#34;, weights)
     else:
+        if self.src_curve is None:
+            cpts = d_cpts
+        else:
+            cpts = self.src_curve.get_control_points() + d_cpts
         weights = self.curve_weights
-    if self.src_curve is None:
-        curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, d_cpts, weights)
-    else:
-        cpts = self.src_curve.get_control_points() + d_cpts
-        curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
+    curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
     return problem_type, residue, curve</code></pre>
 </details>
 <div class="desc"></div>
@@ -2042,7 +2110,11 @@ def curve_weights(self):
         return numerator / denominator
     
     def get_src_points(self, solver):
-        return solver.src_curve.tangent_array(self.us)</code></pre>
+        tangents = solver.src_curve.tangent_array(self.us)
+        if solver.ndim == 4 and tangents.shape[-1] == 3:
+            ones = np.ones((len(tangents),))
+            tangents = to_homogenous(tangents, ones)
+        return tangents</code></pre>
 </details>
 <div class="desc"><p>Goal which says that the curve must have specified tangent vectors at
 specified values of parameter.</p></div>
@@ -2142,7 +2214,11 @@ def single(u, tangent, weight=None, relative=False):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_src_points(self, solver):
-    return solver.src_curve.tangent_array(self.us)</code></pre>
+    tangents = solver.src_curve.tangent_array(self.us)
+    if solver.ndim == 4 and tangents.shape[-1] == 3:
+        ones = np.ones((len(tangents),))
+        tangents = to_homogenous(tangents, ones)
+    return tangents</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -2240,6 +2316,8 @@ def single(u, tangent, weight=None, relative=False):
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.copy" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.copy">copy</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.curve_weights" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.curve_weights">curve_weights</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_knotvector" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_knotvector">get_knotvector</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_matrices" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_matrices">get_matrices</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_problem_type" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_problem_type">get_problem_type</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params">guess_curve_params</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_n_control_points" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_n_control_points">guess_n_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.is_rational" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.is_rational">is_rational</a></code></li>

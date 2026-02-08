@@ -5530,6 +5530,36 @@ Lengths of the returned vector is arbitrary.</p>
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.geom.RangeBoundary"><code class="flex name class">
+<span>class <span class="ident">RangeBoundary</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RangeBoundary(enum.Enum):
+    MIN = enum.auto()
+    MAX = enum.auto()</code></pre>
+</details>
+<div class="desc"><p>An enumeration.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.geom.RangeBoundary.MAX"><code class="name">var <span class="ident">MAX</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geom.RangeBoundary.MIN"><code class="name">var <span class="ident">MIN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.geom.SphericalApproximationData"><code class="flex name class">
 <span>class <span class="ident">SphericalApproximationData</span></span>
 <span>(</span><span>center=None, radius=0.0)</span>
@@ -6703,6 +6733,13 @@ returns: an instance of Ellipse3D.</p></div>
 <li><code><a title="sverchok.utils.geom.PlaneEquation.side_of_point" href="#sverchok.utils.geom.PlaneEquation.side_of_point">side_of_point</a></code></li>
 <li><code><a title="sverchok.utils.geom.PlaneEquation.side_of_points" href="#sverchok.utils.geom.PlaneEquation.side_of_points">side_of_points</a></code></li>
 <li><code><a title="sverchok.utils.geom.PlaneEquation.two_vectors" href="#sverchok.utils.geom.PlaneEquation.two_vectors">two_vectors</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.geom.RangeBoundary" href="#sverchok.utils.geom.RangeBoundary">RangeBoundary</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.geom.RangeBoundary.MAX" href="#sverchok.utils.geom.RangeBoundary.MAX">MAX</a></code></li>
+<li><code><a title="sverchok.utils.geom.RangeBoundary.MIN" href="#sverchok.utils.geom.RangeBoundary.MIN">MIN</a></code></li>
 </ul>
 </li>
 <li>

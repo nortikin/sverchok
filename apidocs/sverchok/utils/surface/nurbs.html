@@ -2080,6 +2080,8 @@ def v_size(self):
         cps2 = surface2.get_control_points()[0,:]
         dpts = np.linalg.norm(cps1 - cps2, axis=0)
         if (dpts &gt; tolerance).any():
+            print(&#34;Cpts1&#34;, cps1)
+            print(&#34;Cpts2&#34;, cps2)
             raise UnsupportedSurfaceTypeException(&#34;Boundary control points do not match&#34;)
 
         ws1 = surface1.get_weights()[-1,:]
@@ -2127,6 +2129,8 @@ def v_size(self):
         cps2 = surface2.get_control_points()[:,0]
         dpts = np.linalg.norm(cps1 - cps2, axis=0)
         if (dpts &gt; tolerance).any():
+            print(&#34;Cpts1&#34;, cps1)
+            print(&#34;Cpts2&#34;, cps2)
             raise UnsupportedSurfaceTypeException(&#34;Boundary control points do not match&#34;)
 
         ws1 = surface1.get_weights()[:,-1]
@@ -2168,7 +2172,25 @@ def v_size(self):
         knotvector_v = self.get_knotvector_v()
         knotvector_u = sv_knotvector.rescale(knotvector_u, new_u_min, new_u_max)
         knotvector_v = sv_knotvector.rescale(knotvector_v, new_v_min, new_v_max)
-        return self.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)</code></pre>
+        return self.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)
+    
+    def flip(self, flip_u, flip_v):
+        ctrlpts = self.get_control_points()
+        weights = self.get_weights()
+        knotvector_u = self.get_knotvector_u()
+        knotvector_v = self.get_knotvector_v()
+        if flip_u:
+            ctrlpts = ctrlpts[::-1,:]
+            weights = weights[::-1,:]
+            knotvector_u = sv_knotvector.reverse(knotvector_u)
+        if flip_v:
+            ctrlpts = ctrlpts[:,::-1]
+            weights = weights[:,::-1]
+            knotvector_v = sv_knotvector.reverse(knotvector_v)
+        return self.copy(knotvector_u = knotvector_u,
+                         knotvector_v = knotvector_v,
+                         control_points = ctrlpts,
+                         weights = weights)</code></pre>
 </details>
 <div class="desc"><p>Base abstract class for all supported implementations of NURBS surfaces.</p></div>
 <h3>Ancestors</h3>
@@ -2510,6 +2532,34 @@ def v_size(self):
                 self.get_degree_u(), new_v_degree,
                 self.get_knotvector_u(), fixed_u_knotvector,
                 new_points, new_weights)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.flip"><code class="name flex">
+<span>def <span class="ident">flip</span></span>(<span>self, flip_u, flip_v)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flip(self, flip_u, flip_v):
+    ctrlpts = self.get_control_points()
+    weights = self.get_weights()
+    knotvector_u = self.get_knotvector_u()
+    knotvector_v = self.get_knotvector_v()
+    if flip_u:
+        ctrlpts = ctrlpts[::-1,:]
+        weights = weights[::-1,:]
+        knotvector_u = sv_knotvector.reverse(knotvector_u)
+    if flip_v:
+        ctrlpts = ctrlpts[:,::-1]
+        weights = weights[:,::-1]
+        knotvector_v = sv_knotvector.reverse(knotvector_v)
+    return self.copy(knotvector_u = knotvector_u,
+                     knotvector_v = knotvector_v,
+                     control_points = ctrlpts,
+                     weights = weights)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -3051,6 +3101,7 @@ def v_size(self):
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.cut_u" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.cut_u">cut_u</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.cut_v" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.cut_v">cut_v</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.elevate_degree" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.elevate_degree">elevate_degree</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.flip" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.flip">flip</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get">get</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_control_points" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_degree_u" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_degree_u">get_degree_u</a></code></li>

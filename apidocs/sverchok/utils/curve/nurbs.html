@@ -538,6 +538,10 @@ el.replaceWith(d);
 #             print(&#34;Denom:&#34;, denominator)
         return nurbs_divide(numerator, denominator)
 
+    def evaluate_homogenous_array(self, ts):
+        numerator, denominator = self.fraction(0, ts)
+        return np.concatenate((numerator, denominator), axis=1)
+
     def tangent(self, t, tangent_delta=None):
         return self.tangent_array(np.array([t]))[0]
 
@@ -866,6 +870,20 @@ el.replaceWith(d);
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.evaluate_homogenous_array"><code class="name flex">
+<span>def <span class="ident">evaluate_homogenous_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_homogenous_array(self, ts):
+    numerator, denominator = self.fraction(0, ts)
+    return np.concatenate((numerator, denominator), axis=1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.extrude_along_vector"><code class="name flex">
 <span>def <span class="ident">extrude_along_vector</span></span>(<span>self, vector)</span>
 </code></dt>
@@ -1506,6 +1524,15 @@ el.replaceWith(d);
 
     def get_degree(self):
         raise NotImplementedError(&#34;Not implemented!&#34;)
+
+    def evaluate_homogenous_array(self, ts):
+        weights = []
+        for t in ts:
+            s1, s2 = self.split_at(t)
+            weight = s1.get_weights()[-1]
+            weights.append(weight)
+        points = self.evaluate_array(ts)
+        return to_homogenous(points, np.array(weights))
 
     def calc_greville_ts(self):
         n = len(self.get_control_points())
@@ -2606,6 +2633,25 @@ such a way that each segment is nearly a straight line segment.</p></div>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.evaluate_homogenous_array"><code class="name flex">
+<span>def <span class="ident">evaluate_homogenous_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_homogenous_array(self, ts):
+    weights = []
+    for t in ts:
+        s1, s2 = self.split_at(t)
+        weight = s1.get_weights()[-1]
+        weights.append(weight)
+    points = self.evaluate_array(ts)
+    return to_homogenous(points, np.array(weights))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.extrude_to_point"><code class="name flex">
 <span>def <span class="ident">extrude_to_point</span></span>(<span>self, point)</span>
 </code></dt>
@@ -3624,6 +3670,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <h4><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve">SvNativeNurbsCurve</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.build" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.build">build</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.evaluate_homogenous_array" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.evaluate_homogenous_array">evaluate_homogenous_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.extrude_along_vector" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction">fraction</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction_single" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction_single">fraction_single</a></code></li>
@@ -3654,6 +3701,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.copy" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.copy">copy</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.cut_segment" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.cut_segment">cut_segment</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.elevate_degree" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.elevate_degree">elevate_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.evaluate_homogenous_array" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.evaluate_homogenous_array">evaluate_homogenous_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.extrude_to_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_bounding_box" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_bounding_box">get_bounding_box</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_point">get_end_point</a></code></li>

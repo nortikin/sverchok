@@ -2347,6 +2347,27 @@ print(extra_arg)</p>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.data_structure.zip_long_repeat_recursive"><code class="name flex">
+<span>def <span class="ident">zip_long_repeat_recursive</span></span>(<span>max_level, *lists)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def zip_long_repeat_recursive(max_level, *lists):
+    def helper(level, *sublists):
+        sub_result = []
+        for items in zip_long_repeat(*sublists):
+            if level == 0:
+                sub_result.append(items)
+            else:
+                sub_result.append(helper(level-1, *items))
+        return sub_result
+    return helper(max_level-1, *lists)[0]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 </dl>
 </section>
 <section>
@@ -2481,6 +2502,7 @@ print(extra_arg)</p>
 <li><code><a title="sverchok.data_structure.update_with_kwargs" href="#sverchok.data_structure.update_with_kwargs">update_with_kwargs</a></code></li>
 <li><code><a title="sverchok.data_structure.wrap_data" href="#sverchok.data_structure.wrap_data">wrap_data</a></code></li>
 <li><code><a title="sverchok.data_structure.zip_long_repeat" href="#sverchok.data_structure.zip_long_repeat">zip_long_repeat</a></code></li>
+<li><code><a title="sverchok.data_structure.zip_long_repeat_recursive" href="#sverchok.data_structure.zip_long_repeat_recursive">zip_long_repeat_recursive</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

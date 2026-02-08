@@ -48,14 +48,14 @@ solver (<code><a title="sverchok.utils.curve.nurbs_solver" href="nurbs_solver.ht
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.adjust_curve_points"><code class="name flex">
-<span>def <span class="ident">adjust_curve_points</span></span>(<span>curve, us_bar, points, preserve_tangents=False, logger=None)</span>
+<span>def <span class="ident">adjust_curve_points</span></span>(<span>curve, us_bar, points, preserve_tangents=False, tangents=None, logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, logger=None):
+<pre><code class="python">def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, tangents = None, logger=None):
     &#34;&#34;&#34;
     Modify NURBS curve so that it would pass through specified points
     at specified parameter values.
@@ -71,16 +71,33 @@ solver (<code><a title="sverchok.utils.curve.nurbs_solver" href="nurbs_solver.ht
     if logger is None:
         logger = get_logger()
     n_target_points = len(us_bar)
+    ndim = points.shape[-1]
     if len(points) != n_target_points:
-        raise Exception(&#34;Number of U parameters must be equal to number of points&#34;)
+        raise ArgumentError(&#34;Number of U parameters must be equal to number of points&#34;)
+    if preserve_tangents and tangents is not None:
+        raise ArgumentError(&#34;preserve_tangents and tangents can not be provided simultaneously&#34;)
 
-    solver = SvNurbsCurveSolver(src_curve=curve)
-    orig_pts = curve.evaluate_array(us_bar)
-    solver.add_goal(SvNurbsCurvePoints(us_bar, points - orig_pts, relative=True))
-    if preserve_tangents:
-        zeros = np.zeros((n_target_points,3))
-        solver.add_goal(SvNurbsCurveTangents(us_bar, zeros, relative=True))
+    solver = SvNurbsCurveSolver(src_curve=curve, ndim=ndim)
     solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector(), weights=curve.get_weights())
+    if ndim == 4:
+        orig_pts = curve.evaluate_homogenous_array(us_bar)
+        #orig_pts = curve.evaluate_array(us_bar)
+        #weights = np.ones((n_target_points,))
+        #orig_pts = to_homogenous(orig_pts, weights)
+    else:
+        orig_pts = curve.evaluate_array(us_bar)
+    solver.add_goal(SvNurbsCurvePoints(us_bar, points - orig_pts, relative=True))
+    #print(&#34;Target delta: &#34;, points - orig_pts)
+    if preserve_tangents:
+        #print(&#34;Add preserve_tangents&#34;)
+        zeros = np.zeros((n_target_points,ndim))
+        solver.add_goal(SvNurbsCurveTangents(us_bar, zeros, relative=True))
+    elif tangents is not None:
+        if ndim == 4 and tangents.shape[-1] == 3:
+            ones = np.ones((len(tangents),))
+            tangents = to_homogenous(tangents, ones)
+        #print(f&#34;Add: Us {len(us_bar)}, tangents {tangents.shape}, target pts {n_target_points}&#34;)
+        solver.add_goal(SvNurbsCurveTangents(us_bar, tangents, relative=False))
     problem_type, residue, curve = solver.solve_ex(
                     problem_types = {SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED,
                                      SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
