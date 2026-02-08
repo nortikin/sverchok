@@ -43,7 +43,7 @@ from sverchok.core.sv_custom_exceptions import AlgorithmError, ArgumentError, In
 from sverchok.utils.sv_logging import get_logger
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
+from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, to_homogenous
 
 class SvNurbsCurveGoal(object):
     """
@@ -128,7 +128,10 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         return alphas
 
     def get_src_points(self, solver):
-        return solver.src_curve.evaluate_array(self.us)
+        if solver.ndim == 3:
+            return solver.src_curve.evaluate_array(self.us)
+        else:
+            return solver.src_curve.evaluate_homogenous_array(self.us)
 
     def get_n_defined_control_points(self):
         return len(self.us)
@@ -238,7 +241,11 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
         return numerator / denominator
     
     def get_src_points(self, solver):
-        return solver.src_curve.tangent_array(self.us)
+        tangents = solver.src_curve.tangent_array(self.us)
+        if solver.ndim == 4 and tangents.shape[-1] == 3:
+            ones = np.ones((len(tangents),))
+            tangents = to_homogenous(tangents, ones)
+        return tangents
 
 class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
     def __init__(self, order, us, vectors, weights = None, relative=False):
@@ -292,7 +299,11 @@ class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
         return betas
     
     def get_src_points(self, solver):
-        return solver.src_curve.tangent_array(self.us)
+        tangents = solver.src_curve.tangent_array(self.us)
+        if solver.ndim == 4 and tangents.shape[-1] == 3:
+            ones = np.ones((len(tangents),))
+            tangents = to_homogenous(tangents, ones)
+        return tangents
 
 class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
     """
@@ -604,6 +615,7 @@ class SvNurbsCurveSolver(SvCurve):
         self.knotvector = None
         self.goals = []
         self.A = self.B = None
+        self._inited = False
 
     @staticmethod
     def _check_is_rational(weights):
@@ -713,6 +725,8 @@ class SvNurbsCurveSolver(SvCurve):
         self.goals = goals
 
     def _init(self):
+        if self._inited:
+            return
         if self.n_cpts is None:
             raise InvalidStateError("Number of control points is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()")
         if self.knotvector is None:
@@ -733,6 +747,21 @@ class SvNurbsCurveSolver(SvCurve):
             Bs.append(Bi)
         self.A = np.concatenate(As)
         self.B = np.concatenate(Bs)
+        self._inited = True
+
+    def get_matrices(self):
+        self._init()
+        return self.A, self.B
+
+    def get_problem_type(self):
+        self._init()
+        n_equations, n_unknowns = self.A.shape
+        if n_equations == n_unknowns:
+            return SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
+        elif n_equations < n_unknowns:
+            return SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
+        else: # n_equations > n_unknowns
+            return SvNurbsCurveSolver.PROBLEM_OVERDETERMINED
 
     PROBLEM_WELLDETERMINED = 'WELLDETERMINED'
     PROBLEM_UNDERDETERMINED = 'UNDERDETERMINED'
@@ -786,18 +815,19 @@ class SvNurbsCurveSolver(SvCurve):
             
         d_cpts = X.reshape((n, ndim))
         if ndim == 4:
-            d_cpts, d_weights = from_homogenous(d_cpts)
+            #print("D cpts 4", d_cpts)
             if self.src_curve is None:
-                weights = d_weights
+                cpts, weights = from_homogenous(d_cpts)
             else:
-                weights = self.curve_weights + d_weights
+                cpts, weights = from_homogenous(d_cpts + self.src_curve.get_homogenous_control_points())
+                #print("Res_weights", weights)
         else:
+            if self.src_curve is None:
+                cpts = d_cpts
+            else:
+                cpts = self.src_curve.get_control_points() + d_cpts
             weights = self.curve_weights
-        if self.src_curve is None:
-            curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, d_cpts, weights)
-        else:
-            cpts = self.src_curve.get_control_points() + d_cpts
-            curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
+        curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
         return problem_type, residue, curve
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):

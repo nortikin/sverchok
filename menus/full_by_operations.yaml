@@ -127,6 +127,8 @@
             - SvNurbsBirailMk2Node
             - SvGordonSurfaceNode
             - SvExQuadsToNurbsNode
+            - ---
+            - SvConcatSurfacesNode
     - G FIELDS:
         - icon_name: OUTLINER_OB_FORCE_FIELD
         - extra_menu: AdvancedObjectsPartialMenu
@@ -335,6 +337,7 @@
             - SvSurfaceReduceDegreeNode
             - ---
             - SvAdjustNurbsSurfaceNode
+            - SvSnapSurfacesNode
         - SvRevolutionSurfaceNodeMK2
         - SvExTaperSweepSurfaceNode
         - SvBendCurveSurfaceNode

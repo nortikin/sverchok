@@ -142,6 +142,17 @@ def zip_long_repeat(*lists):
     objects = match_long_repeat(lists)
     return zip(*objects)
 
+def zip_long_repeat_recursive(max_level, *lists):
+    def helper(level, *sublists):
+        sub_result = []
+        for items in zip_long_repeat(*sublists):
+            if level == 0:
+                sub_result.append(items)
+            else:
+                sub_result.append(helper(level-1, *items))
+        return sub_result
+    return helper(max_level-1, *lists)[0]
+
 def match_long_cycle(lsts):
     """return matched list, cycling the shorter lists
     longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]

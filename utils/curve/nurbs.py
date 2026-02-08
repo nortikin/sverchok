@@ -26,7 +26,7 @@ from sverchok.utils.nurbs_common import (
         nurbs_divide, elevate_bezier_degree, reduce_bezier_degree,
         from_homogenous,
         CantInsertKnotException, CantRemoveKnotException,
-        CantReduceDegreeException
+        CantReduceDegreeException, to_homogenous
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
@@ -317,6 +317,15 @@ class SvNurbsCurve(SvCurve):
 
     def get_degree(self):
         raise NotImplementedError("Not implemented!")
+
+    def evaluate_homogenous_array(self, ts):
+        weights = []
+        for t in ts:
+            s1, s2 = self.split_at(t)
+            weight = s1.get_weights()[-1]
+            weights.append(weight)
+        points = self.evaluate_array(ts)
+        return to_homogenous(points, np.array(weights))
 
     def calc_greville_ts(self):
         n = len(self.get_control_points())
@@ -1273,6 +1282,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 #             print("Num:", numerator)
 #             print("Denom:", denominator)
         return nurbs_divide(numerator, denominator)
+
+    def evaluate_homogenous_array(self, ts):
+        numerator, denominator = self.fraction(0, ts)
+        return np.concatenate((numerator, denominator), axis=1)
 
     def tangent(self, t, tangent_delta=None):
         return self.tangent_array(np.array([t]))[0]

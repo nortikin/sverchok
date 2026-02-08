@@ -50,7 +50,7 @@ class SvFlipSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         surface_out = []
         for surfaces in surface_s:
             for surface in surfaces:
-                new_surface = SvFlipSurface(surface, flip_u, flip_v)
+                new_surface = SvFlipSurface.build(surface, flip_u, flip_v)
                 surface_out.append(new_surface)
 
         self.outputs['Surface'].sv_set(surface_out)

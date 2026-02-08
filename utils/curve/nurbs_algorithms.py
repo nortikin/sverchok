@@ -5,9 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from audioop import mul
 import numpy as np
-from collections import defaultdict
 
 from sverchok.core.sv_custom_exceptions import AlgorithmError
 from sverchok.utils.math import distribute_int, solve_quadratic, solve_cubic, np_dot, FRENET
@@ -1186,5 +1184,4 @@ def optimize_nurbs_curve_parametrization(curve):
     optimal_rhos = solution.x
     optimal_ctrlpts, optimal_weights = apply_transform(optimal_rhos)
     return curve.copy(control_points = optimal_ctrlpts, weights = optimal_weights)
-
 

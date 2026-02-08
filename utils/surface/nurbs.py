@@ -488,6 +488,8 @@ class SvNurbsSurface(SvSurface):
         cps2 = surface2.get_control_points()[0,:]
         dpts = np.linalg.norm(cps1 - cps2, axis=0)
         if (dpts > tolerance).any():
+            print("Cpts1", cps1)
+            print("Cpts2", cps2)
             raise UnsupportedSurfaceTypeException("Boundary control points do not match")
 
         ws1 = surface1.get_weights()[-1,:]
@@ -535,6 +537,8 @@ class SvNurbsSurface(SvSurface):
         cps2 = surface2.get_control_points()[:,0]
         dpts = np.linalg.norm(cps1 - cps2, axis=0)
         if (dpts > tolerance).any():
+            print("Cpts1", cps1)
+            print("Cpts2", cps2)
             raise UnsupportedSurfaceTypeException("Boundary control points do not match")
 
         ws1 = surface1.get_weights()[:,-1]
@@ -577,6 +581,24 @@ class SvNurbsSurface(SvSurface):
         knotvector_u = sv_knotvector.rescale(knotvector_u, new_u_min, new_u_max)
         knotvector_v = sv_knotvector.rescale(knotvector_v, new_v_min, new_v_max)
         return self.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)
+    
+    def flip(self, flip_u, flip_v):
+        ctrlpts = self.get_control_points()
+        weights = self.get_weights()
+        knotvector_u = self.get_knotvector_u()
+        knotvector_v = self.get_knotvector_v()
+        if flip_u:
+            ctrlpts = ctrlpts[::-1,:]
+            weights = weights[::-1,:]
+            knotvector_u = sv_knotvector.reverse(knotvector_u)
+        if flip_v:
+            ctrlpts = ctrlpts[:,::-1]
+            weights = weights[:,::-1]
+            knotvector_v = sv_knotvector.reverse(knotvector_v)
+        return self.copy(knotvector_u = knotvector_u,
+                         knotvector_v = knotvector_v,
+                         control_points = ctrlpts,
+                         weights = weights)
 
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):

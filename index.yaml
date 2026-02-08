@@ -186,6 +186,9 @@
         - SvSurfaceReduceDegreeNode
         - ---
         - SvAdjustNurbsSurfaceNode
+        - SvSnapSurfacesNode
+        - ---
+        - SvConcatSurfacesNode
     - ---
     - SvRevolutionSurfaceNodeMK2
     - SvExTaperSweepSurfaceNode
