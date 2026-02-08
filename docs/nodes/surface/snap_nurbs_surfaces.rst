@@ -21,7 +21,7 @@ This node has the following inputs:
   the **Input mode** parameter is set to **List of Surfaces**. The edges of
   surfaces which will be adjusted are selected according to the order the
   surfaces are present in this list.
-**Surface1**, **Surface2**. Surfaces to be adjusted. These inputs are
+* **Surface1**, **Surface2**. Surfaces to be adjusted. These inputs are
   only available when the **Input mode** parameter is set to **Two Surfaces**.
 
 Parameters
