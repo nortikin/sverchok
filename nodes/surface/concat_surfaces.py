@@ -31,8 +31,8 @@ class SvConcatSurfacesNode(SverchCustomTreeNode, bpy.types.Node):
         update = updateNode)
 
     input_modes = [
-        ('TWO', "Two curves", "Process two curves", 0),
-        ('N', "List of curves", "Process several curves", 1)
+        ('TWO', "Two surfaces", "Process two curves", 0),
+        ('N', "List of surfaces", "Process several curves", 1)
     ]
 
     nurbs_modes = [
