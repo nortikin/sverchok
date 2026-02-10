@@ -4,6 +4,7 @@ in polygons    s d=[[]] n=0
 in filepath    FP d=[[]] n=0
 in object_name   s d="IFC_Export" n=2
 in max_faces     s d=10000 n=2
+in area_threshold s d=0.00001 n=2
 '''
 
 import bpy
@@ -30,6 +31,7 @@ def make(self, context):
     vertices_list = self.inputs['vertices'].sv_get()  # [[вершины1], [вершины2], ...]
     polygons_list = self.inputs['polygons'].sv_get()  # [[полигоны1], [полигоны2], ...]
     max_faces = max(self.inputs['max_faces'].sv_get()[0][0],100)
+    area_threshold = self.inputs['area_threshold'].sv_get()[0][0]
     
     # Проверяем, что есть данные
     if not vertices_list or not polygons_list:
@@ -90,8 +92,7 @@ def make(self, context):
         v2 = p3 - p1
         cross = np.cross(v1, v2)
         area = np.linalg.norm(cross) / 2
-
-        if area < 0.01:  # Порог для вырожденности
+        if area < area_threshold:  # Порог для вырожденности
             return False
         else:
             return True
@@ -353,7 +354,6 @@ def make(self, context):
             shape_def_index = current_index
             element_entities.append(f"#{shape_def_index}=IFCPRODUCTDEFINITIONSHAPE($,$,(#{elem['shape_rep_index']}));")
             current_index += 1
-            
             # Создаем элемент
             element_entities.append(f"#{current_index}=IFCBUILDINGELEMENTPROXY('{elem_guid}',#5,'{elem['name']}',$,$,#{current_index+3},#{shape_def_index},$);")
             elem['element_index'] = current_index
