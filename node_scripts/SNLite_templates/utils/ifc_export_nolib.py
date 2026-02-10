@@ -23,11 +23,13 @@ def make(self, context):
     import os
     import uuid
     from datetime import datetime
+    import math
+    import numpy as np
     
     # Получаем данные из входов ноды - ТЕПЕРЬ СПИСКИ СПИСКОВ
     vertices_list = self.inputs['vertices'].sv_get()  # [[вершины1], [вершины2], ...]
     polygons_list = self.inputs['polygons'].sv_get()  # [[полигоны1], [полигоны2], ...]
-    max_faces = max(self.inputs['max_faces'].sv_get()[0][0],10000)
+    max_faces = max(self.inputs['max_faces'].sv_get()[0][0],100)
     
     # Проверяем, что есть данные
     if not vertices_list or not polygons_list:
@@ -78,8 +80,26 @@ def make(self, context):
         print(guid)
         return guid
 
+    def ensure_area(points, indices):
+        p1 = np.array(points[indices[0]])
+        p2 = np.array(points[indices[1]])
+        p3 = np.array(points[indices[2]])
+
+        # Вычислить векторное произведение
+        v1 = p2 - p1
+        v2 = p3 - p1
+        cross = np.cross(v1, v2)
+        area = np.linalg.norm(cross) / 2
+
+        if area < 0.01:  # Порог для вырожденности
+            return False
+        else:
+            return True
+
     def ensure_counter_clockwise(points, indices):
         """Обеспечивает порядок вершин против часовой стрелки"""
+
+        # не работает, хотя все перевели в треугольники, наверное зря
         if len(indices) < 3:
             return indices
         
@@ -98,35 +118,58 @@ def make(self, context):
             v1[2]*v2[0] - v1[0]*v2[2],
             v1[0]*v2[1] - v1[1]*v2[0]
         ]
-        
         # Если нормаль направлена вниз (Z отрицательный), разворачиваем порядок
         if normal[2] < 0:
             return list(reversed(indices))
         
         return indices
 
-    # Преобразуйте полигоны в треугольники:
-    def triangulate_polygon(indices):
-        """Разбивает полигон на треугольники"""
+    def are_points_collinear(points, epsilon=1e-6):
+        """Проверяет, коллинеарны ли точки"""
+        if len(points) < 3:
+            return True
+            
+        p0, p1, p2 = points[:3]
+        
+        # Векторы
+        v1 = [p1[0]-p0[0], p1[1]-p0[1], p1[2]-p0[2]]
+        v2 = [p2[0]-p0[0], p2[1]-p0[1], p2[2]-p0[2]]
+        
+        # Векторное произведение
+        cross = [
+            v1[1]*v2[2] - v1[2]*v2[1],
+            v1[2]*v2[0] - v1[0]*v2[2],
+            v1[0]*v2[1] - v1[1]*v2[0]
+        ]
+        
+        # Если векторное произведение близко к нулю
+        length = (cross[0]**2 + cross[1]**2 + cross[2]**2)**0.5
+        return length < epsilon
+        #return abs(cross[0]) < epsilon and abs(cross[1]) < epsilon and abs(cross[2]) < epsilon
+
+    def triangulate_polygon_simple(points, indices):
+        """Простая триангуляция для выпуклых полигонов"""
         triangles = []
-        if len(indices) < 3:
+        n = len(indices)
+        
+        if n < 3:
             return triangles
-        
-        for i in range(1, len(indices)-1):
-            triangles.append([indices[0], indices[i], indices[i+1]])
-        
+            
+        for i in range(1, n-1):
+            area = ensure_area(points, [indices[0], indices[i], indices[i+1]])
+            if area:
+                triangles.append([indices[0], indices[i], indices[i+1]])
+
         return triangles
 
     # Функция для создания геометрических сущностей для одного объекта
     def create_geometry_entities_for_object(verts, polys, start_index, obj_index, max_faces):
         """
         Создание геометрических сущностей IFC для одного объекта
-        Возвращает строку с STEP-кодом и индекс для продолжения нумерации
         """
         entities = []
         current_index = start_index
         
-        # Запоминаем индексы созданных сущностей для этого объекта
         obj_data = {
             'point_indices': [],
             'face_indices': [],
@@ -136,86 +179,128 @@ def make(self, context):
             'next_index': current_index
         }
         
-        # 1. Создаем точки (вершины)
+        # 1. ОЧИСТКА вершин: удаляем дубликаты и NaN
+        unique_verts = []
+        unique_indices = {}
+        
         for i, vert in enumerate(verts):
-            # Ограничиваем количество вершин для стабильности
             if i >= max_faces:
                 break
                 
-            # Конвертация из метров в миллиметры (IFC стандарт)
-            x_mm = float(vert[0] * 1000.0)
-            y_mm = float(vert[1] * 1000.0)
-            z_mm = float(vert[2] * 1000.0)
-            entities.append(f"#{current_index}=IFCCARTESIANPOINT(({x_mm:.6f},{y_mm:.6f},{z_mm:.6f}));")
-
+            try:
+                # Проверяем на валидность
+                x, y, z = float(vert[0]), float(vert[1]), float(vert[2])
+                if not (math.isfinite(x) and math.isfinite(y) and math.isfinite(z)):
+                    continue
+                    
+                # Округляем для удаления дубликатов
+                key = (round(x*1000, 3), round(y*1000, 3), round(z*1000, 3))
+                
+                if key not in unique_indices:
+                    unique_indices[key] = len(unique_verts)
+                    unique_verts.append((x, y, z))
+                    
+            except (ValueError, IndexError):
+                continue
+        
+        # 2. Создаем точки из уникальных вершин
+        for x, y, z in unique_verts:
+            x_mm = x * 1000.0
+            y_mm = y * 1000.0
+            z_mm = z * 1000.0
+            
+            entities.append(f"#{current_index}=IFCCARTESIANPOINT(({x_mm:.3f},{y_mm:.3f},{z_mm:.3f}));")
             obj_data['point_indices'].append(current_index)
             current_index += 1
         
-        # 2. Создаем полигоны и грани
-        max_faces = min(max_faces, len(polys))
-        
-        for i, poly in enumerate(polys[:max_faces]):
+        # 3. Валидация полигонов
+        valid_polys = []
+        for poly in polys[:max_faces]:
             if len(poly) < 3:
                 continue
                 
-            # Проверяем, что все индексы валидны
-            valid_indices = [idx for idx in poly if idx < len(obj_data['point_indices'])]
-            if len(valid_indices) < 3:
-                continue
-
+            # Конвертируем индексы с учетом уникальных вершин
+            valid_poly = []
+            for idx in poly:
+                if idx < len(verts):
+                    vert = verts[idx]
+                    key = (round(vert[0]*1000, 3), round(vert[1]*1000, 3), round(vert[2]*1000, 3))
+                    if key in unique_indices:
+                        new_idx = unique_indices[key]
+                        if new_idx not in valid_poly:  # избегаем повторений в полигоне
+                            valid_poly.append(new_idx)
             
-
-            # Создаем полигон (IFCPOLYLOOP)
-            #corrected_indices = ensure_counter_clockwise(verts, valid_indices)
-            triangles = triangulate_polygon(valid_indices)
+            # Полигон должен иметь хотя бы 3 уникальные точки
+            if len(valid_poly) >= 3:
+                # Убедимся, что точки не коллинеарны
+                if not are_points_collinear([unique_verts[i] for i in valid_poly[:3]]):
+                    valid_poly = ensure_counter_clockwise(verts, valid_poly)
+                    valid_polys.append(valid_poly)
+        
+        # 4. Создаем треугольники (IFC лучше работает с триангуляцией)
+        for poly in valid_polys:
+            triangles = triangulate_polygon_simple(verts, poly)
+            
             for tri in triangles:
-                # Создайте IFCPOLYLOOP для каждого треугольника
-                point_refs = ",".join([f"#{obj_data['point_indices'][idx]}" for idx in tri])
-                #point_refs = point_refs + f",#{obj_data['point_indices'][tri[0]]}"  # Замыкаем
-                #point_refs = ",".join([f"#{obj_data['point_indices'][idx]}" for idx in valid_indices]) #corrected_indices])
-                entities.append(f"#{current_index}=IFCPOLYLOOP(({point_refs}));")
-                poly_index = current_index
-                current_index += 1
-            
-                # Создаем внешнюю границу грани (IFCFACEOUTERBOUND)
-                entities.append(f"#{current_index}=IFCFACEOUTERBOUND(#{poly_index},.T.);")
-                face_bound_index = current_index
-                current_index += 1
-            
-                # Создаем грань (IFCFACE)
-                entities.append(f"#{current_index}=IFCFACE((#{face_bound_index}));")
-                obj_data['face_indices'].append(current_index)
-                current_index += 1
+                if len(tri) != 3:
+                    continue
+                    
+                # Проверяем, что все индексы валидны
+                if all(idx < len(obj_data['point_indices']) for idx in tri):
+                    point_refs = ",".join([f"#{obj_data['point_indices'][idx]}" for idx in tri])
+                    entities.append(f"#{current_index}=IFCPOLYLOOP(({point_refs}));")
+                    poly_index = current_index
+                    current_index += 1
+                    
+                    entities.append(f"#{current_index}=IFCFACEOUTERBOUND(#{poly_index},.T.);")
+                    face_bound_index = current_index
+                    current_index += 1
+                    
+                    entities.append(f"#{current_index}=IFCFACE((#{face_bound_index}));")
+                    obj_data['face_indices'].append(current_index)
+                    current_index += 1
         
-        if not obj_data['face_indices'] and len(obj_data['point_indices']) >= 3:
-            # Создаем простую грань по умолчанию
-            entities.append(f"#{current_index}=IFCPOLYLOOP((#{obj_data['point_indices'][0]},#{obj_data['point_indices'][1]},#{obj_data['point_indices'][2]}));")
-            poly_index = current_index
-            current_index += 1
-            entities.append(f"#{current_index}=IFCFACEOUTERBOUND(#{poly_index},.U.);") # T для правильно ориентированых полигонов F для неправильно
-            face_bound_index = current_index
-            current_index += 1
-            entities.append(f"#{current_index}=IFCFACE((#{face_bound_index}));")
-            obj_data['face_indices'].append(current_index)
-            current_index += 1
+        # 5. Если нет граней, создаем простой тетраэдр
+        if not obj_data['face_indices'] and len(obj_data['point_indices']) >= 4:
+            # Создаем тетраэдр из первых 4 точек
+            tetra_faces = [
+                [0, 1, 2],
+                [0, 2, 3],
+                [0, 3, 1],
+                [1, 3, 2]
+            ]
+            
+            for face in tetra_faces:
+                if all(idx < len(obj_data['point_indices']) for idx in face):
+                    point_refs = ",".join([f"#{obj_data['point_indices'][idx]}" for idx in face])
+                    entities.append(f"#{current_index}=IFCPOLYLOOP(({point_refs}));")
+                    poly_index = current_index
+                    current_index += 1
+                    
+                    entities.append(f"#{current_index}=IFCFACEOUTERBOUND(#{poly_index},.U.);")
+                    face_bound_index = current_index
+                    current_index += 1
+                    
+                    entities.append(f"#{current_index}=IFCFACE((#{face_bound_index}));")
+                    obj_data['face_indices'].append(current_index)
+                    current_index += 1
         
-        # 3. Создаем геометрические объекты если есть грани
+        # 6. Создаем геометрические объекты
         if obj_data['face_indices']:
-            # Замкнутая оболочка
-            face_refs = ",".join([f"#{idx}" for idx in obj_data['face_indices']])
-            entities.append(f"#{current_index}=IFCCLOSEDSHELL(({face_refs}));")
-            obj_data['shell_index'] = current_index
-            current_index += 1
-            
-            # Граничное представление
-            entities.append(f"#{current_index}=IFCFACETEDBREP(#{obj_data['shell_index']});")
-            obj_data['brep_index'] = current_index
-            current_index += 1
-            
-            # Геометрическое представление
-            entities.append(f"#{current_index}=IFCSHAPEREPRESENTATION(#12,'Body','Brep',(#{obj_data['brep_index']}));")
-            obj_data['shape_rep_index'] = current_index
-            current_index += 1
+            # Проверяем, что граней достаточно для оболочки
+            if len(obj_data['face_indices']) >= 4:  # минимум для тетраэдра
+                face_refs = ",".join([f"#{idx}" for idx in obj_data['face_indices']])
+                entities.append(f"#{current_index}=IFCCLOSEDSHELL(({face_refs}));")
+                obj_data['shell_index'] = current_index
+                current_index += 1
+                
+                entities.append(f"#{current_index}=IFCFACETEDBREP(#{obj_data['shell_index']});")
+                obj_data['brep_index'] = current_index
+                current_index += 1
+                
+                entities.append(f"#{current_index}=IFCSHAPEREPRESENTATION(#12,'Body','Brep',(#{obj_data['brep_index']}));")
+                obj_data['shape_rep_index'] = current_index
+                current_index += 1
         
         obj_data['next_index'] = current_index
         return "\n".join(entities) + "\n", obj_data
@@ -270,11 +355,11 @@ def make(self, context):
             current_index += 1
             
             # Создаем элемент
-            element_entities.append(f"#{current_index}=IFCBUILDINGELEMENTPROXY('{elem_guid}',#5,'{elem['name']}',$,$,#9,#{shape_def_index},$);")
+            element_entities.append(f"#{current_index}=IFCBUILDINGELEMENTPROXY('{elem_guid}',#5,'{elem['name']}',$,$,#{current_index+3},#{shape_def_index},$);")
             elem['element_index'] = current_index
             elem['guid'] = elem_guid  # Сохраняем GUID
             current_index += 1
-        print(len(element_entities))
+        #print(len(element_entities))
         # Формируем полный IFC файл
         filename = f"{base_obj_name}.ifc"
         site_name = clean_ascii_string(f"Site_{base_obj_name}")
@@ -282,6 +367,7 @@ def make(self, context):
         storey_name = "Level_0"
         allen = "\n".join(all_entities)
         elen = "\n".join(element_entities)
+        
         ifc_content = f"""ISO-10303-21;
 HEADER;
 FILE_DESCRIPTION(('ViewDefinition [CoordinationView]'),'2;1');
@@ -289,7 +375,7 @@ FILE_NAME('{filename}','{iso_date}',(''),(''),'Sverchok IFC Export','','');
 FILE_SCHEMA(('IFC4'));
 ENDSEC;
 DATA;
-#1=IFCPERSON($,$,'Sverchok User',$,$,$,$,$);
+#1=IFCPERSON($,'Sverchok User',$,$,$,$,$,$);
 #2=IFCORGANIZATION($,'Sverchok BIM Export',$,$,$);
 #3=IFCPERSONANDORGANIZATION(#1,#2,$);
 #4=IFCAPPLICATION(#2,'1.0','Sverchok IFC Exporter','Sverchok');
@@ -308,10 +394,9 @@ DATA;
 
 {elen}
 
-#1000=IFCSITE('{site_guid}',#5,'{site_name}',$,$,#9,$,$,$,.ELEMENT.,$,$,$,$);
-#1001=IFCBUILDING('{building_guid}',#5,'{building_name}',$,$,#9,$,$,$,$,$);
-#1002=IFCBUILDINGSTOREY('{storey_guid}',#5,'{storey_name}',$,$,#9,$,$,$,$,0.);"""
-        
+#{current_index+0}=IFCSITE('{site_guid}',#5,'{site_name}',$,$,#9,$,$,.ELEMENT.,$,$,$,$,$);
+#{current_index+1}=IFCBUILDING('{building_guid}',#5,'{building_name}',$,$,#9,$,$,$,$);
+#{current_index+2}=IFCBUILDINGSTOREY('{storey_guid}',#5,'{storey_name}',$,$,#9,$,$,.ELEMENT.,0.);"""
         # Добавляем отношения
         element_indices = ",".join([f"#{elem['element_index']}" for elem in element_data])
         rel_guid1 = create_guid()
@@ -320,10 +405,10 @@ DATA;
         rel_guid4 = create_guid()
 
         relations = f"""
-        #2000=IFCRELAGGREGATES('{rel_guid1}',#5,$,$,#14,(#1000));
-        #2001=IFCRELAGGREGATES('{rel_guid2}',#5,$,$,#1000,(#1001));
-        #2002=IFCRELAGGREGATES('{rel_guid3}',#5,$,$,#1001,(#1002));
-        #2003=IFCRELCONTAINEDINSPATIALSTRUCTURE('{rel_guid4}',#5,$,$,({element_indices}),#1002);"""
+        #{current_index+3}=IFCRELAGGREGATES('{rel_guid1}',#5,$,$,#14,(#{current_index+0}));
+        #{current_index+4}=IFCRELAGGREGATES('{rel_guid2}',#5,$,$,#{current_index+0},(#{current_index+1}));
+        #{current_index+5}=IFCRELAGGREGATES('{rel_guid3}',#5,$,$,#{current_index+1},(#{current_index+2}));
+        #{current_index+6}=IFCRELCONTAINEDINSPATIALSTRUCTURE('{rel_guid4}',#5,$,$,({element_indices}),#{current_index+2});"""
         
         ifc_content += relations + "\nENDSEC;\nEND-ISO-10303-21;"
         
