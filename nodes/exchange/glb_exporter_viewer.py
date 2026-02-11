@@ -517,7 +517,7 @@ class SvGlbExportNode(SverchCustomTreeNode, bpy.types.Node):
                 export_cameras=False,
                 export_lights=False,
                 export_yup=True,
-                export_colors=self.export_colors,
+                #export_colors=self.export_colors,
                 export_normals=self.export_normals,
                 #gltf_trs_w_animation_pointer
                 #export_uvs=self.export_uvs,
