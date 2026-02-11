@@ -3,6 +3,7 @@ in vertices    v d=[[]] n=0
 in polygons    s d=[[]] n=0
 in filepath    FP d=[[]] n=0
 in object_name   s d="IFC_Export" n=2
+enum = BREP MESH
 in max_faces     s d=10000 n=2
 in area_threshold s d=0.00001 n=2
 '''
@@ -11,9 +12,11 @@ import bpy
 
 self.make_operator('make')
 
+
 def ui(self, context, layout):
     cb_str = 'node.scriptlite_custom_callback'
     layout.operator(cb_str, text='E X P O R T').cb_name='make'
+    layout.prop(self, 'custom_enum', expand=True)
 
 def make(self, context):
     """
@@ -32,6 +35,7 @@ def make(self, context):
     polygons_list = self.inputs['polygons'].sv_get()  # [[полигоны1], [полигоны2], ...]
     max_faces = max(self.inputs['max_faces'].sv_get()[0][0],100)
     area_threshold = self.inputs['area_threshold'].sv_get()[0][0]
+    geometry_type = self.custom_enum
     
     # Проверяем, что есть данные
     if not vertices_list or not polygons_list:
@@ -72,15 +76,23 @@ def make(self, context):
         base_object_name = clean_ascii_string(base_object_name)
     
     # Генерация GUID для IFC объектов
-    def create_guid():
+    def create_guid(num=32):
         """Создание GUID в формате IFC (32 символа без дефисов)"""
-        guid = str(uuid.uuid4()).replace('-', '').upper()
+        if num == 36:
+            guid = str(uuid.uuid4()).upper()
+        else:
+            guid = str(uuid.uuid4()).replace('-', '').upper()
         # ДОБАВЬТЕ проверку:
         if guid == '00000000000000000000000000000000':
             # Генерируем заново если получили нулевой GUID
             guid = str(uuid.uuid4()).replace('-', '').upper()
         print(guid)
-        return guid
+        if num == 32:
+            return guid
+        elif num == 36:
+            return guid
+        else:
+            return guid[:22]
 
     def ensure_area(points, indices):
         p1 = np.array(points[indices[0]])
@@ -164,9 +176,10 @@ def make(self, context):
         return triangles
 
     # Функция для создания геометрических сущностей для одного объекта
-    def create_geometry_entities_for_object(verts, polys, start_index, obj_index, max_faces):
+    def create_geometry_entities_for_object(verts, polys, start_index, obj_index, max_faces, geometry_type="BREP"):
         """
         Создание геометрических сущностей IFC для одного объекта
+        Параметр geometry_type: "BREP" или "MESH"
         """
         entities = []
         current_index = start_index
@@ -177,7 +190,9 @@ def make(self, context):
             'shell_index': None,
             'brep_index': None,
             'shape_rep_index': None,
-            'next_index': current_index
+            'next_index': current_index,
+            'mesh_indices': [],
+            'geom_set_indices': []
         }
         
         # 1. ОЧИСТКА вершин: удаляем дубликаты и NaN
@@ -189,12 +204,10 @@ def make(self, context):
                 break
                 
             try:
-                # Проверяем на валидность
                 x, y, z = float(vert[0]), float(vert[1]), float(vert[2])
                 if not (math.isfinite(x) and math.isfinite(y) and math.isfinite(z)):
                     continue
                     
-                # Округляем для удаления дубликатов
                 key = (round(x*1000, 3), round(y*1000, 3), round(z*1000, 3))
                 
                 if key not in unique_indices:
@@ -204,23 +217,24 @@ def make(self, context):
             except (ValueError, IndexError):
                 continue
         
-        # 2. Создаем точки из уникальных вершин
+        # 2. Создаем точки 
+        to_triangle = []
         for x, y, z in unique_verts:
             x_mm = x * 1000.0
             y_mm = y * 1000.0
             z_mm = z * 1000.0
-            
             entities.append(f"#{current_index}=IFCCARTESIANPOINT(({x_mm:.3f},{y_mm:.3f},{z_mm:.3f}));")
+            if geometry_type != "BREP":
+                to_triangle.append((round(x_mm,3),round(y_mm,3),round(z_mm,3)))
             obj_data['point_indices'].append(current_index)
             current_index += 1
         
-        # 3. Валидация полигонов
+        # 3. Валидация полигонов (без изменений)
         valid_polys = []
         for poly in polys[:max_faces]:
             if len(poly) < 3:
                 continue
                 
-            # Конвертируем индексы с учетом уникальных вершин
             valid_poly = []
             for idx in poly:
                 if idx < len(verts):
@@ -228,19 +242,32 @@ def make(self, context):
                     key = (round(vert[0]*1000, 3), round(vert[1]*1000, 3), round(vert[2]*1000, 3))
                     if key in unique_indices:
                         new_idx = unique_indices[key]
-                        if new_idx not in valid_poly:  # избегаем повторений в полигоне
+                        if new_idx not in valid_poly:
                             valid_poly.append(new_idx)
             
-            # Полигон должен иметь хотя бы 3 уникальные точки
             if len(valid_poly) >= 3:
-                # Убедимся, что точки не коллинеарны
                 if not are_points_collinear([unique_verts[i] for i in valid_poly[:3]]):
                     valid_poly = ensure_counter_clockwise(verts, valid_poly)
                     valid_polys.append(valid_poly)
         
-        # 4. Создаем треугольники (IFC лучше работает с триангуляцией)
+        # 4. Выбор типа геометрии
+        if geometry_type == "BREP":
+            entities_part, obj_data = create_brep_geometry(entities, obj_data, unique_verts, valid_polys, current_index)
+        else:  # MESH
+            entities_part, obj_data = create_triangulated_mesh_geometry(entities, obj_data, unique_verts, valid_polys, to_triangle, current_index)
+        
+        entities = entities_part
+        current_index = obj_data['next_index']
+        
+        return "\n".join(entities) + "\n", obj_data
+
+
+    def create_brep_geometry(entities, obj_data, unique_verts, valid_polys, current_index):
+        """Создание геометрии в формате FacetedBrep (оболочки из граней)"""
+        
+        # Создаем треугольники для FacetedBrep
         for poly in valid_polys:
-            triangles = triangulate_polygon_simple(verts, poly)
+            triangles = triangulate_polygon_simple(unique_verts, poly)
             
             for tri in triangles:
                 if len(tri) != 3:
@@ -253,7 +280,7 @@ def make(self, context):
                     poly_index = current_index
                     current_index += 1
                     
-                    entities.append(f"#{current_index}=IFCFACEOUTERBOUND(#{poly_index},.T.);")
+                    entities.append(f"#{current_index}=IFCFACEOUTERBOUND(#{poly_index},.U.);")
                     face_bound_index = current_index
                     current_index += 1
                     
@@ -261,9 +288,8 @@ def make(self, context):
                     obj_data['face_indices'].append(current_index)
                     current_index += 1
         
-        # 5. Если нет граней, создаем простой тетраэдр
+        # Если нет граней, создаем простой тетраэдр
         if not obj_data['face_indices'] and len(obj_data['point_indices']) >= 4:
-            # Создаем тетраэдр из первых 4 точек
             tetra_faces = [
                 [0, 1, 2],
                 [0, 2, 3],
@@ -286,10 +312,9 @@ def make(self, context):
                     obj_data['face_indices'].append(current_index)
                     current_index += 1
         
-        # 6. Создаем геометрические объекты
+        # Создаем геометрические объекты для BREP
         if obj_data['face_indices']:
-            # Проверяем, что граней достаточно для оболочки
-            if len(obj_data['face_indices']) >= 4:  # минимум для тетраэдра
+            if len(obj_data['face_indices']) >= 4:
                 face_refs = ",".join([f"#{idx}" for idx in obj_data['face_indices']])
                 entities.append(f"#{current_index}=IFCCLOSEDSHELL(({face_refs}));")
                 obj_data['shell_index'] = current_index
@@ -304,7 +329,77 @@ def make(self, context):
                 current_index += 1
         
         obj_data['next_index'] = current_index
-        return "\n".join(entities) + "\n", obj_data
+        return entities, obj_data
+
+    def create_triangulated_mesh_geometry(entities, obj_data, unique_verts, valid_polys, to_triangle, current_index):
+        """Создание геометрии в формате TriangulatedFaceSet (IFC4)"""
+        
+        # Собираем все треугольники
+        all_triangles = []
+        
+        for poly in valid_polys:
+            triangles = triangulate_polygon_simple(unique_verts, poly)
+            for tri in triangles:
+                if len(tri) == 3 and all(idx < len(obj_data['point_indices']) for idx in tri):
+                    all_triangles.append(tri)
+        
+        # Если нет треугольников, создаем простой тетраэдр
+        if not all_triangles and len(obj_data['point_indices']) >= 4:
+            tetra_faces = [
+                [0, 1, 2],
+                [0, 2, 3],
+                [0, 3, 1],
+                [1, 3, 2]
+            ]
+            for face in tetra_faces:
+                if all(idx < len(obj_data['point_indices']) for idx in face):
+                    all_triangles.append(face)
+        
+        # Создаем IfcTriangulatedFaceSet
+        if all_triangles:
+            # Получаем все уникальные индексы точек, используемые в треугольниках
+            used_indices = set()
+            for tri in all_triangles:
+                used_indices.update(tri)
+            sorted_indices = sorted(used_indices)
+            
+            # Создаем карту переиндексации (старый индекс -> новый индекс в координатном списке)
+            remap = {old_idx: new_idx for new_idx, old_idx in enumerate(sorted_indices)}
+            
+            # 1. Создаем IfcCartesianPointList3D с координатами в правильном формате
+            coord_refs = []
+            for idx in sorted_indices:
+                coord_refs.append(f"#{obj_data['point_indices'][idx]}")
+            
+            #entities.append(f"#{current_index}=IFCCARTESIANPOINTLIST3D(({','.join(coord_refs)}));")
+            entities.append(f"#{current_index}=IFCCARTESIANPOINTLIST3D({tuple(to_triangle)});")
+            point_list_idx = current_index
+            current_index += 1
+            
+            # 2. Создаем список индексов треугольников в формате ((i1,i2,i3),...)
+            tri_indices_list = []
+            for tri in all_triangles:
+                # Переиндексируем точки
+                t1, t2, t3 = remap[tri[0]], remap[tri[1]], remap[tri[2]]
+                tri_indices_list.append(f"({t1},{t2},{t3})")
+            
+            tri_indices_str = ",".join(tri_indices_list)
+            
+            # 3. Создаем IfcTriangulatedFaceSet
+            # ВАЖНО: Для IFC4 TriangulatedFaceSet не требует IfcFace, это прямой GeometricRepresentationItem tri_indices_str
+            entities.append(f"#{current_index}=IFCTRIANGULATEDFACESET(#{point_list_idx},$,$,({tri_indices_str}),$,$);")
+            mesh_idx = current_index
+            obj_data['mesh_indices'].append(mesh_idx)
+            current_index += 1
+            
+            # 4. Создаем IfcShapeRepresentation с правильным типом 'Tessellation'
+            entities.append(f"#{current_index}=IFCSHAPEREPRESENTATION(#12,'Body','Tessellation',(#{mesh_idx}));")
+            obj_data['shape_rep_index'] = current_index
+            current_index += 1
+        
+        obj_data['next_index'] = current_index
+        return entities, obj_data
+
 
     # Функция создания полного IFC контента для нескольких объектов
     def generate_ifc_content_multiple(objects_data, base_obj_name,max_faces):
@@ -313,10 +408,10 @@ def make(self, context):
         iso_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         
         # Генерируем GUID для основных объектов
-        project_guid = create_guid()
-        site_guid = create_guid()
-        building_guid = create_guid()
-        storey_guid = create_guid()
+        project_guid = create_guid(num=22)
+        site_guid = create_guid(num=22)
+        building_guid = create_guid(num=22)
+        storey_guid = create_guid(num=22)
 
         # Собираем все сущности
         all_entities = []
@@ -331,7 +426,7 @@ def make(self, context):
             
             # Создаем геометрию для объекта
             geometry_str, obj_geometry_data = create_geometry_entities_for_object(
-                verts, polys, current_index, obj_idx,max_faces
+                verts, polys, current_index, obj_idx,max_faces, geometry_type
             )
             
             all_entities.append(geometry_str)
@@ -340,7 +435,7 @@ def make(self, context):
             if obj_geometry_data.get('shape_rep_index'):
                 element_data.append({
                     'name': obj_name,
-                    'guid': create_guid(),
+                    'guid': create_guid(num=22),
                     'shape_rep_index': obj_geometry_data['shape_rep_index'],
                     'next_index': obj_geometry_data['next_index']
                 })
@@ -348,14 +443,16 @@ def make(self, context):
         
         # Создаем элементы (IfcBuildingElementProxy)
         element_entities = []
+        index_IFCBUILDINGSTOREY = current_index+2+len(element_data)*2
         for elem in element_data:
             # Создаем определение формы
-            elem_guid = create_guid()
+            elem_guid = create_guid(num=22)
+            additional_guid = create_guid(num=36)
             shape_def_index = current_index
             element_entities.append(f"#{shape_def_index}=IFCPRODUCTDEFINITIONSHAPE($,$,(#{elem['shape_rep_index']}));")
             current_index += 1
             # Создаем элемент
-            element_entities.append(f"#{current_index}=IFCBUILDINGELEMENTPROXY('{elem_guid}',#5,'{elem['name']}',$,$,#{current_index+3},#{shape_def_index},$);")
+            element_entities.append(f"#{current_index}=IFCBUILDINGELEMENTPROXY('{elem_guid}',#5,'{elem['name']}',$,$,$,#{shape_def_index},'{additional_guid}',$);")
             elem['element_index'] = current_index
             elem['guid'] = elem_guid  # Сохраняем GUID
             current_index += 1
@@ -379,7 +476,7 @@ DATA;
 #2=IFCORGANIZATION($,'Sverchok BIM Export',$,$,$);
 #3=IFCPERSONANDORGANIZATION(#1,#2,$);
 #4=IFCAPPLICATION(#2,'1.0','Sverchok IFC Exporter','Sverchok');
-#5=IFCOWNERHISTORY(#3,#4,$,.ADDED.,$,{timestamp},#3,#4);
+#5=IFCOWNERHISTORY(#3,#4,$,.ADDED.,$,$,$,{timestamp});
 #6=IFCCARTESIANPOINT((0.,0.,0.));
 #7=IFCDIRECTION((0.,0.,1.));
 #8=IFCDIRECTION((1.,0.,0.));
@@ -394,15 +491,15 @@ DATA;
 
 {elen}
 
-#{current_index+0}=IFCSITE('{site_guid}',#5,'{site_name}',$,$,#9,$,$,.ELEMENT.,$,$,$,$,$);
-#{current_index+1}=IFCBUILDING('{building_guid}',#5,'{building_name}',$,$,#9,$,$,$,$);
-#{current_index+2}=IFCBUILDINGSTOREY('{storey_guid}',#5,'{storey_name}',$,$,#9,$,$,.ELEMENT.,0.);"""
+#{current_index+0}=IFCSITE('{site_guid}',#5,'{site_name}',$,$,$,$,$,.ELEMENT.,$,$,$,$,$);
+#{current_index+1}=IFCBUILDING('{building_guid}',#5,'{building_name}',$,$,$,$,$,.ELEMENT.,$,$,$);
+#{current_index+2}=IFCBUILDINGSTOREY('{storey_guid}',#5,'{storey_name}',$,$,$,$,$,.ELEMENT.,0.);"""
         # Добавляем отношения
         element_indices = ",".join([f"#{elem['element_index']}" for elem in element_data])
-        rel_guid1 = create_guid()
-        rel_guid2 = create_guid()
-        rel_guid3 = create_guid()
-        rel_guid4 = create_guid()
+        rel_guid1 = create_guid(num=22)
+        rel_guid2 = create_guid(num=22)
+        rel_guid3 = create_guid(num=22)
+        rel_guid4 = create_guid(num=22)
 
         relations = f"""
         #{current_index+3}=IFCRELAGGREGATES('{rel_guid1}',#5,$,$,#14,(#{current_index+0}));
