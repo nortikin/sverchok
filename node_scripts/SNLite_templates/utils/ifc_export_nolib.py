@@ -416,7 +416,7 @@ def make(self, context):
         # Собираем все сущности
         all_entities = []
         element_data = []  # Данные об элементах для создания отношений
-        current_index = 15  # Начинаем после базовых сущностей
+        current_index = 16  # Начинаем после базовых сущностей
         
         # Создаем геометрию для каждого объекта
         for obj_idx, obj_data in enumerate(objects_data):
@@ -481,11 +481,12 @@ DATA;
 #7=IFCDIRECTION((0.,0.,1.));
 #8=IFCDIRECTION((1.,0.,0.));
 #9=IFCAXIS2PLACEMENT3D(#6,#7,#8);
-#10=IFCDIRECTION((0.,1.,0.));
+#10=IFCDIRECTION((0.,1.));
 #11=IFCAXIS2PLACEMENT2D(#6,#10);
 #12=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-05,#9,$);
 #13=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Plan',2,1.E-05,#11,$);
 #14=IFCPROJECT('{project_guid}',#5,'{base_obj_name} Project',$,$,$,$,(#12,#13),$);
+
 
 {allen}
 
