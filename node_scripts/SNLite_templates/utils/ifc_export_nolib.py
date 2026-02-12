@@ -58,7 +58,10 @@ def make(self, context):
         base_filepath = os.path.join(os.path.expanduser("~"), "exported_model")
     
     # Обрабатываем имена объектов
-    object_name_input = self.inputs['object_name'].sv_get()
+    if self.inputs['object_name'].is_linked:        
+        object_name_input = self.inputs['object_name'].sv_get()
+    else:
+        object_name_input = [['Sverchok_object']]
     base_object_name = "IFC_Export"
     
     def clean_ascii_string(text):
