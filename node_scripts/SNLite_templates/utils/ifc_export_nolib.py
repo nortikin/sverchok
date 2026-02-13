@@ -115,6 +115,7 @@ def make(self, context):
     def ensure_counter_clockwise(points, indices):
         """Обеспечивает порядок вершин против часовой стрелки"""
 
+        return indices
         # не работает, хотя все перевели в треугольники, наверное зря
         if len(indices) < 3:
             return indices
