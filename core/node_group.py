@@ -582,7 +582,13 @@ class AddGroupTree(bpy.types.Operator):
         context.node.group_tree = sub_tree  # link sub tree to group node
         sub_tree.nodes.new('NodeGroupInput').location = (-250, 0)  # create node for putting data into sub tree
         sub_tree.nodes.new('NodeGroupOutput').location = (250, 0)  # create node for getting data from sub tree
-        return bpy.ops.node.edit_group_tree({'node': context.node})
+
+        temp_context = {"node": context.node}
+        if bpy.app.version >= (3, 2):
+            with context.temp_override(**temp_context):
+                return bpy.ops.node.edit_group_tree()
+        else:
+            return bpy.ops.node.edit_group_tree(temp_context)
 
 
 class AddGroupTreeFromSelected(bpy.types.Operator):
