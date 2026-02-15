@@ -1,8 +1,8 @@
 Scalar Math
 ===========
 
-.. image:: https://user-images.githubusercontent.com/14288520/189060032-dcbef5e5-05da-4b6e-8e45-9926e72e5dc0.png
-  :target: https://user-images.githubusercontent.com/14288520/189060032-dcbef5e5-05da-4b6e-8e45-9926e72e5dc0.png
+.. image:: https://github.com/user-attachments/assets/2ea50afb-6be1-41ee-92a6-b5ac3bfa3d24
+  :target: https://github.com/user-attachments/assets/2ea50afb-6be1-41ee-92a6-b5ac3bfa3d24
 
 .. image:: https://user-images.githubusercontent.com/14288520/189060063-894e9fb9-9ce1-4683-b5a1-37df332d33aa.png
   :target: https://user-images.githubusercontent.com/14288520/189060063-894e9fb9-9ce1-4683-b5a1-37df332d33aa.png
@@ -53,6 +53,15 @@ This node will accept lists of flat NumPy arrays [Not available for GCD or Round
 +---------------+---------------------------------------------+
 | constants     | pi, e, phi, tau.                            |
 +---------------+---------------------------------------------+
+
+**High precision** - show float propery with more digits and control mouse input in precision mode for float numbers. It is used only as visual effect. (When shift-precision is not enought)
+
+  .. raw:: html
+
+    <video width="700" controls>
+      <source src="https://github.com/user-attachments/assets/cb4449df-034f-4975-b708-1d2ddd1b3846" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>
 
 Advanced Parameters
 -------------------

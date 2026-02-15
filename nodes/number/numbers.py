@@ -83,18 +83,44 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
         description='maximum'
     ) # type: ignore
 
+    def update_precision(self, context):
+        prop_name = self.get_prop_name()
+        self.inputs["Float"].prop_name = prop_name
+        # do not need update node
+        pass
+
+    precision_high: BoolProperty(default=False, name="Hight precision", description="Show input socket value with high precision and pricise mouse movement", update=update_precision)
+
     float_: FloatProperty(
         default=0.0, name="a float", update=updateNode,
         description = "Floating-point value",
         get=lambda s: uget(s, 'float_'),
-        set=lambda s, val: uset(s, val, 'float_', 'float_min', 'float_max')
-    ) # type: ignore
+        set=lambda s, val: uset(s, val, 'float_', 'float_min', 'float_max'),
+    )
+    float_p6: FloatProperty(
+        default=0.0, name="a float", update=updateNode, precision=6, 
+        description = "Floating-point high precision value",
+        get=lambda s: uget(s, 'float_'),
+        set=lambda s, val: uset(s, val, 'float_', 'float_min', 'float_max',),
+        step=0.01, options={'SKIP_SAVE'},
+    )
+
     float_draft_: FloatProperty(
         default=0.0, name="[D] a float",
         description = "Floating-point value (draft mode)",
         update=updateNode,
         get=lambda s: uget(s, 'float_draft_'),
-        set=lambda s, val: uset(s, val, 'float_draft_', 'float_min', 'float_max')) # type: ignore
+        set=lambda s, val: uset(s, val, 'float_draft_', 'float_min', 'float_max'),
+    )
+    float_draft_p6: FloatProperty(
+        default=0.0, name="[D] a float",
+        description = "Floating-point value high precision value (draft mode)",
+        update=updateNode, precision=6, 
+        get=lambda s: uget(s, 'float_draft_'),
+        set=lambda s, val: uset(s, val, 'float_draft_', 'float_min', 'float_max'),
+        step=0.01, options={'SKIP_SAVE'},
+    )
+    
     float_min: FloatProperty(
         default=-500.0, description='minimum'
     ) # type: ignore
@@ -130,6 +156,7 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
         c1 = layout.column()
         r1 = c1.row(align=True)
         r1.prop(self, 'selected_mode', expand=True)
+        r1.prop(self, "precision_high", text='', icon='MOD_HUE_SATURATION')
         r1.prop(self, 'show_limits', icon='SETTINGS', text='')
         if self.show_limits:
             c2 = c1.row().column(align=True)
@@ -141,11 +168,15 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
         if self.id_data.sv_draft:
             if self.selected_mode == 'float':
                 prop_name = 'float_draft_'
+                if self.precision_high==True:
+                    prop_name+='p6'
             else:
                 prop_name = 'int_draft_'
         else:
             if self.selected_mode == 'float':
                 prop_name = 'float_'
+                if self.precision_high==True:
+                    prop_name+='p6'
             else:
                 prop_name = 'int_'
         return prop_name
@@ -160,6 +191,7 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
         c1 = layout.column()
         r1 = c1.row(align=True)
         r1.prop(self, 'selected_mode', expand=True)
+        r1.prop(self, "precision_high", text='', icon='MOD_HUE_SATURATION')
         #r1.prop(self, 'show_limits', icon='SETTINGS', text='')
         #if self.show_limits:
         c2 = c1.row().column(align=True)
