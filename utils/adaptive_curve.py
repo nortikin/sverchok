@@ -11,6 +11,8 @@ from math import ceil, floor, isnan
 
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.math import distribute_int
+from sverchok.utils.geom import CubicSpline
+from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.curve import SvCurveLengthSolver
 
 
@@ -92,7 +94,7 @@ def populate_t_segment(key_ts, target_count):
         result.update(ts)
     return np.asarray(list(sorted(result)))
 
-def populate_curve(curve, samples_t, by_length = False, by_curvature = True, population_controller = None, curvature_clip = 100, seed = None):
+def populate_curve_old(curve, samples_t, by_length = False, by_curvature = True, population_controller = None, curvature_clip = 100, seed = None):
     if population_controller is None:
         population_controller = MinMaxPerSegment(1, 5)
 
@@ -171,4 +173,38 @@ def populate_curve(curve, samples_t, by_length = False, by_curvature = True, pop
     if need_random:
         new_t = np.sort(new_t)
     return new_t
+
+def populate_curve(curve, n_points, resolution=100, by_length = False, by_curvature = True, curvature_clip=100.0, random=False, seed=None):
+    t_min, t_max = curve.get_u_bounds()
+    factors = np.zeros((resolution,))
+    ts = np.linspace(t_min, t_max, num=resolution)
+    if by_length:
+        lengths = SvCurveLengthSolver(curve).calc_length_segments(ts)
+        lengths = np.cumsum(np.insert(lengths, 0, 0))
+        factors += lengths / lengths[-1]
+    if by_curvature:
+        curvatures = curve.curvature_array(ts)
+        curvatures = np.clip(curvatures, 0.0, curvature_clip)
+        integral = TrapezoidIntegral(ts, ts, np.sqrt(curvatures))
+        #integral = TrapezoidIntegral(ts, ts, curvatures)
+        integral.calc()
+        factors += integral.summands
+    if not by_length and not by_curvature:
+        factors = np.linspace(0.0, 1.0, num=resolution)
+    factors /= factors[-1]
+    cpts = np.zeros((resolution, 3))
+    cpts[:,0] = factors
+    cpts[:,1] = ts
+    spline = CubicSpline(cpts, metric='X', is_cyclic=False)
+    if random:
+        if seed is None:
+            seed = 12345
+        np.random.seed(seed)
+        factor_values = np.random.uniform(0.0, 1.0, size=n_points)
+        factor_values = np.append(factor_values, [0.0, 1.0])
+        factor_values = np.sort(factor_values)
+    else:
+        factor_values = np.linspace(0.0, 1.0, num=n_points)
+    new_ts = spline.eval(factor_values)[:,1]
+    return new_ts
 

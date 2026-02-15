@@ -154,7 +154,7 @@
     - SvExCrossCurveSurfaceNode
     - SvCrossCurveSphereNode
     - ---
-    - SvAdaptivePlotCurveNode
+    - SvAdaptivePlotCurveMk2Node
     - SvExEvalCurveNode
 
 - Surfaces:
