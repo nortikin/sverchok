@@ -175,7 +175,7 @@ class SurfaceData(object):
         else:
             self.cpts_list = None
 
-        if hasattr(surface, 'calc_greville_us'):
+        if hasattr(surface, 'calc_greville_us') and node.draw_node_lines:
             nodes_u = surface.calc_greville_us()
             nodes_v = surface.calc_greville_vs()
             node_u_isolines = [SvIsoUvCurve(surface, 'U', u) for u in nodes_u]
@@ -187,7 +187,7 @@ class SurfaceData(object):
             self.node_u_isoline_data = [CurveData(cfg, isoline, resolution_v) for isoline in node_u_isolines]
             self.node_v_isoline_data = [CurveData(cfg, isoline, resolution_u) for isoline in node_v_isolines]
         else:
-            self.node_u_isoline_data = node_v_isoline_data = None
+            self.node_u_isoline_data = self.node_v_isoline_data = None
 
         self.edges = make_quad_edges(resolution_u, resolution_v)
         self.tris, self.tri_colors = calc_surface_data(node.light_vector, surface_colors, resolution_u, resolution_v, self.points)

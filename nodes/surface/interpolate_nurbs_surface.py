@@ -8,7 +8,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, split_by_count
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvGeomdlSurface
-from sverchok.utils.surface.nurbs_algorithms import interpolate_nurbs_surface
+from sverchok.utils.surface.nurbs_algorithms import interpolate_nurbs_surface_piegl
+from sverchok.utils.surface.nurbs_solver import SvNurbsSurfaceControls, interpolate_nurbs_surface
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.utils.math import supported_metrics
 from sverchok.dependencies import geomdl, FreeCAD
@@ -91,6 +92,11 @@ class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             items=implementations,
             update = update_sockets)
 
+    native_legacy : BoolProperty(
+            name = "Legacy algorithm",
+            default = True,
+            update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "USize").prop_name = 'u_size'
@@ -107,6 +113,7 @@ class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         if self.nurbs_implementation == SvNurbsMaths.GEOMDL:
             layout.prop(self, 'centripetal')
         elif self.nurbs_implementation == SvNurbsMaths.NATIVE:
+            layout.prop(self, 'native_legacy')
             layout.prop(self, 'metric')
         else:
             pass
@@ -159,8 +166,11 @@ class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                 surf = SvSolidFaceSurface(surf.toShape()).to_nurbs()
             else: # NATIVE Implementation:
                 vertices_np = np.array(split_by_count(vertices, n_v))
-                vertices_np = np.transpose(vertices_np, axes=(1,0,2))
-                surf = interpolate_nurbs_surface(degree_u, degree_v, vertices_np, metric=self.metric)
+                if self.native_legacy:
+                    vertices_np = np.transpose(vertices_np, axes=(1,0,2))
+                    surf = interpolate_nurbs_surface_piegl(degree_u, degree_v, vertices_np, metric=self.metric)
+                else:
+                    surf = interpolate_nurbs_surface(degree_u, degree_v, vertices_np, metric=self.metric)
 
             points_out.append(surf.get_control_points().tolist())
             knots_u_out.append(surf.get_knotvector_u().tolist())

@@ -1624,7 +1624,9 @@ class SvNurbsDerivativesCalculator:
             control_points = self._control_points
         if weights is None:
             weights = self._weights
-        return SvNurbsDerivativesCalculator(self.degree, control_points, weights, self.basis)
+        result = SvNurbsDerivativesCalculator(self.degree, control_points, weights, self.basis)
+        #result._fractions = self._fractions
+        return result
 
     def fraction(self, order):
         if order not in self._fractions:
