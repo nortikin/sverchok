@@ -21,7 +21,7 @@ from sverchok.utils.surface.core import other_direction, SurfaceDirection
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces, make_planar_surface
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
 from sverchok.utils.curve.nurbs_solver_applications import adjust_curve_points, interpolate_nurbs_curve
-from sverchok.utils.linalg import least_squares_sparse, least_squares_with_constraints, solve_sparse
+from sverchok.utils.linalg import least_squares_dense, least_squares_sparse, least_squares_with_constraints, solve_sparse
 
 class SvNurbsSurfaceGoal:
     pass
@@ -511,6 +511,65 @@ def interpolate_nurbs_surface(degree_u, degree_v, points,
                 problem_types = SvNurbsSurfaceSolver.PROBLEM_WELLDETERMINED,
                 implementation = implementation,
                 logger=logger)
+    return surface
+
+def approximate_nurbs_surface(degree_u, degree_v,
+                              n_cpts_u, n_cpts_v,
+                              points,
+                              weights = None,
+                              exact_mask = None,
+                              metric = 'DISTANCE',
+                              uknots = None, vknots = None,
+                              knotvector_u = None, knotvector_v = None,
+                              implementation = SvNurbsMaths.NATIVE,
+                              logger = None):
+    points = np.asarray(points)
+    n_pts_u, n_pts_v, ndim = points.shape
+
+    if weights is None:
+        weights = np.ones((n_pts_u, n_pts_v))
+    else:
+        weights = np.array(weights)
+        if weights.shape != (n_pts_u, n_pts_v):
+            raise ArgumentError("Shape of weights array does not match shape of points array")
+    if exact_mask is None:
+        exact_mask = np.full((n_pts_u, n_pts_v), False)
+    else:
+        exact_mask = np.array(exact_mask)
+        if exact_mask.shape != (n_pts_u, n_pts_v):
+            raise ArgumentError("Shape of exact_mask array does not match shape of points array")
+
+    if (uknots is None) != (vknots is None):
+        raise ArgumentError("uknots and vknots must be either both provided or both omitted")
+
+    uknots, vknots = calc_uv_knots(points, metric)
+    # if uknots is None:
+    #     knots = np.array([Spline.create_knots(points[:,j], metric=metric) for j in range(n_pts_v)])
+    #     uknots = knots.mean(axis=0)
+    # if vknots is None:
+    #     knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n_pts_u)])
+    #     vknots = knots.mean(axis=0)
+
+    if knotvector_u is None:
+        knotvector_u = sv_knotvector.from_tknots(degree_u, uknots, n_cpts=n_cpts_u)
+    logger.debug("U: %s", uknots)
+    if knotvector_v is None:
+        knotvector_v = sv_knotvector.from_tknots(degree_v, vknots, n_cpts=n_cpts_v)
+    logger.debug("V: %s", vknots)
+
+    solver = SvNurbsSurfaceSolver.from_parameters(degree_u, degree_v, n_cpts_u, n_cpts_v,
+                                    knotvector_u = knotvector_u, knotvector_v = knotvector_v)
+
+    us, vs = np.meshgrid(uknots, vknots, indexing='ij')
+    us = us.flatten()
+    vs = vs.flatten()
+    points_flat = np.reshape(points, (n_pts_u*n_pts_v, ndim))
+    weights_flat = np.reshape(weights, (n_pts_u*n_pts_v,))
+    exact_flat = np.reshape(exact_mask, (n_pts_u*n_pts_v,))
+    for u, v, point, weight, exact in zip(us, vs, points_flat, weights_flat, exact_flat):
+        solver.add_uv_point(u, v, point, weight=weight, exact=exact)
+    problem_type, residue, surface = solver.solve_ex(implementation = implementation, logger = logger)
+    logger.debug("Problem type: %s, residue: %s", problem_type, residue)
     return surface
 
 def unify_surface_curve(surface, direction, curves, accuracy=6):
