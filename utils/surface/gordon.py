@@ -10,7 +10,8 @@ from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveOnSurfac
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve
 from sverchok.utils.curve.splines import SvMonotoneSpline
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.surface.nurbs_algorithms import simple_loft, interpolate_nurbs_surface, prepare_nurbs_birail, SWEEP_GREVILLE
+from sverchok.utils.surface.nurbs_algorithms import prepare_nurbs_birail, SWEEP_GREVILLE#, interpolate_nurbs_surface_piegl
+from sverchok.utils.surface.nurbs_solver import interpolate_nurbs_surface
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.sv_logging import get_logger
 
@@ -185,7 +186,12 @@ def _gordon_surface_impl_new_knotvector(u_curves, v_curves, intersections,
 
     int_degree_u = min(m-1, u_curves_degree)
     int_degree_v = min(n-1, v_curves_degree)
-    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections, **interpolate_kwargs)
+    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v,
+                                             np.transpose(intersections, axes=(1,0,2)),
+                                             **interpolate_kwargs)
+    # interpolated = interpolate_nurbs_surface_piegl(int_degree_u, int_degree_v,
+    #                                          intersections,
+    #                                          **interpolate_kwargs)
     interpolated = interpolated.swap_uv()
 
     lofted_u, lofted_v, interpolated = unify_nurbs_surfaces([lofted_u, lofted_v, interpolated], knotvector_accuracy=knotvector_accuracy)
