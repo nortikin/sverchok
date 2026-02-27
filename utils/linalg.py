@@ -25,7 +25,7 @@ def solve_dense(A, B):
     return np.linalg.solve(A, B)
 
 def least_squares_dense(A, B):
-    x, residues, rank, singval = np.linalg.lstsq(A, B)
+    x, residues, rank, singval = np.linalg.lstsq(A, B, rcond=None)
     return x, residues.sum()
 
 def use_sparse(A):
