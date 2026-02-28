@@ -79,7 +79,7 @@ class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
     native_legacy : BoolProperty(
             name = "Piegl & Tiller algorithm",
-            description = "Use legacy algorithm by Piegl & Tiller. It is slower if SciPy is not available",
+            description = "Use legacy algorithm by Piegl & Tiller. It is usually slower.",
             default = False,
             update = updateNode)
 
