@@ -542,13 +542,12 @@ def approximate_nurbs_surface(degree_u, degree_v,
     if (uknots is None) != (vknots is None):
         raise ArgumentError("uknots and vknots must be either both provided or both omitted")
 
-    uknots, vknots = calc_uv_knots(points, metric)
-    # if uknots is None:
-    #     knots = np.array([Spline.create_knots(points[:,j], metric=metric) for j in range(n_pts_v)])
-    #     uknots = knots.mean(axis=0)
-    # if vknots is None:
-    #     knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n_pts_u)])
-    #     vknots = knots.mean(axis=0)
+    if uknots is None:
+        knots = np.array([Spline.create_knots(points[:,j], metric=metric) for j in range(n_pts_v)])
+        uknots = knots.mean(axis=0)
+    if vknots is None:
+        knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n_pts_u)])
+        vknots = knots.mean(axis=0)
 
     if knotvector_u is None:
         knotvector_u = sv_knotvector.from_tknots(degree_u, uknots, n_cpts=n_cpts_u)
