@@ -9,10 +9,10 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvGeomdlSurface
 from sverchok.utils.surface.nurbs_algorithms import interpolate_nurbs_surface_piegl
-from sverchok.utils.surface.nurbs_solver import SvNurbsSurfaceControls, interpolate_nurbs_surface
+from sverchok.utils.surface.nurbs_solver import interpolate_nurbs_surface
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.utils.math import supported_metrics
-from sverchok.dependencies import geomdl, FreeCAD
+from sverchok.dependencies import geomdl, FreeCAD, scipy
 
 if geomdl is not None:
     from geomdl import fitting
@@ -20,7 +20,6 @@ if geomdl is not None:
 if FreeCAD is not None:
     import Part
     from Part import BSplineSurface
-
 
 class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -78,6 +77,12 @@ class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             default = 'DISTANCE',
             update = updateNode)
 
+    native_legacy : BoolProperty(
+            name = "Piegl & Tiller algorithm",
+            description = "Use legacy algorithm by Piegl & Tiller. It is slower if SciPy is not available",
+            default = False,
+            update = updateNode)
+
     implementations = []
     if geomdl is not None:
         implementations.append(
@@ -91,11 +96,6 @@ class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             name = "Implementation",
             items=implementations,
             update = update_sockets)
-
-    native_legacy : BoolProperty(
-            name = "Legacy algorithm",
-            default = True,
-            update = updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -113,11 +113,16 @@ class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         if self.nurbs_implementation == SvNurbsMaths.GEOMDL:
             layout.prop(self, 'centripetal')
         elif self.nurbs_implementation == SvNurbsMaths.NATIVE:
-            layout.prop(self, 'native_legacy')
             layout.prop(self, 'metric')
         else:
             pass
         layout.prop(self, "input_mode")
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        if self.nurbs_implementation == SvNurbsMaths.NATIVE:
+            if scipy is not None:
+                layout.prop(self, 'native_legacy')
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -165,12 +170,17 @@ class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                 surf.interpolate(vertices_np)
                 surf = SvSolidFaceSurface(surf.toShape()).to_nurbs()
             else: # NATIVE Implementation:
+                # new implementation is usually slower than Piegl & Tiller algorithm when scipy is not available;
+                # when scipy is available, sparse matrices logic makes new algorithm faster.
+                native_legacy = scipy is None or self.native_legacy
                 vertices_np = np.array(split_by_count(vertices, n_v))
-                if self.native_legacy:
+                if native_legacy:
+                    self.debug("Will use fallback Piegl & Tiller algorithm")
                     vertices_np = np.transpose(vertices_np, axes=(1,0,2))
-                    surf = interpolate_nurbs_surface_piegl(degree_u, degree_v, vertices_np, metric=self.metric)
+                    surf = interpolate_nurbs_surface_piegl(degree_u, degree_v, vertices_np, metric=self.metric, logger=self.sv_logger)
                 else:
-                    surf = interpolate_nurbs_surface(degree_u, degree_v, vertices_np, metric=self.metric)
+                    self.debug("SciPy is available, will use direct `nurbs solver' implementation")
+                    surf = interpolate_nurbs_surface(degree_u, degree_v, vertices_np, metric=self.metric, logger=self.sv_logger)
 
             points_out.append(surf.get_control_points().tolist())
             knots_u_out.append(surf.get_knotvector_u().tolist())

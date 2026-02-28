@@ -290,11 +290,8 @@ def interpolate_nurbs_surface_piegl(degree_u, degree_v, points,
     Interpolate NURBS surface from array of points.
 
     This implements an algorithm described in The NURBS Book, p. 9.2.5.
-    The book says that the solution of MxN equations can be replaced with
-    M solutions of N equations. However, this is not exactly true, when
-    metric is not set to 'POINTS'.
     The direct algorithm located in sverchok.utils.surface.nurbs_solver
-    is more precise and even faster if it is possible to use sparse matrices
+    can be even faster if it is possible to use sparse matrices
     from scipy.
     So this method is considered as "legacy" and will be left here a) for
     compatibility reasons; b) for those who can't use scipy but has to do
