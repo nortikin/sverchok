@@ -184,13 +184,15 @@ This node has the following parameters:
   checked, the node will select the smoothing factor automatically. Unchecked
   by default.
   
-* **Method**. Available only for the FreeCAD_ implementation. Approximation algorithm implementation to be used. The available values are:
+* **Method**. Available only for the FreeCAD_ implementation. Approximation
+  algorithm implementation to be used. The available values are:
 
   * **Parametrization**.
   * **Variational smoothing**.
   * **Explicit Knots**.
 
-* **Continuity**. Available only for the FreeCAD_ implementation. Desired internal smoothness of the result curve. The available values are:
+* **Continuity**. Available only for the FreeCAD_ implementation. Desired
+  internal smoothness of the result curve. The available values are:
 
   * **C0** : Only positional continuity.
   * **G1** : Geometric tangent continuity. Available only for the "Parametrization" method.

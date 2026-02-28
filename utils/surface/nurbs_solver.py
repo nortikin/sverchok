@@ -44,7 +44,7 @@ class SvNurbsSurfacePoints(SvNurbsSurfaceGoal):
         self.us.extend(goal.us)
         self.vs.extend(goal.vs)
         self.points.extend(goal.points)
-        self.weights.extend(goal.weigths)
+        self.weights.extend(goal.weights)
 
     def clear(self):
         self.us = []
@@ -404,6 +404,7 @@ class SvNurbsSurfaceSolver:
             problem_type = SvNurbsSurfaceSolver.PROBLEM_WELLDETERMINED
             if problem_type not in problem_types:
                 raise AlgorithmError("The problem is well-determined")
+            logger.debug(f"Solving well-determined system: #equations = {n_equations}, #unknowns = {n_unknowns}")
             try:
                 X = solve_sparse(A, B)
             except np.linalg.LinAlgError as e:
@@ -413,6 +414,7 @@ class SvNurbsSurfaceSolver:
             problem_type = SvNurbsSurfaceSolver.PROBLEM_UNDERDETERMINED
             if problem_type not in problem_types:
                 raise AlgorithmError("The problem is under-determined")
+            logger.debug(f"Solving underdetermined system: #equations = {n_equations}, #unknowns = {n_unknowns}")
             X, residue = least_squares_sparse(A, B)
         else: # n_equations > n_unknowns
             problem_type = SvNurbsSurfaceSolver.PROBLEM_OVERDETERMINED
@@ -460,7 +462,6 @@ def interpolate_nurbs_surface(degree_u, degree_v, points,
     This implementation solves a system of MxN equations directly. In general, this is slower
     than a "shortcut" algorithm described in The NURBS Book. For performance, this method
     tries to use sparse matrices implementation from scipy, when it is available.
-    For arbitrary metric, this provides more "precise" (more according to metric) results.
 
     Args:
         * degree_u, degree_v: surface degree along U and V direction.
@@ -480,6 +481,8 @@ def interpolate_nurbs_surface(degree_u, degree_v, points,
     Returns:
         * SvNurbsSurface instance.
     """
+    if logger is None:
+        logger = get_logger()
     points = np.asarray(points)
     n_pts_u, n_pts_v, ndim = points.shape
 
