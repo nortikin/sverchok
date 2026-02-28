@@ -28,7 +28,6 @@ if FreeCAD is not None:
     import Part
     from Part import BSplineCurve
 
-
 class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Curve
@@ -249,6 +248,12 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
             layout.prop(self, 'metric')
             layout.prop(self, 'has_smoothing')
         elif self.implementation == 'SVERCHOK':
+            row = layout.row(align = True)
+            row.prop(self, 'is_cyclic')
+            if self.is_cyclic:
+                row.prop(self, 'auto_cyclic')
+                if self.auto_cyclic:
+                    layout.prop(self, 'cyclic_threshold')
             layout.prop(self, 'metric')
         else: # FREECAD
             layout.prop(self, 'method')
@@ -287,6 +292,18 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', "ControlPoints")
         self.outputs.new('SvStringsSocket', "Knots")
         self.update_sockets(context)
+
+    def _detect_is_cyclic(self, points):
+        if self.is_cyclic:
+            if self.auto_cyclic: 
+                dv = np.linalg.norm(points[0] - points[-1])
+                is_cyclic = dv <= self.cyclic_threshold
+                self.info("Dv %s, threshold %s => is_cyclic %s", dv, self.cyclic_threshold, is_cyclic)
+            else:
+                is_cyclic = True
+        else:
+            is_cyclic = False
+        return is_cyclic
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -357,15 +374,7 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
                     if not self.has_smoothing:
                         smoothing = None
 
-                    if self.is_cyclic:
-                        if self.auto_cyclic: 
-                            dv = np.linalg.norm(points[0] - points[-1])
-                            is_cyclic = dv <= self.cyclic_threshold
-                            self.info("Dv %s, threshold %s => is_cyclic %s", dv, self.cyclic_threshold, is_cyclic)
-                        else:
-                            is_cyclic = True
-                    else:
-                        is_cyclic = False
+                    is_cyclic = self._detect_is_cyclic(points)
 
                     curve = scipy_nurbs_approximate(points,
                                 weights = weights,
@@ -384,7 +393,8 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
                         weights = repeat_last_for_length(weights, len(vertices))
                     else:
                         weights = None
-                    curve = approximate_nurbs_curve(degree, points_cnt, points, weights=weights, metric=self.metric)
+                    is_cyclic = self._detect_is_cyclic(points)
+                    curve = approximate_nurbs_curve(degree, points_cnt, points, weights=weights, metric=self.metric, is_cyclic=is_cyclic)
                     control_points = curve.get_control_points().tolist()
                     knotvector = curve.get_knotvector().tolist()
                 else: # FREECAD:

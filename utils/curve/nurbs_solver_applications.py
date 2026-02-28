@@ -19,7 +19,7 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolver, CurvatureIntegral
 from sverchok.utils.nurbs_common import SvNurbsMaths, to_homogenous
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots, concatenate_nurbs_curves
-from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveSolver
+from sverchok.utils.curve.nurbs_solver import SvNurbsCurveCotangents, SvNurbsCurvePoints, SvNurbsCurveSelfIntersections, SvNurbsCurveTangents, SvNurbsCurveSolver
 from sverchok.utils.sv_logging import get_logger
 
 def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, tangents = None, logger=None):
@@ -113,7 +113,7 @@ def deform_curve_with_falloff(curve, length_solver, u_bar, falloff_delta, fallof
     result = solver.solve()
     return remove_excessive_knots(result, tolerance)
 
-def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTANCE', implementation=SvNurbsMaths.NATIVE):
+def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTANCE', is_cyclic=False, implementation=SvNurbsMaths.NATIVE):
     """
     Approximate points by a NURBS curve.
 
@@ -138,6 +138,11 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
     solver = SvNurbsCurveSolver(degree=degree)
     solver.set_curve_params(n_cpts, knotvector = knotvector)
     solver.add_goal(goal)
+    if is_cyclic:
+        closed = SvNurbsCurveSelfIntersections.single(0.0, 1.0, weight=1.0, relative_u=True, relative=False,exact=True)
+        solver.add_goal(closed)
+        tangents = SvNurbsCurveCotangents.single(0.0, 1.0, weight=1.0, relative_u=True, relative=False, exact=True)
+        solver.add_goal(tangents)
     return solver.solve(implementation=implementation)
 
 def prepare_solver_for_interpolation(degree, points,
