@@ -855,7 +855,7 @@ class SvNurbsCurveSolver(SvCurve):
                 raise AlgorithmError("The system is overdetermined")
             if self._has_constraints:
                 logger.debug(f"Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns} with constraints")
-                X, residue = least_squares_with_constraints(self.A, self.B, self.exact_A, self.exact_B, logger)
+                X, residue = least_squares_with_constraints(self.A, self.B, self.exact_A, self.exact_B, logger=logger)
             else:
                 logger.debug(f"Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns} without constraints")
                 X, residue = least_squares_sparse(self.A, self.B)
