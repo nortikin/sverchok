@@ -26,59 +26,6 @@ from sverchok.utils.curve.bakery import curve_to_meshdata
 from sverchok.utils.visualize_data_tree import nesting_circles, data_tree_lines, Line, Item
 from sverchok.settings import get_params
 
-def get_batch_for_shader(shader, mode, attrs, indices=None):
-    """Универсальная функция для создания батча"""
-    
-    if bpy.app.version >= (5, 0, 0):
-        # Blender 5.x
-        vert_format = gpu.types.GPUVertFormat()
-        
-        # Добавляем атрибуты на основе переданных данных
-        for attr_name, attr_data in attrs.items():
-            if not attr_data:
-                continue
-            # Определяем размерность и тип
-            elem_len = len(attr_data[0])
-            
-            if elem_len == 2:
-                attr_type = 'VEC2F'
-            elif elem_len == 3:
-                attr_type = 'VEC3F'
-            elif elem_len == 4:
-                attr_type = 'VEC4F'
-            elif elem_len == 1:
-                attr_type = 'FLOAT'
-            else:
-                attr_type = 'VEC4F'  # по умолчанию
-            
-            # Добавляем атрибут со всеми параметрами
-            vert_format.attr_add(
-                id=attr_name,
-                comp_type='F32',
-                len=elem_len,
-                fetch_mode='FLOAT'
-            )
-        
-        vert_buf = gpu.types.GPUVertBuf(vert_format, len=len(attr_data))
-        for attr_name, attr_data in attrs.items():
-            vert_buf.attr_fill(id=attr_name, data=attr_data)
-        
-        if indices is not None:
-            idx_len = len(indices[0])
-            if idx_len == 2:
-                elem_type = 'LINES'
-            else:
-                elem_type = 'TRIS'
-            print(f"Elem {idx_len}, {elem_type}")
-            index_buf = gpu.types.GPUIndexBuf(type=elem_type, seq=indices)
-            return gpu.types.GPUBatch(type=mode, buf=vert_buf, elem=index_buf)
-        else:
-            return gpu.types.GPUBatch(type='POINTS', buf=vert_buf)
-    else:
-        # Blender 4.x
-        from gpu_extras.batch import batch_for_shader
-        return batch_for_shader(shader, mode, attrs, indices=indices)
-
 def mesh_join(vertices, edges, polygons):
     is_py_input = isinstance(vertices[0], (list, tuple))
     meshes = (meshes_py if is_py_input else meshes_np)(vertices, edges, polygons)
