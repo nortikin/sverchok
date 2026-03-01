@@ -53,34 +53,83 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_2d_smooth_color_shader():
+    if bpy.app.version &gt;= (4,2):
+# Вершинный шейдер (без указания layout – они будут заданы через create_info)
+        vertex_src = &#39;&#39;&#39;
+        //in vec2 pos;
+        //in vec4 color;
 
-    smooth_2d_vertex_shader = &#39;&#39;&#39;
-    in vec2 pos;
-    layout(location=1) in vec4 color;
+        //out vec4 a_color;
 
-    uniform mat4 viewProjectionMatrix;
-    uniform float x_offset;
-    uniform float y_offset;
+        void main()
+        {
+            gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0, 1.0);
+            a_color = color;
+        }
+        &#39;&#39;&#39;
 
-    out vec4 a_color;
+        # Фрагментный шейдер
+        fragment_src = &#39;&#39;&#39;
+        //in vec4 a_color;
+        out vec4 FragColor;
 
-    void main()
-    {
-        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
-        a_color = color;
-    }
-    &#39;&#39;&#39;
+        void main()
+        {
+            FragColor = a_color;
+        }
+        &#39;&#39;&#39;
 
-    smooth_2d_fragment_shader = &#39;&#39;&#39;
-    in vec4 a_color;
+        # Создаём объект описания шейдера
+        create_info = gpu.types.GPUShaderCreateInfo()
 
-    out vec4 FragColor;
-    void main()
-    {
-        FragColor = a_color;
-    }
-    &#39;&#39;&#39;
-    return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)</code></pre>
+        # Передаём исходники
+        create_info.vertex_source(vertex_src)
+        create_info.fragment_source(fragment_src)
+
+        # Явно описываем входные атрибуты (layout)
+        create_info.vertex_in(0, &#39;VEC2&#39;, &#39;pos&#39;)
+        create_info.vertex_in(1, &#39;VEC4&#39;, &#39;color&#39;)
+
+        # Определяем интерфейс передачи данных из вершинного во фрагментный шейдер
+        interface = gpu.types.GPUStageInterfaceInfo(&#34;sv_smooth_color_shader&#34;)
+        interface.smooth(&#39;VEC4&#39;, &#39;a_color&#39;)   # интерполируемая переменная
+        create_info.vertex_out(interface)
+
+        # Uniform-переменные теперь описываются как push-константы
+        create_info.push_constant(&#39;MAT4&#39;, &#39;viewProjectionMatrix&#39;)
+        create_info.push_constant(&#39;FLOAT&#39;, &#39;x_offset&#39;)
+        create_info.push_constant(&#39;FLOAT&#39;, &#39;y_offset&#39;)
+
+        # Создаём и возвращаем готовый шейдер
+        return gpu.shader.create_from_info(create_info)
+    else:
+        smooth_2d_vertex_shader = &#39;&#39;&#39;
+        in vec2 pos;
+        layout(location=1) in vec4 color;
+
+        uniform mat4 viewProjectionMatrix;
+        uniform float x_offset;
+        uniform float y_offset;
+
+        out vec4 a_color;
+
+        void main()
+        {
+            gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+            a_color = color;
+        }
+        &#39;&#39;&#39;
+
+        smooth_2d_fragment_shader = &#39;&#39;&#39;
+        in vec4 a_color;
+
+        out vec4 FragColor;
+        void main()
+        {
+            FragColor = a_color;
+        }
+        &#39;&#39;&#39;
+        return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -93,28 +142,63 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_2d_uniform_color_shader():
-    uniform_2d_vertex_shader = &#39;&#39;&#39;
-    in vec2 pos;
-    uniform mat4 viewProjectionMatrix;
-    uniform float x_offset;
-    uniform float y_offset;
+    if bpy.app.version &gt;= (4,2):
+        uniform_2d_vertex_shader = &#39;&#39;&#39;
+        //in vec2 pos;
+        //uniform mat4 viewProjectionMatrix;
+        //uniform float x_offset;
+        //uniform float y_offset;
 
-    void main()
-    {
-       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
-    }
-    &#39;&#39;&#39;
+        void main()
+        {
+        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+        }
+        &#39;&#39;&#39;
 
-    uniform_2d_fragment_shader = &#39;&#39;&#39;
-    uniform vec4 color;
-    out vec4 FragColor;
+        uniform_2d_fragment_shader = &#39;&#39;&#39;
+        //uniform vec4 color;
+        out vec4 FragColor;
 
-    void main()
-    {
-       FragColor = color;
-    }
-    &#39;&#39;&#39;
-    return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)</code></pre>
+        void main()
+        {
+        FragColor = color;
+        }
+        &#39;&#39;&#39;
+        shader_info = gpu.types.GPUShaderCreateInfo()
+        shader_info.vertex_source(uniform_2d_vertex_shader)
+        shader_info.fragment_source(uniform_2d_fragment_shader)
+        
+        # Объявляем uniform переменные как push constants
+        shader_info.push_constant(&#39;MAT4&#39;, &#39;viewProjectionMatrix&#39;)
+        shader_info.push_constant(&#39;FLOAT&#39;, &#39;x_offset&#39;)
+        shader_info.push_constant(&#39;FLOAT&#39;, &#39;y_offset&#39;)
+        shader_info.push_constant(&#39;VEC4&#39;, &#39;color&#39;)
+        shader_info.vertex_in(0, &#39;VEC2&#39;, &#39;pos&#39;)
+        
+        return gpu.shader.create_from_info(shader_info)
+    else:
+        uniform_2d_vertex_shader = &#39;&#39;&#39;
+        in vec2 pos;
+        uniform mat4 viewProjectionMatrix;
+        uniform float x_offset;
+        uniform float y_offset;
+
+        void main()
+        {
+        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+        }
+        &#39;&#39;&#39;
+
+        uniform_2d_fragment_shader = &#39;&#39;&#39;
+        uniform vec4 color;
+        out vec4 FragColor;
+
+        void main()
+        {
+        FragColor = color;
+        }
+        &#39;&#39;&#39;
+        return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
