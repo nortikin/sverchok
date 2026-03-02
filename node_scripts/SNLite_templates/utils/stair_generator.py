@@ -2,6 +2,7 @@
 in stair_width s d=1.5 n=2
 in floor_height s d=[3.3] n=1
 in distance_between_flights s d=0.15 n=2
+in rail s d=1.05 n=2
 in platethick s d=0.15 n=2
 in railthick s d=0.05 n=2
 enum = CONSTLEN SHRINK
@@ -36,7 +37,7 @@ def create_staircase(stair_width, floor_height, distance_between_flights):
     slope_ratio = 2.0
     keep_length = self.custom_enum
     mode = self.custom_enum_2
-    rail = 0.9
+    #rail = 0.9
     
     # Общая ширина конструкции (два марша + зазор)
     total_width = (2 * stair_width) + distance_between_flights
