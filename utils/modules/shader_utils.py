@@ -7,6 +7,7 @@
 
 import numpy as np
 
+import bpy
 import gpu
 from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
@@ -260,56 +261,140 @@ class ShaderLib2D():
         return geom
 
 def get_2d_uniform_color_shader():
-    uniform_2d_vertex_shader = '''
-    in vec2 pos;
-    uniform mat4 viewProjectionMatrix;
-    uniform float x_offset;
-    uniform float y_offset;
+    if bpy.app.version >= (4,2):
+        uniform_2d_vertex_shader = '''
+        //in vec2 pos;
+        //uniform mat4 viewProjectionMatrix;
+        //uniform float x_offset;
+        //uniform float y_offset;
 
-    void main()
-    {
-       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
-    }
-    '''
+        void main()
+        {
+        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+        }
+        '''
 
-    uniform_2d_fragment_shader = '''
-    uniform vec4 color;
-    out vec4 FragColor;
+        uniform_2d_fragment_shader = '''
+        //uniform vec4 color;
+        out vec4 FragColor;
 
-    void main()
-    {
-       FragColor = color;
-    }
-    '''
-    return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)
+        void main()
+        {
+        FragColor = color;
+        }
+        '''
+        shader_info = gpu.types.GPUShaderCreateInfo()
+        shader_info.vertex_source(uniform_2d_vertex_shader)
+        shader_info.fragment_source(uniform_2d_fragment_shader)
+        
+        # Объявляем uniform переменные как push constants
+        shader_info.push_constant('MAT4', 'viewProjectionMatrix')
+        shader_info.push_constant('FLOAT', 'x_offset')
+        shader_info.push_constant('FLOAT', 'y_offset')
+        shader_info.push_constant('VEC4', 'color')
+        shader_info.vertex_in(0, 'VEC2', 'pos')
+        
+        return gpu.shader.create_from_info(shader_info)
+    else:
+        uniform_2d_vertex_shader = '''
+        in vec2 pos;
+        uniform mat4 viewProjectionMatrix;
+        uniform float x_offset;
+        uniform float y_offset;
+
+        void main()
+        {
+        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+        }
+        '''
+
+        uniform_2d_fragment_shader = '''
+        uniform vec4 color;
+        out vec4 FragColor;
+
+        void main()
+        {
+        FragColor = color;
+        }
+        '''
+        return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)
 
 def get_2d_smooth_color_shader():
+    if bpy.app.version >= (4,2):
+# Вершинный шейдер (без указания layout – они будут заданы через create_info)
+        vertex_src = '''
+        //in vec2 pos;
+        //in vec4 color;
 
-    smooth_2d_vertex_shader = '''
-    in vec2 pos;
-    layout(location=1) in vec4 color;
+        //out vec4 a_color;
 
-    uniform mat4 viewProjectionMatrix;
-    uniform float x_offset;
-    uniform float y_offset;
+        void main()
+        {
+            gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0, 1.0);
+            a_color = color;
+        }
+        '''
 
-    out vec4 a_color;
+        # Фрагментный шейдер
+        fragment_src = '''
+        //in vec4 a_color;
+        out vec4 FragColor;
 
-    void main()
-    {
-        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
-        a_color = color;
-    }
-    '''
+        void main()
+        {
+            FragColor = a_color;
+        }
+        '''
 
-    smooth_2d_fragment_shader = '''
-    in vec4 a_color;
+        # Создаём объект описания шейдера
+        create_info = gpu.types.GPUShaderCreateInfo()
 
-    out vec4 FragColor;
-    void main()
-    {
-        FragColor = a_color;
-    }
-    '''
-    return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)
+        # Передаём исходники
+        create_info.vertex_source(vertex_src)
+        create_info.fragment_source(fragment_src)
+
+        # Явно описываем входные атрибуты (layout)
+        create_info.vertex_in(0, 'VEC2', 'pos')
+        create_info.vertex_in(1, 'VEC4', 'color')
+
+        # Определяем интерфейс передачи данных из вершинного во фрагментный шейдер
+        interface = gpu.types.GPUStageInterfaceInfo("sv_smooth_color_shader")
+        interface.smooth('VEC4', 'a_color')   # интерполируемая переменная
+        create_info.vertex_out(interface)
+
+        # Uniform-переменные теперь описываются как push-константы
+        create_info.push_constant('MAT4', 'viewProjectionMatrix')
+        create_info.push_constant('FLOAT', 'x_offset')
+        create_info.push_constant('FLOAT', 'y_offset')
+
+        # Создаём и возвращаем готовый шейдер
+        return gpu.shader.create_from_info(create_info)
+    else:
+        smooth_2d_vertex_shader = '''
+        in vec2 pos;
+        layout(location=1) in vec4 color;
+
+        uniform mat4 viewProjectionMatrix;
+        uniform float x_offset;
+        uniform float y_offset;
+
+        out vec4 a_color;
+
+        void main()
+        {
+            gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+            a_color = color;
+        }
+        '''
+
+        smooth_2d_fragment_shader = '''
+        in vec4 a_color;
+
+        out vec4 FragColor;
+        void main()
+        {
+            FragColor = a_color;
+        }
+        '''
+        return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)
 
