@@ -146,9 +146,16 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
     #print(typ)
 
     if typ in ["polyline"]:
-        #print('Полилиния попалась ========', entity.dxftype)
+        print('Полилиния попалась ========', entity.dxftype)
+        #print(dir(entity.dxf))
+        print(entity.is_closed)
         vers.append([[i*scale for i in vert.xyz] for vert in entity.points()])
-        pols.append([[i for i in range(len(vers[-1]))]])
+        if entity.is_closed != 0:
+            pols.append([[i for i in range(len(vers[-1]))]])
+            #print(pols)
+        else:
+            edges.append([[i,i+1] for i in range(len(vers[-1])-1)])
+            #print(edges)
 
     if typ in ["3dface", "solid", "polymesh", "polyface"]:
         print('3Д попалась ========', entity.dxftype)
@@ -170,6 +177,7 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         TT.append([[mes]])
 
     if typ == 'lwpolyline':
+        print('lwpolyline попалась ========', entity.dxftype)
         edges_ = []
         vers_ = []
         points = list(entity.get_points())
