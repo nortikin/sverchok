@@ -238,9 +238,16 @@ el.replaceWith(d);
     #print(typ)
 
     if typ in [&#34;polyline&#34;]:
-        #print(&#39;Полилиния попалась ========&#39;, entity.dxftype)
+        print(&#39;Полилиния попалась ========&#39;, entity.dxftype)
+        #print(dir(entity.dxf))
+        print(entity.is_closed)
         vers.append([[i*scale for i in vert.xyz] for vert in entity.points()])
-        pols.append([[i for i in range(len(vers[-1]))]])
+        if entity.is_closed != 0:
+            pols.append([[i for i in range(len(vers[-1]))]])
+            #print(pols)
+        else:
+            edges.append([[i,i+1] for i in range(len(vers[-1])-1)])
+            #print(edges)
 
     if typ in [&#34;3dface&#34;, &#34;solid&#34;, &#34;polymesh&#34;, &#34;polyface&#34;]:
         print(&#39;3Д попалась ========&#39;, entity.dxftype)
@@ -262,6 +269,7 @@ el.replaceWith(d);
         TT.append([[mes]])
 
     if typ == &#39;lwpolyline&#39;:
+        print(&#39;lwpolyline попалась ========&#39;, entity.dxftype)
         edges_ = []
         vers_ = []
         points = list(entity.get_points())
