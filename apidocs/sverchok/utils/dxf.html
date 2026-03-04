@@ -53,6 +53,7 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def angular_dimensions_draw(ang,scal,ldims,msp,t_scal):
+    &#39;&#39;&#39; 2026 todo &#39;&#39;&#39;
     from mathutils import Vector
     #print(&#39;ANGULAR DIMS!!&#39;)
     for a1,a2,a3 in zip(*ang):
@@ -72,7 +73,7 @@ el.replaceWith(d);
                             dimstyle=&#39;EZDXF1&#39;,dxfattribs={&#34;layer&#34;: ldims})
             #dim.render()</code></pre>
 </details>
-<div class="desc"></div>
+<div class="desc"><p>2026 todo</p></div>
 </dd>
 <dt id="sverchok.utils.dxf.arc_points"><code class="name flex">
 <span>def <span class="ident">arc_points</span></span>(<span>start, end, bulge, num_points=3, resolution=50)</span>
@@ -153,7 +154,8 @@ el.replaceWith(d);
 <pre><code class="python">def dimensions_draw(points,scal,ldims,msp):
     #print(&#39;LINEAR DIMS!!&#39;)
     for points_ in points:
-        vers,col = points_.vers, points_.color
+        vers = [[i*scal for i in ver] for ver in points_.vers]
+        col = points_.color
         lw,lt = points_.lineweight, points_.linetype
         v1,v2 = vers
         t_scal = points_.text_scale
@@ -161,7 +163,7 @@ el.replaceWith(d);
 
         dim = msp.add_aligned_dim(p1=v1,p2=v2,  #p1=[i*scal for i in v1[:2]], p2=[i*scal for i in v2[:2]],\
             distance=0.5, dimstyle=&#39;EZDXF1&#39;,dxfattribs={&#34;layer&#34;: ldims},
-            override={&#34;dimtxt&#34;: t_scal}
+            override={&#34;dimtxt&#34;: t_scal} #,&#34;dimfac&#34;:1}
         )
         #dim.render()</code></pre>
 </details>
@@ -204,6 +206,12 @@ el.replaceWith(d);
                 ran = [i/lifehack for i in range(lifehack*start,lifehack*end,max(1,int(lifehack*(end-start)/resolution_arc)))]
         elif typ == &#39;circle&#39;:
             ran = [i/lifehack for i in range(0,lifehack*360,max(1,int((lifehack*360)/resolution)))]
+            #print(&#39;Circle consists of: &#39;,dir(entity),dir(entity.dxf))
+            #print(&#39;Circle consists of: &#39;,center,entity.dxf.center.xyz,entity.dxf.radius)
+            cur = SvCircle(center=np.array(center), normal=np.array((0.,0.,1.)), vectorx=np.array((1.,0.,0.)), radius=entity.dxf.radius/2)
+            cur.u_bounds = (0., math.pi*2)
+            curves_out.append(cur)
+            knots_out.append([])
         elif typ == &#39;ellipse&#39;:
             start  = entity.dxf.start_param
             end    = entity.dxf.end_param
@@ -446,7 +454,8 @@ el.replaceWith(d);
     #print(&#39;EDGES!!&#39;)
 
     for points_ in points:
-        vers,col = points_.vers, points_.color
+        vers = [[i*scal for i in ver] for ver in points_.vers]
+        col = points_.color
         lw,lt = points_.lineweight, points_.linetype
         v1,v2 = vers
         color_int = points_.color_int
@@ -472,14 +481,15 @@ el.replaceWith(d);
     DIM_TEXT_STYLE = ezdxf.options.default_dimension_text_style
     # Create a new DXF document.
     doc = ezdxf.new(dxfversion=&#34;R2010&#34;,setup=True)
-    doc.units = units.M
+    doc.units = units.MM
     # 25 строка
-    doc.header[&#39;$INSUNITS&#39;] = units.M
+    doc.header[&#39;$INSUNITS&#39;] = units.MM
     #create a new dimstyle
     glo = scal  #scal*t_scal
     hai = t_scal   #scal/glo
-    formt = f&#39;EZ_M_{glo}_H{hai}_MM&#39;
-    &#39;&#39;&#39;
+    formt = f&#39;EZ_M_{int(glo*100)}_H{int(hai*2.5*10)}_MM&#39;
+    print(&#39;Format_dimentions&#39;,formt)
+    &#39;&#39;&#39;HELP
     Example: `fmt` = &#39;EZ_M_100_H25_CM&#39;
     1. &#39;&lt;EZ&gt;_M_100_H25_CM&#39;: arbitrary prefix
     2. &#39;EZ_&lt;M&gt;_100_H25_CM&#39;: defines the drawing unit, valid values are &#39;M&#39;, &#39;DM&#39;, &#39;CM&#39;, &#39;MM&#39;
@@ -490,24 +500,29 @@ el.replaceWith(d);
     setup_dimstyle(doc,
                    name=&#39;EZDXF1&#39;,
                    fmt=formt,
-                   blk=ezdxf.ARROWS.architectural_tick,#closed_filled,
+                   blk=ezdxf.ARROWS.architectural_tick, #closed_filled,
                    style=DIM_TEXT_STYLE,
                    )
+    &#39;&#39;&#39;HELP
+    doc: DXF drawing
+    fmt: format string
+    style: text style for measurement
+    blk: block name of arrow head, ``None`` for oblique stroke
+    name: dimension style name, if name is &#39;&#39;, `fmt` string is used as name
+    {3: &#39;dimpost&#39;, 4: &#39;dimapost&#39;, 5: &#39;dimblk&#39;, 6: &#39;dimblk1&#39;, 7: &#39;dimblk2&#39;, 40: &#39;dimscale&#39;, 41: &#39;dimasz&#39;, 42: &#39;dimexo&#39;, 43: &#39;dimdli&#39;, 44: &#39;dimexe&#39;, 45: &#39;dimrnd&#39;, 46: &#39;dimdle&#39;, 47: &#39;dimtp&#39;, 48: &#39;dimtm&#39;, 49: &#39;dimfxl&#39;, 50: &#39;dimjogang&#39;, 140: &#39;dimtxt&#39;, 141: &#39;dimcen&#39;, 142: &#39;dimtsz&#39;, 143: &#39;dimaltf&#39;, 144: &#39;dimlfac&#39;, 145: &#39;dimtvp&#39;, 146: &#39;dimtfac&#39;, 147: &#39;dimgap&#39;, 148: &#39;dimaltrnd&#39;, 69: &#39;dimtfill&#39;, 70: &#39;dimtfillclr&#39;, 71: &#39;dimtol&#39;, 72: &#39;dimlim&#39;, 73: &#39;dimtih&#39;, 74: &#39;dimtoh&#39;, 75: &#39;dimse1&#39;, 76: &#39;dimse2&#39;, 77: &#39;dimtad&#39;, 78: &#39;dimzin&#39;, 79: &#39;dimazin&#39;, 90: &#39;dimarcsym&#39;, 170: &#39;dimalt&#39;, 171: &#39;dimaltd&#39;, 172: &#39;dimtofl&#39;, 173: &#39;dimsah&#39;, 174: &#39;dimtix&#39;, 175: &#39;dimsoxd&#39;, 176: &#39;dimclrd&#39;, 177: &#39;dimclre&#39;, 178: &#39;dimclrt&#39;, 179: &#39;dimadec&#39;, 270: &#39;dimunit&#39;, 271: &#39;dimdec&#39;, 272: &#39;dimtdec&#39;, 273: &#39;dimaltu&#39;, 274: &#39;dimalttd&#39;, 275: &#39;dimaunit&#39;, 276: &#39;dimfrac&#39;, 277: &#39;dimlunit&#39;, 278: &#39;dimdsep&#39;, 279: &#39;dimtmove&#39;, 280: &#39;dimjust&#39;, 281: &#39;dimsd1&#39;, 282: &#39;dimsd2&#39;, 283: &#39;dimtolj&#39;, 284: &#39;dimtzin&#39;, 285: &#39;dimaltz&#39;, 286: &#39;dimalttz&#39;, 287: &#39;dimfit&#39;, 288: &#39;dimupt&#39;, 289: &#39;dimatfit&#39;, 290: &#39;dimfxlon&#39;, 340: &#39;dimtxsty_handle&#39;, 342: &#39;dimblk_handle&#39;, 343: &#39;dimblk1_handle&#39;, 344: &#39;dimblk2_handle&#39;, 341: &#39;dimldrblk_handle&#39;, 345: &#39;dimltype_handle&#39;, 346: &#39;dimltex1_handle&#39;, 347: &#39;dimltex2_handle&#39;, 371: &#39;dimlwd&#39;, 372: &#39;dimlwe&#39;}
+    &#39;&#39;&#39;
 
-    dimstyle = doc.dimstyles.get(&#39;EZDXF1&#39;)
+    #dimstyle = doc.dimstyles.get(&#39;EZDXF1&#39;)
     #keep dim line with text
     #dimstyle.dxf.dimtmove=0
     # multyleader
-    mleaderstyle = doc.mleader_styles.new(&#34;EZDXF2&#34;) #duplicate_entry(&#34;Standard&#34;,&#34;EZDXF2&#34;)
-    mleaderstyle.set_mtext_style(&#34;OpenSans&#34;)
-    mleaderstyle.dxf.char_height = t_scal*scal  # set the default char height of MTEXT
+    #mleaderstyle = doc.mleader_styles.new(&#34;EZDXF2&#34;) #duplicate_entry(&#34;Standard&#34;,&#34;EZDXF2&#34;)
+    #mleaderstyle.set_mtext_style(&#34;OpenSans&#34;)
+    #mleaderstyle.dxf.char_height = t_scal*scal  # set the default char height of MTEXT
     # Create new table entries (layers, linetypes, text styles, ...).
     ltext = &#34;SVERCHOK_TEXT&#34;
     lvers = &#34;SVERCHOK_VERS&#34;
     ledgs = &#34;SVERCHOK_EDGES&#34;
-    #ledg1 = &#34;SVERCHOK_EDGES0.1&#34;
-    #ledg3 = &#34;SVERCHOK_EDGES0.3&#34;
-    #ledg6 = &#34;SVERCHOK_EDGES0.6&#34;
     lpols = &#34;SVERCHOK_POLYGONS&#34;
     ldims = &#34;SVERCHOK_DIMENTIONS&#34;
     llidr = &#34;SVERCHOK_LEADERS&#34;
@@ -516,9 +531,6 @@ el.replaceWith(d);
     doc.layers.add(ltext, color=colors.MAGENTA)
     doc.layers.add(lvers, color=colors.CYAN)
     doc.layers.add(ledgs, color=colors.YELLOW)
-    #doc.layers.add(ledg1, color=colors.BLUE, lineweight=9)
-    #doc.layers.add(ledg3, color=colors.GRAY, lineweight=30)
-    #doc.layers.add(ledg6, color=colors.LIGHT_GRAY, lineweight=60)
     doc.layers.add(lpols, color=colors.WHITE)
     doc.layers.add(ldims, color=colors.GREEN)
     doc.layers.add(llidr, color=colors.CYAN)
@@ -550,23 +562,18 @@ el.replaceWith(d);
             dimensions_draw(data,scal,ldims,msp)
 
     &#39;&#39;&#39;
-    if e:
-        edges_draw(e,v,scal,ledgs,msp)#,ledg1,ledg3,ledg6)
-    elif p and d1:
+    if p and d1:
         polygondance_draw(p,v,d1,d2,scal,lpols,msp,APPID)
-    elif p:
-        polygons_draw(p,v,d1,d2,scal,lpols,msp)
     elif v:
         vertices_draw(v,scal,lvers,msp)
     if tv and tt:
         text_draw(tv,tt,scal,ltext,msp,t_scal)
-    if dim1 and dim2:
-        dimensions_draw(dim1,dim2,scal,ldims,msp,t_scal)
     if angular:
         angular_dimensions_draw(angular,scal,ldims,msp,t_scal)
     if vl and ll:
         leader_draw(ll,vl,scal,llidr,msp)
     &#39;&#39;&#39;
+
     # Save the DXF document.
     doc.saveas(fp[0][0])</code></pre>
 </details>
@@ -598,6 +605,10 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def hatches_draw(points, scal, lhatch, msp):
+    &#39;&#39;&#39; Hatch with amountt of default hatch types
+        Seems like bug, hatches sometimes 
+        opened in zcad and librecad 
+        and others with unwanted arcs &#39;&#39;&#39;
     for points_ in points:
         vers,col,patt,sc = points_.vers, points_.color,points_.pattern,points_.scale
         color_int = points_.color_int
@@ -611,12 +622,15 @@ el.replaceWith(d);
         ht.set_pattern_fill(patt, scale=sc)
         ht.transparency = 0.5
         path = ht.paths.add_polyline_path(
-            vers,
+            [[i*scal for i in ver] for ver in vers],
             is_closed=True,
             flags=ezdxf.const.BOUNDARY_PATH_EXTERNAL,
         )</code></pre>
 </details>
-<div class="desc"></div>
+<div class="desc"><p>Hatch with amountt of default hatch types
+Seems like bug, hatches sometimes
+opened in zcad and librecad
+and others with unwanted arcs</p></div>
 </dd>
 <dt id="sverchok.utils.dxf.leader_draw"><code class="name flex">
 <span>def <span class="ident">leader_draw</span></span>(<span>leader, vleader, scal, llidr, msp)</span>
@@ -627,6 +641,7 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def leader_draw(leader,vleader,scal,llidr,msp):
+    &#39;&#39;&#39; 2026 todo &#39;&#39;&#39;
     from ezdxf.math import Vec2
     #from ezdxf.entities import mleader
     #print(&#39;LEADERS!!&#39;)
@@ -646,7 +661,7 @@ el.replaceWith(d);
             #Vec2.from_deg_angle(angle, 14),
             #dxfattribs={&#34;layer&#34;: llidr}</code></pre>
 </details>
-<div class="desc"></div>
+<div class="desc"><p>2026 todo</p></div>
 </dd>
 <dt id="sverchok.utils.dxf.polygondance_draw"><code class="name flex">
 <span>def <span class="ident">polygondance_draw</span></span>(<span>p, v, d1, d2, scal, lpols, msp, APPID)</span>
@@ -659,7 +674,8 @@ el.replaceWith(d);
 <pre><code class="python">def polygondance_draw(p,v,d1,d2,scal,lpols,msp,APPID):
     &#39;&#39;&#39; draw polygons if there is metadata d1 d2
         needed triangulation for mesh represantation
-        with metadata vectorized for triangles &#39;&#39;&#39;
+        with metadata vectorized for triangles 
+        2026 not in use, want not to use &#39;&#39;&#39;
 
     from sverchok.data_structure import match_long_repeat as mlr
     from mathutils import Vector
@@ -689,7 +705,8 @@ el.replaceWith(d);
 </details>
 <div class="desc"><p>draw polygons if there is metadata d1 d2
 needed triangulation for mesh represantation
-with metadata vectorized for triangles</p></div>
+with metadata vectorized for triangles
+2026 not in use, want not to use</p></div>
 </dd>
 <dt id="sverchok.utils.dxf.polygons_draw"><code class="name flex">
 <span>def <span class="ident">polygons_draw</span></span>(<span>points, scal, lpols, msp)</span>
@@ -700,13 +717,15 @@ with metadata vectorized for triangles</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def polygons_draw(points, scal, lpols, msp):#(p,v,d1,d2,scal,lpols,msp):
-    &#39;&#39;&#39; draw simple polyline polygon &#39;&#39;&#39;
+    &#39;&#39;&#39; draw simple polyline polygon or polyface
+        todo 2026 polymesh &#39;&#39;&#39;
     #print(&#39;POLS!!&#39;)
     for points_ in points:
         vers,col = points_.vers, points_.color
         lw,lt = points_.lineweight, points_.linetype
         color_int = points_.color_int
         objecttype = points_.objecttype
+        vers = [[i*scal for i in ver] for ver in points_.vers]
         if color_int &lt; 1:
             col = tuple([int(i*255) for i in col[:3]])
             #print(&#39;!!!&#39;,col)
@@ -714,20 +733,18 @@ with metadata vectorized for triangles</p></div>
             if objecttype == &#39;FACE&#39;:
                 #print(&#39;face start&#39;)
                 pf = msp.add_polyface()
-                pf.append_face(points_.vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col})
+                pf.append_face(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col})
                 #print(&#39;face finnish&#39;)
             else:
-                pl = msp.add_polyline3d(points_.vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col}, close=True)
+                pl = msp.add_polyline3d(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col}, close=True)
         else:
             if objecttype == &#39;FACE&#39;:
                 #print(&#39;face start&#39;)
                 pf = msp.add_polyface()
-                pf.append_face(points_.vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})
+                pf.append_face(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})
                 #print(&#39;face finnish&#39;)
             else:
-                pl = msp.add_polyline3d(points_.vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int}, close=True)
-        #pf = msp.add_polyface()
-        #pf.append_face(points, dxfattribs={&#34;layer&#34;: lpols})
+                pl = msp.add_polyline3d(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int}, close=True)
         #pm = msp.add_polymesh()
         #pm.append_vertices(points, dxfattribs={&#34;layer&#34;: lpols})
     &#39;&#39;&#39;
@@ -744,7 +761,8 @@ with metadata vectorized for triangles</p></div>
     (1042, 10),
     &#39;&#39;&#39;</code></pre>
 </details>
-<div class="desc"><p>draw simple polyline polygon</p></div>
+<div class="desc"><p>draw simple polyline polygon or polyface
+todo 2026 polymesh</p></div>
 </dd>
 <dt id="sverchok.utils.dxf.text_draw"><code class="name flex">
 <span>def <span class="ident">text_draw</span></span>(<span>tv, tt, scal, ltext, msp, t_scal)</span>
@@ -755,7 +773,7 @@ with metadata vectorized for triangles</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def text_draw(tv,tt,scal,ltext,msp,t_scal):
-    &#39;&#39;&#39; draw text &#39;&#39;&#39;
+    &#39;&#39;&#39; draw text todo in 2026 &#39;&#39;&#39;
     from ezdxf.enums import TextEntityAlignment
     #print(&#39;TEXT!!&#39;)
     for obtv, obtt in zip(tv,tt):
@@ -768,31 +786,7 @@ with metadata vectorized for triangles</p></div>
                 &#34;style&#34;: &#34;OpenSans&#34;
             }).set_placement(tver, align=TextEntityAlignment.CENTER)</code></pre>
 </details>
-<div class="desc"><p>draw text</p></div>
-</dd>
-<dt id="sverchok.utils.dxf.triangl"><code class="name flex">
-<span>def <span class="ident">triangl</span></span>(<span>vertices, edges, faces)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def triangl(vertices,edges,faces):
-    &#39;&#39;&#39; WIP
-        triangulation for mesh represantation
-        with metadata vectorized for triangles &#39;&#39;&#39;
-    from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-    import bmesh
-    bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
-    res = bmesh.ops.triangulate(bm, faces=bm.faces, quad_method=&#34;BEAUTY&#34;, ngon_method=&#34;BEAUTY&#34;)
-    new_vertices, new_edges, new_faces = pydata_from_bmesh(res)
-    bm.free()
-    return  new_vertices, new_edges, new_faces</code></pre>
-</details>
-<div class="desc"><p>WIP
-triangulation for mesh represantation
-with metadata vectorized for triangles</p></div>
+<div class="desc"><p>draw text todo in 2026</p></div>
 </dd>
 <dt id="sverchok.utils.dxf.vertices_draw"><code class="name flex">
 <span>def <span class="ident">vertices_draw</span></span>(<span>v, scal, lvers, msp)</span>
@@ -844,7 +838,6 @@ with metadata vectorized for triangles</p></div>
 <li><code><a title="sverchok.utils.dxf.polygondance_draw" href="#sverchok.utils.dxf.polygondance_draw">polygondance_draw</a></code></li>
 <li><code><a title="sverchok.utils.dxf.polygons_draw" href="#sverchok.utils.dxf.polygons_draw">polygons_draw</a></code></li>
 <li><code><a title="sverchok.utils.dxf.text_draw" href="#sverchok.utils.dxf.text_draw">text_draw</a></code></li>
-<li><code><a title="sverchok.utils.dxf.triangl" href="#sverchok.utils.dxf.triangl">triangl</a></code></li>
 <li><code><a title="sverchok.utils.dxf.vertices_draw" href="#sverchok.utils.dxf.vertices_draw">vertices_draw</a></code></li>
 </ul>
 </li>
