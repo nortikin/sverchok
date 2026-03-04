@@ -207,8 +207,8 @@ el.replaceWith(d);
         elif typ == &#39;circle&#39;:
             ran = [i/lifehack for i in range(0,lifehack*360,max(1,int((lifehack*360)/resolution)))]
             #print(&#39;Circle consists of: &#39;,dir(entity),dir(entity.dxf))
-            #print(&#39;Circle consists of: &#39;,center,entity.dxf.center.xyz,entity.dxf.radius)
-            cur = SvCircle(center=np.array(center), normal=np.array((0.,0.,1.)), vectorx=np.array((1.,0.,0.)), radius=entity.dxf.radius/2)
+            print(&#39;DXF Circle consists of: &#39;,center,entity.dxf.center.xyz,entity.dxf.radius)
+            cur = SvCircle(center=np.array(center), normal=np.array((0.,0.,1.)), vectorx=np.array((1.,0.,0.)), radius=np.float64(entity.dxf.radius)).to_nurbs()
             cur.u_bounds = (0., math.pi*2)
             curves_out.append(cur)
             knots_out.append([])
@@ -257,7 +257,17 @@ el.replaceWith(d);
             edges.append([[i,i+1] for i in range(len(vers[-1])-1)])
             #print(edges)
 
-    if typ in [&#34;3dface&#34;, &#34;solid&#34;, &#34;polymesh&#34;, &#34;polyface&#34;]:
+    if typ in [&#34;3dface&#34;]:
+        print(&#39;3D лицо попалось ========&#39;, entity.dxftype)
+        #print(entity.dxf.vtx0)
+        #print(entity.dxf.vtx3)
+        vs = entity.dxf.vtx0,entity.dxf.vtx1,entity.dxf.vtx2,entity.dxf.vtx3 if entity.dxf.vtx3 \
+            else entity.dxf.vtx0,entity.dxf.vtx1,entity.dxf.vtx2
+        vers.append([[i*scale for i in v] for v in vs])
+        pols.append([[i,i+1,i+2] for i in range(0,len(vers[-1]),3)])
+        #print(pols)
+
+    if typ in [&#34;solid&#34;, &#34;polymesh&#34;, &#34;polyface&#34;]:
         print(&#39;3Д попалась ========&#39;, entity.dxftype)
 
     if typ in [&#39;dimension&#39;,&#34;arc-dimension&#34;, &#34;diameter_dimension&#34;,&#34;radial_dimension&#34;]:
@@ -735,16 +745,25 @@ with metadata vectorized for triangles
                 pf = msp.add_polyface()
                 pf.append_face(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col})
                 #print(&#39;face finnish&#39;)
-            else:
+            elif objecttype == &#39;LINE&#39;:
                 pl = msp.add_polyline3d(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col}, close=True)
+            elif objecttype == &#39;FACE3D&#39;:
+                for i in range(1, len(vers)-1):
+                    pf3 = msp.add_3dface([vers[0],vers[i],vers[i+1]], dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col})
+                #ezdxf.entities.Face3d
         else:
             if objecttype == &#39;FACE&#39;:
                 #print(&#39;face start&#39;)
                 pf = msp.add_polyface()
                 pf.append_face(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})
                 #print(&#39;face finnish&#39;)
-            else:
+            elif objecttype == &#39;LINE&#39;:
                 pl = msp.add_polyline3d(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int}, close=True)
+            elif objecttype == &#39;FACE3D&#39;:
+                for i in range(1, len(vers)-1):
+                    pf3 = msp.add_3dface([vers[0],vers[i],vers[i+1]], dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})
+                #ezdxf.entities.Face3d
+
         #pm = msp.add_polymesh()
         #pm.append_vertices(points, dxfattribs={&#34;layer&#34;: lpols})
     &#39;&#39;&#39;
