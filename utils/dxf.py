@@ -18,6 +18,7 @@ from sverchok.utils.curve import SvCircle
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from mathutils import Vector as V
+import numpy as np
 
 ######################
 ######################
@@ -114,8 +115,10 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         elif typ == 'circle':
             ran = [i/lifehack for i in range(0,lifehack*360,max(1,int((lifehack*360)/resolution)))]
             #print('Circle consists of: ',dir(entity),dir(entity.dxf))
-            #print('Circle consists of: ',center,entity.dxf.center.xyz,entity.dxf.radius)
-            curves_out.append(SvCircle(center=center, normal=(0,0,1), vectorx=(1,0,0), radius=entity.dxf.radius))
+            print('DXF Circle consists of: ',center,entity.dxf.center.xyz,entity.dxf.radius)
+            cur = SvCircle(center=np.array(center), normal=np.array((0.,0.,1.)), vectorx=np.array((1.,0.,0.)), radius=np.float64(entity.dxf.radius)).to_nurbs()
+            cur.u_bounds = (0., math.pi*2)
+            curves_out.append(cur)
             knots_out.append([])
         elif typ == 'ellipse':
             start  = entity.dxf.start_param
@@ -162,7 +165,17 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
             edges.append([[i,i+1] for i in range(len(vers[-1])-1)])
             #print(edges)
 
-    if typ in ["3dface", "solid", "polymesh", "polyface"]:
+    if typ in ["3dface"]:
+        print('3D лицо попалось ========', entity.dxftype)
+        #print(entity.dxf.vtx0)
+        #print(entity.dxf.vtx3)
+        vs = entity.dxf.vtx0,entity.dxf.vtx1,entity.dxf.vtx2,entity.dxf.vtx3 if entity.dxf.vtx3 \
+            else entity.dxf.vtx0,entity.dxf.vtx1,entity.dxf.vtx2
+        vers.append([[i*scale for i in v] for v in vs])
+        pols.append([[i,i+1,i+2] for i in range(0,len(vers[-1]),3)])
+        #print(pols)
+
+    if typ in ["solid", "polymesh", "polyface"]:
         print('3Д попалась ========', entity.dxftype)
 
     if typ in ['dimension',"arc-dimension", "diameter_dimension","radial_dimension"]:
@@ -496,6 +509,7 @@ linetypes = [
 objecttypes3d = [
     ("FACE", "FACE", "3D polyface", 1),
     ("LINE", "LINE", "3D polyline", 2),
+    ("FACE3D", "FACE3D", "3D face", 3),
 ]
 
 ######################
@@ -558,16 +572,25 @@ def polygons_draw(points, scal, lpols, msp):#(p,v,d1,d2,scal,lpols,msp):
                 pf = msp.add_polyface()
                 pf.append_face(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col})
                 #print('face finnish')
-            else:
+            elif objecttype == 'LINE':
                 pl = msp.add_polyline3d(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col}, close=True)
+            elif objecttype == 'FACE3D':
+                for i in range(1, len(vers)-1):
+                    pf3 = msp.add_3dface([vers[0],vers[i],vers[i+1]], dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col})
+                #ezdxf.entities.Face3d
         else:
             if objecttype == 'FACE':
                 #print('face start')
                 pf = msp.add_polyface()
                 pf.append_face(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int})
                 #print('face finnish')
-            else:
+            elif objecttype == 'LINE':
                 pl = msp.add_polyline3d(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int}, close=True)
+            elif objecttype == 'FACE3D':
+                for i in range(1, len(vers)-1):
+                    pf3 = msp.add_3dface([vers[0],vers[i],vers[i+1]], dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int})
+                #ezdxf.entities.Face3d
+
         #pm = msp.add_polymesh()
         #pm.append_vertices(points, dxfattribs={"layer": lpols})
     '''
@@ -824,3 +847,4 @@ def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
 
     # Save the DXF document.
     doc.saveas(fp[0][0])
+>>>>>>> 6772f7770a0358e7e0651b2a830c521e141989fe
