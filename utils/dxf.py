@@ -847,4 +847,3 @@ def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
 
     # Save the DXF document.
     doc.saveas(fp[0][0])
->>>>>>> 6772f7770a0358e7e0651b2a830c521e141989fe
