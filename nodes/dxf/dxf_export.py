@@ -29,7 +29,7 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
         update=updateNode
     )
     
-    scale: bpy.props.FloatProperty(default=1.0,name='scale')
+    scale: bpy.props.FloatProperty(default=1000.0, min=1.0, max=200000.0, name='scale')
 
     text_scale: bpy.props.FloatProperty(default=1.0,name='text_scale')
 

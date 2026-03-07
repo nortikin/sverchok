@@ -182,17 +182,17 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         #print(entity.dxftype,entity.dxf.dimtype, dir(entity.dxf))
         edges.append([[0,1]])
         if entity.dxf.dimtype == 32:
-            mes = round(entity.dxf.defpoint2.distance(entity.dxf.defpoint3),5)
+            mes = round(entity.dxf.defpoint2.distance(entity.dxf.defpoint3),2)
             vers.append([[i*scale for i in entity.dxf.defpoint2.xyz],[i*scale for i in entity.dxf.defpoint3.xyz]])
         else:
-            mes = round(entity.dxf.defpoint.distance(entity.dxf.defpoint4),5)
+            mes = round(entity.dxf.defpoint.distance(entity.dxf.defpoint4),2)
             vers.append([[i*scale for i in entity.dxf.defpoint.xyz],[i*scale for i in entity.dxf.defpoint4.xyz]])
         try:
-            mp = entity.dxf.text_midpoint.xyz
+            mp = [i*scale for i in entity.dxf.text_midpoint.xyz]
         except:
             mp = list((V(vers[-1][1]) + (V(vers[-1][0])-V(vers[-1][1]))/2).to_tuple())
         VT.append([[i*scale for i in mp]])
-        TT.append([[mes]])
+        TT.append([mes])
 
     if typ == 'lwpolyline':
         print('lwpolyline попалась ========', entity.dxftype)
@@ -681,7 +681,7 @@ def dimensions_draw(points,scal,ldims,msp):
         #print('LINEAR DIMS!!', t_scal)
 
         dim = msp.add_aligned_dim(p1=v1,p2=v2,  #p1=[i*scal for i in v1[:2]], p2=[i*scal for i in v2[:2]],\
-            distance=0.5, dimstyle='EZDXF1',dxfattribs={"layer": ldims},
+            distance=0.5, dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims},
             override={"dimtxt": t_scal} #,"dimfac":1}
         )
         #dim.render()
@@ -699,12 +699,12 @@ def angular_dimensions_draw(ang,scal,ldims,msp,t_scal):
                 ang3_ = [i*scal for i in ang3]
                 dim = msp.add_angular_dim_3p(base=bas, center=ang2_, p1=ang1_, p2=ang3_, \
                             override={"dimtad": 1,"dimtxt": t_scal}, \
-                            dimstyle='EZDXF1',dxfattribs={"layer": ldims})
+                            dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims})
             else:
                 bas = list(Vector(ang1)+((Vector(ang3)-Vector(ang1))/2))
                 dim = msp.add_angular_dim_3p(base=bas, center=ang2, p1=ang1, p2=ang3, \
                             override={"dimtad": 1,"dimtxt": t_scal}, \
-                            dimstyle='EZDXF1',dxfattribs={"layer": ldims})
+                            dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims})
             #dim.render()
 
 def get_values(diction):
@@ -746,8 +746,18 @@ def angl(d1,d2):
     return 90-degrees(res)
 '''
 
+def clean_dimstyles_except_mine(doc, my_style_name):
+    """
+    Удаляет все размерные стили, кроме указанного.
+    """
+    all_styles = list(doc.dimstyles)
+    for style in all_styles:
+        if style.dxf.name != my_style_name:
+            doc.dimstyles.remove(style.dxf.name)
+    #doc.dimstyles.set_active_style_name(my_style_name)
+
 # export main definition
-def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
+def export(fp,dxf,scal=1000.0,t_scal=1.0,info=''):
 
     DIM_TEXT_STYLE = ezdxf.options.default_dimension_text_style
     # Create a new DXF document.
@@ -758,8 +768,17 @@ def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
     #create a new dimstyle
     glo = scal  #scal*t_scal
     hai = t_scal   #scal/glo
-    formt = f'EZ_M_{int(glo*100)}_H{int(hai*2.5*10)}_MM'
-    print('Format_dimentions',formt)
+    if 0.0 < scal < 5.0:
+        scl = 'M'
+    elif 5.0 < scal < 50.0:
+        scl = 'DM'
+    elif 50.0 < scal < 500.0:
+        scl = 'CM'
+    elif 500.0 < scal:
+        scl = 'MM'
+    formt = f'EZ_{scl}_{int(100)}_H{int(hai*2.5*10)}_MM'
+    dimstylename = 'Sverchok_dimstyle'
+    #print('Format_dimentions',formt)
     '''HELP
     Example: `fmt` = 'EZ_M_100_H25_CM'
     1. '<EZ>_M_100_H25_CM': arbitrary prefix
@@ -769,18 +788,43 @@ def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
     5. 'EZ_M_100_H25_<CM>': defines the units for the measurement text, valid values are 'M', 'DM', 'CM', 'MM'
     '''
     setup_dimstyle(doc,
-                   name='EZDXF1',
+                   name=dimstylename,
                    fmt=formt,
                    blk=ezdxf.ARROWS.architectural_tick, #closed_filled,
                    style=DIM_TEXT_STYLE,
                    )
+    #my_style = doc.dimstyles[dimstylename]
+    #my_style.dxf.dimtxt = 3.0      # Высота текста
+    #my_style.dxf.dimasz = 2.5      # Размер стрелки
+    #my_style.dxf.dimexe = 1.0      # Вынос за размерную линию
+    #my_style.dxf.dimexo = 1.75     # Отступ от объекта
+    #my_style.dxf.dimgap = 0.625    # Зазор вокруг текста
+    #my_style.dxf.dimtad = 1        # Текст над размерной линией
+    #my_style.dxf.dimunit = 2       # Метрические единицы
+    #my_style.dxf.dimdec = 0        # 0 десятичных знака
+    #my_style.dxf.dimclrd = 3       # Зеленый цвет размерной линии
+    #my_style.dxf.dimclre = 3       # Зеленый цвет выносных линий
+    #my_style.dxf.dimclrt = 1       # Красный цвет текста
+    clean_dimstyles_except_mine(doc, dimstylename)
     '''HELP
     doc: DXF drawing
     fmt: format string
     style: text style for measurement
     blk: block name of arrow head, ``None`` for oblique stroke
     name: dimension style name, if name is '', `fmt` string is used as name
-    {3: 'dimpost', 4: 'dimapost', 5: 'dimblk', 6: 'dimblk1', 7: 'dimblk2', 40: 'dimscale', 41: 'dimasz', 42: 'dimexo', 43: 'dimdli', 44: 'dimexe', 45: 'dimrnd', 46: 'dimdle', 47: 'dimtp', 48: 'dimtm', 49: 'dimfxl', 50: 'dimjogang', 140: 'dimtxt', 141: 'dimcen', 142: 'dimtsz', 143: 'dimaltf', 144: 'dimlfac', 145: 'dimtvp', 146: 'dimtfac', 147: 'dimgap', 148: 'dimaltrnd', 69: 'dimtfill', 70: 'dimtfillclr', 71: 'dimtol', 72: 'dimlim', 73: 'dimtih', 74: 'dimtoh', 75: 'dimse1', 76: 'dimse2', 77: 'dimtad', 78: 'dimzin', 79: 'dimazin', 90: 'dimarcsym', 170: 'dimalt', 171: 'dimaltd', 172: 'dimtofl', 173: 'dimsah', 174: 'dimtix', 175: 'dimsoxd', 176: 'dimclrd', 177: 'dimclre', 178: 'dimclrt', 179: 'dimadec', 270: 'dimunit', 271: 'dimdec', 272: 'dimtdec', 273: 'dimaltu', 274: 'dimalttd', 275: 'dimaunit', 276: 'dimfrac', 277: 'dimlunit', 278: 'dimdsep', 279: 'dimtmove', 280: 'dimjust', 281: 'dimsd1', 282: 'dimsd2', 283: 'dimtolj', 284: 'dimtzin', 285: 'dimaltz', 286: 'dimalttz', 287: 'dimfit', 288: 'dimupt', 289: 'dimatfit', 290: 'dimfxlon', 340: 'dimtxsty_handle', 342: 'dimblk_handle', 343: 'dimblk1_handle', 344: 'dimblk2_handle', 341: 'dimldrblk_handle', 345: 'dimltype_handle', 346: 'dimltex1_handle', 347: 'dimltex2_handle', 371: 'dimlwd', 372: 'dimlwe'}
+    {3: 'dimpost', 4: 'dimapost', 5: 'dimblk', 6: 'dimblk1', 7: 'dimblk2', 40: 'dimscale', 41: 'dimasz', 
+    42: 'dimexo', 43: 'dimdli', 44: 'dimexe', 45: 'dimrnd', 46: 'dimdle', 47: 'dimtp', 48: 'dimtm', 
+    49: 'dimfxl', 50: 'dimjogang', 140: 'dimtxt', 141: 'dimcen', 142: 'dimtsz', 143: 'dimaltf', 144: 'dimlfac', 
+    145: 'dimtvp', 146: 'dimtfac', 147: 'dimgap', 148: 'dimaltrnd', 69: 'dimtfill', 70: 'dimtfillclr', 
+    71: 'dimtol', 72: 'dimlim', 73: 'dimtih', 74: 'dimtoh', 75: 'dimse1', 76: 'dimse2', 77: 'dimtad', 
+    78: 'dimzin', 79: 'dimazin', 90: 'dimarcsym', 170: 'dimalt', 171: 'dimaltd', 172: 'dimtofl', 173: 'dimsah', 
+    174: 'dimtix', 175: 'dimsoxd', 176: 'dimclrd', 177: 'dimclre', 178: 'dimclrt', 179: 'dimadec', 270: 'dimunit', 
+    271: 'dimdec', 272: 'dimtdec', 273: 'dimaltu', 274: 'dimalttd', 275: 'dimaunit', 276: 'dimfrac', 
+    277: 'dimlunit', 278: 'dimdsep', 279: 'dimtmove', 280: 'dimjust', 281: 'dimsd1', 282: 'dimsd2', 
+    283: 'dimtolj', 284: 'dimtzin', 285: 'dimaltz', 286: 'dimalttz', 287: 'dimfit', 288: 'dimupt', 
+    289: 'dimatfit', 290: 'dimfxlon', 340: 'dimtxsty_handle', 342: 'dimblk_handle', 343: 'dimblk1_handle', 
+    344: 'dimblk2_handle', 341: 'dimldrblk_handle', 345: 'dimltype_handle', 346: 'dimltex1_handle', 
+    347: 'dimltex2_handle', 371: 'dimlwd', 372: 'dimlwe'}
     '''
 
     #dimstyle = doc.dimstyles.get('EZDXF1')
