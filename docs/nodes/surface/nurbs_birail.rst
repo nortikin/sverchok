@@ -35,22 +35,58 @@ in XOY plane and disable "Auto rotate" flag.
 The node works by placing several copies of profile curve along the path
 curves. If several profile curves are used, then the node interpolates between
 them and places these interpolated curves along the path curve. Then one of
-two algorithms can be used:
+algorithms can be used:
 
 * **Lofting** (legacy). A loft surface is generated from profile curves placed
   along path curves.
 * **Gordon**. Gordon surface is generated from path curves and profile curves.
   See documentation of "Surface from NURBS curves net" node for more information.
+* **Tensor Product**. This algorithm is based on the idea that control points
+  of the birail surface can be calculated as tensor product of path curve
+  control points and profile curve control points. Surface weights are
+  calculated from weights of profile curve, by using interpolation between
+  corresponding weights of path curves.
 
-Loft algorithm works faster with the same number of profile curve copies
-(**VSections** parameter). But, in order for resulting surface to touch path
-curves precisely enough, you usually will have to use high enough value of
-VSections parameter. Gordon algorithm produces the surface which always touches
-path curves precisely, even with small number of V sections. But Gordon
-algorithm is slower, and it produces surfaces with more control points. Also,
-Gordon algorithm does not support (yet) rational curves. One can either use
-Loft algorithm for such curves, or pass curves through "Curve to NURBS" node to
-make them non-rational.
+Different algorithms have different strengths:
+
++-----------------+-----------------+-----------------+-----------------+
+| Characteristic  | Lofting         | Gordon Surface  | Tensor Product  |
++=================+=================+=================+=================+
+| Follows path    | Approximately   | Exactly         | Exactly         |
+| curves          |                 |                 |                 |
++-----------------+-----------------+-----------------+-----------------+
+| Support for     | Yes             | No              | Yes             |
+| rational curves |                 |                 |                 |
++-----------------+-----------------+-----------------+-----------------+
+| Allows to       | Yes             | Yes             | No              |
+| control         |                 |                 |                 |
+| parametrization |                 |                 |                 |
++-----------------+-----------------+-----------------+-----------------+
+| Number of       | M * VSections   | May be much     | M * N           |
+| generated       |                 | more, depends on|                 |
+| control points  |                 | parmetrization  |                 |
++-----------------+-----------------+-----------------+-----------------+
+| Performance     | Relatively fast | Relatively slow | Relatively fast |
++-----------------+-----------------+-----------------+-----------------+
+
+Loft algorithm works faster compared to Gordon Surface algorithm with the same
+number of profile curve copies (**VSections** parameter). But, in order for
+resulting surface to touch path curves precisely enough, you usually will have
+to use high enough value of VSections parameter.
+
+Gordon algorithm produces the surface which always touches path curves
+precisely, even with small number of V sections. But Gordon algorithm is
+slower, and it produces surfaces with more control points. Also, Gordon
+algorithm does not support (yet) rational curves. One can either use Loft
+algorithm for such curves, or pass curves through "Curve to NURBS" node to make
+them non-rational.
+
+Tensor Product algorithm is about as fast as Lofting algorithm, and does not
+produce so many control points as Gordon algorithm. With Tensor Product
+algorithm, the surface touches path curves precisely, and this algorithm
+supports rational curves. But it does not allow one to control parametrization
+of resulting surface; so if your paths have very different parametrization, you
+have to either change parametrization somehow, or use another algorithm.
 
 This node can be compared with "NURBS Sweep" node. That node uses only one path
 curve.
@@ -80,12 +116,14 @@ This node has the following inputs:
 * **Profile**. Profile curve or curves. The node can work with one profile
   curve per path curve, or list of profile curves per path curve. This input is
   mandatory.
-* **VSections**. Number of copies of profile curve (or interpolated curves, if
-  several profile curves are used) the node will generate for lofting. This
-  will be equal to number of control points of the resulting surface along it's
-  V direction. Bigger values usually correspond to better precision of sweeping
-  procedure; but too high numbers can cause weird results or be too slow. The
-  default value is 10.
+* **VSections**. This input is available only when **Algorithm** parameter is
+  set to **Lofting** or **Gordon Surface**, and **Key V Values** parameter is
+  not set to **Greville abscissae**. Number of copies of profile curve (or
+  interpolated curves, if several profile curves are used) the node will
+  generate for lofting. This will be equal to number of control points of the
+  resulting surface along it's V direction. Bigger values usually correspond to
+  better precision of sweeping procedure; but too high numbers can cause weird
+  results or be too slow. The default value is 10.
 * **V1**, **V2**. Values of V parameter (i.e. path curve's T parameter), at which
   profile curves must be placed for lofting. This input is available and
   mandatory if **Profile V values** parameter is set to **Explicit**. The node
@@ -93,11 +131,12 @@ This node has the following inputs:
   values fed in V1 and V2 must be in an ascending order, e.g. ``(0.0, 0.333,
   0.667, 1.0)``. For one profile curve, these inputs have no meaning. V1 input
   is for the first path, and V2 input is for the second path.
-* **DegreeV**. Degree of NURBS curves used to interpolate in V direction. As
-  most of Sverchok numeric inputs, this input can process data with nesting
-  level up to 2 (list of lists of numbers). Degree of 1 will make a "linear
-  loft", i.e. a surface composed from several ruled surfaces; higher degrees
-  will create more smooth surfaces. The default value is 3. 
+* **DegreeV**. This input is available only when the **Algorithm** parameter is
+  set to **Lofting**. Degree of NURBS curves used to interpolate in V
+  direction. As most of Sverchok numeric inputs, this input can process data
+  with nesting level up to 2 (list of lists of numbers). Degree of 1 will make
+  a "linear loft", i.e. a surface composed from several ruled surfaces; higher
+  degrees will create more smooth surfaces. The default value is 3. 
 * **Length Resolution**. This input is available only when **Profile V values**
   parameter is set to **Path length uniform**. Defines the resolution to be
   used for calculation of path curves length. The default value is 50.
@@ -126,8 +165,17 @@ This node has the following parameters:
   implementation is better tested.  The default option is **Geomdl**, when it
   is available; otherwise, built-in implementation is used.
 
-* **Algorithm**. The available algorithms are **Loft** and **Gordon Surface**.
-  See description above. The default one is **Gordon Surface**.
+* **Algorithm**. The available algorithms are:
+    
+    * **Lofting**. Place several copies of profile curve along path curves, and
+      create a lofting surface between them.
+    * **Gordon Surface**. Place several copies of profile curve along path
+      curves, and use these copies together with path curves to generate a
+      Gordon surface.
+    * **Tensor Product**. Place several copies of profile curve between
+      corresponding pairs of control points, and use all control points as
+      control points of resulting surface. This is the default option.
+
 * **Scale all axes**. If not checked, profile curves will be scaled along one
   axis only, in order to fill the space between two paths. If checked, profile
   curves will be scaled along all axes uniformly. Checked by default.
@@ -155,8 +203,10 @@ This node has the following parameters:
 
    The default option is **Path Normal Average**.
 
-* **Profile V values**. Controls how copies of profile curve(s) are distributed
-  along path curves. The following options are available:
+* **Profile V values**. This parameter is available only when the **Algorithm**
+  parameter is set to **Lofting** or **Gordon Surface**. Controls how copies of
+  profile curve(s) are distributed along path curves. The following options are
+  available:
 
   * **Path parameter uniform**. Distribute profile curves uniformly according
     to path curve parametrization. This is the fastest and default option.
@@ -176,6 +226,10 @@ This node has the following parameters:
     placed. Caveats about Gordon algorithm (see previous option) apply to
     this option as well. This option has no meaning if there is only one
     profile curve.
+  * **Greville abscissae**. Place copies of profile curve at Greville points of
+    path curves. This usually gives good enough results, and with this option
+    the user does not have to guess a good number of required profile curve
+    copies.
 
 * **U Knots**. This parameter is available in the N panel only. This defines
   how the node will modify input curves in order to make them use exactly the
@@ -213,6 +267,36 @@ This node has the following parameters:
    * Centripetal (square root of Euclidean distance).
 
    The default option is Euclidean.
+
+* **Reparametrization algorithm**. This parameter is only avaialble in the N
+  panel, and only when **Algorithm** parameter is set to **Gordon Surface**.
+  The available options are:
+
+  * **Picewise Linear**. This is the default option.
+  * **Monotone Spline**. This option is only available when SciPy library is
+    available.
+
+  See discussion of reparametrization above in the **Functionality** section of
+  "Surface from Curves Net" node documentation.
+
+* **SamplesU**, **SamplesV**. These parameters are available in the N panel
+  only, and only when the **Algorithm** parameter is set to **Gordon Surface**,
+  and the **Reparametrization algorithm** parameter is set to **Monotone
+  Spline**. Number of samples along U and V surface directions, which are used
+  for interpolation during the reparametrization procedure. Bigger values
+  usually generate more precise surfaces; however, have in mind that the
+  surface will have at least **SamplesU * SamplesV** control points (usually
+  more). The default value is 50 for both parameters.
+* **Remove knots**. This parameter is available in the N panel only, and only
+  when the **Algorithm** parameter is set to **Gordon Surface**. If this
+  parameter is checked, then after reparametrization the node will try to
+  remove excessively generated knots from base curves. This reduces the number
+  of generates control points, but reduces the precision. Unchecked by default.
+* **Reparametrization accuracy**. This parameter is available in the N panel
+  only, and only when the **Algorithm** parameter is set to **Gordon Surface**,
+  and the **Remove knots** parameter is checked. Accuracy (number of decimal
+  digits ager decimal point) of excessive knots removing procedure. The default
+  value is 4.
 
 Outputs
 -------
@@ -284,4 +368,12 @@ iso-curves go much more straight:
 
 .. image:: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37
   :target: https://github.com/user-attachments/assets/81d2b638-9946-4d1f-802f-cd9795b2be37
+
+Tensor Product algorithm. Here iso-curves are "skewed" again, as for Lofting
+algorithm; but this time, the number of profile curve copies is calculated
+automatically (based on number of path curves control points), and the surface
+follows path curves exactly:
+
+.. image:: https://github.com/user-attachments/assets/51ce0963-d694-45ef-97c1-f1ccb3dfbf03
+  :target: https://github.com/user-attachments/assets/51ce0963-d694-45ef-97c1-f1ccb3dfbf03
 

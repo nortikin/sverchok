@@ -75,6 +75,7 @@
         - SvBiArcNode
         - SvPolyArcNode
         - ---
+        - SvMonotoneSplineNode
         - SvPointCurveNode
     - SvExCurveFormulaNode
     - SvExCubicSplineNode
@@ -151,6 +152,7 @@
     - SvLengthRebuildCurveNode
     - SvExCrossCurvePlaneNode
     - SvExCrossCurveSurfaceNode
+    - SvCrossCurveSphereNode
     - ---
     - SvAdaptivePlotCurveNode
     - SvExEvalCurveNode
@@ -169,7 +171,7 @@
         - SvExApproxNurbsSurfaceNodeMK2
         - SvExInterpolateNurbsSurfaceNodeMK2
         - SvNurbsLoftNode
-        - SvNurbsSweepNode
+        - SvNurbsSweepMk2Node
         - SvNurbsBirailMk2Node
         - SvGordonSurfaceNode
         - SvDeconstructSurfaceNode
@@ -182,6 +184,11 @@
         - ---
         - SvSurfaceElevateDegreeNode
         - SvSurfaceReduceDegreeNode
+        - ---
+        - SvAdjustNurbsSurfaceNode
+        - SvSnapSurfacesNode
+        - ---
+        - SvConcatSurfacesNode
     - ---
     - SvRevolutionSurfaceNodeMK2
     - SvExTaperSweepSurfaceNode
@@ -460,7 +467,7 @@
         - SvSubdivideNodeMK2
         - SvSubdivideToQuadsNode
         - SvUnsubdivideNode
-        - SvOffsetLineNode
+        - SvOffsetLineNodeMK2
         - SvContourNode
         - ---
         - SvQuadriFlowNode
@@ -508,6 +515,8 @@
     - ---
     - SvStraightSkeleton2DOffset
     - SvStraightSkeleton2DExtrude
+    - ---
+    - SvSpyrrowNesterNode
 
 - ---
 
@@ -604,7 +613,7 @@
     - SvSwitchNodeMK2
     - SvInputSwitchNodeMOD
     - SvNeuroElman1LNode
-    - SvCustomSwitcher
+    - SvCustomSwitcherMK2
     - SvRangeSwitchNode
     - ---
     - SvLoopInNode
@@ -720,18 +729,18 @@
     - SvGTextNode
     - ---
     - SvStringsToolsNode
-    - SvSimpleTextNode
+    - SvSimpleTextNodeMK2
 
 - Scene:
     - icon_name: SCENE_DATA
     - extra_menu: ConnectionPartialMenu
-    - SvGetObjectsDataMK4
+    - SvGetObjectsDataMK5
     - SvObjInLite
     - SvCurveInputNode
     - SvFCurveInNodeMK1
     - SvCollectionPicker
-    - SvBezierInNodeMK2
-    - SvExNurbsInNodeMK2
+    - SvBezierInNodeMK3
+    - SvExNurbsInNodeMK3
     - SvParticlesMK2Node
     - ---
     - SvSelectionGrabberLite
@@ -754,6 +763,7 @@
     - SvReadFCStdSketchNode
     - SvFCStdSpreadsheetNode
     - SvApproxSubdtoNurbsNode
+    - SvGlbExportNode
 
 - Layout:
     - icon_name: NODETREE
@@ -860,6 +870,7 @@
     - extra_menu: ConnectionPartialMenu
     - SvDxfImportNode
     - SvDxfExportNode
+    - SvDxfBlocksNode
     - SvDxfLinDimsNode
     - SvDxfHatchNode
     - SvDxfLinesNode

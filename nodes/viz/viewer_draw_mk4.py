@@ -1080,7 +1080,11 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
             if not total_verts:
                 raise LookupError("Empty vertices list")
             edges = inputs['Edges'].sv_get(deepcopy=False, default=[[]])
+            if len(edges)==0:
+                edges=[[]]
             polygons = inputs['Polygons'].sv_get(deepcopy=False, default=[[]])
+            if len(polygons)==0:
+                polygons=[[]]
             matrix = inputs['Matrix'].sv_get(deepcopy=False, default=[[]])
             vector_color = inputs['Vector Color'].sv_get(deepcopy=False, default=[[self.vector_color]])
             edge_color = inputs['Edge Color'].sv_get(deepcopy=False, default=[[self.edge_color]])
@@ -1099,8 +1103,9 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
             config.polygons = polygons
             config.matrix = matrix
             config.face_culling_set = self.face_culling_set
-            if not inputs['Edges'].is_linked and self.display_edges:
-                config.edges = polygons_to_edges_np(polygons, unique_edges=True)
+            if not inputs['Edges'].is_linked and self.display_edges or (not edges or len(edges)==1 and len(edges[0])==0):
+                if polygons and (not edges or len(edges)==1 and len(edges[0])==0):
+                    config.edges = polygons_to_edges_np(polygons, unique_edges=True)
 
             geom = generate_mesh_geom(config, vecs)
 

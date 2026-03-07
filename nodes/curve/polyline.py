@@ -4,6 +4,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
+from sverchok.utils.math import supported_metrics, xyz_metrics
 from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve import SvSplineCurve
@@ -31,7 +32,7 @@ class SvPolylineNode(SverchCustomTreeNode, bpy.types.Node):
 
     metric: EnumProperty(name='Metric',
         description = "Knot mode",
-        default="DISTANCE", items=metrics,
+        default="DISTANCE", items = supported_metrics + xyz_metrics,
         update=updateNode)
 
     concat : BoolProperty(

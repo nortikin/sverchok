@@ -8,7 +8,7 @@
             -73.0,
             -30.0
           ],
-          "height": 1535.0,
+          "height": 1560.0,
           "width": 2844.0,
           "color": [
             0.6079999804496765,
@@ -25,7 +25,7 @@
             -237.67138671875,
             -634.9827270507812
           ],
-          "height": 768.0000610351562,
+          "height": 793.0000610351562,
           "width": 804.0,
           "label": "Section matrices",
           "parent": {
@@ -89,7 +89,7 @@
             -67.2955322265625,
             -225.92526245117188
           ],
-          "height": 704.0,
+          "height": 729.0,
           "width": 876.0,
           "label": "outputs",
           "parent": {
@@ -248,7 +248,7 @@
         "attributes": {
           "location": [
             101.58833312988281,
-            -721.2350463867188
+            -721.2350769042969
           ],
           "parent": {
             "type": "NODE",
@@ -414,6 +414,12 @@
             -352.16082763671875,
             -1010.8576354980469
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.004"
@@ -454,6 +460,12 @@
             -1561.3917236328125,
             -1373.86572265625
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame"
@@ -579,6 +591,12 @@
             -1759.6986083984375,
             -1259.194580078125
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame"
@@ -630,6 +648,12 @@
             -2260.0000610351562,
             -740.0
           ],
+          "color": [
+            0.9200000166893005,
+            0.9200000166893005,
+            0.9200000166893005
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.003"
@@ -686,7 +710,7 @@
         "attributes": {
           "location": [
             -1749.5318603515625,
-            -1146.6239929199219
+            -1146.6240234375
           ],
           "width": 127.0509033203125,
           "parent": {
@@ -718,7 +742,7 @@
         "attributes": {
           "location": [
             323.5228271484375,
-            -670.5251159667969
+            -670.525146484375
           ],
           "color": [
             0.6284880042076111,
@@ -903,8 +927,8 @@
       "VD Experimental.003": {
         "attributes": {
           "location": [
-            -1356.6991577148438,
-            -615.2628479003906
+            -1356.6992797851562,
+            -615.2628173828125
           ],
           "color": [
             0.6284880042076111,
@@ -932,7 +956,6 @@
             1.0
           ],
           "random_seed": 2,
-          "selected_draw_mode": "facet",
           "u_dash_size": 0.30000001192092896,
           "u_gap_size": 0.20000000298023224,
           "point_size": 2
@@ -1355,7 +1378,7 @@
         "attributes": {
           "location": [
             -120.21002960205078,
-            -689.4416809082031
+            -689.441650390625
           ],
           "parent": {
             "type": "NODE",
@@ -1411,8 +1434,8 @@
       "Reroute": {
         "attributes": {
           "location": [
-            -1410.6434936523438,
-            -715.9472961425781
+            -1410.6436157226562,
+            -715.947265625
           ],
           "width": 16.0,
           "parent": {
@@ -1425,7 +1448,7 @@
       "Reroute.001": {
         "attributes": {
           "location": [
-            -1418.4696655273438,
+            -1418.4697875976562,
             -815.9043579101562
           ],
           "width": 16.0,
@@ -1714,7 +1737,6 @@
           }
         },
         "properties": {
-          "n_id": "-9119609101607395338",
           "text": "2014-11-29, 2019-11-29 upd, 2025-02-07 upd. By Nikitron\n. Waffel layout represents power of simple math\nthat makes possible manufacturing from 3D"
         },
         "inputs": {
@@ -1876,6 +1898,12 @@
             -1380.0
           ],
           "width": 260.0,
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.005"
@@ -1948,6 +1976,12 @@
             1620.0,
             -600.0
           ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -2035,6 +2069,12 @@
             1180.0,
             -740.0
           ],
+          "color": [
+            0.9200000166893005,
+            0.9200000166893005,
+            0.9200000166893005
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -2132,6 +2172,12 @@
             1620.0,
             -960.0
           ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -2219,6 +2265,12 @@
             1180.0,
             -1120.0
           ],
+          "color": [
+            0.9200000166893005,
+            0.9200000166893005,
+            0.9200000166893005
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -2287,6 +2339,12 @@
             1840.0,
             -717.37841796875
           ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -2371,7 +2429,7 @@
             0.0,
             0.0
           ],
-          "height": 885.0,
+          "height": 1005.0,
           "width": 1540.0
         },
         "bl_idname": "NodeFrame"
@@ -2382,6 +2440,12 @@
             1820.0,
             -1040.0
           ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -2426,40 +2490,11 @@
         },
         "bl_idname": "SvIDXViewer28"
       },
-      "Simple Text": {
-        "attributes": {
-          "location": [
-            1620.0,
-            -1260.0
-          ],
-          "color": [
-            0.5,
-            0.5,
-            1.0
-          ],
-          "use_custom_color": true,
-          "parent": {
-            "type": "NODE",
-            "value": "Frame.006"
-          }
-        },
-        "outputs": {
-          "Text": {
-            "bl_idname": "SvTextSocket",
-            "name": "Text",
-            "properties": {
-              "custom_draw": "draw_output",
-              "default_property": "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
-            }
-          }
-        },
-        "bl_idname": "SvSimpleTextNode"
-      },
       "Strings Tools": {
         "attributes": {
           "location": [
             1620.0,
-            -1340.0
+            -1500.0
           ],
           "hide": true,
           "color": [
@@ -2525,6 +2560,12 @@
             2080.0,
             -700.0
           ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -2576,6 +2617,12 @@
             2240.0,
             -1000.0
           ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -2898,6 +2945,44 @@
           }
         },
         "bl_idname": "SvPols2EdgsNodeMk2"
+      },
+      "Simple Text.001": {
+        "attributes": {
+          "location": [
+            1620.0,
+            -1380.0
+          ],
+          "color": [
+            1.0,
+            0.8993440270423889,
+            0.9742509722709656
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "text_prop": "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z",
+          "draw_3dpanel": true
+        },
+        "inputs": {
+          "Text": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text",
+            "properties": {
+              "prop_name": "text_prop"
+            }
+          }
+        },
+        "outputs": {
+          "Text": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text"
+          }
+        },
+        "bl_idname": "SvSimpleTextNodeMK2"
       }
     },
     "links": [
@@ -3310,7 +3395,7 @@
         "to_socket": "text"
       },
       {
-        "from_node": "Simple Text",
+        "from_node": "Simple Text.001",
         "from_socket": "Text",
         "to_node": "Strings Tools",
         "to_socket": "Text"

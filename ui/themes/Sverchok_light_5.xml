@@ -220,9 +220,9 @@
         </wcol_curve>
         <wcol_menu>
           <ThemeWidgetColors
-            outline="#c2af90ff"
+            outline="#c2b092ff"
             outline_sel="#3d3d3dff"
-            inner="#c8b597a7"
+            inner="#c8b59778"
             inner_sel="#5c88cfff"
             item="#000000ff"
             text="#303030"
@@ -538,7 +538,7 @@
         bone_locked_weight="#ff000080"
         before_current_frame="#f22e23"
         after_current_frame="#78f244"
-        bundle_solid="#c8c8c8"
+        bundle_solid="#d5d5d5"
         camera_path="#000000"
         camera_passepartout="#000000"
         skin_root="#b44d4d"
@@ -551,10 +551,10 @@
           <ThemeSpaceGradient
             title="#afdae9"
             text="#000000"
-            text_hi="#7d7d7d"
+            text_hi="#ffffff"
             header="#afdae9ff"
             header_text="#000000"
-            header_text_hi="#565656"
+            header_text_hi="#494949"
             >
             <gradients>
               <ThemeGradientColors
@@ -611,7 +611,7 @@
     </file_browser>
     <nla_editor>
       <ThemeNLAEditor
-        grid="#5e5e5e"
+        grid="#bbe9ff"
         active_action="#cc701a66"
         active_action_unset="#9987614d"
         strips="#0c0a0a"
@@ -629,11 +629,11 @@
         >
         <space>
           <ThemeSpaceGeneric
-            back="#6b6b6b"
+            back="#9fc3d6"
             title="#000000"
             text="#272727"
             text_hi="#ffffff"
-            header="#adadadff"
+            header="#c6d8c3ff"
             header_text="#000000"
             header_text_hi="#ffffff"
             >
@@ -648,7 +648,9 @@
         keyframe_border_selected="#000000ff"
         keyframe_scale_factor="1"
         summary="#d3660066"
-        interpolation_line="#94e575cc"
+        anim_interpolation_linear="#94e575cc"
+        anim_interpolation_constant="#e59c7bcc"
+        anim_interpolation_other="#5dbabeb3"
         simulated_frames="#721e65ff"
         >
         <space>

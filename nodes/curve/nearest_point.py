@@ -1,12 +1,13 @@
 
+import numpy as np
 import bpy
 from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.manifolds import nearest_point_on_curve
-
+from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.manifolds import nearest_point_on_curve, nearest_point_on_nurbs_curve
 
 class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -23,13 +24,19 @@ class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
         name = "Init Resolution",
         description = "Initial number of segments to subdivide curve in, for the first step of algorithm. The higher values will lead to more precise initial guess, so the precise algorithm will be faster",
         default = 50,
-        min = 3,
+        min = 1,
         update = updateNode)
 
     precise : BoolProperty(
         name = "Precise",
         description = "If not checked, then the precise calculation step will not be executed, and the node will just output the nearest point out of points generated at the first step - so it will be “roughly nearest point”",
         default = True,
+        update = updateNode)
+
+    # Not shown, as currently this implementation is too slow
+    use_nurbs : BoolProperty(
+        name = "Use NURBS algorithm",
+        default = False,
         update = updateNode)
 
     solvers = [
@@ -51,6 +58,7 @@ class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'method')
+        #layout.prop(self, 'use_nurbs')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
@@ -75,14 +83,34 @@ class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
         for curves, src_points_i in zip_long_repeat(curves_s, src_point_s):
             for curve, src_points in zip_long_repeat(curves, src_points_i):
 
-                results = nearest_point_on_curve(src_points, curve,
-                            samples=self.samples, precise=self.precise,
-                            output_points = need_points,
-                            method = self.method,
-                            logger = self.sv_logger)
+                nurbs_curve = SvNurbsCurve.to_nurbs(curve)
+                if nurbs_curve is None:
+                    is_nurbs = False
+                else:
+                    is_nurbs = True
+                    curve = nurbs_curve
+                use_nurbs = self.use_nurbs and is_nurbs
+                if use_nurbs:
+                    results = []
+                    for src_point in src_points:
+                        result = nearest_point_on_nurbs_curve(src_point, curve,
+                                    init_samples = self.samples,
+                                    method = self.method,
+                                    splits = 2,
+                                    logger = self.sv_logger)
+                        results.append(result)
+                else:
+                    results = nearest_point_on_curve(src_points, curve,
+                                samples=self.samples, precise=self.precise,
+                                output_points = need_points,
+                                method = self.method,
+                                logger = self.sv_logger)
                 if need_points:
                     new_t = [r[0] for r in results]
-                    new_points = [r[1].tolist() for r in results]
+                    if use_nurbs:
+                        new_points = curve.evaluate_array(np.array(new_t)).tolist()
+                    else:
+                        new_points = [r[1].tolist() for r in results]
                 else:
                     new_t = results
                     new_points = []

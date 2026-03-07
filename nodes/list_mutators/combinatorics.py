@@ -47,7 +47,8 @@ class SvCombinatoricsNode(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_COMBINATRONICS'
 
     def update_operation(self, context):
-        self.label = self.operation.title()
+        #self.label = self.operation.title()
+        self.label = f'{SvCombinatoricsNode.bl_label}: {self.operation.title()}'
         self.update_sockets()
         updateNode(self, context)
 

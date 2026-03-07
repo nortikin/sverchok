@@ -29,7 +29,7 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
         update=updateNode
     )
     
-    scale: bpy.props.FloatProperty(default=1.0,name='scale')
+    scale: bpy.props.FloatProperty(default=1000.0, min=1.0, max=200000.0, name='scale')
 
     text_scale: bpy.props.FloatProperty(default=1.0,name='text_scale')
 
@@ -110,6 +110,9 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
             '''
         #if self.inputs['path'].is_linked:
         fpath_ = self.inputs['path'].sv_get()
+        #print(fpath_)
+        if not fpath_[0][0].endswith('.dxf'):
+            fpath_[0][0] = fpath_[0][0]+'.dxf'
         if self.inputs['dxf'].is_linked:
             dxf_ = ensure_nesting_level(self.inputs['dxf'].sv_get(),2)
         else:

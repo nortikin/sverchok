@@ -25,6 +25,7 @@ then optimized only for speed, never for aesthetics or line count or cleverness.
 
 '''
 
+import enum
 import math
 from math import sin, cos, sqrt, acos, pi, atan
 import numpy as np
@@ -34,6 +35,7 @@ import mathutils
 from mathutils import Matrix, Vector
 from mathutils.geometry import interpolate_bezier, intersect_line_line, intersect_point_line
 
+from sverchok.core.sv_custom_exceptions import ArgumentError
 from sverchok.utils.modules.geom_primitives import (
     circle, arc, quad, arc_slice, rect, grid, line)
 
@@ -44,6 +46,10 @@ from sverchok.utils.sv_logging import sv_logger
 # njit is a light-wrapper around numba.njit, if found
 from sverchok.dependencies import numba  # not strictly needed i think...
 from sverchok.utils.decorators_compilation import njit
+
+class RangeBoundary(enum.Enum):
+    MIN = enum.auto()
+    MAX = enum.auto()
 
 def bounding_box_aligned(verts, evec_external=None, factor=1.0):
     ''' Build bounding box around vectors. If evec_external is not none then it can be used with factor.
@@ -116,6 +122,39 @@ def bounding_box_aligned(verts, evec_external=None, factor=1.0):
     mat_scale[0][0], mat_scale[1][1], mat_scale[2][2] = abbox_size
     mat = mathutils.Matrix.Translation(abbox_center) @ Matrix(evec_target).to_euler().to_matrix().to_4x4() @ mat_scale
     return rrc, mat, abbox_size  # verts, matrix (not use for a while)
+
+def aligned_bounding_box_2d(points):
+    points = np.asarray(points).T
+    ndim, n = points.shape
+    if ndim != 2:
+        raise ArgumentError("Points must be list of 2-tuples")
+    means = np.mean(points, axis=1)
+    points -= means[np.newaxis].T
+    cov = np.cov(points)
+    evalues, evec = np.linalg.eig(cov)
+    evec = evec.T
+    maxidx = np.argmax(abs(evalues))
+
+    vec1 = np.zeros((3,))
+    vec2 = np.zeros((3,))
+    vec1[:2] = evec[maxidx]
+    vec2[:2] = evec[1 - maxidx]
+
+    vec3 = np.cross(vec1, vec2)
+    vec2 = np.cross(vec3, vec1)
+
+    res = np.zeros((2, 2))
+    res[0,:] = vec1[:2]
+    res[1,:] = vec2[:2]
+    det = np.linalg.det(res)
+    if det < 0:
+        res[1,:] = -vec2[:2]
+
+    rotated_pts = (res @ points).T
+    size_0 = rotated_pts[:,0].max() - rotated_pts[:,0].min()
+    size_1 = rotated_pts[:,1].max() - rotated_pts[:,1].min()
+    return rotated_pts, size_0, size_1
+
 
 identity_matrix = Matrix()
 
@@ -2824,4 +2863,24 @@ def is_convex_2d(verts):
         elif sign * n[2] < 0:
             return False
     return True
+
+def calc_polygon_area(points):
+    """
+    Calc area of the polygon.
+    It is assumed that all points are in the same plane
+    (one can check it with are_points_coplanar() method).
+
+    Args:
+        points: np.array of shape (n,3)
+
+    Returns:
+        number.
+    """
+    points = np.asarray(points)
+    p0 = points[0]
+    vectors = points - p0
+    sum_cross = np.zeros((3,))
+    for v1, v2 in zip(vectors[1:], vectors[2:]):
+        sum_cross += np.cross(v1, v2)
+    return np.linalg.norm(sum_cross) / 2.0
 

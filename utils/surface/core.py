@@ -5,12 +5,48 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from sverchok.utils.geom import RangeBoundary
 from sverchok.utils.surface.data import *
-
 
 class UnsupportedSurfaceTypeException(TypeError):
     __description__ = "Unsupported surface type"
     pass
+
+class SurfaceDirection:
+    U = 'U'
+    V = 'V'
+
+class SurfaceEdge:
+    def __init__(self, direction, boundary, name):
+        self.direction = direction
+        self.boundary = boundary
+        self.name = name
+
+    values = dict()
+
+    @classmethod
+    def _create(cls, direction, boundary, name):
+        edge = SurfaceEdge(direction, boundary, name)
+        cls.values[name] = edge
+        setattr(cls, name, edge)
+
+    @classmethod
+    def __class_getitem__(cls, name):
+        return cls.values[name]
+    
+    def __repr__(self):
+        return f"<{self.boundary}_{self.direction}>"
+
+def other_direction(direction):
+    if direction == SurfaceDirection.U:
+        return SurfaceDirection.V
+    else:
+        return SurfaceDirection.U
+
+SurfaceEdge._create(SurfaceDirection.U, RangeBoundary.MIN, 'MIN_U')
+SurfaceEdge._create(SurfaceDirection.U, RangeBoundary.MAX, 'MAX_U')
+SurfaceEdge._create(SurfaceDirection.V, RangeBoundary.MIN, 'MIN_V')
+SurfaceEdge._create(SurfaceDirection.V, RangeBoundary.MAX, 'MAX_V')
 
 class SvSurface(object):
     def __repr__(self):
@@ -225,6 +261,13 @@ class SvFlipSurface(SvSurface):
             self.normal_delta = 0.0001
         self.__description__ = "Flipped {}".format(surface)
 
+    @classmethod
+    def build(cls, surface, flip_u, flip_v):
+        if hasattr(surface, 'flip'):
+            return surface.flip(flip_u, flip_v)
+        else:
+            return SvFlipSurface(surface, flip_u, flip_v)
+
     def get_u_min(self):
         return self.surface.get_u_min()
 
@@ -244,7 +287,7 @@ class SvFlipSurface(SvSurface):
         if self.flip_u:
             u = max_u - u + min_u
         if self.flip_v:
-            v = max_v - v + max_v
+            v = max_v - v + min_v
         return u, v
 
     def evaluate(self, u, v):

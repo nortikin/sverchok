@@ -193,6 +193,37 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
                 row.prop(tree, 'sv_scene_update', icon='SCENE_DATA', text=' ')
                 row.prop(tree, "sv_process", toggle=True, text="P")
                 row.prop(tree, "sv_draft", toggle=True, text="D")
+                row.operator('node.sv_clear_tree', text='X').node_tree_name = list_item.tree_name
+
+class SvClearTree (bpy.types.Operator):
+    """Clear node tree \
+    Please, check if you not need it"""      
+    bl_idname = "node.sv_clear_tree"
+    bl_label = "Remove node tree"
+    bl_options = {'REGISTER', 'UNDO'} 
+    
+    
+    @classmethod
+    def poll(cls, self):
+        for area in bpy.context.window.screen.areas:
+            if area.type == 'NODE_EDITOR':
+                return False
+        return True
+    
+    node_tree_name: bpy.props.StringProperty(default='', name='removenodetree', description='remove node tree')
+    
+    def invoke(self, context, event):
+        wm = context.window_manager
+        wm.invoke_props_dialog(self, width=250)
+        return {'RUNNING_MODAL'}
+    
+    def execute(self, context):
+        if self.node_tree_name:
+            bpy.data.node_groups[self.node_tree_name].user_clear()
+            bpy.data.node_groups.remove(bpy.data.node_groups[self.node_tree_name])
+        else:
+            return {'CENCELLED'}
+        return {'FINISHED'}
 
 
 class Sv3DNodeProperties(bpy.types.PropertyGroup):
@@ -455,6 +486,7 @@ classes = [
     Sv3dPropRemoveItem,
     Sv3DNodeProperties,
     SvPopupEditLabel,
+    SvClearTree,
 ]
 
 

@@ -8,10 +8,8 @@
 import numpy as np
 
 import bpy
-from mathutils import Matrix, Vector
-from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty, FloatVectorProperty
+from bpy.props import BoolProperty, IntProperty, EnumProperty, FloatVectorProperty, FloatProperty
 import gpu
-from gpu_extras.batch import batch_for_shader
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, get_data_nesting_level, ensure_nesting_level, zip_long_repeat, node_id
@@ -22,28 +20,7 @@ from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
 from sverchok.utils.modules.drawing_abstractions import drawing, shading_3d
-
-
-def draw_edges(shader, points, edges, line_width, color):
-    drawing.set_line_width(line_width)
-    batch = batch_for_shader(shader, 'LINES', {"pos": points}, indices=edges)
-    shader.bind()
-    shader.uniform_float('color', color)
-    batch.draw(shader)
-    drawing.reset_line_width()
-
-def draw_points(shader, points, size, color):
-    drawing.set_point_size(size)
-    batch = batch_for_shader(shader, 'POINTS', {"pos": points})
-    shader.bind()
-    shader.uniform_float('color', color)
-    batch.draw(shader)
-    drawing.reset_point_size()
-
-def draw_polygons(shader, points, tris, vertex_colors):
-    batch = batch_for_shader(shader, 'TRIS', {"pos": points, 'color': vertex_colors}, indices=tris)
-    shader.bind()
-    batch.draw(shader)
+from sverchok.utils.modules.drawing_utils import draw_edges, draw_points, draw_polygons, draw_arrows
 
 def draw_surfaces(context, args):
     node, draw_inputs, v_shader, e_shader, p_shader = args
@@ -61,8 +38,16 @@ def draw_surfaces(context, args):
         if node.draw_node_lines and item.node_u_isoline_data is not None:
             for line in item.node_u_isoline_data:
                 draw_edges(e_shader, line.points, line.edges, node.node_lines_width, node.node_lines_color)
+                if node.draw_node_lines_comb and line.comb_edges is not None:
+                    draw_edges(e_shader, line.comb_points, line.comb_edges, node.comb_width, node.node_lines_comb_color_u)
+                if node.draw_node_lines_arrows and line.arrow_pts1 is not None and line.arrow_pts2 is not None:
+                    draw_arrows(e_shader, line.np_points[1:], line.arrow_pts1, line.arrow_pts2, node.arrows_line_width, node.arrows_color_u)
             for line in item.node_v_isoline_data:
-                draw_edges(e_shader, line.points, line.edges, node.node_lines_width, node.node_lines_color)
+                draw_edges(e_shader, line.points, line.edges, node.node_lines_width, node.node_lines_color_v)
+                if node.draw_node_lines_comb and line.comb_edges is not None:
+                    draw_edges(e_shader, line.comb_points, line.comb_edges, node.comb_width, node.node_lines_comb_color_v)
+                if node.draw_node_lines_arrows and line.arrow_pts1 is not None and line.arrow_pts2 is not None:
+                    draw_arrows(e_shader, line.np_points[1:], line.arrow_pts1, line.arrow_pts2, node.arrows_line_width, node.arrows_color_v)
 
         if node.draw_control_net and item.cpts_list is not None:
             draw_edges(e_shader, item.cpts_list, item.control_net, node.control_net_line_width, node.control_net_color)
@@ -196,7 +181,14 @@ class SvSurfaceViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
             update = updateNode)
 
     node_lines_color: FloatVectorProperty(
-            name = "Node Lines Color",
+            name = "Node Lines Color (fixed U value)",
+            default = (0.2, 0.0, 0.0, 1.0),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
+            update = updateNode)
+
+    node_lines_color_v: FloatVectorProperty(
+            name = "Node Lines Color (fixed V value)",
             default = (0.2, 0.0, 0.0, 1.0),
             size = 4, min = 0.0, max = 1.0,
             subtype = 'COLOR',
@@ -205,6 +197,59 @@ class SvSurfaceViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
     node_lines_width : IntProperty(
             name = "Node Lines Width",
             min = 1, default = 2,
+            update = updateNode)
+
+    draw_node_lines_comb : BoolProperty(
+            name = "Display node lines curvature comb",
+            default = False,
+            update = updateNode)
+
+    node_lines_comb_color_u : FloatVectorProperty(
+            name = "Node Lines Comb Color (fixed U value)",
+            default = (1.0, 0.9, 0.1, 1.0),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
+            update = updateNode)
+
+    node_lines_comb_color_v : FloatVectorProperty(
+            name = "Node Lines Comb Color (fixed v value)",
+            default = (1.0, 0.9, 0.1, 1.0),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
+            update = updateNode)
+
+    comb_width : IntProperty(
+            name = "Comb Line Width",
+            min = 1, default = 1,
+            update = updateNode)
+
+    comb_scale : FloatProperty(
+            name = "Comb Scale",
+            min = 0.0, default = 1.0,
+            update = updateNode)
+
+    draw_node_lines_arrows : BoolProperty(
+            name = "Display node lines arows",
+            default = False,
+            update = updateNode)
+
+    arrows_line_width : IntProperty(
+            name = "Arrows Line Width",
+            min = 1, default = 1,
+            update = updateNode)
+
+    arrows_color_u : FloatVectorProperty(
+            name = "Arrows Color (fixed U value)",
+            default = (0.5, 0.8, 1.0, 1.0),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
+            update = updateNode)
+
+    arrows_color_v : FloatVectorProperty(
+            name = "Arrows Color (fixed V value)",
+            default = (0.5, 0.8, 1.0, 1.0),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
             update = updateNode)
 
     draw_curvature : BoolProperty(
@@ -283,8 +328,30 @@ class SvSurfaceViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
 
         row = grid.row(align=True)
         row.prop(self, 'draw_node_lines', icon='EVENT_N', text='')
-        row.prop(self, 'node_lines_color', text="")
-        row.prop(self, 'node_lines_width', text="px")
+        node_lines = row.split(factor = 0.5, align=True)
+        col = node_lines.split(factor = 0.5, align=True)
+        col.prop(self, 'node_lines_color', text="")
+        col.prop(self, 'node_lines_color_v', text="")
+        node_lines.prop(self, 'node_lines_width', text="px")
+
+        if self.draw_node_lines:
+            row = grid.row(align=True)
+            row.prop(self, 'draw_node_lines_comb', icon='EVENT_G', text='')
+            node_lines = row.split(factor = 0.5, align=True)
+            col = node_lines.split(factor = 0.5, align=True)
+            col.prop(self, 'node_lines_comb_color_u', text="")
+            col.prop(self, 'node_lines_comb_color_v', text="")
+            node_lines.prop(self, 'comb_width', text="px")
+            if self.draw_node_lines_comb:
+                grid.prop(self, 'comb_scale', text='Scale')
+
+            row = grid.row(align=True)
+            row.prop(self, 'draw_node_lines_arrows', icon='FORWARD', text='')
+            node_lines = row.split(factor = 0.5, align=True)
+            col = node_lines.split(factor = 0.5, align=True)
+            col.prop(self, 'arrows_color_u', text='')
+            col.prop(self, 'arrows_color_v', text='')
+            node_lines.prop(self, 'arrows_line_width', text='px')
 
         row = grid.row(align=True)
         row.prop(self, 'draw_curvature', icon='EVENT_C', text='')

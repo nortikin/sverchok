@@ -189,10 +189,21 @@ def from_homogenous(control_points):
     else:
         raise Exception(f"control_points have ndim={control_points.ndim}, supported are only 2 and 3")
 
+def to_homogenous(control_points, weights=None):
+    if weights is None:
+        weights = np.ones((len(control_points),))
+    if weights.ndim < 2:
+        weights = weights[np.newaxis].T
+    weighted = weights * control_points
+    return np.concatenate((weighted, weights), axis=1)
+
 class SvNurbsBasisFunctions(object):
     def __init__(self, knotvector):
         self.knotvector = np.array(knotvector)
         self._cache = dict()
+
+    def evaluate(self, degree, n_cpts, order, ts):
+        return np.array([[self.derivative(i, degree, d)(ts) for i in range(n_cpts)] for d in range(order)]) # (order, k, n)
 
     def function(self, i, p, reset_cache=True):
         if reset_cache:

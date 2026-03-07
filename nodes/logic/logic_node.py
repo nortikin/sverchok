@@ -138,7 +138,7 @@ class SvLogicNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Result")
 
     def draw_label(self):
-        return self.function_name
+        return f'{SvLogicNodeMK2.bl_label}: {self.function_name}'
 
     def process(self):
         current_func = functions[self.function_name].func

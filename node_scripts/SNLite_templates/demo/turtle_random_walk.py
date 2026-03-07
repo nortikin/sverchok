@@ -1,18 +1,18 @@
 """
 in   in_verts  v
 in   in_faces  s
-in   in_start_face_idx s d=[[]] n=2
-in   in_steps s
-in   in_select_mask s
-in   in_paint_mask s
-in   in_seed s 
-out  out_face_mask   s
+in   in_start_face_idx s d=0 n=2
+in   in_steps s d=2 n=2
+in   in_select_mask s d=[] n=0
+in   in_paint_mask s d=[] n=0
+in   in_seed s  d=0 n=2
+out  out_face_mask s
 out  out_face_data s
 """
 import logging
 import random
 
-from sverchok.data_structure import zip_long_repeat
+from sverchok.data_structure import zip_long_repeat, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.turtle import Turtle
 
@@ -25,26 +25,31 @@ if in_paint_mask is None:
 
 out_face_mask = []
 out_face_data = []
-objects = zip_long_repeat(in_verts, in_faces, in_start_face_idx, in_steps,
-            in_select_mask, in_paint_mask, in_seed)
-for verts, faces, start_face, steps, select_mask, paint_mask, seed in objects:
-    logger.info(seed)
-    if isinstance(seed, (list, tuple)):
-        seed = seed[0]
+#objects = match_long_repeat([in_verts[0], in_faces[0], [in_start_face_idx], [in_steps],
+#            in_select_mask, in_paint_mask, [in_seed]])
+#inlets_preview = list(objects)
+#print('Inlets:',inlets_preview)
+for verts, faces, start_face, steps, select_mask, paint_mask, seed in zip_long_repeat(in_verts[0], in_faces[0], [in_start_face_idx], [in_steps],
+            in_select_mask, in_paint_mask, [in_seed]):
+    #logger.info(seed[0])
+    print('Seed:',seed)
+    if isinstance(seed[0], (list, tuple)):
+        seed = seed[0][0]
+    print('Start face:',start_face)
     random.seed(seed)
-    if isinstance(start_face, (list, tuple)):
+    if isinstance(start_face[0], (list, tuple)):
         if not start_face:
-            start_face = random.choice(range(len(faces)))
+            start_face = random.choice(range(len(faces[0])))
         else:
-            start_face = start_face[0]
-    if isinstance(steps, (list, tuple)):
-        steps = steps[0]
+            start_face = start_face[0][0]
+    if isinstance(steps[0], (list, tuple)):
+        steps = steps[0][0]
     
-    bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
+    bm = bmesh_from_pydata(verts[0], [], faces[0], normal_update=True)
     bm.verts.ensure_lookup_table()
     bm.faces.ensure_lookup_table()
     turtle = Turtle(bm)
-    
+    print('Turtle:',turtle)
     # When manually assigning the current_face, remember
     # to assign current_loop correspondingly!
     turtle.current_face = bm.faces[start_face]

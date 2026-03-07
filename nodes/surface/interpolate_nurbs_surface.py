@@ -7,7 +7,8 @@ from bpy.props import EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, split_by_count
 from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.surface.nurbs import SvGeomdlSurface, interpolate_nurbs_surface
+from sverchok.utils.surface.nurbs import SvGeomdlSurface
+from sverchok.utils.surface.nurbs_algorithms import interpolate_nurbs_surface
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.utils.math import supported_metrics
 from sverchok.dependencies import geomdl, FreeCAD

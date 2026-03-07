@@ -14,15 +14,17 @@ if ezdxf != None:
     from ezdxf import units
     from ezdxf.tools.standards import setup_dimstyle
 #from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.curve import SvCircle
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from mathutils import Vector as V
+import numpy as np
 
-######################################
-######################################
-#####   IMPORT PART FOR IMPORT   #####
-######################################
-######################################
+######################
+######################
+#####   IMPORT   #####
+######################
+######################
 
 def dxf_read(node, fp, resolution, scale, curve_degree, layers=None):
     curves_out = []
@@ -47,7 +49,7 @@ def dxf_read(node, fp, resolution, scale, curve_degree, layers=None):
     ]
     GEOMETRY_TYPES = [
         "LINE", "CIRCLE", "ARC", "POLYLINE", "LWPOLYLINE", "SPLINE",
-        "ELLIPSE", "POINT", "VERTEX", "3DFACE", "SOLID", "3DFACE",
+        "ELLIPSE", "POINT", "VERTEX", "3DFACE", "SOLID",
         "POLYMESH", "POLYFACE"
     ]
     #pure_geometry = []
@@ -112,6 +114,12 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
                 ran = [i/lifehack for i in range(lifehack*start,lifehack*end,max(1,int(lifehack*(end-start)/resolution_arc)))]
         elif typ == 'circle':
             ran = [i/lifehack for i in range(0,lifehack*360,max(1,int((lifehack*360)/resolution)))]
+            #print('Circle consists of: ',dir(entity),dir(entity.dxf))
+            print('DXF Circle consists of: ',center,entity.dxf.center.xyz,entity.dxf.radius)
+            cur = SvCircle(center=np.array(center), normal=np.array((0.,0.,1.)), vectorx=np.array((1.,0.,0.)), radius=np.float64(entity.dxf.radius)).to_nurbs()
+            cur.u_bounds = (0., math.pi*2)
+            curves_out.append(cur)
+            knots_out.append([])
         elif typ == 'ellipse':
             start  = entity.dxf.start_param
             end    = entity.dxf.end_param
@@ -146,30 +154,48 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
     #print(typ)
 
     if typ in ["polyline"]:
-        #print('Полилиния попалась ========', entity.dxftype)
+        print('Полилиния попалась ========', entity.dxftype)
+        #print(dir(entity.dxf))
+        print(entity.is_closed)
         vers.append([[i*scale for i in vert.xyz] for vert in entity.points()])
-        pols.append([[i for i in range(len(vers[-1]))]])
+        if entity.is_closed != 0:
+            pols.append([[i for i in range(len(vers[-1]))]])
+            #print(pols)
+        else:
+            edges.append([[i,i+1] for i in range(len(vers[-1])-1)])
+            #print(edges)
 
-    if typ in ["3dface", "solid","polymesh", "polyface"]:
+    if typ in ["3dface"]:
+        print('3D лицо попалось ========', entity.dxftype)
+        #print(entity.dxf.vtx0)
+        #print(entity.dxf.vtx3)
+        vs = entity.dxf.vtx0,entity.dxf.vtx1,entity.dxf.vtx2,entity.dxf.vtx3 if entity.dxf.vtx3 \
+            else entity.dxf.vtx0,entity.dxf.vtx1,entity.dxf.vtx2
+        vers.append([[i*scale for i in v] for v in vs])
+        pols.append([[i,i+1,i+2] for i in range(0,len(vers[-1]),3)])
+        #print(pols)
+
+    if typ in ["solid", "polymesh", "polyface"]:
         print('3Д попалась ========', entity.dxftype)
 
     if typ in ['dimension',"arc-dimension", "diameter_dimension","radial_dimension"]:
         #print(entity.dxftype,entity.dxf.dimtype, dir(entity.dxf))
         edges.append([[0,1]])
         if entity.dxf.dimtype == 32:
-            mes = round(entity.dxf.defpoint2.distance(entity.dxf.defpoint3),5)
+            mes = round(entity.dxf.defpoint2.distance(entity.dxf.defpoint3),2)
             vers.append([[i*scale for i in entity.dxf.defpoint2.xyz],[i*scale for i in entity.dxf.defpoint3.xyz]])
         else:
-            mes = round(entity.dxf.defpoint.distance(entity.dxf.defpoint4),5)
+            mes = round(entity.dxf.defpoint.distance(entity.dxf.defpoint4),2)
             vers.append([[i*scale for i in entity.dxf.defpoint.xyz],[i*scale for i in entity.dxf.defpoint4.xyz]])
         try:
-            mp = entity.dxf.text_midpoint.xyz
+            mp = [i*scale for i in entity.dxf.text_midpoint.xyz]
         except:
             mp = list((V(vers[-1][1]) + (V(vers[-1][0])-V(vers[-1][1]))/2).to_tuple())
         VT.append([[i*scale for i in mp]])
-        TT.append([[mes]])
+        TT.append([mes])
 
     if typ == 'lwpolyline':
+        print('lwpolyline попалась ========', entity.dxftype)
         edges_ = []
         vers_ = []
         points = list(entity.get_points())
@@ -480,25 +506,19 @@ linetypes = [
     ("DIVIDE2", "DIVIDE2", "DIVIDE2 linetype", 19)
 ]
 
+objecttypes3d = [
+    ("FACE", "FACE", "3D polyface", 1),
+    ("LINE", "LINE", "3D polyline", 2),
+    ("FACE3D", "FACE3D", "3D face", 3),
+]
 
-######################################
-######################################
-#####   EXPORT PART FOR EXPORT   #####
-######################################
-######################################
+######################
+######################
+#####   EXPORT   #####
+######################
+######################
 
 
-def triangl(vertices,edges,faces):
-    ''' WIP
-        triangulation for mesh represantation
-        with metadata vectorized for triangles '''
-    from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-    import bmesh
-    bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
-    res = bmesh.ops.triangulate(bm, faces=bm.faces, quad_method="BEAUTY", ngon_method="BEAUTY")
-    new_vertices, new_edges, new_faces = pydata_from_bmesh(res)
-    bm.free()
-    return  new_vertices, new_edges, new_faces
 
 def vertices_draw(v,scal,lvers,msp):
     ''' vertices as points draw '''
@@ -511,6 +531,10 @@ def vertices_draw(v,scal,lvers,msp):
             msp.add_point([i*scal for i in ver], dxfattribs={"layer": lvers})
 
 def hatches_draw(points, scal, lhatch, msp):
+    ''' Hatch with amountt of default hatch types
+        Seems like bug, hatches sometimes 
+        opened in zcad and librecad 
+        and others with unwanted arcs '''
     for points_ in points:
         vers,col,patt,sc = points_.vers, points_.color,points_.pattern,points_.scale
         color_int = points_.color_int
@@ -524,27 +548,49 @@ def hatches_draw(points, scal, lhatch, msp):
         ht.set_pattern_fill(patt, scale=sc)
         ht.transparency = 0.5
         path = ht.paths.add_polyline_path(
-            vers,
+            [[i*scal for i in ver] for ver in vers],
             is_closed=True,
             flags=ezdxf.const.BOUNDARY_PATH_EXTERNAL,
         )
 
 def polygons_draw(points, scal, lpols, msp):#(p,v,d1,d2,scal,lpols,msp):
-    ''' draw simple polyline polygon '''
+    ''' draw simple polyline polygon or polyface
+        todo 2026 polymesh '''
     #print('POLS!!')
     for points_ in points:
         vers,col = points_.vers, points_.color
         lw,lt = points_.lineweight, points_.linetype
         color_int = points_.color_int
+        objecttype = points_.objecttype
+        vers = [[i*scal for i in ver] for ver in points_.vers]
         if color_int < 1:
             col = tuple([int(i*255) for i in col[:3]])
             #print('!!!',col)
             col = ezdxf.colors.rgb2int(col)
-            pl = msp.add_polyline3d(points_.vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col}, close=True)
+            if objecttype == 'FACE':
+                #print('face start')
+                pf = msp.add_polyface()
+                pf.append_face(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col})
+                #print('face finnish')
+            elif objecttype == 'LINE':
+                pl = msp.add_polyline3d(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col}, close=True)
+            elif objecttype == 'FACE3D':
+                for i in range(1, len(vers)-1):
+                    pf3 = msp.add_3dface([vers[0],vers[i],vers[i+1]], dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col})
+                #ezdxf.entities.Face3d
         else:
-            pl = msp.add_polyline3d(points_.vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int}, close=True)
-        #pf = msp.add_polyface()
-        #pf.append_face(points, dxfattribs={"layer": lpols})
+            if objecttype == 'FACE':
+                #print('face start')
+                pf = msp.add_polyface()
+                pf.append_face(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int})
+                #print('face finnish')
+            elif objecttype == 'LINE':
+                pl = msp.add_polyline3d(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int}, close=True)
+            elif objecttype == 'FACE3D':
+                for i in range(1, len(vers)-1):
+                    pf3 = msp.add_3dface([vers[0],vers[i],vers[i+1]], dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int})
+                #ezdxf.entities.Face3d
+
         #pm = msp.add_polymesh()
         #pm.append_vertices(points, dxfattribs={"layer": lpols})
     '''
@@ -560,10 +606,12 @@ def polygons_draw(points, scal, lpols, msp):#(p,v,d1,d2,scal,lpols,msp):
     (1041, 10),
     (1042, 10),
     '''
+
 def polygondance_draw(p,v,d1,d2,scal,lpols,msp,APPID):
     ''' draw polygons if there is metadata d1 d2
         needed triangulation for mesh represantation
-        with metadata vectorized for triangles '''
+        with metadata vectorized for triangles 
+        2026 not in use, want not to use '''
 
     from sverchok.data_structure import match_long_repeat as mlr
     from mathutils import Vector
@@ -596,7 +644,8 @@ def edges_draw(points,scal,ledgs,msp):
     #print('EDGES!!')
 
     for points_ in points:
-        vers,col = points_.vers, points_.color
+        vers = [[i*scal for i in ver] for ver in points_.vers]
+        col = points_.color
         lw,lt = points_.lineweight, points_.linetype
         v1,v2 = vers
         color_int = points_.color_int
@@ -608,7 +657,7 @@ def edges_draw(points,scal,ledgs,msp):
             ed = msp.add_line(v1,v2, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'color': color_int})
 
 def text_draw(tv,tt,scal,ltext,msp,t_scal):
-    ''' draw text '''
+    ''' draw text todo in 2026 '''
     from ezdxf.enums import TextEntityAlignment
     #print('TEXT!!')
     for obtv, obtt in zip(tv,tt):
@@ -624,19 +673,21 @@ def text_draw(tv,tt,scal,ltext,msp,t_scal):
 def dimensions_draw(points,scal,ldims,msp):
     #print('LINEAR DIMS!!')
     for points_ in points:
-        vers,col = points_.vers, points_.color
+        vers = [[i*scal for i in ver] for ver in points_.vers]
+        col = points_.color
         lw,lt = points_.lineweight, points_.linetype
         v1,v2 = vers
         t_scal = points_.text_scale
         #print('LINEAR DIMS!!', t_scal)
 
         dim = msp.add_aligned_dim(p1=v1,p2=v2,  #p1=[i*scal for i in v1[:2]], p2=[i*scal for i in v2[:2]],\
-            distance=0.5, dimstyle='EZDXF1',dxfattribs={"layer": ldims},
-            override={"dimtxt": t_scal}
+            distance=0.5, dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims},
+            override={"dimtxt": t_scal} #,"dimfac":1}
         )
         #dim.render()
 
 def angular_dimensions_draw(ang,scal,ldims,msp,t_scal):
+    ''' 2026 todo '''
     from mathutils import Vector
     #print('ANGULAR DIMS!!')
     for a1,a2,a3 in zip(*ang):
@@ -648,12 +699,12 @@ def angular_dimensions_draw(ang,scal,ldims,msp,t_scal):
                 ang3_ = [i*scal for i in ang3]
                 dim = msp.add_angular_dim_3p(base=bas, center=ang2_, p1=ang1_, p2=ang3_, \
                             override={"dimtad": 1,"dimtxt": t_scal}, \
-                            dimstyle='EZDXF1',dxfattribs={"layer": ldims})
+                            dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims})
             else:
                 bas = list(Vector(ang1)+((Vector(ang3)-Vector(ang1))/2))
                 dim = msp.add_angular_dim_3p(base=bas, center=ang2, p1=ang1, p2=ang3, \
                             override={"dimtad": 1,"dimtxt": t_scal}, \
-                            dimstyle='EZDXF1',dxfattribs={"layer": ldims})
+                            dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims})
             #dim.render()
 
 def get_values(diction):
@@ -664,6 +715,7 @@ def get_values(diction):
     return data
 
 def leader_draw(leader,vleader,scal,llidr,msp):
+    ''' 2026 todo '''
     from ezdxf.math import Vec2
     #from ezdxf.entities import mleader
     #print('LEADERS!!')
@@ -694,20 +746,40 @@ def angl(d1,d2):
     return 90-degrees(res)
 '''
 
+def clean_dimstyles_except_mine(doc, my_style_name):
+    """
+    Удаляет все размерные стили, кроме указанного.
+    """
+    all_styles = list(doc.dimstyles)
+    for style in all_styles:
+        if style.dxf.name != my_style_name:
+            doc.dimstyles.remove(style.dxf.name)
+    #doc.dimstyles.set_active_style_name(my_style_name)
+
 # export main definition
-def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
+def export(fp,dxf,scal=1000.0,t_scal=1.0,info='',do_block=False):
 
     DIM_TEXT_STYLE = ezdxf.options.default_dimension_text_style
     # Create a new DXF document.
     doc = ezdxf.new(dxfversion="R2010",setup=True)
-    doc.units = units.M
+    doc.units = units.MM
     # 25 строка
-    doc.header['$INSUNITS'] = units.M
+    doc.header['$INSUNITS'] = units.MM
     #create a new dimstyle
     glo = scal  #scal*t_scal
     hai = t_scal   #scal/glo
-    formt = f'EZ_M_{glo}_H{hai}_MM'
-    '''
+    if 0.0 < scal < 5.0:
+        scl = 'M'
+    elif 5.0 < scal < 50.0:
+        scl = 'DM'
+    elif 50.0 < scal < 500.0:
+        scl = 'CM'
+    elif 500.0 < scal:
+        scl = 'MM'
+    formt = f'EZ_{scl}_{int(100)}_H{int(hai*2.5*10)}_MM'
+    dimstylename = 'Sverchok_dimstyle'
+    #print('Format_dimentions',formt)
+    '''HELP
     Example: `fmt` = 'EZ_M_100_H25_CM'
     1. '<EZ>_M_100_H25_CM': arbitrary prefix
     2. 'EZ_<M>_100_H25_CM': defines the drawing unit, valid values are 'M', 'DM', 'CM', 'MM'
@@ -716,26 +788,56 @@ def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
     5. 'EZ_M_100_H25_<CM>': defines the units for the measurement text, valid values are 'M', 'DM', 'CM', 'MM'
     '''
     setup_dimstyle(doc,
-                   name='EZDXF1',
+                   name=dimstylename,
                    fmt=formt,
-                   blk=ezdxf.ARROWS.architectural_tick,#closed_filled,
+                   blk=ezdxf.ARROWS.architectural_tick, #closed_filled,
                    style=DIM_TEXT_STYLE,
                    )
+    #my_style = doc.dimstyles[dimstylename]
+    #my_style.dxf.dimtxt = 3.0      # Высота текста
+    #my_style.dxf.dimasz = 2.5      # Размер стрелки
+    #my_style.dxf.dimexe = 1.0      # Вынос за размерную линию
+    #my_style.dxf.dimexo = 1.75     # Отступ от объекта
+    #my_style.dxf.dimgap = 0.625    # Зазор вокруг текста
+    #my_style.dxf.dimtad = 1        # Текст над размерной линией
+    #my_style.dxf.dimunit = 2       # Метрические единицы
+    #my_style.dxf.dimdec = 0        # 0 десятичных знака
+    #my_style.dxf.dimclrd = 3       # Зеленый цвет размерной линии
+    #my_style.dxf.dimclre = 3       # Зеленый цвет выносных линий
+    #my_style.dxf.dimclrt = 1       # Красный цвет текста
+    clean_dimstyles_except_mine(doc, dimstylename)
+    '''HELP
+    doc: DXF drawing
+    fmt: format string
+    style: text style for measurement
+    blk: block name of arrow head, ``None`` for oblique stroke
+    name: dimension style name, if name is '', `fmt` string is used as name
+    {3: 'dimpost', 4: 'dimapost', 5: 'dimblk', 6: 'dimblk1', 7: 'dimblk2', 40: 'dimscale', 41: 'dimasz', 
+    42: 'dimexo', 43: 'dimdli', 44: 'dimexe', 45: 'dimrnd', 46: 'dimdle', 47: 'dimtp', 48: 'dimtm', 
+    49: 'dimfxl', 50: 'dimjogang', 140: 'dimtxt', 141: 'dimcen', 142: 'dimtsz', 143: 'dimaltf', 144: 'dimlfac', 
+    145: 'dimtvp', 146: 'dimtfac', 147: 'dimgap', 148: 'dimaltrnd', 69: 'dimtfill', 70: 'dimtfillclr', 
+    71: 'dimtol', 72: 'dimlim', 73: 'dimtih', 74: 'dimtoh', 75: 'dimse1', 76: 'dimse2', 77: 'dimtad', 
+    78: 'dimzin', 79: 'dimazin', 90: 'dimarcsym', 170: 'dimalt', 171: 'dimaltd', 172: 'dimtofl', 173: 'dimsah', 
+    174: 'dimtix', 175: 'dimsoxd', 176: 'dimclrd', 177: 'dimclre', 178: 'dimclrt', 179: 'dimadec', 270: 'dimunit', 
+    271: 'dimdec', 272: 'dimtdec', 273: 'dimaltu', 274: 'dimalttd', 275: 'dimaunit', 276: 'dimfrac', 
+    277: 'dimlunit', 278: 'dimdsep', 279: 'dimtmove', 280: 'dimjust', 281: 'dimsd1', 282: 'dimsd2', 
+    283: 'dimtolj', 284: 'dimtzin', 285: 'dimaltz', 286: 'dimalttz', 287: 'dimfit', 288: 'dimupt', 
+    289: 'dimatfit', 290: 'dimfxlon', 340: 'dimtxsty_handle', 342: 'dimblk_handle', 343: 'dimblk1_handle', 
+    344: 'dimblk2_handle', 341: 'dimldrblk_handle', 345: 'dimltype_handle', 346: 'dimltex1_handle', 
+    347: 'dimltex2_handle', 371: 'dimlwd', 372: 'dimlwe'}
+    '''
 
-    dimstyle = doc.dimstyles.get('EZDXF1')
+    #dimstyle = doc.dimstyles.get('EZDXF1')
     #keep dim line with text
     #dimstyle.dxf.dimtmove=0
     # multyleader
-    mleaderstyle = doc.mleader_styles.new("EZDXF2") #duplicate_entry("Standard","EZDXF2")
-    mleaderstyle.set_mtext_style("OpenSans")
-    mleaderstyle.dxf.char_height = t_scal*scal  # set the default char height of MTEXT
+    #mleaderstyle = doc.mleader_styles.new("EZDXF2") #duplicate_entry("Standard","EZDXF2")
+    #mleaderstyle.set_mtext_style("OpenSans")
+    #mleaderstyle.dxf.char_height = t_scal*scal  # set the default char height of MTEXT
     # Create new table entries (layers, linetypes, text styles, ...).
     ltext = "SVERCHOK_TEXT"
     lvers = "SVERCHOK_VERS"
     ledgs = "SVERCHOK_EDGES"
-    #ledg1 = "SVERCHOK_EDGES0.1"
-    #ledg3 = "SVERCHOK_EDGES0.3"
-    #ledg6 = "SVERCHOK_EDGES0.6"
     lpols = "SVERCHOK_POLYGONS"
     ldims = "SVERCHOK_DIMENTIONS"
     llidr = "SVERCHOK_LEADERS"
@@ -744,9 +846,6 @@ def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
     doc.layers.add(ltext, color=colors.MAGENTA)
     doc.layers.add(lvers, color=colors.CYAN)
     doc.layers.add(ledgs, color=colors.YELLOW)
-    #doc.layers.add(ledg1, color=colors.BLUE, lineweight=9)
-    #doc.layers.add(ledg3, color=colors.GRAY, lineweight=30)
-    #doc.layers.add(ledg6, color=colors.LIGHT_GRAY, lineweight=60)
     doc.layers.add(lpols, color=colors.WHITE)
     doc.layers.add(ldims, color=colors.GREEN)
     doc.layers.add(llidr, color=colors.CYAN)
@@ -765,35 +864,92 @@ def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
     doc.header["$LWDISPLAY"] = 1
     # Add entities to a layout by factory methods: layout.add_...()
 
-    for data in dxf:
-        #print(data)
-        #print("Тип данных DXF",data[0].__repr__())
-        if data[0].__repr__() == '<DXF Pols>':
-            polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
-        if data[0].__repr__() == '<DXF Lines>':
-            edges_draw(data,scal,ledgs,msp)
-        if data[0].__repr__() == '<DXF Hatch>':
-            hatches_draw(data,scal,lhatc,msp)
-        if data[0].__repr__() == '<DXF LinDims>':
-            dimensions_draw(data,scal,ldims,msp)
+    if do_block == False:
+        for data in dxf:
+            #print(data)
+            #print("Тип данных DXF",data[0].__repr__())
+            if data[0].__repr__() == '<DXF Pols>':
+                polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
+            if data[0].__repr__() == '<DXF Lines>':
+                edges_draw(data,scal,ledgs,msp)
+            if data[0].__repr__() == '<DXF Hatch>':
+                hatches_draw(data,scal,lhatc,msp)
+            if data[0].__repr__() == '<DXF LinDims>':
+                dimensions_draw(data,scal,ldims,msp)
+    else:
+        lib = BlockLibrary(doc)
+        
+        # Создаем блок
+        lib.make_block('Sverchok', dxf, scal, [lpols,ledgs,lhatc,ldims])
+        doc = lib.return_block()
+        # Вставляем блок
+        #lib.place_block('BOLT_M10', insert=(0, 0))
 
     '''
-    if e:
-        edges_draw(e,v,scal,ledgs,msp)#,ledg1,ledg3,ledg6)
-    elif p and d1:
+    if p and d1:
         polygondance_draw(p,v,d1,d2,scal,lpols,msp,APPID)
-    elif p:
-        polygons_draw(p,v,d1,d2,scal,lpols,msp)
     elif v:
         vertices_draw(v,scal,lvers,msp)
     if tv and tt:
         text_draw(tv,tt,scal,ltext,msp,t_scal)
-    if dim1 and dim2:
-        dimensions_draw(dim1,dim2,scal,ldims,msp,t_scal)
     if angular:
         angular_dimensions_draw(angular,scal,ldims,msp,t_scal)
     if vl and ll:
         leader_draw(ll,vl,scal,llidr,msp)
     '''
+
     # Save the DXF document.
     doc.saveas(fp[0][0])
+
+class BlockLibrary:
+    def __init__(self, doc):
+        self.doc = doc
+        self.block = []
+
+    def make_block(self, name='Sverchok_block', dxf=[], scal=[], layers=[]):
+        """Создает блок"""
+        if not dxf:
+            return
+        lpols,ledgs,lhatc,ldims = layers
+        block = self.doc.blocks.new(name=name)
+        for data in dxf:
+            if data[0].__repr__() == '<DXF Pols>':
+                self.pols(block,data,scal,lpols) #(p,v,d1,d2,scal,lpols,msp)
+            if data[0].__repr__() == '<DXF Lines>':
+                self.edgs(block,data,scal,ledgs)
+            if data[0].__repr__() == '<DXF Hatch>':
+                pass
+                #self.hatc(block,data,scal,lhatc)
+            if data[0].__repr__() == '<DXF LinDims>':
+                pass
+                #self.dims(block,data,scal,ldims)
+        self.block = [block]
+
+    def pols(self,block,data,scal,lpols):
+        for points_ in data:
+            vers = points_.vers
+            vers = [[i*scal for i in ver] for ver in vers]
+            for i in range(1, len(vers)):
+                block.add_line(vers[i-1][:2], vers[i][:2])
+        #block.add_circle(center=(0, 0), radius=diameter/2)
+
+    def edgs(self,block,data,scal,ledgs):
+        for points_ in data:
+            vers = points_.vers
+            vers = [[i*scal for i in ver] for ver in vers]
+            block.add_line(vers[0][:2], vers[1][:2])
+
+    def return_block(self):
+        return self.doc
+
+    def place_block(self, block_name, insert, rotation=0, scale=1.0):
+        """Вставляет блок в чертеж, не использую"""
+        block = self.block
+        msp = self.doc.modelspace()
+        ref = msp.add_blockref(block_name, insert=insert)
+        ref.dxf.rotation = rotation
+        ref.dxf.xscale = scale
+        ref.dxf.yscale = scale
+
+
+

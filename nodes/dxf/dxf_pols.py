@@ -2,14 +2,14 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, dataCorrect_np
 from mathutils import Vector
-from sverchok.utils.dxf import LWdict, lineweights, linetypes
+from sverchok.utils.dxf import LWdict, lineweights, linetypes, objecttypes3d
 
 
 class DxfPols:
     def __repr__(self):
         return "<DXF Pols>"
 
-    def __init__(self, vers, color, lineweight, metadata, linetype, node, color_int):
+    def __init__(self, vers, color, lineweight, metadata, linetype, node, color_int, objecttype):
         self.vers = vers
         self.node = node
         self.color = color
@@ -17,6 +17,8 @@ class DxfPols:
         self.lineweight = lineweight
         self.metadata = metadata
         self.linetype = linetype
+        self.objecttype = objecttype
+
 
     def draw(self):
         return self.vers
@@ -43,6 +45,9 @@ class SvDxfPolygonsNode(SverchCustomTreeNode, bpy.types.Node):
         size=4, min=0.0, max=1.0, subtype='COLOR'
     )
 
+    objecttype: bpy.props.EnumProperty(
+        name="objecttype", description="objecttypes", default='FACE', items=objecttypes3d, update=updateNode)
+
     linetype: bpy.props.EnumProperty(
         name="linetype", description="linetypes", default='CONTINUOUS', items=linetypes, update=updateNode)
 
@@ -57,6 +62,7 @@ class SvDxfPolygonsNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvSvgSocket', 'dxf')
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "objecttype", expand=False)
         layout.prop(self, "linetype", expand=False)
         layout.prop(self, "lineweight", expand=False)
         layout.prop(self, "color_int", expand=False)
@@ -89,6 +95,8 @@ class SvDxfPolygonsNode(SverchCustomTreeNode, bpy.types.Node):
             # lw,lt - lineweight, linetype
             lw = LWdict[self.lineweight]
             lt = self.linetype
+            ot = self.objecttype
+            print(ot)
             for obv,obp,met in zip_long_repeat(vers_,pols_,meta_):
                 # объекты
                 for po, me in zip_long_repeat(obp,met):
@@ -100,7 +108,7 @@ class SvDxfPolygonsNode(SverchCustomTreeNode, bpy.types.Node):
                         if type(vr) == Vector: vr = vr.to_tuple()
                         points.append(vr)
                     # каждый полигон это отдельный экземпляр
-                    pols = DxfPols(points,cols_,lw,me,lt,self,color_int)
+                    pols = DxfPols(points,cols_,lw,me,lt,self,color_int,ot)
                     dxf.append(pols)
             self.outputs['dxf'].sv_set([dxf])
 

@@ -198,7 +198,7 @@ class SvScalarMathNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         if self.current_op in reversed_draw_labels:
             label = reversed(label)
 
-        return " ".join(label)
+        return SvScalarMathNodeMK4.bl_label + ": " + (" ".join(label))
 
     def draw_buttons(self, ctx, layout):
         row = layout.row(align=True)

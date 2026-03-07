@@ -153,3 +153,39 @@ class SvFourierCurve(SvCurve):
         
         return SvFourierCurve(omega, np.array([0.0,0.0,0.0]), coeffs)
 
+class SvSineCurve(SvCurve):
+    def __init__(self, coeffs):
+        self.coeffs = np.array(coeffs)
+
+    def get_u_bounds(self):
+        return (0.0, 1.0)
+
+    def evaluate_array(self, ts):
+        n = len(ts)
+        ndim = self.coeffs.shape[-1]
+        points = np.zeros((n,ndim))
+        points[:,0] = ts
+        p = len(self.coeffs)
+        js = np.arange(1, p+1)
+        tsj = pi * ts[np.newaxis].T * js
+        rs = np.transpose(np.sin(tsj)[np.newaxis], axes=(1,2,0)) * self.coeffs
+        points += np.sum(rs, axis=1)
+        return points
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def tangent_array(self, ts, tangent_delta=None):
+        n = len(ts)
+        ndim = self.coeffs.shape[-1]
+        points = np.zeros((n,ndim))
+        points[:,0] = ts
+        js = np.arange(1, n+1)
+        tsj = pi * ts[np.newaxis].T * js
+        rs = np.transpose(np.cos(tsj)[np.newaxis], axes=(1,2,0)) * self.coeffs
+        points += np.sum(rs, axis=1)
+        return points
+
+    def tangent(self, t, tangent_delta=None):
+        return self.tangent_array(np.array([t]))[0]
+

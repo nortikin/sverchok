@@ -352,7 +352,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
 
-    replacement_nodes = [('SvGetObjectsDataMK4', None, None)]
+    replacement_nodes = [('SvGetObjectsDataMK5', None, None)]
 
     @property
     def is_scene_dependent(self):

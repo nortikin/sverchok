@@ -460,17 +460,18 @@ class SverchokTestCase(unittest.TestCase):
             step = len(prev_indicies) 
             if step == arr1.ndim:
                 ind = tuple(prev_indicies)
+                a1 = arr1[ind]
+                a2 = arr2[ind]
                 if precision is None:
-                    a1 = arr1[ind]
-                    a2 = arr2[ind]
+                    ok = a1 == a2
                 else:
-                    a1 = round(arr1[ind], precision)
-                    a2 = round(arr2[ind], precision)
+                    tolerance = 10**(-precision)
+                    ok = abs(a1 - a2) < tolerance
 
                 if fail_fast:
-                    self.assertEqual(a1, a2, "Array 1 [{}] != Array 2 [{}]".format(ind, ind))
+                    self.assertTrue(ok, "Array 1 [{}] = {} != Array 2 [{}] = {}".format(ind, a1, ind, a2))
                 else:
-                    if a1 != a2:
+                    if not ok:
                         fails.append((a1, a2, ind))
             else:
                 for idx in range(shape[step]):

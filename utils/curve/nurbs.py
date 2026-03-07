@@ -15,7 +15,7 @@ from math import pi
 
 from sverchok.core.sv_custom_exceptions import AlgorithmError, SvExternalLibraryException, SvInvalidInputException, ArgumentError
 from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, CurveEndpointsNotMatchingException, calc_taylor_nurbs_matrices
-from sverchok.utils.curve.bezier import SvBezierCurve
+from sverchok.utils.curve.bezier import SvBezierCurve, SvRationalBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvPointCurve
 from sverchok.utils.curve.algorithms import unify_curves_degree
@@ -26,7 +26,7 @@ from sverchok.utils.nurbs_common import (
         nurbs_divide, elevate_bezier_degree, reduce_bezier_degree,
         from_homogenous,
         CantInsertKnotException, CantRemoveKnotException,
-        CantReduceDegreeException
+        CantReduceDegreeException, to_homogenous
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
@@ -317,6 +317,15 @@ class SvNurbsCurve(SvCurve):
 
     def get_degree(self):
         raise NotImplementedError("Not implemented!")
+
+    def evaluate_homogenous_array(self, ts):
+        weights = []
+        for t in ts:
+            s1, s2 = self.split_at(t)
+            weight = s1.get_weights()[-1]
+            weights.append(weight)
+        points = self.evaluate_array(ts)
+        return to_homogenous(points, np.array(weights))
 
     def calc_greville_ts(self):
         n = len(self.get_control_points())
@@ -697,7 +706,11 @@ class SvNurbsCurve(SvCurve):
             n = len(points)
             p = self.get_degree()
             raise UnsupportedCurveTypeException(f"Curve with {n} control points and {p}'th degree can not be converted into Bezier curve")
-        return SvBezierCurve.from_control_points(points)
+        if self.is_rational():
+            weights = self.get_weights()
+            return SvRationalBezierCurve(points, weights)
+        else:
+            return SvBezierCurve.from_control_points(points)
 
     def to_bezier_segments(self, to_bezier_class=True):
         """
@@ -706,8 +719,6 @@ class SvNurbsCurve(SvCurve):
         Returns:
             If `to_bezier_class` is True, then a list of SvBezierCurve instances. Otherwise, a list of SvNurbsCurve instances.
         """
-        if to_bezier_class and self.is_rational():
-            raise UnsupportedCurveTypeException("Rational NURBS curve can not be converted into non-rational Bezier curves")
         if self.is_bezier():
             if to_bezier_class:
                 return [self.to_bezier()]
@@ -735,14 +746,15 @@ class SvNurbsCurve(SvCurve):
 
         p = self.get_degree()
         cpts = self.get_homogenous_control_points()
-        #print(f"Cpts {cpts}")
+        ndim = cpts.shape[-1]
+        #print(f"bezier_to_taylor Cpts {cpts}")
 
         mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
         M, R = mr['M'], mr['R']
         #print(f"T {self.get_u_bounds()},\nR {R}\nM {M}")
 
-        coeffs = np.zeros((4, p+1))
-        for k in range(4):
+        coeffs = np.zeros((ndim, p+1))
+        for k in range(ndim):
             coeffs[k] = R @ M @ cpts[:,k]
         #print(f"T: {self.get_u_bounds()} => {coeffs.T}")
         #print(f"C: {c}, D: {d} => R {R}")
@@ -831,13 +843,16 @@ class SvNurbsCurve(SvCurve):
         # then the whole curve lies inside the sphere too.
         # This relies on the fact that the sphere is a convex set of points.
         cpts = self.get_control_points()
-        distances = np.linalg.norm(sphere_center - cpts)
+        distances = np.linalg.norm(sphere_center - cpts, axis=1)
         return (distances < sphere_radius).all()
 
-    def bezier_distance_curve(self, src_point):
+    def bezier_distance_curve(self, src_point, nurbs=True):
         taylor = self.bezier_to_taylor()
         taylor.start[:3] -= src_point
-        return taylor.square(to_axis=0).to_nurbs()
+        if nurbs:
+            return taylor.square(to_axis=0).to_nurbs()
+        else:
+            return taylor.square(to_axis=0)
 
     def bezier_distance_coeffs(self, src_point):
         distance_curve = self.bezier_distance_curve(src_point)
@@ -874,7 +889,7 @@ class SvNurbsCurve(SvCurve):
         lie inside the sphere, or may not touch it at all.
         """
         # See comment to bezier_is_strongly_outside_sphere()
-        return all(segment.bezier_is_strongly_outside_sphere(sphere_center, sphere_radius) for segment in self.to_bezier_segments(to_bezier_class=False))
+        return all(segment.bezier_is_strongly_outside_sphere(sphere_center, sphere_radius) for segment in self.to_bezier_segments(to_bezier_class=True))
 
     def bezier_has_one_nearest_point(self, src_point):
         square_coeffs = self.bezier_distance_coeffs(src_point)
@@ -891,7 +906,7 @@ class SvNurbsCurve(SvCurve):
 
     def has_exactly_one_nearest_point(self, src_point):
         # This implements Property 2 from the paper [1]
-        segments = self.to_bezier_segments(to_bezier_class=False)
+        segments = self.to_bezier_segments(to_bezier_class=True)
         if len(segments) > 1:
             return False
         return segments[0].bezier_has_one_nearest_point(src_point)
@@ -1170,6 +1185,28 @@ class SvNativeNurbsCurve(SvNurbsCurve):
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
         return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
 
+    # def copy(self, implementation = None, knotvector = None, control_points = None, weights = None, normalize_knots=False):
+    #     if (implementation is None or implementation == SvNurbsMaths.NATIVE) and knotvector is None:
+    #         # If knotvector is not changed, then we can reuse the same basis functions.
+    #         if control_points is None:
+    #             control_points = self.get_control_points()
+    #         if weights is None:
+    #             weights = self.get_weights()
+    #         curve = SvNativeNurbsCurve(
+    #                     self.degree,
+    #                     self.knotvector,
+    #                     self.control_points,
+    #                     self.weights,
+    #                     normalize_knots)
+    #         curve.basis = self.basis
+    #         return curve
+    #     else:
+    #         return super().copy(implementation = implementation,
+    #                             knotvector = knotvector,
+    #                             control_points = control_points,
+    #                             weights = weights,
+    #                             normalize_knots = normalize_knots)
+    #
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE', tknots=None, cyclic=False, logger=None):
         return interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
@@ -1206,6 +1243,11 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             return np.array([0,0,0])
         else:
             return numerator / denominator
+
+    def _evaluate_basis(self, order, ts):
+        p = self.degree
+        k = len(self.control_points)
+        return np.array([[self.basis.derivative(i, p, d)(ts) for i in range(k)] for d in range(order)]) # (order, k, n)
 
     def fraction(self, deriv_order, ts):
         n = len(ts)
@@ -1245,6 +1287,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 #             print("Num:", numerator)
 #             print("Denom:", denominator)
         return nurbs_divide(numerator, denominator)
+
+    def evaluate_homogenous_array(self, ts):
+        numerator, denominator = self.fraction(0, ts)
+        return np.concatenate((numerator, denominator), axis=1)
 
     def tangent(self, t, tangent_delta=None):
         return self.tangent_array(np.array([t]))[0]
@@ -1290,6 +1336,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
         curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
         return curve3
+
+    def derivatives_data(self, ts, order=1):
+        basis = self._evaluate_basis(order, ts)
+        return SvNurbsDerivativesCalculator(self.degree, self.control_points, self.weights, basis)
 
     def derivatives_array(self, n, ts, tangent_delta=None):
         result = []
@@ -1545,6 +1595,110 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             logger.debug(f"Removed knot t={u} for {removed_count} times")
         return curve
 
+class SvNurbsDerivativesCalculator:
+    def __init__(self, degree, control_points, weights, basis):
+        self.degree = degree
+        self.basis = basis
+        self._control_points = control_points
+        if weights is None and control_points is not None:
+            k = len(control_points)
+            weights = np.ones((k,))
+        self._weights = weights
+        self._fractions = dict()
+
+    @classmethod
+    def from_knotvector(cls, knotvector, degree, n_cpts, order, ts):
+        err = sv_knotvector.check(degree, knotvector, n_cpts)
+        if err:
+            raise Exception(err)
+        basis = SvNurbsBasisFunctions(knotvector).evaluate(degree, n_cpts, order, ts)
+        weights = np.ones((n_cpts,))
+        return SvNurbsDerivativesCalculator(degree, None, weights, basis)
+
+    def copy(self, control_points = None, weights = None):
+        if control_points is None and weights is None:
+            result = SvNurbsDerivativesCalculator(self.degree, self.control_points, self.weights, self.basis)
+            result._fractions = self._fractions
+            return result
+        if control_points is None:
+            control_points = self._control_points
+        if weights is None:
+            weights = self._weights
+        return SvNurbsDerivativesCalculator(self.degree, control_points, weights, self.basis)
+
+    def fraction(self, order):
+        if order not in self._fractions:
+            #n = self.basis.shape[-1]
+            #p = self.degree
+            #k = len(self._control_points)
+            ns = self.basis[order] # (k, n)
+            coeffs = ns * self._weights[np.newaxis].T # (k, n)
+            coeffs_t = coeffs[np.newaxis].T # (n, k, 1)
+            numerator = (coeffs_t * self._control_points) # (n, k, 3)
+            numerator = numerator.sum(axis=1) # (n, 3)
+            denominator = coeffs.sum(axis=0) # (n,)
+            self._fractions[order] = numerator, denominator[np.newaxis].T
+        return self._fractions[order]
+
+    @property
+    def control_points(self):
+        return self._control_points
+
+    @control_points.setter
+    def control_points(self, points):
+        self._control_points = points
+        self._fractions = dict()
+
+    @property
+    def weights(self):
+        return self._weights
+
+    @weights.setter
+    def weights(self, weights):
+        self._weights = weights
+        self._fractions = dict()
+
+    def evaluate(self, order=0):
+        if order == 0:
+            return self.points()
+        elif order == 1:
+            return self.tangents()
+        elif order == 2:
+            return self.second_derivatives()
+        elif order == 3:
+            return self.third_derivatives()
+
+    def points(self):
+        numerator, denominator = self.fraction(0)
+        return nurbs_divide(numerator, denominator)
+    
+    def tangents(self):
+        numerator, denominator = self.fraction(0)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        return curve1
+    
+    def second_derivatives(self):
+        numerator, denominator = self.fraction(0)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        numerator2, denominator2 = self.fraction(2)
+        curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+        return curve2
+
+    def third_derivatives(self):
+        numerator, denominator = self.fraction(0)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        numerator2, denominator2 = self.fraction(2)
+        curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+        numerator3, denominator3 = self.fraction(3)
+
+        curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
+        return curve3
 
 SvNurbsMaths.curve_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsCurve
 if geomdl is not None:

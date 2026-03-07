@@ -41,8 +41,44 @@ EXTRA_ADDONS = {
     'archive_link':'https://github.com/vicdoval/sverchok-open3d/archive/',
     'branch': 'master',
     'self_instalable': True
-    }
+    },
+'Sverchok Bmesh': {
+    'name': 'sverchok_bmesh',
+    'description': 'Bmesh nodes for Sverchok addon (not suppported more)',
+    'archive_link':'https://github.com/nortikin/Sverchok-Bmesh/archive/',
+    'branch': 'main',
+    'self_instalable': True
+    },
+'Sverchok Mega-Polis': {
+    'name': 'mega_polis',
+    'description': 'MEGA-POLIS is a Data-Driven Urban Design Toolkit. GIS CSV LAS DEM OSM other',
+    'archive_link':'https://github.com/victorcalixto/mega-polis/archive/',
+    'branch': 'main',
+    'self_instalable': True
+    },
+'Sverchok IFC': {
+    'name': 'sverchok_ifc',
+    'description': 'IfcSverchok is a Sverchok plugin that allows you to create native IFC models alongside your parametric Sverchok geometry.',
+    'archive_link':'https://github.com/nortikin/sverchok_ifc/archive/',
+    'branch': 'main',
+    'self_instalable': True
+    },
+'Sverchok ladybug': {
+    'name': 'sverchok_ifc',
+    'description': 'IfcSverchok is a Sverchok plugin that allows you to create native IFC models alongside your parametric Sverchok geometry.',
+    'archive_link':'https://github.com/nortikin/sverchok_ladybug/archive/',
+    'branch': 'main',
+    'self_instalable': True
+    },
+'Sverchok topologic (windows only)': {
+    'name': 'sverchok_topologic',
+    'description': 'Topologic is (windows only) a Sverchok plugin that allows you to create and manage topologu of architectural spaces.',
+    'archive_link':'https://github.com/nortikin/sverchok_topologic/archive/',
+    'branch': 'main',
+    'self_instalable': True
+    },
 }
+
 
 ARCHIVE_LINK = 'https://github.com/nortikin/sverchok/archive/'
 MASTER_BRANCH_NAME = 'master'

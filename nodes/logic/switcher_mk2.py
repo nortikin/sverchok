@@ -12,14 +12,14 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 
-class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
+class SvCustomSwitcherMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: custom switcher
     Convert input to buttons
 
     Output shows selected items
     """
-    bl_idname = 'SvCustomSwitcher'
+    bl_idname = 'SvCustomSwitcherMK2'
     bl_label = 'Switcher'
     bl_icon = 'HAND'
 
@@ -44,6 +44,10 @@ class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         name='Multiple selection', default=True, update=update_mode,
         description='Selection several items simultaneously')
 
+    masked: bpy.props.BoolProperty(
+        name='Use Mask', default=False, update=updateNode,
+        description='To use masks or not to use masks')
+
     ui_scale: bpy.props.FloatProperty(
         name='Size of buttons', default=1.0, min=0.5, max=5)
 
@@ -58,13 +62,20 @@ class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         self['user_list'] = [False for _ in range(32)]
         self['previous_user_list'] = [False for _ in range(32)]
         self.inputs.new('SvStringsSocket', 'Data')
+        self.inputs.new('SvStringsSocket', 'Mask')
+        self.inputs.new('SvStringsSocket', 'UseMask')
+
         self.outputs.new('SvStringsSocket', 'Item')
+        self.outputs.new('SvStringsSocket', 'Data')
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         col.scale_y = self.ui_scale
         for i, val in enumerate(self.string_values):
             col.prop(self, "user_list", toggle=True, index=i, text=val.name)
+        if self.inputs['Mask'].is_linked:
+            row = layout.row(align=True)
+            row.prop(self, "masked", text='UseMask')
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "draw_3dpanel", icon="PLUGIN")
@@ -85,9 +96,11 @@ class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             col = layout.column(align=True)
             row = col.row(align=True)
             row.label(text=self.label or self.name)
-            row.prop(self, 'multiple_selection', toggle=True, text='',
+            row.prop(self, 'multiple_selection', toggle=True, text='multiselect',
                      icon='SNAP_ON' if self.multiple_selection else 'SNAP_OFF')
-
+            row.prop(self, 'masked', toggle=True, text='UseMask',
+                     icon='SPREADSHEET' if self.masked else 'VIEW_PAN')
+            #if not self.masked:
             for i, val in enumerate(self.string_values):
                 col.prop(self, "user_list", toggle=True, index=i, text=val.name)
 
@@ -95,7 +108,7 @@ class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         # Storing names of items
         if self.inputs['Data'].is_linked:
             data = self.inputs['Data'].sv_get()
-            if isinstance(data[0], (list, tuple)):
+            if data and isinstance(data[0], (list, tuple)):
                 data = [i for l in data for i in l]
             if len(data) != len(self.string_values):
                 self.string_values.clear()
@@ -109,12 +122,49 @@ class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         else:
             self.string_values.clear()
 
-        self.outputs['Item'].sv_set([[i for i, b in enumerate(self.user_list[:len(self.string_values)]) if b]])
+        use_mask_from_socket = False
+        if self.inputs['UseMask'].is_linked:
+            try:
+                use_mask_from_socket = bool(self.inputs['UseMask'].sv_get()[0][0])
+                self['masked'] = use_mask_from_socket
+            except:
+                use_mask_from_socket = self.masked
+                print('Switcher node use mask socket got wrong data')
+
+
+        if self.inputs['Mask'].is_linked and self.inputs['Data'].is_linked and use_mask_from_socket:
+            mask_data = self.inputs['Mask'].sv_get()
+            # Check if mask_data is not empty to allow manual override when [] is passed
+            if mask_data and mask_data[0]:
+                # Handle standard Sverchok nested list structure
+                flat_mask = mask_data[0] if isinstance(mask_data[0], (list, tuple)) else mask_data
+                new_values = [False] * 32
+                for i, val in enumerate(flat_mask):
+                    if i < 32:
+                        new_values[i] = bool(val)
+                
+                # Enforce single selection logic if multiple_selection is False
+                if not self.multiple_selection:
+                    found = False
+                    for i in range(32):
+                        if new_values[i] and not found:
+                            found = True
+                        else:
+                            new_values[i] = False
+
+                # Update ID-properties directly to bypass the toggle logic in the setter
+                if list(self['user_list']) != new_values:
+                    self['user_list'] = new_values
+                    self['previous_user_list'] = new_values
+        #print(self.user_list[:len(self.string_values)],self.string_values)
+        out = [i for i, b in enumerate(self.user_list[:len(self.string_values)]) if b]
+        datas = [data[i] for i in out]
+        self.outputs['Item'].sv_set([out])
+        self.outputs['Data'].sv_set([datas])
 
 
 def register():
-    bpy.utils.register_class(SvCustomSwitcher)
-
+    bpy.utils.register_class(SvCustomSwitcherMK2)
 
 def unregister():
-    bpy.utils.unregister_class(SvCustomSwitcher)
+    bpy.utils.unregister_class(SvCustomSwitcherMK2)

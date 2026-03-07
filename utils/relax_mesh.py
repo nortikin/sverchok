@@ -132,10 +132,14 @@ def edges_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, t
     supported shape preservation methods: NONE, NORMAL, BVH
     """
 
-    def do_iteration(bvh, bm, verts):
+    def do_iteration(bvh, bm, boundary_idxs, verts):
+        nonlocal mask
         verts = np.asarray(verts)
-        v1s = verts[edges[:,0]]
-        v2s = verts[edges[:,1]]
+        n_verts = len(verts)
+        edges_fst = edges[:,0]
+        edges_snd = edges[:,1]
+        v1s = verts[edges_fst]
+        v2s = verts[edges_snd]
         edge_vecs = v2s - v1s
         edge_lens = np.linalg.norm(edge_vecs, axis=1)
 
@@ -148,29 +152,31 @@ def edges_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, t
         else:
             raise Exception("Unsupported target edge length type")
 
-        forces = defaultdict(lambda: np.zeros((3,)))
-        counts = defaultdict(int)
-        for edge_idx, (v1_idx, v2_idx) in enumerate(edges):
-            edge_vec = edge_vecs[edge_idx]
-            edge_len = edge_lens[edge_idx]
-            d_len = (edge_len - target_len)/2.0
-            dv1 =   d_len * edge_vec
-            dv2 = - d_len * edge_vec
-            forces[v1_idx] += dv1
-            forces[v2_idx] += dv2
-            counts[v1_idx] += 1
-            counts[v2_idx] += 1
-        
+        counts = np.zeros((n_verts,))
+        counts_fst = np.bincount(edges_fst) 
+        counts[:len(counts_fst)] += counts_fst
+        counts_snd = np.bincount(edges_snd) 
+        counts[:len(counts_snd)] += counts_snd
+
+        forces = np.zeros((n_verts,3))
+        d_lens = (edge_lens - target_len) / 2.0
+        edge_forces = edge_vecs * d_lens[np.newaxis].T
+        forces[edges_fst] += edge_forces
+        forces[edges_snd] -= edge_forces
+
+        I = np.arange(n_verts)
+        if mask is not None:
+            mask = np.array([bool(m) for m in mask])
+        else:
+            mask = np.full((n_verts,), True)
+        if boundary_idxs is not None:
+            mask[list(boundary_idxs)] = False
+        #mask = np.logical_not(mask)
+        counts_masked = counts[mask][np.newaxis].T
+        forces_masked = k * forces[mask]
+
         target_verts = verts.copy()
-        for v_idx in range(len(verts)):
-            if skip_boundary and bm.verts[v_idx].is_boundary:
-                continue
-            if mask is not None and not mask[v_idx]:
-                continue
-            count = counts[v_idx]
-            if count:
-                forces[v_idx] /= count
-            target_verts[v_idx] += k*forces[v_idx]
+        target_verts[mask] += forces_masked / counts_masked
 
         if method == NONE:
             verts_out = target_verts.tolist()
@@ -197,11 +203,21 @@ def edges_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, t
     edges = np.array(edges)
     if mask is not None:
         mask = repeat_last_for_length(mask, len(vertices))
+    if skip_boundary:
+        bm = bmesh_from_pydata(vertices, edges, faces)
+        boundary_idxs = set(v.index for v in bm.verts if v.is_boundary)
+        bm.free()
+    else:
+        boundary_idxs = None
     bvh = BVHTree.FromPolygons(vertices, faces)
     for i in range(iterations):
-        bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-        vertices = do_iteration(bvh, bm, vertices)
-        bm.free()
+        if method != NONE:
+            bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+        else:
+            bm = None
+        vertices = do_iteration(bvh, bm, boundary_idxs, vertices)
+        if bm is not None:
+            bm.free()
 
     return vertices
 
