@@ -499,14 +499,14 @@ el.replaceWith(d);
 <div class="desc"><p>edges as simple lines</p></div>
 </dd>
 <dt id="sverchok.utils.dxf.export"><code class="name flex">
-<span>def <span class="ident">export</span></span>(<span>fp, dxf, scal=1000.0, t_scal=1.0, info='')</span>
+<span>def <span class="ident">export</span></span>(<span>fp, dxf, scal=1000.0, t_scal=1.0, info='', do_block=False)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def export(fp,dxf,scal=1000.0,t_scal=1.0,info=&#39;&#39;):
+<pre><code class="python">def export(fp,dxf,scal=1000.0,t_scal=1.0,info=&#39;&#39;,do_block=False):
 
     DIM_TEXT_STYLE = ezdxf.options.default_dimension_text_style
     # Create a new DXF document.
@@ -613,17 +613,26 @@ el.replaceWith(d);
     doc.header[&#34;$LWDISPLAY&#34;] = 1
     # Add entities to a layout by factory methods: layout.add_...()
 
-    for data in dxf:
-        #print(data)
-        #print(&#34;Тип данных DXF&#34;,data[0].__repr__())
-        if data[0].__repr__() == &#39;&lt;DXF Pols&gt;&#39;:
-            polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
-        if data[0].__repr__() == &#39;&lt;DXF Lines&gt;&#39;:
-            edges_draw(data,scal,ledgs,msp)
-        if data[0].__repr__() == &#39;&lt;DXF Hatch&gt;&#39;:
-            hatches_draw(data,scal,lhatc,msp)
-        if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
-            dimensions_draw(data,scal,ldims,msp)
+    if do_block == False:
+        for data in dxf:
+            #print(data)
+            #print(&#34;Тип данных DXF&#34;,data[0].__repr__())
+            if data[0].__repr__() == &#39;&lt;DXF Pols&gt;&#39;:
+                polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
+            if data[0].__repr__() == &#39;&lt;DXF Lines&gt;&#39;:
+                edges_draw(data,scal,ledgs,msp)
+            if data[0].__repr__() == &#39;&lt;DXF Hatch&gt;&#39;:
+                hatches_draw(data,scal,lhatc,msp)
+            if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
+                dimensions_draw(data,scal,ldims,msp)
+    else:
+        lib = BlockLibrary(doc)
+        
+        # Создаем блок
+        lib.make_block(&#39;Sverchok&#39;, dxf, scal, [lpols,ledgs,lhatc,ldims])
+        doc = lib.return_block()
+        # Вставляем блок
+        #lib.place_block(&#39;BOLT_M10&#39;, insert=(0, 0))
 
     &#39;&#39;&#39;
     if p and d1:
@@ -884,6 +893,168 @@ todo 2026 polymesh</p></div>
 </dl>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.dxf.BlockLibrary"><code class="flex name class">
+<span>class <span class="ident">BlockLibrary</span></span>
+<span>(</span><span>doc)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockLibrary:
+    def __init__(self, doc):
+        self.doc = doc
+        self.block = []
+
+    def make_block(self, name=&#39;Sverchok_block&#39;, dxf=[], scal=[], layers=[]):
+        &#34;&#34;&#34;Создает блок&#34;&#34;&#34;
+        if not dxf:
+            return
+        lpols,ledgs,lhatc,ldims = layers
+        block = self.doc.blocks.new(name=name)
+        for data in dxf:
+            if data[0].__repr__() == &#39;&lt;DXF Pols&gt;&#39;:
+                self.pols(block,data,scal,lpols) #(p,v,d1,d2,scal,lpols,msp)
+            if data[0].__repr__() == &#39;&lt;DXF Lines&gt;&#39;:
+                self.edgs(block,data,scal,ledgs)
+            if data[0].__repr__() == &#39;&lt;DXF Hatch&gt;&#39;:
+                pass
+                #self.hatc(block,data,scal,lhatc)
+            if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
+                pass
+                #self.dims(block,data,scal,ldims)
+        self.block = [block]
+
+    def pols(self,block,data,scal,lpols):
+        for points_ in data:
+            vers = points_.vers
+            vers = [[i*scal for i in ver] for ver in vers]
+            for i in range(1, len(vers)):
+                block.add_line(vers[i-1][:2], vers[i][:2])
+        #block.add_circle(center=(0, 0), radius=diameter/2)
+
+    def edgs(self,block,data,scal,ledgs):
+        for points_ in data:
+            vers = points_.vers
+            vers = [[i*scal for i in ver] for ver in vers]
+            block.add_line(vers[0][:2], vers[1][:2])
+
+    def return_block(self):
+        return self.doc
+
+    def place_block(self, block_name, insert, rotation=0, scale=1.0):
+        &#34;&#34;&#34;Вставляет блок в чертеж, не использую&#34;&#34;&#34;
+        block = self.block
+        msp = self.doc.modelspace()
+        ref = msp.add_blockref(block_name, insert=insert)
+        ref.dxf.rotation = rotation
+        ref.dxf.xscale = scale
+        ref.dxf.yscale = scale</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.dxf.BlockLibrary.edgs"><code class="name flex">
+<span>def <span class="ident">edgs</span></span>(<span>self, block, data, scal, ledgs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edgs(self,block,data,scal,ledgs):
+    for points_ in data:
+        vers = points_.vers
+        vers = [[i*scal for i in ver] for ver in vers]
+        block.add_line(vers[0][:2], vers[1][:2])</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.dxf.BlockLibrary.make_block"><code class="name flex">
+<span>def <span class="ident">make_block</span></span>(<span>self, name='Sverchok_block', dxf=[], scal=[], layers=[])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_block(self, name=&#39;Sverchok_block&#39;, dxf=[], scal=[], layers=[]):
+    &#34;&#34;&#34;Создает блок&#34;&#34;&#34;
+    if not dxf:
+        return
+    lpols,ledgs,lhatc,ldims = layers
+    block = self.doc.blocks.new(name=name)
+    for data in dxf:
+        if data[0].__repr__() == &#39;&lt;DXF Pols&gt;&#39;:
+            self.pols(block,data,scal,lpols) #(p,v,d1,d2,scal,lpols,msp)
+        if data[0].__repr__() == &#39;&lt;DXF Lines&gt;&#39;:
+            self.edgs(block,data,scal,ledgs)
+        if data[0].__repr__() == &#39;&lt;DXF Hatch&gt;&#39;:
+            pass
+            #self.hatc(block,data,scal,lhatc)
+        if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
+            pass
+            #self.dims(block,data,scal,ldims)
+    self.block = [block]</code></pre>
+</details>
+<div class="desc"><p>Создает блок</p></div>
+</dd>
+<dt id="sverchok.utils.dxf.BlockLibrary.place_block"><code class="name flex">
+<span>def <span class="ident">place_block</span></span>(<span>self, block_name, insert, rotation=0, scale=1.0)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def place_block(self, block_name, insert, rotation=0, scale=1.0):
+    &#34;&#34;&#34;Вставляет блок в чертеж, не использую&#34;&#34;&#34;
+    block = self.block
+    msp = self.doc.modelspace()
+    ref = msp.add_blockref(block_name, insert=insert)
+    ref.dxf.rotation = rotation
+    ref.dxf.xscale = scale
+    ref.dxf.yscale = scale</code></pre>
+</details>
+<div class="desc"><p>Вставляет блок в чертеж, не использую</p></div>
+</dd>
+<dt id="sverchok.utils.dxf.BlockLibrary.pols"><code class="name flex">
+<span>def <span class="ident">pols</span></span>(<span>self, block, data, scal, lpols)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols(self,block,data,scal,lpols):
+    for points_ in data:
+        vers = points_.vers
+        vers = [[i*scal for i in ver] for ver in vers]
+        for i in range(1, len(vers)):
+            block.add_line(vers[i-1][:2], vers[i][:2])
+    #block.add_circle(center=(0, 0), radius=diameter/2)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.dxf.BlockLibrary.return_block"><code class="name flex">
+<span>def <span class="ident">return_block</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def return_block(self):
+    return self.doc</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -913,6 +1084,20 @@ todo 2026 polymesh</p></div>
 <li><code><a title="sverchok.utils.dxf.polygons_draw" href="#sverchok.utils.dxf.polygons_draw">polygons_draw</a></code></li>
 <li><code><a title="sverchok.utils.dxf.text_draw" href="#sverchok.utils.dxf.text_draw">text_draw</a></code></li>
 <li><code><a title="sverchok.utils.dxf.vertices_draw" href="#sverchok.utils.dxf.vertices_draw">vertices_draw</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.dxf.BlockLibrary" href="#sverchok.utils.dxf.BlockLibrary">BlockLibrary</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.dxf.BlockLibrary.edgs" href="#sverchok.utils.dxf.BlockLibrary.edgs">edgs</a></code></li>
+<li><code><a title="sverchok.utils.dxf.BlockLibrary.make_block" href="#sverchok.utils.dxf.BlockLibrary.make_block">make_block</a></code></li>
+<li><code><a title="sverchok.utils.dxf.BlockLibrary.place_block" href="#sverchok.utils.dxf.BlockLibrary.place_block">place_block</a></code></li>
+<li><code><a title="sverchok.utils.dxf.BlockLibrary.pols" href="#sverchok.utils.dxf.BlockLibrary.pols">pols</a></code></li>
+<li><code><a title="sverchok.utils.dxf.BlockLibrary.return_block" href="#sverchok.utils.dxf.BlockLibrary.return_block">return_block</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
