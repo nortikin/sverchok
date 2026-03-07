@@ -757,7 +757,7 @@ def clean_dimstyles_except_mine(doc, my_style_name):
     #doc.dimstyles.set_active_style_name(my_style_name)
 
 # export main definition
-def export(fp,dxf,scal=1000.0,t_scal=1.0,info=''):
+def export(fp,dxf,scal=1000.0,t_scal=1.0,info='',do_block=False):
 
     DIM_TEXT_STYLE = ezdxf.options.default_dimension_text_style
     # Create a new DXF document.
@@ -864,17 +864,26 @@ def export(fp,dxf,scal=1000.0,t_scal=1.0,info=''):
     doc.header["$LWDISPLAY"] = 1
     # Add entities to a layout by factory methods: layout.add_...()
 
-    for data in dxf:
-        #print(data)
-        #print("Тип данных DXF",data[0].__repr__())
-        if data[0].__repr__() == '<DXF Pols>':
-            polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
-        if data[0].__repr__() == '<DXF Lines>':
-            edges_draw(data,scal,ledgs,msp)
-        if data[0].__repr__() == '<DXF Hatch>':
-            hatches_draw(data,scal,lhatc,msp)
-        if data[0].__repr__() == '<DXF LinDims>':
-            dimensions_draw(data,scal,ldims,msp)
+    if do_block == False:
+        for data in dxf:
+            #print(data)
+            #print("Тип данных DXF",data[0].__repr__())
+            if data[0].__repr__() == '<DXF Pols>':
+                polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
+            if data[0].__repr__() == '<DXF Lines>':
+                edges_draw(data,scal,ledgs,msp)
+            if data[0].__repr__() == '<DXF Hatch>':
+                hatches_draw(data,scal,lhatc,msp)
+            if data[0].__repr__() == '<DXF LinDims>':
+                dimensions_draw(data,scal,ldims,msp)
+    else:
+        lib = BlockLibrary(doc)
+        
+        # Создаем блок
+        lib.make_block('Sverchok', dxf, scal, [lpols,ledgs,lhatc,ldims])
+        doc = lib.return_block()
+        # Вставляем блок
+        #lib.place_block('BOLT_M10', insert=(0, 0))
 
     '''
     if p and d1:
@@ -891,3 +900,56 @@ def export(fp,dxf,scal=1000.0,t_scal=1.0,info=''):
 
     # Save the DXF document.
     doc.saveas(fp[0][0])
+
+class BlockLibrary:
+    def __init__(self, doc):
+        self.doc = doc
+        self.block = []
+
+    def make_block(self, name='Sverchok_block', dxf=[], scal=[], layers=[]):
+        """Создает блок"""
+        if not dxf:
+            return
+        lpols,ledgs,lhatc,ldims = layers
+        block = self.doc.blocks.new(name=name)
+        for data in dxf:
+            if data[0].__repr__() == '<DXF Pols>':
+                self.pols(block,data,scal,lpols) #(p,v,d1,d2,scal,lpols,msp)
+            if data[0].__repr__() == '<DXF Lines>':
+                self.edgs(block,data,scal,ledgs)
+            if data[0].__repr__() == '<DXF Hatch>':
+                pass
+                #self.hatc(block,data,scal,lhatc)
+            if data[0].__repr__() == '<DXF LinDims>':
+                pass
+                #self.dims(block,data,scal,ldims)
+        self.block = [block]
+
+    def pols(self,block,data,scal,lpols):
+        for points_ in data:
+            vers = points_.vers
+            vers = [[i*scal for i in ver] for ver in vers]
+            for i in range(1, len(vers)):
+                block.add_line(vers[i-1][:2], vers[i][:2])
+        #block.add_circle(center=(0, 0), radius=diameter/2)
+
+    def edgs(self,block,data,scal,ledgs):
+        for points_ in data:
+            vers = points_.vers
+            vers = [[i*scal for i in ver] for ver in vers]
+            block.add_line(vers[0][:2], vers[1][:2])
+
+    def return_block(self):
+        return self.doc
+
+    def place_block(self, block_name, insert, rotation=0, scale=1.0):
+        """Вставляет блок в чертеж, не использую"""
+        block = self.block
+        msp = self.doc.modelspace()
+        ref = msp.add_blockref(block_name, insert=insert)
+        ref.dxf.rotation = rotation
+        ref.dxf.xscale = scale
+        ref.dxf.yscale = scale
+
+
+

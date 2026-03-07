@@ -1055,6 +1055,7 @@
     - extra_menu: ConnectionPartialMenu
     - SvDxfImportNode
     - SvDxfExportNode
+    - SvDxfBlocksNode
     - SvDxfLinDimsNode
     - SvDxfHatchNode
     - SvDxfLinesNode
