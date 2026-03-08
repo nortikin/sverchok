@@ -32,6 +32,8 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
     scale: bpy.props.FloatProperty(default=1000.0, min=1.0, max=200000.0, name='scale')
 
     text_scale: bpy.props.FloatProperty(default=1.0,name='text_scale')
+    
+    do_block: bpy.props.BoolProperty(default=False, name='do_block')
 
     def sv_init(self, context):
         '''
@@ -62,6 +64,7 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
         row.operator("node.dxf_export", text="Export DXF")
         col.prop(self, "scale", expand=False)
         col.prop(self, "text_scale", expand=False)
+        col.prop(self, 'do_block', expand=True)
 
     def process(self):
         pass  # Данные будут обрабатываться в операторе
@@ -121,8 +124,10 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
         #scal_ = self.inputs['scal'].sv_get()[0][0]
         #t_scal_ = self.inputs['t_scal'].sv_get()[0][0]
         #export(vers_,edges_,pols_,Tvers_,Ttext_,fpath_,d1_,d2_,info,dim1_,dim2_,adim1_,scal_,vleader_,leader_,t_scal_,dxf_)
-        export(fpath_,dxf_,scal=self.scale,t_scal=self.text_scale,info=info)
-
+        if self.do_block:
+            export(fpath_,dxf_,scal=self.scale,t_scal=self.text_scale,info=info, do_block=True)
+        else:
+            export(fpath_,dxf_,scal=self.scale,t_scal=self.text_scale,info=info, do_block=False)
 
 
 
