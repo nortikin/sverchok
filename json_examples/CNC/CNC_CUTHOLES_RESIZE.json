@@ -8,7 +8,7 @@
             -40.529541015625,
             -89.1334228515625
           ],
-          "height": 686.0,
+          "height": 680.0,
           "width": 211.0,
           "color": [
             0.6079999804496765,
@@ -25,7 +25,7 @@
             199.54443359375,
             -30.0751953125
           ],
-          "height": 761.0,
+          "height": 755.0,
           "width": 212.8695068359375,
           "label": "INPUT",
           "color": [
@@ -43,7 +43,7 @@
             -30.447509765625,
             -160.383056640625
           ],
-          "height": 692.0,
+          "height": 686.0,
           "width": 921.8760986328125,
           "label": "Separator",
           "color": [
@@ -126,7 +126,6 @@
           "use_custom_color": true
         },
         "properties": {
-          "n_id": "-8088682792411434885",
           "text": "Nikitron 2020 | CHANGE HOLES SIZE v.4. go 3D, find sverchok panel, press Scanforprops, select your flat 2D mesh, press Get object, set enlargement"
         },
         "inputs": {
@@ -149,6 +148,12 @@
             -858.7364501953125,
             14.95672607421875
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.002"
@@ -182,6 +187,12 @@
             -869.9449462890625,
             -199.19415283203125
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.002"
@@ -215,6 +226,12 @@
             -869.9449462890625,
             -411.9028625488281
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.002"
@@ -314,7 +331,7 @@
           "currently_storing": true
         },
         "advanced_properties": {
-          "geom": "{\"Vertices\": [-0.3317485451698303, -0.13539576530456543, 0.0, -0.3317485451698303, 0.28313302993774414, 0.0, 0.13632792234420776, 0.28313302993774414, 0.0, 0.13632792234420776, -0.13539576530456543, 0.0, 0.07718795537948608, 0.19313311576843262, 0.0, 0.07718795537948608, 0.22313308715820312, 0.0, -0.021665304899215698, 0.22313308715820312, 0.0, -0.021665304899215698, 0.19313311576843262, 0.0, -0.17412114143371582, 0.22313308715820312, 0.0, -0.17412114143371582, 0.19313311576843262, 0.0, -0.07526788115501404, 0.19313311576843262, 0.0, -0.07526788115501404, 0.22313308715820312, 0.0, -0.10259544849395752, -0.006459210067987442, 0.0, -0.12380863726139069, 0.014753971248865128, 0.0, -0.0539088249206543, 0.08465377986431122, 0.0, -0.03269564360380173, 0.06344059854745865, 0.0], \"Edges\": [0, 1, 1, 2, 2, 3, 0, 3, 4, 5, 5, 6, 6, 7, 4, 7, 8, 9, 9, 10, 10, 11, 8, 11, 12, 13, 13, 14, 14, 15, 12, 15], \"Polygons\": [], \"MaterialIdx\": [], \"Matrix\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0]}"
+          "geom": "{\"Vertices\": [-0.3317485451698303, -0.13539576530456543, 0.0, -0.3317485451698303, 0.28313302993774414, 0.0, 0.13632792234420776, 0.28313302993774414, 0.0, 0.13632792234420776, -0.13539576530456543, 0.0, 0.07718795537948608, 0.19313311576843262, 0.0, 0.07718795537948608, 0.22313308715820312, 0.0, -0.021665304899215698, 0.22313308715820312, 0.0, -0.021665304899215698, 0.19313311576843262, 0.0, -0.17412114143371582, 0.22313308715820312, 0.0, -0.17412114143371582, 0.19313311576843262, 0.0, -0.07526788115501404, 0.19313311576843262, 0.0, -0.07526788115501404, 0.22313308715820312, 0.0, -0.10259544849395752, -0.006459210067987442, 0.0, -0.12380863726139069, 0.014753971248865128, 0.0, -0.0539088249206543, 0.08465377986431122, 0.0, -0.03269564360380173, 0.06344059854745865, 0.0], \"Edges\": [0, 1, 1, 2, 2, 3, 0, 3, 4, 5, 5, 6, 6, 7, 4, 7, 8, 9, 9, 10, 10, 11, 8, 11, 12, 13, 13, 14, 14, 15, 12, 15], \"Polygons\": [], \"MaterialIdx\": [], \"Matrix\": [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.9999999403953552, 0.0, 0.0, 0.0, 1.9470719792025193e-07, 1.0, 0.0, 0.0, 0.0, 1.0]}"
         },
         "outputs": {
           "Vertices": {
@@ -353,7 +370,7 @@
           }
         },
         "properties": {
-          "float_": 0.03399999812245369,
+          "float_": 0.05000000074505806,
           "float_min": 0.0010000000474974513,
           "float_max": 0.11999999731779099
         },
@@ -383,6 +400,12 @@
             -32.3677978515625,
             23.18878173828125
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.005"
@@ -430,6 +453,12 @@
             -32.3677978515625,
             -152.22137451171875
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.005"
@@ -477,6 +506,12 @@
             -211.864501953125,
             -129.03619384765625
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.005"
@@ -509,6 +544,12 @@
             -211.864501953125,
             9.7769775390625
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.005"
@@ -582,6 +623,12 @@
             -419.3626708984375,
             -373.4560852050781
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.005"
@@ -614,6 +661,12 @@
             -208.6275634765625,
             -292.43963623046875
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.005"
@@ -750,7 +803,7 @@
         "attributes": {
           "location": [
             212.8760986328125,
-            -55.616451263427734
+            -55.616455078125
           ],
           "width": 16.0,
           "label": "V",
@@ -763,18 +816,6 @@
           "parent": {
             "type": "NODE",
             "value": "Frame"
-          }
-        },
-        "inputs": {
-          "Input": {
-            "bl_idname": "NodeSocketColor",
-            "name": "Input"
-          }
-        },
-        "outputs": {
-          "Output": {
-            "bl_idname": "NodeSocketColor",
-            "name": "Output"
           }
         },
         "bl_idname": "NodeReroute"
@@ -796,18 +837,6 @@
           "parent": {
             "type": "NODE",
             "value": "Frame"
-          }
-        },
-        "inputs": {
-          "Input": {
-            "bl_idname": "NodeSocketColor",
-            "name": "Input"
-          }
-        },
-        "outputs": {
-          "Output": {
-            "bl_idname": "NodeSocketColor",
-            "name": "Output"
           }
         },
         "bl_idname": "NodeReroute"
@@ -856,6 +885,12 @@
             818.4948120117188,
             16.81280517578125
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.001"
@@ -1047,6 +1082,12 @@
             2086.3400268554688,
             23.489990234375
           ],
+          "color": [
+            0.9200000166893005,
+            0.9200000166893005,
+            0.9200000166893005
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.001"
@@ -1226,6 +1267,12 @@
             -62.14654541015625
           ],
           "hide": true,
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.003"
@@ -1252,42 +1299,6 @@
           }
         },
         "bl_idname": "ListJoinNode"
-      },
-      "UV Connection": {
-        "attributes": {
-          "location": [
-            3252.5336303710938,
-            6.75531005859375
-          ],
-          "parent": {
-            "type": "NODE",
-            "value": "Frame.001"
-          }
-        },
-        "properties": {
-          "polygons": "Edges"
-        },
-        "inputs": {
-          "vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "vertices"
-          },
-          "vertices 1": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "vertices 1"
-          }
-        },
-        "outputs": {
-          "vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "vertices"
-          },
-          "data": {
-            "bl_idname": "SvStringsSocket",
-            "name": "data"
-          }
-        },
-        "bl_idname": "LineConnectNodeMK2"
       },
       "Evaluate Surface": {
         "attributes": {
@@ -1383,6 +1394,12 @@
             29.9752197265625
           ],
           "width": 260.0,
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.001"
@@ -1390,10 +1407,18 @@
         },
         "properties": {
           "int_list_items": [
-            {"elem": -1},
-            {"elem": -1},
-            {"elem": 1},
-            {"elem": 1}
+            {
+              "elem": -1
+            },
+            {
+              "elem": -1
+            },
+            {
+              "elem": 1
+            },
+            {
+              "elem": 1
+            }
           ],
           "int_list_counter": 4
         },
@@ -1425,6 +1450,12 @@
             37.8502197265625
           ],
           "width": 260.0,
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.001"
@@ -1432,10 +1463,16 @@
         },
         "properties": {
           "int_list_items": [
-            {"elem": -1},
-            {"elem": 1},
-            {"elem": 1},
-            {"elem": -1}
+            {
+              "elem": -1
+            },
+            {
+              "elem": 1
+            },
+            {
+              "elem": 1
+            },
+            {}
           ],
           "int_list_counter": 4
         },
@@ -1681,6 +1718,12 @@
             -130.36761474609375
           ],
           "hide": true,
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.003"
@@ -1726,8 +1769,7 @@
           }
         },
         "properties": {
-          "base_data_name": "New_layuot",
-          "show_objects": false
+          "base_data_name": "New_layuot"
         },
         "inputs": {
           "vertices": {
@@ -1765,37 +1807,6 @@
         },
         "bl_idname": "SvMeshViewer"
       },
-      "Stethoscope MK2.001": {
-        "attributes": {
-          "location": [
-            577.4807739257812,
-            237.37200927734375
-          ],
-          "color": [
-            0.5,
-            0.5,
-            1.0
-          ],
-          "use_custom_color": true
-        },
-        "properties": {
-          "text_color": [
-            0.949999988079071,
-            0.949999988079071,
-            0.949999988079071
-          ],
-          "location_theta": 1.0080000162124634,
-          "num_elements": 11,
-          "selected_mode": "graphical"
-        },
-        "inputs": {
-          "Data": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Data"
-          }
-        },
-        "bl_idname": "SvStethoscopeNodeMK2"
-      },
       "Separate Loose Parts": {
         "attributes": {
           "location": [
@@ -1830,6 +1841,46 @@
           }
         },
         "bl_idname": "SvSeparateMeshNode"
+      },
+      "UV Connection MK3": {
+        "attributes": {
+          "location": [
+            3252.5336303710938,
+            6.75531005859375
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "output_type": "Edges"
+        },
+        "inputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "vertices 1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices 1"
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges"
+          },
+          "polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons"
+          }
+        },
+        "bl_idname": "LineConnectNodeMK3"
       }
     },
     "links": [
@@ -2074,7 +2125,7 @@
         "to_socket": "Poly Egde"
       },
       {
-        "from_node": "UV Connection",
+        "from_node": "UV Connection MK3",
         "from_socket": "vertices",
         "to_node": "List Join",
         "to_socket": "data"
@@ -2084,12 +2135,6 @@
         "from_socket": "Other",
         "to_node": "List Join",
         "to_socket": "data 1"
-      },
-      {
-        "from_node": "Evaluate Surface",
-        "from_socket": "Vertices",
-        "to_node": "UV Connection",
-        "to_socket": "vertices"
       },
       {
         "from_node": "Plane (Surface)",
@@ -2134,8 +2179,8 @@
         "to_socket": "PolyEdge"
       },
       {
-        "from_node": "UV Connection",
-        "from_socket": "data",
+        "from_node": "UV Connection MK3",
+        "from_socket": "edges",
         "to_node": "List Join.001",
         "to_socket": "data"
       },
@@ -2174,6 +2219,12 @@
         "from_socket": "Edges",
         "to_node": "Separate Loose Parts",
         "to_socket": "Poly Egde"
+      },
+      {
+        "from_node": "Evaluate Surface",
+        "from_socket": "Vertices",
+        "to_node": "UV Connection MK3",
+        "to_socket": "vertices"
       }
     ]
   }

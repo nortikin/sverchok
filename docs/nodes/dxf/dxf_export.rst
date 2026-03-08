@@ -17,6 +17,7 @@ Options
 
 - Scale: Overall scale factor for exported geometry
 - Text Scale: Scale factor for text elements
+- Do block: Make 2d block inside dxf, instead of 3d geometry
 
 Operators
 ---------

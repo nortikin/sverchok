@@ -24,243 +24,420 @@ from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsO
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class LineConnectNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
-    ''' uv Edges/Surfaces '''
-    bl_idname = 'LineConnectNodeMK2'
-    bl_label = 'UV Connection'
+class LineConnectNodeMK3(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
+    """
+    UV Connection Node for Sverchok
+    Creates edges or polygons by connecting vertices in U or V direction
+    Useful for creating surfaces from grid-like vertex arrangements
+    """
+    bl_idname = 'LineConnectNodeMK3'
+    bl_label = 'UV Connection MK3'
     bl_icon = 'GRID'
 
     base_name = 'vertices '
     multi_socket_type = 'SvVerticesSocket'
 
-    direction = [('U_dir', 'U', 'u direction'), ('V_dir', 'V', 'v direction')]
-    polsORedges = [('Pols', 'Pols', 'Pols'), ('Edges', 'Edges', 'Edges')]
+    # Direction options
+    direction_options = [('U_dir', 'U', 'U direction'), ('V_dir', 'V', 'V direction')]
+    
+    # Output type options
+    output_type_options = [('Pols', 'Pols', 'Polygons'), ('Edges', 'Edges', 'Edges')]
 
-    JoinLevel: IntProperty(
-        name='JoinLevel', description='Choose connect level of data (see help)',
+    # Node properties
+    join_level: IntProperty(
+        name='Join Level', 
+        description='Choose connect level of data (see help)',
         default=1, min=1, max=2, update=updateNode)
 
-    polygons: EnumProperty(
-        name='polsORedges', items=polsORedges, update=updateNode)
+    output_type: EnumProperty(
+        name='Output Type', 
+        items=output_type_options, 
+        update=updateNode)
     
-    dir_check: EnumProperty(
-        name='direction', items=direction, update=updateNode)
+    direction: EnumProperty(
+        name='Direction', 
+        items=direction_options, 
+        update=updateNode)
 
-    # as cyclic too have to have U cyclic and V cyclic flags - two flags
-    cicl_check_U: BoolProperty(name='cycleU', description='cycle U', default=False, update=updateNode)
-    cicl_check_V: BoolProperty(name='cycleV', description='cycle V', default=False, update=updateNode)
-    cap_U: BoolProperty(name='capU', description='cap U', default=False, update=updateNode)
-    cap_V: BoolProperty(name='capV', description='cap V', default=False, update=updateNode)
-    slice_check: BoolProperty(name='slice', description='Slice polygon', default=True, update=updateNode)
+    # Cyclic and capping options
+    cyclic_u: BoolProperty(
+        name='Cycle U', 
+        description='Cycle in U direction', 
+        default=False, 
+        update=updateNode)
+        
+    cyclic_v: BoolProperty(
+        name='Cycle V', 
+        description='Cycle in V direction', 
+        default=False, 
+        update=updateNode)
+        
+    cap_u: BoolProperty(
+        name='Cap U', 
+        description='Cap ends in U direction', 
+        default=False, 
+        update=updateNode)
+        
+    cap_v: BoolProperty(
+        name='Cap V', 
+        description='Cap ends in V direction', 
+        default=False, 
+        update=updateNode)
+        
+    slice_polygons: BoolProperty(
+        name='Slice', 
+        description='Slice polygon', 
+        default=True, 
+        update=updateNode)
 
     def sv_init(self, context):
+        """Initialize node sockets"""
         self.inputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvVerticesSocket', 'vertices')
-        self.outputs.new('SvStringsSocket', 'data')
+        self.outputs.new('SvStringsSocket', 'edges')
+        self.outputs.new('SvStringsSocket', 'polygons')
 
     def sv_internal_links(self):
+        """Define internal connections between sockets"""
         return [self.inputs[0], self.outputs[0]]
 
     def draw_buttons(self, context, layout):
+        """Draw node UI elements"""
         col = layout.column(align=True)
+        
+        # Direction selection
         row = col.row(align=True)
         row.label(text='Direction')
-        row.prop(self, "dir_check", expand=True)
+        row.prop(self, "direction", expand=True)
 
-        #col.separator()
-        
+        # Cyclic options
         row = col.row(align=True)
         row.label(text='Cycle')
-        row.prop(self, "cicl_check_U", text="U", toggle=True)
-        row.prop(self, "cicl_check_V", text="V", toggle=True)
+        row.prop(self, "cyclic_u", text="U", toggle=True)
+        row.prop(self, "cyclic_v", text="V", toggle=True)
        
+        # Capping options
         row = col.row(align=True)
         row.label(text='Cap')
-        row.prop(self, "cap_U", text="U", toggle=True)
-        row.prop(self, "cap_V", text="V", toggle=True)
+        row.prop(self, "cap_u", text="U", toggle=True)
+        row.prop(self, "cap_v", text="V", toggle=True)
 
+        # Output type and slicing
         row = col.row(align=True)
         row.label(text='Make')
-        row.prop(self, "polygons", text="polygons", expand=True)
-        if self.polygons == "Pols":
+        row.prop(self, "output_type", text="polygons", expand=True)
+        
+        # Show slice option only for polygons
+        if self.output_type == "Pols":
             row = col.row(align=True)
             row.label(text='Slice')
-            row.prop(self, "slice_check", text="Slice", toggle=True)
+            row.prop(self, "slice_polygons", text="Slice", toggle=True)
             row.label(text=' ')
 
-    def connect(self, vers, dirn, ciclU, ciclV, clev, polygons, slice, capU, capV):
-        ''' doing all job to connect '''
+    def create_end_caps(self, object_count, vertices_per_object, flip=False):
+        """
+        Create end caps for the geometry
+        
+        Args:
+            object_count (int): Number of objects/rows
+            vertices_per_object (int): Number of vertices per object
+            flip (bool): Whether to flip the cap orientation
+            
+        Returns:
+            list: List of cap polygons
+        """
+        if not flip:
+            # Standard end caps
+            caps = [
+                [j * vertices_per_object for j in reversed(range(object_count))],
+                [j * vertices_per_object + vertices_per_object - 1 for j in range(object_count)]
+            ]
+        else:
+            # Flipped end caps
+            caps = [
+                [j for j in reversed(range(object_count))],
+                [j + object_count * (vertices_per_object - 1) for j in range(object_count)]
+            ]
+        return caps
 
-        def joinvers(ver):
-            ''' for joinvers to one object '''
-            joinvers = []
-            for ob in ver:
-                fullList(list(ob), lenvers)
-                joinvers.extend(ob)
-            return joinvers
+    def join_vertices(self, vertices_list, target_length):
+        """
+        Join vertices from multiple objects into a single list
+        
+        Args:
+            vertices_list (list): List of vertex lists
+            target_length (int): Target length for padding
+            
+        Returns:
+            list: Joined and padded vertex list
+        """
+        joined_vertices = []
+        for vertex_group in vertices_list:
+            # Pad vertex groups to have consistent length
+            fullList(list(vertex_group), target_length)
+            joined_vertices.extend(vertex_group)
+        return joined_vertices
 
-        def capends(lenobjs, lenvers, flip=False):
-            if not flip:
-                out = [[j*lenvers for j in reversed(range(lenobjs))]]
-                out.extend( [[j*lenvers+lenvers-1 for j in range(lenobjs)]])
-            else:
-                out = [[j for j in reversed(range(lenobjs))]]
-                out.extend( [[j+lenobjs*(lenvers-1) for j in range(lenobjs)]])
-            return out
+    def connect_vertices(self, vertices_data, direction, cyclic_u, cyclic_v, join_level, output_type, slice_polygons, cap_u, cap_v):
+        """
+        Main connection logic - creates edges or polygons from vertices
+        
+        Args:
+            vertices_data (list): Input vertex data
+            direction (str): Connection direction ('U_dir' or 'V_dir')
+            cyclic_u (bool): Whether to cycle in U direction
+            cyclic_v (bool): Whether to cycle in V direction
+            join_level (int): Data join level
+            output_type (str): Output type ('Pols' or 'Edges')
+            slice_polygons (bool): Whether to slice polygons
+            cap_u (bool): Whether to cap U ends
+            cap_v (bool): Whether to cap V ends
+            
+        Returns:
+            tuple: (processed_vertices, edge/polygon_data)
+        """
+        processed_vertices = []
+        vertex_counts = []
+        connection_edges = []
+        connection_polygons = []
 
-        vers_ = []
-        lens = []
-        edges = []
+        # Flatten vertex data and count vertices
+        for vertex_group in vertices_data:
+            for vertex_list in vertex_group:
+                processed_vertices.append(vertex_list)
+                vertex_counts.append(len(vertex_list))
 
-        for ob in vers:
-            ''' prepare standard levels (correcting for default state)
-                and calc average length of each object'''
-            for o in ob:
-                vers_.append(o)
-                lens.append(len(o))
+        object_count = len(processed_vertices)  # Number of objects/rows
+        max_vertices_per_object = max(vertex_counts)  # Max vertices in any object
 
-        # lenobjs == number of sverchok objects
-        lenobjs = len(vers_)
-        # lenvers == amount of elements in one object
-        lenvers = max(lens)
+        if direction == 'U_dir':
+            if output_type == "Pols":
+                # Polygon generation in U direction
+                all_vertices = []
+                polygons = []
+                
+                # Join all vertices into a single list
+                for vertex_list in processed_vertices:
+                    all_vertices.extend(vertex_list)
 
-        if dirn == 'U_dir':
-            if polygons == "Pols":
-
-                # joinvers to implement
-                length_ob = []
-                newobject = []
-                for ob in vers_:
-                    length_ob.append(len(ob))
-                    newobject.extend(ob)
-                # joinvers to implement
-
-                curr = 0
-                objecto = []
-                indexes__ = []
-                if slice:
-                    indexes__ = [[j*lenvers+i for j in range(lenobjs)] for i in range(lenvers)]
-                    objecto = [a for a in zip(*indexes__)]
+                current_index = 0
+                previous_indices = []
+                
+                if slice_polygons:
+                    # Create polygons by slicing across objects
+                    polygon_indices = [
+                        [j * max_vertices_per_object + i for j in range(object_count)] 
+                        for i in range(max_vertices_per_object)
+                    ]
+                    polygons = [list(polygon) for polygon in zip(*polygon_indices)]
                 else:
-                    for i, ob in enumerate(length_ob):
-                        indexes_ = []
-                        for w in range(ob):
-                            indexes_.append(curr)
-                            curr += 1
+                    # Create polygons by connecting adjacent objects
+                    first_row_indices = []
+                    
+                    for i, vertex_count in enumerate(vertex_counts):
+                        current_indices = []
+                        for w in range(vertex_count):
+                            current_indices.append(current_index)
+                            current_index += 1
+                            
                         if i > 0:
-                            indexes = indexes_ + indexes__[::-1]
-                            quaded = [(indexes[k], indexes[k+1], indexes[-(k+2)], indexes[-(k+1)])
-                                      for k in range((len(indexes)-1)//2)]
-                            objecto.extend(quaded)
-                            if i == len(length_ob)-1 and ciclU:
-                                indexes = cicle_firstrow + indexes_[::-1]
-                                quaded = [(indexes[k], indexes[k+1], indexes[-(k+2)], indexes[-(k+1)])
-                                          for k in range((len(indexes)-1)//2)]
-                                objecto.extend(quaded)
+                            # Create quads between current and previous row
+                            combined_indices = current_indices + previous_indices[::-1]
+                            quads = [
+                                (combined_indices[k], combined_indices[k+1], 
+                                 combined_indices[-(k+2)], combined_indices[-(k+1)])
+                                for k in range((len(combined_indices) - 1) // 2)
+                            ]
+                            polygons.extend(quads)
+                            
+                            # Handle cyclic connections
+                            if i == len(vertex_counts) - 1 and cyclic_u:
+                                combined_indices = first_row_indices + current_indices[::-1]
+                                quads = [
+                                    (combined_indices[k], combined_indices[k+1], 
+                                     combined_indices[-(k+2)], combined_indices[-(k+1)])
+                                    for k in range((len(combined_indices) - 1) // 2)
+                                ]
+                                polygons.extend(quads)
 
-                            if i == len(length_ob)-1 and ciclV:
-                                quaded = [ [ (k-1)*lenvers, k*lenvers-1, (k+1)*lenvers-1, k*lenvers ]
-                                          for k in range(lenobjs) if k > 0 ]
-                                objecto.extend(quaded)
-                        if i == 0 and ciclU:
-                            cicle_firstrow = indexes_
-                            if ciclV:
-                                objecto.append([ 0, (lenobjs-1)*lenvers, lenobjs*lenvers-1, lenvers-1 ])
-                        indexes__ = indexes_
-                    if capU:
-                        objecto.extend(capends(lenobjs,lenvers))
-                    if capV:
-                        objecto.extend(capends(lenvers,lenobjs,flip=True))
-                vers_ = [newobject]
-                edges = [objecto]
-            elif polygons == "Edges":
-                for k, ob in enumerate(vers_):
-                    objecto = []
-                    for i, ve in enumerate(ob[:-1]):
-                        objecto.append([i, i+1])
-                    if ciclU:
-                        objecto.append([0, len(ob)-1])
-                    edges.append(objecto)
+                            if i == len(vertex_counts) - 1 and cyclic_v:
+                                quads = [
+                                    [(k-1) * max_vertices_per_object, k * max_vertices_per_object - 1, 
+                                     (k+1) * max_vertices_per_object - 1, k * max_vertices_per_object]
+                                    for k in range(object_count) if k > 0
+                                ]
+                                polygons.extend(quads)
+                                
+                        if i == 0 and cyclic_u:
+                            first_row_indices = current_indices
+                            if cyclic_v:
+                                polygons.append([
+                                    0, (object_count - 1) * max_vertices_per_object, 
+                                    object_count * max_vertices_per_object - 1, max_vertices_per_object - 1
+                                ])
+                                
+                        previous_indices = current_indices
+                    
+                    # Add end caps if requested
+                    if cap_u:
+                        polygons.extend(self.create_end_caps(object_count, max_vertices_per_object))
+                    if cap_v:
+                        polygons.extend(self.create_end_caps(max_vertices_per_object, object_count, flip=True))
+                        
+                processed_vertices = [all_vertices]
+                connection_polygons = [polygons]
+                connection_edges = [[]]
+                
+            elif output_type == "Edges":
+                # Edge generation in U direction
+                for k, vertex_list in enumerate(processed_vertices):
+                    edges = []
+                    for i in range(len(vertex_list) - 1):
+                        edges.append([i, i + 1])
+                    if cyclic_u:
+                        edges.append([0, len(vertex_list) - 1])
+                    connection_edges.append(edges)
+                #connection_polygons = [[] for i in range(len(connection_edges))]
+                connection_polygons = [[]]
 
-        elif dirn == 'V_dir':
-            objecto = []
-            # it making V direction order, but one-edged polygon instead of two rows
-            # to remake - yet one flag that operates slicing. because the next is slicing,
-            # not direction for polygons
-            if polygons == "Pols":
-                if slice:
-                    joinvers = joinvers(vers_)
-                    for i, ve in enumerate(vers_[0][:]):
-                        inds = [j*lenvers+i for j in range(lenobjs)]
-                        objecto.append(inds)
+        elif direction == 'V_dir':
+            polygons = []
+            
+            if output_type == "Pols":
+                if slice_polygons:
+                    # Join vertices and create polygons by slicing
+                    joined_vertices = self.join_vertices(processed_vertices, max_vertices_per_object)
+                    for i in range(len(processed_vertices[0])):
+                        polygon_indices = [j * max_vertices_per_object + i for j in range(object_count)]
+                        polygons.append(polygon_indices)
                 else:
-                    # flip matrix transpose:
-                    vers_flip = [a for a in zip(*vers_)]
-                    vers_ = vers_flip
-                    # flip matrix transpose:
+                    # Transpose the vertex matrix and create polygons
+                    transposed_vertices = [list(column) for column in zip(*processed_vertices)]
+                    processed_vertices = transposed_vertices
+                    
+                    joined_vertices = self.join_vertices(processed_vertices, object_count)
+                    
+                    # Create quads from the transposed vertices
+                    for i in range(len(processed_vertices) - 1):
+                        for k in range(len(processed_vertices[i]) - 1):
+                            polygons.append([
+                                i * object_count + k,
+                                (i + 1) * object_count + k,
+                                (i + 1) * object_count + k + 1,
+                                i * object_count + k + 1
+                            ])
+                            
+                            # Handle cyclic connections
+                            if i == 0 and cyclic_v:
+                                polygons.append([
+                                    k + 1,
+                                    (len(processed_vertices) - 1) * object_count + k + 1,
+                                    (len(processed_vertices) - 1) * object_count + k,
+                                    k
+                                ])
+                                
+                        if i == 0 and cyclic_u and cyclic_v:
+                            polygons.append([
+                                0,
+                                (len(processed_vertices) - 1) * object_count,
+                                len(processed_vertices) * object_count - 1,
+                                object_count - 1
+                            ])
+                            
+                        if i == 0 and cyclic_u:
+                            quads = [
+                                [(k - 1) * object_count, k * object_count - 1, 
+                                 (k + 1) * object_count - 1, k * object_count]
+                                for k in range(len(processed_vertices)) if k > 0
+                            ]
+                            polygons.extend(quads)
 
-                    joinvers = joinvers(vers_)
-                    for i, ob in enumerate(vers_[:-1]):
-                        for k, ve in enumerate(ob[:-1]):
-                            objecto.append([i*lenobjs+k, (i+1)*lenobjs+k, (i+1)*lenobjs+k+1, i*lenobjs+k+1])
-                            if i == 0 and ciclV:
-                                objecto.append([k+1, (lenvers-1)*lenobjs+k+1, (lenvers-1)*lenobjs+k, k])
-                        if i == 0 and ciclU and ciclV:
-                            objecto.append([ 0, (lenvers-1)*lenobjs, lenvers*lenobjs-1, lenobjs-1 ])
-                        if i == 0 and ciclU:
-                            quaded = [ [ (k-1)*lenobjs, k*lenobjs-1, (k+1)*lenobjs-1, k*lenobjs ]
-                                      for k in range(lenvers) if k > 0 ]
-                            objecto.extend(quaded)
-
-                    if capV:
-                        objecto.extend(capends(lenvers,lenobjs))
-                    if capU:
-                        objecto.extend(capends(lenobjs,lenvers,flip=True))
-            elif polygons == "Edges":
-                joinvers = joinvers(vers_)
-                for i, ve in enumerate(vers_[0][:]):
-                    inds = [j*lenvers+i for j in range(lenobjs)]
-                    for i, item in enumerate(inds):
-                        if i == 0 and ciclV:
-                            objecto.append([inds[0], inds[-1]])
-                        elif i == 0:
+                    # Add end caps if requested
+                    if cap_v:
+                        polygons.extend(self.create_end_caps(len(processed_vertices), object_count))
+                    if cap_u:
+                        polygons.extend(self.create_end_caps(object_count, len(processed_vertices), flip=True))
+                processed_vertices = [joined_vertices]
+                connection_polygons.append(polygons)
+                connection_edges = [[]]
+                        
+            elif output_type == "Edges":
+                # Edge generation in V direction
+                joined_vertices = self.join_vertices(processed_vertices, max_vertices_per_object)
+                vertices_out = []
+                for i in range(len(processed_vertices[0])):
+                    edge_indices = [j * max_vertices_per_object + i for j in range(object_count)]
+                    edge_indices_local = [i for i in range(object_count)]
+                    vertices_out.append([joined_vertices[i] for i in edge_indices])
+                    polygons_ = []
+                    for j, vertex_index in enumerate(edge_indices_local):
+                        if j == 0 and cyclic_v:
+                            polygons_.append([edge_indices_local[0], edge_indices_local[-1]])
+                        elif j == 0:
                             continue
                         else:
-                            objecto.append([item, inds[i-1]])
-            edges.append(objecto)
-            vers_ = [joinvers]
-        return vers_, edges
+                            polygons_.append([vertex_index, edge_indices_local[j - 1]])
+                    polygons.append(polygons_)
+                processed_vertices = vertices_out
+                connection_edges.extend(polygons)
+                #connection_polygons = [[] for i in range(len(connection_edges))]
+                connection_polygons = [[]]
+            
+        return processed_vertices, connection_edges, connection_polygons
 
     def sv_update(self):
-        # inputs
+        """Update node sockets based on connections"""
         multi_socket(self, min=1)
 
     def process(self):
-        if self.inputs[0].is_linked:
-            slots = [socket.sv_get() for socket in self.inputs if socket.is_linked]
-            lol = levelsOflist(slots)
-            if lol == 4:
-                one, two = self.connect(slots, self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cap_U, self.cap_V)
-            elif lol == 5:
-                one = []
-                two = []
-                for slo in slots:
-                    for s in slo:
-                        result = self.connect([s], self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cap_U, self.cap_V)
-                        one.extend(result[0])
-                        two.extend(result[1])
-            else:
-                return
+        """Main processing function"""
+        if not self.inputs[0].is_linked:
+            return
+            
+        # Get input data
+        input_slots = [socket.sv_get() for socket in self.inputs if socket.is_linked]
+        data_depth = levelsOflist(input_slots)
+        
+        output_vertices = []
+        output_edges = []
+        output_polygons = []
+        
+        if data_depth == 4:
+            # Single level processing
+            output_vertices, output_edges, output_polygons = self.connect_vertices(
+                input_slots, self.direction, self.cyclic_u, self.cyclic_v, 
+                data_depth, self.output_type, self.slice_polygons, self.cap_u, self.cap_v
+            )
+        elif data_depth == 5:
+            # Nested level processing
+            for slot in input_slots:
+                for sub_slot in slot:
+                    result_vertices, result_edges, result_polygons = self.connect_vertices(
+                        [sub_slot], self.direction, self.cyclic_u, self.cyclic_v, 
+                        data_depth, self.output_type, self.slice_polygons, self.cap_u, self.cap_v
+                    )
+                    output_vertices.extend(result_vertices)
+                    output_edges.extend(result_edges)
+                    output_polygons.extend(result_polygons)
+        else:
+            return
 
-            if self.outputs['vertices'].is_linked:
-                self.outputs['vertices'].sv_set(one)
-            if self.outputs['data'].is_linked:
-                self.outputs['data'].sv_set(two)
+        # Set outputs
+        if self.outputs['vertices'].is_linked:
+            self.outputs['vertices'].sv_set(output_vertices)
+        if self.outputs['edges'].is_linked:
+            self.outputs['edges'].sv_set(output_edges)
+        if self.outputs['polygons'].is_linked:
+            self.outputs['polygons'].sv_set(output_polygons)
 
 
 def register():
-    bpy.utils.register_class(LineConnectNodeMK2)
+    """Register the node"""
+    bpy.utils.register_class(LineConnectNodeMK3)
 
 
 def unregister():
-    bpy.utils.unregister_class(LineConnectNodeMK2)
+    """Unregister the node"""
+    bpy.utils.unregister_class(LineConnectNodeMK3)
+
+if __name__ == '__main__': register()

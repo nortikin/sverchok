@@ -130,7 +130,7 @@
     - Modifier Make:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: MODIFIER
-        - LineConnectNodeMK2
+        - LineConnectNodeMK3
         - ---
         - SvOpenSubdivisionNode
         - SvSubdivideNodeMK2
