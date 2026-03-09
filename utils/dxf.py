@@ -981,8 +981,10 @@ class BlockLibrary:
                 pass
                 #self.hatc(block,data,scal,lhatc)
             if data[0].__repr__() == '<DXF LinDims>':
-                pass
                 #self.dims(block,data,scal,ldims)
+                pass
+            if data[0].__repr__() == '<DXF Circles>':
+                self.crcl(block,data,scal,ledgs)
         self.block = [block]
 
     def pols(self,block,data,scal,lpols):
@@ -991,9 +993,13 @@ class BlockLibrary:
             vers = [[i*scal for i in ver] for ver in vers]
             for i in range(1, len(vers)):
                 block.add_line(vers[i-1][:2], vers[i][:2])
-        #block.add_circle(center=(0, 0), radius=diameter/2)
     def crcl(self,block,data,scal,ledgs):
-        pass
+        for points_ in data:
+            curve = points_.vers
+            matrix = (curve.center*scal).tolist()
+            radius = curve.radius*scal
+            block.add_circle(center=matrix[:2], radius=radius)
+
 
     def edgs(self,block,data,scal,ledgs):
         for points_ in data:
