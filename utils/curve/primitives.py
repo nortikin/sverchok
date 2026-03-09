@@ -25,6 +25,8 @@ from sverchok.utils.curve.algorithms import curve_segment
 class SvLine(SvCurve):
     """
     Straight line segment curve.
+    SvLine(point,direction)
+    SvLine.from_two_points(v1,v2)
     """
 
     def __init__(self, point, direction, u_bounds=None):
@@ -236,6 +238,8 @@ def rotate_radius(radius, normal, thetas):
 class SvCircle(SvCurve):
     """
     Circle (or circular arc) curve.
+    SvCircle(center,radius,normal,vectorx)
+    SvCircle(matrix,radius)
     """
 
     def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):

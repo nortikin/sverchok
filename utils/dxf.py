@@ -692,6 +692,28 @@ def edges_draw(points,scal,ledgs,msp):
         else:
             ed = msp.add_line(v1,v2, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'color': color_int})
 
+def circles_draw(points,scal,ledgs,msp):
+    ''' circles as simple circles '''
+    #print('CIRCLES!!')
+    for points_ in points:
+        curve =  points_.vers
+        #print('== Curve_type','\n   ',type(curve),'\n   ',curve.__repr__(),'\n   ',curve)
+        col = points_.color
+        lw,lt = points_.lineweight, points_.linetype
+        color_int = points_.color_int
+        if curve.__repr__()[:7] == '<Circle':
+            matrix = (curve.center*scal).tolist()
+            radius = curve.radius*scal
+            #print('==Circles export',matrix, radius)
+            if color_int < 1:
+                col = tuple([int(i*255) for i in col[:3]])
+                col = ezdxf.colors.rgb2int(col)
+                circle = msp.add_circle(center=matrix, radius=radius, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'true_color': col})
+            else:
+                circle = msp.add_circle(center=matrix, radius=radius, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'color': color_int})
+        elif curve.__repr__()[:7] == '<BezierCurve': # SvCurve SvEllipse SvCubicBezierCurve SvLine SvNurbsCurve SvSplineCurve Sv
+            pass
+
 def text_draw(tv,tt,scal,ltext,msp,t_scal):
     ''' draw text todo in 2026 '''
     from ezdxf.enums import TextEntityAlignment
@@ -912,6 +934,8 @@ def export(fp,dxf,scal=1000.0,t_scal=1.0,info='',do_block=False):
                 hatches_draw(data,scal,lhatc,msp)
             if data[0].__repr__() == '<DXF LinDims>':
                 dimensions_draw(data,scal,ldims,msp)
+            if data[0].__repr__() == '<DXF Circles>':
+                circles_draw(data,scal,ldims,msp)
     else:
         lib = BlockLibrary(doc)
         
@@ -968,6 +992,8 @@ class BlockLibrary:
             for i in range(1, len(vers)):
                 block.add_line(vers[i-1][:2], vers[i][:2])
         #block.add_circle(center=(0, 0), radius=diameter/2)
+    def crcl(self,block,data,scal,ledgs):
+        pass
 
     def edgs(self,block,data,scal,ledgs):
         for points_ in data:
