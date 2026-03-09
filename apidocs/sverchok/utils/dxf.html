@@ -993,8 +993,10 @@ todo 2026 polymesh</p></div>
                 pass
                 #self.hatc(block,data,scal,lhatc)
             if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
-                pass
                 #self.dims(block,data,scal,ldims)
+                pass
+            if data[0].__repr__() == &#39;&lt;DXF Circles&gt;&#39;:
+                self.crcl(block,data,scal,ledgs)
         self.block = [block]
 
     def pols(self,block,data,scal,lpols):
@@ -1003,9 +1005,13 @@ todo 2026 polymesh</p></div>
             vers = [[i*scal for i in ver] for ver in vers]
             for i in range(1, len(vers)):
                 block.add_line(vers[i-1][:2], vers[i][:2])
-        #block.add_circle(center=(0, 0), radius=diameter/2)
     def crcl(self,block,data,scal,ledgs):
-        pass
+        for points_ in data:
+            curve = points_.vers
+            matrix = (curve.center*scal).tolist()
+            radius = curve.radius*scal
+            block.add_circle(center=matrix[:2], radius=radius)
+
 
     def edgs(self,block,data,scal,ledgs):
         for points_ in data:
@@ -1037,7 +1043,11 @@ todo 2026 polymesh</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def crcl(self,block,data,scal,ledgs):
-    pass</code></pre>
+    for points_ in data:
+        curve = points_.vers
+        matrix = (curve.center*scal).tolist()
+        radius = curve.radius*scal
+        block.add_circle(center=matrix[:2], radius=radius)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1080,8 +1090,10 @@ todo 2026 polymesh</p></div>
             pass
             #self.hatc(block,data,scal,lhatc)
         if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
-            pass
             #self.dims(block,data,scal,ldims)
+            pass
+        if data[0].__repr__() == &#39;&lt;DXF Circles&gt;&#39;:
+            self.crcl(block,data,scal,ledgs)
     self.block = [block]</code></pre>
 </details>
 <div class="desc"><p>Создает блок</p></div>
@@ -1118,8 +1130,7 @@ todo 2026 polymesh</p></div>
         vers = points_.vers
         vers = [[i*scal for i in ver] for ver in vers]
         for i in range(1, len(vers)):
-            block.add_line(vers[i-1][:2], vers[i][:2])
-    #block.add_circle(center=(0, 0), radius=diameter/2)</code></pre>
+            block.add_line(vers[i-1][:2], vers[i][:2])</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
