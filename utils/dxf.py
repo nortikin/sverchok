@@ -14,10 +14,11 @@ if ezdxf != None:
     from ezdxf import units
     from ezdxf.tools.standards import setup_dimstyle
 #from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.curve import SvCircle
+from sverchok.utils.curve import SvCircle, SvLine, SvEllipse
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from mathutils import Vector as V
+from mathutils import Matrix as M
 import numpy as np
 
 ######################
@@ -26,7 +27,7 @@ import numpy as np
 ######################
 ######################
 
-def dxf_read(node, fp, resolution, scale, curve_degree, layers=None):
+def dxf_read(node, fp, resolution, scale, curve_degree, layers=None, curves_import=False):
     curves_out = []
     knots_out = []
     VE, EE = [], []
@@ -62,7 +63,7 @@ def dxf_read(node, fp, resolution, scale, curve_degree, layers=None):
             if not entity.dxf.layer in layers:
                 continue
         if entity.dxftype() in ANNOTATION_TYPES:
-            vers, edges, pols, curves, knots, VT_, TT_ = dxf_geometry_loader(node, entity, curve_degree, resolution, lifehack, scale)
+            vers, edges, pols, curves, knots, VT_, TT_ = dxf_geometry_loader(node, entity, curve_degree, resolution, lifehack, scale, curves_import)
             if vers:
                 VA.extend(vers)
                 EA.extend(edges)
@@ -70,7 +71,7 @@ def dxf_read(node, fp, resolution, scale, curve_degree, layers=None):
                 VT.extend(VT_)
                 TT.extend(TT_)
         elif entity.dxftype() in GEOMETRY_TYPES:
-            vers, edges, pols, curves, knots, VT_, TT_ = dxf_geometry_loader(node, entity, curve_degree, resolution, lifehack, scale)
+            vers, edges, pols, curves, knots, VT_, TT_ = dxf_geometry_loader(node, entity, curve_degree, resolution, lifehack, scale, curves_import)
             if edges:
                 VE.extend(vers)
                 EE.extend(edges)
@@ -85,7 +86,7 @@ def dxf_read(node, fp, resolution, scale, curve_degree, layers=None):
     return curves_out, knots_out, VE, EE, VP, PP, VA, EA, VT, TT
 
 
-def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale):
+def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale, curves_import=False):
     ''' dxf_geometry_loader(entity) ВОЗВРАЩАЕТ вершины, рёбра, полигоны и кривые всей геометрии, что находит у сущности'''
     typ = entity.dxftype().lower()
     #print('!!! type element:',typ)
@@ -115,15 +116,22 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         elif typ == 'circle':
             ran = [i/lifehack for i in range(0,lifehack*360,max(1,int((lifehack*360)/resolution)))]
             #print('Circle consists of: ',dir(entity),dir(entity.dxf))
-            print('DXF Circle consists of: ',center,entity.dxf.center.xyz,entity.dxf.radius)
-            cur = SvCircle(center=np.array(center), normal=np.array((0.,0.,1.)), vectorx=np.array((1.,0.,0.)), radius=np.float64(entity.dxf.radius)).to_nurbs()
-            cur.u_bounds = (0., math.pi*2)
-            curves_out.append(cur)
-            knots_out.append([])
+            #print('DXF Circle consists of: ',center,entity.dxf.center.xyz,entity.dxf.radius)
+            if curves_import:
+                cur = SvCircle(center=np.array(center), normal=np.array((0.,0.,1.)), vectorx=np.array((1.,0.,0.)), radius=np.float64(entity.dxf.radius*scale)).to_nurbs()
+                cur.u_bounds = (0., math.pi*2)
+                curves_out.append(cur)
+                knots_out.append([])
         elif typ == 'ellipse':
             start  = entity.dxf.start_param
             end    = entity.dxf.end_param
             ran = [start + ((end-start)*i)/(lifehack*360) for i in range(0,lifehack*360,max(1,int(lifehack*360/resolution)))]
+            if curves_import:
+                major_radius = entity.dxf.major_axis[0]*scale
+                minor_radius = major_radius*entity.dxf.ratio
+                matrix = M()
+                matrix.translation = V(center)
+                curves_out.append(SvEllipse(matrix, major_radius, minor_radius, center_type = SvEllipse.CENTER))
         for i in entity.vertices(ran): # line 43 is 35 in make 24 in import
             cen = entity.dxf.center.xyz #*scale
             vers_.append([j*scale for j in i])
@@ -137,27 +145,38 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
 
     if typ == 'point':
         mu = 0.2
-        ver = [i*scale for i in entity.dxf.location.xyz]
+        ver = entity.dxf.location.xyz #[i for i in entity.dxf.location.xyz]
         ver_ = [ ver,
-                [-scale*mu+ver[0],-scale*mu+ver[1],ver[2]],
-                [-scale*mu+ver[0],scale*mu+ver[1],ver[2]],
-                [scale*mu+ver[0],scale*mu+ver[1],ver[2]],
-                [scale*mu+ver[0],-scale*mu+ver[1],ver[2]],
+                [-mu+ver[0],-mu+ver[1],ver[2]],
+                [-mu+ver[0],mu+ver[1],ver[2]],
+                [mu+ver[0],mu+ver[1],ver[2]],
+                [mu+ver[0],-mu+ver[1],ver[2]],
                 ]
-        vers.append(ver_)
+        vers.append((np.array(ver_)*scale).tolist())
         edges.append([[1,3],[2,4]])
 
     if typ == 'line':
         edges.append([[0,1]])
         vers.append([[i*scale for i in entity.dxf.start.xyz],[i*scale for i in entity.dxf.end.xyz]])
+        # Сегменты кривыми
+        if curves_import:
+            curves_out.append(SvLine.from_two_points(vers[-1][0],vers[-1][1]))
+
 
     #print(typ)
 
     if typ in ["polyline"]:
-        print('Полилиния попалась ========', entity.dxftype)
+        #print('Полилиния попалась ========', entity.dxftype)
         #print(dir(entity.dxf))
-        print(entity.is_closed)
+        #print(entity.is_closed)
+        #print('==Polyline points type',type(entity.points())) # тип генератор
         vers.append([[i*scale for i in vert.xyz] for vert in entity.points()])
+        # Сегменты кривыми
+        if curves_import:
+            for i in range(len(vers[-1])-1):
+                curves_out.append(SvLine.from_two_points(vers[-1][i],vers[-1][i+1]))
+            if entity.is_closed != 0:
+                curves_out.append(SvLine.from_two_points(vers[-1][i+1],vers[-1][0]))
         if entity.is_closed != 0:
             pols.append([[i for i in range(len(vers[-1]))]])
             #print(pols)
@@ -166,17 +185,17 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
             #print(edges)
 
     if typ in ["3dface"]:
-        print('3D лицо попалось ========', entity.dxftype)
+        #print('3D лицо попалось ========', entity.dxftype)
         #print(entity.dxf.vtx0)
         #print(entity.dxf.vtx3)
         vs = entity.dxf.vtx0,entity.dxf.vtx1,entity.dxf.vtx2,entity.dxf.vtx3 if entity.dxf.vtx3 \
             else entity.dxf.vtx0,entity.dxf.vtx1,entity.dxf.vtx2
-        vers.append([[i*scale for i in v] for v in vs])
+        vers.append((np.array(vs)*scale).tolist())
         pols.append([[i,i+1,i+2] for i in range(0,len(vers[-1]),3)])
         #print(pols)
 
     if typ in ["solid", "polymesh", "polyface"]:
-        print('3Д попалась ========', entity.dxftype)
+        print('3Д попалась, пока не обрабатывается ========', entity.dxftype)
 
     if typ in ['dimension',"arc-dimension", "diameter_dimension","radial_dimension"]:
         #print(entity.dxftype,entity.dxf.dimtype, dir(entity.dxf))
@@ -188,21 +207,22 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
             mes = round(entity.dxf.defpoint.distance(entity.dxf.defpoint4),2)
             vers.append([[i*scale for i in entity.dxf.defpoint.xyz],[i*scale for i in entity.dxf.defpoint4.xyz]])
         try:
-            mp = [i*scale for i in entity.dxf.text_midpoint.xyz]
+            mp = [i for i in entity.dxf.text_midpoint.xyz]
         except:
             mp = list((V(vers[-1][1]) + (V(vers[-1][0])-V(vers[-1][1]))/2).to_tuple())
-        VT.append([[i*scale for i in mp]])
+        VT.append((np.array(mp)*scale).tolist())
         TT.append([mes])
 
     if typ == 'lwpolyline':
-        print('lwpolyline попалась ========', entity.dxftype)
+        # Это 2D линия, у которой нет Z координат
+        #print('lwpolyline попалась ========', entity.dxftype)
         edges_ = []
         vers_ = []
         points = list(entity.get_points())
         vertices = list(entity.vertices())
 
         for i, (x, y, start_width, end_width, bulge) in enumerate(points):
-            current_point = (x*scale, y*scale, 0)
+            current_point = (x, y, 0) # was scale
 
             # Добавляем текущую точку
             if i == 0:
@@ -211,7 +231,7 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
             # Обрабатываем сегмент между текущей и следующей точкой
             if i < len(points) - 1:
                 next_point_data = points[i+1]
-                next_point = (next_point_data[0]*scale, next_point_data[1]*scale, 0)
+                next_point = (next_point_data[0], next_point_data[1], 0) # was scale
                 next_bulge = next_point_data[4]
 
                 if bulge != 0:
@@ -243,14 +263,22 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
                     vers_.extend(segment_points[1:-1])  # Пропускаем первую и последнюю точки
                     edges_.extend([[j-1, j] for j in range(start_idx + 1, len(vers_))])
                     edges_.append([len(vers_)-1, 0])
+        # Сегменты кривыми
+        if curves_import:
+            for i in range(len(vers_)-1):
+                curves_out.append(SvLine.from_two_points(vers_[i],vers_[i+1]))
+            if entity.closed:
+                curves_out.append(SvLine.from_two_points(vers_[i+1],vers_[0]))
 
-        vers.append(vers_)
+        vers.append((np.array(vers_)*scale).tolist())
         edges.append(edges_)
     # Splines as NURBS curves
     vers_ = []
     if typ == 'spline':
         #print('Блок', a.source_block_reference)
         control_points = entity.control_points
+        control_points.values *= scale
+        #print('== Curve control_points',type(control_points),control_points)
         n_total = len(control_points)
         # Set knot vector
         if entity.closed:
@@ -259,9 +287,10 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         else:
             knots = sv_knotvector.generate(curve_degree, n_total)
 
+        #print('== Curve knots', type(knots), knots)
         curve_weights = [1 for i in control_points]
         self.debug('Auto knots: %s', knots)
-        curve_knotvector = knots
+        curve_knotvector = knots*scale
 
         # Nurbs curve
         new_curve = SvNurbsCurve.build(self.implementation, curve_degree, curve_knotvector, control_points, curve_weights, normalize_knots = True)
@@ -275,8 +304,15 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
             u_min = min(curve_knotvector)
             u_max = max(curve_knotvector)
             new_curve.u_bounds = (u_min, u_max)
-        curves_out.append(new_curve)
-        knots_out.append(curve_knotvector)
+        if curves_import:
+            curves_out.append(new_curve)
+            knots_out.append(curve_knotvector)
+        ver_curv = []
+        #print('==Curve min max ',u_min, u_max, [i* (u_min+((u_max-u_min) / (30))) for i in range(31)])
+        for i in range(resolution+1):
+            ver_curv.append(list(new_curve.evaluate(  i* (u_min+((u_max-u_min) / resolution))  )))
+        vers.append(ver_curv)
+        edges.append([[i,i+1] for i in range(len(ver_curv)-1)])
     #print('^$#^%^#$%',typ)
     if typ == 'mtext':
         #print([(k.dxf.insert, k.text) for k in i.entitydb.query('Mtext')])

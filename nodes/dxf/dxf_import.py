@@ -51,6 +51,14 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         update=updateNode
     )
 
+    # Импортировать как кривые
+    curves_import: bpy.props.BoolProperty(
+        name="Curves import",
+        description="Enable/disable curves import",
+        default=False,
+        update=updateNode
+    )
+
     implementations = []
     if geomdl is not None:
         implementations.append((SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
@@ -63,7 +71,7 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
             items=implementations,
             update = updateNode)
 
-    scale: bpy.props.FloatProperty(default=1.0,name='scale',
+    scale: bpy.props.FloatProperty(default=0.001,name='scale',
         update=updateNode)
 
     curve_degree: bpy.props.IntProperty(default=3, min=1, max=4,name='degree for nurbses',
@@ -94,11 +102,10 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_layers_list(self, layout):
         """
         Draw the layers list UI
-        
         Args:
             layout: Blender UILayout to draw in
+        Отрисовка списка слоёв
         """
-        """Отрисовка списка слоёв"""
         if self.dxf_layers:
             # Вместо переключателя - информация о состоянии фильтра
             if self.layers_filter_enabled:
@@ -113,20 +120,19 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
     def get_enabled_layers_count(self):
         """
         Get the number of enabled layers
-        
         Returns:
             int: Number of enabled layers
+        Получить количество включенных слоёв
         """
-        """Получить количество включенных слоёв"""
         return len([layer for layer in self.dxf_layers if layer.enabled])
 
     def get_dxf_layers(self):
         """
         Load layers from DXF file and populate the layers list
-        
+
         Reads the DXF file and extracts all available layers
+        Получение списка слоёв из DXF файла
         """
-        """Получение списка слоёв из DXF файла"""
         if not self.file_path:
             print("File path not specified")
             return
@@ -252,6 +258,7 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         if not self.outputs['curves'].is_linked:
             vc = tree.nodes.new("SvCurveViewerDrawNode")
             vc.location = loc + Vector((400, -500))
+            vc.resolution = self.resolution+1
             links.new(self.outputs['curves'], vc.inputs[0])     # curves
             vc.label = "DXF Curves"
 
@@ -283,6 +290,7 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         row.operator("node.dxf_import", text="I M P O R T   D X F")
 
         # Остальные кнопки
+        columna.prop(self, 'curves_import', text='C U R V E S', toggle=True)
         columna.prop(self, 'implementation', text='curve_type')
         row = columna.row(align=True)
         row.prop(self, "scale", expand=False)
@@ -335,13 +343,14 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         resolution = self.resolution
         scale = self.scale
         curve_degree = self.curve_degree
+        curves_import = self.curves_import
         
         # Получаем список включенных слоёв или None если фильтрация отключена
         enabled_layers = self.get_enabled_layers()
 
         # Передаем curlayer как список слоёв или None
         curves_out, knots_out, VE, EE, VP, PP, VA, EA, VT, TT = dxf_read(
-            self, fp, resolution, scale, curve_degree, enabled_layers
+            self, fp, resolution, scale, curve_degree, enabled_layers, curves_import
         )
 
         self.outputs['vers_e'].sv_set(VE)
@@ -358,7 +367,6 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
 class DXFImportOperator(bpy.types.Operator, SvGenericNodeLocator):
     """
     Operator for importing DXF files
-    
     Triggers DXF import process with current node settings
     """
     bl_idname = "node.dxf_import"
