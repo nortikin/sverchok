@@ -15,6 +15,7 @@ Inputs
 Options
 -------
 
+- BLOCK: Boolean flag to make block instead of entities. All the geometry becomes one block
 - Scale: Overall scale factor for exported geometry
 - Text Scale: Scale factor for text elements
 - Do block: Make 2d block inside dxf, instead of 3d geometry

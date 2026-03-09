@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DXF Export &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>DXF Circles &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/dxf/dxf_export';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/dxf/dxf_circles';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="DXF Hatches" href="dxf_hatch.html" />
-    <link rel="prev" title="DXF Linear Dimensions" href="dxf_dims.html" />
+    <link rel="next" title="DXF Linear Dimensions" href="dxf_dims.html" />
+    <link rel="prev" title="DXF" href="dxf_index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -197,9 +197,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="dxf_index.html">DXF</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="dxf_circles.html">DXF Circles</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">DXF Circles</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dxf_dims.html">DXF Linear Dimensions</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">DXF Export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dxf_export.html">DXF Export</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dxf_hatch.html">DXF Hatches</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dxf_import.html">DXF Import</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dxf_lines.html">DXF Lines</a></li>
@@ -265,7 +265,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/dxf/dxf_export.rst" target="_blank"
+      <li><a href="../../_sources/nodes/dxf/dxf_circles.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -349,7 +349,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>DXF Export</h1>
+    <h1>DXF Circles</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -362,7 +362,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operators">Operators</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
@@ -376,44 +375,47 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="dxf-export">
-<h1>DXF Export<a class="headerlink" href="#dxf-export" title="Link to this heading">#</a></h1>
+  <section id="dxf-circles">
+<h1>DXF Circles<a class="headerlink" href="#dxf-circles" title="Link to this heading">#</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node exports Sverchok geometry to DXF format. It can export various geometry types including lines, polygons, text, and dimensions.</p>
+<p>Creates DXF circles objects from Sverchok geometry. Converts curves-circles into DXF circle entities.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>File Path: Destination path for the DXF file</p></li>
-<li><p>DXF Objects: Geometry objects to export (from other DXF nodes)</p></li>
+<li><p>Curves: Curves as SvCirvle objects expected</p></li>
+<li><p>Color: Line color (RGB or integer DXF color)</p></li>
+<li><p>Metadata: Additional metadata for lines</p></li>
 </ul>
 </section>
 <section id="options">
 <h2>Options<a class="headerlink" href="#options" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>BLOCK: Boolean flag to make block instead of entities. All the geometry becomes one block</p></li>
-<li><p>Scale: Overall scale factor for exported geometry</p></li>
-<li><p>Text Scale: Scale factor for text elements</p></li>
-<li><p>Do block: Make 2d block inside dxf, instead of 3d geometry</p></li>
-</ul>
-</section>
-<section id="operators">
-<h2>Operators<a class="headerlink" href="#operators" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>Export DXF: Main export button - writes geometry to DXF file</p></li>
+<li><p>Line Type: DXF line type (CONTINUOUS, DASHED, etc.)</p></li>
+<li><p>Line Weight: Line thickness</p></li>
+<li><p>Color: DXF color index (-4 to 255, -4 = ignore)</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>None (writes directly to file)</p></li>
+<li><p>DXF Objects: Circle objects ready for export</p></li>
 </ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
-<p><em>Example of exporting Sverchok geometry to DXF format</em></p>
-<img alt="https://github.com/user-attachments/assets/7fbe766d-7400-4097-b04c-0c83047b06a5" src="https://github.com/user-attachments/assets/7fbe766d-7400-4097-b04c-0c83047b06a5" />
+<p><em>Example of creating DXF circles from curves SvCircles node lauout</em></p>
+<img alt="https://github.com/user-attachments/assets/2ae8a0d1-61ac-4434-834d-68e44a285dd9" src="https://github.com/user-attachments/assets/2ae8a0d1-61ac-4434-834d-68e44a285dd9" />
+<p><em>Example of created DXF circles from curves SvCircles in zcad</em></p>
+<img alt="https://github.com/user-attachments/assets/84c4fcb5-4255-4496-b304-b2709fd47168" src="https://github.com/user-attachments/assets/84c4fcb5-4255-4496-b304-b2709fd47168" />
+<p><em>Default DXF linetypes</em></p>
+<img alt="https://github.com/user-attachments/assets/1fe1e785-04fc-441c-b267-514538a53388" src="https://github.com/user-attachments/assets/1fe1e785-04fc-441c-b267-514538a53388" />
+<p><em>Default DXF thicknesses</em></p>
+<img alt="https://github.com/user-attachments/assets/aa8cd5af-a423-4a6d-8e01-54f32e7831ad" src="https://github.com/user-attachments/assets/aa8cd5af-a423-4a6d-8e01-54f32e7831ad" />
+<p><em>Default DXF colors - use whether color in node or DXF index from table</em></p>
+<img alt="https://github.com/user-attachments/assets/390e21c3-3f23-4766-bde1-5cb555b980c4" src="https://github.com/user-attachments/assets/390e21c3-3f23-4766-bde1-5cb555b980c4" />
+<img alt="https://github.com/user-attachments/assets/951d31c1-a2ad-4309-912e-61d230509ee5" src="https://github.com/user-attachments/assets/951d31c1-a2ad-4309-912e-61d230509ee5" />
 </section>
 </section>
 
@@ -429,20 +431,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="dxf_dims.html"
+       href="dxf_index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DXF Linear Dimensions</p>
+        <p class="prev-next-title">DXF</p>
       </div>
     </a>
     <a class="right-next"
-       href="dxf_hatch.html"
+       href="dxf_dims.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">DXF Hatches</p>
+        <p class="prev-next-title">DXF Linear Dimensions</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -465,7 +467,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operators">Operators</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
