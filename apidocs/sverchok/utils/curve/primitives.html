@@ -85,6 +85,8 @@ el.replaceWith(d);
 <pre><code class="python">class SvCircle(SvCurve):
     &#34;&#34;&#34;
     Circle (or circular arc) curve.
+    SvCircle(center,radius,normal,vectorx)
+    SvCircle(matrix,radius)
     &#34;&#34;&#34;
 
     def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):
@@ -608,7 +610,9 @@ el.replaceWith(d);
     def elevate_degree(self, delta=None, target=None):
         return self.to_nurbs().elevate_degree(delta=delta, target=target)</code></pre>
 </details>
-<div class="desc"><p>Circle (or circular arc) curve.</p></div>
+<div class="desc"><p>Circle (or circular arc) curve.
+SvCircle(center,radius,normal,vectorx)
+SvCircle(matrix,radius)</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
@@ -1626,6 +1630,8 @@ def c(self):
 <pre><code class="python">class SvLine(SvCurve):
     &#34;&#34;&#34;
     Straight line segment curve.
+    SvLine(point,direction)
+    SvLine.from_two_points(v1,v2)
     &#34;&#34;&#34;
 
     def __init__(self, point, direction, u_bounds=None):
@@ -1770,7 +1776,9 @@ def c(self):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)</code></pre>
 </details>
-<div class="desc"><p>Straight line segment curve.</p>
+<div class="desc"><p>Straight line segment curve.
+SvLine(point,direction)
+SvLine.from_two_points(v1,v2)</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>point</code></strong></dt>

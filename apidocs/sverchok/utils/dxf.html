@@ -143,6 +143,38 @@ el.replaceWith(d);
 </details>
 <div class="desc"><p>Генерирует точки на дуге между start и end с заданным bulge.</p></div>
 </dd>
+<dt id="sverchok.utils.dxf.circles_draw"><code class="name flex">
+<span>def <span class="ident">circles_draw</span></span>(<span>points, scal, ledgs, msp)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def circles_draw(points,scal,ledgs,msp):
+    &#39;&#39;&#39; circles as simple circles &#39;&#39;&#39;
+    #print(&#39;CIRCLES!!&#39;)
+    for points_ in points:
+        curve =  points_.vers
+        #print(&#39;== Curve_type&#39;,&#39;\n   &#39;,type(curve),&#39;\n   &#39;,curve.__repr__(),&#39;\n   &#39;,curve)
+        col = points_.color
+        lw,lt = points_.lineweight, points_.linetype
+        color_int = points_.color_int
+        if curve.__repr__()[:7] == &#39;&lt;Circle&#39;:
+            matrix = (curve.center*scal).tolist()
+            radius = curve.radius*scal
+            #print(&#39;==Circles export&#39;,matrix, radius)
+            if color_int &lt; 1:
+                col = tuple([int(i*255) for i in col[:3]])
+                col = ezdxf.colors.rgb2int(col)
+                circle = msp.add_circle(center=matrix, radius=radius, dxfattribs={&#34;layer&#34;: ledgs,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col})
+            else:
+                circle = msp.add_circle(center=matrix, radius=radius, dxfattribs={&#34;layer&#34;: ledgs,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})
+        elif curve.__repr__()[:7] == &#39;&lt;BezierCurve&#39;: # SvCurve SvEllipse SvCubicBezierCurve SvLine SvNurbsCurve SvSplineCurve Sv
+            pass</code></pre>
+</details>
+<div class="desc"><p>circles as simple circles</p></div>
+</dd>
 <dt id="sverchok.utils.dxf.clean_dimstyles_except_mine"><code class="name flex">
 <span>def <span class="ident">clean_dimstyles_except_mine</span></span>(<span>doc, my_style_name)</span>
 </code></dt>
@@ -660,6 +692,8 @@ el.replaceWith(d);
                 hatches_draw(data,scal,lhatc,msp)
             if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
                 dimensions_draw(data,scal,ldims,msp)
+            if data[0].__repr__() == &#39;&lt;DXF Circles&gt;&#39;:
+                circles_draw(data,scal,ldims,msp)
     else:
         lib = BlockLibrary(doc)
         
@@ -970,6 +1004,8 @@ todo 2026 polymesh</p></div>
             for i in range(1, len(vers)):
                 block.add_line(vers[i-1][:2], vers[i][:2])
         #block.add_circle(center=(0, 0), radius=diameter/2)
+    def crcl(self,block,data,scal,ledgs):
+        pass
 
     def edgs(self,block,data,scal,ledgs):
         for points_ in data:
@@ -992,6 +1028,19 @@ todo 2026 polymesh</p></div>
 <div class="desc"></div>
 <h3>Methods</h3>
 <dl>
+<dt id="sverchok.utils.dxf.BlockLibrary.crcl"><code class="name flex">
+<span>def <span class="ident">crcl</span></span>(<span>self, block, data, scal, ledgs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def crcl(self,block,data,scal,ledgs):
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.dxf.BlockLibrary.edgs"><code class="name flex">
 <span>def <span class="ident">edgs</span></span>(<span>self, block, data, scal, ledgs)</span>
 </code></dt>
@@ -1106,6 +1155,7 @@ todo 2026 polymesh</p></div>
 <ul class="">
 <li><code><a title="sverchok.utils.dxf.angular_dimensions_draw" href="#sverchok.utils.dxf.angular_dimensions_draw">angular_dimensions_draw</a></code></li>
 <li><code><a title="sverchok.utils.dxf.arc_points" href="#sverchok.utils.dxf.arc_points">arc_points</a></code></li>
+<li><code><a title="sverchok.utils.dxf.circles_draw" href="#sverchok.utils.dxf.circles_draw">circles_draw</a></code></li>
 <li><code><a title="sverchok.utils.dxf.clean_dimstyles_except_mine" href="#sverchok.utils.dxf.clean_dimstyles_except_mine">clean_dimstyles_except_mine</a></code></li>
 <li><code><a title="sverchok.utils.dxf.dimensions_draw" href="#sverchok.utils.dxf.dimensions_draw">dimensions_draw</a></code></li>
 <li><code><a title="sverchok.utils.dxf.dxf_geometry_loader" href="#sverchok.utils.dxf.dxf_geometry_loader">dxf_geometry_loader</a></code></li>
@@ -1125,7 +1175,8 @@ todo 2026 polymesh</p></div>
 <ul>
 <li>
 <h4><code><a title="sverchok.utils.dxf.BlockLibrary" href="#sverchok.utils.dxf.BlockLibrary">BlockLibrary</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="sverchok.utils.dxf.BlockLibrary.crcl" href="#sverchok.utils.dxf.BlockLibrary.crcl">crcl</a></code></li>
 <li><code><a title="sverchok.utils.dxf.BlockLibrary.edgs" href="#sverchok.utils.dxf.BlockLibrary.edgs">edgs</a></code></li>
 <li><code><a title="sverchok.utils.dxf.BlockLibrary.make_block" href="#sverchok.utils.dxf.BlockLibrary.make_block">make_block</a></code></li>
 <li><code><a title="sverchok.utils.dxf.BlockLibrary.place_block" href="#sverchok.utils.dxf.BlockLibrary.place_block">place_block</a></code></li>
