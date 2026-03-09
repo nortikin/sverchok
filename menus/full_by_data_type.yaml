@@ -912,6 +912,7 @@
     - SvDxfLinDimsNode
     - SvDxfHatchNode
     - SvDxfLinesNode
+    - SvDxfCirclesNode
     - SvDxfPolygonsNode
 
 - ---
