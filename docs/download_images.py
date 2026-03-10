@@ -71,6 +71,9 @@ def process_rst(path, args, pas):
             rst.write(output)
 
 def is_excluded(args, name):
+    # Добавить проверку на None
+    if args.exclude is None:
+        return False
     for item in name.split('/'):
         for pattern in args.exclude:
             if fnmatch.fnmatch(item, pattern):
