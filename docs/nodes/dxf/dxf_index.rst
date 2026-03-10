@@ -22,6 +22,7 @@ The DXF nodes provide a complete workflow for importing and exporting DXF files 
 
    - **DXF Lines** for edge-based geometry
    - **DXF Polygons** for face-based geometry  
+   - **DXF Circles** for circles geometry from curves    
    - **DXF Hatches** for patterned fills
    - **DXF Linear Dimensions** for measurements
 
@@ -38,7 +39,8 @@ Support for standard DXF line types including CONTINUOUS, DASHED, DOTTED, etc.
 
 **Compatibility:**
 - Supports DXF R12 and later formats
-- Compatible with most CAD software including AutoCAD, LibreCAD, QCAD
+- Compatible with most CAD software including AutoCAD, LibreCAD, ZWCAD, QCAD and ZCAD.
+- The last, ZCAD is mostly fits my needs. Opensource, cross-platform, fast, supports all my entities. Recommend it for everyday usage.
 - Preserves layer information and entity properties
 
 .. toctree::
