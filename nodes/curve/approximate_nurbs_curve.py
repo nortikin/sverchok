@@ -394,7 +394,7 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
                     else:
                         weights = None
                     is_cyclic = self._detect_is_cyclic(points)
-                    curve = approximate_nurbs_curve(degree, points_cnt, points, weights=weights, metric=self.metric, is_cyclic=is_cyclic)
+                    curve = approximate_nurbs_curve(degree, points_cnt, points, weights=weights, metric=self.metric, is_cyclic=is_cyclic, logger=self.sv_logger)
                     control_points = curve.get_control_points().tolist()
                     knotvector = curve.get_knotvector().tolist()
                 else: # FREECAD:

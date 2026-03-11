@@ -113,7 +113,7 @@ def deform_curve_with_falloff(curve, length_solver, u_bar, falloff_delta, fallof
     result = solver.solve()
     return remove_excessive_knots(result, tolerance)
 
-def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTANCE', is_cyclic=False, implementation=SvNurbsMaths.NATIVE):
+def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTANCE', tknots = None, is_cyclic=False, implementation=SvNurbsMaths.NATIVE, logger=None):
     """
     Approximate points by a NURBS curve.
 
@@ -132,7 +132,8 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
         an instance of SvNurbsCurve.
     """
     points = np.asarray(points)
-    tknots = Spline.create_knots(points, metric=metric)
+    if tknots is None:
+        tknots = Spline.create_knots(points, metric=metric)
     knotvector = sv_knotvector.from_tknots(degree, tknots, n_cpts=n_cpts)
     goal = SvNurbsCurvePoints(tknots, points, weights = weights, relative=False)
     solver = SvNurbsCurveSolver(degree=degree)
@@ -143,7 +144,7 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
         solver.add_goal(closed)
         tangents = SvNurbsCurveCotangents.single(0.0, 1.0, weight=1.0, relative_u=True, relative=False, exact=True)
         solver.add_goal(tangents)
-    return solver.solve(implementation=implementation)
+    return solver.solve(implementation=implementation, logger=logger)
 
 def prepare_solver_for_interpolation(degree, points,
                                      metric='DISTANCE',
