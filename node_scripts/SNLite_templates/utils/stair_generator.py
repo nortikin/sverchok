@@ -97,10 +97,21 @@ def create_staircase(stair_width, floor_height, distance_between_flights):
                     v2,
                     [v2[0],v2[1],v2[2]+rail],
                     [v1[0],v1[1],v1[2]+rail],
+                    
+                    [v2[0],v2[1],v2[2]+rail],
+                    [v11[0],v11[1],v11[2]+rail],
+                    [v11[0],v11[1],v11[2]],
+                    [v2[0],v2[1],v2[2]],
+                    
                     [v8[0],v8[1],v8[2]+rail],
                     [v11[0],v11[1],v11[2]+rail],
                     v11,
                     v8,
+                    
+                    [v8[0],v8[1],v8[2]+rail],
+                    [v2[0],v8[1],v8[2]+rail],
+                    [v2[0],v8[1],v8[2]],
+                    [v8[0],v8[1],v8[2]],
                     ]
             vertices.extend(rvers)
         if mode == 'STEPS':
@@ -123,9 +134,9 @@ def create_staircase(stair_width, floor_height, distance_between_flights):
         if mode == 'RAMP':
             r = 4
         elif mode == 'RAILS':
-            r = 6
+            r = 8
         elif mode == 'STEPS':
-            r = 6 + int(len(svers)/4)
+            r = 8 + int(len(svers)/4)
         # Каждый полигон - это 4 вершины (прямоугольник)
         thickness = []
         for i in range(r):
@@ -135,10 +146,10 @@ def create_staircase(stair_width, floor_height, distance_between_flights):
             thickness.extend([platethick for i in range(4*4)])
         elif mode == 'RAILS':
             thickness.extend([platethick for i in range(4*4)])
-            thickness.extend([railthick for i in range(4*2)])
+            thickness.extend([railthick for i in range(4*4)])
         else:
             thickness.extend([platethick for i in range(4*4)])
-            thickness.extend([railthick for i in range(4*2)])
+            thickness.extend([railthick for i in range(4*4)])
             thickness.extend([platethick for i in range(4*int(len(svers)/4))])
         base_z = base_z + floor_height_
     maxz = max([i[2] for i in vertices])+stair_width
