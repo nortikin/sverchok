@@ -16,6 +16,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nestin
 from sverchok.utils.math import supported_metrics, xyz_metrics
 from sverchok.utils.geom import Spline
 from sverchok.utils.curve.nurbs import SvGeomdlCurve
+from sverchok.utils.curve.nurbs_solver_applications import approximate_nurbs_curve
 from sverchok.utils.curve.splprep import scipy_nurbs_approximate
 from sverchok.utils.curve.freecad import SvSolidEdgeCurve
 from sverchok.dependencies import geomdl, scipy, FreeCAD
@@ -27,7 +28,6 @@ if FreeCAD is not None:
     import Part
     from Part import BSplineCurve
 
-
 class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Curve
@@ -37,7 +37,6 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Approximate NURBS Curve'
     bl_icon = 'CURVE_NCURVE'
     sv_icon = 'SV_APPROXIMATE_CURVE'
-    sv_dependencies = {'geomdl', 'scipy', 'FreeCAD'}
 
     degree : IntProperty(
             name = "Degree",
@@ -57,12 +56,10 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
             update = updateNode)
 
     def update_sockets(self, context):
-        self.inputs['PointsCnt'].hide_safe = not (self.implementation == 'GEOMDL' and self.has_points_cnt)
-        self.inputs['Degree'].hide_safe = not (self.implementation == 'GEOMDL' or self.implementation == 'SCIPY')
-
+        self.inputs['PointsCnt'].hide_safe = not ((self.implementation == 'GEOMDL' and self.has_points_cnt) or (self.implementation == 'SVERCHOK'))
+        self.inputs['Degree'].hide_safe = self.implementation not in {'GEOMDL', 'SCIPY', 'SVERCHOK'}
         self.inputs['Smoothing'].hide_safe = not (self.implementation == 'SCIPY' and self.has_smoothing)
-        self.inputs['Weights'].hide_safe = not (self.implementation == 'SCIPY')
-
+        self.inputs['Weights'].hide_safe = self.implementation not in {'SCIPY', 'SVERCHOK'}
         self.inputs['Knots'].hide_safe = not (self.implementation == 'FREECAD' and self.method == 'explicit_knots')
         self.inputs['DegreeMin'].hide_safe = not (self.implementation == 'FREECAD')
         self.inputs['DegreeMax'].hide_safe = not (self.implementation == 'FREECAD')
@@ -87,9 +84,10 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
     if geomdl is not None:
         implementations.append(('GEOMDL', "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
     if scipy is not None:
-        implementations.append(('SCIPY', "SciPy", "SciPy package implementation", 1))
+        implementations.append(('SCIPY', "SciPy - splprep", "SciPy package implementation", 1))
     if FreeCAD is not None:
         implementations.append(('FREECAD', "FreeCAD", "FreeCAD package implementation", 2))
+    implementations.append(('SVERCHOK', "Sverchok", "Sverchok native implementation", 3))
 
     implementation : EnumProperty(
             name = "Implementation",
@@ -249,7 +247,15 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
                     layout.prop(self, 'cyclic_threshold')
             layout.prop(self, 'metric')
             layout.prop(self, 'has_smoothing')
-        else:
+        elif self.implementation == 'SVERCHOK':
+            row = layout.row(align = True)
+            row.prop(self, 'is_cyclic')
+            if self.is_cyclic:
+                row.prop(self, 'auto_cyclic')
+                if self.auto_cyclic:
+                    layout.prop(self, 'cyclic_threshold')
+            layout.prop(self, 'metric')
+        else: # FREECAD
             layout.prop(self, 'method')
             if self.method == 'parametrization':
                 layout.prop(self, 'continuity_p')
@@ -286,6 +292,18 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', "ControlPoints")
         self.outputs.new('SvStringsSocket', "Knots")
         self.update_sockets(context)
+
+    def _detect_is_cyclic(self, points):
+        if self.is_cyclic:
+            if self.auto_cyclic: 
+                dv = np.linalg.norm(points[0] - points[-1])
+                is_cyclic = dv <= self.cyclic_threshold
+                self.info("Dv %s, threshold %s => is_cyclic %s", dv, self.cyclic_threshold, is_cyclic)
+            else:
+                is_cyclic = True
+        else:
+            is_cyclic = False
+        return is_cyclic
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -356,15 +374,7 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
                     if not self.has_smoothing:
                         smoothing = None
 
-                    if self.is_cyclic:
-                        if self.auto_cyclic: 
-                            dv = np.linalg.norm(points[0] - points[-1])
-                            is_cyclic = dv <= self.cyclic_threshold
-                            self.info("Dv %s, threshold %s => is_cyclic %s", dv, self.cyclic_threshold, is_cyclic)
-                        else:
-                            is_cyclic = True
-                    else:
-                        is_cyclic = False
+                    is_cyclic = self._detect_is_cyclic(points)
 
                     curve = scipy_nurbs_approximate(points,
                                 weights = weights,
@@ -377,6 +387,16 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
                     control_points = curve.get_control_points().tolist()
                     knotvector = curve.get_knotvector().tolist()
 
+                elif self.implementation == 'SVERCHOK':
+                    points = np.array(vertices)
+                    if has_weights:
+                        weights = repeat_last_for_length(weights, len(vertices))
+                    else:
+                        weights = None
+                    is_cyclic = self._detect_is_cyclic(points)
+                    curve = approximate_nurbs_curve(degree, points_cnt, points, weights=weights, metric=self.metric, is_cyclic=is_cyclic, logger=self.sv_logger)
+                    control_points = curve.get_control_points().tolist()
+                    knotvector = curve.get_knotvector().tolist()
                 else: # FREECAD:
                     bspline = Part.BSplineCurve()
                     if self.method == 'parametrization':
