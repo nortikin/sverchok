@@ -4,45 +4,18 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.adaptive_curve import populate_curve, populate_curve_old, MinMaxPerSegment, TotalCount
+from sverchok.utils.adaptive_curve import populate_curve_old, MinMaxPerSegment, TotalCount
 
-LEGACY_IMPLEMENTATION = '1'
-NEW_IMPLEMENTATION = '2'
-
-MODE_TOTAL = 'TOTAL'
-MODE_SEGMENT = 'SEGMENT'
-MODE_NEW = 'DEFAULT'
-
-class SvAdaptivePlotCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
+class SvAdaptivePlotCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Adaptive Plot Curve
     Tooltip: Adaptive Plot Curve
     """
-    bl_idname = 'SvAdaptivePlotCurveMk2Node'
+    bl_idname = 'SvAdaptivePlotCurveNode'
     bl_label = 'Adaptive Plot Curve'
     bl_icon = 'CURVE_NCURVE'
 
-    def update_sockets(self, context):
-        self.inputs['Seed'].hide_safe = not self.random
-        self.inputs['Resolution'].hide_safe = (self.gen_mode != MODE_NEW) or not (self.by_length or self.by_curvature)
-
-        self.inputs['Count'].hide_safe = self.gen_mode not in {MODE_TOTAL, MODE_NEW}
-        self.inputs['MinPpe'].hide_safe = not (self.gen_mode == MODE_SEGMENT)
-        self.inputs['MaxPpe'].hide_safe = not (self.gen_mode == MODE_SEGMENT)
-        self.inputs['Segments'].hide_safe = self.gen_mode != MODE_SEGMENT
-        updateNode(self, context)
-
-    modes = [
-            (MODE_TOTAL, "Total count (legacy)", "Specify total number of points to generate - legacy algorithm", 0),
-            (MODE_SEGMENT, "Per segment", "Specify minimum and maximum number of points per segment - legacy algorithm", 1),
-            (MODE_NEW, "Total count", "Specify total number of points to generate - new algorithm", 2)
-        ]
-
-    gen_mode : EnumProperty(
-            name = "Points count",
-            items = modes,
-            default = MODE_NEW,
-            update = update_sockets)
+    replacement_nodes = [('SvAdaptivePlotCurveMk2Node', None, None)]
 
     sample_size : IntProperty(
             name = "Segments",
@@ -50,6 +23,24 @@ class SvAdaptivePlotCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
             default = 50,
             min = 3,
             update = updateNode)
+
+    def update_sockets(self, context):
+        self.inputs['Seed'].hide_safe = not self.random
+        self.inputs['Count'].hide_safe = self.gen_mode != 'TOTAL'
+        self.inputs['MinPpe'].hide_safe = self.gen_mode == 'TOTAL'
+        self.inputs['MaxPpe'].hide_safe = self.gen_mode == 'TOTAL'
+        updateNode(self, context)
+
+    modes = [
+            ('TOTAL', "Total count", "Specify total number of points to generate", 0),
+            ('SEGMENT', "Per segment", "Specify minimum and maximum number of points per segment", 1)
+        ]
+
+    gen_mode : EnumProperty(
+            name = "Points count",
+            items = modes,
+            default = 'TOTAL',
+            update = update_sockets)
 
     min_ppe : IntProperty(
             name = "Min per segment",
@@ -65,19 +56,13 @@ class SvAdaptivePlotCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
     count : IntProperty(
             name = "Count",
-            description = "Total number of points",
+            description = "Total number of points; NOTE: with Random mode enabled, actual number of generated points can be smaller than specified here",
             min = 2, default = 50,
-            update = updateNode)
-
-    resolution : IntProperty(
-            name = "Resolution",
-            description = "Length and curvature calculation resolution",
-            min = 3, default = 100,
             update = updateNode)
 
     random : BoolProperty(
             name = "Random",
-            description = "Distribute points randomly",
+            description = "Distribute points randomly; NOTE: in this mode, if Total Count is specified, actual number of generated points can be less than specified",
             default = False,
             update = update_sockets)
 
@@ -91,38 +76,39 @@ class SvAdaptivePlotCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
             name = "By Curvature",
             description = "Use curve curvature value to distribute additional points on the curve: places with greater curvature value will receive more points",
             default = True,
-            update = update_sockets)
+            update = updateNode)
 
     by_length : BoolProperty(
             name = "By Length",
             description = "Use segment lengths to distribute additional points on the curve: segments with greater length will receive more points",
             default = False,
-            update = update_sockets)
+            update = updateNode)
 
     curvature_clip : FloatProperty(
-            name = "Curvature Clip",
-            min = 0.0,
-            default = 100.0,
+            name = "Clip Curvature",
+            description = "Do not consider curvature values bigger than specified one; set to 0 to consider all curvature values",
+            default = 100,
+            min = 0,
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'gen_mode', text='')
         row = layout.row(align=True)
         row.prop(self, 'by_curvature', toggle=True)
         row.prop(self, 'by_length', toggle=True)
-        layout.prop(self, 'random')
+        layout.prop(self, 'gen_mode')
+        layout.prop(self, 'random', toggle=True)
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, 'curvature_clip')
+        if self.by_curvature:
+            layout.prop(self, 'curvature_clip')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
-        self.inputs.new('SvStringsSocket', "Count").prop_name = 'count'
         self.inputs.new('SvStringsSocket', "Segments").prop_name = 'sample_size'
         self.inputs.new('SvStringsSocket', "MinPpe").prop_name = 'min_ppe'
         self.inputs.new('SvStringsSocket', "MaxPpe").prop_name = 'max_ppe'
-        self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
+        self.inputs.new('SvStringsSocket', "Count").prop_name = 'count'
         self.inputs.new('SvStringsSocket', "Seed").prop_name = 'seed'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
@@ -135,40 +121,31 @@ class SvAdaptivePlotCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
         curve_s = self.inputs['Curve'].sv_get()
         curve_s = ensure_nesting_level(curve_s, 2, data_types = (SvCurve,))
-        count_s = self.inputs['Count'].sv_get()
-        resolution_s = self.inputs['Resolution'].sv_get()
-        seed_s = self.inputs['Seed'].sv_get()
         samples_s = self.inputs['Segments'].sv_get()
+        count_s = self.inputs['Count'].sv_get()
         min_ppe_s = self.inputs['MinPpe'].sv_get()
         max_ppe_s = self.inputs['MaxPpe'].sv_get()
+        seed_s = self.inputs['Seed'].sv_get()
 
         verts_out = []
         edges_out = []
         ts_out = []
-        inputs = zip_long_repeat(curve_s, count_s, resolution_s, seed_s, samples_s, min_ppe_s, max_ppe_s)
-        for params in inputs:
-            for curve, count, resolution, seed, samples, min_ppe, max_ppe in zip_long_repeat(*params):
+        inputs = zip_long_repeat(curve_s, samples_s, min_ppe_s, max_ppe_s, count_s, seed_s)
+        for curves, samples_i, min_ppe_i, max_ppe_i, count_i, seed_i in inputs:
+            objects = zip_long_repeat(curves, samples_i, min_ppe_i, max_ppe_i, count_i, seed_i)
+            for curve, samples, min_ppe, max_ppe, count, seed in objects:
                 if not self.random:
                     seed = None
-                if self.gen_mode == MODE_NEW:
-                    new_t = populate_curve(curve, count,
-                                resolution = resolution,
-                                by_length = self.by_length,
-                                by_curvature = self.by_curvature,
-                                curvature_clip = self.curvature_clip,
-                                random = self.random,
-                                seed = seed)
-                else: # MODE_TOTAL, MODE_SEGMENT
-                    if self.gen_mode == MODE_SEGMENT:
-                        controller = MinMaxPerSegment(min_ppe, max_ppe)
-                    else:
-                        controller = TotalCount(count)
-                    new_t = populate_curve_old(curve, samples+1,
-                                by_length = self.by_length,
-                                by_curvature = self.by_curvature,
-                                population_controller = controller,
-                                curvature_clip = self.curvature_clip,
-                                seed = seed)
+                if self.gen_mode == 'SEGMENT':
+                    controller = MinMaxPerSegment(min_ppe, max_ppe)
+                else:
+                    controller = TotalCount(count)
+                new_t = populate_curve_old(curve, samples+1,
+                            by_length = self.by_length,
+                            by_curvature = self.by_curvature,
+                            population_controller = controller,
+                            curvature_clip = self.curvature_clip,
+                            seed = seed)
                 n = len(new_t)
                 ts_out.append(new_t.tolist())
                 new_verts = curve.evaluate_array(new_t).tolist()
@@ -181,8 +158,8 @@ class SvAdaptivePlotCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['T'].sv_set(ts_out)
 
 def register():
-    bpy.utils.register_class(SvAdaptivePlotCurveMk2Node)
+    bpy.utils.register_class(SvAdaptivePlotCurveNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvAdaptivePlotCurveMk2Node)
+    bpy.utils.unregister_class(SvAdaptivePlotCurveNode)
 
