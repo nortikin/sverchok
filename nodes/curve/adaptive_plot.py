@@ -34,7 +34,7 @@ class SvAdaptivePlotCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
     modes = [
             (MODE_TOTAL, "Total count (legacy)", "Specify total number of points to generate - legacy algorithm", 0),
-            (MODE_SEGMENT, "Per segment (legacy)", "Specify minimum and maximum number of points per segment - legacy algorithm", 1),
+            (MODE_SEGMENT, "Per segment", "Specify minimum and maximum number of points per segment - legacy algorithm", 1),
             (MODE_NEW, "Total count", "Specify total number of points to generate - new algorithm", 2)
         ]
 
