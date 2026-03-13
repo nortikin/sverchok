@@ -12,6 +12,7 @@ solver (`sverchok.utils.curve.nurbs_solver` module).
 
 import numpy as np
 
+from sverchok.data_structure import apply_mask
 from sverchok.core.sv_custom_exceptions import ArgumentError
 from sverchok.utils.math import falloff_array, distribute_int
 from sverchok.utils.geom import Spline
@@ -113,7 +114,7 @@ def deform_curve_with_falloff(curve, length_solver, u_bar, falloff_delta, fallof
     result = solver.solve()
     return remove_excessive_knots(result, tolerance)
 
-def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTANCE', tknots = None, is_cyclic=False, implementation=SvNurbsMaths.NATIVE, logger=None):
+def approximate_nurbs_curve(degree, n_cpts, points, weights=None, exact_mask=None, metric='DISTANCE', tknots = None, is_cyclic=False, implementation=SvNurbsMaths.NATIVE, logger=None):
     """
     Approximate points by a NURBS curve.
 
@@ -125,8 +126,15 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
         weights: points weights. Bigger weight means that the curve should be
             attracted to corresponding point more than to points with smaller
             weights. None means all weights are equal.
+        exact_mask: optional mask indicating points through which the curve
+            must pass exactly. If provided, the length of mask must be equal
+            to number of points. None means all points are approximated.
         metric: metric to be used.
+        tknots: specific T parameter values for points. If provided, their
+            count must be equal to number of points.
+        is_cyclic: set to True if the curve must be cyclic (closed).
         implementation: NURBS mathematics implementation.
+        logger: logger instance.
 
     Returns:
         an instance of SvNurbsCurve.
@@ -134,11 +142,32 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
     points = np.asarray(points)
     if tknots is None:
         tknots = Spline.create_knots(points, metric=metric)
+    else:
+        if len(tknots) != len(points):
+            raise ArgumentError("Number of tknots must be equal to number of points")
     knotvector = sv_knotvector.from_tknots(degree, tknots, n_cpts=n_cpts)
-    goal = SvNurbsCurvePoints(tknots, points, weights = weights, relative=False)
     solver = SvNurbsCurveSolver(degree=degree)
     solver.set_curve_params(n_cpts, knotvector = knotvector)
-    solver.add_goal(goal)
+    if exact_mask is None:
+        goal = SvNurbsCurvePoints(tknots, points, weights = weights, relative=False)
+        solver.add_goal(goal)
+    else:
+        if len(exact_mask) != len(points):
+            raise ArgumentError("Length of exact_mask must be equal to number of points")
+        t_exact, t_inexact = apply_mask(exact_mask, tknots)
+        points_exact, points_inexact = apply_mask(exact_mask, points)
+        if weights is None:
+            weights_exact, weights_inexact = None, None
+        else:
+            weights_exact, weights_inexact = apply_mask(exact_mask, weights)
+            weights_exact = np.array(weights_exact)
+            weights_inexact = np.array(weights_inexact)
+        if t_exact:
+            exact_goal = SvNurbsCurvePoints(np.array(t_exact), np.array(points_exact), weights = weights_exact, relative=False, exact=True)
+            solver.add_goal(exact_goal)
+        if t_inexact:
+            inexact_goal = SvNurbsCurvePoints(np.array(t_inexact), np.array(points_inexact), weights = weights_inexact, relative=False, exact=False)
+            solver.add_goal(inexact_goal)
     if is_cyclic:
         closed = SvNurbsCurveSelfIntersections.single(0.0, 1.0, weight=1.0, relative_u=True, relative=False,exact=True)
         solver.add_goal(closed)
