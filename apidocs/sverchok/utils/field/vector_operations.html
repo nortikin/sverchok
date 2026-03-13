@@ -1,0 +1,1212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.field.vector_operations API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.field.vector_operations</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvAverageVectorField"><code class="flex name class">
+<span>class <span class="ident">SvAverageVectorField</span></span>
+<span>(</span><span>fields)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvAverageVectorField(SvVectorField):
+
+    def __init__(self, fields):
+        self.fields = fields
+        self.__description__ = &#34;Average&#34;
+
+    def evaluate(self, x, y, z):
+        vectors = np.array([field.evaluate(x, y, z) for field in self.fields])
+        return np.mean(vectors, axis=0)
+
+    def evaluate_grid(self, xs, ys, zs):
+        def func(xs, ys, zs):
+            data = []
+            for field in self.fields:
+                vx, vy, vz = field.evaluate_grid(xs, ys, zs)
+                vectors = np.stack((vx, vy, vz)).T
+                data.append(vectors)
+            data = np.array(data)
+            mean = np.mean(data, axis=0).T
+            return mean[0], mean[1], mean[2]
+        return np.vectorize(func, signature=&#34;(m),(m),(m)-&gt;(m),(m),(m)&#34;)(xs, ys, zs)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvAverageVectorField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    vectors = np.array([field.evaluate(x, y, z) for field in self.fields])
+    return np.mean(vectors, axis=0)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvAverageVectorField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    def func(xs, ys, zs):
+        data = []
+        for field in self.fields:
+            vx, vy, vz = field.evaluate_grid(xs, ys, zs)
+            vectors = np.stack((vx, vy, vz)).T
+            data.append(vectors)
+        data = np.array(data)
+        mean = np.mean(data, axis=0).T
+        return mean[0], mean[1], mean[2]
+    return np.vectorize(func, signature=&#34;(m),(m),(m)-&gt;(m),(m),(m)&#34;)(xs, ys, zs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvComposedVectorField"><code class="flex name class">
+<span>class <span class="ident">SvComposedVectorField</span></span>
+<span>(</span><span>coords, sfield1, sfield2, sfield3)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvComposedVectorField(SvVectorField):
+    def __init__(self, coords, sfield1, sfield2, sfield3):
+        self.coords = coords
+        self.sfield1 = sfield1
+        self.sfield2 = sfield2
+        self.sfield3 = sfield3
+        self.__description__ = &#34;{}({}, {}, {})&#34;.format(coords, sfield1, sfield2, sfield3)
+
+    def evaluate(self, x, y, z):
+        v1 = self.sfield1.evaluate(x, y, z)
+        v2 = self.sfield2.evaluate(x, y, z)
+        v3 = self.sfield3.evaluate(x, y, z)
+        if self.coords == &#39;XYZ&#39;:
+            return np.array((v1, v2, v3))
+        elif self.coords == &#39;CYL&#39;:
+            return np.array(from_cylindrical(v1, v2, v3, mode=&#39;radians&#39;))
+        else: # SPH:
+            return np.array(from_spherical(v1, v2, v3, mode=&#39;radians&#39;))
+
+    def evaluate_grid(self, xs, ys, zs):
+        v1s = self.sfield1.evaluate_grid(xs, ys, zs)
+        v2s = self.sfield2.evaluate_grid(xs, ys, zs)
+        v3s = self.sfield3.evaluate_grid(xs, ys, zs)
+        if self.coords == &#39;XYZ&#39;:
+            return v1s, v2s, v3s
+        elif self.coords == &#39;CYL&#39;:
+            vectors = np.stack((v1s, v2s, v3s)).T
+            vectors = np.apply_along_axis(lambda v: np.array(from_cylindrical(*tuple(v), mode=&#39;radians&#39;)), 1, vectors).T
+            return vectors[0], vectors[1], vectors[2]
+        else: # SPH:
+            vectors = np.stack((v1s, v2s, v3s)).T
+            vectors = np.apply_along_axis(lambda v: np.array(from_spherical(*tuple(v), mode=&#39;radians&#39;)), 1, vectors).T
+            return vectors[0], vectors[1], vectors[2]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvComposedVectorField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    v1 = self.sfield1.evaluate(x, y, z)
+    v2 = self.sfield2.evaluate(x, y, z)
+    v3 = self.sfield3.evaluate(x, y, z)
+    if self.coords == &#39;XYZ&#39;:
+        return np.array((v1, v2, v3))
+    elif self.coords == &#39;CYL&#39;:
+        return np.array(from_cylindrical(v1, v2, v3, mode=&#39;radians&#39;))
+    else: # SPH:
+        return np.array(from_spherical(v1, v2, v3, mode=&#39;radians&#39;))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvComposedVectorField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    v1s = self.sfield1.evaluate_grid(xs, ys, zs)
+    v2s = self.sfield2.evaluate_grid(xs, ys, zs)
+    v3s = self.sfield3.evaluate_grid(xs, ys, zs)
+    if self.coords == &#39;XYZ&#39;:
+        return v1s, v2s, v3s
+    elif self.coords == &#39;CYL&#39;:
+        vectors = np.stack((v1s, v2s, v3s)).T
+        vectors = np.apply_along_axis(lambda v: np.array(from_cylindrical(*tuple(v), mode=&#39;radians&#39;)), 1, vectors).T
+        return vectors[0], vectors[1], vectors[2]
+    else: # SPH:
+        vectors = np.stack((v1s, v2s, v3s)).T
+        vectors = np.apply_along_axis(lambda v: np.array(from_spherical(*tuple(v), mode=&#39;radians&#39;)), 1, vectors).T
+        return vectors[0], vectors[1], vectors[2]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvPreserveCoordinateField"><code class="flex name class">
+<span>class <span class="ident">SvPreserveCoordinateField</span></span>
+<span>(</span><span>field, axis)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvPreserveCoordinateField(SvVectorField):
+    def __init__(self, field, axis):
+        self.field = field
+        self.axis = axis
+
+    def evaluate(self, x, y, z):
+        xyz = self.field.evaluate(x, y, z)
+        xyz = np.array(xyz)
+        xyz[self.axis] = [x, y, z][self.axis]
+        return xyz
+
+    def evaluate_grid(self, xs, ys, zs):
+        r = self.field.evaluate_grid(xs, ys, zs)
+        r = np.array(r)
+        r[self.axis] = [xs, ys, zs][self.axis]
+        return r</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvPreserveCoordinateField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    xyz = self.field.evaluate(x, y, z)
+    xyz = np.array(xyz)
+    xyz[self.axis] = [x, y, z][self.axis]
+    return xyz</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvPreserveCoordinateField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    r = self.field.evaluate_grid(xs, ys, zs)
+    r = np.array(r)
+    r[self.axis] = [xs, ys, zs][self.axis]
+    return r</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvSelectVectorField"><code class="flex name class">
+<span>class <span class="ident">SvSelectVectorField</span></span>
+<span>(</span><span>fields, mode)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvSelectVectorField(SvVectorField):
+    def __init__(self, fields, mode):
+        self.fields = fields
+        self.mode = mode
+        self.__description__ = &#34;{}({})&#34;.format(mode, fields)
+
+    def evaluate(self, x, y, z):
+        vectors = [field.evaluate(x, y, z) for field in self.fields]
+        vectors = np.array(vectors)
+        norms = np.linalg.norm(vectors, axis=1)
+        if self.mode == &#39;MIN&#39;:
+            selected = np.argmin(norms)
+        else: # MAX
+            selected = np.argmax(norms)
+        return vectors[selected]
+
+    def evaluate_grid(self, xs, ys, zs):
+        n = len(xs)
+        vectors = [field.evaluate_grid(xs, ys, zs) for field in self.fields]
+        vectors = np.stack(vectors)
+        vectors = np.transpose(vectors, axes=(2,0,1))
+        norms = np.linalg.norm(vectors, axis=2)
+        if self.mode == &#39;MIN&#39;:
+            selected = np.argmin(norms, axis=1)
+        else: # MAX
+            selected = np.argmax(norms, axis=1)
+        all_points = list(range(n))
+        vectors = vectors[all_points, selected, :]
+        return vectors.T</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvSelectVectorField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    vectors = [field.evaluate(x, y, z) for field in self.fields]
+    vectors = np.array(vectors)
+    norms = np.linalg.norm(vectors, axis=1)
+    if self.mode == &#39;MIN&#39;:
+        selected = np.argmin(norms)
+    else: # MAX
+        selected = np.argmax(norms)
+    return vectors[selected]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvSelectVectorField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    n = len(xs)
+    vectors = [field.evaluate_grid(xs, ys, zs) for field in self.fields]
+    vectors = np.stack(vectors)
+    vectors = np.transpose(vectors, axes=(2,0,1))
+    norms = np.linalg.norm(vectors, axis=2)
+    if self.mode == &#39;MIN&#39;:
+        selected = np.argmin(norms, axis=1)
+    else: # MAX
+        selected = np.argmax(norms, axis=1)
+    all_points = list(range(n))
+    vectors = vectors[all_points, selected, :]
+    return vectors.T</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldBinOp"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldBinOp</span></span>
+<span>(</span><span>field1, field2, function)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldBinOp(SvVectorField):
+    def __init__(self, field1, field2, function):
+        self.function = function
+        self.field1 = field1
+        self.field2 = field2
+        self.__description__ = f&#34;&lt;BinOp ({field1}, {field2})&gt;&#34;
+
+    def evaluate(self, x, y, z):
+        return self.function(self.field1.evaluate(x, y, z), self.field2.evaluate(x, y, z))
+
+    def evaluate_grid(self, xs, ys, zs):
+        def func(xs, ys, zs):
+            vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
+            vx2, vy2, vz2 = self.field2.evaluate_grid(xs, ys, zs)
+            R = self.function(np.array([vx1, vy1, vz1]), np.array([vx2, vy2, vz2]))
+            return R[0], R[1], R[2]
+        return np.vectorize(func, signature=&#34;(m),(m),(m)-&gt;(m),(m),(m)&#34;)(xs, ys, zs)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldBinOp.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    return self.function(self.field1.evaluate(x, y, z), self.field2.evaluate(x, y, z))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldBinOp.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    def func(xs, ys, zs):
+        vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
+        vx2, vy2, vz2 = self.field2.evaluate_grid(xs, ys, zs)
+        R = self.function(np.array([vx1, vy1, vz1]), np.array([vx2, vy2, vz2]))
+        return R[0], R[1], R[2]
+    return np.vectorize(func, signature=&#34;(m),(m),(m)-&gt;(m),(m),(m)&#34;)(xs, ys, zs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldCartesianFilter"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldCartesianFilter</span></span>
+<span>(</span><span>field, use_x=True, use_y=True, use_z=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldCartesianFilter(SvVectorField):
+    def __init__(self, field, use_x=True, use_y=True, use_z=True):
+        self.field = field
+        self.use_x = use_x
+        self.use_y = use_y
+        self.use_z = use_z
+        desc = &#34;&#34;
+        if use_x:
+            desc = desc + &#39;X&#39;
+        if use_y:
+            desc = desc + &#39;Y&#39;
+        if use_z:
+            desc = desc + &#39;Z&#39;
+        self.__description__ = f&#34;Filter[{desc}]({field})&#34;
+
+    def evaluate_grid(self, xs, ys, zs):
+        vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+        if not self.use_x:
+            vxs[:] = 0
+        if not self.use_y:
+            vys[:] = 0
+        if not self.use_z:
+            vzs[:] = 0
+        return vxs, vys, vzs</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldCartesianFilter.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+    if not self.use_x:
+        vxs[:] = 0
+    if not self.use_y:
+        vys[:] = 0
+    if not self.use_z:
+        vzs[:] = 0
+    return vxs, vys, vzs</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldComposition"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldComposition</span></span>
+<span>(</span><span>field1, field2)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldComposition(SvVectorField):
+
+    def __init__(self, field1, field2):
+        self.field1 = field1
+        self.field2 = field2
+        self.__description__ = &#34;Composition&#34;
+
+    def evaluate(self, x, y, z):
+        x1, y1, z1 = self.field1.evaluate(x,y,z)
+        v2 = self.field2.evaluate(x1,y1,z1)
+        return v2
+
+    def evaluate_grid(self, xs, ys, zs):
+        r = self.field1.evaluate_grid(xs, ys, zs)
+        vx1, vy1, vz1 = r
+        return self.field2.evaluate_grid(vx1, vy1, vz1)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldComposition.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    x1, y1, z1 = self.field1.evaluate(x,y,z)
+    v2 = self.field2.evaluate(x1,y1,z1)
+    return v2</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldComposition.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    r = self.field1.evaluate_grid(xs, ys, zs)
+    vx1, vy1, vz1 = r
+    return self.field2.evaluate_grid(vx1, vy1, vz1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldCotangent"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldCotangent</span></span>
+<span>(</span><span>field1, field2)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldCotangent(SvVectorField):
+
+    def __init__(self, field1, field2):
+        self.field1 = field1
+        self.field2 = field2
+        self.__description__ = &#34;Cotangent&#34;
+
+    def evaluate(self, x, y, z):
+        v1 = self.field1.evaluate(x,y,z)
+        v2 = self.field2.evaluate(x,y,z)
+        projection = np.dot(v1, v2) * v2 / np.dot(v2, v2)
+        return v1 - projection
+
+    def evaluate_grid(self, xs, ys, zs):
+        vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
+        vx2, vy2, vz2 = self.field2.evaluate_grid(xs, ys, zs)
+        vectors1 = np.stack((vx1, vy1, vz1)).T
+        vectors2 = np.stack((vx2, vy2, vz2)).T
+
+        def project(v1, v2):
+            projection = np.dot(v1, v2) * v2 / np.dot(v2, v2)
+            coprojection = v1 - projection
+            vx, vy, vz = coprojection
+            return vx, vy, vz
+
+        return np.vectorize(project, signature=&#34;(3),(3)-&gt;(),(),()&#34;)(vectors1, vectors2)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldCotangent.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    v1 = self.field1.evaluate(x,y,z)
+    v2 = self.field2.evaluate(x,y,z)
+    projection = np.dot(v1, v2) * v2 / np.dot(v2, v2)
+    return v1 - projection</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldCotangent.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
+    vx2, vy2, vz2 = self.field2.evaluate_grid(xs, ys, zs)
+    vectors1 = np.stack((vx1, vy1, vz1)).T
+    vectors2 = np.stack((vx2, vy2, vz2)).T
+
+    def project(v1, v2):
+        projection = np.dot(v1, v2) * v2 / np.dot(v2, v2)
+        coprojection = v1 - projection
+        vx, vy, vz = coprojection
+        return vx, vy, vz
+
+    return np.vectorize(project, signature=&#34;(3),(3)-&gt;(),(),()&#34;)(vectors1, vectors2)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldCrossProduct"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldCrossProduct</span></span>
+<span>(</span><span>field1, field2)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldCrossProduct(SvVectorField):
+    def __init__(self, field1, field2):
+        self.field1 = field1
+        self.field2 = field2
+        self.__description__ = &#34;{} x {}&#34;.format(field1, field2)
+
+    def evaluate(self, x, y, z):
+        v1 = self.field1.evaluate(x, y, z)
+        v2 = self.field2.evaluate(x, y, z)
+        return np.cross(v1, v2)
+
+    def evaluate_grid(self, xs, ys, zs):
+        vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
+        vx2, vy2, vz2 = self.field2.evaluate_grid(xs, ys, zs)
+        vectors1 = np.stack((vx1, vy1, vz1)).T
+        vectors2 = np.stack((vx2, vy2, vz2)).T
+        R = np.cross(vectors1, vectors2).T
+        return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldCrossProduct.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    v1 = self.field1.evaluate(x, y, z)
+    v2 = self.field2.evaluate(x, y, z)
+    return np.cross(v1, v2)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldCrossProduct.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
+    vx2, vy2, vz2 = self.field2.evaluate_grid(xs, ys, zs)
+    vectors1 = np.stack((vx1, vy1, vz1)).T
+    vectors2 = np.stack((vx2, vy2, vz2)).T
+    R = np.cross(vectors1, vectors2).T
+    return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldCylindricalFilter"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldCylindricalFilter</span></span>
+<span>(</span><span>field, use_rho=True, use_phi=True, use_z=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldCylindricalFilter(SvVectorField):
+    def __init__(self, field, use_rho=True, use_phi=True, use_z=True):
+        self.field = field
+        self.use_rho = use_rho
+        self.use_phi = use_phi
+        self.use_z = use_z
+
+    def evaluate_grid(self, xs, ys, zs):
+        pts = np.stack((xs,ys,zs)).T
+        vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+        vectors = np.stack((vxs,vys,vzs)).T
+        s_rho, s_phi, s_z = to_cylindrical_np(pts.T, mode=&#39;radians&#39;)
+        v_rho, v_phi, v_z = to_cylindrical_np((pts + vectors).T, mode=&#39;radians&#39;)
+        if not self.use_rho:
+            v_rho = s_rho
+        if not self.use_phi:
+            v_phi = s_phi
+        if not self.use_z:
+            v_z = s_z
+        v_x, v_y, v_z = from_cylindrical_np(v_rho, v_phi, v_z, mode=&#39;radians&#39;)
+        return (v_x - xs), (v_y - ys), (v_z - zs)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldCylindricalFilter.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    pts = np.stack((xs,ys,zs)).T
+    vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+    vectors = np.stack((vxs,vys,vzs)).T
+    s_rho, s_phi, s_z = to_cylindrical_np(pts.T, mode=&#39;radians&#39;)
+    v_rho, v_phi, v_z = to_cylindrical_np((pts + vectors).T, mode=&#39;radians&#39;)
+    if not self.use_rho:
+        v_rho = s_rho
+    if not self.use_phi:
+        v_phi = s_phi
+    if not self.use_z:
+        v_z = s_z
+    v_x, v_y, v_z = from_cylindrical_np(v_rho, v_phi, v_z, mode=&#39;radians&#39;)
+    return (v_x - xs), (v_y - ys), (v_z - zs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldMultipliedByScalar"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldMultipliedByScalar</span></span>
+<span>(</span><span>vector_field, scalar_field)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldMultipliedByScalar(SvVectorField):
+    def __init__(self, vector_field, scalar_field):
+        self.vector_field = vector_field
+        self.scalar_field = scalar_field
+        self.__description__ = &#34;{} * {}&#34;.format(scalar_field, vector_field)
+
+    def evaluate(self, x, y, z):
+        scalar = self.scalar_field.evaluate(x, y, z)
+        vector = self.vector_field.evaluate(x, y, z)
+        return scalar * vector
+
+    def evaluate_grid(self, xs, ys, zs):
+        def product(xs, ys, zs):
+            scalars = self.scalar_field.evaluate_grid(xs, ys, zs)
+            vx, vy, vz = self.vector_field.evaluate_grid(xs, ys, zs)
+            vectors = np.stack((vx, vy, vz))
+            R = (scalars * vectors)
+            return R[0], R[1], R[2]
+        return np.vectorize(product, signature=&#34;(m),(m),(m)-&gt;(m),(m),(m)&#34;)(xs, ys, zs)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldMultipliedByScalar.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    scalar = self.scalar_field.evaluate(x, y, z)
+    vector = self.vector_field.evaluate(x, y, z)
+    return scalar * vector</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldMultipliedByScalar.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    def product(xs, ys, zs):
+        scalars = self.scalar_field.evaluate_grid(xs, ys, zs)
+        vx, vy, vz = self.vector_field.evaluate_grid(xs, ys, zs)
+        vectors = np.stack((vx, vy, vz))
+        R = (scalars * vectors)
+        return R[0], R[1], R[2]
+    return np.vectorize(product, signature=&#34;(m),(m),(m)-&gt;(m),(m),(m)&#34;)(xs, ys, zs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldSphericalFilter"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldSphericalFilter</span></span>
+<span>(</span><span>field, use_rho=True, use_phi=True, use_theta=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldSphericalFilter(SvVectorField):
+    def __init__(self, field, use_rho=True, use_phi=True, use_theta=True):
+        self.field = field
+        self.use_rho = use_rho
+        self.use_phi = use_phi
+        self.use_theta = use_theta
+
+    def evaluate_grid(self, xs, ys, zs):
+        pts = np.stack((xs,ys,zs)).T
+        vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+        vectors = np.stack((vxs,vys,vzs)).T
+        s_rho, s_phi, s_theta = to_spherical_np(pts.T, mode=&#39;radians&#39;)
+        v_rho, v_phi, v_theta = to_spherical_np((pts + vectors).T, mode=&#39;radians&#39;)
+        if not self.use_rho:
+            v_rho = s_rho
+        if not self.use_phi:
+            v_phi = s_phi
+        if not self.use_theta:
+            v_theta = s_theta
+        v_x, v_y, v_z = from_spherical_np(v_rho, v_phi, v_theta, mode=&#39;radians&#39;)
+        return (v_x - xs), (v_y - ys), (v_z - zs)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldSphericalFilter.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    pts = np.stack((xs,ys,zs)).T
+    vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+    vectors = np.stack((vxs,vys,vzs)).T
+    s_rho, s_phi, s_theta = to_spherical_np(pts.T, mode=&#39;radians&#39;)
+    v_rho, v_phi, v_theta = to_spherical_np((pts + vectors).T, mode=&#39;radians&#39;)
+    if not self.use_rho:
+        v_rho = s_rho
+    if not self.use_phi:
+        v_phi = s_phi
+    if not self.use_theta:
+        v_theta = s_theta
+    v_x, v_y, v_z = from_spherical_np(v_rho, v_phi, v_theta, mode=&#39;radians&#39;)
+    return (v_x - xs), (v_y - ys), (v_z - zs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldTangent"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldTangent</span></span>
+<span>(</span><span>field1, field2)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldTangent(SvVectorField):
+
+    def __init__(self, field1, field2):
+        self.field1 = field1
+        self.field2 = field2
+        self.__description__ = &#34;Tangent&#34;
+
+    def evaluate(self, x, y, z):
+        v1 = self.field1.evaluate(x,y,z)
+        v2 = self.field2.evaluate(x,y,z)
+        projection = np.dot(v1, v2) * v2 / np.dot(v2, v2)
+        return projection
+
+    def evaluate_grid(self, xs, ys, zs):
+        vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
+        vx2, vy2, vz2 = self.field2.evaluate_grid(xs, ys, zs)
+        vectors1 = np.stack((vx1, vy1, vz1)).T
+        vectors2 = np.stack((vx2, vy2, vz2)).T
+
+        def project(v1, v2):
+            projection = np.dot(v1, v2) * v2 / np.dot(v2, v2)
+            vx, vy, vz = projection
+            return vx, vy, vz
+
+        return np.vectorize(project, signature=&#34;(3),(3)-&gt;(),(),()&#34;)(vectors1, vectors2)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldTangent.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    v1 = self.field1.evaluate(x,y,z)
+    v2 = self.field2.evaluate(x,y,z)
+    projection = np.dot(v1, v2) * v2 / np.dot(v2, v2)
+    return projection</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldTangent.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
+    vx2, vy2, vz2 = self.field2.evaluate_grid(xs, ys, zs)
+    vectors1 = np.stack((vx1, vy1, vz1)).T
+    vectors2 = np.stack((vx2, vy2, vz2)).T
+
+    def project(v1, v2):
+        projection = np.dot(v1, v2) * v2 / np.dot(v2, v2)
+        vx, vy, vz = projection
+        return vx, vy, vz
+
+    return np.vectorize(project, signature=&#34;(3),(3)-&gt;(),(),()&#34;)(vectors1, vectors2)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldsLerp"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldsLerp</span></span>
+<span>(</span><span>vfield1, vfield2, scalar_field)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldsLerp(SvVectorField):
+
+    def __init__(self, vfield1, vfield2, scalar_field):
+        self.vfield1 = vfield1
+        self.vfield2 = vfield2
+        self.scalar_field = scalar_field
+        self.__description__ = &#34;Lerp&#34;
+
+    def evaluate(self, x, y, z):
+        scalar = self.scalar_field.evaluate(x, y, z)
+        vector1 = self.vfield1.evaluate(x, y, z)
+        vector2 = self.vfield2.evaluate(x, y, z)
+        return (1 - scalar) * vector1 + scalar * vector2
+
+    def evaluate_grid(self, xs, ys, zs):
+        scalars = self.scalar_field.evaluate_grid(xs, ys, zs)
+        vx1, vy1, vz1 = self.vfield1.evaluate_grid(xs, ys, zs)
+        vectors1 = np.stack((vx1, vy1, vz1))
+        vx2, vy2, vz2 = self.vfield2.evaluate_grid(xs, ys, zs)
+        vectors2 = np.stack((vx2, vy2, vz2))
+        R = (1 - scalars) * vectors1 + scalars * vectors2
+        return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldsLerp.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    scalar = self.scalar_field.evaluate(x, y, z)
+    vector1 = self.vfield1.evaluate(x, y, z)
+    vector2 = self.vfield2.evaluate(x, y, z)
+    return (1 - scalar) * vector1 + scalar * vector2</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector_operations.SvVectorFieldsLerp.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    scalars = self.scalar_field.evaluate_grid(xs, ys, zs)
+    vx1, vy1, vz1 = self.vfield1.evaluate_grid(xs, ys, zs)
+    vectors1 = np.stack((vx1, vy1, vz1))
+    vx2, vy2, vz2 = self.vfield2.evaluate_grid(xs, ys, zs)
+    vectors2 = np.stack((vx2, vy2, vz2))
+    R = (1 - scalars) * vectors1 + scalars * vectors2
+    return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.field" href="index.html">sverchok.utils.field</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvAverageVectorField" href="#sverchok.utils.field.vector_operations.SvAverageVectorField">SvAverageVectorField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvAverageVectorField.evaluate" href="#sverchok.utils.field.vector_operations.SvAverageVectorField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvAverageVectorField.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvAverageVectorField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvComposedVectorField" href="#sverchok.utils.field.vector_operations.SvComposedVectorField">SvComposedVectorField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvComposedVectorField.evaluate" href="#sverchok.utils.field.vector_operations.SvComposedVectorField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvComposedVectorField.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvComposedVectorField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvPreserveCoordinateField" href="#sverchok.utils.field.vector_operations.SvPreserveCoordinateField">SvPreserveCoordinateField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvPreserveCoordinateField.evaluate" href="#sverchok.utils.field.vector_operations.SvPreserveCoordinateField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvPreserveCoordinateField.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvPreserveCoordinateField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvSelectVectorField" href="#sverchok.utils.field.vector_operations.SvSelectVectorField">SvSelectVectorField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvSelectVectorField.evaluate" href="#sverchok.utils.field.vector_operations.SvSelectVectorField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvSelectVectorField.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvSelectVectorField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldBinOp" href="#sverchok.utils.field.vector_operations.SvVectorFieldBinOp">SvVectorFieldBinOp</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldBinOp.evaluate" href="#sverchok.utils.field.vector_operations.SvVectorFieldBinOp.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldBinOp.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvVectorFieldBinOp.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldCartesianFilter" href="#sverchok.utils.field.vector_operations.SvVectorFieldCartesianFilter">SvVectorFieldCartesianFilter</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldCartesianFilter.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvVectorFieldCartesianFilter.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldComposition" href="#sverchok.utils.field.vector_operations.SvVectorFieldComposition">SvVectorFieldComposition</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldComposition.evaluate" href="#sverchok.utils.field.vector_operations.SvVectorFieldComposition.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldComposition.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvVectorFieldComposition.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldCotangent" href="#sverchok.utils.field.vector_operations.SvVectorFieldCotangent">SvVectorFieldCotangent</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldCotangent.evaluate" href="#sverchok.utils.field.vector_operations.SvVectorFieldCotangent.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldCotangent.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvVectorFieldCotangent.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldCrossProduct" href="#sverchok.utils.field.vector_operations.SvVectorFieldCrossProduct">SvVectorFieldCrossProduct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldCrossProduct.evaluate" href="#sverchok.utils.field.vector_operations.SvVectorFieldCrossProduct.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldCrossProduct.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvVectorFieldCrossProduct.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldCylindricalFilter" href="#sverchok.utils.field.vector_operations.SvVectorFieldCylindricalFilter">SvVectorFieldCylindricalFilter</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldCylindricalFilter.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvVectorFieldCylindricalFilter.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldMultipliedByScalar" href="#sverchok.utils.field.vector_operations.SvVectorFieldMultipliedByScalar">SvVectorFieldMultipliedByScalar</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldMultipliedByScalar.evaluate" href="#sverchok.utils.field.vector_operations.SvVectorFieldMultipliedByScalar.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldMultipliedByScalar.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvVectorFieldMultipliedByScalar.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldSphericalFilter" href="#sverchok.utils.field.vector_operations.SvVectorFieldSphericalFilter">SvVectorFieldSphericalFilter</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldSphericalFilter.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvVectorFieldSphericalFilter.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldTangent" href="#sverchok.utils.field.vector_operations.SvVectorFieldTangent">SvVectorFieldTangent</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldTangent.evaluate" href="#sverchok.utils.field.vector_operations.SvVectorFieldTangent.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldTangent.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvVectorFieldTangent.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldsLerp" href="#sverchok.utils.field.vector_operations.SvVectorFieldsLerp">SvVectorFieldsLerp</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldsLerp.evaluate" href="#sverchok.utils.field.vector_operations.SvVectorFieldsLerp.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector_operations.SvVectorFieldsLerp.evaluate_grid" href="#sverchok.utils.field.vector_operations.SvVectorFieldsLerp.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

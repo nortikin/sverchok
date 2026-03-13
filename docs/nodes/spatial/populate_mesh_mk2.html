@@ -1,0 +1,618 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Populate Mesh &#8212; Sverchok 1, 4, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=c14129a0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/spatial/populate_mesh_mk2';</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Populate Solid" href="populate_solid.html" />
+    <link rel="prev" title="Mesh clustering" href="mesh_clustering.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 4, 0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 4, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 4, 0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="spatial_index.html">Spatial</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="concave_hull.html">Concave Hull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="convex_hull_mk2.html">Convex Hull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="delaunay_2d.html">Delaunay 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="delaunay_2d_cdt.html">Delaunay 2D Cdt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="delaunay_3d_mk2.html">Delaunay 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="field_random_probe.html">Field Random Probe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="homogenous_vector_field.html">Vector P Field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lloyd2d.html">Lloyd 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lloyd3d.html">Lloyd 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lloyd_on_mesh.html">Lloyd on Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lloyd_on_sphere.html">Lloyd on Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lloyd_solid.html">Lloyd in Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lloyd_solid_face.html">Lloyd on Solid Face</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_clustering.html">Mesh clustering</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Populate Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="populate_solid.html">Populate Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="populate_surface.html">Populate Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi3d.html">Voronoi 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_2d.html">Voronoi 2D Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_on_mesh.html">Voronoi on Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_on_solid_mk2.html">Voronoi on Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_on_surface.html">Voronoi on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_sphere.html">Voronoi Sphere</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dxf/dxf_index.html">DXF</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/spatial/populate_mesh_mk2.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Populate Mesh</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#category">Category</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="populate-mesh">
+<h1>Populate Mesh<a class="headerlink" href="#populate-mesh" title="Link to this heading">#</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
+<p>The node distributes points on given mesh.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201531076-d2b9e049-b229-4065-acbe-a9c735364e3c.png"><img alt="https://user-images.githubusercontent.com/14288520/201531076-d2b9e049-b229-4065-acbe-a9c735364e3c.png" src="https://user-images.githubusercontent.com/14288520/201531076-d2b9e049-b229-4065-acbe-a9c735364e3c.png" />
+</a>
+<p>Volume:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201530858-6d55519a-b06d-4a90-a15d-a564d7c9e5e6.gif"><img alt="https://user-images.githubusercontent.com/14288520/201530858-6d55519a-b06d-4a90-a15d-a564d7c9e5e6.gif" src="https://user-images.githubusercontent.com/14288520/201530858-6d55519a-b06d-4a90-a15d-a564d7c9e5e6.gif" />
+</a>
+</section>
+<section id="category">
+<h2>Category<a class="headerlink" href="#category" title="Link to this heading">#</a></h2>
+<p>Spatial -&gt; Populate Mesh</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Vertices</strong>. Vertices of given mesh(es). This input is mandatory.</p></li>
+<li><p><strong>Edges</strong>. Edges of given mesh(es).</p></li>
+<li><p><strong>Faces</strong>. Faces of given mesh(es). This input is mandatory.</p></li>
+<li><p><strong>Weights</strong>. This input is optional. Available only in <strong>Surface</strong> and
+<strong>Edges</strong> modes. This input is supposed to contain one value per face or
+edge. The less value the less number of vertices generates on current face.
+Values lessen then 0 will be changed to 0. This input can be used as mask.
+Just assign 0 values to faces on which there is no need in generation points.</p></li>
+<li><p><strong>Field</strong>. The scalar field defining the distribution of generated points. If
+this input is not connected, the node will generate evenly distributed
+points. This input is mandatory, if <strong>Proportional to Field</strong> parameter is checked.</p></li>
+<li><p><strong>Count</strong>. The number of points to be generated. The default value is 50.</p></li>
+<li><p><strong>MinDistance</strong>. This input is available only when <strong>Distance</strong> parameter is
+set to <strong>Min. Distance</strong>. Minimum allowable distance between generated
+points. If set to zero, there will be no restriction on distance between
+points. Default value is 0.</p></li>
+<li><p><strong>RadiusField</strong>. This input is available and mandatory only when <strong>Distance</strong>
+parameter is set to <strong>Radius Field</strong>. The scalar field, which defines radius
+of free sphere around any generated point.</p></li>
+<li><p><strong>Threshold</strong>. Threshold value: the node will not generate points in areas
+where the value of scalar field is less than this value. The default value is
+0.5.</p></li>
+<li><p><strong>Field Minimum</strong>. Minimum value of scalar field reached within the mesh.
+This input is used to define the probability of vertices generation at
+certain points. This input is only available when the <strong>Proportional to
+Field</strong> parameter is checked. The default value is 0.0.</p></li>
+<li><p><strong>Field Maximum</strong>. Maximum value of scalar field reached within mesh.
+This input is used to define the probability of vertices generation at
+certain points. This input is only available when the <strong>Proportional to Field</strong>
+parameter is checked. The default value is 1.0.</p></li>
+<li><p><strong>Seed</strong>. Random seed. The default value is 0.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<p>This node has the following parameters:</p>
+<ul>
+<li><p><strong>Mode</strong>. This defines where the points will be generated. The available options are:</p>
+<ul class="simple">
+<li><p><strong>Volume</strong>. The points will be generated inside the mesh.</p></li>
+<li><p><strong>Surface</strong>. The points will be generated on the surface of the mesh.</p></li>
+<li><p><strong>Edges</strong>. The points will be generated on the edges of the mesh.</p></li>
+</ul>
+<p>The default value is <strong>Volume</strong>.</p>
+</li>
+<li><p><strong>Distance</strong>. This defines how minimum distance between generated points is
+defined. The available options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Min. Distance</strong>. The user provides minimum distance between any two
+points in the <strong>MinDistance</strong> input.</p></li>
+<li><p><strong>RadiusField</strong>. The user defines a radius of a sphere that should be
+empty around each generated point, by providing a scalar field in the
+<strong>RadiusField</strong> input. The node makes sure that these spheres will not
+intersect.</p></li>
+</ul>
+<p>The default value is <strong>Min. Distance</strong>.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Proportional to Field</strong>. If checked, then the points density will be distributed
+proportionally to the values of scalar field. Otherwise, the points will be
+uniformly distributed in the area where the value of scalar field exceeds
+threshold. Unchecked by default.</p></li>
+<li><p><strong>Proportional to Face Area / Edge Length</strong>. This parameter is available only
+in <strong>Surface</strong> and <strong>Edges</strong> modes. If checked then the points density will
+be distributed proportionally to areas of mesh faces (in <strong>Surface</strong> mode) or
+length of mesh edges (in <strong>Edges</strong> mode). Checked by default.</p></li>
+<li><p><strong>Random Radius</strong>. This parameter is available only when <strong>Distance</strong>
+parameter is set to <strong>RadiusField</strong>. If checked, then radiuses of empty
+spheres will be generated randomly, by using uniform distribution between 0
+(zero) and the value defined by the scalar field provided in the
+<strong>RadiusField</strong> input. Unchecked by default.</p></li>
+</ul>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<p>This node has the following output:</p>
+<ul class="simple">
+<li><p><strong>Vertices</strong>. Generated vertices.</p></li>
+<li><p><strong>Indices</strong>. This output is available only in <strong>Surface</strong> and <strong>Edges</strong>
+modes. For each generated point, it contains the index of mesh face or edge
+the point was generated on.</p></li>
+<li><p><strong>Radiuses</strong>. This output is available only when <strong>Distance</strong> parameter is
+set to <strong>RadiusField</strong>. For each generated point, this output contains the
+radius of free space around the point.</p></li>
+</ul>
+</section>
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
+<p>Points on the surface of cricket model:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201532606-a738a7b3-c303-44d6-ab81-3f49b0c11468.gif"><img alt="https://user-images.githubusercontent.com/14288520/201532606-a738a7b3-c303-44d6-ab81-3f49b0c11468.gif" src="https://user-images.githubusercontent.com/14288520/201532606-a738a7b3-c303-44d6-ab81-3f49b0c11468.gif" />
+</a>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_surface_1.png"><img alt="../../_images/populate_mesh_surface_1.png" src="../../_images/populate_mesh_surface_1.png" />
+</a>
+<p>Points within mesh volume, with distribution controlled by scalar field:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_volume_2.png"><img alt="../../_images/populate_mesh_volume_2.png" src="../../_images/populate_mesh_volume_2.png" />
+</a>
+<p>Points on mesh surface, with distribution controlled by scalar field:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_surface_2.png"><img alt="../../_images/populate_mesh_surface_2.png" src="../../_images/populate_mesh_surface_2.png" />
+</a>
+<p>Points on mesh edges, with distribution controlled by scalar field:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_edges_1.png"><img alt="../../_images/populate_mesh_edges_1.png" src="../../_images/populate_mesh_edges_1.png" />
+</a>
+<p>Points on mesh surface, with distribution controlled by scalar field:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_field_1.png"><img alt="../../_images/populate_mesh_field_1.png" src="../../_images/populate_mesh_field_1.png" />
+</a>
+<p>Voronoi built from mesh, with sites distribution controlled by scalar field:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_voronoi_1.png"><img alt="../../_images/populate_mesh_voronoi_1.png" src="../../_images/populate_mesh_voronoi_1.png" />
+</a>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="mesh_clustering.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Mesh clustering</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="populate_solid.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Populate Solid</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#category">Category</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2026, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -264,8 +264,6 @@ Tool Panel
   :align: right
 
 To see this panel it has to be enabled in the Sverchok properties inside the Blender Preferences Panel -> Add-ons -> Sverchok.
-There you can choose if to display it on the "N panel" or the "T panel".
-Also you can choose if you want to display only the icons
 
 The panel presents all nodes available, organized in categories with a search menu.
 

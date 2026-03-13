@@ -15,6 +15,13 @@ If you are new to Blender node tree interface it is worth to have a look at
 #. Processing shows whether current tree is in Live update mode
 #. Git branch - if you clone and link repository - it will show current branch
 
+There are several ways to create nodes in Sverchok:
+
+* From "Add Node" menu, which can be invoked from top menu bar, or by pressing
+  Shift-A.
+* From "Sverchok Nodes" toolbox under Tools (T) panel.
+* From standard Blender's search menu (F3).
+
 .. toctree::
     :maxdepth: 2
 

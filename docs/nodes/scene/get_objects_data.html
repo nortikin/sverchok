@@ -1,59 +1,157 @@
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Get Objects Data &mdash; Sverchok 1, 2, 0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Get Objects Data &#8212; Sverchok 1, 4, 0 documentation</title>
   
-    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
   
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/js/theme.js"></script>
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=c14129a0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/scene/get_objects_data';</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Node Remote" href="node_remote_mk2.html" />
-    <link rel="prev" title="Frame Info" href="frame_info_mk2.html" /> 
-</head>
+    <link rel="prev" title="Frame Info" href="frame_info_mk2.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 4, 0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
-          
-          
-          <a href="../../main.html" class="icon icon-home">
-            Sverchok
-              <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                1, 2, 0
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 4, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 4, 0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
@@ -80,21 +178,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="scene_index.html">Scene</a><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="scene_index.html">Scene</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="FCurve_in.html">FCurve Input</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cache.html">Cache</a></li>
 <li class="toctree-l3"><a class="reference internal" href="collection_picker_mk1.html">Collection Picker mk1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_in.html">Curve Input</a></li>
 <li class="toctree-l3"><a class="reference internal" href="frame_info_mk2.html">Frame Info</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Get Objects Data</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#d-panel">3D panel</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
-</ul>
-</li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Get Objects Data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="node_remote_mk2.html">Node Remote</a></li>
 <li class="toctree-l3"><a class="reference internal" href="obj_remote_mk2.html">Object Remote (Control)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="objects_in_lite.html">Objects in Lite</a></li>
@@ -102,54 +192,197 @@
 <li class="toctree-l3"><a class="reference internal" href="selection_grabber_lite.html">Selection Grabber Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dxf/dxf_index.html">DXF</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
-        </div>
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
       </div>
-    </nav>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../main.html">Sverchok</a>
-      </nav>
+<div class="sbt-scroll-pixel-helper"></div>
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
-          <li class="breadcrumb-item"><a href="scene_index.html">Scene</a></li>
-      <li class="breadcrumb-item active">Get Objects Data</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/scene/get_objects_data.rst.txt" rel="nofollow"> View page source</a>
-      </li>
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/scene/get_objects_data.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
   </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Get Objects Data</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simplify-node-view">Simplify node view</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additionally">Additionally</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-panel">3D panel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-material-idx-and-material-names">About Material Idx and Material Names</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-properties-out-to-the-sockets">Custom Properties out to the sockets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description-custom-properties">Description custom properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-property-animation">Custom property animation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
   <section id="get-objects-data">
-<h1>Get Objects Data<a class="headerlink" href="#get-objects-data" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc" src="https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc" /></a>
+<h1>Get Objects Data<a class="headerlink" href="#get-objects-data" title="Link to this heading">#</a></h1>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/63ffe714-6aec-4d23-b575-c0519abd7298"><img alt="https://github.com/user-attachments/assets/63ffe714-6aec-4d23-b575-c0519abd7298" src="https://github.com/user-attachments/assets/63ffe714-6aec-4d23-b575-c0519abd7298" />
+</a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
-<p>Get objects from the Blender <code class="docutils literal notranslate"><span class="pre">Scene</span></code> and output them into Sverchok’s node tree. This node supports most object types. All are converted to a Sverchok representation of <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> where possible.</p>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
+<p>Get objects from the Blender <code class="docutils literal notranslate"><span class="pre">Scene</span></code> and output them into Sverchok’s node tree. This node supports most object types. All are converted to a Sverchok representation of <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> where possible.
+Sockets for the selected mesh elements or creases on weights can be used for quck masking.</p>
 <p>A few points worth stating explicitly.</p>
-<ul class="simple">
+<ul>
 <li><p>Empties, Cameras, and Lamps produce only matrix data.</p></li>
 <li><p>The order of the selected Objects can be sorted by name.</p></li>
 <li><p>It supports Object collections.</p></li>
@@ -157,12 +390,48 @@
 <li><p>When you <code class="docutils literal notranslate"><span class="pre">Get</span></code> objects from the Scene that have modifiers on them, you can import the final mesh by enabling the <code class="docutils literal notranslate"><span class="pre">Post</span></code> button.</p></li>
 <li><p>Importing Objects with a lot of geometry will decrease Sverchok tree update speed, be careful with any modifiers that produce a lot of extra geometry (like subdivision modifier)</p></li>
 <li><p>The Matrix socket lets you ignore or acquire the Object’s <code class="docutils literal notranslate"><span class="pre">World</span> <span class="pre">Matrix</span></code>, by default the Object data is untransformed. Use a matrix-apply node if you want to explicitly transform the vertex data.</p></li>
+<li><p>add selected objects from scene into the list individually:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/827589d4-13ca-4523-b0eb-0380932d8260"><img alt="https://github.com/user-attachments/assets/827589d4-13ca-4523-b0eb-0380932d8260" src="https://github.com/user-attachments/assets/827589d4-13ca-4523-b0eb-0380932d8260" />
+</a>
+</li>
+<li><p>move objects in list up and down:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7e1c2fee-e757-4523-a0b4-3659e5d3a851"><img alt="https://github.com/user-attachments/assets/7e1c2fee-e757-4523-a0b4-3659e5d3a851" src="https://github.com/user-attachments/assets/7e1c2fee-e757-4523-a0b4-3659e5d3a851" />
+</a>
+</li>
+<li><p>enable/disable objects in list to exclude some objects from process:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/1daefd0b-bda2-46b7-930f-41457873684f"><img alt="https://github.com/user-attachments/assets/1daefd0b-bda2-46b7-930f-41457873684f" src="https://github.com/user-attachments/assets/1daefd0b-bda2-46b7-930f-41457873684f" />
+</a>
+<p>This work for collections too:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/32446a11-cffe-4e75-9b27-da7e2791b8fb"><img alt="https://github.com/user-attachments/assets/32446a11-cffe-4e75-9b27-da7e2791b8fb" src="https://github.com/user-attachments/assets/32446a11-cffe-4e75-9b27-da7e2791b8fb" />
+</a>
+</div></blockquote>
+</li>
+<li><p>select objects or collections in scene by operator in list. Use Shift key to append object into selection set</p>
+<video width="700" controls>
+  <source src="https://github.com/user-attachments/assets/d4bd813f-a9c2-488e-b7fc-e9251ac61af5" type="video/mp4">
+  Your browser does not support the video tag.
+</video></li>
+<li><p>Find active object in list. If object is in collection then active position will be switched on duplicates or collections that has this object</p>
+<video width="700" controls>
+  <source src="https://github.com/user-attachments/assets/2e43c672-93f5-4bdf-bf31-8da6720ffafe" type="video/mp4">
+  Your browser does not support the video tag.
+</video></li>
+<li><p>duplicates objects can be marked with a sign (for active object in list):</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/41b112c4-4688-4214-9cff-f5191e8a456f"><img alt="https://github.com/user-attachments/assets/41b112c4-4688-4214-9cff-f5191e8a456f" src="https://github.com/user-attachments/assets/41b112c4-4688-4214-9cff-f5191e8a456f" />
+</a>
+</li>
+<li><p>add collections into the list (1-add empty pointer, 2-open list of collections in this scene, 3-select collection):</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/8a026341-8ec3-48ce-98aa-06e339cabce5"><img alt="https://github.com/user-attachments/assets/8a026341-8ec3-48ce-98aa-06e339cabce5" src="https://github.com/user-attachments/assets/8a026341-8ec3-48ce-98aa-06e339cabce5" />
+</a>
+</li>
 </ul>
 <p>limitations:</p>
 <ul>
 <li><p>When you use the <code class="docutils literal notranslate"><span class="pre">Post</span></code> mode Sverchok/Blender expect Objects to be visible. If you want to “hide” the original Objects in the scene to avoid visual clutter, you can place them into a Collection and hide the collection. This is a current Blender API limitation.</p></li>
 <li><p>Another method to work with objects - select wireframe mode and hide objects in Render by buttons:</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289"><img alt="https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289" src="https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289"><img alt="https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289" src="https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289" />
+</a>
 </li>
 </ul>
 <video width="700" controls>
@@ -172,13 +441,40 @@
 <li><p>We have Bezier-in and NURBS-in nodes if you want to get Curve data from Scene objects, instead of Mesh.</p></li>
 </ul>
 </section>
+<section id="simplify-node-view">
+<h2>Simplify node view<a class="headerlink" href="#simplify-node-view" title="Link to this heading">#</a></h2>
+<p>This node can be very large. If you have no plans to use all sockets then you can hide unused socket:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/55a8b530-b822-41f4-8ed7-4260ef455be9"><img alt="https://github.com/user-attachments/assets/55a8b530-b822-41f4-8ed7-4260ef455be9" src="https://github.com/user-attachments/assets/55a8b530-b822-41f4-8ed7-4260ef455be9" />
+</a>
+</div></blockquote>
+<p>Also you can simplify table view ob objects:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/9ebe3a1f-783b-4a07-a4cf-aa121db8115c"><img alt="https://github.com/user-attachments/assets/9ebe3a1f-783b-4a07-a4cf-aa121db8115c" src="https://github.com/user-attachments/assets/9ebe3a1f-783b-4a07-a4cf-aa121db8115c" />
+</a>
+</div></blockquote>
+</section>
+<section id="additionally">
+<h2>Additionally<a class="headerlink" href="#additionally" title="Link to this heading">#</a></h2>
+<ul>
+<li><p>You can see objects info in description of elements on mouse hover:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5afb43b4-7651-4d03-9dc8-14b291bf7ca3"><img alt="https://github.com/user-attachments/assets/5afb43b4-7651-4d03-9dc8-14b291bf7ca3" src="https://github.com/user-attachments/assets/5afb43b4-7651-4d03-9dc8-14b291bf7ca3" />
+</a>
+</li>
+<li><p>Added Metaball and Point Cloud</p></li>
+</ul>
+</section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
-<p>Objects Socket</p>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<p>Objects Socket. You can select object or link to Collection picker node to select a collection:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/f3c654c2-51c1-4d06-aee8-e02ec88bc747"><img alt="https://github.com/user-attachments/assets/f3c654c2-51c1-4d06-aee8-e02ec88bc747" src="https://github.com/user-attachments/assets/f3c654c2-51c1-4d06-aee8-e02ec88bc747" />
+</a>
+</div></blockquote>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
-<table class="docutils align-default">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
 <th class="head"><p>Type</p></th>
@@ -213,16 +509,17 @@ Poligon Centers, Polygon Normals). Has no infuence for Matrix and Object</p></td
 </tr>
 </tbody>
 </table>
+</div>
 </section>
 <section id="d-panel">
-<h2>3D panel<a class="headerlink" href="#d-panel" title="Link to this heading">¶</a></h2>
+<h2>3D panel<a class="headerlink" href="#d-panel" title="Link to this heading">#</a></h2>
 <p>The node can show its properties on 3D panel.
 For this parameter <cite>to 3d</cite> should be enabled, output should be linked.
 After that you can press <cite>scan for props</cite> button on 3D panel for showing the node properties on 3D panel.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
-<table class="docutils align-default">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Output</p></th>
 <th class="head"><p>Description</p></th>
@@ -238,67 +535,309 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
 <tr class="row-even"><td><p>Polygons</p></td>
 <td><p>Polygons of objects</p></td>
 </tr>
+<tr class="row-odd"><td><p>Vertices Select</p></td>
+<td><p>Mask of vertices selected in the edit mode</p></td>
+</tr>
+<tr class="row-even"><td><p>Vertices Crease</p></td>
+<td><p>Vertices crease values</p></td>
+</tr>
+<tr class="row-odd"><td><p>Vertices Bevel Weight</p></td>
+<td><p>Vertices Bevel Weight values</p></td>
+</tr>
+<tr class="row-even"><td><p>Edges Select</p></td>
+<td><p>Mask of Edges selected in the edit mode</p></td>
+</tr>
+<tr class="row-odd"><td><p>Edges Crease</p></td>
+<td><p>Edges crease values</p></td>
+</tr>
+<tr class="row-even"><td><p>Edges Seam</p></td>
+<td><p>Edges seam values</p></td>
+</tr>
+<tr class="row-odd"><td><p>Edges Sharp</p></td>
+<td><p>Edges sharp values</p></td>
+</tr>
+<tr class="row-even"><td><p>Edges Bevel Weight</p></td>
+<td><p>Edges Bevel Weight values</p></td>
+</tr>
+<tr class="row-odd"><td><p>Polygon Selected</p></td>
+<td><p>Mask of Polygons selected in the edit mode</p></td>
+</tr>
+<tr class="row-even"><td><p>Polygon Smooth</p></td>
+<td><p>Smooth of Polygons</p></td>
+</tr>
 <tr class="row-odd"><td><p>Vertex Normals</p></td>
 <td><p>Vertex Normals</p></td>
 </tr>
 <tr class="row-even"><td><p>Material Idx</p></td>
 <td><p>Material indexes per object face.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Polygons Areas</p></td>
-<td><p>Polygons of objects.</p></td>
+<tr class="row-odd"><td><p>Material Names</p></td>
+<td><p>Material names per object face.</p></td>
 </tr>
-<tr class="row-even"><td><p>Polygons Centers</p></td>
+<tr class="row-even"><td><p>Polygons Areas</p></td>
+<td><p>Area of Polygons of objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Polygons Centers</p></td>
 <td><p>Polygons Center of objects.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Polygons Normal</p></td>
+<tr class="row-even"><td><p>Polygons Normal</p></td>
 <td><p>Polygons Normal of objects.</p></td>
 </tr>
-<tr class="row-even"><td><p>Matrix</p></td>
+<tr class="row-odd"><td><p>Matrix</p></td>
 <td><p>Matrices of objects</p></td>
 </tr>
-<tr class="row-odd"><td><p>Vers grouped</p></td>
+<tr class="row-even"><td><p>Vers grouped</p></td>
 <td><p>Vertex groups’ indices from all vertex groups</p></td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>It can output Numpy arrays of vertices and edges if enabled on N-panel properties (makes node faster)</p>
 </section>
+<section id="about-material-idx-and-material-names">
+<h2>About Material Idx and Material Names<a class="headerlink" href="#about-material-idx-and-material-names" title="Link to this heading">#</a></h2>
+<p>Initially, these parameters produce results according to the materials in the corresponding material sockets of the object.
+When the node parameters “Mesh Join” and “Post” are enabled, the material indices are combined, duplicate materials are removed,
+the Material Names are sorted alphabetically, and the Material Idx values are renumbered according to each material name’s
+position after sorting. If a material is not assigned but is used by some Faces, this material is treated as None, and during
+the sorting of Material Names, the value None is placed at the end of the sorted list.</p>
+<p>Before Mesh Join:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/fca3b1de-9e39-4bae-91ba-e688643a9dcd"><img alt="https://github.com/user-attachments/assets/fca3b1de-9e39-4bae-91ba-e688643a9dcd" src="https://github.com/user-attachments/assets/fca3b1de-9e39-4bae-91ba-e688643a9dcd" />
+</a>
+</div></blockquote>
+<p>After Mesh Join:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/2ade627a-a965-478e-9ee6-e3b6b3c6964b"><img alt="https://github.com/user-attachments/assets/2ade627a-a965-478e-9ee6-e3b6b3c6964b" src="https://github.com/user-attachments/assets/2ade627a-a965-478e-9ee6-e3b6b3c6964b" />
+</a>
+</div></blockquote>
+<p>Material Idx can be used to calculate the area of materials.</p>
+</section>
+<section id="custom-properties-out-to-the-sockets">
+<h2>Custom Properties out to the sockets<a class="headerlink" href="#custom-properties-out-to-the-sockets" title="Link to this heading">#</a></h2>
+<p>Custom properties can be out to the output sockets:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/10bffb4a-2ea8-48a1-a149-323a260c42e4"><img alt="https://github.com/user-attachments/assets/10bffb4a-2ea8-48a1-a149-323a260c42e4" src="https://github.com/user-attachments/assets/10bffb4a-2ea8-48a1-a149-323a260c42e4" />
+</a>
+</div></blockquote>
+</section>
+<section id="description-custom-properties">
+<h2>Description custom properties<a class="headerlink" href="#description-custom-properties" title="Link to this heading">#</a></h2>
+<p>Blender has several kinds of custom properties, associated with different parts of an object:</p>
+<ul class="simple">
+<li><p>directly with the object in the scene</p></li>
+<li><p>with the object’s data (the Data section)</p></li>
+<li><p>with materials</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/749d639d-ae29-47d6-965a-1645d11af777"><img alt="https://github.com/user-attachments/assets/749d639d-ae29-47d6-965a-1645d11af777" src="https://github.com/user-attachments/assets/749d639d-ae29-47d6-965a-1645d11af777" />
+</a>
+<p>Some objects may be different. Lamp has no materials, Empty has no Data and Materials, Point Cloud has no Mesh (only verts), but has all types of Custom Properties.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/98510555-106a-4632-b3c0-ad6da160de80"><img alt="https://github.com/user-attachments/assets/98510555-106a-4632-b3c0-ad6da160de80" src="https://github.com/user-attachments/assets/98510555-106a-4632-b3c0-ad6da160de80" />
+</a>
+</div></blockquote>
+<p>Lets create prices for every material. Create two object: a Suzanne and a Sphere with materials. As you can see there are no custom property in materials:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/4bb81e03-bdb9-470b-8a18-54b0b81bc44f"><img alt="https://github.com/user-attachments/assets/4bb81e03-bdb9-470b-8a18-54b0b81bc44f" src="https://github.com/user-attachments/assets/4bb81e03-bdb9-470b-8a18-54b0b81bc44f" />
+</a>
+</div></blockquote>
+<p>Create a Price custom attribute for one material. For example for an Icosphere:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/16b9e511-1d8f-48b2-91ac-737e5f2ced4d"><img alt="https://github.com/user-attachments/assets/16b9e511-1d8f-48b2-91ac-737e5f2ced4d" src="https://github.com/user-attachments/assets/16b9e511-1d8f-48b2-91ac-737e5f2ced4d" />
+</a>
+</div></blockquote>
+<p>As you can see no “Price” custom attribute in another materials for a while. Add Suzanne and Icosphere into “Get Object Data”. Select Icosphere only after:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/a4172654-c977-4394-8a06-de8066e45508"><img alt="https://github.com/user-attachments/assets/a4172654-c977-4394-8a06-de8066e45508" src="https://github.com/user-attachments/assets/a4172654-c977-4394-8a06-de8066e45508" />
+</a>
+</div></blockquote>
+<p>Create new socket:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/40f5002a-3c29-4571-be61-e5f5e83ae415"><img alt="https://github.com/user-attachments/assets/40f5002a-3c29-4571-be61-e5f5e83ae415" src="https://github.com/user-attachments/assets/40f5002a-3c29-4571-be61-e5f5e83ae415" />
+</a>
+<p>This action will copy Price into another materials:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/3da07b40-e8dd-4286-8b3c-5ddf4d8d27fd"><img alt="https://github.com/user-attachments/assets/3da07b40-e8dd-4286-8b3c-5ddf4d8d27fd" src="https://github.com/user-attachments/assets/3da07b40-e8dd-4286-8b3c-5ddf4d8d27fd" />
+</a>
+</div></blockquote>
+<p>Set different prices for materials:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/4bdfa5ca-8f83-41bc-a77b-fbb7ad23e84d"><img alt="https://github.com/user-attachments/assets/4bdfa5ca-8f83-41bc-a77b-fbb7ad23e84d" src="https://github.com/user-attachments/assets/4bdfa5ca-8f83-41bc-a77b-fbb7ad23e84d" />
+</a>
+</div></blockquote>
+<p>And check prices in the socket:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/bee70087-a6e1-4e52-a0ab-ac57eb02e787"><img alt="https://github.com/user-attachments/assets/bee70087-a6e1-4e52-a0ab-ac57eb02e787" src="https://github.com/user-attachments/assets/bee70087-a6e1-4e52-a0ab-ac57eb02e787" />
+</a>
+</div></blockquote>
+<p>Calc Areas by materials:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/f6e49f48-8b36-4051-b4e3-c1b8a56e2b06"><img alt="https://github.com/user-attachments/assets/f6e49f48-8b36-4051-b4e3-c1b8a56e2b06" src="https://github.com/user-attachments/assets/f6e49f48-8b36-4051-b4e3-c1b8a56e2b06" />
+</a>
+</div></blockquote>
+<p>Calc Price of materials:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/dc496857-cd2c-4ab9-8b66-dd51c72ecc84"><img alt="https://github.com/user-attachments/assets/dc496857-cd2c-4ab9-8b66-dd51c72ecc84" src="https://github.com/user-attachments/assets/dc496857-cd2c-4ab9-8b66-dd51c72ecc84" />
+</a>
+</div></blockquote>
+<p>Now you know that Suzanne’s eyes has a price 13.923$.</p>
+</section>
+<section id="custom-property-animation">
+<h2>Custom property animation<a class="headerlink" href="#custom-property-animation" title="Link to this heading">#</a></h2>
+<p>Create Cube and create 2 custom property in Object mode:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/1bdf8a21-9eb6-43fb-adcf-e4ae79624693"><img alt="https://github.com/user-attachments/assets/1bdf8a21-9eb6-43fb-adcf-e4ae79624693" src="https://github.com/user-attachments/assets/1bdf8a21-9eb6-43fb-adcf-e4ae79624693" />
+</a>
+</div></blockquote>
+<p>Create next node scheme and add X and Y custom properties:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/6ccd7b82-be4f-4c9f-8216-8afcf8663c2c"><img alt="https://github.com/user-attachments/assets/6ccd7b82-be4f-4c9f-8216-8afcf8663c2c" src="https://github.com/user-attachments/assets/6ccd7b82-be4f-4c9f-8216-8afcf8663c2c" />
+</a>
+</div></blockquote>
+<p>Create F-curve modifier animation:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/4dad105d-d902-45d5-ae2f-9f9fd66f8ed9"><img alt="https://github.com/user-attachments/assets/4dad105d-d902-45d5-ae2f-9f9fd66f8ed9" src="https://github.com/user-attachments/assets/4dad105d-d902-45d5-ae2f-9f9fd66f8ed9" />
+</a>
+<video width="700" controls>
+  <source src="https://github.com/user-attachments/assets/ce39820a-a789-4776-bd66-e1ff537cf8e2" type="video/mp4">
+ Your browser does not support the video tag.
+</video><p>Now you can do animation of Sverchok Scheme with custom properties and custom properties animation, animation keys and animation modifiers.
+Additionally: The animation of Sverchok Nodes with Blender is not possible.</p>
+<p>Animated custom property example: [GetObjectsData.MK5.002.Blender.3.0.0.blend.zip](<a class="github reference external" href="https://github.com/user-attachments/files/24540889/GetObjectsData.MK5.002.Blender.3.0.0.blend.zip">user-attachments/files</a>)</p>
+</section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
 <img alt="https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png" src="https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png" />
 <p>Importing an object with two array modifiers applied and showing indices.</p>
+<p>Mask sites of Voronoi node with selection of faces:</p>
+<video width="700" controls>
+  <source src="https://github.com/nortikin/sverchok/assets/14288520/e08f226e-f13b-4fff-bdb1-aa4db06ac0a6" type="video/mp4">
+ Your browser does not support the video tag.
+</video><ul class="simple">
+<li><p>Spatial-&gt; <a class="reference internal" href="../spatial/voronoi_on_mesh.html"><span class="doc">Voronoi on Mesh</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<p>Mask edges of Grid with selection of edges:</p>
+<video width="700" controls>
+  <source src="https://github.com/nortikin/sverchok/assets/14288520/280c72f7-8b51-44cc-9e63-75c9a97f5739" type="video/mp4">
+ Your browser does not support the video tag.
+</video><ul class="simple">
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/extrude_edges_mk2.html"><span class="doc">Extrude Edges</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
 </section>
 </section>
 
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="frame_info_mk2.html" class="btn btn-neutral float-left" title="Frame Info" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="node_remote_mk2.html" class="btn btn-neutral float-right" title="Node Remote" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+                </article>
+              
 
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2014...2024, sverchok team.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="frame_info_mk2.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Frame Info</p>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+    </a>
+    <a class="right-next"
+       href="node_remote_mk2.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Node Remote</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-</body>
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simplify-node-view">Simplify node view</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additionally">Additionally</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-panel">3D panel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-material-idx-and-material-names">About Material Idx and Material Names</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-properties-out-to-the-sockets">Custom Properties out to the sockets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description-custom-properties">Description custom properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-property-animation">Custom property animation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2026, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
 </html>

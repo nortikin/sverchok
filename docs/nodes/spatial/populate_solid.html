@@ -1,66 +1,164 @@
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Populate Solid &mdash; Sverchok 1, 2, 0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Populate Solid &#8212; Sverchok 1, 4, 0 documentation</title>
   
-    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
   
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/js/theme.js"></script>
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=c14129a0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/spatial/populate_solid';</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Populate Surface" href="populate_surface.html" />
-    <link rel="prev" title="Lloyd on Solid Face" href="lloyd_solid_face.html" /> 
-</head>
+    <link rel="prev" title="Populate Mesh" href="populate_mesh_mk2.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 4, 0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
-          
-          
-          <a href="../../main.html" class="icon icon-home">
-            Sverchok
-              <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                1, 2, 0
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 4, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 4, 0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="spatial_index.html">Spatial</a><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="spatial_index.html">Spatial</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="concave_hull.html">Concave Hull</a></li>
 <li class="toctree-l3"><a class="reference internal" href="convex_hull_mk2.html">Convex Hull</a></li>
 <li class="toctree-l3"><a class="reference internal" href="delaunay_2d.html">Delaunay 2D</a></li>
@@ -74,25 +172,18 @@
 <li class="toctree-l3"><a class="reference internal" href="lloyd_on_sphere.html">Lloyd on Sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd_solid.html">Lloyd in Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd_solid_face.html">Lloyd on Solid Face</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Populate Solid</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of Usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_clustering.html">Mesh clustering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="populate_mesh_mk2.html">Populate Mesh</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Populate Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="populate_surface.html">Populate Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_points_on_mesh.html">Populate Mesh (Random points on mesh)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="voronoi3d.html">Voronoi 3D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="voronoi_2d.html">Voronoi 2D Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="voronoi_on_mesh_mk2.html">Voronoi on Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_on_mesh.html">Voronoi on Mesh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="voronoi_on_solid_mk2.html">Voronoi on Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="voronoi_on_surface.html">Voronoi on Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="voronoi_sphere.html">Voronoi Sphere</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
@@ -119,48 +210,184 @@
 <li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dxf/dxf_index.html">DXF</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
-        </div>
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
       </div>
-    </nav>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../main.html">Sverchok</a>
-      </nav>
+<div class="sbt-scroll-pixel-helper"></div>
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
-          <li class="breadcrumb-item"><a href="spatial_index.html">Spatial</a></li>
-      <li class="breadcrumb-item active">Populate Solid</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/spatial/populate_solid.rst.txt" rel="nofollow"> View page source</a>
-      </li>
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/spatial/populate_solid.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
   </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Populate Solid</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of Usage</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
   <section id="populate-solid">
-<h1>Populate Solid<a class="headerlink" href="#populate-solid" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png"><img alt="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png" src="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png" /></a>
+<h1>Populate Solid<a class="headerlink" href="#populate-solid" title="Link to this heading">#</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png"><img alt="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png" src="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png" />
+</a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
 <p>This node requires <a class="reference external" href="../../solids.rst">FreeCAD</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
 <p>This node generates a number of random points, distributed in a given Solid
 object according to the provided Scalar Field. It has two modes:</p>
 <ul class="simple">
@@ -182,49 +409,56 @@ radiuses of such spheres are provided as a scalar field: it defines a radius
 value for any point in the space.</p></li>
 </ul>
 <p>The node can generate points either inside the Solid body, or on it’s surface.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png"><img alt="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png" src="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png"><img alt="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png" src="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png" />
+</a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Solid</strong>. Solid object, in which the points must be generated. This input is
 mandatory.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png"><img alt="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png" src="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png"><img alt="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png" src="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png" />
+</a>
 <p>Solids-&gt; <a class="reference internal" href="../solid/sphere_solid.html"><span class="doc">Sphere (Solid)</span></a></p>
 <ul class="simple">
 <li><p><strong>Field</strong>. The scalar field defining the distribution of generated points. If
 this input is not connected, the node will generate evenly distributed
 points. This input is mandatory, if <strong>Proportional</strong> parameter is checked.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png"><img alt="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png" src="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png"><img alt="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png" src="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p>
 <ul class="simple">
 <li><p><strong>Count</strong>. The number of points to be generated. The default value is 50.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png"><img alt="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png" src="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png"><img alt="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png" src="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png" />
+</a>
 <ul class="simple">
 <li><p><strong>MinDistance</strong>. This input is available only when <strong>Distance</strong> parameter is
 set to <strong>Min. Distance</strong>. Minimum allowable distance between generated
 points. If set to zero, there will be no restriction on distance between
 points. Default value is 0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif"><img alt="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif" src="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif"><img alt="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif" src="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif" />
+</a>
 <p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p>
 <ul class="simple">
 <li><p><strong>RadiusField</strong>. This input is available and mandatory only when <strong>Distance</strong>
 parameter is set to <strong>Radius Field</strong>. The scalar field, which defines radius
 of free sphere around any generated point.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png"><img alt="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png" src="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png"><img alt="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png" src="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p>
 <ul class="simple">
 <li><p><strong>Threshold</strong>. Threshold value: the node will not generate points in areas
 where the value of scalar field is less than this value. The default value is
 0.5.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png"><img alt="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png" src="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png"><img alt="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png" src="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png" />
+</a>
 <p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a>, Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p>
 <ul class="simple">
 <li><p><strong>Field Minimum</strong>. Minimum value of scalar field reached within the area
@@ -236,20 +470,23 @@ defined by <strong>Bounds</strong> input. This input is used to define the proba
 vertices generation at certain points. This input is only available when the
 <strong>Proportional</strong> parameter is checked. The default value is 1.0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png"><img alt="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png" src="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png"><img alt="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png" src="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p>
 <ul class="simple">
 <li><p><strong>FaceMask</strong>. Mask Solid faces.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png"><img alt="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png" src="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png"><img alt="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png" src="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png" />
+</a>
 <p>Solids-&gt; <a class="reference internal" href="../solid/box_solid.html"><span class="doc">Box (Solid)</span></a>, Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p>
 <ul class="simple">
 <li><p><strong>Seed</strong>. Random seed. The default value is 0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png"><img alt="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png" src="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png"><img alt="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png" src="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png" />
+</a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Generation mode</strong>. This defines where the points will be generated. The available options are:</p>
@@ -260,7 +497,8 @@ vertices generation at certain points. This input is only available when the
 <p>The default value is <strong>Volume</strong></p>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png"><img alt="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png" src="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png"><img alt="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png" src="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png" />
+</a>
 <ul>
 <li><p><strong>Distance</strong>. This defines how minimum distance between generated points is
 defined. The available options are:</p>
@@ -277,7 +515,8 @@ intersect.</p></li>
 </div></blockquote>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png"><img alt="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png" src="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png"><img alt="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png" src="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a>, Solids-&gt; <a class="reference internal" href="../solid/box_solid.html"><span class="doc">Box (Solid)</span></a>, Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p>
 <ul class="simple">
 <li><p><strong>Proportional</strong>. If checked, then the points density will be distributed
@@ -285,7 +524,8 @@ proportionally to the values of scalar field. Otherwise, the points will be
 uniformly distributed in the area where the value of scalar field exceeds
 threshold. Unchecked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif"><img alt="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif" src="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif"><img alt="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif" src="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a>, Solids-&gt; <a class="reference internal" href="../solid/box_solid.html"><span class="doc">Box (Solid)</span></a>, Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p>
 <ul class="simple">
 <li><p><strong>Random Radius</strong>. This parameter is available only when <strong>Distance</strong>
@@ -294,7 +534,8 @@ spheres will be generated randomly, by using uniform distribution between 0
 (zero) and the value defined by the scalar field provided in the
 <strong>RadiusField</strong> input. Unchecked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif"><img alt="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif" src="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif"><img alt="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif" src="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a>, Solids-&gt; <a class="reference internal" href="../solid/box_solid.html"><span class="doc">Box (Solid)</span></a>, Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p>
 <ul class="simple">
 <li><p><strong>Accept in surface</strong>. This parameter is only available when the <strong>Generation
@@ -306,22 +547,24 @@ the accuracy of defining whether the point lies on the surface of the body.
 The higher the value, the more precise this process is. The default value is
 5.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png"><img alt="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png" src="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png"><img alt="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png" src="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png" />
+</a>
 <p>When <strong>Proportional</strong> mode is enabled, then the probability of vertex
 appearance at the certain point is calculated as <code class="docutils literal notranslate"><span class="pre">P</span> <span class="pre">=</span> <span class="pre">(V</span> <span class="pre">-</span> <span class="pre">FieldMin)</span> <span class="pre">/</span>
 <span class="pre">(FieldMax</span> <span class="pre">-</span> <span class="pre">FieldMin)</span></code>, where V is the value of scalar field at that point,
 and FieldMin, FieldMax are values of corresponding node inputs.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Generated vertices.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png"><img alt="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png" src="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png" /></a>
+<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png"><img alt="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png" src="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png" />
+</a>
 <ul class="simple">
 <li><p>Solids-&gt; <a class="reference internal" href="../solid/cylinder_solid.html"><span class="doc">Cylinder (Solid)</span></a></p></li>
 <li><p>Solids-&gt; <a class="reference internal" href="../solid/solid_boolean.html"><span class="doc">Solid Boolean</span></a></p></li>
@@ -330,16 +573,19 @@ and FieldMin, FieldMax are values of corresponding node inputs.</p>
 </ul>
 <hr class="docutils" />
 <p>Example of “Radius Field” mode usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png"><img alt="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png" src="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png"><img alt="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png" src="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>
 <li><p>Solids-&gt; <a class="reference internal" href="../solid/cylinder_solid.html"><span class="doc">Cylinder (Solid)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif"><img alt="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif" src="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif"><img alt="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif" src="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif" />
+</a>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png"><img alt="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png" src="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png"><img alt="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png" src="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>
@@ -351,34 +597,110 @@ and FieldMin, FieldMax are values of corresponding node inputs.</p>
 </section>
 
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="lloyd_solid_face.html" class="btn btn-neutral float-left" title="Lloyd on Solid Face" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="populate_surface.html" class="btn btn-neutral float-right" title="Populate Surface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+                </article>
+              
 
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2014...2024, sverchok team.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="populate_mesh_mk2.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Populate Mesh</p>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+    </a>
+    <a class="right-next"
+       href="populate_surface.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Populate Surface</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-</body>
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of Usage</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2026, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
 </html>

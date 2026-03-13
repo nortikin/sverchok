@@ -1,8 +1,8 @@
 Voronoi on Mesh
 ===============
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/3782710e-2a14-4bea-a835-37ac6ff715b4
-  :target: https://github.com/nortikin/sverchok/assets/14288520/3782710e-2a14-4bea-a835-37ac6ff715b4
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/c907cc2d-7493-4117-a20f-b5e760a47d28
+  :target: https://github.com/nortikin/sverchok/assets/14288520/c907cc2d-7493-4117-a20f-b5e760a47d28
 
 Dependencies
 ------------
@@ -29,6 +29,12 @@ This node has the following inputs:
 
 * **Vertices**. Vertices of the mesh to generate Voronoi diagram on. This input is mandatory.
 * **Faces**. Faces of the mesh to generate Voronoi diagram on. This input is mandatory.
+* **Mask**. List of True/False. What Sites will visible.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/cc788894-acc7-4b1f-a1c0-fb5756e42eb2
+  :target: https://github.com/nortikin/sverchok/assets/14288520/cc788894-acc7-4b1f-a1c0-fb5756e42eb2
+
+
 * **Sites**. The points to generate Voronoi diagram for. Usually you want for
   this points to lie either inside the mesh or on it's surface, but this is not
   necessary. This input is mandatory.

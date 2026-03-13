@@ -1,0 +1,139 @@
+Surface from Curves
+===================
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/58e5090a-77b1-46fc-b42d-4b86453f4dc1
+  :target: https://github.com/nortikin/sverchok/assets/14288520/58e5090a-77b1-46fc-b42d-4b86453f4dc1
+
+Dependencies
+------------
+
+This node can optionally use Geomdl_ and / or SciPy_ libraries.
+
+.. _Geomdl: https://onurraufbingol.com/NURBS-Python/
+.. _SciPy: https://scipy.org/
+
+Functionality
+-------------
+
+This node generates a Surface object by interpolating several Curves. This
+operation is also known as "Loft". Several interpolation modes are supported.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/fd83f175-9523-45ca-8bce-9678ef44cd35
+  :target: https://github.com/nortikin/sverchok/assets/14288520/fd83f175-9523-45ca-8bce-9678ef44cd35
+
+* Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+See also "NURBS Loft" node.
+
+Surface domain: from 0 to 1 in both directions.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/2591dc7c-6150-4451-b0a4-3e0742093894
+  :target: https://github.com/nortikin/sverchok/assets/14288520/2591dc7c-6150-4451-b0a4-3e0742093894
+
+* Surfaces-> :doc:`Surface Domain </nodes/surface/surface_domain>`
+* List->List Main-> :doc:`List Join </nodes/list_main/join>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+Inputs
+------
+
+This node has the following inputs:
+
+* **Curves**. The list of curves to interpolate between. For Linear
+  interpolation, at least two curves are required; for Cubic interpolation, at
+  least three curves are required.
+
+Parameters
+----------
+
+This node has the following parameters:
+
+* **Interpolation mode**. The available values are:
+
+  * **Linear**
+  * **Cubic**
+  * **BSpline**. Use B-Spline (NURBS) interpolation.
+  * **RBF**. Use Radial Basis Functions (RBF_) interpolation. This mode is
+    available only when SciPy_ library is available.
+
+  The default mode is **Linear**.
+
+* **Implementation**. This parameter is available only if **Interpolation
+  mode** parameter is set to **BSpline**. This defines the implementation of
+  NURBS mathematics to be used. The available options are:
+
+  * **Geomdl**. Use Geomdl_ library. This option is available only when Geomdl package is installed.
+  * **Sverchok**. Use built-in Sverchok implementation.
+  
+  In general, built-in implementation should be faster; but Geomdl implementation is better tested.
+  The default option is **Geomdl**, when it is available; otherwise, built-in implementation is used.
+
+* **Function**. This parameter is available only when **Interpolation mode**
+  parameter is set to **RBF**. The specific function used by the node. The
+  available values are:
+
+  * Multi Quadric
+  * Inverse
+  * Gaussian
+  * Cubic
+  * Quintic
+  * Thin Plate
+
+  The default function is Multi Quadric.
+
+* **Cyclic**. This parameter is available only when **Interpolation mode**
+  parameter is set to **Linear** or **Cubic**. This defines whether the surface
+  should be cyclic (closed) in the U direction - i.e., should the node create
+  an interpolation between the last curve and the first one. Unchecked by
+  default.
+
+.. _RBF: http://www.scholarpedia.org/article/Radial_basis_function
+
+Outputs
+-------
+
+This node has the following output:
+
+* **Surface**. The generated surface.
+
+Examples of usage
+-----------------
+
+Linear interpolation between several polylines:
+
+.. image:: https://user-images.githubusercontent.com/284644/79368209-771df600-7f68-11ea-9d65-90257d257bd0.png
+  :target: https://user-images.githubusercontent.com/284644/79368209-771df600-7f68-11ea-9d65-90257d257bd0.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Generator-> :doc:`Segment </nodes/generator/segment>`
+* Curves->Curve Primitives-> :doc:`Polyline </nodes/curve/polyline>`
+* Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+
+The same but with Cubic interpolation:
+
+.. image:: https://user-images.githubusercontent.com/284644/79368213-784f2300-7f68-11ea-80c0-059469ba14d9.png
+  :target: https://user-images.githubusercontent.com/284644/79368213-784f2300-7f68-11ea-80c0-059469ba14d9.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Generator-> :doc:`Segment </nodes/generator/segment>`
+* Curves->Curve Primitives-> :doc:`Polyline </nodes/curve/polyline>`
+* Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+
+Cubic interpolation between several curves (generated by trigonometric formula):
+
+.. image:: https://user-images.githubusercontent.com/284644/79369070-d0d2f000-7f69-11ea-97f6-b71d33f49b97.png
+  :target: https://user-images.githubusercontent.com/284644/79369070-d0d2f000-7f69-11ea-97f6-b71d33f49b97.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* Curves-> :doc:`Curve Formula </nodes/curve/curve_formula>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

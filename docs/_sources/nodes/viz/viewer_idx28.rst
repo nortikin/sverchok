@@ -1,0 +1,118 @@
+Viewer Index+
+=============
+
+.. image:: https://user-images.githubusercontent.com/14288520/189987500-f9bf79a3-79a2-4250-af0d-eb98372bdde8.png
+  :target: https://user-images.githubusercontent.com/14288520/189987500-f9bf79a3-79a2-4250-af0d-eb98372bdde8.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/190139465-2d5beff6-e871-4148-be65-03f47d951f24.png
+  :target: https://user-images.githubusercontent.com/14288520/190139465-2d5beff6-e871-4148-be65-03f47d951f24.png
+
+Functionality
+-------------
+
+This node's primary purpose is for display the index information of geometry and topology, it will draw the indices of ``Vertices``, ``Edges``, and ``Faces`` 
+
+- Vertex indices are drawn on the locations of the vertices
+- Edge indices are drawn on midpoint of the Edge
+- Face indices are drawn at the average location of the Vertices associated with the face.
+
+Additionally
+
+- the input geometry can be transformed using the Matrix socket.
+- the Node can draw arbitrary (non renderable) text into the 3dview at the
+  location of incoming verts, edges and faces. If incoming data is shorter than
+  number of elements the last element will be displayed on rest elements.
+
+Because it can be difficult to read indices when there are many geometric elements visible there is an option to draw a small background under the text element.
+
+Difference from standard index display mode in Blender
+------------------------------------------------------
+
+Blender in "Edit mode" mode can display the indices of elements of the original polygonal grid:
+
+  .. image:: https://github.com/user-attachments/assets/97b38eef-f223-4969-9e56-d1ad694ef321
+    :target: https://github.com/user-attachments/assets/97b38eef-f223-4969-9e56-d1ad694ef321
+
+This node can display the indices of the polygonal grid regardless of the mode of display of the object, and also in the Post modifiers mode:
+
+.. image:: https://github.com/user-attachments/assets/03448df5-3618-41d3-8e80-af15b0550715
+  :target: https://github.com/user-attachments/assets/03448df5-3618-41d3-8e80-af15b0550715
+
+Parameters
+----------
+
+Activate
+  Enabling the node (show hide indexes).
+
+Draw background
+  Hide background around text.
+
+  .. image:: https://user-images.githubusercontent.com/14288520/190143217-5cc4e457-194b-491e-9de0-2fc793d645d7.png
+    :target: https://user-images.githubusercontent.com/14288520/190143217-5cc4e457-194b-491e-9de0-2fc793d645d7.png
+
+----------
+
+Draw bface
+  (using the Ghost icon in the Node UI) if you attach verts + faces, you can
+  also hide backfacing indices from being displayed. Adding the faces
+  information gives the node enough information to detect what can be seen
+  directly by the viewport "eye" location.
+
+  .. image:: https://user-images.githubusercontent.com/14288520/190142052-1524e31a-a4fa-4c69-9c3c-bc0230f7cec7.png
+    :target: https://user-images.githubusercontent.com/14288520/190142052-1524e31a-a4fa-4c69-9c3c-bc0230f7cec7.png
+
+-----------
+
+Draw object index
+  The Node can display the Object index associated with the element. Index first and object index as subtext:
+
+  .. image:: https://github.com/user-attachments/assets/d8bb319f-a7e8-473c-b103-365356b39305
+    :target: https://github.com/user-attachments/assets/d8bb319f-a7e8-473c-b103-365356b39305
+
+Draw text with inex of elements
+  The Node can display the text with index associated with the element:
+
+  .. image:: https://github.com/user-attachments/assets/070c8afa-df80-464a-a756-d59ea011db98
+    :target: https://github.com/user-attachments/assets/070c8afa-df80-464a-a756-d59ea011db98
+
+Examples
+--------
+
+Length of edges
+---------------
+
+.. image:: https://github.com/user-attachments/assets/d8f87e21-9d81-4cfa-a089-bc9c29c5182b
+  :target: https://github.com/user-attachments/assets/d8f87e21-9d81-4cfa-a089-bc9c29c5182b
+
+-----------
+
+Area of faces
+-------------
+
+.. image:: https://github.com/user-attachments/assets/357c16cc-85a0-43c8-b9e3-46e694796ebc
+  :target: https://github.com/user-attachments/assets/357c16cc-85a0-43c8-b9e3-46e694796ebc
+
+-----------
+
+Hide text behind geometry
+-------------------------
+
+.. image:: https://user-images.githubusercontent.com/14288520/189987936-5d24ba0b-9141-4f1e-bbd1-97f1dbad1bde.png
+  :target: https://user-images.githubusercontent.com/14288520/189987936-5d24ba0b-9141-4f1e-bbd1-97f1dbad1bde.png
+
+* Generator-> :doc:`Torus </nodes/generator/torus_mk2>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
+Show custom text with offset
+----------------------------
+
+.. image:: https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png
+  :target: https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* ROUND X: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

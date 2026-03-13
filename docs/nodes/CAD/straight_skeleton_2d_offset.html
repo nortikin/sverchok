@@ -1,0 +1,717 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Straight Skeleton 2d Offset (Alpha) &#8212; Sverchok 1, 4, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=c14129a0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/CAD/straight_skeleton_2d_offset';</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Number" href="../number/number_index.html" />
+    <link rel="prev" title="Straight Skeleton 2d Extrude (Alpha)" href="straight_skeleton_2d_extrude.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 4, 0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 4, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 4, 0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="CAD_index.html">CAD</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="crop_mesh_2d.html">Crop Mesh 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edges_intersect_mk3.html">Intersect Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edges_to_faces_2d.html">Edges to Faces 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="embed_mesh.html">Embed Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="inset_special_mk2.html">Inset Special</a></li>
+<li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d.html">Merge Mesh 2d</a></li>
+<li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d_lite.html">Merge mesh 2D lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spyrrow_nester.html">Spyrrow Nester</a></li>
+<li class="toctree-l3"><a class="reference internal" href="straight_skeleton_2d_extrude.html">Straight Skeleton 2d Extrude (Alpha)</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Straight Skeleton 2d Offset (Alpha)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dxf/dxf_index.html">DXF</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/CAD/straight_skeleton_2d_offset.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Straight Skeleton 2d Offset (Alpha)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-dependency">Install dependency</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output-sockets">Output sockets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance">Performance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#development">DEVELOPMENT</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="straight-skeleton-2d-offset-alpha">
+<h1>Straight Skeleton 2d Offset (Alpha)<a class="headerlink" href="#straight-skeleton-2d-offset-alpha" title="Link to this heading">#</a></h1>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/d47db67a-7f1f-4930-b8f6-b688d54c32de"><img alt="https://github.com/user-attachments/assets/d47db67a-7f1f-4930-b8f6-b688d54c32de" src="https://github.com/user-attachments/assets/d47db67a-7f1f-4930-b8f6-b688d54c32de" />
+</a>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
+<p>This node is a python wrapper of function “Skeleton Offset 2d” of CGAL <a class="reference external" href="https://doc.cgal.org/latest/Straight_skeleton_2/index.html">https://doc.cgal.org/latest/Straight_skeleton_2/index.html</a>.</p>
+<p>This package implements straight skeletons offset for two-dimensional polygons with holes.</p>
+<p>Simple example:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/8fb1ad28-4e4c-4cd5-8afe-8e0a7b5d27e5"><img alt="https://github.com/user-attachments/assets/8fb1ad28-4e4c-4cd5-8afe-8e0a7b5d27e5" src="https://github.com/user-attachments/assets/8fb1ad28-4e4c-4cd5-8afe-8e0a7b5d27e5" />
+</a>
+<p>More complex example:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/afa62b30-d5e4-4877-8efc-ccade1730e63"><img alt="https://github.com/user-attachments/assets/afa62b30-d5e4-4877-8efc-ccade1730e63" src="https://github.com/user-attachments/assets/afa62b30-d5e4-4877-8efc-ccade1730e63" />
+</a>
+<p>Additionally you can perform the offset connection of profiles to get a dimensional shape:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/72cbb4df-097c-4a2f-9b7b-413d539c642f"><img alt="https://github.com/user-attachments/assets/72cbb4df-097c-4a2f-9b7b-413d539c642f" src="https://github.com/user-attachments/assets/72cbb4df-097c-4a2f-9b7b-413d539c642f" />
+</a>
+</section>
+<section id="install-dependency">
+<h2>Install dependency<a class="headerlink" href="#install-dependency" title="Link to this heading">#</a></h2>
+<p>To use node install additional library pySVCGAL in the Extra Nodes Section:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/548ad0a2-86af-4f12-9f39-230f6cda7d41"><img alt="https://github.com/user-attachments/assets/548ad0a2-86af-4f12-9f39-230f6cda7d41" src="https://github.com/user-attachments/assets/548ad0a2-86af-4f12-9f39-230f6cda7d41" />
+</a>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Faces</strong> - Input Mesh (2D only) or Meshes. You can use several meshes as input.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/b36eab6d-395c-49b5-9e43-c66c83e78d70"><img alt="https://github.com/user-attachments/assets/b36eab6d-395c-49b5-9e43-c66c83e78d70" src="https://github.com/user-attachments/assets/b36eab6d-395c-49b5-9e43-c66c83e78d70" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Join mode</strong>. Preprocess source meshes. <strong>Split</strong>, <strong>Keep</strong>, <strong>Merge</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/eb3f3937-466e-4621-9edf-25a07f837620"><img alt="https://github.com/user-attachments/assets/eb3f3937-466e-4621-9edf-25a07f837620" src="https://github.com/user-attachments/assets/eb3f3937-466e-4621-9edf-25a07f837620" />
+</a>
+<ul class="simple">
+<li><p><strong>Split</strong> - separate source meshes into independent islands and process them individually. Results boundaries can overlaps.</p></li>
+<li><p><strong>Keep</strong> - If source meshes has several islands then they has influence.</p></li>
+<li><p><strong>Merge</strong> - Combine all islands to influence all islands.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/3cc4b707-2068-4743-8c81-2b707edfc8ef"><img alt="https://github.com/user-attachments/assets/3cc4b707-2068-4743-8c81-2b707edfc8ef" src="https://github.com/user-attachments/assets/3cc4b707-2068-4743-8c81-2b707edfc8ef" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Combine mode</strong>. How to combine shapes and profiles.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/130fc055-a563-48fe-a118-8109dc1b7f96"><img alt="https://github.com/user-attachments/assets/130fc055-a563-48fe-a118-8109dc1b7f96" src="https://github.com/user-attachments/assets/130fc055-a563-48fe-a118-8109dc1b7f96" />
+</a>
+<ul class="simple">
+<li><p><strong>one dot</strong> - combine one shape and one profile. If no profile then skipped</p></li>
+<li><p><strong>three dots</strong> - combine every shape with all profiles.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/491362a5-e47f-4ee4-b1e1-2348fceab2d9"><img alt="https://github.com/user-attachments/assets/491362a5-e47f-4ee4-b1e1-2348fceab2d9" src="https://github.com/user-attachments/assets/491362a5-e47f-4ee4-b1e1-2348fceab2d9" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Matrixes</strong> - Apply matrixes to the results parts if Shape Mode or Result Mode sets with SPLIT/MERGE</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/c045d9d8-41a6-47da-99d5-dfca194035bb"><img alt="https://github.com/user-attachments/assets/c045d9d8-41a6-47da-99d5-dfca194035bb" src="https://github.com/user-attachments/assets/c045d9d8-41a6-47da-99d5-dfca194035bb" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/17928457-8849-4180-baa4-7897f0263090"><img alt="https://github.com/user-attachments/assets/17928457-8849-4180-baa4-7897f0263090" src="https://github.com/user-attachments/assets/17928457-8849-4180-baa4-7897f0263090" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Shapes mode</strong>. <strong>Original</strong>, <strong>Exclude Holes</strong>, <strong>Invert Holes</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/51292f9a-44bb-40e3-adda-d80cfc303602"><img alt="https://github.com/user-attachments/assets/51292f9a-44bb-40e3-adda-d80cfc303602" src="https://github.com/user-attachments/assets/51292f9a-44bb-40e3-adda-d80cfc303602" />
+</a>
+<ul class="simple">
+<li><p><strong>Original</strong> - Process original meshes.</p></li>
+<li><p><strong>Exclude holes</strong> - process only external boundaries.</p></li>
+<li><p><strong>Invert Holes</strong> - process holes as islands, exclude external boundaries from process.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f3b577f9-25c1-424b-ac55-0b7ceb754877"><img alt="https://github.com/user-attachments/assets/f3b577f9-25c1-424b-ac55-0b7ceb754877" src="https://github.com/user-attachments/assets/f3b577f9-25c1-424b-ac55-0b7ceb754877" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Offsets</strong>, <strong>Altitudes</strong>.</p>
+<blockquote>
+<div><p><strong>Offsets</strong> - distance from contour in plane (one can use negative value).
+<strong>Altitudes</strong> - results heights in Z axis (one can use negative value).</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/a6d31042-4564-4b38-a90c-ab8d32f8109e"><img alt="https://github.com/user-attachments/assets/a6d31042-4564-4b38-a90c-ab8d32f8109e" src="https://github.com/user-attachments/assets/a6d31042-4564-4b38-a90c-ab8d32f8109e" />
+</a>
+</div></blockquote>
+</li>
+</ul>
+<p>If you do not connect any lists of floats values then this value will be used for every objects
+connected into this node:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/378b3a91-a5f1-4660-9c81-81e196b063ee"><img alt="https://github.com/user-attachments/assets/378b3a91-a5f1-4660-9c81-81e196b063ee" src="https://github.com/user-attachments/assets/378b3a91-a5f1-4660-9c81-81e196b063ee" />
+</a>
+</div></blockquote>
+<ul>
+<li><p><strong>Profile faces indexes</strong>. Only used in <strong>Bevel mode</strong>. List of indexes to connect offsets. If you use some mesh objects you can use profile faces to connect these offset as in profile shape:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/1d73265a-ca29-40bc-a460-04a9dcab39d8"><img alt="https://github.com/user-attachments/assets/1d73265a-ca29-40bc-a460-04a9dcab39d8" src="https://github.com/user-attachments/assets/1d73265a-ca29-40bc-a460-04a9dcab39d8" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Profile close mode</strong>. Only used in <strong>Bevel mode</strong>. This option affects the way the profile points are connected.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/07570dd0-d855-4135-a835-29775adf83ea"><img alt="https://github.com/user-attachments/assets/07570dd0-d855-4135-a835-29775adf83ea" src="https://github.com/user-attachments/assets/07570dd0-d855-4135-a835-29775adf83ea" />
+</a>
+<ul>
+<li><p><strong>Close</strong> - Profile forms closed shape. The first and last points are connected. The shape is closed from all sides.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/81804a13-c392-48f9-9cc6-c9401e013928"><img alt="https://github.com/user-attachments/assets/81804a13-c392-48f9-9cc6-c9401e013928" src="https://github.com/user-attachments/assets/81804a13-c392-48f9-9cc6-c9401e013928" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Open</strong>  - Profile forms opened shape. The first and last points do not connect</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/30697e95-8c08-4e65-bf3b-9442c880ea03"><img alt="https://github.com/user-attachments/assets/30697e95-8c08-4e65-bf3b-9442c880ea03" src="https://github.com/user-attachments/assets/30697e95-8c08-4e65-bf3b-9442c880ea03" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Pair</strong>  - List items are joined in pairs. If an index is out of offset index range, the pair is completely ignored. Ex.: [1,2,3,4,5,6,7,8,9,0] will be [1,2],[3,4],[5,6],[7,8],[9,0] and you get the bands</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/a72f8880-daf3-4062-adda-1a902a2d0375"><img alt="https://github.com/user-attachments/assets/a72f8880-daf3-4062-adda-1a902a2d0375" src="https://github.com/user-attachments/assets/a72f8880-daf3-4062-adda-1a902a2d0375" />
+</a>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Mask of objects</strong> - Mask hide objects. If element of boolean mask is True then object are hidden. If length of mask is more than length of objects then exceeded values will be omitted.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/112402bd-e369-468e-84cd-b8537611bda8"><img alt="https://github.com/user-attachments/assets/112402bd-e369-468e-84cd-b8537611bda8" src="https://github.com/user-attachments/assets/112402bd-e369-468e-84cd-b8537611bda8" />
+</a>
+<p>You can get this result with boolean mask too</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/655d5abe-cfab-40c1-873d-ae11f86f6eca"><img alt="https://github.com/user-attachments/assets/655d5abe-cfab-40c1-873d-ae11f86f6eca" src="https://github.com/user-attachments/assets/655d5abe-cfab-40c1-873d-ae11f86f6eca" />
+</a>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/40187fad-ab8f-4e01-b299-c19d3c383f5a"><img alt="https://github.com/user-attachments/assets/40187fad-ab8f-4e01-b299-c19d3c383f5a" src="https://github.com/user-attachments/assets/40187fad-ab8f-4e01-b299-c19d3c383f5a" />
+</a>
+<ul>
+<li><p><strong>Result Type</strong>. <strong>Contours</strong>, <strong>Faces</strong>, <strong>Bevel</strong>, <strong>Skeleton</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/c9fb9213-649b-4e31-a608-22af8d84b461"><img alt="https://github.com/user-attachments/assets/c9fb9213-649b-4e31-a608-22af8d84b461" src="https://github.com/user-attachments/assets/c9fb9213-649b-4e31-a608-22af8d84b461" />
+</a>
+<ul class="simple">
+<li><p><strong>Contours</strong> - results are only edges.</p></li>
+<li><p><strong>Faces</strong> - Results are faces with holes.</p></li>
+<li><p><strong>Bevel</strong> - Offsets are connected in shapes or figures.</p></li>
+<li><p><strong>Skeleton</strong> - Show Straight Skeleton scheme.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/3f04fc16-212e-457d-9dc2-3b56a0284d5f"><img alt="https://github.com/user-attachments/assets/3f04fc16-212e-457d-9dc2-3b56a0284d5f" src="https://github.com/user-attachments/assets/3f04fc16-212e-457d-9dc2-3b56a0284d5f" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Results Join Mode</strong>. <strong>Split</strong>, <strong>Keep</strong>, <strong>Merge</strong>.</p>
+<blockquote>
+<div><blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/64594acc-667e-4547-bee5-49004dc9f9b6"><img alt="https://github.com/user-attachments/assets/64594acc-667e-4547-bee5-49004dc9f9b6" src="https://github.com/user-attachments/assets/64594acc-667e-4547-bee5-49004dc9f9b6" />
+</a>
+</div></blockquote>
+<ul>
+<li><p><strong>Split</strong> - Separate all results into independent meshes.</p></li>
+<li><p><strong>Keep</strong> - If some of objects has several independent meshes then they will be as one object on output.</p></li>
+<li><p><strong>Merge</strong> - This node will merge all vertices, edjes, and faces into a single object. Results in merge mode can be overlapped.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/e469b38b-a0de-4e7a-a595-a027e77aae48"><img alt="https://github.com/user-attachments/assets/e469b38b-a0de-4e7a-a595-a027e77aae48" src="https://github.com/user-attachments/assets/e469b38b-a0de-4e7a-a595-a027e77aae48" />
+</a>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Force z=0.0</strong> - To force use meshes as planes. Useful for ex. bezier 2D curve some time take Z not zero.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/171ee664-1f24-4f00-aed7-4d69ab0f8e75"><img alt="https://github.com/user-attachments/assets/171ee664-1f24-4f00-aed7-4d69ab0f8e75" src="https://github.com/user-attachments/assets/171ee664-1f24-4f00-aed7-4d69ab0f8e75" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Only Tests</strong> - If you have a hi poly mesh like imported SVG file one can save time and do not Skeletonize all meshes before fix all. You can connect viewer draw into the “Wrong Contours Verts” with red color or any color you prefer for errors to see any wrong contrours. Red dots are wrong contours.</p></li>
+<li><p><strong>Verbose</strong> - Enabled - Show process messages in console while process meshes. Disabled - Hide any process messages.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/b5c4590d-8eff-4e32-8626-6c8cd8be0f6d"><img alt="https://github.com/user-attachments/assets/b5c4590d-8eff-4e32-8626-6c8cd8be0f6d" src="https://github.com/user-attachments/assets/b5c4590d-8eff-4e32-8626-6c8cd8be0f6d" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Use cache</strong> - Store Straight Skeleton 2D calculations in cache. If you pass the geometry for calculation a Straight Skeleton a second time, the result will be taken from the cache. This is a new feature so this is disabled by default. If the setting is disabled, the cache is not used.</p></li>
+<li><p><strong>Detailed split</strong> - Work only in Bevel mode. Additional separation of the object by profile faces in <strong>split</strong> mode.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/69670c31-d4e8-42ff-936f-699500f41359"><img alt="https://github.com/user-attachments/assets/69670c31-d4e8-42ff-936f-699500f41359" src="https://github.com/user-attachments/assets/69670c31-d4e8-42ff-936f-699500f41359" />
+</a>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="output-sockets">
+<h2>Output sockets<a class="headerlink" href="#output-sockets" title="Link to this heading">#</a></h2>
+<ul>
+<li><p>Vertices, Edges, Faces - Results meshes.</p></li>
+<li><p>Wrong Contour Verts - If source meshes can’t be processed then this socket will output vertices of that contours (ex. if meshes contours is self intersection)</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/18cc453d-c1a7-4692-a5b4-ba2e67eb7203"><img alt="https://github.com/user-attachments/assets/18cc453d-c1a7-4692-a5b4-ba2e67eb7203" src="https://github.com/user-attachments/assets/18cc453d-c1a7-4692-a5b4-ba2e67eb7203" />
+</a>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="performance">
+<h2>Performance<a class="headerlink" href="#performance" title="Link to this heading">#</a></h2>
+<p>If you have a low poly model then no problem - you can work with it in real time:</p>
+<video width="400" controls>
+    <source src="https://github.com/user-attachments/assets/eb9dc0cb-cee8-4373-8330-5068c5fd2330" type="video/mp4">
+Your browser does not support the video tag.
+</video><p>If you try high poly like Besier 2D with many points and hi resolution (1) then better is to turn off (2) update sverchok nodes while editing objects and run process manually (3):</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/429e6571-fe73-4fc7-b242-4f038f670871"><img alt="https://github.com/user-attachments/assets/429e6571-fe73-4fc7-b242-4f038f670871" src="https://github.com/user-attachments/assets/429e6571-fe73-4fc7-b242-4f038f670871" />
+</a>
+<p>Also you can use cache mode (it is experimental property for a while!!!):</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/2e8eaadc-ac14-4789-826a-3bf992ebeb7d"><img alt="https://github.com/user-attachments/assets/2e8eaadc-ac14-4789-826a-3bf992ebeb7d" src="https://github.com/user-attachments/assets/2e8eaadc-ac14-4789-826a-3bf992ebeb7d" />
+</a>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<p>Boundary background contour:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f6cf099c-1e3a-47ac-be87-e6e9b44b4683"><img alt="https://github.com/user-attachments/assets/f6cf099c-1e3a-47ac-be87-e6e9b44b4683" src="https://github.com/user-attachments/assets/f6cf099c-1e3a-47ac-be87-e6e9b44b4683" />
+</a>
+<p>Inner Offset</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/78568725-254e-469c-98bd-50ffb24321b0"><img alt="https://github.com/user-attachments/assets/78568725-254e-469c-98bd-50ffb24321b0" src="https://github.com/user-attachments/assets/78568725-254e-469c-98bd-50ffb24321b0" />
+</a>
+<p>Extrude with profile faces:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/e7278c18-18aa-4e3c-8897-71369f8566b9"><img alt="https://github.com/user-attachments/assets/e7278c18-18aa-4e3c-8897-71369f8566b9" src="https://github.com/user-attachments/assets/e7278c18-18aa-4e3c-8897-71369f8566b9" />
+</a>
+</section>
+<section id="development">
+<h2>DEVELOPMENT<a class="headerlink" href="#development" title="Link to this heading">#</a></h2>
+<p>If you have skills for work with CGAL see: <a class="github reference external" href="https://github.com/satabol/SVCGAL">satabol/SVCGAL</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="straight_skeleton_2d_extrude.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Straight Skeleton 2d Extrude (Alpha)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../number/number_index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Number</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-dependency">Install dependency</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output-sockets">Output sockets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance">Performance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#development">DEVELOPMENT</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2026, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

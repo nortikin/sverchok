@@ -1,0 +1,655 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Celling 03. Preparing geometry for work &#8212; Sverchok 1, 4, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=c14129a0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/Celling_00/celling_03';</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Celling 04. Flattening and offset" href="celling_04.html" />
+    <link rel="prev" title="Celling 03. Flattening and offset" href="celling_02.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 4, 0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 4, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 4, 0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../celling.html">Celling design</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="celling_01.html">Lesson 01 - Overview for product design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="celling_02.html">Lesson 02 - Node Tree overview</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Lesson 03 - Geometry preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="celling_04.html">Lesson 04 - Flattening and offset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="celling_05.html">Lesson 05 - Types definition with checking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="celling_06.html">Lesson 06 - "Layouts" on "paper space"</a></li>
+<li class="toctree-l2"><a class="reference internal" href="celling_07.html">Lesson 07 - SVG/DXF/XMLX/IFC export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="celling_08.html">Lesson 08 - Realisation, photos</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/tutorials/Celling_00/celling_03.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Celling 03. Preparing geometry for work</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subject">Subject</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow">Workflow</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="celling-03-preparing-geometry-for-work">
+<h1>Celling 03. Preparing geometry for work<a class="headerlink" href="#celling-03-preparing-geometry-for-work" title="Link to this heading">#</a></h1>
+<section id="subject">
+<h2>Subject<a class="headerlink" href="#subject" title="Link to this heading">#</a></h2>
+<p>Importing initial shape (railing lines) for celling, checking of consistency</p>
+<section id="workflow">
+<h3>Workflow<a class="headerlink" href="#workflow" title="Link to this heading">#</a></h3>
+<p><img alt="image1" src="https://github.com/nortikin/sverchok/assets/5783432/10a4fcef-1eb9-421a-8863-f5057b5e4f84" /></p>
+<ol class="arabic">
+<li><p><strong>Importing DXF</strong>:</p>
+<blockquote>
+<div><p>First of all we import DXF. Last 15 years using Blender I did not checked correctness of geometry. Reason for that was usage of blender, mostly for vizualisation. But now checked for production we found that Blender’ DXF importer works as shit in circles case. Deviation can achive 200 mm, that is not suits any needs of production ever in the world. So, only way to avoid such dissapointments was to write short importer by myself for only circles to replace original bezier. On vertical it have deviations because of different rails levels. It required  little triangulation, that not calculated, but manually esteblished and checked on viewer index node.</p>
+<p><img alt="image2" src="https://github.com/nortikin/sverchok/assets/5783432/696ec148-69b8-4436-b506-c6eff419e582" /></p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Код узла DXF импорта кругов.</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="w">     </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     in resol    s d=128 n=2</span>
+<span class="sd">     in path    FP d=[[]] n=0</span>
+<span class="sd">     out vers    v d=[[]] n=0</span>
+<span class="sd">     out edges   s d=[[]] n=0</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+
+<span class="w">     </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     Принцип работы -</span>
+<span class="sd">         брать данные и в dxf</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+
+
+     <span class="kn">import</span> <span class="nn">bpy</span>
+
+
+
+     <span class="k">def</span> <span class="nf">make</span><span class="p">():</span>
+<span class="w">         </span><span class="sd">&#39;&#39;&#39; ЗАГОТОВКА ДЛЯ БУДУЩИХ ОТДЕЛЬНЫХ УЗЛОВ</span>
+<span class="sd">             DXF ИМПОРТА.&#39;&#39;&#39;</span>
+
+         <span class="k">def</span> <span class="nf">import_dxf</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="n">resolution</span><span class="p">):</span>
+             <span class="kn">import</span> <span class="nn">ezdxf</span>
+             <span class="kn">from</span> <span class="nn">ezdxf</span> <span class="kn">import</span> <span class="n">colors</span>
+             <span class="kn">from</span> <span class="nn">ezdxf</span> <span class="kn">import</span> <span class="n">units</span>
+             <span class="kn">from</span> <span class="nn">ezdxf.tools.standards</span> <span class="kn">import</span> <span class="n">setup_dimstyle</span>
+             <span class="kn">from</span> <span class="nn">mathutils</span> <span class="kn">import</span> <span class="n">Vector</span>
+
+             <span class="n">dxf</span> <span class="o">=</span> <span class="n">ezdxf</span><span class="o">.</span><span class="n">readfile</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+             <span class="n">lifehack</span> <span class="o">=</span> <span class="mi">50</span>
+             <span class="n">ran</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">/</span><span class="n">lifehack</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">lifehack</span><span class="o">*</span><span class="mi">360</span><span class="p">,</span><span class="nb">int</span><span class="p">((</span><span class="n">lifehack</span><span class="o">*</span><span class="mi">360</span><span class="p">)</span><span class="o">/</span><span class="n">resolution</span><span class="p">))]</span>
+             <span class="c1">#print(ran)</span>
+             <span class="n">vers</span> <span class="o">=</span> <span class="p">[]</span>
+             <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+             <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">dxf</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;Arc&#39;</span><span class="p">):</span>
+             <span class="c1">#a = dxf.query(&#39;Arc&#39;)[1]</span>
+                 <span class="c1">#arc = sverchok.utils.curve.primitives.SvCircle</span>
+                 <span class="c1">#arc.to_nurbs()</span>
+                 <span class="n">vers_</span> <span class="o">=</span> <span class="p">[]</span>
+                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>  <span class="n">a</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">ran</span><span class="p">):</span> <span class="c1"># line 43 is 35 in make 24 in import</span>
+                     <span class="n">cen</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">xyz</span>
+                     <span class="n">vers_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">j</span><span class="o">/</span><span class="mi">1000</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">k</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">cen</span><span class="p">)])</span>
+                 <span class="n">vers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vers_</span><span class="p">)</span>
+                 <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">([[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vers_</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)])</span>
+                 <span class="n">edges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">vers_</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+             <span class="k">return</span> <span class="p">[</span><span class="n">vers</span><span class="p">],</span> <span class="p">[</span><span class="n">edges</span><span class="p">]</span>
+
+
+
+         <span class="c1"># MAKE DEFINITION BODY HERE #</span>
+
+
+
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_linked</span><span class="p">:</span>
+             <span class="n">fpath_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+         <span class="n">resol_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;resol&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+         <span class="n">verts_</span><span class="p">,</span> <span class="n">edges_</span> <span class="o">=</span> <span class="n">import_dxf</span><span class="p">(</span><span class="n">fpath_</span><span class="p">,</span><span class="n">resol_</span><span class="p">)</span>
+
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;vers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_linked</span><span class="p">:</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;vers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_set</span><span class="p">(</span><span class="n">verts_</span><span class="p">)</span>
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_linked</span><span class="p">:</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_set</span><span class="p">(</span><span class="n">edges_</span><span class="p">)</span>
+
+     <span class="n">make</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Surface</strong>:</p>
+<blockquote>
+<div><p>Surface created from two lines with ordered vertices. I naturally reparametrized them only for better view, that is eye-checked quality. Separately created flat part of surface, it is the same as curved.</p>
+<p><img alt="image3" src="https://github.com/nortikin/sverchok/assets/5783432/4ee4f3e7-9cef-4eaa-9aec-13f9d442b579" /></p>
+</div></blockquote>
+</li>
+<li><p><strong>Raycasting on surface</strong>:</p>
+<blockquote>
+<div><p>Raycasting pattern on surface. For cropping pattern i used other countour - offseted from shape-definition curves. dimensions are defined by farthere offset for plates. So, offset for plates is half of 14 mm, 7 mm. That means, i needed to offset other 7 mm here.</p>
+<p><img alt="image4" src="https://github.com/nortikin/sverchok/assets/5783432/e625e033-cece-4166-8a1d-1789bf4b343f" /></p>
+</div></blockquote>
+</li>
+<li><p><strong>Dissolve</strong>:</p>
+<blockquote>
+<div><p>Dissolve accures with list of edges. Manually iterate all 2500 edges. So, i created edges generator, that choose edges by plate area threshold and boundary analising. Output is flat list in texts, that i need to edit manually. So, need to finish at some stage and not return back for autogenerate list. That means, shape boundary and pattern need to be fixed by design. In practic it was several times changed. After that, i get text with text in node and dissolve it. Than check border elevations (heights) to manually esteblish correct surface shape.</p>
+<p><img alt="image5" src="https://github.com/nortikin/sverchok/assets/5783432/4dfe924a-fca8-4dc8-be28-0f749257a06d" /></p>
+<p><img alt="image6" src="https://github.com/nortikin/sverchok/assets/5783432/289bc089-ec0e-4f56-b0fe-8e9a9445c988" /></p>
+<p><img alt="image7" src="https://github.com/nortikin/sverchok/assets/5783432/a7aeca59-f8dc-4308-98d1-da1a6068af29" /></p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Код узла нахождения лишних рёбер.</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="w">     </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     in vers    v d=[[]] n=0</span>
+<span class="sd">     in edges   s d=[[]] n=0</span>
+<span class="sd">     in pols    s d=[[]] n=0</span>
+<span class="sd">     in areas   s d=[[]] n=0</span>
+<span class="sd">     in border  s d=[[]] n=0</span>
+<span class="sd">     in cutarea s d=0.1  n=2</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+
+<span class="w">     </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     Принцип работы -</span>
+<span class="sd">         снаружи:</span>
+<span class="sd">             определить площади</span>
+<span class="sd">             определить границы</span>
+<span class="sd">         снутри:</span>
+<span class="sd">             определить граничащие полигоны</span>
+<span class="sd">             определить граничащие рёбра</span>
+<span class="sd">         далее:</span>
+<span class="sd">             вывод индексов рёбер</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+
+
+     <span class="kn">import</span> <span class="nn">bpy</span>
+
+     <span class="bp">self</span><span class="o">.</span><span class="n">make_operator</span><span class="p">(</span><span class="s1">&#39;make&#39;</span><span class="p">)</span>
+
+
+     <span class="k">def</span> <span class="nf">ui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+         <span class="n">cb_str</span> <span class="o">=</span> <span class="s1">&#39;node.scriptlite_custom_callback&#39;</span>
+         <span class="n">layout</span><span class="o">.</span><span class="n">operator</span><span class="p">(</span><span class="n">cb_str</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;B A K E&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cb_name</span><span class="o">=</span><span class="s1">&#39;make&#39;</span>
+
+     <span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+         <span class="kn">from</span> <span class="nn">mathutils</span> <span class="kn">import</span> <span class="n">Vector</span> <span class="k">as</span> <span class="n">V</span>
+         <span class="k">def</span> <span class="nf">do_text</span><span class="p">(</span><span class="n">out_string</span><span class="p">):</span>
+             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">bpy</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">texts</span><span class="p">:</span>
+                 <span class="n">bpy</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">texts</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+             <span class="n">datablock</span> <span class="o">=</span> <span class="n">bpy</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">texts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+             <span class="n">datablock</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+             <span class="n">datablock</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">out_string</span><span class="p">)</span>
+
+         <span class="k">def</span> <span class="nf">main_border</span><span class="p">(</span><span class="n">vers</span><span class="p">,</span><span class="n">edges</span><span class="p">,</span><span class="n">pols</span><span class="p">,</span><span class="n">areas</span><span class="p">,</span><span class="n">border</span><span class="p">,</span><span class="n">cutarea</span><span class="p">):</span>
+             <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># номер полигона короткого</span>
+             <span class="n">found</span> <span class="o">=</span> <span class="p">[]</span>
+             <span class="n">used</span> <span class="o">=</span> <span class="p">[]</span>
+             <span class="k">for</span> <span class="n">pol</span><span class="p">,</span><span class="n">bor</span><span class="p">,</span><span class="n">ar</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pols</span><span class="p">,</span><span class="n">border</span><span class="p">,</span><span class="n">areas</span><span class="p">):</span>
+                 <span class="k">if</span> <span class="n">ar</span> <span class="o">&lt;</span> <span class="n">cutarea</span> <span class="ow">and</span> <span class="n">bor</span><span class="p">:</span>
+                     <span class="n">fou</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">po</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pols</span><span class="p">)</span> <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">e</span> <span class="ow">in</span> <span class="n">po</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">pol</span><span class="p">])</span> <span class="ow">and</span> <span class="n">po</span> <span class="o">!=</span> <span class="n">pol</span><span class="p">]</span>
+                     <span class="c1"># i номер полигона большого</span>
+                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fou</span><span class="p">:</span>
+                     <span class="c1">#i = fou[0]</span>
+                         <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">used</span><span class="p">:</span>
+                             <span class="n">used</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                             <span class="c1"># v это искомые индексы вершин, нужны индексы рёбер</span>
+                             <span class="n">v</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">pols</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">pol</span><span class="p">))</span>
+                             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span> <span class="k">continue</span>
+                             <span class="c1"># записать индексы рёбер, в которых совпало два индекса вершин</span>
+                             <span class="n">eds_</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">e</span><span class="p">))</span><span class="o">==</span><span class="mi">2</span><span class="p">]</span>
+                             <span class="n">a</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">V</span><span class="p">(</span><span class="n">vers</span><span class="p">[</span><span class="n">edges</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span><span class="o">-</span><span class="n">V</span><span class="p">(</span><span class="n">vers</span><span class="p">[</span><span class="n">edges</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="mi">1</span><span class="p">]]))</span><span class="o">.</span><span class="n">length</span>
+                             <span class="n">eds</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">eds_</span><span class="p">,</span><span class="n">key</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+                             <span class="c1">#print(v,eds_)</span>
+                             <span class="n">found</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">eds</span><span class="p">)</span>
+                 <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+             <span class="n">foundout</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">found</span><span class="p">)))</span>
+             <span class="c1">#print(foundout[:5],len(foundout))</span>
+             <span class="c1">#edges_out = []</span>
+             <span class="c1">#for i,e in enumerate(edges):</span>
+             <span class="c1">#    if i in foundout: edges_out.extend([True])</span>
+             <span class="c1">#    else: edges_out.extend([False])</span>
+             <span class="c1">#print([edges_out])</span>
+             <span class="k">return</span> <span class="p">[</span><span class="n">foundout</span><span class="p">]</span>
+
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;vers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_linked</span><span class="p">:</span>
+             <span class="n">vers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;vers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">()</span>
+         <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;FINISHED&#39;</span><span class="p">}</span>
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;pols&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_linked</span><span class="p">:</span>
+             <span class="n">pols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;pols&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">()</span>
+         <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;FINISHED&#39;</span><span class="p">}</span>
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_linked</span><span class="p">:</span>
+             <span class="n">edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">()</span>
+         <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;FINISHED&#39;</span><span class="p">}</span>
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;areas&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_linked</span><span class="p">:</span>
+             <span class="n">areas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;areas&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">()</span>
+         <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;FINISHED&#39;</span><span class="p">}</span>
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;border&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_linked</span><span class="p">:</span>
+             <span class="n">border</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;border&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">()</span>
+         <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;FINISHED&#39;</span><span class="p">}</span>
+         <span class="n">cutarea</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;cutarea&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">()</span>
+         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cutarea</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+             <span class="n">cutarea</span> <span class="o">=</span> <span class="n">cutarea</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+         <span class="c1">#print(&#39;\n&#39;.join([str(i) for i in (vers[0][:5],edges[0][:5],pols[0][:5],areas[0][:5],border[0][:5],cutarea[0][0])]))</span>
+         <span class="n">edges_out</span> <span class="o">=</span> <span class="n">main_border</span><span class="p">(</span><span class="n">vers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">pols</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">areas</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">border</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">cutarea</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+         <span class="n">do_text</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">edges_out</span><span class="p">))</span>
+
+         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;FINISHED&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Результат полуавтоматического списка индексов рёбер.</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>     <span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">54</span><span class="p">,</span> <span class="mi">57</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">104</span><span class="p">,</span> <span class="mi">106</span><span class="p">,</span><span class="mi">108</span><span class="p">,</span> <span class="mi">112</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">119</span><span class="p">,</span> <span class="mi">126</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">134</span><span class="p">,</span> <span class="mi">145</span><span class="p">,</span> <span class="mi">149</span><span class="p">,</span> <span class="mi">152</span><span class="p">,</span> <span class="mi">156</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">164</span><span class="p">,</span> <span class="mi">168</span><span class="p">,</span> <span class="mi">172</span><span class="p">,</span> <span class="mi">176</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">184</span><span class="p">,</span> <span class="mi">188</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="mi">196</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">204</span><span class="p">,</span> <span class="mi">208</span><span class="p">,</span> <span class="mi">212</span><span class="p">,</span> <span class="mi">216</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">228</span><span class="p">,</span> <span class="mi">232</span><span class="p">,</span> <span class="mi">236</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">244</span><span class="p">,</span> <span class="mi">248</span><span class="p">,</span> <span class="mi">252</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">264</span><span class="p">,</span> <span class="mi">268</span><span class="p">,</span> <span class="mi">272</span><span class="p">,</span> <span class="mi">276</span><span class="p">,</span> <span class="mi">280</span><span class="p">,</span> <span class="mi">284</span><span class="p">,</span> <span class="mi">288</span><span class="p">,</span> <span class="mi">292</span><span class="p">,</span> <span class="mi">296</span><span class="p">,</span> <span class="mi">301</span><span class="p">,</span> <span class="mi">306</span><span class="p">,</span> <span class="mi">310</span><span class="p">,</span> <span class="mi">315</span><span class="p">,</span> <span class="mi">321</span><span class="p">,</span> <span class="mi">330</span><span class="p">,</span> <span class="mi">333</span><span class="p">,</span> <span class="mi">337</span><span class="p">,</span> <span class="mi">341</span><span class="p">,</span> <span class="mi">347</span><span class="p">,</span> <span class="mi">351</span><span class="p">,</span> <span class="mi">391</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">405</span><span class="p">,</span> <span class="mi">415</span><span class="p">,</span> <span class="mi">417</span><span class="p">,</span> <span class="mi">423</span><span class="p">,</span> <span class="mi">427</span><span class="p">,</span> <span class="mi">529</span><span class="p">,</span> <span class="mi">591</span><span class="p">,</span> <span class="mi">599</span><span class="p">,</span> <span class="mi">661</span><span class="p">,</span> <span class="mi">684</span><span class="p">,</span> <span class="mi">708</span><span class="p">,</span> <span class="mi">710</span><span class="p">,</span> <span class="mi">728</span><span class="p">,</span> <span class="mi">730</span><span class="p">,</span> <span class="mi">732</span><span class="p">,</span> <span class="mi">752</span><span class="p">,</span> <span class="mi">762</span><span class="p">,</span> <span class="mi">765</span><span class="p">,</span> <span class="mi">767</span><span class="p">,</span> <span class="mi">771</span><span class="p">,</span> <span class="mi">777</span><span class="p">,</span> <span class="mi">788</span><span class="p">,</span> <span class="mi">793</span><span class="p">,</span> <span class="mi">795</span><span class="p">,</span> <span class="mi">797</span><span class="p">,</span> <span class="mi">799</span><span class="p">,</span> <span class="mi">802</span><span class="p">,</span><span class="mi">805</span><span class="p">,</span> <span class="mi">808</span><span class="p">,</span> <span class="mi">810</span><span class="p">,</span> <span class="mi">814</span><span class="p">,</span> <span class="mi">816</span><span class="p">,</span> <span class="mi">818</span><span class="p">,</span> <span class="mi">822</span><span class="p">,</span> <span class="mi">826</span><span class="p">,</span> <span class="mi">830</span><span class="p">,</span> <span class="mi">834</span><span class="p">,</span> <span class="mi">838</span><span class="p">,</span> <span class="mi">842</span><span class="p">,</span> <span class="mi">846</span><span class="p">,</span> <span class="mi">850</span><span class="p">,</span> <span class="mi">854</span><span class="p">,</span> <span class="mi">858</span><span class="p">,</span> <span class="mi">862</span><span class="p">,</span> <span class="mi">866</span><span class="p">,</span> <span class="mi">870</span><span class="p">,</span> <span class="mi">874</span><span class="p">,</span> <span class="mi">878</span><span class="p">,</span> <span class="mi">882</span><span class="p">,</span> <span class="mi">886</span><span class="p">,</span> <span class="mi">890</span><span class="p">,</span> <span class="mi">894</span><span class="p">,</span> <span class="mi">898</span><span class="p">,</span> <span class="mi">902</span><span class="p">,</span> <span class="mi">906</span><span class="p">,</span> <span class="mi">910</span><span class="p">,</span> <span class="mi">914</span><span class="p">,</span> <span class="mi">918</span><span class="p">,</span> <span class="mi">922</span><span class="p">,</span> <span class="mi">926</span><span class="p">,</span> <span class="mi">930</span><span class="p">,</span> <span class="mi">934</span><span class="p">,</span> <span class="mi">938</span><span class="p">,</span> <span class="mi">942</span><span class="p">,</span> <span class="mi">946</span><span class="p">,</span> <span class="mi">950</span><span class="p">,</span> <span class="mi">957</span><span class="p">,</span> <span class="mi">965</span><span class="p">,</span> <span class="mi">969</span><span class="p">,</span> <span class="mi">975</span><span class="p">,</span> <span class="mi">981</span><span class="p">,</span> <span class="mi">987</span><span class="p">,</span> <span class="mi">996</span><span class="p">,</span> <span class="mi">999</span><span class="p">,</span> <span class="mi">1003</span><span class="p">,</span> <span class="mi">1007</span><span class="p">,</span> <span class="mi">1013</span><span class="p">,</span> <span class="mi">1017</span><span class="p">,</span> <span class="mi">1278</span><span class="p">,</span> <span class="mi">1298</span><span class="p">,</span> <span class="mi">1300</span><span class="p">,</span> <span class="mi">1313</span><span class="p">,</span> <span class="mi">1315</span><span class="p">,</span> <span class="mi">1317</span><span class="p">,</span> <span class="mi">1325</span><span class="p">,</span> <span class="mi">1337</span><span class="p">,</span> <span class="mi">1340</span><span class="p">,</span> <span class="mi">1965</span><span class="p">,</span> <span class="mi">1966</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Separate corner plates</strong>:</p>
+<blockquote>
+<div><p>To avoid jumping plates’ corners, happening far from original surface, i created part of triangulated plates. Defined by lines, snapped to projected pattern corners, i filtered plates by lines location, later that lines helped me to define left and right side of plates’ triangles, because, farthere offset happened only to two sides. Here I need to say, that all plates are completely flat. So, flattaning happens here in step forward. To flatten triangulated plate I separated triangles, flatted and joined pairs after.</p>
+<p><img alt="image8" src="https://github.com/nortikin/sverchok/assets/5783432/5e7bea86-a6a6-48a9-9294-24df20655781" /></p>
+<p><img alt="image9" src="https://github.com/nortikin/sverchok/assets/5783432/2b4fde10-8bcf-458f-9683-64959ed12083" /></p>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="celling_02.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Celling 03. Flattening and offset</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="celling_04.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Celling 04. Flattening and offset</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subject">Subject</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow">Workflow</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2026, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

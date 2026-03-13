@@ -1,0 +1,29 @@
+Solid Volume
+============
+
+Dependencies
+------------
+
+This node requires FreeCAD_ library to work.
+
+.. _FreeCAD: ../../solids.rst
+
+Functionality
+-------------
+
+This node calculates the volume of a Solid object.
+
+Inputs
+------
+
+This node has the following input:
+
+* **Solid**. The Solid object to be analyzed. This input is mandatory.
+
+Outputs
+-------
+
+This node has the following output:
+
+* **Volume**. The calculated volume of the Solid object.
+

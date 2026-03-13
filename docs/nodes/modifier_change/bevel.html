@@ -1,59 +1,157 @@
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bevel &mdash; Sverchok 1, 2, 0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Bevel &#8212; Sverchok 1, 4, 0 documentation</title>
   
-    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
   
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/js/theme.js"></script>
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=c14129a0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/modifier_change/bevel';</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Delete Loose" href="delete_loose.html" />
-    <link rel="prev" title="Modifier Change" href="modifier_change_index.html" /> 
-</head>
+    <link rel="prev" title="Modifier Change" href="modifier_change_index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 4, 0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
-          
-          
-          <a href="../../main.html" class="icon icon-home">
-            Sverchok
-              <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                1, 2, 0
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 4, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 4, 0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
@@ -63,19 +161,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="modifier_change_index.html">Modifier Change</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Bevel</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#profile">Profile</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#spread">Spread</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#loop-slide">Loop Slide</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#miter-type">Miter type</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="modifier_change_index.html">Modifier Change</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Bevel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="delete_loose.html">Delete Loose</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dissolve_mesh_elements.html">Dissolve Mesh Elements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="edge_boom.html">Edge Boom</a></li>
@@ -104,6 +191,7 @@
 <li class="toctree-l3"><a class="reference internal" href="poke.html">Poke Faces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polygons_boom.html">Polygon Boom</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polygons_to_edges_mk2.html">Polygons to Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quadriflow.html">Quadriflow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recalc_normals.html">Recalculate Normals</a></li>
 <li class="toctree-l3"><a class="reference internal" href="relax_mesh.html">Relax Mesh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rigid_origami.html">Rigid Origami</a></li>
@@ -116,7 +204,7 @@
 <li class="toctree-l3"><a class="reference internal" href="triangulate.html">Triangulate Mesh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_mask.html">Mask Vertices</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
@@ -140,67 +228,238 @@
 <li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dxf/dxf_index.html">DXF</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
-        </div>
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
       </div>
-    </nav>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../main.html">Sverchok</a>
-      </nav>
+<div class="sbt-scroll-pixel-helper"></div>
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
-          <li class="breadcrumb-item"><a href="modifier_change_index.html">Modifier Change</a></li>
-      <li class="breadcrumb-item active">Bevel</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/modifier_change/bevel.rst.txt" rel="nofollow"> View page source</a>
-      </li>
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/modifier_change/bevel.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
   </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Bevel</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#as-multibevel">As <strong>multibevel</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#profile">Profile</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spread">Spread</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loop-slide">Loop Slide</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#miter-type">Miter type</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#update-node">Update node</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beveled-cube">Beveled cube</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#only-three-edges-of-cube-beveled">Only three edges of cube beveled</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#another-sort-of-cage">Another sort of cage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-multiple-bevel-in-one-object">Generate multiple bevel in one object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-bevel-in-several-objects">Generate bevel in several objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vertex-mode-and-multiple-radius">Vertex mode and multiple radius</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example-of-facedata-sockets-usage">An example of “FaceData” sockets usage</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
   <section id="bevel">
-<h1>Bevel<a class="headerlink" href="#bevel" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png"><img alt="https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png" src="https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png" /></a>
+<h1>Bevel<a class="headerlink" href="#bevel" title="Link to this heading">#</a></h1>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/90a21d18-8f0d-4f7a-9f4e-e0e1ec1db1e2"><img alt="https://github.com/user-attachments/assets/90a21d18-8f0d-4f7a-9f4e-e0e1ec1db1e2" src="https://github.com/user-attachments/assets/90a21d18-8f0d-4f7a-9f4e-e0e1ec1db1e2" />
+</a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
-<p>This node applies Bevel operator to the input mesh. You can specify edges to be beveled.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png"><img alt="https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png" src="https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png" /></a>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
+<p>This node applies Bevel operator to the input mesh with multilevel. You can specify vertices or edges to be beveled.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/8b8b053f-bb0d-44d0-a498-051b8cab96ed"><img alt="https://github.com/user-attachments/assets/8b8b053f-bb0d-44d0-a498-051b8cab96ed" src="https://github.com/user-attachments/assets/8b8b053f-bb0d-44d0-a498-051b8cab96ed" />
+</a>
+</section>
+<section id="as-multibevel">
+<h2>As <strong>multibevel</strong><a class="headerlink" href="#as-multibevel" title="Link to this heading">#</a></h2>
+<p>One can assign bevel size on every vertex separately:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/d88a0f2f-78a5-48cf-9ec1-0b82501cb794"><img alt="https://github.com/user-attachments/assets/d88a0f2f-78a5-48cf-9ec1-0b82501cb794" src="https://github.com/user-attachments/assets/d88a0f2f-78a5-48cf-9ec1-0b82501cb794" />
+</a>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/1d043328-31f5-4cc2-9f71-54a21535fa2d" type="video/mp4">
+Your browser does not support the video tag.
+</video><p><a class="reference external" href="https://github.com/user-attachments/files/20104204/BevelMK2.example.004.06.multibevel.blend.zip">BevelMK2.example.004.06.multibevel.blend.zip</a></p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
-<li><p><strong>Vertices</strong></p></li>
-<li><p><strong>Edges</strong></p></li>
-<li><p><strong>Polygons</strong></p></li>
+<ul>
+<li><p><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Polygons</strong> - Source mesh to bevel.</p></li>
 <li><p><strong>FaceData</strong>. List containing an arbitrary data item for each face of input
 mesh. For example, this may be used to provide material indexes of input
 mesh faces. Optional input.</p></li>
 <li><p><strong>BevelFaceData</strong>. Face data to be assigned to bevel faces. This input is
 expected to contain one item per input objects. If this input is not
 connected, then bevel faces will be assigned with face data from adjacent
-faces.</p></li>
+faces. It is a <strong>multibevel</strong> property!</p></li>
 <li><p><strong>BevelEdges / VerticesMask</strong>.  Edges or vertices to be beveled. If this
 input is not connected, then by default all will be beveled. This parameter
 changes when <code class="docutils literal notranslate"><span class="pre">Vertex</span> <span class="pre">mode</span></code> flag is modified.  On vertex mode it will expect
 a list of True/False (or 0/1) values indicating the selected vertices
 (<cite>[[0,1,0,..]]</cite>).  Otherwise it will expect a list of Edges
 (<cite>[[2,6],[3,4]…]</cite>).</p></li>
+<li><p><strong>Masks elements mode</strong> (boolean, indexes). - What a method you can use to select elements [[0,0,1,1,0],[1,0,0,0,0],…] or [[1,2], [6,3,8], …]. You can set indexes as sublists for every object. Ex.:</p>
+<blockquote>
+<div><dl>
+<dt>[</dt><dd><p>[[9,7], [6,3,8],], - first object. [9,7] - indexes of first layer, [6,10] - indexes of second layer</p>
+<p>[[1],[7,3],] - second object. [1] - indexes of first layer, [7,3] - indexes of second layer</p>
+</dd>
+</dl>
+<p>]</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/eab81c21-29ef-4766-af34-cc8102c4bccf"><img alt="https://github.com/user-attachments/assets/eab81c21-29ef-4766-af34-cc8102c4bccf" src="https://github.com/user-attachments/assets/eab81c21-29ef-4766-af34-cc8102c4bccf" />
+</a>
+<p>If edges or vertices selected are not connected then all vertices or edges will be beveled.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Offset mode</strong> One bevel for all vertices <strong>per object</strong> or use a number <strong>per every layer</strong> of <strong>Masks elements mode</strong>.</p></li>
 <li><p><strong>Amount</strong>. Amount to offset beveled edge.</p></li>
 <li><p><strong>Segments</strong>. Number of segments in bevel.</p></li>
 <li><p><strong>Profile</strong>. Profile shape.</p></li>
@@ -210,9 +469,9 @@ value different from <strong>Sharp</strong>. The default value is 0.0.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <p>This node has the following parameters:</p>
-<table class="docutils align-default">
+<div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Type</p></th>
@@ -323,26 +582,31 @@ value different from <strong>Sharp</strong>. The default value is 0.0.</p></li>
 </tr>
 </tbody>
 </table>
+</div>
 <p><a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html">Bevel Bevel Modifier Documentation</a></p>
 </section>
 <section id="profile">
-<h2>Profile<a class="headerlink" href="#profile" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197985396-d661c052-4678-440a-819a-4758f1b627d9.png"><img alt="https://user-images.githubusercontent.com/14288520/197985396-d661c052-4678-440a-819a-4758f1b627d9.png" src="https://user-images.githubusercontent.com/14288520/197985396-d661c052-4678-440a-819a-4758f1b627d9.png" /></a>
+<h2>Profile<a class="headerlink" href="#profile" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197985396-d661c052-4678-440a-819a-4758f1b627d9.png"><img alt="https://user-images.githubusercontent.com/14288520/197985396-d661c052-4678-440a-819a-4758f1b627d9.png" src="https://user-images.githubusercontent.com/14288520/197985396-d661c052-4678-440a-819a-4758f1b627d9.png" />
+</a>
 </section>
 <section id="spread">
-<h2>Spread<a class="headerlink" href="#spread" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197967980-f01b33bc-8cb1-462c-a65b-2f68e83858dd.png"><img alt="https://user-images.githubusercontent.com/14288520/197967980-f01b33bc-8cb1-462c-a65b-2f68e83858dd.png" src="https://user-images.githubusercontent.com/14288520/197967980-f01b33bc-8cb1-462c-a65b-2f68e83858dd.png" /></a>
+<h2>Spread<a class="headerlink" href="#spread" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197967980-f01b33bc-8cb1-462c-a65b-2f68e83858dd.png"><img alt="https://user-images.githubusercontent.com/14288520/197967980-f01b33bc-8cb1-462c-a65b-2f68e83858dd.png" src="https://user-images.githubusercontent.com/14288520/197967980-f01b33bc-8cb1-462c-a65b-2f68e83858dd.png" />
+</a>
 </section>
 <section id="loop-slide">
-<h2>Loop Slide<a class="headerlink" href="#loop-slide" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197971748-568283ee-5834-491d-a909-79afb8947a87.gif"><img alt="https://user-images.githubusercontent.com/14288520/197971748-568283ee-5834-491d-a909-79afb8947a87.gif" src="https://user-images.githubusercontent.com/14288520/197971748-568283ee-5834-491d-a909-79afb8947a87.gif" /></a>
+<h2>Loop Slide<a class="headerlink" href="#loop-slide" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197971748-568283ee-5834-491d-a909-79afb8947a87.gif"><img alt="https://user-images.githubusercontent.com/14288520/197971748-568283ee-5834-491d-a909-79afb8947a87.gif" src="https://user-images.githubusercontent.com/14288520/197971748-568283ee-5834-491d-a909-79afb8947a87.gif" />
+</a>
 </section>
 <section id="miter-type">
-<h2>Miter type<a class="headerlink" href="#miter-type" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197964779-a9439e7d-d0ae-47a8-8717-af82660a445a.png"><img alt="https://user-images.githubusercontent.com/14288520/197964779-a9439e7d-d0ae-47a8-8717-af82660a445a.png" src="https://user-images.githubusercontent.com/14288520/197964779-a9439e7d-d0ae-47a8-8717-af82660a445a.png" /></a>
+<h2>Miter type<a class="headerlink" href="#miter-type" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197964779-a9439e7d-d0ae-47a8-8717-af82660a445a.png"><img alt="https://user-images.githubusercontent.com/14288520/197964779-a9439e7d-d0ae-47a8-8717-af82660a445a.png" src="https://user-images.githubusercontent.com/14288520/197964779-a9439e7d-d0ae-47a8-8717-af82660a445a.png" />
+</a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -353,17 +617,30 @@ contains one item for each output mesh face.</p></li>
 <li><p><strong>NewPolys</strong> - only bevel faces.</p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
-<p>Beveled cube:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png"><img alt="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png" src="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png" /></a>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
+</section>
+<section id="update-node">
+<h2>Update node<a class="headerlink" href="#update-node" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/774e8660-8e48-4603-8e90-9d2ed142cdab"><img alt="https://github.com/user-attachments/assets/774e8660-8e48-4603-8e90-9d2ed142cdab" src="https://github.com/user-attachments/assets/774e8660-8e48-4603-8e90-9d2ed142cdab" />
+</a>
+<p><a class="reference external" href="https://github.com/user-attachments/files/20140784/Bevel.Example.006.blend.zip">Bevel.Example.006.blend.zip</a></p>
+</section>
+<section id="beveled-cube">
+<h2>Beveled cube<a class="headerlink" href="#beveled-cube" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png"><img alt="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png" src="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
+</section>
 <hr class="docutils" />
-<p>Only three edges of cube beveled:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png"><img alt="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png" src="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png" /></a>
+<section id="only-three-edges-of-cube-beveled">
+<h2>Only three edges of cube beveled<a class="headerlink" href="#only-three-edges-of-cube-beveled" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png"><img alt="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png" src="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
@@ -373,9 +650,12 @@ contains one item for each output mesh face.</p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
 </ul>
+</section>
 <hr class="docutils" />
-<p>Another sort of cage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png"><img alt="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png" src="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png" /></a>
+<section id="another-sort-of-cage">
+<h2>Another sort of cage<a class="headerlink" href="#another-sort-of-cage" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png"><img alt="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png" src="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
@@ -385,60 +665,188 @@ contains one item for each output mesh face.</p></li>
 <li><p>CAD-&gt; <a class="reference internal" href="offset.html"><span class="doc">Offset</span></a> (Outpols)</p></li>
 </ul>
 <hr class="docutils" />
-<p>You can work with multiple objects:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png"><img alt="https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png" src="https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png" /></a>
+<p>You can work with multiple objects in per object mode (one bevel per whole object):</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/eec4dfb7-bc24-4a83-922c-364ce269b66c"><img alt="https://github.com/user-attachments/assets/eec4dfb7-bc24-4a83-922c-364ce269b66c" src="https://github.com/user-attachments/assets/eec4dfb7-bc24-4a83-922c-364ce269b66c" />
+</a>
+<p>bevel 1 for object 1, bevel 2 for object 2, bevel 3 for object 3, bevel 3 for object 4 (replay last value of bevel)</p>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/fd21d13d-c4cd-4198-bd42-42f341a21e05" type="video/mp4">
+Your browser does not support the video tag.
+</video><p><a class="reference external" href="https://github.com/user-attachments/files/20106741/BevelMK2.example.004.Bevel.edges.per.objects.blend.zip">BevelMK2.example.004.Bevel.edges.per.objects.blend.zip</a></p>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
-<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/apply_and_join.html"><span class="doc">Matrix Apply to Mesh</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
+</section>
 <hr class="docutils" />
-<p>Vertex mode and multiple radius:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png"><img alt="https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png" src="https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png" /></a>
+<section id="generate-multiple-bevel-in-one-object">
+<h2>Generate multiple bevel in one object<a class="headerlink" href="#generate-multiple-bevel-in-one-object" title="Link to this heading">#</a></h2>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/a95dacfe-2150-441b-8496-1f42cb13afa1" type="video/mp4">
+Your browser does not support the video tag.
+</video><a class="reference external image-reference" href="https://github.com/user-attachments/assets/f38c0835-5514-4304-80a1-9648c203f2d4"><img alt="https://github.com/user-attachments/assets/f38c0835-5514-4304-80a1-9648c203f2d4" src="https://github.com/user-attachments/assets/f38c0835-5514-4304-80a1-9648c203f2d4" />
+</a>
 <ul class="simple">
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
-<li><p>Generator-&gt;Generators Extended-&gt; <a class="reference internal" href="../generators_extended/triangle.html"><span class="doc">Triangle</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
-<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+<li><p>Script-&gt; <a class="reference internal" href="../script/formula_mk5.html"><span class="doc">Formula</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
 </ul>
-<p>An example of “FaceData” sockets usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png"><img alt="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png" src="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png" /></a>
+<p><a class="reference external" href="https://github.com/user-attachments/files/20107471/BevelMK2.example.005.multibevel.edges.blend.zip">BevelMK2.example.005.multibevel.edges.blend.zip</a></p>
+</section>
+<hr class="docutils" />
+<section id="generate-bevel-in-several-objects">
+<h2>Generate bevel in several objects<a class="headerlink" href="#generate-bevel-in-several-objects" title="Link to this heading">#</a></h2>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/cfebf3c2-0e4f-47b9-9f35-7ab11bf4656b" type="video/mp4">
+Your browser does not support the video tag.
+</video><a class="reference external image-reference" href="https://github.com/user-attachments/assets/5d2873d4-5870-4ff7-818a-fc50184c7172"><img alt="https://github.com/user-attachments/assets/5d2873d4-5870-4ff7-818a-fc50184c7172" src="https://github.com/user-attachments/assets/5d2873d4-5870-4ff7-818a-fc50184c7172" />
+</a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+<li><p>Script-&gt; <a class="reference internal" href="../script/formula_mk5.html"><span class="doc">Formula</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<p>blend file: <a class="reference external" href="https://github.com/user-attachments/files/20048703/BevelMK2.example.003.multibevel.per.object.blend.zip">BevelMK2.example.003.multibevel.per.object.blend.zip</a></p>
+</section>
+<hr class="docutils" />
+<section id="vertex-mode-and-multiple-radius">
+<h2>Vertex mode and multiple radius<a class="headerlink" href="#vertex-mode-and-multiple-radius" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2"><img alt="https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2" src="https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2" />
+</a>
+<p>blend file: <a class="reference external" href="https://github.com/user-attachments/files/20048755/BevelMK2.example.002.bevel.per.object.blend.zip">BevelMK2.example.002.bevel.per.object.blend.zip</a></p>
+</section>
+<hr class="docutils" />
+<section id="an-example-of-facedata-sockets-usage">
+<h2>An example of “FaceData” sockets usage<a class="headerlink" href="#an-example-of-facedata-sockets-usage" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png"><img alt="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png" src="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png" />
+</a>
 </section>
 </section>
 
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="modifier_change_index.html" class="btn btn-neutral float-left" title="Modifier Change" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="delete_loose.html" class="btn btn-neutral float-right" title="Delete Loose" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+                </article>
+              
 
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2014...2024, sverchok team.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="modifier_change_index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Modifier Change</p>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+    </a>
+    <a class="right-next"
+       href="delete_loose.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Delete Loose</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-</body>
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#as-multibevel">As <strong>multibevel</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#profile">Profile</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spread">Spread</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loop-slide">Loop Slide</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#miter-type">Miter type</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#update-node">Update node</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beveled-cube">Beveled cube</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#only-three-edges-of-cube-beveled">Only three edges of cube beveled</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#another-sort-of-cage">Another sort of cage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-multiple-bevel-in-one-object">Generate multiple bevel in one object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-bevel-in-several-objects">Generate bevel in several objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vertex-mode-and-multiple-radius">Vertex mode and multiple radius</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example-of-facedata-sockets-usage">An example of “FaceData” sockets usage</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2026, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
 </html>

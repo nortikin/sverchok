@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.surface.blend_optimizer API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.surface.blend_optimizer</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint"><code class="flex name class">
+<span>class <span class="ident">BlendSurfaceConstraint</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlendSurfaceConstraint(enum.Enum):
+    G1 = enum.auto()
+    NORMALS_MATCH = enum.auto()
+    CURVATURE_MATCH = enum.auto()</code></pre>
+</details>
+<div class="desc"><p>An enumeration.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint.CURVATURE_MATCH"><code class="name">var <span class="ident">CURVATURE_MATCH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint.G1"><code class="name">var <span class="ident">G1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint.NORMALS_MATCH"><code class="name">var <span class="ident">NORMALS_MATCH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceInput"><code class="flex name class">
+<span>class <span class="ident">BlendSurfaceInput</span></span>
+<span>(</span><span>surface: <a title="sverchok.utils.surface.core.SvSurface" href="core.html#sverchok.utils.surface.core.SvSurface">SvSurface</a>,<br>direction: <a title="sverchok.utils.surface.core.SurfaceDirection" href="core.html#sverchok.utils.surface.core.SurfaceDirection">SurfaceDirection</a>,<br>boundary: <a title="sverchok.utils.geom.RangeBoundary" href="../geom.html#sverchok.utils.geom.RangeBoundary">RangeBoundary</a>,<br>invert: bool)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class BlendSurfaceInput:
+    surface : SvSurface
+    direction : SurfaceDirection
+    boundary : RangeBoundary
+    invert : bool</code></pre>
+</details>
+<div class="desc"><p>BlendSurfaceInput(surface: sverchok.utils.surface.core.SvSurface, direction: sverchok.utils.surface.core.SurfaceDirection, boundary: sverchok.utils.geom.RangeBoundary, invert: bool)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.boundary"><code class="name">var <span class="ident">boundary</span> : <a title="sverchok.utils.geom.RangeBoundary" href="../geom.html#sverchok.utils.geom.RangeBoundary">RangeBoundary</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.direction"><code class="name">var <span class="ident">direction</span> : <a title="sverchok.utils.surface.core.SurfaceDirection" href="core.html#sverchok.utils.surface.core.SurfaceDirection">SurfaceDirection</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.invert"><code class="name">var <span class="ident">invert</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.surface"><code class="name">var <span class="ident">surface</span> : <a title="sverchok.utils.surface.core.SvSurface" href="core.html#sverchok.utils.surface.core.SvSurface">SvSurface</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceOptimizer"><code class="flex name class">
+<span>class <span class="ident">BlendSurfaceOptimizer</span></span>
+<span>(</span><span>input1, input2)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlendSurfaceOptimizer:
+
+    def __init__(self, input1, input2):
+        self.surface1 = input1.surface
+        self.direction1 = input1.direction
+        self.boundary1 = input1.boundary
+        self.surface2 = input2.surface
+        self.direction2 = input2.direction
+        self.boundary2 = input2.boundary
+        self.invert1 = input1.invert
+        self.invert2 = input2.invert
+
+    def _get_cpts(self,surface, direction, side):
+        cpts = surface.get_control_points()
+        if direction == SurfaceDirection.V:
+            cpts = np.transpose(cpts, (1,0,2))
+        if side == RangeBoundary.MIN:
+            cpts_last = cpts[0,:]
+            cpts_prev = cpts[1,:]
+        else:
+            cpts_last = cpts[-1,:]
+            cpts_prev = cpts[-2,:]
+        return cpts_prev, cpts_last
+
+    def _get_range(self,direction, surface):
+        if direction == SurfaceDirection.U:
+            return surface.get_u_bounds()
+        else:
+            return surface.get_v_bounds()
+
+    def _get_parameter(self, direction, side, surface):
+        p1, p2 = self._get_range(direction, surface)
+        if side is RangeBoundary.MIN:
+            return p1
+        else:
+            return p2
+
+    def _init(self, n_along):
+        unify_directions = set([other_direction(self.direction1), other_direction(self.direction2)])
+        self.surface1, self.surface2 = unify_nurbs_surfaces([self.surface1, self.surface2], directions = unify_directions)
+        if self.direction1 == SurfaceDirection.U:
+            self.degree_across = self.surface1.get_degree_v()
+            self.degree_along = self.surface1.get_degree_u()
+            self.kv_across = self.surface1.get_knotvector_v()
+        else:
+            self.degree_across = self.surface1.get_degree_u()
+            self.degree_along = self.surface1.get_degree_v()
+            self.kv_across = self.surface1.get_knotvector_u()
+        self.kv_along = sv_knotvector.generate(self.degree_along, n_along)
+
+        self.cpts1_prev, self.cpts1_last = self._get_cpts(self.surface1, self.direction1, self.boundary1)
+        self.cpts2_prev, self.cpts2_last = self._get_cpts(self.surface2, self.direction2, self.boundary2)
+
+        self.n_along = n_along
+        self.n_across = len(self.cpts1_last)
+
+    def _mk_goal(self, lambda_bending = 1.0, lambda_curvature = 0.0, use_cpts = True):
+        if not use_cpts:    
+            nodes_across = sv_knotvector.calc_nodes(self.degree_across, self.n_across, self.kv_across)
+            nodes_along = sv_knotvector.calc_nodes(self.degree_along, self.n_along, self.kv_along)
+            calculator_u = SvNurbsDerivativesCalculator.from_knotvector(self.kv_along, self.degree_along, self.n_along, 3, nodes_along)
+            calculator_v = SvNurbsDerivativesCalculator.from_knotvector(self.kv_across, self.degree_along, self.n_across, 3, nodes_across)
+            
+        def goal(p):
+            cpts = p.reshape((self.n_along, self.n_across, 3))
+                    
+            if not use_cpts:            
+                dus = np.array([calculator_u.copy(control_points = cpts[:,i]).second_derivatives() for i in range(self.n_across)])
+                dus = np.transpose(dus, axes=(1,0,2))
+                dvs = np.array([calculator_v.copy(control_points = cpts[i,:]).second_derivatives() for i in range(self.n_along)])
+            else:
+                I = np.arange(1, self.n_along-1)
+                J = np.arange(1, self.n_across-1)
+                II, JJ = np.meshgrid(I, J, indexing=&#39;ij&#39;)
+                #I0 = np.arange(self.n_along)
+                #II0, JJ0 = np.meshgrid(I0, J, indexing=&#39;ij&#39;)
+                dus = np.zeros((self.n_along, self.n_across, 3))
+                dvs = np.zeros((self.n_along, self.n_across, 3))
+                dus[II,JJ] = cpts[II,JJ-1] - 2*cpts[II,JJ] + cpts[II,JJ+1]
+                dvs[II,JJ] = cpts[II-1,JJ] - 2*cpts[II,JJ] + cpts[II+1,JJ]
+                
+                #dus[II0,0] = 12*(p[II0,0] - 2*p[II0,1] + 2*p[II0,2]) / (du1**2)
+                #dus[II0,-1] = 12*(p[II0,-1] - 2*p[II0,-2] + 2*p[II0,-3]) / (dun**2)
+                #dvs[II,0] = p[II-1,0] - 2*p[II,0] + p[II+1,0]
+                #dvs[II,-1] = p[II-1,-1] - 2*p[II,-1] + p[II+1,-1]
+                #dus[0,JJ] = p[0,JJ-1] - 2*p[0,JJ] + p[0,JJ+1]
+                #dus[-1,JJ] = p[-1,JJ-1] - 2*p[-1,JJ] + p[-1,JJ+1]
+            
+            curvature = 0.0
+            if lambda_curvature &gt; 0.0:
+                crosses = np.cross(dus, dvs)
+                curvature = (crosses * crosses).sum()
+            bending = 0.0
+            if lambda_bending &gt; 0.0:
+                bending = (dus * dus).sum() + (dvs * dvs).sum()
+                
+            return lambda_curvature * curvature + lambda_bending * bending
+
+        return goal
+
+    def solve(self,
+              implementation = SvNurbsMaths.NATIVE,
+              constraint = BlendSurfaceConstraint.G1,
+              lambda_bending = 1.0,
+              lambda_curvature = 0.0,
+              use_cpts = True,
+              tolerance = 1e-5,
+              **kwargs):
+        if constraint is BlendSurfaceConstraint.G1:
+            opt = self._setup_g1(**kwargs)
+        elif constraint is BlendSurfaceConstraint.NORMALS_MATCH:
+            opt = self._setup_normals_match(**kwargs)
+        elif constraint is BlendSurfaceConstraint.CURVATURE_MATCH:
+            opt = self._setup_curvature_match(**kwargs)
+        else:
+            raise SvUnsupportedOptionException(&#34;Unsupported constraint: &#34; + constraint)
+
+        goal = self._mk_goal(lambda_curvature = lambda_curvature, lambda_bending = lambda_bending,
+                use_cpts = use_cpts)
+        
+        opt.set_goal(goal)
+
+        solution = opt.minimize(tol = tolerance)
+        if not solution.success:
+            raise NoConvergenceException(solution.message)
+        #print(solution.parameters)
+        cpts = solution.control_points.reshape((self.n_along, self.n_across, 3))
+        
+        surface = SvNurbsMaths.build_surface(implementation,
+                    degree_u = self.degree_across, degree_v = self.degree_along,
+                    knotvector_u = sv_knotvector.generate(self.degree_across, self.n_along),
+                    knotvector_v = self.kv_across,
+                    control_points = cpts)
+        return surface
+
+    def _setup_g1(self,
+              min_alpha = 0.1):
+        self._init(n_along = 4)
+
+        opt = Optimizer(self.n_across*self.n_along)
+        for i in range(self.n_across):
+            gamma0 = self.cpts1_last[i]
+            gamma1 = self.cpts1_last[i] - self.cpts1_prev[i]
+            if self.invert1:
+                gamma1 *= -1
+            opt.set_constraint(i, gamma0)
+            opt.set_constraint(self.n_across + i, gamma0, [gamma1], bounds = [(min_alpha,1)])
+            gamma0 = self.cpts2_last[i]
+            gamma1 = self.cpts2_last[i] - self.cpts2_prev[i]
+            if self.invert2:
+                gamma1 *= -1
+            opt.set_constraint(2*self.n_across + i, gamma0, [gamma1], bounds = [(min_alpha,1)])
+            opt.set_constraint(3*self.n_across + i, gamma0)
+        
+        return opt
+
+    def _setup_normals_match(self,
+              min_alpha = 0.01,
+              min_beta = 0.01, max_beta = None):
+        self._init(n_along = 6)
+
+        s1p = self._get_parameter(self.direction1, self.boundary1, self.surface1)
+        s2p = self._get_parameter(self.direction2, self.boundary2, self.surface2)
+        
+        nodes_across = sv_knotvector.calc_nodes(self.degree_across, self.n_across, self.kv_across)
+        iso_1_along = [self.surface1.iso_curve(other_direction(self.direction1), t) for t in nodes_across]
+        iso_2_along = [self.surface2.iso_curve(other_direction(self.direction2), t) for t in nodes_across]
+        gamma2_1_along = [c.second_derivative(s1p) for c in iso_1_along]
+        gamma2_2_along = [c.second_derivative(s2p) for c in iso_2_along]
+        
+        opt = Optimizer(self.n_across*self.n_along)
+        for i in range(self.n_across):
+            opt.set_constraint(i, self.cpts1_last[i])
+            
+            gamma0 = self.cpts1_last[i]
+            gamma1 = (self.cpts1_last[i] - self.cpts1_prev[i]) * 3
+            gamma2 = gamma2_1_along[i]
+            if self.invert1:
+                gamma1 *= -1
+                gamma2 *= -1
+            #print(f&#34;S1: Gamma0 {gamma0}, Gamma1 {gamma1}, Gamma2 {gamma2}&#34;)
+            alpha1 = opt.set_constraint(1*self.n_across + i, gamma0, [gamma1/9], bounds = [(min_alpha,9)])[0]
+            beta1 = opt.allocate_parameters()[0]
+            opt.constraints[2*self.n_across + i] = LinearConstraint(gamma0, [
+                                                    Summand(alpha1, gamma1/3.0),
+                                                    Summand(beta1, gamma2/27.0)
+                                                ])
+            opt.bounds[beta1] = (min_beta, max_beta)
+            
+            gamma0 = self.cpts2_last[i]
+            gamma1 = (self.cpts2_last[i] - self.cpts2_prev[i]) * 3 # / 9
+            gamma2 = gamma2_2_along[i]
+            if self.invert2:
+                gamma1 *= -1
+                gamma2 *= -1
+            #print(f&#34;S2: Gamma0 {gamma0}, Gamma1 {gamma1}, Gamma2 {gamma2}&#34;)
+            alpha2 = opt.set_constraint(4*self.n_across + i, gamma0, [gamma1/9], bounds = [(min_alpha,9)])[0]
+            beta2 = opt.allocate_parameters()[0]
+            opt.constraints[3*self.n_across + i] = LinearConstraint(gamma0, [
+                                                    Summand(alpha2, gamma1/3.0),
+                                                    Summand(beta2, gamma2/27.0)
+                                                ])
+            opt.bounds[beta2] = (min_beta, max_beta)
+            opt.set_constraint(5*self.n_across + i, gamma0)
+                
+        return opt
+
+    def _setup_curvature_match(self, min_alpha = 0.01):
+        self._init(n_along = 6)
+
+        s1p = self._get_parameter(self.direction1, self.boundary1, self.surface1)
+        s2p = self._get_parameter(self.direction2, self.boundary2, self.surface2)
+        
+        nodes_across = sv_knotvector.calc_nodes(self.degree_across, self.n_across, self.kv_across)
+        iso_1_along = [self.surface1.iso_curve(other_direction(self.direction1), t) for t in nodes_across]
+        iso_2_along = [self.surface2.iso_curve(other_direction(self.direction2), t) for t in nodes_across]
+
+        def mk_curvature_constraint(orig_point, orig_tangent, normal, kappa0):
+            def function(params):
+                alpha = params[0]
+                beta = params[1]
+                gamma1 = alpha * orig_tangent * 9
+                d1 = kappa0 * (gamma1 * gamma1).sum() / 27
+                curvature_pt_base = orig_point + d1*normal
+                result = curvature_pt_base + beta * orig_tangent
+                #print(f&#34;G0 {orig_point}, G1 {gamma1}, K0 {kappa0}, normal {normal}, d1 {d1}, pt_base {curvature_pt_base}, alpha {alpha}, beta {beta} =&gt; {result}&#34;)
+                return result
+            return function
+
+        opt = Optimizer(self.n_across*self.n_along)
+        for i in range(self.n_across):
+            gamma0 = self.cpts1_last[i]
+            opt.set_constraint(i, gamma0)
+
+            gamma1 = iso_1_along[i].tangent(s1p)
+            if self.invert1:
+                gamma1 *= -1
+            alpha1 = opt.set_constraint(1*self.n_across + i, gamma0, [gamma1], bounds = [(min_alpha,9)])[0]
+
+            kappa0 = iso_1_along[i].curvature(s1p)
+            normal1 = iso_1_along[i].main_normal(s1p)
+
+            beta1 = opt.allocate_parameters()[0]
+            opt.constraints[2*self.n_across + i] = NonLinearConstraint(
+                                mk_curvature_constraint(gamma0, gamma1, normal1, kappa0),
+                                [alpha1, beta1])
+            opt.bounds[beta1] = (min_alpha, None)
+
+
+            gamma0 = self.cpts2_last[i]
+            gamma1 = -iso_2_along[i].tangent(s2p)
+            if self.invert2:
+                gamma1 *= -1
+
+            alpha2 = opt.set_constraint(4*self.n_across + i, gamma0, [gamma1], bounds = [(min_alpha,9)])[0]
+
+            kappa0 = iso_2_along[i].curvature(s2p)
+            normal2 = iso_2_along[i].main_normal(s2p)
+            beta2 = opt.allocate_parameters()[0]
+            opt.constraints[3*self.n_across + i] = NonLinearConstraint(
+                                mk_curvature_constraint(gamma0, gamma1, normal2, kappa0),
+                                [alpha2, beta2])
+            opt.bounds[beta2] = (min_alpha, None)
+
+            opt.set_constraint(5*self.n_across + i, gamma0)
+        return opt</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.blend_optimizer.BlendSurfaceOptimizer.solve"><code class="name flex">
+<span>def <span class="ident">solve</span></span>(<span>self,<br>implementation='NATIVE',<br>constraint=BlendSurfaceConstraint.G1,<br>lambda_bending=1.0,<br>lambda_curvature=0.0,<br>use_cpts=True,<br>tolerance=1e-05,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve(self,
+          implementation = SvNurbsMaths.NATIVE,
+          constraint = BlendSurfaceConstraint.G1,
+          lambda_bending = 1.0,
+          lambda_curvature = 0.0,
+          use_cpts = True,
+          tolerance = 1e-5,
+          **kwargs):
+    if constraint is BlendSurfaceConstraint.G1:
+        opt = self._setup_g1(**kwargs)
+    elif constraint is BlendSurfaceConstraint.NORMALS_MATCH:
+        opt = self._setup_normals_match(**kwargs)
+    elif constraint is BlendSurfaceConstraint.CURVATURE_MATCH:
+        opt = self._setup_curvature_match(**kwargs)
+    else:
+        raise SvUnsupportedOptionException(&#34;Unsupported constraint: &#34; + constraint)
+
+    goal = self._mk_goal(lambda_curvature = lambda_curvature, lambda_bending = lambda_bending,
+            use_cpts = use_cpts)
+    
+    opt.set_goal(goal)
+
+    solution = opt.minimize(tol = tolerance)
+    if not solution.success:
+        raise NoConvergenceException(solution.message)
+    #print(solution.parameters)
+    cpts = solution.control_points.reshape((self.n_along, self.n_across, 3))
+    
+    surface = SvNurbsMaths.build_surface(implementation,
+                degree_u = self.degree_across, degree_v = self.degree_along,
+                knotvector_u = sv_knotvector.generate(self.degree_across, self.n_along),
+                knotvector_v = self.kv_across,
+                control_points = cpts)
+    return surface</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.surface" href="index.html">sverchok.utils.surface</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint">BlendSurfaceConstraint</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint.CURVATURE_MATCH" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint.CURVATURE_MATCH">CURVATURE_MATCH</a></code></li>
+<li><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint.G1" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint.G1">G1</a></code></li>
+<li><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint.NORMALS_MATCH" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceConstraint.NORMALS_MATCH">NORMALS_MATCH</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceInput" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceInput">BlendSurfaceInput</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.boundary" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.boundary">boundary</a></code></li>
+<li><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.direction" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.direction">direction</a></code></li>
+<li><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.invert" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.invert">invert</a></code></li>
+<li><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.surface" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceInput.surface">surface</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceOptimizer" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceOptimizer">BlendSurfaceOptimizer</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.blend_optimizer.BlendSurfaceOptimizer.solve" href="#sverchok.utils.surface.blend_optimizer.BlendSurfaceOptimizer.solve">solve</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
