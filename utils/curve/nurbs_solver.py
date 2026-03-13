@@ -153,16 +153,17 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         alphas = self.calc_alphas(solver, us)
 
         weights = self.get_weights()
+        alphas = (alphas * weights[np.newaxis]).T
 
         A = np.zeros((n_equations, n_unknowns))
         B = np.zeros((n_equations, 1))
         #print(f"A: {A.shape}, W {weights.shape}, n_points {n_points}")
 
-        for pt_idx in range(n_points):
-            for cpt_idx in range(solver.n_cpts):
-                alpha = alphas[cpt_idx][pt_idx]
-                for dim_idx in range(ndim):
-                    A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = weights[pt_idx] * alpha
+        pt_idxs = np.arange(n_points)
+        cpt_idxs = np.arange(solver.n_cpts)
+        pt_idxs, cpt_idxs = np.meshgrid(ndim*pt_idxs, ndim*cpt_idxs, indexing='ij')
+        for dim_idx in range(ndim):
+            A[pt_idxs + dim_idx, cpt_idxs + dim_idx] = alphas
 
         if solver.src_curve is None:
             if self.relative:
