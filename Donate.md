@@ -7,7 +7,12 @@ If you want to support the project you have a lot of options. Money alone does n
 - Write code (including scripted node templates) and share
 - Help improve the documentation (rst)
 - Or you can send money.  
- 
+
+## Yoomoney
+
+Use that link any time
+<iframe src="https://yoomoney.ru/quickpay/fundraise/widget?billNumber=1GFRQK2G7EU.260313&" width="500" height="480" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+or simply link <a hrefhttps://yoomoney.ru/fundraise/1GFRQK2G7EU.260313
 
 ## Nodes on commission
 
