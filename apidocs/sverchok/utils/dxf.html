@@ -685,6 +685,7 @@ el.replaceWith(d);
             #print(data)
             #print(&#34;Тип данных DXF&#34;,data[0].__repr__())
             if data[0].__repr__() == &#39;&lt;DXF Pols&gt;&#39;:
+                #print(&#39;getting pols&#39;,data)
                 polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
             if data[0].__repr__() == &#39;&lt;DXF Lines&gt;&#39;:
                 edges_draw(data,scal,ledgs,msp)
@@ -693,7 +694,10 @@ el.replaceWith(d);
             if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
                 dimensions_draw(data,scal,ldims,msp)
             if data[0].__repr__() == &#39;&lt;DXF Circles&gt;&#39;:
-                circles_draw(data,scal,ldims,msp)
+                circles_draw(data,scal,ledgs,msp)
+            if data[0].__repr__() == &#39;&lt;DXF Texts&gt;&#39;:
+                #print(&#39;getting text&#39;,data)
+                text_draw(data,scal,ltext,msp) # tv,tt,scal,ltext,msp,t_scal
     else:
         lib = BlockLibrary(doc)
         
@@ -916,26 +920,28 @@ with metadata vectorized for triangles
 todo 2026 polymesh</p></div>
 </dd>
 <dt id="sverchok.utils.dxf.text_draw"><code class="name flex">
-<span>def <span class="ident">text_draw</span></span>(<span>tv, tt, scal, ltext, msp, t_scal)</span>
+<span>def <span class="ident">text_draw</span></span>(<span>t, scal, ltext, msp)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def text_draw(tv,tt,scal,ltext,msp,t_scal):
+<pre><code class="python">def text_draw(t,scal,ltext,msp):
     &#39;&#39;&#39; draw text todo in 2026 &#39;&#39;&#39;
     from ezdxf.enums import TextEntityAlignment
-    #print(&#39;TEXT!!&#39;)
-    for obtv, obtt in zip(tv,tt):
-        for tver, ttext in zip(obtv,obtt):
-            tver = [i*scal for i in tver]
-            msp.add_text(
-            ttext, height=scal*t_scal,#0.05,
-            dxfattribs={
-                &#34;layer&#34;: ltext,
-                &#34;style&#34;: &#34;OpenSans&#34;
-            }).set_placement(tver, align=TextEntityAlignment.CENTER)</code></pre>
+    for data in t:
+        tv,tt = data.vers
+        t_scal = data.text_scale
+        print(&#39;TEXT!!&#39;,tv,tt)
+        tv = [i*scal for i in tv]
+        print(&#39;text unit&#39;,tt)
+        msp.add_text(
+        tt, height=t_scal,#0.05,
+        dxfattribs={
+            &#34;layer&#34;: ltext,
+            &#34;style&#34;: &#34;LiberationSerif&#34;
+        }).set_placement(tv, align=TextEntityAlignment.CENTER)</code></pre>
 </details>
 <div class="desc"><p>draw text todo in 2026</p></div>
 </dd>
