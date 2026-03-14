@@ -40,8 +40,3 @@ Examples
 *Standart DXF hatches available from sverchok node*
 
 .. image:: https://github.com/user-attachments/assets/c5dbb1f2-986c-44a1-9df8-fa9a679ea835
-
-*Default DXF colors - use whether color in node or DXF index from table*
-
-.. image:: https://github.com/user-attachments/assets/390e21c3-3f23-4766-bde1-5cb555b980c4
-.. image:: https://github.com/user-attachments/assets/951d31c1-a2ad-4309-912e-61d230509ee5

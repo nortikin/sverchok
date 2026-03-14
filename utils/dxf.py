@@ -714,19 +714,21 @@ def circles_draw(points,scal,ledgs,msp):
         elif curve.__repr__()[:7] == '<BezierCurve': # SvCurve SvEllipse SvCubicBezierCurve SvLine SvNurbsCurve SvSplineCurve Sv
             pass
 
-def text_draw(tv,tt,scal,ltext,msp,t_scal):
+def text_draw(t,scal,ltext,msp):
     ''' draw text todo in 2026 '''
     from ezdxf.enums import TextEntityAlignment
-    #print('TEXT!!')
-    for obtv, obtt in zip(tv,tt):
-        for tver, ttext in zip(obtv,obtt):
-            tver = [i*scal for i in tver]
-            msp.add_text(
-            ttext, height=scal*t_scal,#0.05,
-            dxfattribs={
-                "layer": ltext,
-                "style": "OpenSans"
-            }).set_placement(tver, align=TextEntityAlignment.CENTER)
+    for data in t:
+        tv,tt = data.vers
+        t_scal = data.text_scale
+        print('TEXT!!',tv,tt)
+        tv = [i*scal for i in tv]
+        print('text unit',tt)
+        msp.add_text(
+        tt, height=t_scal,#0.05,
+        dxfattribs={
+            "layer": ltext,
+            "style": "LiberationSerif"
+        }).set_placement(tv, align=TextEntityAlignment.CENTER)
 
 def dimensions_draw(points,scal,ldims,msp):
     #print('LINEAR DIMS!!')
@@ -927,6 +929,7 @@ def export(fp,dxf,scal=1000.0,t_scal=1.0,info='',do_block=False):
             #print(data)
             #print("Тип данных DXF",data[0].__repr__())
             if data[0].__repr__() == '<DXF Pols>':
+                #print('getting pols',data)
                 polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
             if data[0].__repr__() == '<DXF Lines>':
                 edges_draw(data,scal,ledgs,msp)
@@ -935,7 +938,10 @@ def export(fp,dxf,scal=1000.0,t_scal=1.0,info='',do_block=False):
             if data[0].__repr__() == '<DXF LinDims>':
                 dimensions_draw(data,scal,ldims,msp)
             if data[0].__repr__() == '<DXF Circles>':
-                circles_draw(data,scal,ldims,msp)
+                circles_draw(data,scal,ledgs,msp)
+            if data[0].__repr__() == '<DXF Texts>':
+                #print('getting text',data)
+                text_draw(data,scal,ltext,msp) # tv,tt,scal,ltext,msp,t_scal
     else:
         lib = BlockLibrary(doc)
         

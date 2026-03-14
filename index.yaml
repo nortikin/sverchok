@@ -871,6 +871,7 @@
     - SvDxfImportNode
     - SvDxfExportNode
     - SvDxfLinDimsNode
+    - SvDxfTextsNode
     - SvDxfHatchNode
     - SvDxfLinesNode
     - SvDxfCirclesNode

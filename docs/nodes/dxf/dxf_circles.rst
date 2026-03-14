@@ -35,16 +35,3 @@ Examples
 *Example of created DXF circles from curves SvCircles in zcad*
 
 .. image:: https://github.com/user-attachments/assets/84c4fcb5-4255-4496-b304-b2709fd47168
-
-*Default DXF linetypes*
-
-.. image:: https://github.com/user-attachments/assets/1fe1e785-04fc-441c-b267-514538a53388
-
-*Default DXF thicknesses*
-
-.. image:: https://github.com/user-attachments/assets/aa8cd5af-a423-4a6d-8e01-54f32e7831ad
-
-*Default DXF colors - use whether color in node or DXF index from table*
-
-.. image:: https://github.com/user-attachments/assets/390e21c3-3f23-4766-bde1-5cb555b980c4
-.. image:: https://github.com/user-attachments/assets/951d31c1-a2ad-4309-912e-61d230509ee5
