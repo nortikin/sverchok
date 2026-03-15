@@ -946,7 +946,7 @@ def export(fp,dxf,scal=1000.0,t_scal=1.0,info='',do_block=False):
         lib = BlockLibrary(doc)
         
         # Создаем блок
-        lib.make_block('Sverchok', dxf, scal, [lpols,ledgs,lhatc,ldims])
+        lib.make_block(do_block, dxf, scal, [lpols,ledgs,lhatc,ldims])
         doc = lib.return_block()
         # Вставляем блок
         #lib.place_block('BOLT_M10', insert=(0, 0))

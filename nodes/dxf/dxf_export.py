@@ -35,6 +35,8 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
     
     do_block: bpy.props.BoolProperty(default=False, name='do_block')
 
+    block_name: bpy.props.StringProperty(name='block name', default='Sverchok_block', update=updateNode)
+
     def sv_init(self, context):
         '''
         self.inputs.new('SvVerticesSocket', 'verts')
@@ -65,6 +67,8 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
         col.prop(self, "scale", expand=False)
         col.prop(self, "text_scale", expand=False)
         col.prop(self, 'do_block', expand=True)
+        if self.do_block:
+            col.prop(self, 'block_name')
 
     def process(self):
         pass  # Данные будут обрабатываться в операторе
@@ -125,7 +129,7 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
         #t_scal_ = self.inputs['t_scal'].sv_get()[0][0]
         #export(vers_,edges_,pols_,Tvers_,Ttext_,fpath_,d1_,d2_,info,dim1_,dim2_,adim1_,scal_,vleader_,leader_,t_scal_,dxf_)
         if self.do_block:
-            export(fpath_,dxf_,scal=self.scale,t_scal=self.text_scale,info=info, do_block=True)
+            export(fpath_,dxf_,scal=self.scale,t_scal=self.text_scale,info=info, do_block=self.block_name)
         else:
             export(fpath_,dxf_,scal=self.scale,t_scal=self.text_scale,info=info, do_block=False)
 
