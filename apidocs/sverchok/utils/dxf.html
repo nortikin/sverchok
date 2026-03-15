@@ -702,7 +702,7 @@ el.replaceWith(d);
         lib = BlockLibrary(doc)
         
         # Создаем блок
-        lib.make_block(&#39;Sverchok&#39;, dxf, scal, [lpols,ledgs,lhatc,ldims])
+        lib.make_block(do_block, dxf, scal, [lpols,ledgs,lhatc,ldims])
         doc = lib.return_block()
         # Вставляем блок
         #lib.place_block(&#39;BOLT_M10&#39;, insert=(0, 0))
