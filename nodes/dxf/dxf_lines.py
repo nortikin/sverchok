@@ -77,11 +77,11 @@ class SvDxfLinesNode(SverchCustomTreeNode, bpy.types.Node):
             edges_ = self.inputs['edges'].sv_get()
             #if self.inputs['color'].is_linked:
             # color [[ (1,0,1) ]]
-            if self.inputs['color'].is_linked:
-                cols_ = self.inputs['color'].sv_get(deepcopy=False)
-                cols_ = dataCorrect_np(cols_)[0][0]
-            else:
-                cols_ = self.unit_color[:]
+            #if self.inputs['color'].is_linked:
+            #    cols_ = self.inputs['color'].sv_get(deepcopy=False)
+            #    cols_ = dataCorrect_np(cols_)[0][0]
+            #else:
+            cols_ = self.unit_color[:]
             color_int = self.color_int
             #if self.inputs['metadata'].is_linked:
             # It is any text [['text']]
