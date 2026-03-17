@@ -60,6 +60,8 @@ class SvDxfCirclesNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "linetype", expand=False)
         layout.prop(self, "lineweight", expand=False)
         layout.prop(self, "color_int", expand=False)
+        col = layout.operator("node.dxf_color_table_modal", text="dxf colors", icon='COLOR')
+        col.node_name = self.name
 
     def draw_color_socket(self, socket, context, layout):
         if not socket.is_linked:
