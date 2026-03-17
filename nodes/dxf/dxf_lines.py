@@ -53,7 +53,7 @@ class SvDxfLinesNode(SverchCustomTreeNode, bpy.types.Node):
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'verts')
         self.inputs.new('SvStringsSocket', 'edges')
-        self.inputs.new('SvColorSocket', 'color').custom_draw = 'draw_color_socket'
+        #self.inputs.new('SvColorSocket', 'color').custom_draw = 'draw_color_socket'
         self.inputs.new('SvTextSocket', 'metadata').prop_name='metadata'
         self.outputs.new('SvSvgSocket', 'dxf')
 
