@@ -52,7 +52,7 @@ class SvDxfCirclesNode(SverchCustomTreeNode, bpy.types.Node):
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', 'curves')
-        self.inputs.new('SvColorSocket', 'color').custom_draw = 'draw_color_socket'
+        #self.inputs.new('SvColorSocket', 'color').custom_draw = 'draw_color_socket'
         self.inputs.new('SvTextSocket', 'metadata').prop_name='metadata'
         self.outputs.new('SvSvgSocket', 'dxf')
 
