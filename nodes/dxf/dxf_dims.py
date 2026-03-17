@@ -80,11 +80,11 @@ class SvDxfLinDimsNode(SverchCustomTreeNode, bpy.types.Node):
             #if self.inputs['text'].is_linked:
             #    text_ = self.inputs['text'].sv_get()
             # color [[ (1,0,1) ]]
-            if self.inputs['color'].is_linked:
-                cols_ = self.inputs['color'].sv_get(deepcopy=False)
-                cols_ = dataCorrect_np(cols_)[0][0]
-            else:
-                cols_ = self.unit_color[:]
+            #if self.inputs['color'].is_linked:
+            #    cols_ = self.inputs['color'].sv_get(deepcopy=False)
+            #    cols_ = dataCorrect_np(cols_)[0][0]
+            #else:
+            cols_ = self.unit_color[:]
             color_int = self.color_int
             # It is any text [['text']]
             meta_ = self.inputs['metadata'].sv_get()
