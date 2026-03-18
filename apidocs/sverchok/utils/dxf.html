@@ -160,6 +160,7 @@ el.replaceWith(d);
         col = points_.color
         lw,lt = points_.lineweight, points_.linetype
         color_int = points_.color_int
+        metadata = points_.metadata
         if curve.__repr__()[:7] == &#39;&lt;Circle&#39;:
             matrix = (curve.center*scal).tolist()
             radius = curve.radius*scal
@@ -170,6 +171,8 @@ el.replaceWith(d);
                 circle = msp.add_circle(center=matrix, radius=radius, dxfattribs={&#34;layer&#34;: ledgs,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col})
             else:
                 circle = msp.add_circle(center=matrix, radius=radius, dxfattribs={&#34;layer&#34;: ledgs,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})
+            if metadata:
+                circle.set_xdata(&#34;Sverchok&#34;, [(1000, metadata)])
         elif curve.__repr__()[:7] == &#39;&lt;BezierCurve&#39;: # SvCurve SvEllipse SvCubicBezierCurve SvLine SvNurbsCurve SvSplineCurve Sv
             pass</code></pre>
 </details>
@@ -556,12 +559,15 @@ el.replaceWith(d);
         lw,lt = points_.lineweight, points_.linetype
         v1,v2 = vers
         color_int = points_.color_int
+        metadata = points_.metadata
         if color_int &lt; 1:
             col = tuple([int(i*255) for i in col[:3]])
             col = ezdxf.colors.rgb2int(col)
             ed = msp.add_line(v1,v2, dxfattribs={&#34;layer&#34;: ledgs,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col})
         else:
-            ed = msp.add_line(v1,v2, dxfattribs={&#34;layer&#34;: ledgs,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})</code></pre>
+            ed = msp.add_line(v1,v2, dxfattribs={&#34;layer&#34;: ledgs,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})
+        if metadata:
+            ed.set_xdata(&#34;Sverchok&#34;, [(1000, metadata)])</code></pre>
 </details>
 <div class="desc"><p>edges as simple lines</p></div>
 </dd>
@@ -871,6 +877,7 @@ with metadata vectorized for triangles
         lw,lt = points_.lineweight, points_.linetype
         color_int = points_.color_int
         objecttype = points_.objecttype
+        metadata = points_.metadata
         vers = [[i*scal for i in ver] for ver in points_.vers]
         if color_int &lt; 1:
             col = tuple([int(i*255) for i in col[:3]])
@@ -880,24 +887,36 @@ with metadata vectorized for triangles
                 #print(&#39;face start&#39;)
                 pf = msp.add_polyface()
                 pf.append_face(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col})
+                if metadata:
+                    pf.set_xdata(&#34;Sverchok&#34;, [(1000, metadata)])
                 #print(&#39;face finnish&#39;)
             elif objecttype == &#39;LINE&#39;:
                 pl = msp.add_polyline3d(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col}, close=True)
+                if metadata:
+                    pl.set_xdata(&#34;Sverchok&#34;, [(1000, metadata)])
             elif objecttype == &#39;FACE3D&#39;:
                 for i in range(1, len(vers)-1):
                     pf3 = msp.add_3dface([vers[0],vers[i],vers[i+1]], dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col})
+                    if metadata:
+                        pf3.set_xdata(&#34;Sverchok&#34;, [(1000, metadata)])
                 #ezdxf.entities.Face3d
         else:
             if objecttype == &#39;FACE&#39;:
                 #print(&#39;face start&#39;)
                 pf = msp.add_polyface()
                 pf.append_face(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})
+                if metadata:
+                    pf.set_xdata(&#34;Sverchok&#34;, [(1000, metadata)])
                 #print(&#39;face finnish&#39;)
             elif objecttype == &#39;LINE&#39;:
                 pl = msp.add_polyline3d(vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int}, close=True)
+                if metadata:
+                    pl.set_xdata(&#34;Sverchok&#34;, [(1000, metadata)])
             elif objecttype == &#39;FACE3D&#39;:
                 for i in range(1, len(vers)-1):
                     pf3 = msp.add_3dface([vers[0],vers[i],vers[i+1]], dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})
+                    if metadata:
+                        pf3.set_xdata(&#34;Sverchok&#34;, [(1000, metadata)])
                 #ezdxf.entities.Face3d
 
         #pm = msp.add_polymesh()
@@ -935,13 +954,16 @@ todo 2026 polymesh</p></div>
         t_scal = data.text_scale
         print(&#39;TEXT!!&#39;,tv,tt)
         tv = [i*scal for i in tv]
+        metadata = data.metadata
         print(&#39;text unit&#39;,tt)
-        msp.add_text(
+        textout = msp.add_text(
         tt, height=t_scal,#0.05,
         dxfattribs={
             &#34;layer&#34;: ltext,
             &#34;style&#34;: &#34;LiberationSerif&#34;
-        }).set_placement(tv, align=TextEntityAlignment.CENTER)</code></pre>
+        }).set_placement(tv, align=TextEntityAlignment.CENTER)
+        if metadata:
+            textout.set_xdata(&#34;Sverchok&#34;, [(1000, metadata)])</code></pre>
 </details>
 <div class="desc"><p>draw text todo in 2026</p></div>
 </dd>
