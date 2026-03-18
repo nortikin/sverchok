@@ -598,6 +598,7 @@ def polygons_draw(points, scal, lpols, msp):#(p,v,d1,d2,scal,lpols,msp):
         lw,lt = points_.lineweight, points_.linetype
         color_int = points_.color_int
         objecttype = points_.objecttype
+        metadata = points_.metadata
         vers = [[i*scal for i in ver] for ver in points_.vers]
         if color_int < 1:
             col = tuple([int(i*255) for i in col[:3]])
@@ -607,24 +608,36 @@ def polygons_draw(points, scal, lpols, msp):#(p,v,d1,d2,scal,lpols,msp):
                 #print('face start')
                 pf = msp.add_polyface()
                 pf.append_face(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col})
+                if metadata:
+                    pf.set_xdata("Sverchok", [(1000, metadata)])
                 #print('face finnish')
             elif objecttype == 'LINE':
                 pl = msp.add_polyline3d(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col}, close=True)
+                if metadata:
+                    pl.set_xdata("Sverchok", [(1000, metadata)])
             elif objecttype == 'FACE3D':
                 for i in range(1, len(vers)-1):
                     pf3 = msp.add_3dface([vers[0],vers[i],vers[i+1]], dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col})
+                    if metadata:
+                        pf3.set_xdata("Sverchok", [(1000, metadata)])
                 #ezdxf.entities.Face3d
         else:
             if objecttype == 'FACE':
                 #print('face start')
                 pf = msp.add_polyface()
                 pf.append_face(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int})
+                if metadata:
+                    pf.set_xdata("Sverchok", [(1000, metadata)])
                 #print('face finnish')
             elif objecttype == 'LINE':
                 pl = msp.add_polyline3d(vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int}, close=True)
+                if metadata:
+                    pl.set_xdata("Sverchok", [(1000, metadata)])
             elif objecttype == 'FACE3D':
                 for i in range(1, len(vers)-1):
                     pf3 = msp.add_3dface([vers[0],vers[i],vers[i+1]], dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int})
+                    if metadata:
+                        pf3.set_xdata("Sverchok", [(1000, metadata)])
                 #ezdxf.entities.Face3d
 
         #pm = msp.add_polymesh()
@@ -685,12 +698,15 @@ def edges_draw(points,scal,ledgs,msp):
         lw,lt = points_.lineweight, points_.linetype
         v1,v2 = vers
         color_int = points_.color_int
+        metadata = points_.metadata
         if color_int < 1:
             col = tuple([int(i*255) for i in col[:3]])
             col = ezdxf.colors.rgb2int(col)
             ed = msp.add_line(v1,v2, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'true_color': col})
         else:
             ed = msp.add_line(v1,v2, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'color': color_int})
+        if metadata:
+            ed.set_xdata("Sverchok", [(1000, metadata)])
 
 def circles_draw(points,scal,ledgs,msp):
     ''' circles as simple circles '''
@@ -701,6 +717,7 @@ def circles_draw(points,scal,ledgs,msp):
         col = points_.color
         lw,lt = points_.lineweight, points_.linetype
         color_int = points_.color_int
+        metadata = points_.metadata
         if curve.__repr__()[:7] == '<Circle':
             matrix = (curve.center*scal).tolist()
             radius = curve.radius*scal
@@ -711,6 +728,8 @@ def circles_draw(points,scal,ledgs,msp):
                 circle = msp.add_circle(center=matrix, radius=radius, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'true_color': col})
             else:
                 circle = msp.add_circle(center=matrix, radius=radius, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'color': color_int})
+            if metadata:
+                circle.set_xdata("Sverchok", [(1000, metadata)])
         elif curve.__repr__()[:7] == '<BezierCurve': # SvCurve SvEllipse SvCubicBezierCurve SvLine SvNurbsCurve SvSplineCurve Sv
             pass
 
@@ -722,13 +741,16 @@ def text_draw(t,scal,ltext,msp):
         t_scal = data.text_scale
         print('TEXT!!',tv,tt)
         tv = [i*scal for i in tv]
+        metadata = data.metadata
         print('text unit',tt)
-        msp.add_text(
+        textout = msp.add_text(
         tt, height=t_scal,#0.05,
         dxfattribs={
             "layer": ltext,
             "style": "LiberationSerif"
         }).set_placement(tv, align=TextEntityAlignment.CENTER)
+        if metadata:
+            textout.set_xdata("Sverchok", [(1000, metadata)])
 
 def dimensions_draw(points,scal,ldims,msp):
     #print('LINEAR DIMS!!')
