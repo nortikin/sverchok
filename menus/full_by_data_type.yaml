@@ -794,6 +794,7 @@
     - SvExJsonToNurbsNode
     - SvImportSolidNode
     - SvExportSolidNode
+    - SvExportIfcNode
     - SvReceiveFromSorcarNode
     - SvExportGcodeNode
     - SvReadFCStdNode
