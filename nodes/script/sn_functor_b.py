@@ -7,7 +7,7 @@
 
 import sys
 import json
-import imp
+#import imp deprecated since Python 3.4 and removed entirely in Python 3.12
 import types
 import itertools
 

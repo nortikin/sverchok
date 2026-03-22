@@ -25,11 +25,20 @@ def get_addon_root_dir():
 plugin_icons = previews.new()
 
 # \sverchok-master\ui\logo\png
-plugin_icons.load(
-    name='sverchock_icon_b.png',
-    path=os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
-    path_type='IMAGE'
-)
+if bpy.app.version >= (5,0,0):
+    plugin_icons.load(
+        name='sverchock_icon_b.png',
+        filepath=os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
+        file_type='IMAGE'
+    )
+else:
+    plugin_icons.load(
+        name='sverchock_icon_b.png',
+        path=os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
+        path_type='IMAGE'
+    )
+
+
 
 
 class SV_PT_3DPanel(bpy.types.Panel):
