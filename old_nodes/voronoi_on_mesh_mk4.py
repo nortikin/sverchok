@@ -27,126 +27,18 @@ from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.voronoi3d import voronoi_on_mesh
 import numpy as np
 
-class SvVoronoiOnMeshOffUnlinkedSocketsMK5(bpy.types.Operator):
-    '''Hide all unlinked sockets'''
-    bl_idname = "node.sv_on_voronoi_on_mesh_off_unlinked_sockets_mk5"
-    bl_label = "Select object as active"
-    description_text: bpy.props.StringProperty(default='Only hide unlinked output sockets.\nTo hide linked socket you have to unlink it first.')
 
-    description_text: bpy.props.StringProperty(default='')
-    node_group      : bpy.props.StringProperty(default='')
-    node_name       : bpy.props.StringProperty(default='')
-
-    @classmethod
-    def description(cls, context, property):
-        s = property.description_text
-        return s
-
-    def invoke(self, context, event):
-        node = bpy.data.node_groups[self.node_group].nodes[self.node_name]
-        #node = context.node
-        if node:
-            for s in node.outputs:
-                if not s.is_linked:
-                    s.hide = True
-            pass
-        return {'FINISHED'}
-
-def draw_properties(layout, node_group, node_name):
-    node = bpy.data.node_groups[node_group].nodes[node_name]
-    #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
-    root_grid = layout.grid_flow(row_major=False, columns=2, align=True)
-    root_grid.alignment = 'EXPAND'
-    grid1 = root_grid.grid_flow(row_major=False, columns=1, align=True)
-    grid1.label(text='Viewport Display:')
-
-    grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
-    grid2.label(text='Output Sockets:')
-    row0 = grid2.row(align=True)
-    row0.label(text='- socket is visible', icon='CHECKBOX_HLT')
-    row0.label(text='- socket is hidden', icon='CHECKBOX_DEHLT')
-    grid2.separator()
-    row_op = grid2.row(align=True)
-    row_op.alignment = "LEFT"
-    op = row_op.operator(SvVoronoiOnMeshOffUnlinkedSocketsMK5.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
-    op.node_group = node_group
-    op.node_name  = node_name
-
-    for s in node.outputs:
-        row = grid2.row(align=True)
-        row.enabled = not s.is_linked
-        row.prop(s, 'hide', text=f'{s.label if s.label else s.name}{" (linked)" if s.is_linked else ""}', invert_checkbox=True)
-
-    row_op = grid2.row(align=True)
-    row_op.alignment = "LEFT"
-    op = row_op.operator(SvVoronoiOnMeshOffUnlinkedSocketsMK5.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
-    op.node_group = node_group
-    op.node_name  = node_name
-    pass
-
-
-class SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5(bpy.types.Operator):
-    '''Additional objects properties\nYou can pan dialog window out of node.'''
-    # this combination do not show this panel on the right side panel
-    bl_idname="sv.viewport_display_properties_dialog_voronoi_on_mesh_mk5"
-    bl_label = "Objects 3DViewport properties as Dialog Window."
-
-    # horizontal size
-    # bl_ui_units_x = 40 - Has no influence in Dialog mode
-
-    description_text: bpy.props.StringProperty(default='')
-    node_group      : bpy.props.StringProperty(default='')
-    node_name       : bpy.props.StringProperty(default='')
-
-    # def is_extended():
-    #     return True
-
-    def execute(self, context):
-        return {'FINISHED'}
-    
-    def invoke(self, context, event):
-        self.node_name = context.node.name
-        self.node_group = context.annotation_data_owner.name_full
-        return context.window_manager.invoke_props_dialog(self, width=500)
-
-    def draw(self, context):
-        draw_properties(self.layout, self.node_group, self.node_name)
-        pass
-
-class SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5(bpy.types.Panel):
-    '''Additional objects properties'''
-    # this combination do not show this panel on the right side panel
-    bl_idname="SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5"
-    bl_label = "Voronoi Onn Mesh Node properties"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'WINDOW'
-
-    # @classmethod
-    # def description(cls, context, properties):
-    #     s = "properties.description_text"
-    #     return s
-
-    # horizontal size
-    bl_ui_units_x = 22
-
-    def draw(self, context):
-        if hasattr(context, "node"):
-            node_name = context.node.name
-            node_group = context.annotation_data_owner.name_full
-            draw_properties(self.layout, node_group, node_name)
-        pass
-
-
-class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
+class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi Mesh
     Tooltip: Generate Voronoi diagram on the surface of a mesh object
     """
-    bl_idname = 'SvVoronoiOnMeshNodeMK5'
+    bl_idname = 'SvVoronoiOnMeshNodeMK4'
     bl_label = 'Voronoi on Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
     sv_dependencies = {'scipy'}
+    replacement_nodes = [('SvVoronoiOnMeshNodeMK5', None, None)]
 
     modes = [
             ('VOLUME', "Split Volume", "Split volume of the mesh into regions of Voronoi diagram", 0),
@@ -179,9 +71,9 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets) # type: ignore
     
     join_modes = [
-            ('FLAT', "Separate All Meshes", "Post processing: Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
-            ('SEPARATE', "Keep Source Meshes", "Post processing: Keep parts of the source meshes as source meshes.", 'SYNTAX_ON', 1),
-            ('JOIN', "Join All Meshes", "Post processing: Join all results meshes into a single mesh", 'STICKY_UVS_LOC', 2)
+            ('FLAT', "Separate All Meshes", "Post processing: Separate the result meshes into individual meshes", custom_icon("SV_VOM_SEPARATE_ALL_MESHES"), 0),
+            ('SEPARATE', "Keep Source Meshes", "Post processing: Keep parts of the source meshes as source meshes.", custom_icon("SV_VOM_KEEP_SOURCE_MESHES"), 1),
+            ('JOIN', "Join All Meshes", "Post processing: Join all results meshes into a single mesh", custom_icon("SV_VOM_JOIN_ALL_MESHES"), 2)
         ]
 
     join_mode : EnumProperty(
@@ -261,18 +153,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs.new('SvVerticesSocket', "vertices").label = 'Vertices'
         self.outputs.new('SvStringsSocket', "edges").label = 'Edges'
-        self.outputs.new('SvStringsSocket', "edgesOuter" ).label = 'Edges Outer'
-        self.outputs.new('SvStringsSocket', "edgesInner" ).label = 'Edges Inner'
-        self.outputs.new('SvStringsSocket', "edgesBorder").label = 'Edges Border'
-        self.outputs.new('SvStringsSocket', "edgesOuterIndexes" ).label = 'Edges Outer Index'
-        self.outputs.new('SvStringsSocket', "edgesInnerIndexes" ).label = 'Edges Inner Index'
-        self.outputs.new('SvStringsSocket', "edgesBorderIndexes").label = 'Edges Border Index'
-        self.outputs.new('SvStringsSocket', "polygons"            ).label = 'Polygons'
-        self.outputs.new('SvStringsSocket', "polygonsOuterInner"  ).label = 'Polygons Outer Inner'
-        self.outputs.new('SvStringsSocket', "polygonsOuter"       ).label = 'Polygons Outer'
-        self.outputs.new('SvStringsSocket', "polygonsInner"       ).label = 'Polygons Inner'
-        self.outputs.new('SvStringsSocket', "polygonsOuterIndexes").label = 'Polygons Outer Indexes'
-        self.outputs.new('SvStringsSocket', "polygonsInnerIndexes").label = 'Polygons Inner Indexes'
+        self.outputs.new('SvStringsSocket', "polygons").label = 'Polygons'
         self.outputs.new('SvStringsSocket', "sites_idx").label = 'Used Sites Idx'
         self.outputs.new('SvStringsSocket', "sites_verts").label = 'Used Sites Verts'
 
@@ -281,11 +162,6 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
-        row0 = layout.row(align=True)
-        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
-        row0.column(align=True).popover(panel=SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5.bl_idname, icon='DOWNARROW_HLT', text="")
-
-        #layout.operator(SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
         layout.label(text="Mode:")
         layout.prop(self, "mode", expand=True)
         # split = layout.column().split(factor=0.6)
@@ -331,8 +207,6 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         verts_out = []
         edges_out = []
         faces_out = []
-        outer_polygons_property_out = []
-        outer_edges_property_out = []
         sites_idx_out = []
         sites_verts_out = []
 
@@ -365,7 +239,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                         np_mask = np.invert(np_mask)
                     mask = np_mask.tolist()
 
-            new_verts, new_edges, new_faces, new_used_sites_idx, new_used_sites_verts, outer_faces_property, outer_edges_property = voronoi_on_mesh(verts, faces, sites, thickness=0,
+            new_verts, new_edges, new_faces, new_used_sites_idx, new_used_sites_verts = voronoi_on_mesh(verts, faces, sites, thickness=0,
                             spacing = spacing,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
@@ -383,101 +257,23 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                 verts_out.extend(new_verts)
                 edges_out.extend(new_edges)
                 faces_out.extend(new_faces)
-                outer_polygons_property_out.extend(outer_faces_property)
-                outer_edges_property_out.extend(outer_edges_property) # dict {is_outer:True/False, is_inner: True/False}
             elif self.join_mode == 'SEPARATE' or self.join_mode == 'JOIN':
                 verts1, edges1, faces1 = mesh_join(new_verts, new_edges, new_faces)
                 verts_out.append(verts1)
                 edges_out.append(edges1)
                 faces_out.append(faces1)
-                outer_faces = [item for sublist in outer_faces_property for item in sublist]
-                outer_polygons_property_out.append(outer_faces)
-                outer_edges = [item for sublist in outer_edges_property for item in sublist]
-                outer_edges_property_out.append(outer_edges)  # dict {is_outer:True/False, is_inner: True/False}
 
         if self.join_mode == 'JOIN':
             verts1, edges1, faces1 = mesh_join(verts_out, edges_out, faces_out)
             verts_out = [verts1]
             edges_out = [edges1]
             faces_out = [faces1]
-            outer_faces = [item for sublist in outer_polygons_property_out for item in sublist]
-            outer_polygons_property_out = [outer_faces]
-            outer_edges = [item for sublist in outer_edges_property_out for item in sublist]
-            outer_edges_property_out = [outer_edges]
-
-        polygonsOuter_out = []
-        polygonsInner_out = []
-        polygonsOuterIndexes_out = []
-        polygonsInnerIndexes_out = []
-        for I, mask in enumerate(outer_polygons_property_out):
-            faces_out_I = faces_out[I]
-            polygonsOuter_out_I = []
-            polygonsInner_out_I = []
-            polygonsOuterIndexes_out_I = []
-            polygonsInnerIndexes_out_I = []
-            for IJ, (m, v) in enumerate(zip(mask, faces_out_I)):
-                if m==1:
-                    polygonsInner_out_I.append(v)
-                    polygonsOuterIndexes_out_I.append(IJ)
-                else:
-                    polygonsOuter_out_I.append(v)
-                    polygonsInnerIndexes_out_I.append(IJ)
-                pass
-            polygonsOuter_out.append(polygonsInner_out_I)
-            polygonsInner_out.append(polygonsOuter_out_I)
-            polygonsOuterIndexes_out.append(polygonsInnerIndexes_out_I)
-            polygonsInnerIndexes_out.append(polygonsOuterIndexes_out_I)
-
-        edgesOuter_out = []
-        edgesInner_out = []
-        edgesBorder_out = []
-        edgesOuterIndexes_out = []
-        edgesInnerIndexes_out = []
-        edgesBorderIndexes_out = []
-        for I, mask in enumerate(outer_edges_property_out):
-            edges_out_I = edges_out[I]
-            edgesOuter_out_I = []
-            edgesInner_out_I = []
-            edgesBorder_out_I = []
-            edgesOuterIndexes_out_I = []
-            edgesInnerIndexes_out_I = []
-            edgesBorderIndexes_out_I = []
-            for IJ, (m, v) in enumerate(zip(mask, edges_out_I)):
-                m_is_outer = m["is_outer"]
-                m_is_inner = m["is_inner"]
-                if m_is_outer==True:
-                    edgesInner_out_I.append(v)
-                    edgesOuterIndexes_out_I.append(IJ)
-                if m_is_inner==True:
-                    edgesOuter_out_I.append(v)
-                    edgesInnerIndexes_out_I.append(IJ)
-                if m_is_outer==True and m_is_inner==True:
-                    edgesBorder_out_I.append(v)
-                    edgesBorderIndexes_out_I.append(IJ)
-                pass
-            edgesOuter_out.append(edgesInner_out_I)
-            edgesInner_out.append(edgesOuter_out_I)
-            edgesBorder_out.append(edgesBorder_out_I)
-            edgesOuterIndexes_out.append(edgesInnerIndexes_out_I)
-            edgesInnerIndexes_out.append(edgesOuterIndexes_out_I)
-            edgesBorderIndexes_out.append(edgesBorderIndexes_out_I)
 
         self.outputs['vertices'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)
-        self.outputs['edgesOuter'].sv_set(edgesOuter_out)
-        self.outputs['edgesInner'].sv_set(edgesInner_out)
-        self.outputs['edgesBorder'].sv_set(edgesBorder_out)
-        self.outputs['edgesOuterIndexes'].sv_set(edgesOuterIndexes_out)
-        self.outputs['edgesInnerIndexes'].sv_set(edgesInnerIndexes_out)
-        self.outputs['edgesBorderIndexes'].sv_set(edgesBorderIndexes_out)
         self.outputs['polygons'].sv_set(faces_out)
-        self.outputs['polygonsOuterInner'].sv_set(outer_polygons_property_out)
-        self.outputs['polygonsOuter'].sv_set(polygonsOuter_out)
-        self.outputs['polygonsInner'].sv_set(polygonsInner_out)
-        self.outputs['polygonsOuterIndexes'].sv_set(polygonsOuterIndexes_out)
-        self.outputs['polygonsInnerIndexes'].sv_set(polygonsInnerIndexes_out)
         self.outputs['sites_idx'].sv_set(sites_idx_out)
         self.outputs['sites_verts'].sv_set(sites_verts_out)
 
-classes = [SvVoronoiOnMeshOffUnlinkedSocketsMK5, SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5, SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5, SvVoronoiOnMeshNodeMK5]
+classes = [SvVoronoiOnMeshNodeMK4]
 register, unregister = bpy.utils.register_classes_factory(classes)

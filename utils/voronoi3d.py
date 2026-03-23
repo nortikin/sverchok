@@ -240,6 +240,34 @@ def calc_bvh_projections(bvh, sites):
 # see additional info https://github.com/nortikin/sverchok/pull/4948
 def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', normal_update = False, precision=1e-8, mask=[]):
 
+    def get_bmesh_data(bm, outer_layer_name, ret_verts=True, ret_edges=True, ret_faces=True):
+        '''return verts, edges, faces and outer faces property (1-outer, 0-inner face)'''
+        verts_res = [v.co[:] for v in bm.verts] if ret_verts==True else None
+        edges_res = [[e.verts[0].index, e.verts[1].index] for e in bm.edges] if ret_edges==True else None
+        ordered_faces = sorted(bm.faces, key=lambda f: f.index)
+        faces_res = [[i.index for i in p.verts] for p in ordered_faces] if ret_faces==True else None
+
+        outer_faces_layer = bm.faces.layers.int.get(outer_layer_name)
+        faces_outer_property = [ f[outer_faces_layer] for f in ordered_faces]
+
+        #outer_edges_layer = bm.edges.layers.int.get(outer_layer_name)
+        edges_outer_property = []
+        for e in bm.edges:
+            faces = e.link_faces  # список BMFace
+            is_outer = False
+            is_inner = False
+            for f in faces:
+                outer_property = f[outer_faces_layer]
+                if outer_property==1:
+                    is_outer = True
+                else:
+                    is_inner = True
+                pass
+            edges_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner))
+            pass
+        return verts_res, edges_res, faces_res, faces_outer_property, edges_outer_property
+
+
     def get_sites_delaunay_params(delaunay, n_orig_sites):
         result = defaultdict(list)
         ridges = []
@@ -273,7 +301,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     num_bisect = 0 # general count of bisect for full cutting process
     num_unpredicted_erased = 0 # if optimisation can not find a skip bisect case (with using bounding box) then counter incremented
 
-    def cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing, center_of_mass, bbox_aligned):
+    def cut_cell(start_mesh, outer_layer_name, sites_delaunay_params, site_idx, spacing, center_of_mass, bbox_aligned):
         nonlocal num_bisect, num_unpredicted_erased
         src_mesh = None
         # Check ridges for sites before bisect. If no ridges then no bisect and no mesh in result
@@ -328,6 +356,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                     lst_ridges_to_bisect.sort()  # less dist gets more points to cut off (with negative dists to. Negative dist is a negative side of bisect plane)
 
                     src_mesh = start_mesh.copy() # do not need create src_mesh until here.
+                    outer_layer = src_mesh.faces.layers.int.get(outer_layer_name)
 
                     # A main bisection process of site_idx
                     for i in range(len(lst_ridges_to_bisect)):
@@ -382,9 +411,13 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
             return None
 
         # if src_mesh has vertices then return mesh data
+        src_mesh.faces.ensure_lookup_table()
+        src_mesh.faces.index_update() # sort faces by indexes for 
+        src_mesh.edges.ensure_lookup_table()
+        src_mesh.edges.index_update() # sort edges by indexes for 
         if mode=='VOLUME' and normal_update==True:
             src_mesh.normal_update()
-        pydata = pydata_from_bmesh(src_mesh)
+        pydata = get_bmesh_data(src_mesh, outer_layer_name)
         src_mesh.clear() #remember to clear geometry before return
         src_mesh.free()
         return pydata
@@ -392,6 +425,8 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     verts_out = []
     edges_out = []
     faces_out = []
+    outer_faces_property_out = []
+    outer_edges_property_out = []
     used_sites_idx = []
     used_sites_verts = []
 
@@ -454,15 +489,24 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
             mask = mask[:]+[False]*(len(sites)-len(mask) if len(mask)<=len(sites) else 0)
 
         start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
+        # fill all faces as outer
+        outer_layer_name = "__outer__"
+        start_mesh.faces.layers.int.new(outer_layer_name)
+        outer_faces_layer = start_mesh.faces.layers.int.get(outer_layer_name)
+        for start_mesh_faces in start_mesh.faces:
+            start_mesh_faces[outer_faces_layer] = 1
+
         for site_idx in range(len(sites)):
             if(mask[site_idx]):
-                cell = cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
+                cell = cut_cell(start_mesh, outer_layer_name, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
                 if cell is not None:
-                    new_verts, new_edges, new_faces = cell
+                    new_verts, new_edges, new_faces, new_outer_faces_property, new_edges_outer_property = cell
                     if new_verts:
                         verts_out.append(new_verts)
                         edges_out.append(new_edges)
                         faces_out.append(new_faces)
+                        outer_faces_property_out.append(new_outer_faces_property)
+                        outer_edges_property_out.append(new_edges_outer_property)
                         used_sites_idx.append( site_idx )
                         used_sites_verts.append( sites[site_idx] )
         start_mesh.clear() # remember to clear empty geometry
@@ -473,6 +517,8 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
         verts_out.append(new_verts)
         edges_out.append(new_edges)
         faces_out.append(new_faces)
+        outer_faces_property_out = [[1 for f in new_faces]] # all faces are outer
+        outer_edges_property_out.append([ dict(is_outer=False, is_inner=True) for e in new_edges])
         start_mesh.clear() # remember to clear empty geometry
         start_mesh.free()
     
@@ -483,7 +529,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     # sites - count of sites in process
     # mask - mask of sites that uset to the result. Empty list all sites uset to result.
     # print( f"bisects: {num_bisect: 4d}, unb={num_unpredicted_erased: 4d}, sites={len(sites)}")
-    return verts_out, edges_out, faces_out, used_sites_idx, used_sites_verts
+    return verts_out, edges_out, faces_out, used_sites_idx, used_sites_verts, outer_faces_property_out, outer_edges_property_out
 
 def voronoi_on_mesh(verts, faces, sites, thickness,
     spacing = 0.0,
@@ -520,10 +566,10 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
 
     else: # VOLUME, SURFACE
         all_points = [site for site in sites if site]
-        verts, edges, faces, used_sites_idx, used_sites_verts = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
+        verts, edges, faces, used_sites_idx, used_sites_verts, outer_faces_property, outer_edges_property_out = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
                 spacing = spacing, mode = mode, normal_update = normal_update,
                 precision = precision, mask=mask)
-        return verts, edges, faces, used_sites_idx, used_sites_verts
+        return verts, edges, faces, used_sites_idx, used_sites_verts, outer_faces_property, outer_edges_property_out
 
 def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True, predicate_plus=None, predicate_minus=None):
     k = 0.5*thickness
