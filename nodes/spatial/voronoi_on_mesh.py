@@ -259,22 +259,28 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
 
         self.inputs['voronoi_sites_mask'].custom_draw = 'draw_voronoi_sites_mask_in_socket'
 
-        self.outputs.new('SvVerticesSocket', "vertices").label = 'Vertices'
-        self.outputs.new('SvStringsSocket', "edges").label = 'Edges'
-        self.outputs.new('SvStringsSocket', "edgesOuter" ).label = 'Edges Outer'
-        self.outputs.new('SvStringsSocket', "edgesInner" ).label = 'Edges Inner'
-        self.outputs.new('SvStringsSocket', "edgesBorder").label = 'Edges Border'
-        self.outputs.new('SvStringsSocket', "edgesOuterIndexes" ).label = 'Edges Outer Index'
-        self.outputs.new('SvStringsSocket', "edgesInnerIndexes" ).label = 'Edges Inner Index'
-        self.outputs.new('SvStringsSocket', "edgesBorderIndexes").label = 'Edges Border Index'
-        self.outputs.new('SvStringsSocket', "polygons"            ).label = 'Polygons'
-        self.outputs.new('SvStringsSocket', "polygonsOuterInner"  ).label = 'Polygons Outer Inner'
-        self.outputs.new('SvStringsSocket', "polygonsOuter"       ).label = 'Polygons Outer'
-        self.outputs.new('SvStringsSocket', "polygonsInner"       ).label = 'Polygons Inner'
-        self.outputs.new('SvStringsSocket', "polygonsOuterIndexes").label = 'Polygons Outer Indexes'
-        self.outputs.new('SvStringsSocket', "polygonsInnerIndexes").label = 'Polygons Inner Indexes'
-        self.outputs.new('SvStringsSocket', "sites_idx").label = 'Used Sites Idx'
-        self.outputs.new('SvStringsSocket', "sites_verts").label = 'Used Sites Verts'
+        self.outputs.new('SvVerticesSocket', "vertices"             ).label = 'Vertices'
+        self.outputs.new('SvVerticesSocket', "verticesOuter"        ).label = 'Vertices Outer'
+        self.outputs.new('SvVerticesSocket', "verticesInner"        ).label = 'Vertices Inner'
+        self.outputs.new('SvVerticesSocket', "verticesBorder"       ).label = 'Vertices Border'
+        self.outputs.new('SvStringsSocket' , "verticesOuterIndexes" ).label = 'Vertices Outer Indexes'
+        self.outputs.new('SvStringsSocket' , "verticesInnerIndexes" ).label = 'Vertices Inner Indexes'
+        self.outputs.new('SvStringsSocket' , "verticesBorderIndexes").label = 'Vertices Border Indexes'
+        self.outputs.new('SvStringsSocket' , "edges"                ).label = 'Edges'
+        self.outputs.new('SvStringsSocket' , "edgesOuter"           ).label = 'Edges Outer'
+        self.outputs.new('SvStringsSocket' , "edgesInner"           ).label = 'Edges Inner'
+        self.outputs.new('SvStringsSocket' , "edgesBorder"          ).label = 'Edges Border'
+        self.outputs.new('SvStringsSocket' , "edgesOuterIndexes"    ).label = 'Edges Outer Index'
+        self.outputs.new('SvStringsSocket' , "edgesInnerIndexes"    ).label = 'Edges Inner Index'
+        self.outputs.new('SvStringsSocket' , "edgesBorderIndexes"   ).label = 'Edges Border Index'
+        self.outputs.new('SvStringsSocket' , "polygons"             ).label = 'Polygons'
+        self.outputs.new('SvStringsSocket' , "polygonsOuterInner"   ).label = 'Polygons Outer Inner Mask'
+        self.outputs.new('SvStringsSocket' , "polygonsOuter"        ).label = 'Polygons Outer'
+        self.outputs.new('SvStringsSocket' , "polygonsInner"        ).label = 'Polygons Inner'
+        self.outputs.new('SvStringsSocket' , "polygonsOuterIndexes" ).label = 'Polygons Outer Indexes'
+        self.outputs.new('SvStringsSocket' , "polygonsInnerIndexes" ).label = 'Polygons Inner Indexes'
+        self.outputs.new('SvStringsSocket' , "sites_idx"            ).label = 'Used Sites Idx'
+        self.outputs.new('SvStringsSocket' , "sites_verts"          ).label = 'Used Sites Verts'
 
         self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
 
@@ -331,8 +337,9 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         verts_out = []
         edges_out = []
         faces_out = []
-        outer_polygons_property_out = []
+        outer_verts_property_out = []
         outer_edges_property_out = []
+        outer_polygons_property_out = []
         sites_idx_out = []
         sites_verts_out = []
 
@@ -365,7 +372,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                         np_mask = np.invert(np_mask)
                     mask = np_mask.tolist()
 
-            new_verts, new_edges, new_faces, new_used_sites_idx, new_used_sites_verts, outer_faces_property, outer_edges_property = voronoi_on_mesh(verts, faces, sites, thickness=0,
+            new_verts, new_edges, new_faces, new_used_sites_idx, new_used_sites_verts, outer_verts_property, outer_edges_property, outer_faces_property = voronoi_on_mesh(verts, faces, sites, thickness=0,
                             spacing = spacing,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
@@ -383,50 +390,68 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                 verts_out.extend(new_verts)
                 edges_out.extend(new_edges)
                 faces_out.extend(new_faces)
-                outer_polygons_property_out.extend(outer_faces_property)
+                outer_verts_property_out.extend(outer_verts_property) # dict {is_outer:True/False, is_inner: True/False}
                 outer_edges_property_out.extend(outer_edges_property) # dict {is_outer:True/False, is_inner: True/False}
+                outer_polygons_property_out.extend(outer_faces_property)
             elif self.join_mode == 'SEPARATE' or self.join_mode == 'JOIN':
                 verts1, edges1, faces1 = mesh_join(new_verts, new_edges, new_faces)
                 verts_out.append(verts1)
                 edges_out.append(edges1)
                 faces_out.append(faces1)
-                outer_faces = [item for sublist in outer_faces_property for item in sublist]
-                outer_polygons_property_out.append(outer_faces)
+                outer_verts = [item for sublist in outer_verts_property for item in sublist]
+                outer_verts_property_out.append(outer_verts)  # dict {is_outer:True/False, is_inner: True/False}
                 outer_edges = [item for sublist in outer_edges_property for item in sublist]
                 outer_edges_property_out.append(outer_edges)  # dict {is_outer:True/False, is_inner: True/False}
+                outer_faces = [item for sublist in outer_faces_property for item in sublist]
+                outer_polygons_property_out.append(outer_faces)
 
         if self.join_mode == 'JOIN':
             verts1, edges1, faces1 = mesh_join(verts_out, edges_out, faces_out)
             verts_out = [verts1]
             edges_out = [edges1]
             faces_out = [faces1]
-            outer_faces = [item for sublist in outer_polygons_property_out for item in sublist]
-            outer_polygons_property_out = [outer_faces]
+            outer_verts = [item for sublist in outer_verts_property_out for item in sublist]
+            outer_verts_property_out = [outer_verts]
             outer_edges = [item for sublist in outer_edges_property_out for item in sublist]
             outer_edges_property_out = [outer_edges]
+            outer_faces = [item for sublist in outer_polygons_property_out for item in sublist]
+            outer_polygons_property_out = [outer_faces]
+            pass
 
-        polygonsOuter_out = []
-        polygonsInner_out = []
-        polygonsOuterIndexes_out = []
-        polygonsInnerIndexes_out = []
-        for I, mask in enumerate(outer_polygons_property_out):
-            faces_out_I = faces_out[I]
-            polygonsOuter_out_I = []
-            polygonsInner_out_I = []
-            polygonsOuterIndexes_out_I = []
-            polygonsInnerIndexes_out_I = []
-            for IJ, (m, v) in enumerate(zip(mask, faces_out_I)):
-                if m==1:
-                    polygonsInner_out_I.append(v)
-                    polygonsOuterIndexes_out_I.append(IJ)
-                else:
-                    polygonsOuter_out_I.append(v)
-                    polygonsInnerIndexes_out_I.append(IJ)
+        vertsOuter_out = []
+        vertsInner_out = []
+        vertsBorder_out = []
+        vertsOuterIndexes_out = []
+        vertsInnerIndexes_out = []
+        vertsBorderIndexes_out = []
+        for I, mask in enumerate(outer_verts_property_out):
+            verts_out_I = verts_out[I]
+            vertsOuter_out_I = []
+            vertsInner_out_I = []
+            vertsBorder_out_I = []
+            vertsOuterIndexes_out_I = []
+            vertsInnerIndexes_out_I = []
+            vertsBorderIndexes_out_I = []
+            for IJ, (m, v) in enumerate(zip(mask, verts_out_I)):
+                m_is_outer = m["is_outer"]
+                m_is_inner = m["is_inner"]
+                if m_is_outer==True:
+                    vertsInner_out_I.append(v)
+                    vertsOuterIndexes_out_I.append(IJ)
+                if m_is_inner==True:
+                    vertsOuter_out_I.append(v)
+                    vertsInnerIndexes_out_I.append(IJ)
+                if m_is_outer==True and m_is_inner==True:
+                    vertsBorder_out_I.append(v)
+                    vertsBorderIndexes_out_I.append(IJ)
                 pass
-            polygonsOuter_out.append(polygonsInner_out_I)
-            polygonsInner_out.append(polygonsOuter_out_I)
-            polygonsOuterIndexes_out.append(polygonsInnerIndexes_out_I)
-            polygonsInnerIndexes_out.append(polygonsOuterIndexes_out_I)
+            vertsOuter_out.append(vertsInner_out_I)
+            vertsInner_out.append(vertsOuter_out_I)
+            vertsBorder_out.append(vertsBorder_out_I)
+            vertsOuterIndexes_out.append(vertsInnerIndexes_out_I)
+            vertsInnerIndexes_out.append(vertsOuterIndexes_out_I)
+            vertsBorderIndexes_out.append(vertsBorderIndexes_out_I)
+            pass
 
         edgesOuter_out = []
         edgesInner_out = []
@@ -461,23 +486,54 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             edgesOuterIndexes_out.append(edgesInnerIndexes_out_I)
             edgesInnerIndexes_out.append(edgesOuterIndexes_out_I)
             edgesBorderIndexes_out.append(edgesBorderIndexes_out_I)
+            pass
 
-        self.outputs['vertices'].sv_set(verts_out)
-        self.outputs['edges'].sv_set(edges_out)
-        self.outputs['edgesOuter'].sv_set(edgesOuter_out)
-        self.outputs['edgesInner'].sv_set(edgesInner_out)
-        self.outputs['edgesBorder'].sv_set(edgesBorder_out)
-        self.outputs['edgesOuterIndexes'].sv_set(edgesOuterIndexes_out)
-        self.outputs['edgesInnerIndexes'].sv_set(edgesInnerIndexes_out)
-        self.outputs['edgesBorderIndexes'].sv_set(edgesBorderIndexes_out)
-        self.outputs['polygons'].sv_set(faces_out)
-        self.outputs['polygonsOuterInner'].sv_set(outer_polygons_property_out)
-        self.outputs['polygonsOuter'].sv_set(polygonsOuter_out)
-        self.outputs['polygonsInner'].sv_set(polygonsInner_out)
-        self.outputs['polygonsOuterIndexes'].sv_set(polygonsOuterIndexes_out)
-        self.outputs['polygonsInnerIndexes'].sv_set(polygonsInnerIndexes_out)
-        self.outputs['sites_idx'].sv_set(sites_idx_out)
-        self.outputs['sites_verts'].sv_set(sites_verts_out)
+        polygonsOuter_out = []
+        polygonsInner_out = []
+        polygonsOuterIndexes_out = []
+        polygonsInnerIndexes_out = []
+        for I, mask in enumerate(outer_polygons_property_out):
+            faces_out_I = faces_out[I]
+            polygonsOuter_out_I = []
+            polygonsInner_out_I = []
+            polygonsOuterIndexes_out_I = []
+            polygonsInnerIndexes_out_I = []
+            for IJ, (m, v) in enumerate(zip(mask, faces_out_I)):
+                if m==1:
+                    polygonsInner_out_I.append(v)
+                    polygonsOuterIndexes_out_I.append(IJ)
+                else:
+                    polygonsOuter_out_I.append(v)
+                    polygonsInnerIndexes_out_I.append(IJ)
+                pass
+            polygonsOuter_out.append(polygonsInner_out_I)
+            polygonsInner_out.append(polygonsOuter_out_I)
+            polygonsOuterIndexes_out.append(polygonsInnerIndexes_out_I)
+            polygonsInnerIndexes_out.append(polygonsOuterIndexes_out_I)
+            pass
+
+        self.outputs['vertices'             ].sv_set(verts_out)
+        self.outputs['verticesOuter'        ].sv_set(vertsOuter_out)
+        self.outputs['verticesInner'        ].sv_set(vertsInner_out)
+        self.outputs['verticesBorder'       ].sv_set(vertsBorder_out)
+        self.outputs['verticesOuterIndexes' ].sv_set(vertsOuterIndexes_out)
+        self.outputs['verticesInnerIndexes' ].sv_set(vertsInnerIndexes_out)
+        self.outputs['verticesBorderIndexes'].sv_set(vertsBorderIndexes_out)
+        self.outputs['edges'                ].sv_set(edges_out)
+        self.outputs['edgesOuter'           ].sv_set(edgesOuter_out)
+        self.outputs['edgesInner'           ].sv_set(edgesInner_out)
+        self.outputs['edgesBorder'          ].sv_set(edgesBorder_out)
+        self.outputs['edgesOuterIndexes'    ].sv_set(edgesOuterIndexes_out)
+        self.outputs['edgesInnerIndexes'    ].sv_set(edgesInnerIndexes_out)
+        self.outputs['edgesBorderIndexes'   ].sv_set(edgesBorderIndexes_out)
+        self.outputs['polygons'             ].sv_set(faces_out)
+        self.outputs['polygonsOuterInner'   ].sv_set(outer_polygons_property_out)
+        self.outputs['polygonsOuter'        ].sv_set(polygonsOuter_out)
+        self.outputs['polygonsInner'        ].sv_set(polygonsInner_out)
+        self.outputs['polygonsOuterIndexes' ].sv_set(polygonsOuterIndexes_out)
+        self.outputs['polygonsInnerIndexes' ].sv_set(polygonsInnerIndexes_out)
+        self.outputs['sites_idx'            ].sv_set(sites_idx_out)
+        self.outputs['sites_verts'          ].sv_set(sites_verts_out)
 
 classes = [SvVoronoiOnMeshOffUnlinkedSocketsMK5, SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5, SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5, SvVoronoiOnMeshNodeMK5]
 register, unregister = bpy.utils.register_classes_factory(classes)
