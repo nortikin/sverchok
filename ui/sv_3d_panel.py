@@ -25,7 +25,7 @@ def get_addon_root_dir():
 plugin_icons = previews.new()
 
 # \sverchok-master\ui\logo\png
-if bpy.app.version >= (5,0,0):
+if bpy.app.version >= (5,1,0):
     plugin_icons.load(
         name='sverchock_icon_b.png',
         filepath=os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
