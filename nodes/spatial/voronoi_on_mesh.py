@@ -374,6 +374,24 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
 
+        self.outputs["verticesOuter"]           .hide = True
+        self.outputs["verticesInner"]           .hide = True
+        self.outputs["verticesBorder"]          .hide = True
+        self.outputs["verticesOuterIndexes"]    .hide = True
+        self.outputs["verticesInnerIndexes"]    .hide = True
+        self.outputs["verticesBorderIndexes"]   .hide = True
+        self.outputs["edgesOuter"]              .hide = True
+        self.outputs["edgesInner"]              .hide = True
+        self.outputs["edgesBorder"]             .hide = True
+        self.outputs["edgesOuterIndexes"]       .hide = True
+        self.outputs["edgesInnerIndexes"]       .hide = True
+        self.outputs["edgesBorderIndexes"]      .hide = True
+        self.outputs["polygonsOuterInner"]      .hide = True
+        self.outputs["polygonsOuter"]           .hide = True
+        self.outputs["polygonsInner"]           .hide = True
+        self.outputs["polygonsOuterIndexes"]    .hide = True
+        self.outputs["polygonsInnerIndexes"]    .hide = True
+
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
