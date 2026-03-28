@@ -1,8 +1,8 @@
 Voronoi on Mesh
 ===============
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/ecff1142-de97-438f-a3be-f609d0816b96
-  :target: https://github.com/nortikin/sverchok/assets/14288520/ecff1142-de97-438f-a3be-f609d0816b96
+.. image:: https://github.com/user-attachments/assets/5e24b41f-f458-4432-8212-917e6813255e
+  :target: https://github.com/user-attachments/assets/5e24b41f-f458-4432-8212-917e6813255e
 
 Dependencies
 ------------
@@ -30,27 +30,31 @@ This node has the following inputs:
 * **Vertices**. Vertices of the mesh to generate Voronoi diagram on. This input is mandatory.
 * **Polygons**. Faces of the mesh to generate Voronoi diagram on. This input is mandatory.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/5a6ecd49-9ae1-4422-98b6-211060a22420
-  :target: https://github.com/nortikin/sverchok/assets/14288520/5a6ecd49-9ae1-4422-98b6-211060a22420
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/5a6ecd49-9ae1-4422-98b6-211060a22420
+    :target: https://github.com/nortikin/sverchok/assets/14288520/5a6ecd49-9ae1-4422-98b6-211060a22420
 
 * **Voronoi Sites**. The points to generate Voronoi diagram for. Usually you want for
   this points to lie either inside the mesh or on it's surface, but this is not
   necessary. This input is mandatory. If list of Voronoi sites is Zero length then source object will not processed
   and transfer it params to output sockets.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/4353aec1-e4f5-4cb4-a9ec-f3e8c6435c0b
-  :target: https://github.com/nortikin/sverchok/assets/14288520/4353aec1-e4f5-4cb4-a9ec-f3e8c6435c0b
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/4353aec1-e4f5-4cb4-a9ec-f3e8c6435c0b
+    :target: https://github.com/nortikin/sverchok/assets/14288520/4353aec1-e4f5-4cb4-a9ec-f3e8c6435c0b
+
+* **Matrices of meshes**. Matrices of input meshes if meshes placed not in the zero. For example: if you using "Get Objects Data" with "Apply matrices" parameter off then real coords can be calculated with "Get Objects Data" Matrices output
+  
+  .. image:: https://github.com/user-attachments/assets/fbc79628-7c54-4e0e-a86e-601b41abf0cd
+    :target: https://github.com/user-attachments/assets/fbc79628-7c54-4e0e-a86e-601b41abf0cd
 
 * **Mask of sites**. List of True/False or indexes. What Sites will be show in result.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/61bd23e3-3a8e-47e2-b18f-1c7272b71679
-  :target: https://github.com/nortikin/sverchok/assets/14288520/61bd23e3-3a8e-47e2-b18f-1c7272b71679
-
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/61bd23e3-3a8e-47e2-b18f-1c7272b71679
+    :target: https://github.com/nortikin/sverchok/assets/14288520/61bd23e3-3a8e-47e2-b18f-1c7272b71679
 
 * **invert** Invert list **Mask of Sites**.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/b8360826-c678-4b47-b783-3e05a71f1275
-  :target: https://github.com/nortikin/sverchok/assets/14288520/b8360826-c678-4b47-b783-3e05a71f1275
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/b8360826-c678-4b47-b783-3e05a71f1275
+    :target: https://github.com/nortikin/sverchok/assets/14288520/b8360826-c678-4b47-b783-3e05a71f1275
 
 * **Spacing**. Percent of space to leave between generated fragment meshes.
   Zero means do not leave any space, i.e. regions will fully cover initial
@@ -58,13 +62,13 @@ This node has the following inputs:
   per object, or a list of values per object - one value per site. In the later
   case, each value will be used for corresponding cell.
 
-.. image:: https://user-images.githubusercontent.com/14288520/202571726-e7ecbf0a-72ad-48bd-b3c5-cd800b86b524.gif
-  :target: https://user-images.githubusercontent.com/14288520/202571726-e7ecbf0a-72ad-48bd-b3c5-cd800b86b524.gif
+  .. image:: https://user-images.githubusercontent.com/14288520/202571726-e7ecbf0a-72ad-48bd-b3c5-cd800b86b524.gif
+    :target: https://user-images.githubusercontent.com/14288520/202571726-e7ecbf0a-72ad-48bd-b3c5-cd800b86b524.gif
 
 The list of values per object - one value per site:
 
-.. image:: https://user-images.githubusercontent.com/14288520/202572900-c82edfd3-6634-4425-b33a-b4f09f87ecc9.png
-  :target: https://user-images.githubusercontent.com/14288520/202572900-c82edfd3-6634-4425-b33a-b4f09f87ecc9.png
+  .. image:: https://user-images.githubusercontent.com/14288520/202572900-c82edfd3-6634-4425-b33a-b4f09f87ecc9.png
+    :target: https://user-images.githubusercontent.com/14288520/202572900-c82edfd3-6634-4425-b33a-b4f09f87ecc9.png
 
 Parameters
 ----------
@@ -86,20 +90,36 @@ This node has the following parameters:
   normals of generated meshes point outside. Otherwise, this is not guaranteed.
   Checked by default.
 
-.. image:: https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png
-  :target: https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png
+  .. image:: https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png
+    :target: https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png
 
-.. image:: https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif
-  :target: https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif
+  .. image:: https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif
+    :target: https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif
+
+* **Pre processing**. This define preprocessing original objects, sites, matrices and masks.
+
+  - **Split**. Separate unconnected meshes independently before process. Sites, matrices and masks keep the same for every separated element.
+  - **Keep**. Do nothing. All original meshes stay unchanged before process
+  - **Merge**. Merge original meshes, sites, masks. Spacing gets first.
+
+    .. image:: https://github.com/user-attachments/assets/11a1b295-83b4-4a9a-a62f-9760a93ae680
+      :target: https://github.com/user-attachments/assets/11a1b295-83b4-4a9a-a62f-9760a93ae680
+
+    .. image:: https://github.com/user-attachments/assets/9961c060-f60d-4e7d-a40e-730e6861fa4a
+      :target: https://github.com/user-attachments/assets/9961c060-f60d-4e7d-a40e-730e6861fa4a
+
+    .. image:: https://github.com/user-attachments/assets/a0a2de0a-ded9-408e-9609-24373e5c51f5
+      :target: https://github.com/user-attachments/assets/a0a2de0a-ded9-408e-9609-24373e5c51f5
+
 
 * **Post processing**. This defines nesting structure of result meshes. The available options are:
 
-  * **Separate All Meshes**. Separate the result meshes into individual meshes.
-  * **Keep Source Meshes**. Keep parts of the source meshes as source meshes.
-  * **Join All Meshes**. Join all results meshes into a single mesh.
+  * **Split**. Separate the result meshes into individual unconnected meshes. Every unconnected part get matrix of originbal meshes.
+  * **Keep**. Keep parts of preprocessed meshes. Also keep matrices of original objects unchanged.
+  * **Merge**. Join all results meshes into a single mesh.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/afa0b637-b0cb-4813-9f10-3e05cd607e02
-  :target: https://github.com/nortikin/sverchok/assets/14288520/afa0b637-b0cb-4813-9f10-3e05cd607e02
+  .. image:: https://github.com/user-attachments/assets/f499584c-f162-4f2d-bb01-5904283e8939
+    :target: https://github.com/user-attachments/assets/f499584c-f162-4f2d-bb01-5904283e8939
 
 * **Accuracy**. This parameter is available in the N panel only. This defines
   the precision of mesh calculation (number of digits after decimal point). The
