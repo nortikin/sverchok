@@ -25,7 +25,74 @@ from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.voronoi3d import voronoi_on_mesh
+from mathutils import Vector, Matrix
 import numpy as np
+import collections
+
+def separate_loose_mesh(verts_in, poly_edge_in):
+        ''' separate a mesh by loose parts.
+        input:
+          1. list of verts
+          2. list of edges/polygons
+        output: list of
+          1. separated list of verts
+          2. separated list of edges/polygons with new indices of separated elements
+          3. separated list of edges/polygons (like 2) with old indices
+        '''
+
+        verts_out = []
+        poly_edge_out = []
+        poly_edge_old_indexes_out = []  # faces with old indices 
+
+        # build links
+        node_links = {}
+        for edge_face in poly_edge_in:
+            for i in edge_face:
+                if i not in node_links:
+                    node_links[i] = set()
+                node_links[i].update(edge_face)
+
+        nodes = set(node_links.keys())
+        n = nodes.pop()
+        node_set_list = [set([n])]
+        node_stack = collections.deque()
+        node_stack_append = node_stack.append
+        node_stack_pop = node_stack.pop
+        node_set = node_set_list[-1]
+        # find separate sets
+        while nodes:
+            for node in node_links[n]:
+                if node not in node_set:
+                    node_stack_append(node)
+            if not node_stack:  # new mesh part
+                n = nodes.pop()
+                node_set_list.append(set([n]))
+                node_set = node_set_list[-1]
+            else:
+                while node_stack and n in node_set:
+                    n = node_stack_pop()
+                nodes.discard(n)
+                node_set.add(n)
+        # create new meshes from sets, new_pe is the slow line.
+        if len(node_set_list) >= 1:
+            for node_set in node_set_list:
+                mesh_index = sorted(node_set)
+                vert_dict = {j: i for i, j in enumerate(mesh_index)}
+                new_vert = [verts_in[i] for i in mesh_index]
+                new_pe = [[vert_dict[n] for n in fe]
+                            for fe in poly_edge_in
+                            if fe[0] in node_set]
+                old_pe = [fe for fe in poly_edge_in
+                             if fe[0] in node_set]
+                verts_out.append(new_vert)
+                poly_edge_out.append(new_pe)
+                poly_edge_old_indexes_out.append(old_pe)
+        elif node_set_list:  # no reprocessing needed
+            verts_out.append(verts_in)
+            poly_edge_out.append(poly_edge_in)
+            poly_edge_old_indexes_out.append(poly_edge_in)
+
+        return verts_out, poly_edge_out, poly_edge_old_indexes_out
 
 class SvVoronoiOnMeshOffUnlinkedSocketsMK5(bpy.types.Operator):
     '''Hide all unlinked sockets'''
@@ -178,16 +245,28 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         default = 'VOLUME',
         update = update_sockets) # type: ignore
     
-    join_modes = [
-            ('FLAT', "Separate All Meshes", "Post processing: Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
-            ('SEPARATE', "Keep Source Meshes", "Post processing: Keep parts of the source meshes as source meshes.", 'SYNTAX_ON', 1),
-            ('JOIN', "Join All Meshes", "Post processing: Join all results meshes into a single mesh", 'STICKY_UVS_LOC', 2)
+    results_join_modes = [
+            ('SPLIT', "Split", "Post processing: Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
+            ('KEEP', "Keep", "Post processing: Keep parts of the source meshes as source meshes.", 'SYNTAX_ON', 1),
+            ('MERGE', "Merge", "Post processing: Join all results meshes into a single mesh", 'STICKY_UVS_LOC', 2)
         ]
 
-    join_mode : EnumProperty(
+    results_join_mode : EnumProperty(
         name = "Output mode",
-        items = join_modes,
-        default = 'FLAT',
+        items = results_join_modes,
+        default = 'KEEP',
+        update = updateNode) # type: ignore
+    
+    source_objects_join_modes = [
+            ('SPLIT', "Split", "Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
+            ('KEEP' , "Keep", "Keep as input meshes", 'SYNTAX_ON', 1),
+            ('MERGE', "Merge", "Join all meshes into a single mesh", 'STICKY_UVS_LOC', 2)
+        ]
+
+    source_objects_join_mode : EnumProperty(
+        name = "How process input objects",
+        items = source_objects_join_modes,
+        default = 'KEEP',
         update = updateNode) # type: ignore
 
     def updateMaskMode(self, context):
@@ -222,9 +301,17 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             default = 6,
             min = 1,
             update = updateNode) # type: ignore
+    
+    def draw_vertices_in_socket(self, socket, context, layout):
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
+        else:
+            layout.label(text=f'{socket.label}')
+        layout.prop(self, 'source_objects_join_mode', text='')
+        pass
 
     def draw_vertices_out_socket(self, socket, context, layout):
-        layout.prop(self, 'join_mode', text='')
+        layout.prop(self, 'results_join_mode', text='')
         if socket.is_linked:  # linked INPUT or OUTPUT
             layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
         else:
@@ -251,12 +338,14 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
 
     def sv_init(self, context):
         self.width = 250
-        self.inputs.new('SvVerticesSocket', 'vertices').label = 'Vertices'
-        self.inputs.new('SvStringsSocket', 'polygons').label = 'Polygons'
-        self.inputs.new('SvVerticesSocket', 'voronoi_sites').label = 'Voronoi Sites'
-        self.inputs.new('SvStringsSocket', 'voronoi_sites_mask').label = "Mask of Voronoi Sites"
-        self.inputs.new('SvStringsSocket', 'spacing').prop_name = 'spacing'
+        self.inputs.new('SvVerticesSocket', 'vertices'          ).label     = 'Vertices'
+        self.inputs.new('SvStringsSocket' , 'polygons'          ).label     = 'Polygons'
+        self.inputs.new('SvMatrixSocket'  , 'matrices'          ).label     = 'Matrices of Meshes'
+        self.inputs.new('SvVerticesSocket', 'voronoi_sites'     ).label     = 'Voronoi Sites'
+        self.inputs.new('SvStringsSocket' , 'voronoi_sites_mask').label     = "Mask of Voronoi Sites"
+        self.inputs.new('SvStringsSocket' , 'spacing'           ).prop_name = 'spacing'
 
+        self.inputs['vertices'].custom_draw = 'draw_vertices_in_socket'
         self.inputs['voronoi_sites_mask'].custom_draw = 'draw_voronoi_sites_mask_in_socket'
 
         self.outputs.new('SvVerticesSocket', "vertices"             ).label = 'Vertices'
@@ -281,6 +370,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket' , "polygonsInnerIndexes" ).label = 'Polygons Inner Indexes'
         self.outputs.new('SvStringsSocket' , "sites_idx"            ).label = 'Used Sites Idx'
         self.outputs.new('SvStringsSocket' , "sites_verts"          ).label = 'Used Sites Verts'
+        self.outputs.new('SvMatrixSocket'  , 'matrices'             ).label = 'Matrices'
 
         self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
 
@@ -311,89 +401,200 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        verts_in = self.inputs['vertices'].sv_get(deepcopy=False)
-        faces_in = self.inputs['polygons'].sv_get(deepcopy=False)
-        sites_in = self.inputs['voronoi_sites'].sv_get(deepcopy=False)
+        verts_in    = self.inputs['vertices']      .sv_get(deepcopy=False)
+        faces_in    = self.inputs['polygons']      .sv_get(deepcopy=False)
+        _Matrices   = self.inputs['matrices'].sv_get(default=[[Matrix()]], deepcopy=False)
+        Matrices2   = ensure_nesting_level(_Matrices, 2)
+        sites_in    = self.inputs['voronoi_sites'] .sv_get(deepcopy=False)
 
-        mask_in = self.inputs['voronoi_sites_mask'] #.sv_get(deepcopy=False)
+        mask_in     = self.inputs['voronoi_sites_mask'] #.sv_get(deepcopy=False)
         if mask_in.is_linked==False:
             mask_in = [[]]
         else:
             mask_in = mask_in.sv_get(deepcopy=False)
             
-        spacing_in = self.inputs['spacing'].sv_get(deepcopy=False)
+        spacing_in  = self.inputs['spacing'].sv_get(deepcopy=False)
 
-        verts_in = ensure_nesting_level(verts_in, 3)
+        verts_in    = ensure_nesting_level(verts_in, 3)
         input_level = get_data_nesting_level(sites_in, search_first_data=True)
         if input_level<=2:
             sites_in = ensure_nesting_level(sites_in, 3)
 
-        faces_in = ensure_nesting_level(faces_in, 3)
-        spacing_in = ensure_min_nesting(spacing_in, 2)
-        mask_in = ensure_min_nesting(mask_in, 2)
+        faces_in    = ensure_nesting_level(faces_in, 3)
+        spacing_in  = ensure_min_nesting(spacing_in, 2)
+        mask_in     = ensure_min_nesting(mask_in, 2)
 
-        precision = 10 ** (-self.accuracy)
+        precision   = 10 ** (-self.accuracy)
 
         verts_out = []
         edges_out = []
         faces_out = []
+        matrices_out = []
         outer_verts_property_out = []
         outer_edges_property_out = []
         outer_polygons_property_out = []
         sites_idx_out = []
         sites_verts_out = []
 
-        for verts, faces, sites, spacing, mask in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, mask_in):
+        matrix_0 = None
+        matrix_0_inverted = None
+
+        verts_in_1 = []
+        faces_in_1 = []
+        sites_in_1 = []
+        spacing_in_1 = []
+        mask_in_1 = []
+        matrices_in_1 = []
+
+        for I, (verts_I, faces_I, sites_I, spacing_I, mask_I) in enumerate(zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, mask_in)):
+            if I<=len(Matrices2[0])-1:
+                matrix_I = Matrices2[0][I]
+            else:
+                matrix_I = Matrices2[0][-1]
+            
+            if matrix_0 is None:
+                matrix_0 = matrix_I
+                matrix_0_inverted = matrix_0.inverted()
+
             # if mask is zero or not connected then do not mask any. Except of inversion,
-            if not mask:
-                np_mask = np.ones(len(sites), dtype=bool)
+            if not mask_I:
+                np_mask = np.ones(len(sites_I), dtype=bool)
                 if self.inputs['voronoi_sites_mask'].is_linked and self.mask_inversion==True:
                     np_mask = np.invert(np_mask)
-                mask = np_mask.tolist()
+                mask_I = np_mask.tolist()
             else:
                 if self.mask_mode=='MASK':
                     if self.mask_inversion==True:
-                        mask = list( map( lambda v: False if v==0 else True, mask) )
-                        mask = mask[:len(sites)]
-                        np_mask = np.zeros(len(sites), dtype=bool)
-                        np_mask[0:len(mask)]=mask
+                        mask_I = list( map( lambda v: False if v==0 else True, mask_I) )
+                        mask_I = mask_I[:len(sites_I)]
+                        np_mask = np.zeros(len(sites_I), dtype=bool)
+                        np_mask[0:len(mask_I)]=mask_I
                         np_mask = np.invert(np_mask)
-                        mask = np_mask.tolist()
+                        mask_I = np_mask.tolist()
                     pass
                 elif self.mask_mode=='INDEXES':
-                    mask_len = len(sites)
+                    mask_len = len(sites_I)
                     mask_range = []
-                    for x in mask:
+                    for x in mask_I:
                         if -mask_len<x<mask_len:
                             mask_range.append(x)
-                    np_mask = np.zeros(len(sites), dtype=bool)
+                    np_mask = np.zeros(len(sites_I), dtype=bool)
                     np_mask[mask_range] = True
                     if self.mask_inversion==True:
                         np_mask = np.invert(np_mask)
-                    mask = np_mask.tolist()
+                    mask_I = np_mask.tolist()
+                pass
 
-            new_verts, new_edges, new_faces, new_used_sites_idx, new_used_sites_verts, outer_verts_property, outer_edges_property, outer_faces_property = voronoi_on_mesh(verts, faces, sites, thickness=0,
-                            spacing = spacing,
+            mtr = matrix_I@matrix_0_inverted
+
+            verts_in_1   .append(verts_I)
+            faces_in_1   .append(faces_I)
+            matrices_in_1.append(matrix_I)
+            sites_in_1   .append(sites_I)
+            spacing_in_1 .append(spacing_I)
+            mask_in_1    .append(mask_I)
+
+            pass
+
+
+        verts_in_2 = []
+        faces_in_2 = []
+        matrices_in_2 = []
+        sites_in_2 = []
+        spacing_in_2 = []
+        mask_in_2 = []
+        if self.source_objects_join_mode=='SPLIT':
+            for I, verts_in_1_I in enumerate(verts_in_1):
+                objects_I_verts, object_I_faces, _ = separate_loose_mesh(verts_in_1_I, faces_in_1[I])
+                if len(objects_I_verts)>1:
+                    for IJ, verts_IJ in enumerate(objects_I_verts):
+                        verts_in_2   .append(verts_IJ)
+                        faces_in_2   .append(object_I_faces[IJ])
+                        matrices_in_2.append(matrices_in_1 [I])
+                        sites_in_2   .append(sites_in_1    [I])
+                        spacing_in_2 .append(spacing_in_1  [I])
+                        mask_in_2    .append(mask_in_1     [I])
+                        pass
+                else:
+                    verts_in_2   .append(verts_in_1_I     )
+                    faces_in_2   .append(faces_in_1    [I])
+                    matrices_in_2.append(matrices_in_1 [I])
+                    sites_in_2   .append(sites_in_1    [I])
+                    spacing_in_2 .append(spacing_in_1  [I])
+                    mask_in_2    .append(mask_in_1     [I])
+                pass
+            pass
+        elif self.source_objects_join_mode=='MERGE':
+            matrices_in_1_0_inverted = matrices_in_1[0].inverted()
+            verts_for_merge = [verts_in_1[0]]
+            sites_for_merge = sites_in_1[0][:]
+            for I, mat_I in enumerate(matrices_in_1):
+                if I>0:
+                    mat = matrices_in_1_0_inverted @ mat_I
+                    verts_mat = []
+                    for v in verts_in_1[I]:
+                        v1 = mat @ Vector(v)
+                        verts_mat.append( (v1.x, v1.y, v1.z) )
+                        pass
+                    verts_for_merge.append(verts_mat)
+
+                    sites_mat = []
+                    for s in sites_in_1[I]:
+                        s1 = mat @ Vector(s)
+                        sites_mat.append((s1.x, s1.y, s1.z))
+                        pass
+                    sites_for_merge.extend(sites_mat)
+                    pass
+                pass
+            merged_verts, _, merged_faces  = mesh_join(verts_for_merge, [], faces_in_1)
+            verts_in_2       = [merged_verts]
+            faces_in_2       = [merged_faces]
+            matrices_in_2.append(matrices_in_1[0])
+            sites_in_2       = [sites_for_merge]
+            spacing_in_2     = [spacing_in_1[0]]
+            merged_masks = []
+            for m in mask_in_1:
+                merged_masks = merged_masks+m
+            mask_in_2 = [merged_masks]
+            pass
+        else:
+            verts_in_2    = verts_in_1
+            faces_in_2    = faces_in_1
+            matrices_in_2 = matrices_in_1
+            sites_in_2    = sites_in_1
+            spacing_in_2  = spacing_in_1
+            mask_in_2     = mask_in_1
+            pass
+        pass
+
+
+
+        for I, (verts_I, faces_I, matrices_I, sites_I, spacing_I, mask_I) in enumerate( zip(verts_in_2, faces_in_2, matrices_in_2, sites_in_2, spacing_in_2, mask_in_2) ):
+            new_verts, new_edges, new_faces, new_used_sites_idx, new_used_sites_verts, outer_verts_property, outer_edges_property, outer_faces_property = voronoi_on_mesh(verts_I, faces_I, sites_I, thickness=0,
+                            spacing = spacing_I,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
                             mode = self.mode,
                             normal_update = self.normals,
                             precision = precision,
-                            mask = mask
+                            mask = mask_I
                             )
 
-            # collect sites_idx and used_sites_verts independently of self.join_mode
+            # collect sites_idx and used_sites_verts independently of self.results_join_mode
             sites_idx_out.append(new_used_sites_idx)
             sites_verts_out.append(new_used_sites_verts)
             
-            if self.join_mode == 'FLAT':
+            if self.results_join_mode == 'SPLIT':
                 verts_out.extend(new_verts)
                 edges_out.extend(new_edges)
                 faces_out.extend(new_faces)
+                matrices_out.extend([matrices_I]*len(new_verts))
                 outer_verts_property_out.extend(outer_verts_property) # dict {is_outer:True/False, is_inner: True/False}
                 outer_edges_property_out.extend(outer_edges_property) # dict {is_outer:True/False, is_inner: True/False}
                 outer_polygons_property_out.extend(outer_faces_property)
-            elif self.join_mode == 'SEPARATE' or self.join_mode == 'JOIN':
+            elif self.results_join_mode == 'KEEP' or self.results_join_mode == 'MERGE':
+                if self.results_join_mode == 'KEEP':
+                    matrices_out.append(matrices_I)
                 verts1, edges1, faces1 = mesh_join(new_verts, new_edges, new_faces)
                 verts_out.append(verts1)
                 edges_out.append(edges1)
@@ -404,12 +605,27 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                 outer_edges_property_out.append(outer_edges)  # dict {is_outer:True/False, is_inner: True/False}
                 outer_faces = [item for sublist in outer_faces_property for item in sublist]
                 outer_polygons_property_out.append(outer_faces)
+            pass
 
-        if self.join_mode == 'JOIN':
-            verts1, edges1, faces1 = mesh_join(verts_out, edges_out, faces_out)
+        if self.results_join_mode == 'MERGE':
+            matrices_in_1_0_inverted = matrices_in_1[0].inverted()
+            verts_out_for_merge = [verts_out[0]]
+            for I, mat_I in enumerate(matrices_in_2):
+                if I>0:
+                    mat = matrices_in_1_0_inverted @ mat_I
+                    verts_mat = []
+                    for v in verts_out[I]:
+                        v1 = mat @ Vector(v)
+                        verts_mat.append( (v1.x, v1.y, v1.z) )
+                        pass
+                    verts_out_for_merge.append(verts_mat)
+                    pass
+                pass
+            verts1, edges1, faces1 = mesh_join(verts_out_for_merge, edges_out, faces_out)
             verts_out = [verts1]
             edges_out = [edges1]
             faces_out = [faces1]
+            matrices_out.append(matrices_in_2[0])
             outer_verts = [item for sublist in outer_verts_property_out for item in sublist]
             outer_verts_property_out = [outer_verts]
             outer_edges = [item for sublist in outer_edges_property_out for item in sublist]
@@ -534,6 +750,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['polygonsInnerIndexes' ].sv_set(polygonsInnerIndexes_out)
         self.outputs['sites_idx'            ].sv_set(sites_idx_out)
         self.outputs['sites_verts'          ].sv_set(sites_verts_out)
+        self.outputs['matrices'             ].sv_set(matrices_out)
 
 classes = [SvVoronoiOnMeshOffUnlinkedSocketsMK5, SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5, SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5, SvVoronoiOnMeshNodeMK5]
 register, unregister = bpy.utils.register_classes_factory(classes)
