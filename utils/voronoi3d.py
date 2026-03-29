@@ -289,32 +289,38 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                 vert_link_edges = vert.link_edges
                 is_outer = False
                 is_inner = False
+                is_surface_border = False
                 for edge in vert_link_edges:
                     outer_property = edge[outer_edges_layer]
                     if outer_property==0: # new edge created
                         is_inner = True
+                        is_surface_border = True
                     elif outer_property==1: # old edge external
                         is_outer = True
+                        is_surface_border = True
                     else: # 2 value for a while
                         # inside object plane
                         pass
                     pass
-                verts_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, index=vert.index))
+                verts_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, is_surface_border=is_surface_border, index=vert.index))
                 pass
 
             for edge in bm.edges:
                 is_outer = False
                 is_inner = False
+                is_surface_border = False
 
                 outer_property = edge[outer_edges_layer]
                 if outer_property==0:  # new edge created
                     is_inner = True
+                    is_surface_border = True
                 elif outer_property==1: # old edges external
                     is_outer = True
+                    is_surface_border = True
                 else:
                     # inside object plane
                     pass
-                edges_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, index=edge.index))
+                edges_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, is_surface_border = is_surface_border, index=edge.index))
                 pass
 
             pass

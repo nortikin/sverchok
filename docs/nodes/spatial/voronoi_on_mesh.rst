@@ -148,8 +148,8 @@ This node has the following outputs:
 * **Vertices Inner Indexes**.
 * **Vertices Border Indexes**.
 
-    .. image:: https://github.com/user-attachments/assets/fa496dd7-e16c-4196-8e6b-04e253e76570
-      :target: https://github.com/user-attachments/assets/fa496dd7-e16c-4196-8e6b-04e253e76570
+    .. image:: https://github.com/user-attachments/assets/1dc196b6-0f89-4677-ae62-90555ce6a0f7
+      :target: https://github.com/user-attachments/assets/1dc196b6-0f89-4677-ae62-90555ce6a0f7
 
     .. image:: https://github.com/user-attachments/assets/ebb8817f-6a5d-4903-b808-e4931a5695ea
       :target: https://github.com/user-attachments/assets/ebb8817f-6a5d-4903-b808-e4931a5695ea
@@ -162,8 +162,8 @@ This node has the following outputs:
 * **Edges Inner Indexes**.
 * **Edges Border Indexes**.
 
-    .. image:: https://github.com/user-attachments/assets/3fcd23e2-ff09-407e-aee4-6edac0305494
-      :target: https://github.com/user-attachments/assets/3fcd23e2-ff09-407e-aee4-6edac0305494
+    .. image:: https://github.com/user-attachments/assets/cf0b2c90-c04c-458f-9ba5-85c26f5fa783
+      :target: https://github.com/user-attachments/assets/cf0b2c90-c04c-458f-9ba5-85c26f5fa783
 
     .. image:: https://github.com/user-attachments/assets/c6dda949-a694-4ddf-81e9-4bd9d153ff85
       :target: https://github.com/user-attachments/assets/c6dda949-a694-4ddf-81e9-4bd9d153ff85
