@@ -136,7 +136,7 @@ def load_images_from_script_folder(group):
     # Load images and create textures
     for item in script_folder:
         group_, filename, image = item.group, item.filename, item.image
-        print(group_,filename,image)
+        #print(group_,filename,image)
         if group_ == group:
             try:
                 img = bpy.data.images.load(str(splash_images_path / filename))
@@ -152,10 +152,10 @@ def load_images_from_script_folder(group):
                 textures.append(texture)
                 # Remove image from Blender data to avoid clutter
                 bpy.data.images.remove(img)
-                print(f"Loaded: {os.path.basename(filename)}")
+                #print(f"Loaded: {os.path.basename(filename)}")
             except Exception as e:
                 print(f"Error loading {filename}: {e}")
-
+    print(f'Splash screens loaded: {len(textures)}')
     return len(textures) > 0
 
 def draw_callback():
@@ -423,6 +423,7 @@ def close_splash_screen(context):
         operator_instance._handle = None
         if context.area:
             context.area.tag_redraw()
+    bpy.context.space_data.node_tree.sv_splash_data.clear()
 
 
 class SV_OT_DownloadSplashImages(Operator):
