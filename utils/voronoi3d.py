@@ -240,7 +240,7 @@ def calc_bvh_projections(bvh, sites):
 # see additional info https://github.com/nortikin/sverchok/pull/4948
 def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', normal_update = False, precision=1e-8, mask=[]):
 
-    def get_bmesh_data(bm, outer_layer_name, ret_verts=True, ret_edges=True, ret_faces=True):
+    def get_bmesh_data(bm, outer_layer_name, mode, ret_verts=True, ret_edges=True, ret_faces=True):
         '''return verts, edges, faces and outer faces property (1-outer, 0-inner face)'''
         verts_res = [v.co[:] for v in bm.verts] if ret_verts==True else None
         edges_res = [[e.verts[0].index, e.verts[1].index] for e in bm.edges] if ret_edges==True else None
@@ -251,34 +251,75 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
         faces_outer_property = [ f[outer_faces_layer] for f in ordered_faces]
 
         verts_outer_property = []
-        for vert in bm.verts:
-            faces = vert.link_faces  # список BMFace
-            is_outer = False
-            is_inner = False
-            for f in faces:
-                outer_property = f[outer_faces_layer]
-                if outer_property==1:
-                    is_outer = True
-                else:
-                    is_inner = True
-                pass
-            verts_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, index=vert.index))
-            pass
-
         edges_outer_property = []
-        for edge in bm.edges:
-            faces = edge.link_faces  # список BMFace
-            is_outer = False
-            is_inner = False
-            for f in faces:
-                outer_property = f[outer_faces_layer]
-                if outer_property==1:
+
+        if mode=='VOLUME':
+            for vert in bm.verts:
+                faces = vert.link_faces
+                is_outer = False
+                is_inner = False
+                for f in faces:
+                    outer_property = f[outer_faces_layer]
+                    if outer_property==1:
+                        is_outer = True
+                    else:
+                        is_inner = True
+                    pass
+                verts_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, index=vert.index))
+                pass
+
+            for edge in bm.edges:
+                faces = edge.link_faces
+                is_outer = False
+                is_inner = False
+                for f in faces:
+                    outer_property = f[outer_faces_layer]
+                    if outer_property==1:
+                        is_outer = True
+                    else:
+                        is_inner = True
+                    pass
+                edges_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, index=edge.index))
+                pass
+        elif mode=='SURFACE':
+            # on surface mode no additional faces created.
+            outer_edges_layer = bm.edges.layers.int.get(outer_layer_name)
+
+            for vert in bm.verts:
+                vert_link_edges = vert.link_edges
+                is_outer = False
+                is_inner = False
+                for edge in vert_link_edges:
+                    outer_property = edge[outer_edges_layer]
+                    if outer_property==0: # new edge created
+                        is_inner = True
+                    elif outer_property==1: # old edge external
+                        is_outer = True
+                    else: # 2 value for a while
+                        # inside object plane
+                        pass
+                    pass
+                verts_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, index=vert.index))
+                pass
+
+            for edge in bm.edges:
+                is_outer = False
+                is_inner = False
+
+                outer_property = edge[outer_edges_layer]
+                if outer_property==0:  # new edge created
+                    is_inner = True
+                elif outer_property==1: # old edges external
                     is_outer = True
                 else:
-                    is_inner = True
+                    # inside object plane
+                    pass
+                edges_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, index=edge.index))
                 pass
-            edges_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, index=edge.index))
+
             pass
+        else:
+            raise Exception(f'Unknown mode="{mode}" in voronoi_on_mesh_bmesh->get_bmesh_data')
         return verts_res, edges_res, faces_res, verts_outer_property, edges_outer_property, faces_outer_property
 
 
@@ -315,7 +356,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     num_bisect = 0 # general count of bisect for full cutting process
     num_unpredicted_erased = 0 # if optimisation can not find a skip bisect case (with using bounding box) then counter incremented
 
-    def cut_cell(start_mesh, outer_layer_name, sites_delaunay_params, site_idx, spacing, center_of_mass, bbox_aligned):
+    def cut_cell(start_mesh, outer_layer_name, mode, sites_delaunay_params, site_idx, spacing, center_of_mass, bbox_aligned):
         nonlocal num_bisect, num_unpredicted_erased
         src_mesh = None
         # Check ridges for sites before bisect. If no ridges then no bisect and no mesh in result
@@ -431,7 +472,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
         src_mesh.edges.index_update() # sort edges by indexes for 
         if mode=='VOLUME' and normal_update==True:
             src_mesh.normal_update()
-        pydata = get_bmesh_data(src_mesh, outer_layer_name)
+        pydata = get_bmesh_data(src_mesh, outer_layer_name, mode)
         src_mesh.clear() #remember to clear geometry before return
         src_mesh.free()
         return pydata
@@ -508,12 +549,27 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
         outer_layer_name = "__outer__"
         start_mesh.faces.layers.int.new(outer_layer_name)
         outer_faces_layer = start_mesh.faces.layers.int.get(outer_layer_name)
-        for start_mesh_faces in start_mesh.faces:
-            start_mesh_faces[outer_faces_layer] = 1
+        for start_mesh_face in start_mesh.faces:
+            start_mesh_face[outer_faces_layer] = 1
+        start_mesh.edges.layers.int.new(outer_layer_name)
+        outer_edges_layer = start_mesh.edges.layers.int.get(outer_layer_name)
+        for edge in start_mesh.edges:
+            len_linked_faces = len(edge.link_faces)
+            if mode=='SURFACE':
+                if len_linked_faces==1:
+                    edge[outer_edges_layer] = 1 # outer edge of surface (border of surface)
+                elif len_linked_faces==2:
+                    edge[outer_edges_layer] = 2 # inner edge of surface (inside)
+                else:
+                    edge[outer_edges_layer] = 3 # non-manifold edge on voronoi SURFACE mode (==0 or >2)
+            elif mode=='VOLUME':
+                edge[outer_edges_layer] = 1
+            else:
+                raise Exception(f'Unknown mode="{mode}" in voronoi_on_mesh_bmesh')
 
         for site_idx in range(len(sites)):
             if(mask[site_idx]):
-                cell = cut_cell(start_mesh, outer_layer_name, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
+                cell = cut_cell(start_mesh, outer_layer_name, mode, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
                 if cell is not None:
                     new_verts, new_edges, new_faces, new_verts_outer_property, new_edges_outer_property, new_outer_faces_property = cell
                     if new_verts:
@@ -525,6 +581,10 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                         outer_faces_property_out.append(new_outer_faces_property)
                         used_sites_idx.append( site_idx )
                         used_sites_verts.append( sites[site_idx] )
+                        pass
+                    pass
+                pass
+            pass
         start_mesh.clear() # remember to clear empty geometry
         start_mesh.free()
     else:

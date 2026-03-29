@@ -90,17 +90,20 @@ This node has the following parameters:
   normals of generated meshes point outside. Otherwise, this is not guaranteed.
   Checked by default.
 
-  .. image:: https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png
-    :target: https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png
+    .. image:: https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png
+      :target: https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png
 
-  .. image:: https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif
-    :target: https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif
+    .. image:: https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif
+      :target: https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif
 
 * **Pre processing**. This define preprocessing original objects, sites, matrices and masks.
 
   - **Split**. Separate unconnected meshes independently before process. Sites, matrices and masks keep the same for every separated element.
   - **Keep**. Do nothing. All original meshes stay unchanged before process
   - **Merge**. Merge original meshes, sites, masks. Spacing gets first.
+
+    .. image:: https://github.com/user-attachments/assets/2619e606-f96d-4ef8-8f7f-324b6a8f5b8d
+      :target: https://github.com/user-attachments/assets/2619e606-f96d-4ef8-8f7f-324b6a8f5b8d
 
     .. image:: https://github.com/user-attachments/assets/11a1b295-83b4-4a9a-a62f-9760a93ae680
       :target: https://github.com/user-attachments/assets/11a1b295-83b4-4a9a-a62f-9760a93ae680
@@ -114,19 +117,22 @@ This node has the following parameters:
 
 * **Post processing**. This defines nesting structure of result meshes. The available options are:
 
-  * **Split**. Separate the result meshes into individual unconnected meshes. Every unconnected part get matrix of originbal meshes.
+  * **Split**. Separate the result meshes into individual unconnected meshes. Every unconnected part get matrix of original meshes.
   * **Keep**. Keep parts of preprocessed meshes. Also keep matrices of original objects unchanged.
   * **Merge**. Join all results meshes into a single mesh.
 
-  .. image:: https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff
-    :target: https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff
+    .. image:: https://github.com/user-attachments/assets/f67e2ac6-7332-4078-bde8-a3bff23ae177
+      :target: https://github.com/user-attachments/assets/f67e2ac6-7332-4078-bde8-a3bff23ae177
+
+    .. image:: https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff
+      :target: https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff
 
 * **Accuracy**. This parameter is available in the N panel only. This defines
   the precision of mesh calculation (number of digits after decimal point). The
   default value is 6.
 
-.. image:: https://user-images.githubusercontent.com/14288520/202577600-9f0e8eb6-2782-4a3b-9e58-f915823c9dfa.png
-  :target: https://user-images.githubusercontent.com/14288520/202577600-9f0e8eb6-2782-4a3b-9e58-f915823c9dfa.png
+    .. image:: https://user-images.githubusercontent.com/14288520/202577600-9f0e8eb6-2782-4a3b-9e58-f915823c9dfa.png
+      :target: https://user-images.githubusercontent.com/14288520/202577600-9f0e8eb6-2782-4a3b-9e58-f915823c9dfa.png
 
 
 Outputs
@@ -135,8 +141,51 @@ Outputs
 This node has the following outputs:
 
 * **Vertices**. Vertices of generated mesh.
+* **Vertices Outer**.
+* **Vertices Inner**.
+* **Vertices Border**.
+* **Vertices Outer Indexes**.
+* **Vertices Inner Indexes**.
+* **Vertices Border Indexes**.
+
+    .. image:: https://github.com/user-attachments/assets/fa496dd7-e16c-4196-8e6b-04e253e76570
+      :target: https://github.com/user-attachments/assets/fa496dd7-e16c-4196-8e6b-04e253e76570
+
+    .. image:: https://github.com/user-attachments/assets/ebb8817f-6a5d-4903-b808-e4931a5695ea
+      :target: https://github.com/user-attachments/assets/ebb8817f-6a5d-4903-b808-e4931a5695ea
+
 * **Edges**. Edges of generated mesh.
-* **Faces**. Faces of generated mesh.
+* **Edges Outer**.
+* **Edges Inner**.
+* **Edges Border**.
+* **Edges Outer Indexes**.
+* **Edges Inner Indexes**.
+* **Edges Border Indexes**.
+
+    .. image:: https://github.com/user-attachments/assets/3fcd23e2-ff09-407e-aee4-6edac0305494
+      :target: https://github.com/user-attachments/assets/3fcd23e2-ff09-407e-aee4-6edac0305494
+
+    .. image:: https://github.com/user-attachments/assets/c6dda949-a694-4ddf-81e9-4bd9d153ff85
+      :target: https://github.com/user-attachments/assets/c6dda949-a694-4ddf-81e9-4bd9d153ff85
+
+* **Polygons**. Faces of generated mesh.
+* **Polygons Outer Inner Mask**.
+* **Polygons Outer**.
+* **Polygons Inner**.
+* **Polygons Border**.
+
+
+* **Polygons Outer Indexes**.
+* **Polygons Inner Indexes**.
+* **Polygons Border Indexes**.
+
+    .. image:: https://github.com/user-attachments/assets/e51f9fd8-071d-4e71-b970-f0b09560531b
+      :target: https://github.com/user-attachments/assets/e51f9fd8-071d-4e71-b970-f0b09560531b
+
+    .. image:: https://github.com/user-attachments/assets/99db0125-e62b-4818-b181-2a90f50bbb3b
+      :target: https://github.com/user-attachments/assets/99db0125-e62b-4818-b181-2a90f50bbb3b
+
+
 * **Used Sites idx**. Indices of sources sites for further using (after apply Mask of sites). (from sverchok 1.3-alpha-master)
 * **Used Sites Verts**. Values of used sites. Keep of source struct of input socket "Voronoi sites" lists (after apply Mask of sites). (from sverchok 1.3-alpha-master)
 
@@ -144,6 +193,14 @@ This node has the following outputs:
       :target: https://github.com/nortikin/sverchok/assets/14288520/91ccb203-e0bb-49a0-a626-e403ee30be3c
 
     * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+* **Matrices**. Matrices or results meshes by join mode. 
+
+    .. image:: https://github.com/user-attachments/assets/59580680-401d-44d3-98fa-20ff6e718541
+      :target: https://github.com/user-attachments/assets/59580680-401d-44d3-98fa-20ff6e718541
+
+    .. image:: https://github.com/user-attachments/assets/2edd54d3-cb90-4d20-8a26-a70be84044ec
+      :target: https://github.com/user-attachments/assets/2edd54d3-cb90-4d20-8a26-a70be84044ec
 
 Addition info
 -------------
@@ -247,6 +304,13 @@ Like the previous example but node "Particle System" replaced by node "Spiral":
   :target: https://github.com/nortikin/sverchok/assets/14288520/4e963254-251d-441d-808f-f30c9af55d62
 
 blend file: https://github.com/nortikin/sverchok/files/12342712/Voronoi.Tower.006.blend.zip
+
+--------
+
+Show external surface as frame:
+
+.. image:: https://github.com/user-attachments/assets/569e0afe-619b-450b-8c9f-df1583b894a9
+  :target: https://github.com/user-attachments/assets/569e0afe-619b-450b-8c9f-df1583b894a9
 
 See also example
 ----------------

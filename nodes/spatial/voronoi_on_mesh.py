@@ -359,9 +359,9 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket' , "edgesOuter"           ).label = 'Edges Outer'
         self.outputs.new('SvStringsSocket' , "edgesInner"           ).label = 'Edges Inner'
         self.outputs.new('SvStringsSocket' , "edgesBorder"          ).label = 'Edges Border'
-        self.outputs.new('SvStringsSocket' , "edgesOuterIndexes"    ).label = 'Edges Outer Index'
-        self.outputs.new('SvStringsSocket' , "edgesInnerIndexes"    ).label = 'Edges Inner Index'
-        self.outputs.new('SvStringsSocket' , "edgesBorderIndexes"   ).label = 'Edges Border Index'
+        self.outputs.new('SvStringsSocket' , "edgesOuterIndexes"    ).label = 'Edges Outer Indexes'
+        self.outputs.new('SvStringsSocket' , "edgesInnerIndexes"    ).label = 'Edges Inner Indexes'
+        self.outputs.new('SvStringsSocket' , "edgesBorderIndexes"   ).label = 'Edges Border Indexes'
         self.outputs.new('SvStringsSocket' , "polygons"             ).label = 'Polygons'
         self.outputs.new('SvStringsSocket' , "polygonsOuterInner"   ).label = 'Polygons Outer Inner Mask'
         self.outputs.new('SvStringsSocket' , "polygonsOuter"        ).label = 'Polygons Outer'
@@ -670,20 +670,20 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                 m_is_outer = m["is_outer"]
                 m_is_inner = m["is_inner"]
                 if m_is_outer==True:
-                    vertsInner_out_I.append(v)
+                    vertsOuter_out_I.append(v)
                     vertsOuterIndexes_out_I.append(IJ)
                 if m_is_inner==True:
-                    vertsOuter_out_I.append(v)
+                    vertsInner_out_I.append(v)
                     vertsInnerIndexes_out_I.append(IJ)
                 if m_is_outer==True and m_is_inner==True:
                     vertsBorder_out_I.append(v)
                     vertsBorderIndexes_out_I.append(IJ)
                 pass
-            vertsOuter_out.append(vertsInner_out_I)
-            vertsInner_out.append(vertsOuter_out_I)
+            vertsOuter_out.append(vertsOuter_out_I)
+            vertsInner_out.append(vertsInner_out_I)
             vertsBorder_out.append(vertsBorder_out_I)
-            vertsOuterIndexes_out.append(vertsInnerIndexes_out_I)
-            vertsInnerIndexes_out.append(vertsOuterIndexes_out_I)
+            vertsOuterIndexes_out.append(vertsOuterIndexes_out_I)
+            vertsInnerIndexes_out.append(vertsInnerIndexes_out_I)
             vertsBorderIndexes_out.append(vertsBorderIndexes_out_I)
             pass
 
@@ -705,20 +705,20 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                 m_is_outer = m["is_outer"]
                 m_is_inner = m["is_inner"]
                 if m_is_outer==True:
-                    edgesInner_out_I.append(v)
+                    edgesOuter_out_I.append(v)
                     edgesOuterIndexes_out_I.append(IJ)
                 if m_is_inner==True:
-                    edgesOuter_out_I.append(v)
+                    edgesInner_out_I.append(v)
                     edgesInnerIndexes_out_I.append(IJ)
                 if m_is_outer==True and m_is_inner==True:
                     edgesBorder_out_I.append(v)
                     edgesBorderIndexes_out_I.append(IJ)
                 pass
-            edgesOuter_out.append(edgesInner_out_I)
-            edgesInner_out.append(edgesOuter_out_I)
+            edgesOuter_out.append(edgesOuter_out_I)
+            edgesInner_out.append(edgesInner_out_I)
             edgesBorder_out.append(edgesBorder_out_I)
-            edgesOuterIndexes_out.append(edgesInnerIndexes_out_I)
-            edgesInnerIndexes_out.append(edgesOuterIndexes_out_I)
+            edgesOuterIndexes_out.append(edgesOuterIndexes_out_I)
+            edgesInnerIndexes_out.append(edgesInnerIndexes_out_I)
             edgesBorderIndexes_out.append(edgesBorderIndexes_out_I)
             pass
 
@@ -734,16 +734,16 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             polygonsInnerIndexes_out_I = []
             for IJ, (m, v) in enumerate(zip(mask, faces_out_I)):
                 if m==1:
-                    polygonsInner_out_I.append(v)
+                    polygonsOuter_out_I.append(v)
                     polygonsOuterIndexes_out_I.append(IJ)
                 else:
-                    polygonsOuter_out_I.append(v)
+                    polygonsInner_out_I.append(v)
                     polygonsInnerIndexes_out_I.append(IJ)
                 pass
-            polygonsOuter_out.append(polygonsInner_out_I)
-            polygonsInner_out.append(polygonsOuter_out_I)
-            polygonsOuterIndexes_out.append(polygonsInnerIndexes_out_I)
-            polygonsInnerIndexes_out.append(polygonsOuterIndexes_out_I)
+            polygonsOuter_out.append(polygonsOuter_out_I)
+            polygonsInner_out.append(polygonsInner_out_I)
+            polygonsOuterIndexes_out.append(polygonsOuterIndexes_out_I)
+            polygonsInnerIndexes_out.append(polygonsInnerIndexes_out_I)
             pass
 
         self.outputs['vertices'             ].sv_set(verts_out)
