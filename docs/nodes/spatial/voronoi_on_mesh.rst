@@ -118,8 +118,8 @@ This node has the following parameters:
   * **Keep**. Keep parts of preprocessed meshes. Also keep matrices of original objects unchanged.
   * **Merge**. Join all results meshes into a single mesh.
 
-  .. image:: https://github.com/user-attachments/assets/f499584c-f162-4f2d-bb01-5904283e8939
-    :target: https://github.com/user-attachments/assets/f499584c-f162-4f2d-bb01-5904283e8939
+  .. image:: https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff
+    :target: https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff
 
 * **Accuracy**. This parameter is available in the N panel only. This defines
   the precision of mesh calculation (number of digits after decimal point). The
