@@ -43,8 +43,18 @@ This node has the following inputs:
 
 * **Matrices of meshes**. Matrices of input meshes if meshes placed not in the zero. For example: if you using "Get Objects Data" with "Apply matrices" parameter off then real coords can be calculated with "Get Objects Data" Matrices output
   
-  .. image:: https://github.com/user-attachments/assets/fbc79628-7c54-4e0e-a86e-601b41abf0cd
-    :target: https://github.com/user-attachments/assets/fbc79628-7c54-4e0e-a86e-601b41abf0cd
+  .. image:: https://github.com/user-attachments/assets/1bf85e83-12c2-4469-8d35-526be6e5b0c8
+    :target: https://github.com/user-attachments/assets/1bf85e83-12c2-4469-8d35-526be6e5b0c8
+
+* **Voronoi Sites**. Points of Voronoi. If using Source Join Mode as "Merge" then sites merged only what in input "Voronoi Sites". For example: if objects are 3 and sites are 2 then sites will not recalculate for object number 3.
+
+  .. image:: https://github.com/user-attachments/assets/862468b6-bd4d-4503-8436-a3013e0bbb77
+    :target: https://github.com/user-attachments/assets/862468b6-bd4d-4503-8436-a3013e0bbb77
+
+  If mode is split then every unconnected object will get sites of original mesh:
+
+  .. image:: https://github.com/user-attachments/assets/f153ae9c-a0c2-4d2a-a4d3-dacb43c74844
+    :target: https://github.com/user-attachments/assets/f153ae9c-a0c2-4d2a-a4d3-dacb43c74844
 
 * **Mask of sites**. List of True/False or indexes. What Sites will be show in result.
 

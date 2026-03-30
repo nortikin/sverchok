@@ -472,7 +472,14 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         mask_in_1 = []
         matrices_in_1 = []
 
+        len_verts_in = len(verts_in)
+        if len_verts_in>len(faces_in):
+            raise Exception(f'list of verts less than faces [{len(verts_in)}<{len(faces_in)}]')
+        
         for I, (verts_I, faces_I, sites_I, spacing_I, mask_I) in enumerate(zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, mask_in)):
+            if len(faces_I)==0:
+                raise Exception(f'no faces in Polygons[{I}]')
+
             if I<=len(Matrices2[0])-1:
                 matrix_I = Matrices2[0][I]
             else:
@@ -565,11 +572,15 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                     verts_for_merge.append(verts_mat)
 
                     sites_mat = []
-                    for s in sites_in_1[I]:
-                        s1 = mat @ Vector(s)
-                        sites_mat.append((s1.x, s1.y, s1.z))
-                        pass
-                    sites_for_merge.extend(sites_mat)
+                    # On merge source meshes do use source sites, not zipped in zip_long_repeat. 
+                    # If original sites are less objects then use only these sites
+                    if len(sites_in)-1>=I:
+                        for s in sites_in[I]:
+                            s1 = mat @ Vector(s)
+                            sites_mat.append((s1.x, s1.y, s1.z))
+                            pass
+                        sites_for_merge.extend(sites_mat)
+                    #sites_for_merge.extend(sites_in_1[I]) # use sites as local
                     pass
                 pass
             merged_verts, _, merged_faces  = mesh_join(verts_for_merge, [], faces_in_1)
