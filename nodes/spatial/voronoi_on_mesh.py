@@ -246,7 +246,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets) # type: ignore
     
     results_join_modes = [
-            ('SPLIT', "Split", "Post processing: Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
+            ('SPLIT', "Split (disconnect)", "Post processing: Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
             ('KEEP', "Keep", "Post processing: Keep parts of the source meshes as source meshes.", 'SYNTAX_ON', 1),
             ('MERGE', "Merge", "Post processing: Join all results meshes into a single mesh", 'STICKY_UVS_LOC', 2)
         ]
@@ -258,7 +258,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         update = updateNode) # type: ignore
     
     source_objects_join_modes = [
-            ('SPLIT', "Split", "Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
+            ('SPLIT', "Split (disconnect)", "Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
             ('KEEP' , "Keep", "Keep as input meshes", 'SYNTAX_ON', 1),
             ('MERGE', "Merge", "Join all meshes into a single mesh", 'STICKY_UVS_LOC', 2)
         ]
@@ -270,20 +270,20 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         update = updateNode) # type: ignore
 
     def updateMaskMode(self, context):
-        if self.mask_mode=='MASK':
+        if self.mask_mode=='BOOLEAN':
             self.inputs["voronoi_sites_mask"].label = "Mask of Sites"
         elif self.mask_mode=='INDEXES':
             self.inputs["voronoi_sites_mask"].label = "Indexes of Sites"
         updateNode(self, context)
 
     mask_modes = [
-            ('MASK', "Booleans", "Boolean values (0/1) as mask of Voronoi Sites per objects [[0,1,0,0,1,1],[1,1,0,0,1],...]. Has no influence if socket is not connected (All sites are used)", 0),
+            ('BOOLEAN', "Booleans", "Boolean values (0/1) as mask of Voronoi Sites per objects [[0,1,0,0,1,1],[1,1,0,0,1],...]. Has no influence if socket is not connected (All sites are used)", 0),
             ('INDEXES', "Indexes", "Indexes as mask of Voronoi Sites per objects [[1,2,0,4],[0,1,4,5,7],..]. Has no influence if socket is not connected (All sites are used)", 1),
         ]
     mask_mode : EnumProperty(
         name = "Mask mode",
         items = mask_modes,
-        default = 'MASK',
+        default = 'BOOLEAN',
         #update = updateMaskMode
         update = updateNode
         ) # type: ignore
@@ -426,6 +426,12 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
 
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
+        if self.inputs["vertices"].is_linked:
+            if self.inputs["polygons"].is_linked==False:
+                raise Exception(f'socket Polygons are not connected')
+            if self.inputs["voronoi_sites"].is_linked==False:
+                raise Exception(f'socket "Voronoi Sites" are not connected')
 
         verts_in    = self.inputs['vertices']      .sv_get(deepcopy=False)
         faces_in    = self.inputs['polygons']      .sv_get(deepcopy=False)
@@ -476,9 +482,21 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         if len_verts_in>len(faces_in):
             raise Exception(f'list of verts less than faces [{len(verts_in)}<{len(faces_in)}]')
         
-        for I, (verts_I, faces_I, sites_I, spacing_I, mask_I) in enumerate(zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, mask_in)):
+        #for I, (verts_I, faces_I, sites_I, spacing_I, mask_I) in enumerate(zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, mask_in)):
+        for I, verts_I in enumerate(verts_in):
+            faces_I = faces_in[I if I<=len(faces_in)-1 else -1]
+            sites_I = sites_in[I if I<=len(sites_in)-1 else -1]
+            spacing_I = spacing_in[I if I<=len(spacing_in)-1 else -1]
+            mask_I = mask_in[I if I<=len(mask_in)-1 else -1]
+
             if len(faces_I)==0:
                 raise Exception(f'no faces in Polygons[{I}]')
+            if len(sites_I)==0:
+                raise Exception(f'no sites in socket "Voronoi Sites" {I} ')
+            else:
+                empty_sites = [I for I, s in enumerate(sites_I) if len(s)==0]
+                if len(empty_sites)>0:
+                    raise Exception(f'no sites in socket "Voronoi Sites" {empty_sites}')
 
             if I<=len(Matrices2[0])-1:
                 matrix_I = Matrices2[0][I]
@@ -496,7 +514,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                     np_mask = np.invert(np_mask)
                 mask_I = np_mask.tolist()
             else:
-                if self.mask_mode=='MASK':
+                if self.mask_mode=='BOOLEAN':
                     if self.mask_inversion==True:
                         mask_I = list( map( lambda v: False if v==0 else True, mask_I) )
                         mask_I = mask_I[:len(sites_I)]
@@ -530,23 +548,24 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             pass
 
 
-        verts_in_2 = []
-        faces_in_2 = []
+        verts_in_2    = []
+        faces_in_2    = []
         matrices_in_2 = []
-        sites_in_2 = []
-        spacing_in_2 = []
-        mask_in_2 = []
+        sites_in_2    = []
+        spacing_in_2  = []
+        mask_in_2     = []
+
         if self.source_objects_join_mode=='SPLIT':
             for I, verts_in_1_I in enumerate(verts_in_1):
                 objects_I_verts, object_I_faces, _ = separate_loose_mesh(verts_in_1_I, faces_in_1[I])
                 if len(objects_I_verts)>1:
                     for IJ, verts_IJ in enumerate(objects_I_verts):
-                        verts_in_2   .append(verts_IJ)
+                        verts_in_2   .append(verts_IJ          )
                         faces_in_2   .append(object_I_faces[IJ])
-                        matrices_in_2.append(matrices_in_1 [I])
-                        sites_in_2   .append(sites_in_1    [I])
-                        spacing_in_2 .append(spacing_in_1  [I])
-                        mask_in_2    .append(mask_in_1     [I])
+                        matrices_in_2.append(matrices_in_1 [I ])
+                        sites_in_2   .append(sites_in_1    [I ])
+                        spacing_in_2 .append(spacing_in_1  [I ])
+                        mask_in_2    .append(mask_in_1     [I ])
                         pass
                 else:
                     verts_in_2   .append(verts_in_1_I     )
