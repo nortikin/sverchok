@@ -574,13 +574,14 @@ def hatches_draw(points, scal, lhatch, msp):
     for points_ in points:
         vers,col,patt,sc = points_.vers, points_.color,points_.pattern,points_.scale
         color_int = points_.color_int
-        if color_int < 1:
-            col = tuple([int(i*255) for i in col[:3]])
-            col = ezdxf.colors.rgb2int(col)
-        else:
-            col = color_int
+        #lw,lt = points_.lineweight, points_.linetype
+        #if color_int < 1:
+        #    col = tuple([int(i*255) for i in col[:3]])
+        #    col = ezdxf.colors.rgb2int(col)
+        #else:
+        #    col = color_int
 
-        ht = msp.add_hatch(color=col, dxfattribs={"layer": lhatch})
+        ht = msp.add_hatch(color=color_int, dxfattribs={"layer": lhatch})
         ht.set_pattern_fill(patt, scale=sc)
         ht.transparency = 0.5
         path = ht.paths.add_polyline_path(
@@ -739,10 +740,10 @@ def text_draw(t,scal,ltext,msp):
     for data in t:
         tv,tt = data.vers
         t_scal = data.text_scale
-        print('TEXT!!',tv,tt)
+        #print('TEXT!!',tv,tt)
         tv = [i*scal for i in tv]
         metadata = data.metadata
-        print('text unit',tt)
+        #print('text unit',tt)
         textout = msp.add_text(
         tt, height=t_scal,#0.05,
         dxfattribs={
@@ -917,21 +918,21 @@ def export(fp,dxf,scal=1000.0,t_scal=1.0,info='',do_block=False):
     #mleaderstyle.set_mtext_style("OpenSans")
     #mleaderstyle.dxf.char_height = t_scal*scal  # set the default char height of MTEXT
     # Create new table entries (layers, linetypes, text styles, ...).
-    ltext = "SVERCHOK_TEXT"
-    lvers = "SVERCHOK_VERS"
-    ledgs = "SVERCHOK_EDGES"
-    lpols = "SVERCHOK_POLYGONS"
-    ldims = "SVERCHOK_DIMENTIONS"
-    llidr = "SVERCHOK_LEADERS"
-    lhatc = "SVERCHOK_HATCHES"
+    #ltext = "SVERCHOK_TEXT"
+    #lvers = "SVERCHOK_VERS"
+    #ledgs = "SVERCHOK_EDGES"
+    #lpols = "SVERCHOK_POLYGONS"
+    #ldims = "SVERCHOK_DIMENTIONS"
+    #llidr = "SVERCHOK_LEADERS"
+    #lhatc = "SVERCHOK_HATCHES"
 
-    doc.layers.add(ltext, color=colors.MAGENTA)
-    doc.layers.add(lvers, color=colors.CYAN)
-    doc.layers.add(ledgs, color=colors.YELLOW)
-    doc.layers.add(lpols, color=colors.WHITE)
-    doc.layers.add(ldims, color=colors.GREEN)
-    doc.layers.add(llidr, color=colors.CYAN)
-    doc.layers.add(lhatc, color=colors.WHITE)
+    #doc.layers.add(ltext, color=colors.MAGENTA)
+    #doc.layers.add(lvers, color=colors.CYAN)
+    #doc.layers.add(ledgs, color=colors.YELLOW)
+    #doc.layers.add(lpols, color=colors.WHITE)
+    #doc.layers.add(ldims, color=colors.GREEN)
+    #doc.layers.add(llidr, color=colors.CYAN)
+    #doc.layers.add(lhatc, color=colors.WHITE)
 
     # DXF entities (LINE, TEXT, ...) reside in a layout (modelspace,
     # paperspace layout or block definition).
@@ -946,24 +947,28 @@ def export(fp,dxf,scal=1000.0,t_scal=1.0,info='',do_block=False):
     doc.header["$LWDISPLAY"] = 1
     # Add entities to a layout by factory methods: layout.add_...()
 
+    num = 0
     if do_block == False:
         for data in dxf:
+            layer = 'Sverchok_'+data[0].__repr__()[5:-2]+'_'+str(num)
+            doc.layers.add(layer, color=data[0].color_int)
             #print(data)
             #print("Тип данных DXF",data[0].__repr__())
             if data[0].__repr__() == '<DXF Pols>':
                 #print('getting pols',data)
-                polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
+                polygons_draw(data,scal,layer,msp) #(p,v,d1,d2,scal,lpols,msp)
             if data[0].__repr__() == '<DXF Lines>':
-                edges_draw(data,scal,ledgs,msp)
+                edges_draw(data,scal,layer,msp)
             if data[0].__repr__() == '<DXF Hatch>':
-                hatches_draw(data,scal,lhatc,msp)
+                hatches_draw(data,scal,layer,msp)
             if data[0].__repr__() == '<DXF LinDims>':
-                dimensions_draw(data,scal,ldims,msp)
+                dimensions_draw(data,scal,layer,msp)
             if data[0].__repr__() == '<DXF Circles>':
-                circles_draw(data,scal,ledgs,msp)
+                circles_draw(data,scal,layer,msp)
             if data[0].__repr__() == '<DXF Texts>':
                 #print('getting text',data)
-                text_draw(data,scal,ltext,msp) # tv,tt,scal,ltext,msp,t_scal
+                text_draw(data,scal,layer,msp) # tv,tt,scal,ltext,msp,t_scal
+            num += 1
     else:
         lib = BlockLibrary(doc)
         

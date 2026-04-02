@@ -19,7 +19,6 @@ class DxfPols:
         self.linetype = linetype
         self.objecttype = objecttype
 
-
     def draw(self):
         return self.vers
 
@@ -38,7 +37,7 @@ class SvDxfPolygonsNode(SverchCustomTreeNode, bpy.types.Node):
 
     metadata: bpy.props.StringProperty(default='',name='metadata')
 
-    color_int: bpy.props.IntProperty(default=-4, min=-4, max=255,name='color', description='-4 is ignore, -3')
+    color_int: bpy.props.IntProperty(default=-4, min=-4, max=255,name='color', description='-4 is ignore, -3', update=updateNode)
 
     unit_color: bpy.props.FloatVectorProperty(
         update=updateNode, name='', default=(.3, .3, .2, 1.0),
