@@ -225,7 +225,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
     spacing : FloatProperty(
         name = "Spacing",
         default = 0.0,
-        min = 0.0,
+        #min = 0.0,
         description="Percent of space to leave between generated fragment meshes",
         update=updateNode) # type: ignore
 
@@ -255,6 +255,12 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         name = "Output mode",
         items = results_join_modes,
         default = 'KEEP',
+        update = updateNode) # type: ignore
+    
+    results_split_matrices : BoolProperty(
+        name = "Origins sites",
+        default = False,
+        description="Set objects origins to sites in split (disconnect) results",
         update = updateNode) # type: ignore
     
     source_objects_join_modes = [
@@ -318,6 +324,20 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             layout.label(text=f'{socket.label}')
         pass
 
+    def draw_matrices_out_socket(self, socket, context, layout):
+        col = layout.row(align=True)
+        col.alignment='RIGHT'
+        col_prop = col.row()
+        col_prop.alignment='RIGHT'
+        if self.results_join_mode!='SPLIT':
+            col_prop.enabled=False
+        col_prop.prop(self, 'results_split_matrices', text=f'Origin on {"sites" if self.results_split_matrices==True else "objects"}', toggle=True)
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            col.label(text=f"{socket.label}. {socket.objects_number or ''}")
+        else:
+            col.label(text=f'{socket.label}')
+        pass
+
     def draw_voronoi_sites_mask_in_socket(self, socket, context, layout):
         grid = layout.grid_flow(row_major=True, columns=2)
         if not socket.is_linked:
@@ -378,9 +398,11 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket' , "polygonsInnerMasks"   ).label = 'Polygons Inner Masks'
         self.outputs.new('SvStringsSocket' , "sites_idx"            ).label = 'Used Sites Idx'
         self.outputs.new('SvStringsSocket' , "sites_verts"          ).label = 'Used Sites Verts'
-        self.outputs.new('SvMatrixSocket'  , 'matrices'             ).label = 'Matrices'
+        self.outputs.new('SvMatrixSocket'  , 'matrices'             ).label = 'Origins Matrices'
+        self.outputs.new('SvMatrixSocket'  , 'matrices_split_mode'  ).label = 'Local Sites'
 
         self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
+        self.outputs['matrices'].custom_draw = 'draw_matrices_out_socket'
 
         self.outputs["verticesOuter"]           .hide = True
         self.outputs["verticesInner"]           .hide = True
@@ -462,6 +484,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         edges_out = []
         faces_out = []
         matrices_out = []
+        matrices_split_mode_out = []
         outer_verts_property_out = []
         outer_edges_property_out = []
         outer_polygons_property_out = []
@@ -641,9 +664,29 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             sites_verts_out.append(new_used_sites_verts)
             
             if self.results_join_mode == 'SPLIT':
-                verts_out.extend(new_verts)
+                if self.results_split_matrices==True:
+                    for IJ, obj_verts in enumerate(new_verts):
+                        s1 = new_used_sites_verts[IJ]
+                        mat_site_translation = Matrix.Translation(s1)
+                        mat_site_translation_inverted = mat_site_translation.inverted()
+                        obj_verts_site = []
+                        for obj_vert in obj_verts:
+                            v = mat_site_translation_inverted @ Vector(obj_vert)
+                            obj_verts_site.append(v)
+                        verts_out.append(obj_verts_site)
+                        matrices_split_mode_out.append(mat_site_translation)
+                    pass
+                else:
+                    verts_out.extend(new_verts)
+                    matrices_split_mode_out.extend([Matrix()]*len(new_verts))
+                    pass
                 edges_out.extend(new_edges)
                 faces_out.extend(new_faces)
+                # for s1 in new_used_sites_verts:
+                #     mat_site_translation = Matrix.Translation(s1)
+                #     mat = matrices_I @ mat_site_translation.inverted()
+                #     matrices_split_mode_out.append(mat_site_translation)
+                #     matrices_out.append(mat)
                 matrices_out.extend([matrices_I]*len(new_verts))
                 outer_verts_property_out.extend(outer_verts_property) # dict {is_outer:True/False, is_inner: True/False}
                 outer_edges_property_out.extend(outer_edges_property) # dict {is_outer:True/False, is_inner: True/False}
@@ -651,6 +694,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             elif self.results_join_mode == 'KEEP' or self.results_join_mode == 'MERGE':
                 if self.results_join_mode == 'KEEP':
                     matrices_out.append(matrices_I)
+                    matrices_split_mode_out.append(Matrix())
                 verts1, edges1, faces1 = mesh_join(new_verts, new_edges, new_faces)
                 verts_out.append(verts1)
                 edges_out.append(edges1)
@@ -682,6 +726,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             edges_out = [edges1]
             faces_out = [faces1]
             matrices_out.append(matrices_in_2[0])
+            matrices_split_mode_out.фззутв(Matrix())
             outer_verts = [item for sublist in outer_verts_property_out for item in sublist]
             outer_verts_property_out = [outer_verts]
             outer_edges = [item for sublist in outer_edges_property_out for item in sublist]
@@ -886,6 +931,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['sites_idx'            ].sv_set(sites_idx_out)
         self.outputs['sites_verts'          ].sv_set(sites_verts_out)
         self.outputs['matrices'             ].sv_set(matrices_out)
+        self.outputs['matrices_split_mode'  ].sv_set(matrices_split_mode_out)
 
 classes = [SvVoronoiOnMeshOffUnlinkedSocketsMK5, SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5, SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5, SvVoronoiOnMeshNodeMK5]
 register, unregister = bpy.utils.register_classes_factory(classes)
