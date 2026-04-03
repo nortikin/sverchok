@@ -184,7 +184,7 @@ class SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5(bpy.types.Panel):
     '''Additional objects properties'''
     # this combination do not show this panel on the right side panel
     bl_idname="SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5"
-    bl_label = "Voronoi Onn Mesh Node properties"
+    bl_label = "Voronoi On Mesh Node properties"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
 
@@ -232,7 +232,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
     normals : BoolProperty(
         name = "Correct normals",
         default = True,
-        description="Make sure that all normals of generated meshes point outside",
+        description="Make sure that all normals of generated meshes point outside (Works in volume mode only)",
         update = updateNode) # type: ignore
 
     def update_sockets(self, context):
@@ -257,10 +257,16 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         default = 'KEEP',
         update = updateNode) # type: ignore
     
-    results_split_matrices : BoolProperty(
-        name = "Origins sites",
-        default = False,
-        description="Set objects origins to sites in split (disconnect) results",
+    results_objects_origins_modes = [
+            ('ALIGHT_PARENT_OBJECTS_ORIGIN', "Parent origins", "Post processing: Align results objects origins to parent objects origins", 'ORIENTATION_VIEW', 0),
+            ('ALIGHT_INPUT_SITES', "Sites origins", "Post processing: Align results objects origins to input sites", 'STICKY_UVS_DISABLE', 1),
+        ]
+
+    results_objects_origins : EnumProperty(
+        name = "Origins results objects",
+        default = 'ALIGHT_PARENT_OBJECTS_ORIGIN',
+        items = results_objects_origins_modes,
+        description="Set results objects origins",
         update = updateNode) # type: ignore
     
     source_objects_join_modes = [
@@ -331,7 +337,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         col_prop.alignment='RIGHT'
         if self.results_join_mode!='SPLIT':
             col_prop.enabled=False
-        col_prop.prop(self, 'results_split_matrices', text=f'Origin on {"sites" if self.results_split_matrices==True else "objects"}', toggle=True)
+        col_prop.prop(self, 'results_objects_origins', text='')
         if socket.is_linked:  # linked INPUT or OUTPUT
             col.label(text=f"{socket.label}. {socket.objects_number or ''}")
         else:
@@ -426,23 +432,28 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons(self, context, layout):
         row0 = layout.row(align=True)
+        row0.alignment='RIGHT'
+        row0_col0 = row0.column(align=True)
+        row0_col0.alignment='RIGHT'
+        row0_col0.label(text='Settings: ')
         row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
         row0.column(align=True).popover(panel=SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5.bl_idname, icon='DOWNARROW_HLT', text="")
 
-        #layout.operator(SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
         layout.label(text="Mode:")
         layout.prop(self, "mode", expand=True)
-        # split = layout.column().split(factor=0.6)
-        # split.column().prop(self, "mask_mode", text='')
-        # split.column().prop(self, "mask_inversion", text='Invert')
-        if self.mode == 'VOLUME':
-            layout.prop(self, 'normals')
-        # layout.label(text='Recombine result:')
-        # layout.prop(self, 'join_mode', text='')
+        row1 = layout.row(align=True)
+        row1.prop(self, 'normals')
+        if self.mode != 'VOLUME':
+            row1.enabled = False
+        pass
 
     def draw_buttons_ext(self, context, layout):
-        self.draw_buttons(context, layout)
+        #self.draw_buttons(context, layout)
+        layout.label(text="Mode:")
+        layout.prop(self, "mode", expand=True)
         layout.prop(self, 'accuracy')
+        # TODO: remove input sockets
+        pass
 
     def process(self):
 
@@ -664,7 +675,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             sites_verts_out.append(new_used_sites_verts)
             
             if self.results_join_mode == 'SPLIT':
-                if self.results_split_matrices==True:
+                if self.results_objects_origins=='ALIGHT_INPUT_SITES':
                     for IJ, obj_verts in enumerate(new_verts):
                         s1 = new_used_sites_verts[IJ]
                         mat_site_translation = Matrix.Translation(s1)
@@ -676,7 +687,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                         verts_out.append(obj_verts_site)
                         matrices_split_mode_out.append(mat_site_translation)
                     pass
-                else:
+                elif self.results_objects_origins=='ALIGHT_PARENT_OBJECTS_ORIGIN':
                     verts_out.extend(new_verts)
                     matrices_split_mode_out.extend([Matrix()]*len(new_verts))
                     pass
