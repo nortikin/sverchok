@@ -726,7 +726,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             edges_out = [edges1]
             faces_out = [faces1]
             matrices_out.append(matrices_in_2[0])
-            matrices_split_mode_out.фззутв(Matrix())
+            matrices_split_mode_out.append(Matrix())
             outer_verts = [item for sublist in outer_verts_property_out for item in sublist]
             outer_verts_property_out = [outer_verts]
             outer_edges = [item for sublist in outer_edges_property_out for item in sublist]
