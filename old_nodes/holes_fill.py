@@ -41,9 +41,9 @@ def fill_holes(vertices, edges, s):
     return (verts, edges, faces)
 
 
-class SvFillHolesNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
+class SvFillHolesNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     '''Fills holes'''
-    bl_idname = 'SvFillsHoleNodeMK2'
+    bl_idname = 'SvFillsHoleNode'
     bl_label = 'Fill Holes'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FILL_HOLES'
@@ -91,7 +91,12 @@ class SvFillHolesNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs['vertices'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)
         self.outputs['polygons'].sv_set(polys_out)
-        pass
 
-classes = [SvFillHolesNodeMK2]
-register, unregister = bpy.utils.register_classes_factory(classes)
+
+
+def register():
+    bpy.utils.register_class(SvFillHolesNode)
+
+
+def unregister():
+    bpy.utils.unregister_class(SvFillHolesNode)
