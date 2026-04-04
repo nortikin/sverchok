@@ -1,8 +1,8 @@
 Voronoi on Mesh
 ===============
 
-.. image:: https://github.com/user-attachments/assets/85e2b2e4-0dea-4f85-9466-7b5848c4e620
-  :target: https://github.com/user-attachments/assets/85e2b2e4-0dea-4f85-9466-7b5848c4e620
+.. image:: https://github.com/user-attachments/assets/b24933ff-f6fc-4c06-b679-c777be5e5e2a
+  :target: https://github.com/user-attachments/assets/b24933ff-f6fc-4c06-b679-c777be5e5e2a
 
 Dependencies
 ------------
@@ -109,15 +109,22 @@ Parameters
 
 This node has the following parameters:
 
-* **Mode**. The available options are:
+* **Voronoi Mode**. The available options are:
 
-  * **Split Volume**. Split closed-volume mesh into smaller closed-volume mesh regions.
-  * **Split Surface**. Split the surface of a mesh into smaller flat meshes.
+  * **Volume**. Split closed-volume mesh into smaller closed-volume mesh regions.
+  * **Surface**. Split the surface of a mesh into smaller flat meshes.
 
-  The default value is **Split Volume**.
+  The default value is **Volume**.
 
-.. image:: https://user-images.githubusercontent.com/14288520/202573307-cd8f42e1-6909-47d0-bf37-9211dbafb69a.png
-  :target: https://user-images.githubusercontent.com/14288520/202573307-cd8f42e1-6909-47d0-bf37-9211dbafb69a.png
+    .. image:: https://github.com/user-attachments/assets/21441877-6bc1-485c-9780-6cb8f5b52d55
+      :target: https://github.com/user-attachments/assets/21441877-6bc1-485c-9780-6cb8f5b52d55
+
+    .. raw:: html
+
+      <video width="700" controls>
+        <source src="https://github.com/user-attachments/assets/1505d4f5-c541-472b-965f-0bd7c37a8a52" type="video/mp4">
+      Your browser does not support the video tag.
+      </video>
 
 * **Correct normals**. This parameter is available only when **Mode** parameter
   is set to **Volume**. If checked, then the node will make sure that all
@@ -176,12 +183,12 @@ Outputs
 This node has the following outputs:
 
 * **Vertices**. Vertices of generated mesh.
-* **Vertices Outer**.
-* **Vertices Inner**.
-* **Vertices Border**.
-* **Vertices Outer Indexes**.
-* **Vertices Inner Indexes**.
-* **Vertices Border Indexes**.
+* **Outer Vertices**.
+* **Inner Vertices**.
+* **Border Vertices**.
+* **Outer Indexes Vertices**.
+* **Inner Indexes Vertices**.
+* **Border Indexes Vertices**.
 
     .. image:: https://github.com/user-attachments/assets/1dc196b6-0f89-4677-ae62-90555ce6a0f7
       :target: https://github.com/user-attachments/assets/1dc196b6-0f89-4677-ae62-90555ce6a0f7
@@ -190,12 +197,12 @@ This node has the following outputs:
       :target: https://github.com/user-attachments/assets/ebb8817f-6a5d-4903-b808-e4931a5695ea
 
 * **Edges**. Edges of generated mesh.
-* **Edges Outer**.
-* **Edges Inner**.
-* **Edges Border**.
-* **Edges Outer Indexes**.
-* **Edges Inner Indexes**.
-* **Edges Border Indexes**.
+* **Outer Edges**.
+* **Inner Edges**.
+* **Border Edges**.
+* **Outer Indexes Edges**.
+* **Inner Indexes Edges**.
+* **Border Indexes Edges**.
 
     .. image:: https://github.com/user-attachments/assets/cf0b2c90-c04c-458f-9ba5-85c26f5fa783
       :target: https://github.com/user-attachments/assets/cf0b2c90-c04c-458f-9ba5-85c26f5fa783
@@ -204,15 +211,15 @@ This node has the following outputs:
       :target: https://github.com/user-attachments/assets/c6dda949-a694-4ddf-81e9-4bd9d153ff85
 
 * **Polygons**. Faces of generated mesh.
-* **Polygons Outer Inner Mask**.
-* **Polygons Outer**.
-* **Polygons Inner**.
-* **Polygons Border**.
+* **Outer Inner Mask Polygons**.
+* **Outer Polygons**.
+* **Inner Polygons**.
+* **Border Polygons**.
 
 
-* **Polygons Outer Indexes**.
-* **Polygons Inner Indexes**.
-* **Polygons Border Indexes**.
+* **Outer Indexes Polygons**.
+* **Inner Indexes Polygons**.
+* **Border Indexes Polygons**.
 
     .. image:: https://github.com/user-attachments/assets/e51f9fd8-071d-4e71-b970-f0b09560531b
       :target: https://github.com/user-attachments/assets/e51f9fd8-071d-4e71-b970-f0b09560531b
@@ -220,7 +227,7 @@ This node has the following outputs:
     .. image:: https://github.com/user-attachments/assets/99db0125-e62b-4818-b181-2a90f50bbb3b
       :target: https://github.com/user-attachments/assets/99db0125-e62b-4818-b181-2a90f50bbb3b
 
-  Additionally:
+  Additionally for voronoi on volume if you connect socket "Outer polygon" then you can see this result:
 
     .. image:: https://github.com/user-attachments/assets/5fde423b-ad47-4bc8-8b4d-9758b6c92477
       :target: https://github.com/user-attachments/assets/5fde423b-ad47-4bc8-8b4d-9758b6c92477
@@ -241,6 +248,35 @@ This node has the following outputs:
 
     .. image:: https://github.com/user-attachments/assets/2edd54d3-cb90-4d20-8a26-a70be84044ec
       :target: https://github.com/user-attachments/assets/2edd54d3-cb90-4d20-8a26-a70be84044ec
+
+* **Voronoi Sites Matrices**. These Matrices is used in multi-objects sources. If you have several meshes and split results on individual meshes with "Split (disconnect)" or "Split (sites)" then this socket out matrices for every results objects as Translate matrix to Voronoi Site position from source object origin.
+
+    .. image:: https://github.com/user-attachments/assets/556f2815-1780-417c-9aee-a436342becb3
+      :target: https://github.com/user-attachments/assets/556f2815-1780-417c-9aee-a436342becb3
+
+    To get real world position of objects you have to use both matrices:
+
+    .. image:: https://github.com/user-attachments/assets/bfe6c0fc-6177-4fe7-a2bd-156d159fb588
+      :target: https://github.com/user-attachments/assets/bfe6c0fc-6177-4fe7-a2bd-156d159fb588
+
+    Using only "Matrices" socket will get next result:
+
+    .. image:: https://github.com/user-attachments/assets/5ef90016-1da3-4378-9502-f1be4f516ca1
+      :target: https://github.com/user-attachments/assets/5ef90016-1da3-4378-9502-f1be4f516ca1
+
+    Examples of using matrices sockets in split mode.
+    
+    .. raw:: html
+
+      <video width="700" controls>
+        <source src="https://github.com/user-attachments/assets/6d641895-fe49-4186-a050-01f4ca3075a1" type="video/mp4">
+      Your browser does not support the video tag.
+      </video>
+
+    Additionally: if results join mode is not split then "Voronoi Sites Matrices" has no sence so this socket will has only identity Matrices in Keep or Merge mode.
+
+    .. image:: https://github.com/user-attachments/assets/4fe0caa7-195c-4ccc-b17c-27024cde0e34
+      :target: https://github.com/user-attachments/assets/4fe0caa7-195c-4ccc-b17c-27024cde0e34
 
 Addition info
 -------------
