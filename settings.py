@@ -442,6 +442,11 @@ class SverchokPreferences(AddonPreferences):
             description = "Path to FreeCAD Python API library files (FreeCAD.so on Linux and MacOS, FreeCAD.dll on Windows). On Linux the usual location is /usr/lib/freecad/lib, on Windows it can be something like E:\programs\conda-0.18.3\\bin"
         )
 
+    custom_library: StringProperty(
+            name="Custom lib",
+            description = "Name of your library from pip to install. It is risky, so, use if you know what you are doing"
+        )
+
     def get_menu_presets(self, context):
         items = []
         name = 'index.yaml'
@@ -629,11 +634,11 @@ dependencies, or install only some of them.""")
         box = layout.box()
         box.label(text="Dependencies:")
         # please, not activate pyOpenSubdiv and pyQuadriFlow it crashes sverchok sometimes
-        package_names = ["scipy", "geomdl", "skimage", "mcubes", "circlify", "cython", "numba", "numexpr", "ezdxf", "pyacvd", "pySVCGAL", "spyrrow"]
+        package_names_allatonce = ["scipy", "geomdl", "skimage", "mcubes", "circlify", "cython", "numba", "numexpr", "ezdxf", "pyacvd", "pySVCGAL", "spyrrow"]
+        package_names = ["scipy", "geomdl", "skimage", "mcubes", "circlify", "cython", "numba", "numexpr", "ezdxf", "pyacvd", "pySVCGAL", "spyrrow","pyOpenSubdiv","pyQuadriFlow"]
         col = box.column(align=True)
         row = col.row(align=True)
-        row.operator('sverchok.install_or_update_dependencies_operator', text="Install or Update all packages (Upgrade PIP FIRST)").serialized_items=";".join(package_names)
-
+        row.operator('sverchok.install_or_update_dependencies_operator', text="Install or Update all packages (Upgrade PIP FIRST)").serialized_items=";".join(package_names_allatonce)
         row = draw_message(box, "pip")
         if pip is not None:
             row.operator('node.sv_ex_pip_install', text="Upgrade PIP").package = "pip setuptools wheel"
@@ -651,6 +656,11 @@ dependencies, or install only some of them.""")
         if any(package.module is None for package in sv_dependencies.values()):
             box.operator('wm.url_open', text="Read installation instructions for missing dependencies").url = "https://github.com/nortikin/sverchok/wiki/Dependencies"
         draw_extra_addons(layout)
+        if self.developer_mode:
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            row.prop(self,"custom_library")
+            row.operator('sverchok.install_or_update_dependencies_operator', text="Install on your own risk!").serialized_items=self.custom_library
 
     def draw(self, context):
 

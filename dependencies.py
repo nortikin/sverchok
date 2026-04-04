@@ -242,10 +242,15 @@ class DI_OT_install_or_update_dependencies_operator(bpy.types.Operator):
 
     def execute(self, context):
         items = self.serialized_items.split(';')
+        print(items)
         for item in items:
             try:
-                dependency = sv_dependencies[item]
-                if dependency.module is None and dependency.pip_installable and pip is not None and item != 'pyOpenSubdiv':
+                if item in sv_dependencies:
+                    dependency = sv_dependencies[item]
+                else:
+                    dependency = sv_dependencies[item] = SvDependency(item,"None")
+                    dependency.pip_installable = True
+                if dependency.module is None and dependency.pip_installable and pip is not None: # and item != 'pyOpenSubdiv':
                     print(f"===>> Install Dependency: {item}")
                     res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
                     #res = bpy.ops.node.sv_ex_pip_install('INVOKE_DEFAULT', package = dependency.package)
