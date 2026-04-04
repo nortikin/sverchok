@@ -28,6 +28,7 @@ from sverchok.utils.voronoi3d import voronoi_on_mesh
 from mathutils import Vector, Matrix
 import numpy as np
 import collections
+import textwrap
 
 def separate_loose_mesh(verts_in, poly_edge_in):
         ''' separate a mesh by loose parts.
@@ -203,6 +204,38 @@ class SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5(bpy.types.Panel):
             draw_properties(self.layout, node_group, node_name)
         pass
 
+class SV_PT_ViewportDisplayInformationVoronoiOnMeshMK5(bpy.types.Panel):
+    '''Additional information'''
+    # this combination do not show this panel on the right side panel
+    bl_idname="SV_PT_ViewportDisplayInformationVoronoiOnMeshMK5"
+    bl_label = "Additional information"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'WINDOW'
+
+    # @classmethod
+    # def description(cls, context, properties):
+    #     s = "properties.description_text"
+    #     return s
+
+    # horizontal size
+    bl_ui_units_x = 22
+
+    def draw(self, context):
+        if hasattr(context, "node"):
+            node_name = context.node.name
+            node_group = context.annotation_data_owner.name_full
+            #draw_properties(self.layout, node_group, node_name)
+            #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
+            #root_grid = self.layout.grid_flow(row_major=False, columns=2, align=True)
+            root_grid = self.layout.grid_flow(row_major=False, columns=1, align=True)
+            root_grid.alignment = 'EXPAND'
+            text="'Voronoi Sites Matrices' is Identity Matrix now. If output results join mode is not 'Split' or if it is 'Split' but 'Align results to'!='Voronoi Sites' then 'Voronoi Sites Matrices' has no sense. So results in this socket set with Identity Matrices"
+            region_width = context.region.width
+            chars = int(region_width / 7)
+            for line in textwrap.wrap(text, width=80):
+                root_grid.label(text=line)
+        pass
+
 
 class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -215,40 +248,40 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_VORONOI'
     sv_dependencies = {'scipy'}
 
-    modes = [
-            ('VOLUME', "Split Volume", "Split volume of the mesh into regions of Voronoi diagram", 0),
-            ('SURFACE', "Split Surface", "Split the surface of the mesh into regions of Vornoi diagram", 1),
-            #('RIDGES', "Ridges near Surface", "Generate ridges of 3D Voronoi diagram near the surface of the mesh", 2),
-            #('REGIONS', "Regions near Surface", "Generate regions of 3D Voronoi diagram near the surface of the mesh", 3)
-        ]
-
-    spacing : FloatProperty(
+    voronoi_spacing : FloatProperty(
         name = "Spacing",
         default = 0.0,
         #min = 0.0,
         description="Percent of space to leave between generated fragment meshes",
         update=updateNode) # type: ignore
 
-    normals : BoolProperty(
+    correct_normals : BoolProperty(
         name = "Correct normals",
         default = True,
-        description="Make sure that all normals of generated meshes point outside (Works in volume mode only)",
+        description="Postprocess:\nMake sure that all normals of generated meshes point outside.\n(Works in volume mode only)",
         update = updateNode) # type: ignore
 
     def update_sockets(self, context):
-        self.inputs['spacing'].hide_safe = self.mode not in {'VOLUME', 'SURFACE'}
+        self.inputs['voronoi_spacing'].hide_safe = self.voronoi_mode not in {'VOLUME', 'SURFACE'}
         updateNode(self, context)
 
-    mode : EnumProperty(
-        name = "Mode",
-        items = modes,
+    voronoi_modes = [
+            ('VOLUME', "Volume", "Split volume of the mesh into regions of Voronoi diagram. If Mesh is not Closed and Manifold then results are weirded", 0),
+            ('SURFACE', "Surface", "Split the surface of the mesh into regions of Vornoi diagram. Can be applied to Closed meshes too", 1),
+            #('RIDGES', "Ridges near Surface", "Generate ridges of 3D Voronoi diagram near the surface of the mesh", 2),
+            #('REGIONS', "Regions near Surface", "Generate regions of 3D Voronoi diagram near the surface of the mesh", 3)
+        ]
+
+    voronoi_mode : EnumProperty(
+        name = "Voronoi Mode",
+        items = voronoi_modes,
         default = 'VOLUME',
         update = update_sockets) # type: ignore
     
     results_join_modes = [
-            ('SPLIT', "Split (disconnect)", "Post processing: Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
-            ('KEEP', "Keep", "Post processing: Keep parts of the source meshes as source meshes.", 'SYNTAX_ON', 1),
-            ('MERGE', "Merge", "Post processing: Join all results meshes into a single mesh", 'STICKY_UVS_LOC', 2)
+            ('SPLIT', "Split (disconnect)", "Post processing:\nSeparate (disconnect) the results meshes into individual meshes", 'SNAP_VERTEX', 0),
+            ('KEEP', "Keep", "Post processing:\nKeep parts of the sources meshes as source meshes.", 'SYNTAX_ON', 1),
+            ('MERGE', "Merge", "Post processing:\nJoin all results meshes into a single mesh", 'STICKY_UVS_LOC', 2)
         ]
 
     results_join_mode : EnumProperty(
@@ -258,21 +291,21 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         update = updateNode) # type: ignore
     
     results_objects_origins_modes = [
-            ('ALIGHT_PARENT_OBJECTS_ORIGIN', "Parent origins", "Post processing: Align results objects origins to parent objects origins", 'ORIENTATION_VIEW', 0),
-            ('ALIGHT_INPUT_SITES', "Sites origins", "Post processing: Align results objects origins to input sites", 'STICKY_UVS_DISABLE', 1),
+            ('ALIGN_SOURCES_OBJECTS_ORIGIN', "Sources origins", "Post processing:\nAlign origins of results objects to parent objects origins.\n'Align Vertices to' works in Split mode only.\nUse only 'Matrices' output socket to get real world position", 'ORIENTATION_VIEW', 0),
+            ('ALIGN_INPUT_SITES', "Voronoi Sites", "Post processing:\nAlign origins of results objects to input Voronoi Sites.\n'Align Vertices to' works in Postprocessing 'Split (disconnect)' mode only.\nUse 'Matrices' output socket with 'Sites Matrices' output socket to get real world position", 'STICKY_UVS_DISABLE', 1),
         ]
 
     results_objects_origins : EnumProperty(
         name = "Origins results objects",
-        default = 'ALIGHT_PARENT_OBJECTS_ORIGIN',
+        default = 'ALIGN_SOURCES_OBJECTS_ORIGIN',
         items = results_objects_origins_modes,
         description="Set results objects origins",
         update = updateNode) # type: ignore
     
     source_objects_join_modes = [
-            ('SPLIT', "Split (disconnect)", "Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
-            ('KEEP' , "Keep", "Keep as input meshes", 'SYNTAX_ON', 1),
-            ('MERGE', "Merge", "Join all meshes into a single mesh", 'STICKY_UVS_LOC', 2)
+            ('SPLIT', "Split (disconnect)", "Preprocess input objects: Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
+            ('KEEP' , "Keep", "Preprocess input objects: Keep as input meshes", 'SYNTAX_ON', 1),
+            ('MERGE', "Merge", "Preprocess input objects: Join all meshes into a single mesh", 'STICKY_UVS_LOC', 2)
         ]
 
     source_objects_join_mode : EnumProperty(
@@ -323,21 +356,46 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         pass
 
     def draw_vertices_out_socket(self, socket, context, layout):
-        layout.prop(self, 'results_join_mode', text='')
+        # grid = layout.grid_flow(row_major=True, columns=2, align=False,)
+        # grid.label(text='')
+        # col1 = grid.column()
+        # col1.alignment = 'RIGHT'
+        # if socket.is_linked:  # linked INPUT or OUTPUT
+        #     col1.label(text=f"{socket.label}. {socket.objects_number or ''} ")
+        # else:
+        #     col1.label(text=f'{socket.label} ')
+        # col = grid.column()
+        # col.alignment='RIGHT'
+        # col.label(text=f'Postprocessing:')
+        # grid.prop(self, 'results_join_mode', text='')
+        # col = grid.column()
+        # col.alignment='RIGHT'
+        # col.label(text='Align vertices to:')
+        # grid.prop(self, 'results_objects_origins', text='')
+        
+        #grid = layout.grid_flow(row_major=True, columns=1, align=False,)
+        col = layout.column()
+        row = col.row()
+        row.alignment = 'RIGHT'
+        row.prop(self, 'results_join_mode', text='')
         if socket.is_linked:  # linked INPUT or OUTPUT
-            layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
+            row.label(text=f"{socket.label}. {socket.objects_number or ''} ")
         else:
-            layout.label(text=f'{socket.label}')
+            row.label(text=f'{socket.label} ')
         pass
 
-    def draw_matrices_out_socket(self, socket, context, layout):
+    def draw_sites_matrices_out_socket(self, socket, context, layout):
         col = layout.row(align=True)
         col.alignment='RIGHT'
+        if (self.results_join_mode=='SPLIT' and self.results_objects_origins=='ALIGN_INPUT_SITES')==False:
+            col.popover(panel=SV_PT_ViewportDisplayInformationVoronoiOnMeshMK5.bl_idname, icon='INFO', text="",)
+        # if self.results_join_mode!='SPLIT':
+        #     col.label(text='non split->')
         col_prop = col.row()
         col_prop.alignment='RIGHT'
         if self.results_join_mode!='SPLIT':
             col_prop.enabled=False
-        col_prop.prop(self, 'results_objects_origins', text='')
+        #col_prop.prop(self, 'results_objects_origins', text='')
         if socket.is_linked:  # linked INPUT or OUTPUT
             col.label(text=f"{socket.label}. {socket.objects_number or ''}")
         else:
@@ -369,10 +427,10 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvMatrixSocket'  , 'matrices'          ).label     = 'Matrices of Meshes'
         self.inputs.new('SvVerticesSocket', 'voronoi_sites'     ).label     = 'Voronoi Sites'
         self.inputs.new('SvStringsSocket' , 'voronoi_sites_mask').label     = "Mask of Voronoi Sites"
-        self.inputs.new('SvStringsSocket' , 'spacing'           ).prop_name = 'spacing'
+        self.inputs.new('SvStringsSocket' , 'voronoi_spacing'   ).prop_name = 'voronoi_spacing'
 
-        self.inputs['vertices'].custom_draw = 'draw_vertices_in_socket'
-        self.inputs['voronoi_sites_mask'].custom_draw = 'draw_voronoi_sites_mask_in_socket'
+        self.inputs['vertices']             .custom_draw = 'draw_vertices_in_socket'
+        self.inputs['voronoi_sites_mask']   .custom_draw = 'draw_voronoi_sites_mask_in_socket'
 
         self.outputs.new('SvVerticesSocket', "vertices"             ).label = 'Vertices'
         self.outputs.new('SvVerticesSocket', "verticesOuter"        ).label = 'Vertices Outer'
@@ -404,11 +462,11 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket' , "polygonsInnerMasks"   ).label = 'Polygons Inner Masks'
         self.outputs.new('SvStringsSocket' , "sites_idx"            ).label = 'Used Sites Idx'
         self.outputs.new('SvStringsSocket' , "sites_verts"          ).label = 'Used Sites Verts'
-        self.outputs.new('SvMatrixSocket'  , 'matrices'             ).label = 'Origins Matrices'
-        self.outputs.new('SvMatrixSocket'  , 'matrices_split_mode'  ).label = 'Local Sites'
+        self.outputs.new('SvMatrixSocket'  , 'matrices'             ).label = 'Matrices'
+        self.outputs.new('SvMatrixSocket'  , 'sites_matrices'       ).label = 'Voronoi Sites Matrices'
 
-        self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
-        self.outputs['matrices'].custom_draw = 'draw_matrices_out_socket'
+        self.outputs['vertices']        .custom_draw = 'draw_vertices_out_socket'
+        self.outputs['sites_matrices']  .custom_draw = 'draw_sites_matrices_out_socket'
 
         self.outputs["verticesOuter"]           .hide = True
         self.outputs["verticesInner"]           .hide = True
@@ -431,27 +489,97 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
-        row0 = layout.row(align=True)
-        row0.alignment='RIGHT'
-        row0_col0 = row0.column(align=True)
-        row0_col0.alignment='RIGHT'
-        row0_col0.label(text='Settings: ')
-        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
-        row0.column(align=True).popover(panel=SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5.bl_idname, icon='DOWNARROW_HLT', text="")
+        grid = layout.box().grid_flow(row_major=True, columns=2, align=True)
 
-        layout.label(text="Mode:")
-        layout.prop(self, "mode", expand=True)
-        row1 = layout.row(align=True)
-        row1.prop(self, 'normals')
-        if self.mode != 'VOLUME':
-            row1.enabled = False
+        row21 = grid.row()
+        row22 = grid.row()
+        row21.alignment = 'RIGHT'
+        row21.label(text="Voronoi Mode:")
+        row22.prop(self, 'voronoi_mode', expand=True)
+
+        row31 = grid.row()
+        row32 = grid.row()
+        if self.voronoi_mode != 'VOLUME':
+            row31.enabled = False
+            row32.enabled = False
+        row31.alignment = 'RIGHT'
+        row31.label(text="Correct normals:")
+        row32.prop(self, 'correct_normals', text='')
+
+        # row51 = grid.row()
+        # row52 = grid.row()
+        # row51.alignment = 'RIGHT'
+        # row51.label(text='Source join mode:')
+        # row52.prop(self, 'source_objects_join_mode', text='', )
+
+        # row41 = grid.row()
+        # row42 = grid.row()
+        # row41.alignment = 'RIGHT'
+        # row41.label(text='Results join mode:')
+        # row42.prop(self, 'results_join_mode', text='', )
+
+        row11 = grid.row()
+        row12 = grid.row()
+        if self.results_join_mode!='SPLIT':
+            row11.enabled = False
+            row12.enabled = False
+        row11.alignment = 'RIGHT'
+        row11.label(text='Align results to:')
+        row12.prop(self, 'results_objects_origins', text='', )
+
+        row01 = grid.row()
+        row02 = grid.row(align=True)
+        row01.alignment='RIGHT'
+        row01.label(text='Settings:')
+        row02.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
+        row02.column(align=True).popover(panel=SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5.bl_idname, icon='DOWNARROW_HLT', text="")
+
         pass
 
     def draw_buttons_ext(self, context, layout):
-        #self.draw_buttons(context, layout)
-        layout.label(text="Mode:")
-        layout.prop(self, "mode", expand=True)
-        layout.prop(self, 'accuracy')
+        grid = layout.grid_flow(row_major=True, columns=2, align=True)
+
+        row21 = grid.row()
+        row22 = grid.row()
+        row21.alignment = 'RIGHT'
+        row21.label(text="Voronoi Mode:")
+        row22.prop(self, 'voronoi_mode', expand=True)
+
+        row31 = grid.row()
+        row32 = grid.row()
+        if self.voronoi_mode != 'VOLUME':
+            row31.enabled = False
+            row32.enabled = False
+        row31.alignment = 'RIGHT'
+        row31.label(text="Correct normals:")
+        row32.prop(self, 'correct_normals', text='')
+
+        row51 = grid.row()
+        row52 = grid.row()
+        row51.alignment = 'RIGHT'
+        row51.label(text='Source join mode:')
+        row52.prop(self, 'source_objects_join_mode', text='', )
+
+        row41 = grid.row()
+        row42 = grid.row()
+        row41.alignment = 'RIGHT'
+        row41.label(text='Results join mode:')
+        row42.prop(self, 'results_join_mode', text='', )
+
+        row11 = grid.row()
+        row12 = grid.row()
+        if self.results_join_mode!='SPLIT':
+            row11.enabled = False
+            row12.enabled = False
+        row11.alignment = 'RIGHT'
+        row11.label(text='Align results to:')
+        row12.prop(self, 'results_objects_origins', text='', )
+
+        row61 = grid.row()
+        row62 = grid.row()
+        row61.alignment = 'RIGHT'
+        row61.label(text='Accuracy:')
+        row62.prop(self, 'accuracy', text='', )
         # TODO: remove input sockets
         pass
 
@@ -478,7 +606,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         else:
             mask_in = mask_in.sv_get(deepcopy=False)
             
-        spacing_in  = self.inputs['spacing'].sv_get(deepcopy=False)
+        voronoi_spacing_in  = self.inputs['voronoi_spacing'].sv_get(deepcopy=False)
 
         verts_in    = ensure_nesting_level(verts_in, 3)
         input_level = get_data_nesting_level(sites_in, search_first_data=True)
@@ -486,7 +614,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             sites_in = ensure_nesting_level(sites_in, 3)
 
         faces_in    = ensure_nesting_level(faces_in, 3)
-        spacing_in  = ensure_min_nesting(spacing_in, 2)
+        voronoi_spacing_in  = ensure_min_nesting(voronoi_spacing_in, 2)
         mask_in     = ensure_min_nesting(mask_in, 2)
 
         precision   = 10 ** (-self.accuracy)
@@ -495,7 +623,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         edges_out = []
         faces_out = []
         matrices_out = []
-        matrices_split_mode_out = []
+        sites_matrices_split_mode_out = []
         outer_verts_property_out = []
         outer_edges_property_out = []
         outer_polygons_property_out = []
@@ -508,7 +636,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         verts_in_1 = []
         faces_in_1 = []
         sites_in_1 = []
-        spacing_in_1 = []
+        voronoi_spacing_in_1 = []
         mask_in_1 = []
         matrices_in_1 = []
 
@@ -516,11 +644,11 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         if len_verts_in>len(faces_in):
             raise Exception(f'list of verts less than faces [{len(verts_in)}<{len(faces_in)}]')
         
-        #for I, (verts_I, faces_I, sites_I, spacing_I, mask_I) in enumerate(zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, mask_in)):
+        #for I, (verts_I, faces_I, sites_I, voronoi_spacing_I, mask_I) in enumerate(zip_long_repeat(verts_in, faces_in, sites_in, voronoi_spacing_in, mask_in)):
         for I, verts_I in enumerate(verts_in):
             faces_I = faces_in[I if I<=len(faces_in)-1 else -1]
             sites_I = sites_in[I if I<=len(sites_in)-1 else -1]
-            spacing_I = spacing_in[I if I<=len(spacing_in)-1 else -1]
+            voronoi_spacing_I = voronoi_spacing_in[I if I<=len(voronoi_spacing_in)-1 else -1]
             mask_I = mask_in[I if I<=len(mask_in)-1 else -1]
 
             if len(faces_I)==0:
@@ -576,7 +704,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             faces_in_1   .append(faces_I)
             matrices_in_1.append(matrix_I)
             sites_in_1   .append(sites_I)
-            spacing_in_1 .append(spacing_I)
+            voronoi_spacing_in_1 .append(voronoi_spacing_I)
             mask_in_1    .append(mask_I)
 
             pass
@@ -586,7 +714,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         faces_in_2    = []
         matrices_in_2 = []
         sites_in_2    = []
-        spacing_in_2  = []
+        voronoi_spacing_in_2  = []
         mask_in_2     = []
 
         if self.source_objects_join_mode=='SPLIT':
@@ -594,20 +722,20 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                 objects_I_verts, object_I_faces, _ = separate_loose_mesh(verts_in_1_I, faces_in_1[I])
                 if len(objects_I_verts)>1:
                     for IJ, verts_IJ in enumerate(objects_I_verts):
-                        verts_in_2   .append(verts_IJ          )
-                        faces_in_2   .append(object_I_faces[IJ])
-                        matrices_in_2.append(matrices_in_1 [I ])
-                        sites_in_2   .append(sites_in_1    [I ])
-                        spacing_in_2 .append(spacing_in_1  [I ])
-                        mask_in_2    .append(mask_in_1     [I ])
+                        verts_in_2              .append(verts_IJ                )
+                        faces_in_2              .append(object_I_faces      [IJ])
+                        matrices_in_2           .append(matrices_in_1       [I ])
+                        sites_in_2              .append(sites_in_1          [I ])
+                        voronoi_spacing_in_2    .append(voronoi_spacing_in_1[I ])
+                        mask_in_2               .append(mask_in_1           [I ])
                         pass
                 else:
-                    verts_in_2   .append(verts_in_1_I     )
-                    faces_in_2   .append(faces_in_1    [I])
-                    matrices_in_2.append(matrices_in_1 [I])
-                    sites_in_2   .append(sites_in_1    [I])
-                    spacing_in_2 .append(spacing_in_1  [I])
-                    mask_in_2    .append(mask_in_1     [I])
+                    verts_in_2          .append(verts_in_1_I           )
+                    faces_in_2          .append(faces_in_1          [I])
+                    matrices_in_2       .append(matrices_in_1       [I])
+                    sites_in_2          .append(sites_in_1          [I])
+                    voronoi_spacing_in_2.append(voronoi_spacing_in_1[I])
+                    mask_in_2           .append(mask_in_1           [I])
                 pass
             pass
         elif self.source_objects_join_mode=='MERGE':
@@ -637,11 +765,11 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                     pass
                 pass
             merged_verts, _, merged_faces  = mesh_join(verts_for_merge, [], faces_in_1)
-            verts_in_2       = [merged_verts]
-            faces_in_2       = [merged_faces]
+            verts_in_2              = [merged_verts]
+            faces_in_2              = [merged_faces]
             matrices_in_2.append(matrices_in_1[0])
-            sites_in_2       = [sites_for_merge]
-            spacing_in_2     = [spacing_in_1[0]]
+            sites_in_2              = [sites_for_merge]
+            voronoi_spacing_in_2    = [voronoi_spacing_in_1[0]]
             merged_masks = []
             for m in mask_in_1:
                 merged_masks = merged_masks+m
@@ -652,20 +780,20 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             faces_in_2    = faces_in_1
             matrices_in_2 = matrices_in_1
             sites_in_2    = sites_in_1
-            spacing_in_2  = spacing_in_1
+            voronoi_spacing_in_2  = voronoi_spacing_in_1
             mask_in_2     = mask_in_1
             pass
         pass
 
 
 
-        for I, (verts_I, faces_I, matrices_I, sites_I, spacing_I, mask_I) in enumerate( zip(verts_in_2, faces_in_2, matrices_in_2, sites_in_2, spacing_in_2, mask_in_2) ):
+        for I, (verts_I, faces_I, matrices_I, sites_I, voronoi_spacing_I, mask_I) in enumerate( zip(verts_in_2, faces_in_2, matrices_in_2, sites_in_2, voronoi_spacing_in_2, mask_in_2) ):
             new_verts, new_edges, new_faces, new_used_sites_idx, new_used_sites_verts, outer_verts_property, outer_edges_property, outer_faces_property = voronoi_on_mesh(verts_I, faces_I, sites_I, thickness=0,
-                            spacing = spacing_I,
+                            spacing = voronoi_spacing_I,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
-                            mode = self.mode,
-                            normal_update = self.normals,
+                            mode = self.voronoi_mode,
+                            normal_update = self.correct_normals,
                             precision = precision,
                             mask = mask_I
                             )
@@ -675,7 +803,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             sites_verts_out.append(new_used_sites_verts)
             
             if self.results_join_mode == 'SPLIT':
-                if self.results_objects_origins=='ALIGHT_INPUT_SITES':
+                if self.results_objects_origins=='ALIGN_INPUT_SITES':
                     for IJ, obj_verts in enumerate(new_verts):
                         s1 = new_used_sites_verts[IJ]
                         mat_site_translation = Matrix.Translation(s1)
@@ -685,18 +813,18 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                             v = mat_site_translation_inverted @ Vector(obj_vert)
                             obj_verts_site.append(v)
                         verts_out.append(obj_verts_site)
-                        matrices_split_mode_out.append(mat_site_translation)
+                        sites_matrices_split_mode_out.append(mat_site_translation)
                     pass
-                elif self.results_objects_origins=='ALIGHT_PARENT_OBJECTS_ORIGIN':
+                elif self.results_objects_origins=='ALIGN_SOURCES_OBJECTS_ORIGIN':
                     verts_out.extend(new_verts)
-                    matrices_split_mode_out.extend([Matrix()]*len(new_verts))
+                    sites_matrices_split_mode_out.extend([Matrix()]*len(new_verts))
                     pass
                 edges_out.extend(new_edges)
                 faces_out.extend(new_faces)
                 # for s1 in new_used_sites_verts:
                 #     mat_site_translation = Matrix.Translation(s1)
                 #     mat = matrices_I @ mat_site_translation.inverted()
-                #     matrices_split_mode_out.append(mat_site_translation)
+                #     sites_matrices_split_mode_out.append(mat_site_translation)
                 #     matrices_out.append(mat)
                 matrices_out.extend([matrices_I]*len(new_verts))
                 outer_verts_property_out.extend(outer_verts_property) # dict {is_outer:True/False, is_inner: True/False}
@@ -705,7 +833,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             elif self.results_join_mode == 'KEEP' or self.results_join_mode == 'MERGE':
                 if self.results_join_mode == 'KEEP':
                     matrices_out.append(matrices_I)
-                    matrices_split_mode_out.append(Matrix())
+                    sites_matrices_split_mode_out.append(Matrix())
                 verts1, edges1, faces1 = mesh_join(new_verts, new_edges, new_faces)
                 verts_out.append(verts1)
                 edges_out.append(edges1)
@@ -737,7 +865,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             edges_out = [edges1]
             faces_out = [faces1]
             matrices_out.append(matrices_in_2[0])
-            matrices_split_mode_out.append(Matrix())
+            sites_matrices_split_mode_out.append(Matrix())
             outer_verts = [item for sublist in outer_verts_property_out for item in sublist]
             outer_verts_property_out = [outer_verts]
             outer_edges = [item for sublist in outer_edges_property_out for item in sublist]
@@ -779,13 +907,13 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                     vertsInnerIndexes_out_I.append(IJ)
                     vertsInnerMasks_out_I[IJ] = True
 
-                if self.mode=='VOLUME':
+                if self.voronoi_mode=='VOLUME':
                     if m_is_outer==True and m_is_inner==True:
                         vertsBorder_out_I       .append(v)
                         vertsBorderIndexes_out_I.append(IJ)
                         vertsBorderMasks_out_I[IJ] = True
                     pass
-                elif self.mode=='SURFACE':
+                elif self.voronoi_mode=='SURFACE':
                     m_is_surface_border = m["is_surface_border"]
                     if m_is_surface_border==True:
                         vertsBorder_out_I       .append(v)
@@ -793,9 +921,9 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                         vertsBorderMasks_out_I[IJ] = True
                     pass
                 else:
-                    raise Exception(f'Unknown mode="{self.mode}" in SvVoronoiOnMeshNodeMK5->process')
+                    raise Exception(f'Unknown mode="{self.voronoi_mode}" in SvVoronoiOnMeshNodeMK5->process')
                 
-                if self.mode=='SURFACE':
+                if self.voronoi_mode=='SURFACE':
                     pass
                 pass
             vertsOuter_out        .append(vertsOuter_out_I)
@@ -843,13 +971,13 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                     edgesInner_out_I.append(v)
                     edgesInnerIndexes_out_I.append(IJ)
                     edgesInnerMasks_out_I[IJ] = True
-                if self.mode=='VOLUME':
+                if self.voronoi_mode=='VOLUME':
                     if m_is_outer==True and m_is_inner==True:
                         edgesBorder_out_I.append(v)
                         edgesBorderIndexes_out_I.append(IJ)
                         edgesBorderMasks_out_I[IJ] = True
                     pass
-                elif self.mode=='SURFACE':
+                elif self.voronoi_mode=='SURFACE':
                     m_is_surface_border = m["is_surface_border"]
                     if m_is_surface_border==True:
                         edgesBorder_out_I.append(v)
@@ -858,9 +986,9 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                         pass
                     pass
                 else:
-                    raise Exception(f'Unknown mode="{self.mode}" in SvVoronoiOnMeshNodeMK5->process')
+                    raise Exception(f'Unknown mode="{self.voronoi_mode}" in SvVoronoiOnMeshNodeMK5->process')
                 
-                if self.mode=='SURFACE':
+                if self.voronoi_mode=='SURFACE':
                     pass
                 pass
             edgesOuter_out.append(edgesOuter_out_I)
@@ -942,7 +1070,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['sites_idx'            ].sv_set(sites_idx_out)
         self.outputs['sites_verts'          ].sv_set(sites_verts_out)
         self.outputs['matrices'             ].sv_set(matrices_out)
-        self.outputs['matrices_split_mode'  ].sv_set(matrices_split_mode_out)
+        self.outputs['sites_matrices'       ].sv_set(sites_matrices_split_mode_out)
 
-classes = [SvVoronoiOnMeshOffUnlinkedSocketsMK5, SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5, SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5, SvVoronoiOnMeshNodeMK5]
+classes = [SvVoronoiOnMeshOffUnlinkedSocketsMK5, SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5, SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5, SV_PT_ViewportDisplayInformationVoronoiOnMeshMK5, SvVoronoiOnMeshNodeMK5]
 register, unregister = bpy.utils.register_classes_factory(classes)
