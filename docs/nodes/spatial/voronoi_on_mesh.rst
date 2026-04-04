@@ -1,8 +1,8 @@
 Voronoi on Mesh
 ===============
 
-.. image:: https://github.com/user-attachments/assets/5e24b41f-f458-4432-8212-917e6813255e
-  :target: https://github.com/user-attachments/assets/5e24b41f-f458-4432-8212-917e6813255e
+.. image:: https://github.com/user-attachments/assets/85e2b2e4-0dea-4f85-9466-7b5848c4e620
+  :target: https://github.com/user-attachments/assets/85e2b2e4-0dea-4f85-9466-7b5848c4e620
 
 Dependencies
 ------------
@@ -22,6 +22,21 @@ of such Voronoi diagram. It is possible to subdivide:
 * or the volume of the mesh, generating a series of closed-body meshes. In this
   mode, it is required that the mesh represents a closed volume.
 
+Addition
+--------
+
+The number of resulting objects can differ from the number of sites you set, both smaller and larger. Example of smaller number:
+
+
+  .. image:: https://github.com/user-attachments/assets/f02be360-304f-432b-95a5-406f7e1a7e71
+    :target: https://github.com/user-attachments/assets/f02be360-304f-432b-95a5-406f7e1a7e71
+
+Example of bigger number:
+
+  .. image:: https://github.com/user-attachments/assets/8d419553-3e13-4704-8608-41c52dc2b318
+    :target: https://github.com/user-attachments/assets/8d419553-3e13-4704-8608-41c52dc2b318
+
+
 Inputs
 ------
 
@@ -30,8 +45,17 @@ This node has the following inputs:
 * **Vertices**. Vertices of the mesh to generate Voronoi diagram on. This input is mandatory.
 * **Polygons**. Faces of the mesh to generate Voronoi diagram on. This input is mandatory.
 
-  .. image:: https://github.com/nortikin/sverchok/assets/14288520/5a6ecd49-9ae1-4422-98b6-211060a22420
-    :target: https://github.com/nortikin/sverchok/assets/14288520/5a6ecd49-9ae1-4422-98b6-211060a22420
+  .. image:: https://github.com/user-attachments/assets/09b2accd-7f8b-46e9-aa3a-254f1e1518d7
+    :target: https://github.com/user-attachments/assets/09b2accd-7f8b-46e9-aa3a-254f1e1518d7
+
+* **Matrices of Meshes**. Matrices of input objects.
+
+    .. image:: https://github.com/user-attachments/assets/2661d9ef-b5d3-486b-9cf7-00f666f7218d
+      :target: https://github.com/user-attachments/assets/2661d9ef-b5d3-486b-9cf7-00f666f7218d
+      :width: 500px
+
+  Used in complex multi-object scenarios. If you have several input objects and set postprocess property "Join Mode" to "Split (disconnect)" then you mess up the corresponding matrices for the resulting objects
+
 
 * **Voronoi Sites**. The points to generate Voronoi diagram for. Usually you want for
   this points to lie either inside the mesh or on it's surface, but this is not
@@ -127,12 +151,13 @@ This node has the following parameters:
 
 * **Post processing**. This defines nesting structure of result meshes. The available options are:
 
-  * **Split**. Separate the result meshes into individual unconnected meshes. Every unconnected part get matrix of original meshes.
+  * **Split (disconnect)**. Separate the result meshes into individual unconnected meshes. Every unconnected part get matrix of original meshes.
+  * **Split (sites)**. Separate the result meshes into meshes of original sites (can keep several unconnected objects). Every part get matrix of original meshes.
   * **Keep**. Keep parts of preprocessed meshes. Also keep matrices of original objects unchanged.
   * **Merge**. Join all results meshes into a single mesh.
 
-    .. image:: https://github.com/user-attachments/assets/f67e2ac6-7332-4078-bde8-a3bff23ae177
-      :target: https://github.com/user-attachments/assets/f67e2ac6-7332-4078-bde8-a3bff23ae177
+    .. image:: https://github.com/user-attachments/assets/ad754124-d6e2-4371-95d4-cfd9a14c7bb5
+      :target: https://github.com/user-attachments/assets/ad754124-d6e2-4371-95d4-cfd9a14c7bb5
 
     .. image:: https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff
       :target: https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff
@@ -141,8 +166,8 @@ This node has the following parameters:
   the precision of mesh calculation (number of digits after decimal point). The
   default value is 6.
 
-    .. image:: https://user-images.githubusercontent.com/14288520/202577600-9f0e8eb6-2782-4a3b-9e58-f915823c9dfa.png
-      :target: https://user-images.githubusercontent.com/14288520/202577600-9f0e8eb6-2782-4a3b-9e58-f915823c9dfa.png
+    .. image:: https://github.com/user-attachments/assets/c871ef28-fbf2-46ae-8707-bbfb72497ca2
+      :target: https://github.com/user-attachments/assets/c871ef28-fbf2-46ae-8707-bbfb72497ca2
 
 
 Outputs
@@ -194,6 +219,11 @@ This node has the following outputs:
 
     .. image:: https://github.com/user-attachments/assets/99db0125-e62b-4818-b181-2a90f50bbb3b
       :target: https://github.com/user-attachments/assets/99db0125-e62b-4818-b181-2a90f50bbb3b
+
+  Additionally:
+
+    .. image:: https://github.com/user-attachments/assets/5fde423b-ad47-4bc8-8b4d-9758b6c92477
+      :target: https://github.com/user-attachments/assets/5fde423b-ad47-4bc8-8b4d-9758b6c92477
 
 
 * **Used Sites idx**. Indices of sources sites for further using (after apply Mask of sites). (from sverchok 1.3-alpha-master)

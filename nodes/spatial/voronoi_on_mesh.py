@@ -16,8 +16,24 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# import bpy
+# from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+
+# from sverchok.node_tree import SverchCustomTreeNode
+# from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, ensure_min_nesting
+# from sverchok.ui.sv_icons import custom_icon
+# from sverchok.utils.sv_bmesh_utils import recalc_normals
+# from sverchok.utils.sv_mesh_utils import mesh_join
+# from sverchok.utils.voronoi3d import voronoi_on_mesh
+# from mathutils import Vector, Matrix
+# import numpy as np
+# import collections
+# import textwrap
+
+
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, ensure_min_nesting
@@ -25,10 +41,22 @@ from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.voronoi3d import voronoi_on_mesh
-from mathutils import Vector, Matrix
 import numpy as np
-import collections
 import textwrap
+
+from mathutils import Vector, Matrix
+from mathutils.bvhtree import BVHTree
+from collections import defaultdict, deque
+import itertools
+import random
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.geom import calc_bounds, PlaneEquation, bounding_box_aligned
+from sverchok.data_structure import repeat_last_for_length
+from sverchok.utils.voronoi3d import voronoi3d_layer, calc_bvh_normals
+from sverchok.dependencies import scipy
+
+if scipy is not None:
+    from scipy.spatial import Voronoi, SphericalVoronoi, Delaunay
 
 def separate_loose_mesh(verts_in, poly_edge_in):
         ''' separate a mesh by loose parts.
@@ -56,7 +84,7 @@ def separate_loose_mesh(verts_in, poly_edge_in):
         nodes = set(node_links.keys())
         n = nodes.pop()
         node_set_list = [set([n])]
-        node_stack = collections.deque()
+        node_stack = deque()
         node_stack_append = node_stack.append
         node_stack_pop = node_stack.pop
         node_set = node_set_list[-1]
@@ -95,6 +123,512 @@ def separate_loose_mesh(verts_in, poly_edge_in):
 
         return verts_out, poly_edge_out, poly_edge_old_indexes_out
 
+
+# see additional info https://github.com/nortikin/sverchok/pull/4948
+def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', normal_update = False, results_join_mode = 'RESULTS_JOIN_MODE_KEEP', precision=1e-8, mask=[]):
+
+    def get_bmesh_data(bm, outer_layer_name, mode, ret_verts=True, ret_edges=True, ret_faces=True):
+        '''return verts, edges, faces and outer faces property (1-outer, 0-inner face)'''
+        verts_res = [v.co[:] for v in bm.verts] if ret_verts==True else None
+        edges_res = [[e.verts[0].index, e.verts[1].index] for e in bm.edges] if ret_edges==True else None
+        ordered_faces = sorted(bm.faces, key=lambda f: f.index)
+        faces_res = [[i.index for i in p.verts] for p in ordered_faces] if ret_faces==True else None
+
+        outer_faces_layer = bm.faces.layers.int.get(outer_layer_name)
+        faces_outer_property = [ f[outer_faces_layer] for f in ordered_faces]
+
+        verts_outer_property = []
+        edges_outer_property = []
+
+        if mode=='VOLUME':
+            for vert in bm.verts:
+                faces = vert.link_faces
+                is_outer = False
+                is_inner = False
+                for f in faces:
+                    outer_property = f[outer_faces_layer]
+                    if outer_property==1:
+                        is_outer = True
+                    else:
+                        is_inner = True
+                    pass
+                verts_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, index=vert.index))
+                pass
+
+            for edge in bm.edges:
+                faces = edge.link_faces
+                is_outer = False
+                is_inner = False
+                for f in faces:
+                    outer_property = f[outer_faces_layer]
+                    if outer_property==1:
+                        is_outer = True
+                    else:
+                        is_inner = True
+                    pass
+                edges_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, index=edge.index))
+                pass
+        elif mode=='SURFACE':
+            # on surface mode no additional faces created.
+            outer_edges_layer = bm.edges.layers.int.get(outer_layer_name)
+
+            for vert in bm.verts:
+                vert_link_edges = vert.link_edges
+                is_outer = False
+                is_inner = False
+                is_surface_border = False
+                for edge in vert_link_edges:
+                    outer_property = edge[outer_edges_layer]
+                    if outer_property==0: # new edge created
+                        is_inner = True
+                        is_surface_border = True
+                    elif outer_property==1: # old edge external
+                        is_outer = True
+                        is_surface_border = True
+                    else: # 2 value for a while
+                        # inside object plane
+                        pass
+                    pass
+                verts_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, is_surface_border=is_surface_border, index=vert.index))
+                pass
+
+            for edge in bm.edges:
+                is_outer = False
+                is_inner = False
+                is_surface_border = False
+
+                outer_property = edge[outer_edges_layer]
+                if outer_property==0:  # new edge created
+                    is_inner = True
+                    is_surface_border = True
+                elif outer_property==1: # old edges external
+                    is_outer = True
+                    is_surface_border = True
+                else:
+                    # inside object plane
+                    pass
+                edges_outer_property.append(dict(is_outer=is_outer, is_inner=is_inner, is_surface_border = is_surface_border, index=edge.index))
+                pass
+
+            pass
+        else:
+            raise Exception(f'Unknown mode="{mode}" in voronoi_on_mesh_bmesh->get_bmesh_data')
+        return verts_res, edges_res, faces_res, verts_outer_property, edges_outer_property, faces_outer_property
+
+
+    def get_sites_delaunay_params(delaunay, n_orig_sites):
+        result = defaultdict(list)
+        ridges = []
+        sites_pair = dict()
+        for simplex in delaunay.simplices:
+            ridges += itertools.combinations(tuple( sorted( simplex ) ), 2)
+
+        ridges = list(set( ridges )) # remove duplicates of ridges
+        ridges.sort() # for nice view in debugger
+
+        for ridge_idx in range(len(ridges)):
+            site1_idx, site2_idx = tuple(ridges[ridge_idx])
+            # Remove 4D simplex ridges:
+            if n_orig_sites<=site1_idx or n_orig_sites<=site2_idx:
+                continue
+            # Convert source sites to the 3D
+            site1 = delaunay.points[site1_idx]
+            site1 = Vector([site1[0], site1[1], site1[2], ])
+            site2 = delaunay.points[site2_idx]
+            site2 = Vector([site2[0], site2[1], site2[2], ])
+            middle = (site1 + site2) * 0.5
+            normal =  Vector(site1 - site2).normalized() # normal to site1
+            plane1 = PlaneEquation.from_normal_and_point( normal, middle)
+            plane2 = PlaneEquation.from_normal_and_point(-normal, middle)
+            result[site1_idx].append( (site2_idx, site1, site2, middle,  normal, plane1) )
+            result[site2_idx].append( (site1_idx, site2, site1, middle, -normal, plane2) )
+
+        return result
+
+    # some statistics:
+    num_bisect = 0 # general count of bisect for full cutting process
+    num_unpredicted_erased = 0 # if optimisation can not find a skip bisect case (with using bounding box) then counter incremented
+    
+    def get_face_components(bm):
+        visited = set()
+        components = []
+
+        for f in bm.faces:
+            if f in visited:
+                continue
+
+            stack = [f]
+            comp = []
+
+            while stack:
+                cur = stack.pop()
+                if cur in visited:
+                    continue
+
+                visited.add(cur)
+                comp.append(cur)
+
+                for e in cur.edges:
+                    for f2 in e.link_faces:
+                        if f2 not in visited:
+                            stack.append(f2)
+            comp_indexes = list(set([c.index for c in comp]))
+            comp_indexes.sort()
+            components.append(comp_indexes)
+
+        return components
+    
+    def keep_only_component(bm, faces_indexes):
+        component_faces = [bm.faces[i] for i in faces_indexes]
+        keep_faces = set(component_faces)
+        keep_edges = set()
+        keep_verts = set()
+
+        # Собираем связанные edges и verts
+        for f in keep_faces:
+            for e in f.edges:
+                keep_edges.add(e)
+                for v in e.verts:
+                    keep_verts.add(v)
+                pass
+            pass
+        pass
+
+        # Всё остальное — на удаление
+        del_faces = [f for f in bm.faces if f not in keep_faces]
+        #del_edges = [e for e in bm.edges if e not in keep_edges]
+        #del_verts = [v for v in bm.verts if v not in keep_verts]
+
+        # Удаляем (порядок важен)
+        bmesh.ops.delete(bm, geom=del_faces, context='FACES')
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.is_valid and not v.link_faces], context='VERTS')
+        return
+
+    def cut_cell(start_mesh, outer_layer_name, voronoi_mode, results_join_mode, sites_delaunay_params, site_idx, spacing, center_of_mass, bbox_aligned):
+        nonlocal num_bisect, num_unpredicted_erased
+        src_mesh = None
+        # Check ridges for sites before bisect. If no ridges then no bisect and no mesh in result
+        if site_idx in sites_delaunay_params:
+            site_params = sites_delaunay_params[site_idx]
+
+            if len(start_mesh.verts) > 0:
+                lst_ridges_to_bisect = []
+                #arr_dist_site_middle = np.empty(0)
+
+                out_of_bbox = False
+
+                # Sorting for optiomal bisections and search what can be skipped:
+                for i, (site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane) in enumerate(site_params):
+                    # Move bisect plane on size of half of spacing (normal point to the site_idx from site_pair_idx)
+                    plane_co = middle + 0.5 * spacing * plane_no
+                    # [1]. Test if bbox_aligned outside a site_pair plane?
+                    signs_verts_bbox_aligned = PlaneEquation.from_normal_and_point( plane_no, plane_co ).side_of_points(bbox_aligned)
+                    # if all vertexes of bbox_aligned out of plane with negation normal then object will be erased anyway.
+                    # So one can skeep bisect operation
+                    if (signs_verts_bbox_aligned <= 0).all():
+                        out_of_bbox = True
+                        break
+                    # if all vertexes of bbox_aligned is on a positive side of a plane then bisect cannot produce any sections.
+                    # So one can skip operation of bisection and stay object unchanged (do not add ringe to bisection list)
+                    if (signs_verts_bbox_aligned > 0).all():
+                        pass
+                    else:
+                        # [2]. calc middle planes for optimal bisects sequence (sort later)
+                        plane_spacing = PlaneEquation.from_normal_and_point(plane_no, plane_co)
+                        sign = plane_spacing.side_of_points(center_of_mass)
+                        dist = plane_spacing.distance_to_point(center_of_mass)
+                
+                        lst_ridges_to_bisect.append( [dist*sign, site_pair_idx, site_vert, site_pair_vert, middle, plane_co, plane_no, plane, ] )
+                    
+                    # [3]. for test if all (site, middle) dist are less 0.5 spacing?
+                    #    if spacing to big and eat all area [all (site-middle).lenght <= spacing/2]
+                    # arr_dist_site_middle = np.append(arr_dist_site_middle, np.linalg.norm(site_vert-middle) )
+
+                    # here is the place to extend optimization variants to exclude bisect from process.
+                    # To the future: one cannot optimize process of bisection. Only count of bisects can be optimized.
+                    pass
+
+                # (3).
+                # out_of_bbox may realized before all site pairs observed so arr_dist_site_middle may contain not all dists
+                # if out_of_bbox==False and (arr_dist_site_middle<=0.5 * spacing).all():
+                #     #out_of_bbox = True # If site has open side then its bisect cannot be skipped. So this rule are disabled.
+                #     pass
+
+                if out_of_bbox==False:
+                    # (2)
+                    lst_ridges_to_bisect.sort()  # less dist gets more points to cut off (with negative dists to. Negative dist is a negative side of bisect plane)
+
+                    src_mesh = start_mesh.copy() # do not need create src_mesh until here.
+                    outer_layer = src_mesh.faces.layers.int.get(outer_layer_name)
+
+                    # A main bisection process of site_idx
+                    for i in range(len(lst_ridges_to_bisect)):
+                        dist_center_of_mass_to_plane, site_pair_idx, site_vert, site_pair_vert, middle, plane_co, plane_no, plane = lst_ridges_to_bisect[i]
+                        geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
+                        res_bisect = bmesh.ops.bisect_plane(
+                                src_mesh, geom=geom_in, dist=precision,
+                                plane_co = plane_co,
+                                plane_no = plane_no,
+                                use_snap_center = False,
+                                clear_outer = False,
+                                clear_inner = True
+                            )
+                        num_bisect+=1 # for statistics
+
+                        if len(res_bisect['geom_cut'])>0:
+                            if voronoi_mode=='VOLUME': # fill faces after bisect
+                                surround = [e for e in res_bisect['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
+                                if surround:
+                                    fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
+                                    if fres['edges']:
+                                        #bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges']) # has glitches
+                                        mfilled = bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'])
+                                    else:
+                                        pass
+                                else:
+                                    pass
+                        else:
+                            # if no geometry after bisect then break
+                            # Geometry get clear in two cases:
+                            # 1. Optimisation fail and not realized that this process has no result
+                            # 2. Big spacing eat geometry inside mesh
+                            if len( res_bisect['geom'] )==0:
+                                num_unpredicted_erased+=1 # for statistics
+                                break
+                            pass
+                else:
+                    # func come here if out_of_bbox==True
+                    pass
+            else:
+                pass
+        else:
+            pass
+
+
+        # if out_of_bbox==True then bisect process jump here
+        # if no verts then return noting
+        if src_mesh is None or len( src_mesh.verts ) == 0:
+            if src_mesh is not None:
+                src_mesh.clear() #remember to clear empty geometry
+                src_mesh.free()
+            return None
+
+        # if src_mesh has vertices then return mesh data
+        src_mesh.faces.ensure_lookup_table()
+        src_mesh.faces.index_update() # sort faces by indexes for 
+        src_mesh.edges.ensure_lookup_table()
+        src_mesh.edges.index_update() # sort edges by indexes for 
+        if voronoi_mode=='VOLUME' and normal_update==True:
+            src_mesh.normal_update()
+        
+        arr_pydata = []
+        if results_join_mode == 'RESULTS_JOIN_MODE_SPLIT_DISCONNECT':
+            arr_faces_indexes = get_face_components(src_mesh)
+            if len(arr_faces_indexes)>1:
+                for faces_indexes in arr_faces_indexes:
+                    src_mesh_copy = src_mesh.copy()
+                    src_mesh_copy.verts.ensure_lookup_table()
+                    src_mesh_copy.verts.index_update() # sort edges by indexes for 
+                    src_mesh_copy.edges.ensure_lookup_table()
+                    src_mesh_copy.edges.index_update() # sort edges by indexes for 
+                    src_mesh_copy.faces.ensure_lookup_table()
+                    src_mesh_copy.faces.index_update() # sort faces by indexes for 
+                    keep_only_component(src_mesh_copy, faces_indexes)
+                    pydata1 = get_bmesh_data(src_mesh_copy, outer_layer_name, voronoi_mode)
+                    if pydata1:
+                        arr_pydata.append(pydata1)
+                    src_mesh_copy.clear()
+                    src_mesh_copy.free()
+                    pass
+                pass
+            else:
+                pydata1 = get_bmesh_data(src_mesh, outer_layer_name, voronoi_mode)
+                if pydata1:
+                    arr_pydata.append(pydata1)
+        else:
+            pydata1 = get_bmesh_data(src_mesh, outer_layer_name, voronoi_mode)
+            if pydata1:
+                arr_pydata.append(pydata1)
+
+        src_mesh.clear() #remember to clear geometry before return
+        src_mesh.free()
+        return arr_pydata
+
+    verts_out = []
+    edges_out = []
+    faces_out = []
+    outer_verts_property_out = []
+    outer_edges_property_out = []
+    outer_faces_property_out = []
+    used_sites_idx = []
+    used_sites_verts = []
+
+
+    if len(sites)>=2:
+        are_sites_plane = True # plane or line
+        if len(sites)>=4:
+            # select random sites to test are they are tethraeder or 3D?
+            # If this thethod get wrong answer then not optimal method will be used.
+            list_sites_for_test_plane = random.sample( range(0, len(sites)), 4)
+            v0 = Vector(sites[list_sites_for_test_plane[0]])
+            v1 = Vector(sites[list_sites_for_test_plane[1]])-v0
+            v2 = Vector(sites[list_sites_for_test_plane[2]])-v0
+            v3 = Vector(sites[list_sites_for_test_plane[3]])-v0
+            cross1_v1_v2 = np.cross(v1, v2)
+            cross2_v1_v3 = np.cross(v1, v3)
+            cross12 = np.cross(cross1_v1_v2, cross2_v1_v3)
+
+            res_norm = np.linalg.norm(cross12,ord=1)
+            if res_norm>0.1:
+                are_sites_plane = False
+            else:
+                are_sites_plane = True
+
+        if are_sites_plane:
+            # https://github.com/nortikin/sverchok/pull/4952
+            # http://www.qhull.org/html/qdelaun.htm
+            # http://www.qhull.org/html/qh-optc.htm
+            # https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.Delaunay.html
+            # Convert sites to 4D
+            np_sites = np.array([(s[0], s[1], s[2], 0) for s in sites], dtype=np.float32)
+            # Add 3D tetraedre to the 4D with W=1
+            np_sites = np.append(np_sites, [[0.0, 0.0, 0.0, 1],
+                                            [1.0, 0.0, 0.0, 1],
+                                            [0.0, 1.0, 0.0, 1],
+                                            [0.0, 0.0, 1.0, 1],
+                                            ], axis=0)
+        else:
+            np_sites = np.array([(s[0], s[1], s[2]) for s in sites], dtype=np.float32)
+
+        delaunay = Delaunay(np.array(np_sites, dtype=np.float32))
+        sites_delaunay_params = get_sites_delaunay_params(delaunay, n_orig_sites)
+
+        if isinstance(spacing, list):
+            spacing = repeat_last_for_length(spacing, len(sites))
+        else:
+            spacing = [spacing for i in range(len(sites))]
+
+        # calc center of mass. Using for sort of bisect planes for sites.
+        center_of_mass = np.average( verts, axis=0 )
+        # using for precalc unneeded bisects
+        bbox_aligned, *_ = bounding_box_aligned(verts)
+
+        # Extend mask if it is less len of sites
+        if len(mask)==0:
+            # if len of mask is 0 then use all sites
+            mask = [True] * ( len(sites)-len(mask) )
+        else:
+            # else extend mask by false and do not use sites that are not in the mask
+            mask = mask[:]+[False]*(len(sites)-len(mask) if len(mask)<=len(sites) else 0)
+
+        start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
+        # fill all faces as outer
+        outer_layer_name = "__outer__"
+        start_mesh.faces.layers.int.new(outer_layer_name)
+        outer_faces_layer = start_mesh.faces.layers.int.get(outer_layer_name)
+        for start_mesh_face in start_mesh.faces:
+            start_mesh_face[outer_faces_layer] = 1
+        start_mesh.edges.layers.int.new(outer_layer_name)
+        outer_edges_layer = start_mesh.edges.layers.int.get(outer_layer_name)
+        for edge in start_mesh.edges:
+            len_linked_faces = len(edge.link_faces)
+            if mode=='SURFACE':
+                if len_linked_faces==1:
+                    edge[outer_edges_layer] = 1 # outer edge of surface (border of surface)
+                elif len_linked_faces==2:
+                    edge[outer_edges_layer] = 2 # inner edge of surface (inside)
+                else:
+                    edge[outer_edges_layer] = 3 # non-manifold edge on voronoi SURFACE mode (==0 or >2)
+            elif mode=='VOLUME':
+                edge[outer_edges_layer] = 1
+            else:
+                raise Exception(f'Unknown mode="{mode}" in voronoi_on_mesh_bmesh')
+
+        for site_idx in range(len(sites)):
+            if(mask[site_idx]):
+                cells = cut_cell(start_mesh, outer_layer_name, mode, results_join_mode, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
+                if cells:
+                    for cell in cells:
+                        new_verts, new_edges, new_faces, new_verts_outer_property, new_edges_outer_property, new_outer_faces_property = cell
+                        if new_verts:
+                            verts_out.append(new_verts)
+                            edges_out.append(new_edges)
+                            faces_out.append(new_faces)
+                            outer_verts_property_out.append(new_verts_outer_property)
+                            outer_edges_property_out.append(new_edges_outer_property)
+                            outer_faces_property_out.append(new_outer_faces_property)
+                            used_sites_idx.append( site_idx )
+                            used_sites_verts.append( sites[site_idx] )
+                            pass
+                        pass
+                    pass
+                pass
+            pass
+        start_mesh.clear() # remember to clear empty geometry
+        start_mesh.free()
+    else:
+        start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=False)
+        new_verts, new_edges, new_faces = pydata_from_bmesh(start_mesh)  # No edges as function params. So one can get edges from bmesh.
+        verts_out.append(new_verts)
+        edges_out.append(new_edges)
+        faces_out.append(new_faces)
+        outer_verts_property_out.append([ dict(is_outer=False, is_inner=True, index=e.index) for e in new_verts])
+        outer_edges_property_out.append([ dict(is_outer=False, is_inner=True, index=e.index) for e in new_edges])
+        outer_edges_property_out.append([ dict(is_outer=False, is_inner=True) for e in new_edges])
+        outer_faces_property_out = [[1 for f in new_faces]] # all faces are outer
+        start_mesh.clear() # remember to clear empty geometry
+        start_mesh.free()
+    
+
+    # show statistics:
+    # bisects - count of bisects in cut_cell
+    # unb - unpredicted erased mesh (bbox_aligned cannot make predicted results)
+    # sites - count of sites in process
+    # mask - mask of sites that uset to the result. Empty list all sites uset to result.
+    # print( f"bisects: {num_bisect: 4d}, unb={num_unpredicted_erased: 4d}, sites={len(sites)}")
+    return verts_out, edges_out, faces_out, used_sites_idx, used_sites_verts, outer_verts_property_out, outer_edges_property_out, outer_faces_property_out
+
+def voronoi_on_mesh(verts, faces, sites, thickness,
+    spacing = 0.0,
+    clip_inner=True, clip_outer=True, do_clip=True,
+    clipping=1.0, mode = 'REGIONS', normal_update=False,
+    results_join_mode = 'RESULTS_JOIN_MODE_KEEP',
+    precision = 1e-8,
+    mask = []
+    ):
+
+    bvh = BVHTree.FromPolygons(verts, faces)
+    npoints = len(sites)
+
+    if clipping is None:
+        x_min, x_max, y_min, y_max, z_min, z_max = calc_bounds(verts)
+        clipping = max(x_max - x_min, y_max - y_min, z_max - z_min) / 2.0
+
+    if mode in {'REGIONS', 'RIDGES'}:
+        if clip_inner or clip_outer:
+            normals = calc_bvh_normals(bvh, sites)
+        k = 0.5*thickness
+        sites = np.array(sites)
+        all_points = sites.tolist()
+        if clip_outer:
+            plus_points = sites + k*normals
+            all_points.extend(plus_points.tolist())
+        if clip_inner:
+            minus_points = sites - k*normals
+            all_points.extend(minus_points.tolist())
+
+        return voronoi3d_layer(npoints, all_points,
+                make_regions = (mode == 'REGIONS'),
+                do_clip = do_clip,
+                clipping = clipping)
+
+    else: # VOLUME, SURFACE
+        all_points = [site for site in sites if site]
+        verts, edges, faces, used_sites_idx, used_sites_verts, outer_verts_property_out, outer_edges_property_out, outer_faces_property = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
+                spacing = spacing, mode = mode, normal_update = normal_update, results_join_mode = results_join_mode,
+                precision = precision, mask=mask)
+        return verts, edges, faces, used_sites_idx, used_sites_verts, outer_verts_property_out, outer_edges_property_out, outer_faces_property
+
 class SvVoronoiOnMeshOffUnlinkedSocketsMK5(bpy.types.Operator):
     '''Hide all unlinked sockets'''
     bl_idname = "node.sv_on_voronoi_on_mesh_off_unlinked_sockets_mk5"
@@ -123,10 +657,10 @@ class SvVoronoiOnMeshOffUnlinkedSocketsMK5(bpy.types.Operator):
 def draw_properties(layout, node_group, node_name):
     node = bpy.data.node_groups[node_group].nodes[node_name]
     #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
-    root_grid = layout.grid_flow(row_major=False, columns=2, align=True)
+    root_grid = layout.grid_flow(row_major=False, columns=1, align=True)
     root_grid.alignment = 'EXPAND'
-    grid1 = root_grid.grid_flow(row_major=False, columns=1, align=True)
-    grid1.label(text='Viewport Display:')
+    # grid1 = root_grid.grid_flow(row_major=False, columns=1, align=True)
+    # grid1.label(text='Viewport Display:')
 
     grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
     grid2.label(text='Output Sockets:')
@@ -195,7 +729,7 @@ class SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5(bpy.types.Panel):
     #     return s
 
     # horizontal size
-    bl_ui_units_x = 22
+    bl_ui_units_x = 15
 
     def draw(self, context):
         if hasattr(context, "node"):
@@ -229,7 +763,7 @@ class SV_PT_ViewportDisplayInformationVoronoiOnMeshMK5(bpy.types.Panel):
             #root_grid = self.layout.grid_flow(row_major=False, columns=2, align=True)
             root_grid = self.layout.grid_flow(row_major=False, columns=1, align=True)
             root_grid.alignment = 'EXPAND'
-            text="'Voronoi Sites Matrices' is Identity Matrix now. If output results join mode is not 'Split' or if it is 'Split' but 'Align results to'!='Voronoi Sites' then 'Voronoi Sites Matrices' has no sense. So results in this socket set with Identity Matrices"
+            text="'Voronoi Sites Matrices' is Identity Matrix now. If output results join mode is not 'Split (disconnect or sites)' or if it is 'Split (disconnect or sites)' but 'Align results to'!='Voronoi Sites' then 'Voronoi Sites Matrices' has no sense. So results in this socket set with Identity Matrices"
             region_width = context.region.width
             chars = int(region_width / 7)
             for line in textwrap.wrap(text, width=80):
@@ -279,15 +813,16 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets) # type: ignore
     
     results_join_modes = [
-            ('SPLIT', "Split (disconnect)", "Post processing:\nSeparate (disconnect) the results meshes into individual meshes", 'SNAP_VERTEX', 0),
-            ('KEEP', "Keep", "Post processing:\nKeep parts of the sources meshes as source meshes.", 'SYNTAX_ON', 1),
-            ('MERGE', "Merge", "Post processing:\nJoin all results meshes into a single mesh", 'STICKY_UVS_LOC', 2)
+            ('RESULTS_JOIN_MODE_SPLIT_DISCONNECT', "Split (disconnect)", "Post processing:\nSeparate (disconnect) the results meshes into individual meshes\nIn process sites can produce more than 1 unconnected objects (volume or surface)", 'SNAP_VERTEX', 0),
+            ('RESULTS_JOIN_MODE_SPLIT_SITES', "Split (sites)", "Post processing:\nSeparate the results meshes into sites meshes.\nCan hold several inner unconnected meshes in one site result", 'SNAP_VERTEX', 1),
+            ('RESULTS_JOIN_MODE_KEEP', "Keep", "Post processing:\nKeep parts of the sources meshes as source meshes.", 'SYNTAX_ON', 2),
+            ('RESULTS_JOIN_MODE_MERGE', "Merge", "Post processing:\nJoin all results meshes into a single mesh", 'STICKY_UVS_LOC', 3)
         ]
 
     results_join_mode : EnumProperty(
         name = "Output mode",
         items = results_join_modes,
-        default = 'KEEP',
+        default = 'RESULTS_JOIN_MODE_KEEP',
         update = updateNode) # type: ignore
     
     results_objects_origins_modes = [
@@ -387,13 +922,11 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
     def draw_sites_matrices_out_socket(self, socket, context, layout):
         col = layout.row(align=True)
         col.alignment='RIGHT'
-        if (self.results_join_mode=='SPLIT' and self.results_objects_origins=='ALIGN_INPUT_SITES')==False:
+        if (self.results_join_mode in ['RESULTS_JOIN_MODE_SPLIT_SITES', 'RESULTS_JOIN_MODE_SPLIT_DISCONNECT'] and self.results_objects_origins=='ALIGN_INPUT_SITES')==False:
             col.popover(panel=SV_PT_ViewportDisplayInformationVoronoiOnMeshMK5.bl_idname, icon='INFO', text="",)
-        # if self.results_join_mode!='SPLIT':
-        #     col.label(text='non split->')
         col_prop = col.row()
         col_prop.alignment='RIGHT'
-        if self.results_join_mode!='SPLIT':
+        if self.results_join_mode in ['RESULTS_JOIN_MODE_SPLIT_SITES', 'RESULTS_JOIN_MODE_SPLIT_DISCONNECT'] == False:
             col_prop.enabled=False
         #col_prop.prop(self, 'results_objects_origins', text='')
         if socket.is_linked:  # linked INPUT or OUTPUT
@@ -520,7 +1053,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
 
         row11 = grid.row()
         row12 = grid.row()
-        if self.results_join_mode!='SPLIT':
+        if (self.results_join_mode in ['RESULTS_JOIN_MODE_SPLIT_SITES', 'RESULTS_JOIN_MODE_SPLIT_DISCONNECT']) == False:
             row11.enabled = False
             row12.enabled = False
         row11.alignment = 'RIGHT'
@@ -568,7 +1101,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
 
         row11 = grid.row()
         row12 = grid.row()
-        if self.results_join_mode!='SPLIT':
+        if (self.results_join_mode in ['RESULTS_JOIN_MODE_SPLIT_SITES', 'RESULTS_JOIN_MODE_SPLIT_DISCONNECT']) == False:
             row11.enabled = False
             row12.enabled = False
         row11.alignment = 'RIGHT'
@@ -793,6 +1326,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
                             mode = self.voronoi_mode,
+                            results_join_mode = self.results_join_mode,
                             normal_update = self.correct_normals,
                             precision = precision,
                             mask = mask_I
@@ -802,7 +1336,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             sites_idx_out.append(new_used_sites_idx)
             sites_verts_out.append(new_used_sites_verts)
             
-            if self.results_join_mode == 'SPLIT':
+            if self.results_join_mode in ['RESULTS_JOIN_MODE_SPLIT_SITES', 'RESULTS_JOIN_MODE_SPLIT_DISCONNECT']:
                 if self.results_objects_origins=='ALIGN_INPUT_SITES':
                     for IJ, obj_verts in enumerate(new_verts):
                         s1 = new_used_sites_verts[IJ]
@@ -830,8 +1364,8 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                 outer_verts_property_out.extend(outer_verts_property) # dict {is_outer:True/False, is_inner: True/False}
                 outer_edges_property_out.extend(outer_edges_property) # dict {is_outer:True/False, is_inner: True/False}
                 outer_polygons_property_out.extend(outer_faces_property)
-            elif self.results_join_mode == 'KEEP' or self.results_join_mode == 'MERGE':
-                if self.results_join_mode == 'KEEP':
+            elif self.results_join_mode in ['RESULTS_JOIN_MODE_KEEP', 'RESULTS_JOIN_MODE_MERGE']:
+                if self.results_join_mode == 'RESULTS_JOIN_MODE_KEEP':
                     matrices_out.append(matrices_I)
                     sites_matrices_split_mode_out.append(Matrix())
                 verts1, edges1, faces1 = mesh_join(new_verts, new_edges, new_faces)
@@ -846,7 +1380,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                 outer_polygons_property_out.append(outer_faces)
             pass
 
-        if self.results_join_mode == 'MERGE':
+        if self.results_join_mode == 'RESULTS_JOIN_MODE_MERGE':
             matrices_in_1_0_inverted = matrices_in_1[0].inverted()
             verts_out_for_merge = [verts_out[0]]
             for I, mat_I in enumerate(matrices_in_2):
