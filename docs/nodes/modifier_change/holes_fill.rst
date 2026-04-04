@@ -1,8 +1,8 @@
 Fill Holes
 ==========
 
-.. image:: https://user-images.githubusercontent.com/14288520/200031589-47edec1e-ef4f-4d45-8757-6b68aed53831.png
-  :target: https://user-images.githubusercontent.com/14288520/200031589-47edec1e-ef4f-4d45-8757-6b68aed53831.png
+.. image:: https://github.com/user-attachments/assets/18380d00-a8f2-40ee-b72d-dcf053b45d08
+  :target: https://github.com/user-attachments/assets/18380d00-a8f2-40ee-b72d-dcf053b45d08
 
 Functionality
 -------------
@@ -21,11 +21,13 @@ Inputs
 Parameters
 ----------
 
-+-----------------+---------------+-------------+-------------------------------------------------------------+
-| Param           | Type          | Default     | Description                                                 |
-+=================+===============+=============+=============================================================+
-| **Sides**       | Float         | 4           | Number of sides that will be collapsed to polygon.          |
-+-----------------+---------------+-------------+-------------------------------------------------------------+
++---------------------+---------------+-------------+---------------------------------------------------------------+
+| Param               | Type          | Default     | Description                                                   |
++=====================+===============+=============+===============================================================+
+| **Sides**           | Float         | 4           | Number of sides that will be collapsed to polygon.            |
++---------------------+---------------+-------------+---------------------------------------------------------------+
+| **Correct normals** | Bool          | True        | Make sure that all normals of generated meshes point outside. |
++---------------------+---------------+-------------+---------------------------------------------------------------+
 
 Outputs
 -------
