@@ -245,11 +245,18 @@ class DI_OT_install_or_update_dependencies_operator(bpy.types.Operator):
         print(items)
         for item in items:
             try:
-                if item in sv_dependencies:
+                if item in sv_dependencies and item == 'mcubes':
                     dependency = sv_dependencies[item]
+                    sv_dependencies[item].pip_installable = True
+                elif item in sv_dependencies:
+                    dependency = sv_dependencies[item]
+                    print(dependency,dependency.module)
                 else:
-                    dependency = sv_dependencies[item] = SvDependency(item,"None")
-                    dependency.pip_installable = True
+                    sv_dependencies[item] = SvDependency(item,"None")
+                    sv_dependencies[item].pip_installable = True
+                    sv_dependencies[item].module = None
+                    dependency = sv_dependencies[item]
+                    print(sv_dependencies[item],sv_dependencies[item].pip_installable,sv_dependencies[item].module, pip)
                 if dependency.module is None and dependency.pip_installable and pip is not None: # and item != 'pyOpenSubdiv':
                     print(f"===>> Install Dependency: {item}")
                     res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
