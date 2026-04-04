@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-def fill_holes(vertices, edges, s):
+def fill_holes(vertices, edges, s, correct_normals):
 
     if not edges and not vertices:
         return False
@@ -37,7 +37,12 @@ def fill_holes(vertices, edges, s):
     bm = bmesh_from_pydata(vertices, edges, [])
 
     bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=s)
+    if correct_normals:
+        bm.normal_update()
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
     verts, edges, faces = pydata_from_bmesh(bm)
+    bm.clear() #remember to clear geometry before return
+    bm.free()
     return (verts, edges, faces)
 
 
@@ -51,6 +56,12 @@ class SvFillHolesNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     sides: IntProperty(
         name='Sides', description='Number of sides that will be collapsed to polygon',
         default=4, min=3, update=updateNode)
+    
+    correct_normals : bpy.props.BoolProperty(
+        name = "Correct normals",
+        default = True,
+        description="Make sure that all normals of generated meshes point outside",
+        update = updateNode) # type: ignore
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'vertices')
@@ -67,6 +78,10 @@ class SvFillHolesNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             (self.inputs[0], self.outputs[0]),
             (self.inputs[1], self.outputs[1]),
         ]
+    
+    def draw_buttons(self, context, layout):
+        box = layout.box()
+        box.prop(self, "correct_normals",)
 
     def process(self):
 
@@ -81,7 +96,7 @@ class SvFillHolesNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         polys_out = []
 
         for v, e, s in zip_long_repeat(verts, edges, sides):
-            res = fill_holes(v, e, int(s))
+            res = fill_holes(v, e, int(s), self.correct_normals)
             if not res:
                 return
             verts_out.append(res[0])
