@@ -363,6 +363,7 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#addition">Addition</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
@@ -382,7 +383,7 @@
                   
   <section id="voronoi-on-mesh">
 <h1>Voronoi on Mesh<a class="headerlink" href="#voronoi-on-mesh" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ecff1142-de97-438f-a3be-f609d0816b96"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ecff1142-de97-438f-a3be-f609d0816b96" src="https://github.com/nortikin/sverchok/assets/14288520/ecff1142-de97-438f-a3be-f609d0816b96" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b24933ff-f6fc-4c06-b679-c777be5e5e2a"><img alt="https://github.com/user-attachments/assets/b24933ff-f6fc-4c06-b679-c777be5e5e2a" src="https://github.com/user-attachments/assets/b24933ff-f6fc-4c06-b679-c777be5e5e2a" />
 </a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
@@ -399,96 +400,201 @@ of such Voronoi diagram. It is possible to subdivide:</p>
 mode, it is required that the mesh represents a closed volume.</p></li>
 </ul>
 </section>
+<section id="addition">
+<h2>Addition<a class="headerlink" href="#addition" title="Link to this heading">#</a></h2>
+<p>The number of resulting objects can differ from the number of sites you set, both smaller and larger. Example of smaller number:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/f02be360-304f-432b-95a5-406f7e1a7e71"><img alt="https://github.com/user-attachments/assets/f02be360-304f-432b-95a5-406f7e1a7e71" src="https://github.com/user-attachments/assets/f02be360-304f-432b-95a5-406f7e1a7e71" />
+</a>
+</div></blockquote>
+<p>Example of bigger number:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/8d419553-3e13-4704-8608-41c52dc2b318"><img alt="https://github.com/user-attachments/assets/8d419553-3e13-4704-8608-41c52dc2b318" src="https://github.com/user-attachments/assets/8d419553-3e13-4704-8608-41c52dc2b318" />
+</a>
+</div></blockquote>
+</section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Vertices</strong>. Vertices of the mesh to generate Voronoi diagram on. This input is mandatory.</p></li>
-<li><p><strong>Polygons</strong>. Faces of the mesh to generate Voronoi diagram on. This input is mandatory.</p></li>
-</ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5a6ecd49-9ae1-4422-98b6-211060a22420"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5a6ecd49-9ae1-4422-98b6-211060a22420" src="https://github.com/nortikin/sverchok/assets/14288520/5a6ecd49-9ae1-4422-98b6-211060a22420" />
+<li><p><strong>Polygons</strong>. Faces of the mesh to generate Voronoi diagram on. This input is mandatory.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/09b2accd-7f8b-46e9-aa3a-254f1e1518d7"><img alt="https://github.com/user-attachments/assets/09b2accd-7f8b-46e9-aa3a-254f1e1518d7" src="https://github.com/user-attachments/assets/09b2accd-7f8b-46e9-aa3a-254f1e1518d7" />
 </a>
-<ul class="simple">
+</li>
+<li><p><strong>Matrices of Meshes</strong>. Matrices of input objects.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/2661d9ef-b5d3-486b-9cf7-00f666f7218d"><img alt="https://github.com/user-attachments/assets/2661d9ef-b5d3-486b-9cf7-00f666f7218d" src="https://github.com/user-attachments/assets/2661d9ef-b5d3-486b-9cf7-00f666f7218d" style="width: 500px;" />
+</a>
+</div></blockquote>
+<p>Used in complex multi-object scenarios. If you have several input objects and set postprocess property “Join Mode” to “Split (disconnect)” then you mess up the corresponding matrices for the resulting objects</p>
+</li>
 <li><p><strong>Voronoi Sites</strong>. The points to generate Voronoi diagram for. Usually you want for
 this points to lie either inside the mesh or on it’s surface, but this is not
 necessary. This input is mandatory. If list of Voronoi sites is Zero length then source object will not processed
-and transfer it params to output sockets.</p></li>
-</ul>
+and transfer it params to output sockets.</p>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4353aec1-e4f5-4cb4-a9ec-f3e8c6435c0b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4353aec1-e4f5-4cb4-a9ec-f3e8c6435c0b" src="https://github.com/nortikin/sverchok/assets/14288520/4353aec1-e4f5-4cb4-a9ec-f3e8c6435c0b" />
 </a>
-<ul class="simple">
-<li><p><strong>Mask of sites</strong>. List of True/False or indexes. What Sites will be show in result.</p></li>
-</ul>
+</li>
+<li><p><strong>Matrices of meshes</strong>. Matrices of input meshes if meshes placed not in the zero. For example: if you using “Get Objects Data” with “Apply matrices” parameter off then real coords can be calculated with “Get Objects Data” Matrices output</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/1bf85e83-12c2-4469-8d35-526be6e5b0c8"><img alt="https://github.com/user-attachments/assets/1bf85e83-12c2-4469-8d35-526be6e5b0c8" src="https://github.com/user-attachments/assets/1bf85e83-12c2-4469-8d35-526be6e5b0c8" />
+</a>
+</li>
+<li><p><strong>Voronoi Sites</strong>. Points of Voronoi. If using Source Join Mode as “Merge” then sites merged only what in input “Voronoi Sites”. For example: if objects are 3 and sites are 2 then sites will not recalculate for object number 3.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/862468b6-bd4d-4503-8436-a3013e0bbb77"><img alt="https://github.com/user-attachments/assets/862468b6-bd4d-4503-8436-a3013e0bbb77" src="https://github.com/user-attachments/assets/862468b6-bd4d-4503-8436-a3013e0bbb77" />
+</a>
+<p>If mode is split then every unconnected object will get sites of original mesh:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f153ae9c-a0c2-4d2a-a4d3-dacb43c74844"><img alt="https://github.com/user-attachments/assets/f153ae9c-a0c2-4d2a-a4d3-dacb43c74844" src="https://github.com/user-attachments/assets/f153ae9c-a0c2-4d2a-a4d3-dacb43c74844" />
+</a>
+</li>
+<li><p><strong>Mask of sites</strong>. List of True/False or indexes. What Sites will be show in result.</p>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/61bd23e3-3a8e-47e2-b18f-1c7272b71679"><img alt="https://github.com/nortikin/sverchok/assets/14288520/61bd23e3-3a8e-47e2-b18f-1c7272b71679" src="https://github.com/nortikin/sverchok/assets/14288520/61bd23e3-3a8e-47e2-b18f-1c7272b71679" />
 </a>
-<ul class="simple">
-<li><p><strong>invert</strong> Invert list <strong>Mask of Sites</strong>.</p></li>
-</ul>
+</li>
+<li><p><strong>invert</strong> Invert list <strong>Mask of Sites</strong>.</p>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b8360826-c678-4b47-b783-3e05a71f1275"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b8360826-c678-4b47-b783-3e05a71f1275" src="https://github.com/nortikin/sverchok/assets/14288520/b8360826-c678-4b47-b783-3e05a71f1275" />
 </a>
-<ul class="simple">
+</li>
 <li><p><strong>Spacing</strong>. Percent of space to leave between generated fragment meshes.
 Zero means do not leave any space, i.e. regions will fully cover initial
 mesh. The default value is 0. This input can consume either a single value
 per object, or a list of values per object - one value per site. In the later
-case, each value will be used for corresponding cell.</p></li>
-</ul>
+case, each value will be used for corresponding cell.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202571726-e7ecbf0a-72ad-48bd-b3c5-cd800b86b524.gif"><img alt="https://user-images.githubusercontent.com/14288520/202571726-e7ecbf0a-72ad-48bd-b3c5-cd800b86b524.gif" src="https://user-images.githubusercontent.com/14288520/202571726-e7ecbf0a-72ad-48bd-b3c5-cd800b86b524.gif" />
 </a>
+</li>
+</ul>
 <p>The list of values per object - one value per site:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202572900-c82edfd3-6634-4425-b33a-b4f09f87ecc9.png"><img alt="https://user-images.githubusercontent.com/14288520/202572900-c82edfd3-6634-4425-b33a-b4f09f87ecc9.png" src="https://user-images.githubusercontent.com/14288520/202572900-c82edfd3-6634-4425-b33a-b4f09f87ecc9.png" />
+<blockquote>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202572900-c82edfd3-6634-4425-b33a-b4f09f87ecc9.png"><img alt="https://user-images.githubusercontent.com/14288520/202572900-c82edfd3-6634-4425-b33a-b4f09f87ecc9.png" src="https://user-images.githubusercontent.com/14288520/202572900-c82edfd3-6634-4425-b33a-b4f09f87ecc9.png" />
 </a>
+</div></blockquote>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
-<li><p><strong>Mode</strong>. The available options are:</p>
+<li><p><strong>Voronoi Mode</strong>. The available options are:</p>
 <ul class="simple">
-<li><p><strong>Split Volume</strong>. Split closed-volume mesh into smaller closed-volume mesh regions.</p></li>
-<li><p><strong>Split Surface</strong>. Split the surface of a mesh into smaller flat meshes.</p></li>
+<li><p><strong>Volume</strong>. Split closed-volume mesh into smaller closed-volume mesh regions.</p></li>
+<li><p><strong>Surface</strong>. Split the surface of a mesh into smaller flat meshes.</p></li>
 </ul>
-<p>The default value is <strong>Split Volume</strong>.</p>
-</li>
-</ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202573307-cd8f42e1-6909-47d0-bf37-9211dbafb69a.png"><img alt="https://user-images.githubusercontent.com/14288520/202573307-cd8f42e1-6909-47d0-bf37-9211dbafb69a.png" src="https://user-images.githubusercontent.com/14288520/202573307-cd8f42e1-6909-47d0-bf37-9211dbafb69a.png" />
+<p>The default value is <strong>Volume</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/21441877-6bc1-485c-9780-6cb8f5b52d55"><img alt="https://github.com/user-attachments/assets/21441877-6bc1-485c-9780-6cb8f5b52d55" src="https://github.com/user-attachments/assets/21441877-6bc1-485c-9780-6cb8f5b52d55" />
 </a>
-<ul class="simple">
+<video width="700" controls>
+  <source src="https://github.com/user-attachments/assets/1505d4f5-c541-472b-965f-0bd7c37a8a52" type="video/mp4">
+Your browser does not support the video tag.
+</video></div></blockquote>
+</li>
 <li><p><strong>Correct normals</strong>. This parameter is available only when <strong>Mode</strong> parameter
 is set to <strong>Volume</strong>. If checked, then the node will make sure that all
 normals of generated meshes point outside. Otherwise, this is not guaranteed.
-Checked by default.</p></li>
-</ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png"><img alt="https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png" src="https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png" />
+Checked by default.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png"><img alt="https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png" src="https://user-images.githubusercontent.com/14288520/202575356-5ece8f0e-4787-4d85-846e-c8fb525e732b.png" />
 </a>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif"><img alt="https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif" src="https://user-images.githubusercontent.com/14288520/202574847-5343b0d1-61f3-4313-a8a1-7efce49f1405.gif" />
 </a>
-<ul class="simple">
-<li><p><strong>Post processing</strong>. This defines nesting structure of result meshes. The available options are:</p>
+</div></blockquote>
+</li>
+<li><p><strong>Pre processing</strong>. This define preprocessing original objects, sites, matrices and masks.</p>
 <ul>
-<li><p><strong>Separate All Meshes</strong>. Separate the result meshes into individual meshes.</p></li>
-<li><p><strong>Keep Source Meshes</strong>. Keep parts of the source meshes as source meshes.</p></li>
-<li><p><strong>Join All Meshes</strong>. Join all results meshes into a single mesh.</p></li>
-</ul>
+<li><p><strong>Split</strong>. Separate unconnected meshes independently before process. Sites, matrices and masks keep the same for every separated element.</p></li>
+<li><p><strong>Keep</strong>. Do nothing. All original meshes stay unchanged before process</p></li>
+<li><p><strong>Merge</strong>. Merge original meshes, sites, masks. Spacing gets first.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/2619e606-f96d-4ef8-8f7f-324b6a8f5b8d"><img alt="https://github.com/user-attachments/assets/2619e606-f96d-4ef8-8f7f-324b6a8f5b8d" src="https://github.com/user-attachments/assets/2619e606-f96d-4ef8-8f7f-324b6a8f5b8d" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/11a1b295-83b4-4a9a-a62f-9760a93ae680"><img alt="https://github.com/user-attachments/assets/11a1b295-83b4-4a9a-a62f-9760a93ae680" src="https://github.com/user-attachments/assets/11a1b295-83b4-4a9a-a62f-9760a93ae680" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/9961c060-f60d-4e7d-a40e-730e6861fa4a"><img alt="https://github.com/user-attachments/assets/9961c060-f60d-4e7d-a40e-730e6861fa4a" src="https://github.com/user-attachments/assets/9961c060-f60d-4e7d-a40e-730e6861fa4a" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/a0a2de0a-ded9-408e-9609-24373e5c51f5"><img alt="https://github.com/user-attachments/assets/a0a2de0a-ded9-408e-9609-24373e5c51f5" src="https://github.com/user-attachments/assets/a0a2de0a-ded9-408e-9609-24373e5c51f5" />
+</a>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/afa0b637-b0cb-4813-9f10-3e05cd607e02"><img alt="https://github.com/nortikin/sverchok/assets/14288520/afa0b637-b0cb-4813-9f10-3e05cd607e02" src="https://github.com/nortikin/sverchok/assets/14288520/afa0b637-b0cb-4813-9f10-3e05cd607e02" />
+</li>
+<li><p><strong>Post processing</strong>. This defines nesting structure of result meshes. The available options are:</p>
+<ul>
+<li><p><strong>Split (disconnect)</strong>. Separate the result meshes into individual unconnected meshes. Every unconnected part get matrix of original meshes. Be careful when evaluating the outcome. Some settings may produce similar results but with different structure.
+For example, the “Split (disconnect)”” operation with “Outer Polygons” in “Volume” Mode gives one object, although it seems that the objects are two, and “Split (disconnect)” in “Surface Mode” gives as a result 2 objects.
+This is because “Split (disconnect)” with “Outer Polygons” in “Volume Mode” is the same object as external Polygons.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/53368187-096a-42e1-963c-22394cff7635"><img alt="https://github.com/user-attachments/assets/53368187-096a-42e1-963c-22394cff7635" src="https://github.com/user-attachments/assets/53368187-096a-42e1-963c-22394cff7635" />
 </a>
-<ul class="simple">
+</li>
+<li><p><strong>Split (sites)</strong>. Separate the result meshes into meshes of original sites (can keep several unconnected objects). Every part get matrix of original meshes.</p></li>
+<li><p><strong>Keep</strong>. Keep parts of preprocessed meshes. Also keep matrices of original objects unchanged.</p></li>
+<li><p><strong>Merge</strong>. Join all results meshes into a single mesh.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/ad754124-d6e2-4371-95d4-cfd9a14c7bb5"><img alt="https://github.com/user-attachments/assets/ad754124-d6e2-4371-95d4-cfd9a14c7bb5" src="https://github.com/user-attachments/assets/ad754124-d6e2-4371-95d4-cfd9a14c7bb5" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff"><img alt="https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff" src="https://github.com/user-attachments/assets/58e43bce-4428-4210-b0a9-3234d7b1a7ff" />
+</a>
+</li>
+</ul>
+</li>
 <li><p><strong>Accuracy</strong>. This parameter is available in the N panel only. This defines
 the precision of mesh calculation (number of digits after decimal point). The
-default value is 6.</p></li>
-</ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202577600-9f0e8eb6-2782-4a3b-9e58-f915823c9dfa.png"><img alt="https://user-images.githubusercontent.com/14288520/202577600-9f0e8eb6-2782-4a3b-9e58-f915823c9dfa.png" src="https://user-images.githubusercontent.com/14288520/202577600-9f0e8eb6-2782-4a3b-9e58-f915823c9dfa.png" />
+default value is 6.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/c871ef28-fbf2-46ae-8707-bbfb72497ca2"><img alt="https://github.com/user-attachments/assets/c871ef28-fbf2-46ae-8707-bbfb72497ca2" src="https://github.com/user-attachments/assets/c871ef28-fbf2-46ae-8707-bbfb72497ca2" />
 </a>
+</div></blockquote>
+</li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
 <p>This node has the following outputs:</p>
 <ul>
 <li><p><strong>Vertices</strong>. Vertices of generated mesh.</p></li>
+<li><p><strong>Outer Vertices</strong>.</p></li>
+<li><p><strong>Inner Vertices</strong>.</p></li>
+<li><p><strong>Border Vertices</strong>.</p></li>
+<li><p><strong>Outer Indexes Vertices</strong>.</p></li>
+<li><p><strong>Inner Indexes Vertices</strong>.</p></li>
+<li><p><strong>Border Indexes Vertices</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/1dc196b6-0f89-4677-ae62-90555ce6a0f7"><img alt="https://github.com/user-attachments/assets/1dc196b6-0f89-4677-ae62-90555ce6a0f7" src="https://github.com/user-attachments/assets/1dc196b6-0f89-4677-ae62-90555ce6a0f7" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/ebb8817f-6a5d-4903-b808-e4931a5695ea"><img alt="https://github.com/user-attachments/assets/ebb8817f-6a5d-4903-b808-e4931a5695ea" src="https://github.com/user-attachments/assets/ebb8817f-6a5d-4903-b808-e4931a5695ea" />
+</a>
+</div></blockquote>
+</li>
 <li><p><strong>Edges</strong>. Edges of generated mesh.</p></li>
-<li><p><strong>Faces</strong>. Faces of generated mesh.</p></li>
+<li><p><strong>Outer Edges</strong>.</p></li>
+<li><p><strong>Inner Edges</strong>.</p></li>
+<li><p><strong>Border Edges</strong>.</p></li>
+<li><p><strong>Outer Indexes Edges</strong>.</p></li>
+<li><p><strong>Inner Indexes Edges</strong>.</p></li>
+<li><p><strong>Border Indexes Edges</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/cf0b2c90-c04c-458f-9ba5-85c26f5fa783"><img alt="https://github.com/user-attachments/assets/cf0b2c90-c04c-458f-9ba5-85c26f5fa783" src="https://github.com/user-attachments/assets/cf0b2c90-c04c-458f-9ba5-85c26f5fa783" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/c6dda949-a694-4ddf-81e9-4bd9d153ff85"><img alt="https://github.com/user-attachments/assets/c6dda949-a694-4ddf-81e9-4bd9d153ff85" src="https://github.com/user-attachments/assets/c6dda949-a694-4ddf-81e9-4bd9d153ff85" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Polygons</strong>. Faces of generated mesh.</p></li>
+<li><p><strong>Outer Inner Mask Polygons</strong>.</p></li>
+<li><p><strong>Outer Polygons</strong>.</p></li>
+<li><p><strong>Inner Polygons</strong>.</p></li>
+<li><p><strong>Border Polygons</strong>.</p></li>
+<li><p><strong>Outer Indexes Polygons</strong>.</p></li>
+<li><p><strong>Inner Indexes Polygons</strong>.</p></li>
+<li><p><strong>Border Indexes Polygons</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/e51f9fd8-071d-4e71-b970-f0b09560531b"><img alt="https://github.com/user-attachments/assets/e51f9fd8-071d-4e71-b970-f0b09560531b" src="https://github.com/user-attachments/assets/e51f9fd8-071d-4e71-b970-f0b09560531b" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/99db0125-e62b-4818-b181-2a90f50bbb3b"><img alt="https://github.com/user-attachments/assets/99db0125-e62b-4818-b181-2a90f50bbb3b" src="https://github.com/user-attachments/assets/99db0125-e62b-4818-b181-2a90f50bbb3b" />
+</a>
+</div></blockquote>
+<p>Additionally for voronoi on volume if you connect socket “Outer polygon” then you can see this result:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/5fde423b-ad47-4bc8-8b4d-9758b6c92477"><img alt="https://github.com/user-attachments/assets/5fde423b-ad47-4bc8-8b4d-9758b6c92477" src="https://github.com/user-attachments/assets/5fde423b-ad47-4bc8-8b4d-9758b6c92477" />
+</a>
+</div></blockquote>
+</li>
 <li><p><strong>Used Sites idx</strong>. Indices of sources sites for further using (after apply Mask of sites). (from sverchok 1.3-alpha-master)</p></li>
 <li><p><strong>Used Sites Verts</strong>. Values of used sites. Keep of source struct of input socket “Voronoi sites” lists (after apply Mask of sites). (from sverchok 1.3-alpha-master)</p>
 <blockquote>
@@ -497,6 +603,33 @@ default value is 6.</p></li>
 <ul class="simple">
 <li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 </ul>
+</div></blockquote>
+</li>
+<li><p><strong>Matrices</strong>. Matrices or results meshes by join mode.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/59580680-401d-44d3-98fa-20ff6e718541"><img alt="https://github.com/user-attachments/assets/59580680-401d-44d3-98fa-20ff6e718541" src="https://github.com/user-attachments/assets/59580680-401d-44d3-98fa-20ff6e718541" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/2edd54d3-cb90-4d20-8a26-a70be84044ec"><img alt="https://github.com/user-attachments/assets/2edd54d3-cb90-4d20-8a26-a70be84044ec" src="https://github.com/user-attachments/assets/2edd54d3-cb90-4d20-8a26-a70be84044ec" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Voronoi Sites Matrices</strong>. These Matrices is used in multi-objects sources. If you have several meshes and split results on individual meshes with “Split (disconnect)” or “Split (sites)” then this socket out matrices for every results objects as Translate matrix to Voronoi Site position from source object origin.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/556f2815-1780-417c-9aee-a436342becb3"><img alt="https://github.com/user-attachments/assets/556f2815-1780-417c-9aee-a436342becb3" src="https://github.com/user-attachments/assets/556f2815-1780-417c-9aee-a436342becb3" />
+</a>
+<p>To get real world position of objects you have to use both matrices:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/bfe6c0fc-6177-4fe7-a2bd-156d159fb588"><img alt="https://github.com/user-attachments/assets/bfe6c0fc-6177-4fe7-a2bd-156d159fb588" src="https://github.com/user-attachments/assets/bfe6c0fc-6177-4fe7-a2bd-156d159fb588" />
+</a>
+<p>Using only “Matrices” socket will get next result:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5ef90016-1da3-4378-9502-f1be4f516ca1"><img alt="https://github.com/user-attachments/assets/5ef90016-1da3-4378-9502-f1be4f516ca1" src="https://github.com/user-attachments/assets/5ef90016-1da3-4378-9502-f1be4f516ca1" />
+</a>
+<p>Examples of using matrices sockets in split mode.</p>
+<video width="700" controls>
+  <source src="https://github.com/user-attachments/assets/6d641895-fe49-4186-a050-01f4ca3075a1" type="video/mp4">
+Your browser does not support the video tag.
+</video><p>Additionally: if results join mode is not split then “Voronoi Sites Matrices” has no sence so this socket will has only identity Matrices in Keep or Merge mode.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/4fe0caa7-195c-4ccc-b17c-27024cde0e34"><img alt="https://github.com/user-attachments/assets/4fe0caa7-195c-4ccc-b17c-27024cde0e34" src="https://github.com/user-attachments/assets/4fe0caa7-195c-4ccc-b17c-27024cde0e34" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -591,6 +724,10 @@ default value is 6.</p></li>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4e963254-251d-441d-808f-f30c9af55d62"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4e963254-251d-441d-808f-f30c9af55d62" src="https://github.com/nortikin/sverchok/assets/14288520/4e963254-251d-441d-808f-f30c9af55d62" />
 </a>
 <p>blend file: <a class="github reference external" href="https://github.com/nortikin/sverchok/files/12342712/Voronoi.Tower.006.blend.zip">nortikin/sverchok</a></p>
+<hr class="docutils" />
+<p>Show external surface as frame:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/569e0afe-619b-450b-8c9f-df1583b894a9"><img alt="https://github.com/user-attachments/assets/569e0afe-619b-450b-8c9f-df1583b894a9" src="https://github.com/user-attachments/assets/569e0afe-619b-450b-8c9f-df1583b894a9" />
+</a>
 </section>
 <section id="see-also-example">
 <h2>See also example<a class="headerlink" href="#see-also-example" title="Link to this heading">#</a></h2>
@@ -649,6 +786,7 @@ default value is 6.</p></li>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#addition">Addition</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
