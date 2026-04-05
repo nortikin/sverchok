@@ -11,6 +11,9 @@ if ezdxf != None:
 from mathutils import Vector
 from sverchok.data_structure import get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.dxf import export
+from sverchok.utils.context_managers import sv_preferences
+import subprocess
+#from sverchok.settings import dxf_editor
 
 
 
@@ -64,6 +67,7 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
         row = col.row(align=True)
         row.scale_y = scale_y
         row.operator("node.dxf_export", text="Export DXF")
+        col.operator("node.dxf_edit", text="Edit DXF")
         col.prop(self, "scale", expand=False)
         col.prop(self, "text_scale", expand=False)
         col.prop(self, 'do_block', expand=True)
@@ -159,13 +163,103 @@ class DXFExportOperator(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class DXFEditOperator(bpy.types.Operator):
+    bl_idname = "node.dxf_edit"
+    bl_label = "Edit DXF"
+
+    def invoke(self, context, event):
+        with sv_preferences() as prefs:
+            app_name = prefs.dxf_editor
+            
+            if not app_name:
+                # Показываем диалоговое окно с описанием проблемы
+                return context.window_manager.invoke_props_dialog(self, width=500)
+        
+        # Если app_name есть, сразу выполняем
+        return self.execute(context)
+
+    def draw(self, context):
+        layout = self.layout
+        
+        # 
+        box = layout.box()
+        col = box.column(align=True)
+        col.label(text="DXF Editor not configured!", icon='ERROR')
+        # 
+        col = box.column(align=True)
+        col.label(text="Propose to download ZCAD (nice and easy GPL3 freepascal CAD)")
+        # 
+        col.operator("wm.url_open", text="Download ZCAD (linux / windows) (GPL3 license)", icon='FILEBROWSER').url = "https://github.com/zamtmn/zcad"
+        # 
+        col.operator("node.dxf_select_editor", text="Select your DXF editor executable", icon='URL')
+        # /home/ololo/git/zcad/cad/bin/zcad
+        col.label(text="💡 Tip: After setting the editor, run this operator again.")
+
+    def execute(self, context):
+        node = context.node
+        inputs = node.inputs
+
+        file_path = inputs['path'].sv_get()[0][0]
+
+        if not file_path:
+            self.report({'ERROR'}, "File path not specified!")
+            return {'CANCELLED'}
+        if not file_path.endswith('.dxf'):
+            file_path = file_path + '.dxf'
+
+        try:
+            with sv_preferences() as prefs:
+
+                app_name = prefs.dxf_editor
+                if not app_name:
+                    self.report({'INFO'}, "Set first a external editor on Sverchok Preferences (User Preferences -> Add-ons)")
+                    return {'CANCELLED'}
+                #print(app_name,file_path)
+                subprocess.Popen([app_name, file_path])
+                return {'FINISHED'}
+                
+                self.report({'INFO'}, f"Opening {file_path}")
+        except Exception as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+
+        return {'FINISHED'}
+
+class DXFSelectEditorOperator(bpy.types.Operator):
+    bl_idname = "node.dxf_select_editor"
+    bl_label = "Select DXF Editor"
+    bl_description = "Browse and select DXF editor executable"
+    
+    filepath: bpy.props.StringProperty(subtype='FILE_PATH')
+    
+    def execute(self, context):
+        if not self.filepath:
+            return {'CANCELLED'}
+        
+        try:
+            with sv_preferences() as prefs:
+                prefs.dxf_editor = self.filepath
+                self.report({'INFO'}, f"DXF editor set to: {self.filepath}")
+                return {'FINISHED'}
+        except Exception as e:
+            self.report({'ERROR'}, f"Failed to save preferences: {str(e)}")
+            return {'CANCELLED'}
+    
+    def invoke(self, context, event):
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
 def register():
     bpy.utils.register_class(SvDxfExportNode)
     bpy.utils.register_class(DXFExportOperator)
+    bpy.utils.register_class(DXFEditOperator)
+    bpy.utils.register_class(DXFSelectEditorOperator)
 
 def unregister():
-    bpy.utils.unregister_class(SvDxfExportNode)
+    bpy.utils.unregister_class(DXFSelectEditorOperator)
+    bpy.utils.unregister_class(DXFEditOperator)
     bpy.utils.unregister_class(DXFExportOperator)
+    bpy.utils.unregister_class(SvDxfExportNode)
 
 if __name__ == "__main__":
     register()

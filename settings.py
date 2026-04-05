@@ -386,6 +386,7 @@ class SverchokPreferences(AddonPreferences):
 
     external_editor: StringProperty(description='which external app to invoke to view sources')
     real_sverchok_path: StringProperty(description='use with symlinked to get correct src->dst')
+    dxf_editor: StringProperty(description='which external app for DXF editing')
 
     github_token : StringProperty(name = "GitHub API Token",
                     description = "GitHub API access token. Should have 'gist' OAuth scope.",
@@ -521,6 +522,7 @@ class SverchokPreferences(AddonPreferences):
         col2box.prop(self, "developer_mode")
         col2box.prop(self, "external_editor", text="Ext Editor")
         col2box.prop(self, "real_sverchok_path", text="Src Directory")
+        col2box.prop(self, "dxf_editor", text="DXF Editor")
 
         log_box = col2.box()
         log_box.label(text="Logging:")
@@ -647,9 +649,15 @@ dependencies, or install only some of them.""")
                 row.operator('node.sv_ex_ensurepip', text="Install PIP")
             else:
                 row.operator('wm.url_open', text="Installation instructions").url = "https://pip.pypa.io/en/stable/installing/"
-
+        row_lib = col.row(align=True)
+        col_lib = row_lib.box()
+        ind = 0
+        l = (len(package_names) // 2)
         for k in package_names:
-            draw_message(box, k)
+            draw_message(col_lib, k)
+            ind += 1
+            if ind % l == 0:
+                col_lib = row_lib.box()
 
         draw_freecad_ops()
 

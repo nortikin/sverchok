@@ -65,7 +65,7 @@ EXTRA_ADDONS = {
     },
 'Sverchok ladybug': {
     'name': 'sverchok_ifc',
-    'description': 'IfcSverchok is a Sverchok plugin that allows you to create native IFC models alongside your parametric Sverchok geometry.',
+    'description': 'Sverchok ladybug is a Sverchok plugin that allows you to calculate insolation and make wind research for your Sverchok geometry.',
     'archive_link':'https://github.com/nortikin/sverchok_ladybug/archive/',
     'branch': 'main',
     'self_instalable': True
