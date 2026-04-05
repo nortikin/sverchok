@@ -54,14 +54,26 @@ class SvFillHolesNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_FILL_HOLES'
 
     sides: IntProperty(
-        name='Sides', description='Number of sides that will be collapsed to polygon',
-        default=4, min=3, update=updateNode)
+        name='Sides',
+        description='Number of sides that will be collapsed to polygon',
+        min=3,
+        default=4,
+        update=updateNode,
+    )
     
     correct_normals : bpy.props.BoolProperty(
         name = "Correct normals",
         default = True,
         description="Make sure that all normals of generated meshes point outside",
-        update = updateNode) # type: ignore
+        update = updateNode,
+    )
+    
+    invert_normals: bpy.props.BoolProperty(
+        name="Invert normals",
+        description="Invert normals after Correct Normals",
+        default=False,
+        update=updateNode,
+    )
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'vertices')
@@ -82,6 +94,14 @@ class SvFillHolesNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         box = layout.box()
         box.prop(self, "correct_normals",)
+        box.prop(self, "invert_normals",)
+        pass
+
+    def draw_buttons_ext(self, context, layout):
+        box = layout
+        box.prop(self, "correct_normals",)
+        box.prop(self, "invert_normals",)
+        pass
 
     def process(self):
 
@@ -99,9 +119,14 @@ class SvFillHolesNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             res = fill_holes(v, e, int(s), self.correct_normals)
             if not res:
                 return
-            verts_out.append(res[0])
-            edges_out.append(res[1])
-            polys_out.append(res[2])
+            new_verts, new_edges, new_faces = res
+
+            if self.invert_normals:
+                new_faces = [list(reversed(face)) for face in new_faces]
+
+            verts_out.append(new_verts)
+            edges_out.append(new_edges)
+            polys_out.append(new_faces)
 
         self.outputs['vertices'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)

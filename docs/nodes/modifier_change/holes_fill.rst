@@ -1,8 +1,8 @@
 Fill Holes
 ==========
 
-.. image:: https://github.com/user-attachments/assets/18380d00-a8f2-40ee-b72d-dcf053b45d08
-  :target: https://github.com/user-attachments/assets/18380d00-a8f2-40ee-b72d-dcf053b45d08
+.. image:: https://github.com/user-attachments/assets/26a572ca-aebb-4b97-a5a8-8b71c9d3c4a2
+  :target: https://github.com/user-attachments/assets/26a572ca-aebb-4b97-a5a8-8b71c9d3c4a2
 
 Functionality
 -------------
@@ -27,6 +27,8 @@ Parameters
 | **Sides**           | Float         | 4           | Number of sides that will be collapsed to polygon.            |
 +---------------------+---------------+-------------+---------------------------------------------------------------+
 | **Correct normals** | Bool          | True        | Make sure that all normals of generated meshes point outside. |
++---------------------+---------------+-------------+---------------------------------------------------------------+
+| **Invert normals**  | Bool          | True        | Invert normals after Correct Normals.                         |
 +---------------------+---------------+-------------+---------------------------------------------------------------+
 
 Outputs
