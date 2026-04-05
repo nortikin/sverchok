@@ -668,10 +668,10 @@ def draw_properties(layout, node_group, node_name):
 
 
 class SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5(bpy.types.Operator):
-    '''Additional objects properties\nYou can pan dialog window out of node.'''
+    '''You can pan dialog window out of node.'''
     # this combination do not show this panel on the right side panel
     bl_idname="sv.viewport_display_properties_dialog_voronoi_on_mesh_mk5"
-    bl_label = "Voronoi On Mesh node properties"
+    bl_label = "Voronoi On Mesh additional node properties"
 
     # horizontal size
     # bl_ui_units_x = 40 - Has no influence in Dialog mode
@@ -983,6 +983,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvMatrixSocket'  , 'sites_matrices'       ).label = 'Voronoi Sites Matrices'
 
         self.outputs['vertices']        .custom_draw = 'draw_vertices_out_socket'
+        self.outputs['vertices']        .description = 'draw_vertices_out_socket description'
         self.outputs['sites_matrices']  .custom_draw = 'draw_sites_matrices_out_socket'
 
         self.outputs["verticesOuter"]           .hide = True
@@ -991,17 +992,25 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs["verticesOuterIndexes"]    .hide = True
         self.outputs["verticesInnerIndexes"]    .hide = True
         self.outputs["verticesBorderIndexes"]   .hide = True
+        self.outputs["verticesOuterMasks"]      .hide = True
+        self.outputs["verticesInnerMasks"]      .hide = True
+        self.outputs["verticesBorderMasks"]     .hide = True
         self.outputs["edgesOuter"]              .hide = True
         self.outputs["edgesInner"]              .hide = True
-        self.outputs["edgesBorder"]             .hide = True
+        #self.outputs["edgesBorder"]             .hide = True
         self.outputs["edgesOuterIndexes"]       .hide = True
         self.outputs["edgesInnerIndexes"]       .hide = True
         self.outputs["edgesBorderIndexes"]      .hide = True
+        self.outputs["edgesOuterMasks"]         .hide = True
+        self.outputs["edgesInnerMasks"]         .hide = True
+        self.outputs["edgesBorderMasks"]        .hide = True
         self.outputs["polygonsOuterInner"]      .hide = True
-        self.outputs["polygonsOuter"]           .hide = True
-        self.outputs["polygonsInner"]           .hide = True
+        #self.outputs["polygonsOuter"]           .hide = True
+        #self.outputs["polygonsInner"]           .hide = True
         self.outputs["polygonsOuterIndexes"]    .hide = True
         self.outputs["polygonsInnerIndexes"]    .hide = True
+        self.outputs["polygonsOuterMasks"]      .hide = True
+        self.outputs["polygonsInnerMasks"]      .hide = True
 
         self.update_sockets(context)
 
@@ -1047,7 +1056,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         row01 = grid.row()
         row02 = grid.row(align=True)
         row01.alignment='RIGHT'
-        row01.label(text='Settings:')
+        row01.label(text='UI Settings:')
         row02.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogVoronoiOnMeshMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
         row02.column(align=True).popover(panel=SV_PT_ViewportDisplayPropertiesVoronoiOnMeshMK5.bl_idname, icon='DOWNARROW_HLT', text="")
 
