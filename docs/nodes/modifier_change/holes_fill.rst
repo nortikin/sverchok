@@ -1,8 +1,8 @@
 Fill Holes
 ==========
 
-.. image:: https://github.com/user-attachments/assets/26a572ca-aebb-4b97-a5a8-8b71c9d3c4a2
-  :target: https://github.com/user-attachments/assets/26a572ca-aebb-4b97-a5a8-8b71c9d3c4a2
+.. image:: https://github.com/user-attachments/assets/6ecd63a9-424d-4b66-9be4-9129350598e6
+  :target: https://github.com/user-attachments/assets/6ecd63a9-424d-4b66-9be4-9129350598e6
 
 Functionality
 -------------
