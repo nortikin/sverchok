@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
+from idprop.types import IDPropertyGroup
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -1522,6 +1523,8 @@ class SvNodeInDataMK5(SverchCustomTreeNode):
                 '''Кэширование custom properties при открытом диалоговом окне (нужно только на момент открытия диалогового окна)'''
                 for key, value in _mi.items():
                     # системные служебные пропускаем
+                    if isinstance(value, IDPropertyGroup):
+                        continue
                     if key.startswith("_"):
                         continue
 
