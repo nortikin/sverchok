@@ -54,6 +54,7 @@ from sverchok.utils.geom import calc_bounds, PlaneEquation, bounding_box_aligned
 from sverchok.data_structure import repeat_last_for_length
 from sverchok.utils.voronoi3d import voronoi3d_layer, calc_bvh_normals
 from sverchok.dependencies import scipy
+from datetime import datetime
 
 if scipy is not None:
     from scipy.spatial import Voronoi, SphericalVoronoi, Delaunay
@@ -382,7 +383,8 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                                     fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
                                     if fres['edges']:
                                         #bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges']) # has glitches
-                                        mfilled = bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'])
+                                        #bmesh.ops.holes_fill(src_mesh, edges=fres['edges'])
+                                        mfilled = bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'], normal=plane_no)
                                     else:
                                         pass
                                 else:
@@ -396,6 +398,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                                 num_unpredicted_erased+=1 # for statistics
                                 break
                             pass
+                        pass
                 else:
                     # func come here if out_of_bbox==True
                     pass
@@ -424,6 +427,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
         arr_pydata = []
         if results_objects_join_mode == 'RESULTS_OBJECTS_JOIN_MODE_SPLIT_DISCONNECT':
             arr_faces_indexes = get_face_components(src_mesh)
+
             if len(arr_faces_indexes)>1:
                 for faces_indexes in arr_faces_indexes:
                     src_mesh_copy = src_mesh.copy()
@@ -445,10 +449,12 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                 pydata1 = get_bmesh_data(src_mesh, outer_layer_name, voronoi_mode)
                 if pydata1:
                     arr_pydata.append(pydata1)
+                pass
         else:
             pydata1 = get_bmesh_data(src_mesh, outer_layer_name, voronoi_mode)
             if pydata1:
                 arr_pydata.append(pydata1)
+            pass
 
         src_mesh.clear() #remember to clear geometry before return
         src_mesh.free()
@@ -597,37 +603,11 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
     mask = []
     ):
 
-    bvh = BVHTree.FromPolygons(verts, faces)
-    npoints = len(sites)
-
-    if clipping is None:
-        x_min, x_max, y_min, y_max, z_min, z_max = calc_bounds(verts)
-        clipping = max(x_max - x_min, y_max - y_min, z_max - z_min) / 2.0
-
-    if mode in {'REGIONS', 'RIDGES'}:
-        if clip_inner or clip_outer:
-            normals = calc_bvh_normals(bvh, sites)
-        k = 0.5*thickness
-        sites = np.array(sites)
-        all_points = sites.tolist()
-        if clip_outer:
-            plus_points = sites + k*normals
-            all_points.extend(plus_points.tolist())
-        if clip_inner:
-            minus_points = sites - k*normals
-            all_points.extend(minus_points.tolist())
-
-        return voronoi3d_layer(npoints, all_points,
-                make_regions = (mode == 'REGIONS'),
-                do_clip = do_clip,
-                clipping = clipping)
-
-    else: # VOLUME, SURFACE
-        all_points = [site for site in sites if site]
-        verts, edges, faces, used_sites_idx, used_sites_verts, outer_verts_property_out, outer_edges_property_out, outer_faces_property = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
-                spacing = spacing, mode = mode, normal_update = normal_update, results_objects_join_mode = results_objects_join_mode,
-                precision = precision, mask=mask)
-        return verts, edges, faces, used_sites_idx, used_sites_verts, outer_verts_property_out, outer_edges_property_out, outer_faces_property
+    all_points = [site for site in sites if site]
+    verts, edges, faces, used_sites_idx, used_sites_verts, outer_verts_property_out, outer_edges_property_out, outer_faces_property = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
+            spacing = spacing, mode = mode, normal_update = normal_update, results_objects_join_mode = results_objects_join_mode,
+            precision = precision, mask=mask)
+    return verts, edges, faces, used_sites_idx, used_sites_verts, outer_verts_property_out, outer_edges_property_out, outer_faces_property
 
 class SvVoronoiOnMeshOffUnlinkedSocketsMK5(bpy.types.Operator):
     '''Hide all unlinked sockets'''
@@ -1321,7 +1301,6 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             mask_in_2     = mask_in_1
             pass
         pass
-
 
 
         for I, (verts_I, faces_I, matrices_I, sites_I, voronoi_spacing_I, mask_I) in enumerate( zip(verts_in_2, faces_in_2, matrices_in_2, sites_in_2, voronoi_spacing_in_2, mask_in_2) ):
