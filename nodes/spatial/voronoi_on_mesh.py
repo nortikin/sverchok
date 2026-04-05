@@ -1328,7 +1328,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                         obj_verts_site = []
                         for obj_vert in obj_verts:
                             v = mat_site_translation_inverted @ Vector(obj_vert)
-                            obj_verts_site.append(v)
+                            obj_verts_site.append((v.x, v.y, v.z))
                         verts_out.append(obj_verts_site)
                         sites_matrices_split_mode_out.append(mat_site_translation)
                     pass
