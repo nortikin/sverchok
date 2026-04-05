@@ -158,7 +158,13 @@ This node has the following parameters:
 
 * **Post processing**. This defines nesting structure of result meshes. The available options are:
 
-  * **Split (disconnect)**. Separate the result meshes into individual unconnected meshes. Every unconnected part get matrix of original meshes.
+  * **Split (disconnect)**. Separate the result meshes into individual unconnected meshes. Every unconnected part get matrix of original meshes. Be careful when evaluating the outcome. Some settings may produce similar results but with different structure.
+    For example, the "Split (disconnect)"" operation with "Outer Polygons" in "Volume" Mode gives one object, although it seems that the objects are two, and "Split (disconnect)" in "Surface Mode" gives as a result 2 objects.
+    This is because "Split (disconnect)" with "Outer Polygons" in "Volume Mode" is the same object as external Polygons.
+
+    .. image:: https://github.com/user-attachments/assets/53368187-096a-42e1-963c-22394cff7635
+      :target: https://github.com/user-attachments/assets/53368187-096a-42e1-963c-22394cff7635
+
   * **Split (sites)**. Separate the result meshes into meshes of original sites (can keep several unconnected objects). Every part get matrix of original meshes.
   * **Keep**. Keep parts of preprocessed meshes. Also keep matrices of original objects unchanged.
   * **Merge**. Join all results meshes into a single mesh.
