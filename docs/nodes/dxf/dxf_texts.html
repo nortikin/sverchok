@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DXF Circles &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>DXF Texts &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -44,12 +44,12 @@
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/dxf/dxf_circles';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/dxf/dxf_texts';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="DXF Linear Dimensions" href="dxf_dims.html" />
-    <link rel="prev" title="DXF" href="dxf_index.html" />
+    <link rel="next" title="Tutorials" href="../../tutorials/tutorials.html" />
+    <link rel="prev" title="DXF Polygons" href="dxf_pols.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="1, 4, 0" />
@@ -186,14 +186,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="dxf_index.html">DXF</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">DXF Circles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dxf_circles.html">DXF Circles</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dxf_dims.html">DXF Linear Dimensions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dxf_export.html">DXF Export</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dxf_hatch.html">DXF Hatches</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dxf_import.html">DXF Import</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dxf_lines.html">DXF Lines</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dxf_pols.html">DXF Polygons</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dxf_texts.html">DXF Texts</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">DXF Texts</a></li>
 </ul>
 </details></li>
 </ul>
@@ -260,7 +260,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/dxf/dxf_circles.rst" target="_blank"
+      <li><a href="../../_sources/nodes/dxf/dxf_texts.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -336,7 +336,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>DXF Circles</h1>
+    <h1>DXF Texts</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -362,40 +362,42 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="dxf-circles">
-<h1>DXF Circles<a class="headerlink" href="#dxf-circles" title="Link to this heading">#</a></h1>
+  <section id="dxf-texts">
+<h1>DXF Texts<a class="headerlink" href="#dxf-texts" title="Link to this heading">#</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>Creates DXF circles objects from Sverchok geometry. Converts curves-circles into DXF circle entities.</p>
+<p>Creates DXF text objects. Generates text on one point.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Curves: Curves as SvCirvle objects expected</p></li>
-<li><p>Color: Line color (RGB or integer DXF color)</p></li>
-<li><p>Metadata: Additional metadata for lines</p></li>
+<li><p>Vertices: Start points for dimensions</p></li>
+<li><p>Texts: End points for dimensions</p></li>
+<li><p>Color: Dimension color (RGB or integer DXF color)</p></li>
+<li><p>Metadata: Additional metadata for dimensions</p></li>
 </ul>
 </section>
 <section id="options">
 <h2>Options<a class="headerlink" href="#options" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Line Type: DXF line type (CONTINUOUS, DASHED, etc.)</p></li>
-<li><p>Line Weight: Line thickness</p></li>
+<li><p>Line Type: DXF line type for dimension lines</p></li>
+<li><p>Line Weight: Line thickness for dimension lines</p></li>
+<li><p>Text Scale: Scale factor for dimension text</p></li>
 <li><p>Color: DXF color index (-4 to 255, -4 = ignore)</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>DXF Objects: Circle objects ready for export</p></li>
+<li><p>DXF Objects: Dimension objects ready for export</p></li>
 </ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
-<p><em>Example of creating DXF circles from curves SvCircles node lauout</em></p>
-<img alt="https://github.com/user-attachments/assets/2ae8a0d1-61ac-4434-834d-68e44a285dd9" src="https://github.com/user-attachments/assets/2ae8a0d1-61ac-4434-834d-68e44a285dd9" />
-<p><em>Example of created DXF circles from curves SvCircles in zcad</em></p>
-<img alt="https://github.com/user-attachments/assets/84c4fcb5-4255-4496-b304-b2709fd47168" src="https://github.com/user-attachments/assets/84c4fcb5-4255-4496-b304-b2709fd47168" />
+<p><em>Example of creating DXF texts node lauout</em></p>
+<img alt="https://github.com/user-attachments/assets/751e57d7-7b43-47e5-b9bf-54a2d3c42e89" src="https://github.com/user-attachments/assets/751e57d7-7b43-47e5-b9bf-54a2d3c42e89" />
+<p><em>Example of created DXF texts in zcad</em></p>
+<img alt="https://github.com/user-attachments/assets/02f73d24-39e6-47b8-8b15-043be32b2d26" src="https://github.com/user-attachments/assets/02f73d24-39e6-47b8-8b15-043be32b2d26" />
 </section>
 </section>
 
@@ -411,20 +413,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="dxf_index.html"
+       href="dxf_pols.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DXF</p>
+        <p class="prev-next-title">DXF Polygons</p>
       </div>
     </a>
     <a class="right-next"
-       href="dxf_dims.html"
+       href="../../tutorials/tutorials.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">DXF Linear Dimensions</p>
+        <p class="prev-next-title">Tutorials</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

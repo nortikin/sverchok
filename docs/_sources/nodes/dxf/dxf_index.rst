@@ -25,9 +25,10 @@ The DXF nodes provide a complete workflow for importing and exporting DXF files 
    - **DXF Circles** for circles geometry from curves    
    - **DXF Hatches** for patterned fills
    - **DXF Linear Dimensions** for measurements
+   - **DXF Texts** for texts geometry 
 
 3. Connect all DXF objects to **DXF Export** node
-4. Set export path and click "Export DXF"
+4. Set export path, (optionally export all as block) and click "Export DXF"
 
 **Color System:**
 - Use RGB colors for visual consistency
@@ -42,6 +43,23 @@ Support for standard DXF line types including CONTINUOUS, DASHED, DOTTED, etc.
 - Compatible with most CAD software including AutoCAD, LibreCAD, ZWCAD, QCAD and ZCAD.
 - The last, ZCAD is mostly fits my needs. Opensource, cross-platform, fast, supports all my entities. Recommend it for everyday usage.
 - Preserves layer information and entity properties
+
+**General for export nodes**
+
+*Default DXF linetypes*
+
+.. image:: https://github.com/user-attachments/assets/1fe1e785-04fc-441c-b267-514538a53388
+
+*Default DXF thicknesses*
+
+.. image:: https://github.com/user-attachments/assets/aa8cd5af-a423-4a6d-8e01-54f32e7831ad
+
+*Default DXF colors - use whether color in node or DXF index from table*
+
+.. image:: https://github.com/user-attachments/assets/390e21c3-3f23-4766-bde1-5cb555b980c4
+.. image:: https://github.com/user-attachments/assets/951d31c1-a2ad-4309-912e-61d230509ee5
+
+
 
 .. toctree::
    :glob:

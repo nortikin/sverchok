@@ -1,8 +1,8 @@
 Fill Holes
 ==========
 
-.. image:: https://user-images.githubusercontent.com/14288520/200031589-47edec1e-ef4f-4d45-8757-6b68aed53831.png
-  :target: https://user-images.githubusercontent.com/14288520/200031589-47edec1e-ef4f-4d45-8757-6b68aed53831.png
+.. image:: https://github.com/user-attachments/assets/6ecd63a9-424d-4b66-9be4-9129350598e6
+  :target: https://github.com/user-attachments/assets/6ecd63a9-424d-4b66-9be4-9129350598e6
 
 Functionality
 -------------
@@ -21,11 +21,15 @@ Inputs
 Parameters
 ----------
 
-+-----------------+---------------+-------------+-------------------------------------------------------------+
-| Param           | Type          | Default     | Description                                                 |
-+=================+===============+=============+=============================================================+
-| **Sides**       | Float         | 4           | Number of sides that will be collapsed to polygon.          |
-+-----------------+---------------+-------------+-------------------------------------------------------------+
++---------------------+---------------+-------------+---------------------------------------------------------------+
+| Param               | Type          | Default     | Description                                                   |
++=====================+===============+=============+===============================================================+
+| **Sides**           | Float         | 4           | Number of sides that will be collapsed to polygon.            |
++---------------------+---------------+-------------+---------------------------------------------------------------+
+| **Correct normals** | Bool          | True        | Make sure that all normals of generated meshes point outside. |
++---------------------+---------------+-------------+---------------------------------------------------------------+
+| **Invert normals**  | Bool          | True        | Invert normals after Correct Normals.                         |
++---------------------+---------------+-------------+---------------------------------------------------------------+
 
 Outputs
 -------
