@@ -189,9 +189,9 @@ class DXFEditOperator(bpy.types.Operator):
         col = box.column(align=True)
         col.label(text="Propose to download ZCAD (nice and easy GPL3 freepascal CAD)")
         # 
-        col.operator("wm.url_open", text="Download ZCAD (linux / windows) (GPL3 license)", icon='FILEBROWSER').url = "https://github.com/zamtmn/zcad"
+        col.operator("wm.url_open", text="Download ZCAD (linux / windows) (GPL3 license)", icon='URL').url = "https://github.com/zamtmn/zcad"
         # 
-        col.operator("node.dxf_select_editor", text="Select your DXF editor executable", icon='URL')
+        col.operator("node.dxf_select_editor", text="Select your DXF editor executable", icon='FILEBROWSER')
         # /home/ololo/git/zcad/cad/bin/zcad
         col.label(text="💡 Tip: After setting the editor, run this operator again.")
 
