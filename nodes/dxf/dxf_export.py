@@ -18,6 +18,10 @@ import subprocess
 
 
 class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
+    """
+    Triggers: DXF exporter
+    Tooltip:  Exports DXF file format using ezdxf
+    """
     bl_idname = 'SvDxfExportNode'
     bl_label = 'DXF Export'
     bl_icon = 'EXPORT'
@@ -31,33 +35,16 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
         subtype='FILE_PATH',
         update=updateNode
     )
-    
-    scale: bpy.props.FloatProperty(default=1000.0, min=1.0, max=200000.0, name='scale')
 
-    text_scale: bpy.props.FloatProperty(default=1.0,name='text_scale')
-    
-    do_block: bpy.props.BoolProperty(default=False, name='do_block')
+    scale: bpy.props.FloatProperty(default=1000.0, min=1.0, max=200000.0, name='scale',description='Due to Blender units in meter, it multiply 1000 for mm dxf')
 
-    block_name: bpy.props.StringProperty(name='block name', default='Sverchok_block', update=updateNode)
+    text_scale: bpy.props.FloatProperty(default=1.0,name='text_scale',description='Scale of the text, usually corresponding 1 to 1 to overall scale')
+
+    do_block: bpy.props.BoolProperty(default=False, name='do_block',description='Output block from all objects (understands 2d only and lines/polygon lines/circles only)')
+
+    block_name: bpy.props.StringProperty(name='block name', default='Sverchok_block', description='All objscts will get that name',update=updateNode)
 
     def sv_init(self, context):
-        '''
-        self.inputs.new('SvVerticesSocket', 'verts')
-        self.inputs.new('SvStringsSocket', 'edges')
-        self.inputs.new('SvStringsSocket', 'pols')
-        self.inputs.new('SvVerticesSocket', 'Tvers')
-        self.inputs.new('SvStringsSocket', 'Ttext')
-        self.inputs.new('SvStringsSocket', 'FaceData')
-        self.inputs.new('SvStringsSocket', 'FDDescr')
-        self.inputs.new('SvStringsSocket', 'INFO')
-        self.inputs.new('SvVerticesSocket', 'dim1')
-        self.inputs.new('SvVerticesSocket', 'dim2')
-        self.inputs.new('SvVerticesSocket', 'adim')
-        self.inputs.new('SvStringsSocket', 'scal').prop_name = 'scale'
-        self.inputs.new('SvStringsSocket', 'leader')
-        self.inputs.new('SvVerticesSocket', 'vleader')
-        self.inputs.new('SvStringsSocket', 't_scal').prop_name = 'text_scale'
-        '''
         self.inputs.new('SvFilePathSocket', 'path').prop_name = 'file_path'
         self.inputs.new('SvSvgSocket', 'dxf')
 
@@ -84,7 +71,7 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
 
 
         # MAKE DEFINITION BODY HERE #
-        
+
         vers_, edges_, pols_, Tvers_, Ttext_, fpath_ = [],[],[],[],[],[]
         d1_, d2_, info, dim1_, dim2_,adim1_ = [],[],[],[],[],[]
         leader_, vleader_, dxf_ = [],[],[]
@@ -140,6 +127,10 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 class DXFExportOperator(bpy.types.Operator):
+    """
+    Triggers: Exports dxf
+    Tooltip: Using ezdxf iterate all items from inputs and saves dxf. Layers per object.
+    """
     bl_idname = "node.dxf_export"
     bl_label = "Export DXF"
 
@@ -164,33 +155,37 @@ class DXFExportOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 class DXFEditOperator(bpy.types.Operator):
+    """
+    Triggers: Opens dxf in external application
+    Tooltip: Call application defined in properties to open saved dxf externally
+    """
     bl_idname = "node.dxf_edit"
     bl_label = "Edit DXF"
 
     def invoke(self, context, event):
         with sv_preferences() as prefs:
             app_name = prefs.dxf_editor
-            
+
             if not app_name:
                 # Показываем диалоговое окно с описанием проблемы
                 return context.window_manager.invoke_props_dialog(self, width=500)
-        
+
         # Если app_name есть, сразу выполняем
         return self.execute(context)
 
     def draw(self, context):
         layout = self.layout
-        
-        # 
+
+        #
         box = layout.box()
         col = box.column(align=True)
         col.label(text="DXF Editor not configured!", icon='ERROR')
-        # 
+        #
         col = box.column(align=True)
         col.label(text="Propose to download ZCAD (nice and easy LGPL2 freepascal CAD)")
-        # 
+        #
         col.operator("wm.url_open", text="Download ZCAD (linux / windows) (LGPL2 license)", icon='URL').url = "https://github.com/zamtmn/zcad"
-        # 
+        #
         col.operator("node.dxf_select_editor", text="Select your DXF editor executable", icon='FILEBROWSER')
         # /home/ololo/git/zcad/cad/bin/zcad
         col.label(text="💡 Tip: After setting the editor, run this operator again.")
@@ -217,7 +212,7 @@ class DXFEditOperator(bpy.types.Operator):
                 #print(app_name,file_path)
                 subprocess.Popen([app_name, file_path])
                 return {'FINISHED'}
-                
+
                 self.report({'INFO'}, f"Opening {file_path}")
         except Exception as e:
             self.report({'ERROR'}, str(e))
@@ -229,13 +224,13 @@ class DXFSelectEditorOperator(bpy.types.Operator):
     bl_idname = "node.dxf_select_editor"
     bl_label = "Select DXF Editor"
     bl_description = "Browse and select DXF editor executable"
-    
+
     filepath: bpy.props.StringProperty(subtype='FILE_PATH')
-    
+
     def execute(self, context):
         if not self.filepath:
             return {'CANCELLED'}
-        
+
         try:
             with sv_preferences() as prefs:
                 prefs.dxf_editor = self.filepath
@@ -244,7 +239,7 @@ class DXFSelectEditorOperator(bpy.types.Operator):
         except Exception as e:
             self.report({'ERROR'}, f"Failed to save preferences: {str(e)}")
             return {'CANCELLED'}
-    
+
     def invoke(self, context, event):
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
