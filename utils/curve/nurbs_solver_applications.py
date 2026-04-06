@@ -21,6 +21,8 @@ from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolve
 from sverchok.utils.nurbs_common import SvNurbsMaths, to_homogenous
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots, concatenate_nurbs_curves
 from sverchok.utils.curve.nurbs_solver import SvNurbsCurveCotangents, SvNurbsCurvePoints, SvNurbsCurveSelfIntersections, SvNurbsCurveTangents, SvNurbsCurveSolver
+from sverchok.utils.curve.splines import SvMonotoneSpline
+from sverchok.utils.adaptive_curve import populate_curve
 from sverchok.utils.sv_logging import get_logger
 
 def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, tangents = None, logger=None):
@@ -174,6 +176,73 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, exact_mask=Non
         tangents = SvNurbsCurveCotangents.single(0.0, 1.0, weight=1.0, relative_u=True, relative=False, exact=True)
         solver.add_goal(tangents)
     return solver.solve(implementation=implementation, logger=logger)
+
+def reparametrize_nurbs_curve(curve, n_cpts, samples, src_key_ts, dst_key_ts,
+                        degree = None,
+                        samples_by_curvature = True,
+                        samples_by_length = False,
+                        weights_by_curvature = False,
+                        populate_resolution = 200,
+                        nurbs_implementation = SvNurbsMaths.NATIVE,
+                        logger = None):
+    if degree is None:
+        if hasattr(curve, 'get_degree'):
+            degree = curve.get_degree()
+        else:
+            raise ArgumentError("Curve degree is not provided, and original curve does not have get_degree() method")
+
+    src_key_ts = np.array(src_key_ts)
+    dst_key_ts = np.array(dst_key_ts)
+    spline = SvMonotoneSpline(src_key_ts, dst_key_ts)
+    
+    t_min, t_max = curve.get_u_bounds()
+    if samples_by_curvature or samples_by_length:
+        src_ts = populate_curve(curve, samples, resolution=populate_resolution, by_length = samples_by_length, by_curvature = samples_by_curvature)
+    else:
+        src_ts = np.linspace(t_min, t_max, num=samples)
+    
+    dst_ts = spline.evaluate_array(src_ts)[:,1]
+    curve_pts = curve.evaluate_array(src_ts)
+    curve_key_pts = curve.evaluate_array(src_key_ts)
+
+    # all_src_ts = np.array(list(set(list(src_key_ts) + list(src_ts))))
+    # all_src_ts = np.sort(all_src_ts)
+    # src_knotvector = sv_knotvector.from_tknots(degree, all_src_ts, n_cpts = n_cpts)
+    # knotvector = spline.evaluate_array(src_knotvector)[:,1]
+    
+    all_ts = np.array(list(set(list(dst_key_ts) + list(dst_ts))))
+    t_idxs = np.argsort(all_ts)
+    all_ts = all_ts[t_idxs]
+
+    # all_pts = np.concatenate((curve_key_pts, curve_pts), axis=0)
+    # sorted_pts = all_pts[t_idxs]
+    # metric_tknots = Spline.create_knots(sorted_pts, metric='DISTANCE')
+    # knotvector = sv_knotvector.from_tknots(degree, metric_tknots, n_cpts = n_cpts)
+    
+    orig_idxs = np.linspace(t_min, t_max, num = n_cpts)
+    dst_idxs = spline.evaluate_array(orig_idxs)[:,1]
+    knotvector = sv_knotvector.from_tknots(degree, dst_idxs)
+    # knotvector = sv_knotvector.from_tknots(degree, all_ts, n_cpts = n_cpts)
+    # knotvector = sv_knotvector.from_tknots(degree, src_ts, n_cpts = n_cpts)
+    
+    solver = SvNurbsCurveSolver(degree=degree)
+    solver.set_curve_params(n_cpts, knotvector = knotvector)
+    
+    exact_goal = SvNurbsCurvePoints(dst_key_ts, curve_key_pts, relative=False, exact=True)
+    solver.add_goal(exact_goal)
+    
+    if weights_by_curvature:
+        weights = np.sqrt(curve.curvature_array(src_ts))
+    else:
+        weights = None
+    inexact_goal = SvNurbsCurvePoints(dst_ts, curve_pts, weights = weights, relative=False, exact=False)
+    solver.add_goal(inexact_goal)
+    
+    new_curve = solver.solve(implementation = nurbs_implementation, logger = logger)
+    new_curve_pts = new_curve.evaluate_array(dst_ts)
+    deltas = new_curve_pts - curve_pts
+    diff = (deltas * deltas).sum() / samples
+    return new_curve, diff
 
 def prepare_solver_for_interpolation(degree, points,
                                      metric='DISTANCE',
