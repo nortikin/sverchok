@@ -96,6 +96,8 @@ class SvGeoNodesViewerNode(
     bl_idname = 'SvGeoNodesViewerNode'
     bl_label = 'Geo Nodes Viewer'
     bl_icon = 'GEOMETRY_NODES' if bpy.app.version >= (3, 3) else 'NODETREE'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     def generate_sockets(self, context):
         # remove all extra sockets
