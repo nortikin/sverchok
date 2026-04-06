@@ -12,7 +12,6 @@ from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException, Sv
 from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import concatenate_curves, reparametrize_curve
 from sverchok.utils.curve.nurbs_algorithms import concatenate_nurbs_curves
 from sverchok.dependencies import scipy
@@ -64,13 +63,13 @@ class SvSplineCurve(SvCurve):
     def get_degree(self):
         return self.spline.get_degree()
 
-    def to_nurbs(self, implementation=SvNurbsCurve.NATIVE):
+    def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
         control_points = self.spline.get_control_points()
         degree = self.spline.get_degree()
         n_points = degree + 1
         knotvector = sv_knotvector.generate(degree, n_points)
         t_segments = self.spline.get_t_segments()
-        segments = [SvNurbsCurve.build(implementation,
+        segments = [SvNurbsMaths.build_curve(implementation,
                         degree, knotvector, points) for points in control_points]
         segments = [reparametrize_curve(segment, t_min, t_max) for segment, (t_min, t_max) in zip(segments, t_segments)]
 #         pairs = [f"#{i}: {t_min}-{t_max}: {segment.evaluate(t_min)} -- {segment.evaluate(t_max)}" for i, (segment, (t_min, t_max)) in enumerate(zip(segments, t_segments))]
@@ -86,7 +85,7 @@ class SvSplineCurve(SvCurve):
         return segments
 
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
-        curve2 = SvNurbsCurve.to_nurbs(curve2)
+        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
         if curve2 is None:
             raise UnsupportedCurveTypeException("second curve is not NURBS")
         else:
