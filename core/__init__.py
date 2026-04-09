@@ -54,6 +54,26 @@ sverchok_help_nodes_map_was_registered = False
 def sverchok_help_nodes_map():
     return sverchok_help_prefix, sverchok_nodes_map
 
+def draw_node_manual(self, context):
+    layout = self.layout
+    node = context.active_node
+
+    if node:
+        node_name = node.bl_idname
+        node_name_lower = node_name.lower()
+        elem = [nm for nm in sverchok_nodes_map if nm[0].endswith("."+node_name_lower)]
+        if elem:
+            help_url = sverchok_help_prefix + elem[0][1]
+            layout.separator()
+            layout.operator(
+                "wm.url_open",
+                text="Online Manual",
+                icon='HELP'
+            ).url = help_url
+            #layout.operator("wm.doc_view_manual", text="Online Manual" ) # do not work as expected in Blender <3.6
+        pass
+    pass
+
 
 def sv_register_modules(modules):
     global sverchok_help_prefix, sverchok_nodes_map, sverchok_help_nodes_map_was_registered
@@ -88,6 +108,10 @@ def sv_register_modules(modules):
         
         if result:
             try:
+                if bpy.app.version < (3, 6):
+                    # in the old versions of sverchok add/remove menu manually
+                    bpy.types.NODE_MT_context_menu.append(draw_node_manual)
+
                 sverchok_nodes_map = tuple(result)
                 bpy.utils.register_manual_map(sverchok_help_nodes_map)
                 sverchok_help_nodes_map_was_registered = True
@@ -109,6 +133,9 @@ def sv_unregister_modules(modules):
                 print(str(e))
     try:
         if sverchok_help_nodes_map_was_registered==True:
+            if bpy.app.version < (3, 6):
+                # in the old versions of sverchok add/remove menu manually
+                bpy.types.NODE_MT_context_menu.remove(draw_node_manual)
             bpy.utils.unregister_manual_map(sverchok_help_nodes_map)
         sverchok_help_nodes_map_was_registered = False
     except RuntimeError as e:

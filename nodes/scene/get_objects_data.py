@@ -75,6 +75,10 @@ class SvGetObjectsDataMK5(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
         return (not self.inputs['objects'].is_linked) and (self.inputs['objects'].object_ref_pointer
                                                            or self.object_names)
 
+    def draw_menu(self, context):
+        layout = self.layout
+        layout.operator("wm.url_open", text="Online Manual").url = "https://..."
+
     def hide_show_versgroups(self, context):
         outs = self.outputs
         showing_vg = 'Vers_grouped' in outs
