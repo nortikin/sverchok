@@ -11,12 +11,14 @@ from pathlib import Path
 
 import bpy
 from bpy.types import Operator
+from bpy.utils import previews
 
 import sverchok
 from sverchok.ui.utils import datafiles
 from sverchok.utils.sv_json_import import JSONImporter
 from sverchok.ui.sv_icons import icon
-from sverchok.ui.sv_3d_panel import plugin_icons
+from sverchok.ui.sv_3d_panel import preview_collections
+
 
 
 def node_examples_pulldown(self, context):
@@ -30,6 +32,7 @@ def node_examples_pulldown(self, context):
 
 def node_settings_pulldown(self, context):
     if context.space_data.tree_type == 'SverchCustomTreeType':
+        plugin_icons = preview_collections['sverchok_logo']
         layout = self.layout
         row = layout.row(align=True)
         row.scale_x = 1.3
@@ -41,7 +44,8 @@ def node_settings_pulldown(self, context):
             row.operator("sv.orbit_around_selection", icon="PROP_CON",text="",)
         else:
             row.operator("sv.orbit_around_selection", icon="SNAP_NORMAL", text="")
-        row.menu("SV_MT_layouts_Splash", text='👈☝ ( ͡° ͜ʖ ͡°)', icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
+        row.template_icon(icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
+        row.menu("SV_MT_layouts_Splash", text='👈☝ ( ͡° ͜ʖ ͡°)') #, icon_value=plugin_icons['sverchock_icon_b.png'].icon_id)
         
 
 class SV_MT_LayoutsSplash(bpy.types.Menu):

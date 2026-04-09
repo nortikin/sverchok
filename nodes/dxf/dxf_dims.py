@@ -37,7 +37,7 @@ class SvDxfLinDimsNode(SverchCustomTreeNode, bpy.types.Node):
 
     metadata: bpy.props.StringProperty(default='',name='metadata')
 
-    color_int: bpy.props.IntProperty(default=-4, min=-4, max=255,name='color', description='-4 is ignore, -3', update=updateNode)
+    color_int: bpy.props.IntProperty(default=7, min=1, max=256,name='color', description='Choose color', update=updateNode)
 
     unit_color: bpy.props.FloatVectorProperty(
         update=updateNode, name='', default=(.3, .3, .2, 1.0),

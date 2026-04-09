@@ -22,23 +22,7 @@ def get_addon_root_dir():
             break
     return path
 
-plugin_icons = previews.new()
-
-# \sverchok-master\ui\logo\png
-if bpy.app.version >= (5,1,0):
-    plugin_icons.load(
-        name='sverchock_icon_b.png',
-        filepath=os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
-        file_type='IMAGE'
-    )
-else:
-    plugin_icons.load(
-        name='sverchock_icon_b.png',
-        path=os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
-        path_type='IMAGE'
-    )
-
-
+preview_collections = {}
 
 
 class SV_PT_3DPanel(bpy.types.Panel):
@@ -50,6 +34,7 @@ class SV_PT_3DPanel(bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
+        plugin_icons = preview_collections['sverchok_logo']
         row = self.layout.row()
         row.template_icon(icon_value=plugin_icons['sverchock_icon_b.png'].icon_id, scale=2.2)
         col = row.column()
@@ -500,12 +485,30 @@ classes = [
 
 
 def register():
+    plugin_icons = previews.new()
+    # \sverchok-master\ui\logo\png
+    if bpy.app.version >= (5,1,0):
+        plugin_icons.load(
+            'sverchock_icon_b.png',
+            os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
+            'IMAGE'
+        )
+    else:
+        plugin_icons.load(
+            name='sverchock_icon_b.png',
+            path=os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
+            path_type='IMAGE'
+        )
+    preview_collections['sverchok_logo'] = plugin_icons
     [bpy.utils.register_class(cls) for cls in classes]
 
     bpy.types.Scene.sv_ui_node_props = bpy.props.PointerProperty(type=Sv3DNodeProperties)
+    
 
 
 def unregister():
     [bpy.utils.unregister_class(cls) for cls in classes[::-1]]
 
     del bpy.types.Scene.sv_ui_node_props
+    for plugin_icons in preview_collections.values():
+        bpy.utils.previews.remove(plugin_icons)
