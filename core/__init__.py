@@ -50,11 +50,13 @@ def iter_modules(module, visited=None):
 
 sverchok_help_prefix = "https://nortikin.github.io/sverchok/docs/nodes/"
 sverchok_nodes_map = tuple()
+sverchok_help_nodes_map_was_registered = False
 def sverchok_help_nodes_map():
     return sverchok_help_prefix, sverchok_nodes_map
 
+
 def sv_register_modules(modules):
-    global sverchok_help_prefix, sverchok_nodes_map
+    global sverchok_help_prefix, sverchok_nodes_map, sverchok_help_nodes_map_was_registered
     for m in modules:
         if hasattr(m, "register"):
             # print("Registering module: {}".format(m.__name__))
@@ -88,6 +90,7 @@ def sv_register_modules(modules):
             try:
                 sverchok_nodes_map = tuple(result)
                 bpy.utils.register_manual_map(sverchok_help_nodes_map)
+                sverchok_help_nodes_map_was_registered = True
             except RuntimeError as e:
                 print("Error registering bpy.utils.register_manual_map")
                 pass
@@ -96,6 +99,7 @@ def sv_register_modules(modules):
     pass
 
 def sv_unregister_modules(modules):
+    global sverchok_help_prefix, sverchok_nodes_map, sverchok_help_nodes_map_was_registered
     for m in reversed(modules):
         if hasattr(m, "unregister"):
             try:
@@ -104,7 +108,9 @@ def sv_unregister_modules(modules):
                 print("Error unregistering module: {}".format(m.__name__))
                 print(str(e))
     try:
-        bpy.utils.unregister_manual_map(sverchok_help_nodes_map)
+        if sverchok_help_nodes_map_was_registered==True:
+            bpy.utils.unregister_manual_map(sverchok_help_nodes_map)
+        sverchok_help_nodes_map_was_registered = False
     except RuntimeError as e:
         print("Error unregistering bpy.utils.unregister_manual_map")
     pass
