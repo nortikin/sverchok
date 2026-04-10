@@ -40,6 +40,17 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         default = True,
         description="On - Enable, Off - remove Rigid Body simulation params from all objects.",
         update = updateNode)
+    
+    source_object_pointer: bpy.props.PointerProperty(
+        name="object",
+        type=bpy.types.Object
+    )
+    source_object_pointer_apply : BoolProperty(
+        name = "Apply params from source object",
+        default = False,
+        description="Apply params from source object pointer",
+        update = updateNode)
+
 
     rigid_body_types = [
             ('RIGID_BODY_TYPE,ACTIVE' , "Active" , "[0] Object is directly controller by simulation results", 0),
@@ -177,7 +188,10 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
 
     def sv_draw_buttons(self, context, layout):
         box = layout #.box()
-        box.column(align=True).prop(self, 'node_apply', text=('Enabled' if self.node_apply==True else 'Disabled'), icon=('GHOST_ENABLED' if self.node_apply==True else 'GHOST_DISABLED') )
+        box.prop(self, 'node_apply', text=('Enabled' if self.node_apply==True else 'Disabled'), icon=('GHOST_ENABLED' if self.node_apply==True else 'GHOST_DISABLED') )
+        box.prop(self, 'source_object_pointer' )
+        box.prop(self, 'source_object_pointer_apply' )
+
         pass
 
     def sv_init(self, context):
@@ -244,16 +258,32 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
                         obj.select_set(True)
                         bpy.ops.rigidbody.object_add()
                     pass
-                    obj.rigid_body.type = 'ACTIVE' if self.rigid_body_type=='RIGID_BODY_TYPE,ACTIVE' else 'PASSIVE'
-                    for attr in attrs:
-                        attr_val = getattr(self, 'rigid_body_'+attr)
-                        setattr( obj.rigid_body, attr, attr_val )
 
-                    for attr in attrs1:
-                        attr_val = getattr(self, 'rigid_body_'+attr)
-                        attr_val = attr_val.split(',')[-1]
-                        setattr( obj.rigid_body, attr, attr_val )
-                    pass
+                    if self.source_object_pointer_apply==False:
+                        obj.rigid_body.type = 'ACTIVE' if self.rigid_body_type=='RIGID_BODY_TYPE,ACTIVE' else 'PASSIVE'
+                        for attr in attrs:
+                            attr_val = getattr(self, 'rigid_body_'+attr)
+                            setattr( obj.rigid_body, attr, attr_val )
+
+                        for attr in attrs1:
+                            attr_val = getattr(self, 'rigid_body_'+attr)
+                            attr_val = attr_val.split(',')[-1]
+                            setattr( obj.rigid_body, attr, attr_val )
+                        pass
+                    elif self.source_object_pointer:
+                        obj.rigid_body.type = self.source_object_pointer.rigid_body.type
+                        for attr in attrs:
+                            attr_val = getattr(self.source_object_pointer.rigid_body, attr)
+                            setattr( obj.rigid_body, attr, attr_val )
+
+                        for attr in attrs1:
+                            attr_val = getattr(self.source_object_pointer.rigid_body, attr)
+                            setattr( obj.rigid_body, attr, attr_val )
+
+                        pass
+                    else:
+                        # do nothing
+                        pass
                 else:
                     if hasattr(obj, 'rigid_body')==True and obj.rigid_body is not None:
                         bpy.context.view_layer.objects.active = obj
