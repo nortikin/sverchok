@@ -203,6 +203,9 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         pass
 
     def process(self):
+        if not any(socket.is_linked for socket in self.inputs):
+            return
+
         active_obj = bpy.context.view_layer.objects.active
         selected = bpy.context.selected_objects.copy()
 
