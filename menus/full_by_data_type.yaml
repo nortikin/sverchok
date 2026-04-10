@@ -844,6 +844,8 @@
     - SvLatticePropsNode
     - SvSculptMaskNode
     - SvSelectMeshVerts
+    - ---
+    - SvRigidBodyNode
 
 - ---
 
