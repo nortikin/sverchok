@@ -199,7 +199,6 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'rigid_body_deactivate_angular_velocity' ).prop_name = 'rigid_body_deactivate_angular_velocity'
 
         self.outputs.new('SvObjectSocket', 'objects')
-        self.update_all_faces(context)
         pass
 
     def process(self):
