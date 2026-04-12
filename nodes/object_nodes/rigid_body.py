@@ -47,27 +47,7 @@ rigid_body_params = {
         #{'object': '', 'node': 'rigid_body_', },
     }
 
-lst_rigid_body_params = [
-    "type",
-    "mass",
-    "enabled",
-    "kinematic",
-    "collision_shape",
-    "mesh_source",
-    "use_deform",
-    "friction",
-    "restitution",
-    "use_margin",
-    "collision_margin",
-    "collision_collections",
-    "linear_damping",
-    "angular_damping",
-    "use_deactivation",
-    "use_start_deactivated",
-    "deactivate_linear_velocity",
-    "deactivate_angular_velocity",
-]
-
+# tests for copy animation
 
 def copy_rigid_body_animation(obj, list_target_objects, only_clear=False):
     if not obj.animation_data or not obj.animation_data.action:
@@ -79,7 +59,7 @@ def copy_rigid_body_animation(obj, list_target_objects, only_clear=False):
         return any(
             fcurve.data_path == f"rigid_body.{param}"
             or fcurve.data_path.startswith(f"rigid_body.{param}[")
-            for param in lst_rigid_body_params
+            for param in rigid_body_params
         )
 
     src_fcurves = []
@@ -135,7 +115,7 @@ def copy_rigid_body_animation(obj, list_target_objects, only_clear=False):
     pass
 
 class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
-    '''Set Set rigid Body params per object'''
+    '''Set rigid Body params per object'''
 
     bl_idname = 'SvRigidBodyNode'
     bl_label = "Rigid Body (Objects)"
@@ -248,10 +228,10 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
 
     rigid_body_collision_shape_modes = [
             ('RIGID_BODY_SHAPE_MODE,BOX'          , "Box"            , "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"                                      , 'MESH_CUBE'       , 0),
-            ('RIGID_BODY_SHAPE_MODE,SPHERE'       , "Sphere"         , ""                                                                                                         , 'MESH_UVSPHERE'   , 1),
-            ('RIGID_BODY_SHAPE_MODE,CAPSULE'      , "Capsule"        , ""                                                                                                         , 'MESH_CAPSULE'    , 2),
-            ('RIGID_BODY_SHAPE_MODE,CYLINDER'     , "Cylinder"       , ""                                                                                                         , 'MESH_CYLINDER'   , 3),
-            ('RIGID_BODY_SHAPE_MODE,CONE'         , "Cone"           , ""                                                                                                         , 'MESH_CONE'       , 4),
+            ('RIGID_BODY_SHAPE_MODE,SPHERE'       , "Sphere"         , "Sphere like shapes"                                                                                       , 'MESH_UVSPHERE'   , 1),
+            ('RIGID_BODY_SHAPE_MODE,CAPSULE'      , "Capsule"        , "Capsule like shapes"                                                                                      , 'MESH_CAPSULE'    , 2),
+            ('RIGID_BODY_SHAPE_MODE,CYLINDER'     , "Cylinder"       , "Cylinder like shapes"                                                                                     , 'MESH_CYLINDER'   , 3),
+            ('RIGID_BODY_SHAPE_MODE,CONE'         , "Cone"           , "Cone like shapes"                                                                                         , 'MESH_CONE'       , 4),
             ('RIGID_BODY_SHAPE_MODE,CONVEX_HULL'  , "Convex Hull"    , "A mesh-like surface encompassing (i.e. shrinkwrap over) all vertices (best results with fewer vertices)"  , 'MESH_ICOSPHERE'  , 5),
             ('RIGID_BODY_SHAPE_MODE,MESH'         , "Mesh"           , "Mesh consisting of triangles only, allowing for more detailed interactions than convex hulls"             , 'MESH_MONKEY'     , 6),
             ('RIGID_BODY_SHAPE_MODE,COMPOUND'     , "Compound Parent", "Combines all of its direct rigid body children into one rigid object"                                     , 'MESH_DATA'       , 7),
@@ -377,17 +357,25 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     
-    def custom_draw_collision_collections(self, socket, context, layout, post_process=False):
+    def custom_draw_collision_collections(self, socket, context, layout):
+        # if post_process==False:
+        #     return 'POST_PROCESS'
+
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.alignment = "LEFT"
         if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
-            layout.enabled = False
-        if post_process==False:
-            return 'POST_PROCESS'
+            row.enabled = False
         if socket.is_linked==True:
-            layout.enabled = False
-        root = layout.row(align=True)
-        row = root.row()
+            row.label(text=socket.label + f". {socket.objects_number or ''}")
+        else:
+            row.label(text=socket.label)
+
+        row = col.row()
         row.alignment = 'LEFT'
-        grid = root.grid_flow(row_major=True, columns=2, even_columns=True, even_rows=True)
+        if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
+            row.enabled = False
+        grid = row.grid_flow(row_major=True, columns=2, even_columns=True, even_rows=True)
         grid1 = grid.grid_flow(row_major=True, columns=5, even_columns=True, even_rows=True, align=True)
         for I in range(0,5):
             grid1.prop(self, "rigid_body_collision_collections1", index=I, text=str(I), toggle=True)
@@ -418,30 +406,41 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
 
         pass
 
+    def custom_draw_input_sockets_objects(self, socket, context, layout):
+        if socket.is_linked==True:
+            layout.label(text=socket.label + f". {socket.objects_number or ''}")
+        else:
+            layout.prop(self, socket.prop_name, text=self.label or None)
+        return
+
     def custom_draw_input_sockets_objects_map(self, socket, context, layout):
-        if self.objects_map_mode1=='RIGID_BODY_MAP,INDEXING':
+        if self.objects_map_mode1=='RIGID_BODY_MAP,INDEXING' or self.node_in_use==False:
             layout.enabled = False
         if socket.is_linked==True:
             layout.alignment = "LEFT"
-
-        return 'CONTINUE'
+            layout.label(text=socket.label + f". {socket.objects_number or ''}")
+        else:
+            layout.prop(self, socket.prop_name, text=self.label or None)
+        return
 
     def custom_draw_input_sockets_rigid_body_source_objects(self, socket, context, layout):
-        if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,SETTINGS':
+        if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,SETTINGS' or self.node_in_use==False:
             layout.enabled = False
         if socket.is_linked==True:
             layout.alignment = "LEFT"
-
-        return 'CONTINUE'
+            layout.label(text=socket.label + f". {socket.objects_number or ''}")
+        else:
+            layout.prop(self, socket.prop_name, text=self.label or None)
+        return
 
     def custom_draw_input_sockets_rigid_body_params(self, socket, context, layout):
-        if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
+        if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS' or self.node_in_use==False:
             layout.enabled = False
         if socket.is_linked==True:
-            layout.alignment = "LEFT"
-            pass
-
-        return 'CONTINUE'
+            layout.label(text=socket.label + f". {socket.objects_number or ''}")
+        else:
+            layout.prop(self, socket.prop_name, text=self.label or None)
+        return
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket' , 'objects'                                ).prop_name = 'object_in_pointer'
@@ -465,47 +464,35 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'rigid_body_use_start_deactivated'       ).prop_name = 'rigid_body_use_start_deactivated1'
         self.inputs.new('SvStringsSocket', 'rigid_body_deactivate_linear_velocity'  ).prop_name = 'rigid_body_deactivate_linear_velocity1'
         self.inputs.new('SvStringsSocket', 'rigid_body_deactivate_angular_velocity' ).prop_name = 'rigid_body_deactivate_angular_velocity1'
-
-        #self.inputs['objects'                           ].label       = 'Objects'
-        #self.inputs['objects'                           ].description = 'Objects description'
-
-        for (_sn, value) in {
-                'objects':'object_in_pointer',
-                'objects_map':'objects_map1',
-                'rigid_body_settings':'rigid_body_settings1'}.items():
+        
+        for (sn, params) in (rigid_body_params | {
+                'objects'             : {'node_property_name': 'object_in_pointer', 'socket_name': 'objects'},
+                'objects_map'         : {'node_property_name': 'objects_map1', 'socket_name': 'objects_map'},
+                'rigid_body_settings' : {'node_property_name': 'rigid_body_settings1', 'socket_name': 'rigid_body_settings'}
+            }).items() :
+            node_property_name = params['node_property_name']
+            socket_name = params['socket_name']
             name = None
             type = None
             description=None
-            if hasattr(self.__class__, 'bl_rna')==True and value in self.__class__.bl_rna.properties:
-                prop = self.__class__.bl_rna.properties[value]
+            if hasattr(self.__class__, 'bl_rna')==True and node_property_name in self.__class__.bl_rna.properties:
+                prop = self.__class__.bl_rna.properties[node_property_name]
                 name = prop.name
                 type = prop.type
                 description = prop.description
             if description:
-                self.inputs[_sn].description = description
-                pass
-
+                self.inputs[socket_name].description = f'{description}'
+            if name:
+                self.inputs[socket_name].label = f'{name}'
+            self.inputs[socket_name].custom_draw = 'custom_draw_input_sockets_rigid_body_params'
             pass
-        self.inputs['objects_map'           ].custom_draw = 'custom_draw_input_sockets_objects_map'
-        self.inputs['rigid_body_settings'   ].custom_draw = 'custom_draw_input_sockets_rigid_body_source_objects'
 
-        #for sn in sockets_input_names_for_params:
-        for sn in rigid_body_params:
-            _sn = 'rigid_body_'+sn
-            name = None
-            type = None
-            description=None
-            if hasattr(self.__class__, 'bl_rna')==True and _sn in self.__class__.bl_rna.properties:
-                prop = self.__class__.bl_rna.properties[_sn]
-                name = prop.name
-                type = prop.type
-                description = prop.description
-            if description:
-                self.inputs[_sn].description = f'{description}'
-            self.inputs[_sn].custom_draw = 'custom_draw_input_sockets_rigid_body_params'
-
+        # rewrite some input sockets
+        self.inputs['objects'                           ].custom_draw = 'custom_draw_input_sockets_objects'
+        self.inputs['objects_map'                       ].custom_draw = 'custom_draw_input_sockets_objects_map'
         self.inputs['rigid_body_collision_collections'  ].custom_draw = 'custom_draw_collision_collections'
         self.inputs['rigid_body_collision_collections'  ].label       = 'Collision Collection'
+        self.inputs['rigid_body_settings'               ].custom_draw = 'custom_draw_input_sockets_rigid_body_source_objects'
         
         self.outputs.new('SvObjectSocket', 'objects')
         self.outputs['objects'].label       = 'Objects'
@@ -597,7 +584,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
                     if len_socket_value>len_objects_map:
                         socket_value = socket_value[:len_objects_map]
                     elif len_socket_value<len_objects_map-1:
-                        socket_value += [socket_value[-1]]*(len_objects_map-len(socket_value))
+                        socket_value = socket_value + [socket_value[-1]]*(len_objects_map-len(socket_value))
                     pass
 
                 else:
