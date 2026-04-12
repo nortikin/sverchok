@@ -76,6 +76,7 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
     nozzle : FloatProperty(name="Nozzle", default=0.4, min=0, soft_max=10)
     layer_height : FloatProperty(name="Layer Height", default=0.1, min=0, soft_max=10)
     filament : FloatProperty(name="Filament (\u03A6)", default=1.75, min=0, soft_max=120)
+    scale_all : FloatProperty(name="Scale", default=1.0, min=0.1, soft_max=100000.0)
 
     gcode_mode : EnumProperty(items=[
             ("CONT", "Continuous", ""),
@@ -112,6 +113,7 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
         col.separator()
         col.label(text="Speed (Feed Rate F):", icon='DRIVER')
         col.prop(self, 'feed', text='Print')
+        col.prop(self, 'scale_all', text='Scale')
         if self.gcode_mode == 'RETR':
             col.prop(self, 'feed_vertical', text='Z Lift')
             col.prop(self, 'feed_horizontal', text='Travel')
@@ -140,6 +142,7 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
         feed = self.feed
         feed_v = self.feed_vertical
         feed_h = self.feed_horizontal
+        scale = self.scale_all
         layer = self.layer_height
         layer = self.inputs['Layer Height'].sv_get()
         vertices = self.inputs['Vertices'].sv_get()
@@ -193,7 +196,7 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
             curve = vertices[i]
             first_id = len(printed_verts)
             for j in range(len(curve)):
-                v = curve[j]
+                v = [i*scale for i in curve[j]]
                 #print('_______________',len(layer))
                 v_flow_mult = flow_mult[i][0][j]
                 v_layer = layer[i][0][j]
