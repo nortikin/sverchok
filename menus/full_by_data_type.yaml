@@ -846,6 +846,7 @@
     - SvSelectMeshVerts
     - ---
     - SvRigidBodyNode
+    - SvCopyMaterialSlotsNode
 
 - ---
 

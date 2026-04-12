@@ -979,6 +979,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket' , "polygonsInnerMasks"   ).label = 'Inner Masks Polygons'
         self.outputs.new('SvStringsSocket' , "sites_idx"            ).label = 'Used Sites Idx'
         self.outputs.new('SvStringsSocket' , "sites_verts"          ).label = 'Used Sites Verts'
+        self.outputs.new('SvStringsSocket' , "original_objects_id"  ).label = 'Original Objects Id'
         self.outputs.new('SvMatrixSocket'  , 'matrices'             ).label = 'Matrices'
         self.outputs.new('SvMatrixSocket'  , 'sites_matrices'       ).label = 'Voronoi Sites Matrices'
 
@@ -997,7 +998,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs["verticesBorderMasks"]     .hide = True
         self.outputs["edgesOuter"]              .hide = True
         self.outputs["edgesInner"]              .hide = True
-        #self.outputs["edgesBorder"]             .hide = True
+        #self.outputs["edgesBorder"]            .hide = True
         self.outputs["edgesOuterIndexes"]       .hide = True
         self.outputs["edgesInnerIndexes"]       .hide = True
         self.outputs["edgesBorderIndexes"]      .hide = True
@@ -1005,12 +1006,13 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs["edgesInnerMasks"]         .hide = True
         self.outputs["edgesBorderMasks"]        .hide = True
         self.outputs["polygonsOuterInner"]      .hide = True
-        #self.outputs["polygonsOuter"]           .hide = True
-        #self.outputs["polygonsInner"]           .hide = True
+        #self.outputs["polygonsOuter"]          .hide = True
+        #self.outputs["polygonsInner"]          .hide = True
         self.outputs["polygonsOuterIndexes"]    .hide = True
         self.outputs["polygonsInnerIndexes"]    .hide = True
         self.outputs["polygonsOuterMasks"]      .hide = True
         self.outputs["polygonsInnerMasks"]      .hide = True
+        #self.outputs["original_objects_id"]    .hide = True
 
         self.update_sockets(context)
 
@@ -1155,6 +1157,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         outer_polygons_property_out = []
         sites_idx_out = []
         sites_verts_out = []
+        original_objects_id_out = []
 
         matrix_0 = None
         matrix_0_inverted = None
@@ -1165,6 +1168,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         voronoi_spacing_in_1 = []
         mask_in_1 = []
         matrices_in_1 = []
+        original_objects_id_1 = []
 
         len_verts_in = len(verts_in)
         if len_verts_in>len(faces_in):
@@ -1172,6 +1176,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         
         #for I, (verts_I, faces_I, sites_I, voronoi_spacing_I, mask_I) in enumerate(zip_long_repeat(verts_in, faces_in, sites_in, voronoi_spacing_in, mask_in)):
         for I, verts_I in enumerate(verts_in):
+            original_objects_id_1.append(I)
             faces_I = faces_in[I if I<=len(faces_in)-1 else -1]
             sites_I = sites_in[I if I<=len(sites_in)-1 else -1]
             voronoi_spacing_I = voronoi_spacing_in[I if I<=len(voronoi_spacing_in)-1 else -1]
@@ -1242,6 +1247,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         sites_in_2    = []
         voronoi_spacing_in_2  = []
         mask_in_2     = []
+        original_objects_id_2 = []
 
         if self.source_objects_join_mode=='SOURCE_OBJECTS_JOIN_MODE_SPLIT':
             for I, verts_in_1_I in enumerate(verts_in_1):
@@ -1254,6 +1260,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                         sites_in_2              .append(sites_in_1          [I ])
                         voronoi_spacing_in_2    .append(voronoi_spacing_in_1[I ])
                         mask_in_2               .append(mask_in_1           [I ])
+                        original_objects_id_2.append(I) # keep source object id for island (here is several equals id for island)
                         pass
                 else:
                     verts_in_2          .append(verts_in_1_I           )
@@ -1262,6 +1269,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                     sites_in_2          .append(sites_in_1          [I])
                     voronoi_spacing_in_2.append(voronoi_spacing_in_1[I])
                     mask_in_2           .append(mask_in_1           [I])
+                    original_objects_id_2.append(I) # keep source object id for island
                 pass
             pass
         elif self.source_objects_join_mode=='SOURCE_OBJECTS_JOIN_MODE_MERGE':
@@ -1300,14 +1308,17 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             for m in mask_in_1:
                 merged_masks = merged_masks+m
             mask_in_2 = [merged_masks]
+            original_objects_id_2.append(0) # all meshes merge into 0th object
             pass
-        else:
+        else: # self.source_objects_join_mode=='SOURCE_OBJECTS_JOIN_MODE_KEEP'
             verts_in_2    = verts_in_1
             faces_in_2    = faces_in_1
             matrices_in_2 = matrices_in_1
             sites_in_2    = sites_in_1
             voronoi_spacing_in_2  = voronoi_spacing_in_1
             mask_in_2     = mask_in_1
+            for I, _ in enumerate(verts_in_2):
+                original_objects_id_2.append(I) # keep original ID
             pass
         pass
 
@@ -1356,10 +1367,17 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
                 outer_verts_property_out.extend(outer_verts_property) # dict {is_outer:True/False, is_inner: True/False}
                 outer_edges_property_out.extend(outer_edges_property) # dict {is_outer:True/False, is_inner: True/False}
                 outer_polygons_property_out.extend(outer_faces_property)
+                source_object_id = original_objects_id_2[I]
+                for IJ in enumerate(new_verts):
+                    original_objects_id_out.append(source_object_id)
+                pass
             elif self.results_objects_join_mode in ['RESULTS_OBJECTS_JOIN_MODE_KEEP', 'RESULTS_OBJECTS_JOIN_MODE_MERGE']:
                 if self.results_objects_join_mode == 'RESULTS_OBJECTS_JOIN_MODE_KEEP':
                     matrices_out.append(matrices_I)
                     sites_matrices_split_mode_out.append(Matrix())
+                    source_object_id = original_objects_id_2[I]
+                    original_objects_id_out.append(source_object_id)
+                    pass
                 verts1, edges1, faces1 = mesh_join(new_verts, new_edges, new_faces)
                 verts_out.append(verts1)
                 edges_out.append(edges1)
@@ -1398,6 +1416,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
             outer_edges_property_out = [outer_edges]
             outer_faces = [item for sublist in outer_polygons_property_out for item in sublist]
             outer_polygons_property_out = [outer_faces]
+            original_objects_id_out.append(0)
             pass
 
         vertsOuter_out = []
@@ -1595,6 +1614,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['polygonsInnerMasks'   ].sv_set(polygonsInnerMasks_out)
         self.outputs['sites_idx'            ].sv_set(sites_idx_out)
         self.outputs['sites_verts'          ].sv_set(sites_verts_out)
+        self.outputs['original_objects_id'  ].sv_set(original_objects_id_out)
         self.outputs['matrices'             ].sv_set(matrices_out)
         self.outputs['sites_matrices'       ].sv_set(sites_matrices_split_mode_out)
 

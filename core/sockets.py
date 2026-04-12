@@ -504,14 +504,18 @@ class SvSocketCommon(SvSocketProcessing):
         op.input_name = self.name
 
 
-    def draw(self, context, layout, node, text):
-
-        def draw_label(text):
+    def draw(self, context, _layout, node, text):
+        root = _layout.column(align=True)
+        root.alignment  = _layout.alignment 
+        layout = root.row(align=True)
+        layout.alignment  = _layout.alignment 
+        
+        def draw_label(layout, text):
             flags = self.get_mode_flags()
             if flags:
                 text = text + " [" + ",".join(flags) + "]"
-            if self.description:
-                layout.operator('node.sv_socket_show_help', text=text, emboss=False).text = self.description
+            if self.description and False:
+                layout.operator('node.sv_socket_show_help', text=text, emboss=True, icon='NONE').text = self.description
             else:
                 if hasattr(self, 'show_domain') and self.show_domain:
                     row = layout.row()
@@ -523,46 +527,67 @@ class SvSocketCommon(SvSocketProcessing):
         menu_option = get_param('show_input_menus', 'QUICKLINK')
 
         # just handle custom draw..be it input or output.
+        custom_draw_res = None
+        custom_draw_processed = False
         if self.custom_draw:
+            custom_draw_processed = True
             # does the node have the draw function referred to by
             # the string stored in socket's custom_draw attribute
             if hasattr(node, self.custom_draw):
-                getattr(node, self.custom_draw)(self, context, layout)
+                custom_draw_res = getattr(node, self.custom_draw)(self, context, layout)
+            pass
+        if custom_draw_processed==False or custom_draw_res in ['CONTINUE', 'POST_PROCESS']: # continue draw if custom_draw return some info. 'CONTINUE' - custom_draw did preprocess (ex. enabled=False) and general process has to be continue. 'POST_PROCESS' - continue custom_draw AFTER Sverchok draw (as second row)
+            if self.is_linked:  # linked INPUT or OUTPUT
+                prop_name = self.get_prop_name()
+                name = None
+                if prop_name:
+                    prop = node.__class__.bl_rna.properties[prop_name]
+                    name = prop.name
 
-        elif self.is_linked:  # linked INPUT or OUTPUT
-            draw_label((self.label or text) + f". {self.objects_number or ''}")
+                draw_label(layout, (self.label or name or text) + f". {self.objects_number or ''}")
 
-        elif self.is_output:  # unlinked OUTPUT
-            draw_label(self.label or text)
+            elif self.is_output:  # unlinked OUTPUT
+                draw_label(layout, self.label or text)
 
-        else:  # unlinked INPUT
-            prop_name = self.get_prop_name()
-            if prop_name:  # has property
-                if menu_option == 'ALL':
-                    self.draw_link_input_menu(context, layout, node)
-                self.draw_property(layout, prop_origin=node, prop_name=prop_name)
+            else:  # unlinked INPUT
+                prop_name = self.get_prop_name()
+                if prop_name:  # has property
+                    if menu_option == 'ALL':
+                        self.draw_link_input_menu(context, layout, node)
+                    self.draw_property(layout, prop_origin=node, prop_name=prop_name)
 
-            elif node.bl_idname == 'SvGroupTreeNode' and hasattr(self, 'draw_group_property'):  # group node
-                if node.node_tree:  # when tree is removed from node sockets still exist
-                    interface_socket = list(node.node_tree.sockets('INPUT'))[self.index]
-                    self.draw_group_property(layout, text, interface_socket)
+                elif node.bl_idname == 'SvGroupTreeNode' and hasattr(self, 'draw_group_property'):  # group node
+                    if node.node_tree:  # when tree is removed from node sockets still exist
+                        interface_socket = list(node.node_tree.sockets('INPUT'))[self.index]
+                        self.draw_group_property(layout, text, interface_socket)
 
-            elif node.bl_idname == 'NodeGroupOutput' and hasattr(self, 'draw_group_property'):  # group out node
-                if self.index < len(node.outputs):  # in case of last socket of the node which is virtual
-                    interface_socket = node.outputs[self.index]
-                    self.draw_group_property(layout, text, interface_socket)
+                elif node.bl_idname == 'NodeGroupOutput' and hasattr(self, 'draw_group_property'):  # group out node
+                    if self.index < len(node.outputs):  # in case of last socket of the node which is virtual
+                        interface_socket = node.outputs[self.index]
+                        self.draw_group_property(layout, text, interface_socket)
 
-            elif self.use_prop:  # no property but use default prop
-                if menu_option == 'ALL':
-                    self.draw_link_input_menu(context, layout, node)
-                self.draw_property(layout)
+                elif self.use_prop:  # no property but use default prop
+                    if menu_option == 'ALL':
+                        self.draw_link_input_menu(context, layout, node)
+                    self.draw_property(layout)
 
-            else:  # no property and not use default prop
-                if menu_option == 'QUICKLINK':
-                    self.draw_quick_link(context, layout, node)
-                elif menu_option == 'ALL':
-                    self.draw_link_input_menu(context, layout, node)
-                draw_label(self.label or text)
+                else:  # no property and not use default prop
+                    if menu_option == 'QUICKLINK':
+                        self.draw_quick_link(context, layout, node)
+                    elif menu_option == 'ALL':
+                        self.draw_link_input_menu(context, layout, node)
+                    draw_label(layout, self.label or text)
+                pass
+            if custom_draw_res=='POST_PROCESS':
+                if self.custom_draw:
+                    custom_draw_processed = True
+                    # does the node have the draw function referred to by
+                    # the string stored in socket's custom_draw attribute
+                    if hasattr(node, self.custom_draw):
+                        custom_draw_res = getattr(node, self.custom_draw)(self, context, root.row(align=True), post_process=True)
+                    pass
+            pass
+        pass
 
         if self.has_menu(context):
             self.draw_menu_button(context, layout, node, text)
@@ -962,6 +987,21 @@ class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
     def draw_property(self, layout, prop_origin=None, prop_name=None):
         if prop_origin and prop_name:
             layout.prop(prop_origin, prop_name, text=self.label or None)
+            # name = None
+            # type = None
+            # if hasattr(prop_origin.__class__, 'bl_rna')==True and prop_name in prop_origin.__class__.bl_rna.properties:
+            #     prop = prop_origin.__class__.bl_rna.properties[prop_name]
+            #     name = prop.name
+            #     type = prop.type
+            # row = layout.row(align=True)
+            # if type=='FLOAT':
+            #     row.prop(prop_origin, prop_name, )
+            # else:
+            #     #row.alignment = 'LEFT'
+            #     row.label(text=(self.label or name or '')+':')
+            #     col = row.column()
+            #     col.alignment = 'RIGHT'
+            #     col.prop(prop_origin, prop_name, text='')
         elif self.use_prop:
             row = layout.row(align=True)
             if self.default_property_type == 'float':
