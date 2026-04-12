@@ -72,7 +72,7 @@ def control_center(event):
     # also this can be called (by Blender) during undo event in this case all
     # nodes will have another hash id and the comparison method will decide that
     # all nodes are new, and won't be able to detect changes, and will update all
-    elif type(event) is ev.TreeEvent:
+    elif type(event) is ev.TreeEvent and hasattr(event.tree, 'tree_id')==True:
         UpdateTree.get(event.tree).is_updated = False
         if event.tree.sv_process:
             ts.tasks.add(ts.Task(event.tree,

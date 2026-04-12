@@ -38,3 +38,5 @@ def handle_event(event):
         raise RuntimeError(f"{event=} was executed more than one time, {duplicates=}")
     elif results == 0:
         raise RuntimeError(f"{event} was not handled")
+    else:
+        pass
