@@ -384,7 +384,13 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                                     if fres['edges']:
                                         #bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges']) # has glitches
                                         #bmesh.ops.holes_fill(src_mesh, edges=fres['edges'])
-                                        mfilled = bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'], normal=plane_no)
+                                        mfilled = bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'], normal=-plane_no)
+                                        faces = [ele for ele in mfilled['geom'] if isinstance(ele, bmesh.types.BMFace)]
+                                        if faces:
+                                            ref = plane_no.normalized()
+                                            if faces[0].normal.dot(ref) > 0:
+                                                for f in faces:
+                                                    f.normal_flip()
                                     else:
                                         pass
                                 else:
