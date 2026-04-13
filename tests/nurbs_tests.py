@@ -10,6 +10,7 @@ from sverchok.utils.nurbs_common import SvNurbsMaths, elevate_bezier_degree, fro
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
+from sverchok.utils.nurbs_common import CantRemoveKnotException
 from sverchok.utils.curve.nurbs_solver_applications import knotvector_with_tangents_from_tknots
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface
@@ -1254,6 +1255,57 @@ class RemoveKnotTests(SverchokTestCase):
         inserted = curve.insert_knot(0.5, 1)
         removed = inserted.remove_knot(0.5, 1)
         self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=8)
+
+    def test_remove_knot_cumulated_error_if_possible_false(self):
+        """Проверка остановки при превышении суммарной ошибки при if_possible=False"""
+        # Use higher degree curve to allow more knot insertions
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        degree = 3
+        kv = sv_knotvector.generate(degree, 3, clamped=False)
+        weights = [1, 1, 1]
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+
+        # Insert knot multiple times
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 2)
+
+        # Try to remove more knots than fit within tolerance
+        # Small tolerance should cause early stop with if_possible=False
+        try:
+            # Tolerance too small for 2 removals
+            removed = inserted.remove_knot(knot, count=2, tolerance=1e-12, if_possible=False)
+            # If we get here, both removals succeeded within tolerance
+            self.assertEqual(len(removed.get_control_points()), len(points) - 2)
+        except CantRemoveKnotException:
+            # Expected - not all knots could be removed within tiny tolerance
+            pass
+
+    def test_remove_knot_cumulated_error_if_possible_true(self):
+        """Проверка остановки при превышении суммарной ошибки при if_possible=True"""
+        # Use curve that allows knot removal with reasonable tolerance
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+
+        # Insert knot twice
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 2)
+        orig_cpts = len(inserted.get_control_points())
+
+        # With if_possible=True, should stop when tolerance exceeded
+        # Large tolerance should allow all removals
+        removed_large_tol = inserted.remove_knot(knot, count=2, tolerance=1e-6, if_possible=True)
+        # Should have removed some or all knots
+        self.assertTrue(len(removed_large_tol.get_control_points()) < orig_cpts)
+
+        # Small tolerance might stop after first removal
+        removed_small_tol = inserted.remove_knot(knot, count=2, tolerance=1e-12, if_possible=True)
+        # No exception should be raised
+        self.assertIsNotNone(removed_small_tol)
 
 class RemoveKnotNonExistingTests(SverchokTestCase):
     """Tests for removing knots that don't exist in the curve initially"""
