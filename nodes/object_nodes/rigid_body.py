@@ -26,24 +26,24 @@ from sverchok.data_structure import (updateNode, match_long_repeat, fullList, ge
 from itertools import zip_longest
 
 rigid_body_params = {
-        'type'                          : {'node_property_name': 'rigid_body_type1'                        , 'socket_name': 'rigid_body_type'                       , 'priority_property_name': 'rigid_body_type_priority'                          , },
-        'mass'                          : {'node_property_name': 'rigid_body_mass1'                        , 'socket_name': 'rigid_body_mass'                       , 'priority_property_name': 'rigid_body_mass_priority'                          , },
-        'enabled'                       : {'node_property_name': 'rigid_body_enabled1'                     , 'socket_name': 'rigid_body_enabled'                    , 'priority_property_name': 'rigid_body_enabled_priority'                       , },
-        'kinematic'                     : {'node_property_name': 'rigid_body_kinematic1'                   , 'socket_name': 'rigid_body_kinematic'                  , 'priority_property_name': 'rigid_body_kinematic_priority'                     , },
-        'collision_shape'               : {'node_property_name': 'rigid_body_collision_shape1'             , 'socket_name': 'rigid_body_collision_shape'            , 'priority_property_name': 'rigid_body_collision_shape_priority'               , },
-        'mesh_source'                   : {'node_property_name': 'rigid_body_mesh_source1'                 , 'socket_name': 'rigid_body_mesh_source'                , 'priority_property_name': 'rigid_body_mesh_source_priority'                   , },
-        'use_deform'                    : {'node_property_name': 'rigid_body_use_deform1'                  , 'socket_name': 'rigid_body_use_deform'                 , 'priority_property_name': 'rigid_body_use_deform_priority'                    , },
-        'friction'                      : {'node_property_name': 'rigid_body_friction1'                    , 'socket_name': 'rigid_body_friction'                   , 'priority_property_name': 'rigid_body_friction_priority'                      , },
-        'restitution'                   : {'node_property_name': 'rigid_body_restitution1'                 , 'socket_name': 'rigid_body_restitution'                , 'priority_property_name': 'rigid_body_restitution_priority'                   , },
-        'use_margin'                    : {'node_property_name': 'rigid_body_use_margin1'                  , 'socket_name': 'rigid_body_use_margin'                 , 'priority_property_name': 'rigid_body_use_margin_priority'                    , },
-        'collision_margin'              : {'node_property_name': 'rigid_body_collision_margin1'            , 'socket_name': 'rigid_body_collision_margin'           , 'priority_property_name': 'rigid_body_collision_margin_priority'              , },
-        'collision_collections'         : {'node_property_name': 'rigid_body_collision_collections1'       , 'socket_name': 'rigid_body_collision_collections'      , 'priority_property_name': 'rigid_body_collision_collections_priority'         , },
-        'linear_damping'                : {'node_property_name': 'rigid_body_linear_damping1'              , 'socket_name': 'rigid_body_linear_damping'             , 'priority_property_name': 'rigid_body_linear_damping_priority'                , },
-        'angular_damping'               : {'node_property_name': 'rigid_body_angular_damping1'             , 'socket_name': 'rigid_body_angular_damping'            , 'priority_property_name': 'rigid_body_angular_damping_priority'               , },
-        'use_deactivation'              : {'node_property_name': 'rigid_body_use_deactivation1'            , 'socket_name': 'rigid_body_use_deactivation'           , 'priority_property_name': 'rigid_body_use_deactivation_priority'              , },
-        'use_start_deactivated'         : {'node_property_name': 'rigid_body_use_start_deactivated1'       , 'socket_name': 'rigid_body_use_start_deactivated'      , 'priority_property_name': 'rigid_body_use_start_deactivated_priority'         , },
-        'deactivate_linear_velocity'    : {'node_property_name': 'rigid_body_deactivate_linear_velocity1'  , 'socket_name': 'rigid_body_deactivate_linear_velocity' , 'priority_property_name': 'rigid_body_deactivate_linear_velocity_priority'    , },
-        'deactivate_angular_velocity'   : {'node_property_name': 'rigid_body_deactivate_angular_velocity1' , 'socket_name': 'rigid_body_deactivate_angular_velocity', 'priority_property_name': 'rigid_body_deactivate_angular_velocity_priority'   , },
+        'type'                          : {'node_property_name': 'rigid_body_type1'                        , 'socket_name': 'rigid_body_type'                       , 'priority_property_name': 'rigid_body_type_priority'                          , 'node_property_map_mode' : 'rigid_body_type_map_mode'                         , },
+        'mass'                          : {'node_property_name': 'rigid_body_mass1'                        , 'socket_name': 'rigid_body_mass'                       , 'priority_property_name': 'rigid_body_mass_priority'                          , 'node_property_map_mode' : 'rigid_body_mass_map_mode'                         , },
+        'enabled'                       : {'node_property_name': 'rigid_body_enabled1'                     , 'socket_name': 'rigid_body_enabled'                    , 'priority_property_name': 'rigid_body_enabled_priority'                       , 'node_property_map_mode' : 'rigid_body_enabled_map_mode'                      , },
+        'kinematic'                     : {'node_property_name': 'rigid_body_kinematic1'                   , 'socket_name': 'rigid_body_kinematic'                  , 'priority_property_name': 'rigid_body_kinematic_priority'                     , 'node_property_map_mode' : 'rigid_body_kinematic_map_mode'                    , },
+        'collision_shape'               : {'node_property_name': 'rigid_body_collision_shape1'             , 'socket_name': 'rigid_body_collision_shape'            , 'priority_property_name': 'rigid_body_collision_shape_priority'               , 'node_property_map_mode' : 'rigid_body_collision_shape_map_mode'              , },
+        'mesh_source'                   : {'node_property_name': 'rigid_body_mesh_source1'                 , 'socket_name': 'rigid_body_mesh_source'                , 'priority_property_name': 'rigid_body_mesh_source_priority'                   , 'node_property_map_mode' : 'rigid_body_mesh_source_map_mode'                  , },
+        'use_deform'                    : {'node_property_name': 'rigid_body_use_deform1'                  , 'socket_name': 'rigid_body_use_deform'                 , 'priority_property_name': 'rigid_body_use_deform_priority'                    , 'node_property_map_mode' : 'rigid_body_use_deform_map_mode'                   , },
+        'friction'                      : {'node_property_name': 'rigid_body_friction1'                    , 'socket_name': 'rigid_body_friction'                   , 'priority_property_name': 'rigid_body_friction_priority'                      , 'node_property_map_mode' : 'rigid_body_friction_map_mode'                     , },
+        'restitution'                   : {'node_property_name': 'rigid_body_restitution1'                 , 'socket_name': 'rigid_body_restitution'                , 'priority_property_name': 'rigid_body_restitution_priority'                   , 'node_property_map_mode' : 'rigid_body_restitution_map_mode'                  , },
+        'use_margin'                    : {'node_property_name': 'rigid_body_use_margin1'                  , 'socket_name': 'rigid_body_use_margin'                 , 'priority_property_name': 'rigid_body_use_margin_priority'                    , 'node_property_map_mode' : 'rigid_body_use_margin_map_mode'                   , },
+        'collision_margin'              : {'node_property_name': 'rigid_body_collision_margin1'            , 'socket_name': 'rigid_body_collision_margin'           , 'priority_property_name': 'rigid_body_collision_margin_priority'              , 'node_property_map_mode' : 'rigid_body_collision_margin_map_mode'             , },
+        'collision_collections'         : {'node_property_name': 'rigid_body_collision_collections1'       , 'socket_name': 'rigid_body_collision_collections'      , 'priority_property_name': 'rigid_body_collision_collections_priority'         , 'node_property_map_mode' : 'rigid_body_collision_collections_map_mode'        , },
+        'linear_damping'                : {'node_property_name': 'rigid_body_linear_damping1'              , 'socket_name': 'rigid_body_linear_damping'             , 'priority_property_name': 'rigid_body_linear_damping_priority'                , 'node_property_map_mode' : 'rigid_body_linear_damping_map_mode'               , },
+        'angular_damping'               : {'node_property_name': 'rigid_body_angular_damping1'             , 'socket_name': 'rigid_body_angular_damping'            , 'priority_property_name': 'rigid_body_angular_damping_priority'               , 'node_property_map_mode' : 'rigid_body_angular_damping_map_mode'              , },
+        'use_deactivation'              : {'node_property_name': 'rigid_body_use_deactivation1'            , 'socket_name': 'rigid_body_use_deactivation'           , 'priority_property_name': 'rigid_body_use_deactivation_priority'              , 'node_property_map_mode' : 'rigid_body_use_deactivation_map_mode'             , },
+        'use_start_deactivated'         : {'node_property_name': 'rigid_body_use_start_deactivated1'       , 'socket_name': 'rigid_body_use_start_deactivated'      , 'priority_property_name': 'rigid_body_use_start_deactivated_priority'         , 'node_property_map_mode' : 'rigid_body_use_start_deactivated_map_mode'        , },
+        'deactivate_linear_velocity'    : {'node_property_name': 'rigid_body_deactivate_linear_velocity1'  , 'socket_name': 'rigid_body_deactivate_linear_velocity' , 'priority_property_name': 'rigid_body_deactivate_linear_velocity_priority'    , 'node_property_map_mode' : 'rigid_body_deactivate_linear_velocity_map_mode'   , },
+        'deactivate_angular_velocity'   : {'node_property_name': 'rigid_body_deactivate_angular_velocity1' , 'socket_name': 'rigid_body_deactivate_angular_velocity', 'priority_property_name': 'rigid_body_deactivate_angular_velocity_priority'   , 'node_property_map_mode' : 'rigid_body_deactivate_angular_velocity_map_mode'  , },
         #{'object': '', 'node': 'rigid_body_', },
     }
 
@@ -166,12 +166,13 @@ class SvRigidBodyPrioritySocketsOnOff(bpy.types.Operator):
 def draw_properties(layout, node_group, node_name):
     node = bpy.data.node_groups[node_group].nodes[node_name]
     #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
-    root_grid = layout.grid_flow(row_major=False, columns=1, align=True)
+    root_grid = layout.grid_flow(row_major=True, columns=2, align=True)
     root_grid.alignment = 'EXPAND'
 
+    root_grid.row(align=True).label(text='')
     grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
     grid2.label(text='Priority params:')
-    row0 = grid2.row(align=True)
+    row0 = grid2.column(align=True)
     row0.label(text='- socket is priority', icon='CHECKBOX_HLT')
     row0.label(text='- socket is not priority', icon='CHECKBOX_DEHLT')
     grid2.separator()
@@ -182,11 +183,38 @@ def draw_properties(layout, node_group, node_name):
     # op.node_name  = node_name
 
     for (param_name, param_settings) in rigid_body_params.items():
+        prop_enabled = True
         if 'priority_property_name' in param_settings:
             node_priority_property_name = param_settings['priority_property_name']
-            row = grid2.row(align=True)
+            # row = root_grid.row(align=True)
+            # row.prop(node, node_priority_property_name,)
+            if getattr(node, node_priority_property_name)==False:
+                prop_enabled = False
+
+        if 'node_property_map_mode' in param_settings:
+            node_property_map_mode = param_settings['node_property_map_mode']
+            row = root_grid.row(align=True)
+            row.enabled = prop_enabled
+            row.prop(node, node_property_map_mode, expand=True)
+
+        if 'priority_property_name' in param_settings:
+            node_priority_property_name = param_settings['priority_property_name']
+            row = root_grid.row(align=True)
             row.prop(node, node_priority_property_name,)
+        
+
         pass
+
+    # row0 = grid2.row(align=True)
+    # row0.label(text='', )
+    # grid2.separator()
+    # row0.label(text='', )
+    # for (param_name, param_settings) in rigid_body_params.items():
+    #     if 'node_property_map_mode' in param_settings:
+    #         node_property_map_mode = param_settings['node_property_map_mode']
+    #         row = grid2.row(align=True)
+    #         row.prop(node, node_property_map_mode, expand=True)
+    #     pass
 
     # row_op = grid2.row(align=True)
     # row_op.alignment = "LEFT"
@@ -217,7 +245,7 @@ class SV_PT_ViewportDisplayPropertiesDialogRigidBody(bpy.types.Operator):
     def invoke(self, context, event):
         self.node_name = context.node.name
         self.node_group = context.annotation_data_owner.name_full
-        return context.window_manager.invoke_props_dialog(self, width=300)
+        return context.window_manager.invoke_props_dialog(self, width=500)
 
     def draw(self, context):
         draw_properties(self.layout, self.node_group, self.node_name)
@@ -336,7 +364,8 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_type_priority : BoolProperty( name = "Type", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
-    
+    rigid_body_type_map_mode : EnumProperty( name = "Type", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+
     rigid_body_mass1: FloatProperty(
         name        = "Mass",
         description = "How much the object 'weighs' irrespective of gravity",
@@ -346,6 +375,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_mass_priority : BoolProperty( name = "Mass", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_mass_map_mode : EnumProperty( name = "Mass", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
     
     rigid_body_enabled1 : BoolProperty(
         name        = "Dynamic",
@@ -353,6 +383,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         default     = True,
         update = updateNode)
     rigid_body_enabled_priority : BoolProperty( name = "Dynamic", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_enabled_map_mode : EnumProperty( name = "Dynamic", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
 
     rigid_body_kinematic1 : BoolProperty(
         name        = "Animated",
@@ -361,6 +392,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_kinematic_priority : BoolProperty( name = "Animated", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_kinematic_map_mode : EnumProperty( name = "Animated", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
 
     rigid_body_collision_shape_modes = [
             ('RIGID_BODY_SHAPE_MODE,BOX'          , "Box"            , "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"                                      , 'MESH_CUBE'       , 0),
@@ -381,6 +413,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_collision_shape_priority : BoolProperty( name = "Shape", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_collision_shape_map_mode : EnumProperty( name = "Shape", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
 
     rigid_body_mesh_source_modes = [
             ('RIGID_BODY_MESH_SOURCE,BASE'   , "Base"   , "Base mesh"                                  , 0),
@@ -396,6 +429,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_mesh_source_priority : BoolProperty( name = "Source", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_mesh_source_map_mode : EnumProperty( name = "Source", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
     
     rigid_body_use_deform1 : BoolProperty(
         name        = "Deforming",
@@ -404,6 +438,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_use_deform_priority : BoolProperty( name = "Deforming", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_use_deform_map_mode : EnumProperty( name = "Deforming", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
 
     rigid_body_friction1: FloatProperty(
         name        = "Friction",
@@ -414,6 +449,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_friction_priority : BoolProperty( name = "Friction", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_friction_map_mode : EnumProperty( name = "Friction", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
 
     rigid_body_restitution1: FloatProperty(
         name        = "Bounciness",
@@ -424,6 +460,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_restitution_priority : BoolProperty( name = "Bounciness", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_restitution_map_mode : EnumProperty( name = "Bounciness", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
     
     rigid_body_use_margin1 : BoolProperty(
         name        = "Collision Margin",
@@ -432,6 +469,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_use_margin_priority : BoolProperty( name = "Collision Margin", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_use_margin_map_mode : EnumProperty( name = "Collision Margin", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
 
     rigid_body_collision_margin1: FloatProperty(
         name        = "Margin",
@@ -442,7 +480,8 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_collision_margin_priority : BoolProperty( name = "Margin", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
-    
+    rigid_body_collision_margin_map_mode : EnumProperty( name = "Margin", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+
     rigid_body_collision_collections1: BoolVectorProperty(
         name        = "Collision Collection",
         description = "Collision collections rigid body belongs to",
@@ -450,6 +489,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_collision_collections_priority : BoolProperty( name = "Collision Collection", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_collision_collections_map_mode : EnumProperty( name = "Collision Collection", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
 
     rigid_body_linear_damping1: FloatProperty(
         name        = "Damping Translation",
@@ -461,6 +501,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_linear_damping_priority : BoolProperty( name = "Damping Translation", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_linear_damping_map_mode : EnumProperty( name = "Damping Translation", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
 
     rigid_body_angular_damping1: FloatProperty(
         name        = "Rotation",
@@ -472,6 +513,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_angular_damping_priority : BoolProperty( name = "Rotation", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_angular_damping_map_mode : EnumProperty( name = "Rotation", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
     
     rigid_body_use_deactivation1 : BoolProperty(
         name        = "Deactivation",
@@ -480,6 +522,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_use_deactivation_priority : BoolProperty( name = "Deactivation", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_use_deactivation_map_mode : EnumProperty( name = "Deactivation", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
     
     rigid_body_use_start_deactivated1 : BoolProperty(
         name        = "Start Deactivated",
@@ -488,6 +531,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_use_start_deactivated_priority : BoolProperty( name = "Start Deactivated", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_use_start_deactivated_map_mode : EnumProperty( name = "Start Deactivated", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
 
     rigid_body_deactivate_linear_velocity1: FloatProperty(
         name        = "Velocity Linear",
@@ -498,6 +542,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_deactivate_linear_velocity_priority : BoolProperty( name = "Velocity Linear", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_deactivate_linear_velocity_map_mode : EnumProperty( name = "Velocity Linear", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
 
     rigid_body_deactivate_angular_velocity1: FloatProperty(
         name        = "Angular",
@@ -508,6 +553,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     rigid_body_deactivate_angular_velocity_priority : BoolProperty( name = "Angular", description = "On - Value in input socket overwrite objects values\nOff - skip overwriting", default = True, update = updateNode)
+    rigid_body_deactivate_angular_velocity_map_mode : EnumProperty( name = "Angular", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
     
     def custom_draw_collision_collections(self, socket, context, layout):
         if socket.name in rigid_body_socket_names:
@@ -720,33 +766,70 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
                 if socket_name not in self.inputs:
                     raise Exception(f'003. No input socket with name {socket_name}.')
 
-                prop_type = None
-                if hasattr(self.__class__, 'bl_rna')==True and node_property_name in self.__class__.bl_rna.properties:
-                    prop = self.__class__.bl_rna.properties[node_property_name]
-                    prop_type = prop.type
-                else:
-                    # development error.
-                    raise Exception(f'004. Unknown property {node_property_name}. Check settings params')
-                
-                default_prop_value = getattr(self, node_property_name)
-                if prop_type=='ENUM':
-                    # enum properties of default value has prefix to remove
-                    default_prop_value = default_prop_value.split(',')[-1]
-                    pass
-                socket = self.inputs[socket_name]
-                if socket.is_linked==True:
-                    socket_value =self.inputs[socket_name].sv_get(deepcopy=False)
-                    len_socket_value = len(socket_value)
-                    # align objects and input setting socket
-                    if len_socket_value>len_objects_map:
-                        socket_value = socket_value[:len_objects_map]
-                    elif len_socket_value<len_objects_map-1:
-                        socket_value = socket_value + [socket_value[-1]]*(len_objects_map-len(socket_value))
-                    pass
+                priority_property_name = params['priority_property_name']
+                property_priority = getattr(self, priority_property_name)
+                if property_priority==True:
+                    node_property_map_mode = params['node_property_map_mode']
+                    property_map_mode = getattr(self, node_property_map_mode)
 
+                    prop_type = None
+                    if hasattr(self.__class__, 'bl_rna')==True and node_property_name in self.__class__.bl_rna.properties:
+                        prop = self.__class__.bl_rna.properties[node_property_name]
+                        prop_type = prop.type
+                    else:
+                        # development error.
+                        raise Exception(f'004. Unknown property {node_property_name}. Check settings params')
+                    
+                    default_prop_value = getattr(self, node_property_name)
+                    if prop_type=='ENUM':
+                        # enum properties of default value has prefix to remove
+                        default_prop_value = default_prop_value.split(',')[-1]
+                        pass
+                    socket = self.inputs[socket_name]
+                    if socket.is_linked==True:
+                        socket_value = dict()
+                        _socket_value        = self.inputs[socket_name].sv_get(deepcopy=False)
+                        len_socket_value    = len(socket_value)
+                        # # align objects and input setting socket
+                        # if len_socket_value > len_objects_map:
+                        #     socket_value = socket_value[:len_objects_map]
+                        # elif len_socket_value < len_objects_map-1:
+                        #     socket_value = socket_value + [socket_value[-1]]*(len_objects_map-len(socket_value))
+                        # pass
+                        len_socket_value = len(_socket_value)
+                        try:
+                            if property_map_mode=='RIGID_BODY_MAP,MAPPING':
+                                for I in objects_map:
+                                    socket_value[I] = _socket_value[I]
+                                pass
+                            elif property_map_mode=='RIGID_BODY_MAP,INDEXING':
+                                for I in range(len(objects)):
+                                    socket_value[I] = _socket_value[I]
+                                pass
+                            else:
+                                raise Exception(f'012. unknown map mode: {property_map_mode}.')
+                        except IndexError:
+                            raise Exception(f'013. {socket_name}[{I}] out of range in mode "{property_map_mode}". Length of data in this socket is {len(_socket_value)}')
+                        except Exception as _ex:
+                            raise Exception(f'014. Error getting {socket_name}[{I}]. {_ex}')
+                        pass
+                    else:
+                        # if socket is not connected then fill socket with default values
+                        socket_value = dict()
+                        if property_map_mode=='RIGID_BODY_MAP,MAPPING':
+                            for I in objects_map:
+                                socket_value[I] = default_prop_value
+                            pass
+                        elif property_map_mode=='RIGID_BODY_MAP,INDEXING':
+                            for I in range(len(objects)):
+                                socket_value[I] = default_prop_value
+                            pass
+                        else:
+                            raise Exception(f'011. unknown map mode: {property_map_mode}.')
+                        pass
+                    input_sockets_settings[name] = socket_value
                 else:
-                    socket_value = [default_prop_value]*len_objects_map
-                input_sockets_settings[name] = socket_value
+                    pass
                 pass
 
             if len(objects)<len(objects_map):
@@ -761,43 +844,67 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
                     inputs_settings = []
                     # read settings
 
-                    rigid_body_objects_for_animation = []
-                    for I, ID in enumerate(objects_map):
+                    #rigid_body_objects_for_animation = []
+                    for I in ( range(len(objects_map)) if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else range(len(objects)) ):
                         rigid_body_settings_ID = dict()
+                        ID = objects_map[I] if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else I
+                        try:
+                            object_rigid_body_settings_ID = rigid_body_settings[ID]
+                        except IndexError:
+                            raise Exception(f'0015. "Rigid Body settings"[{ID}] out of range.')
+                        except Exception as _ex:
+                            raise Exception(f'0016. "Rigid Body settings"[{ID}] exception: {_ex}')
+                        
+                        if hasattr(object_rigid_body_settings_ID, 'rigid_body')==False:
+                            raise Exception(f'0016. No rigid_body attribute in "Rigid Body settings"[{ID}]. Check object can has rigid body settings')
+                        rigid_body = object_rigid_body_settings_ID.rigid_body
+                        if rigid_body:
+                            pass
+                        else:
+                            raise Exception(f'0017. "Rigid Body settings"[{ID}].rigid_body is None. Rigid body must not have a None value')
+
                         #if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
-                        skip_rigid_body_settings = False
-                        if ID<-len_rigid_body_settings or len_rigid_body_settings-1<ID:
-                            if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
-                                raise Exception(f"007. No Rigid Body settings[{ID}] in the Objects Map[{I}]. Allowed range in Rigid Body settings is [{-(len_rigid_body_settings-1)}:{len_rigid_body_settings-1}]")
-                            else:
-                                skip_rigid_body_settings = True
+                        # skip_rigid_body_settings = False
+                        # if ID<-len_rigid_body_settings or len_rigid_body_settings-1<ID:
+                        #     if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
+                        #         raise Exception(f"007. No Rigid Body settings[{ID}] in the Objects Map[{I}]. Allowed range in Rigid Body settings is [{-(len_rigid_body_settings-1)}:{len_rigid_body_settings-1}]")
+                        #     else:
+                        #         skip_rigid_body_settings = True
 
-                        if skip_rigid_body_settings==False and not rigid_body_settings[ID]:
-                            if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
-                                raise Exception(f"008. No Rigid Body settings [{ID}]. pos[{I}]")
-                            else:
-                                skip_rigid_body_settings = True
+                        # if skip_rigid_body_settings==False and not rigid_body_settings[ID]:
+                        #     if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
+                        #         raise Exception(f"008. No Rigid Body settings [{ID}]. pos[{I}]")
+                        #     else:
+                        #         skip_rigid_body_settings = True
 
-                        if skip_rigid_body_settings==False and hasattr(rigid_body_settings[ID], 'rigid_body')==False:
-                            if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
-                                raise Exception(f"009. No rigid_body params in Rigid Body settings [{ID}]. pos[{I}]")
-                            else:
-                                skip_rigid_body_settings = True
+                        # if skip_rigid_body_settings==False and hasattr(rigid_body_settings[ID], 'rigid_body')==False:
+                        #     if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
+                        #         raise Exception(f"009. No rigid_body params in Rigid Body settings [{ID}]. pos[{I}]")
+                        #     else:
+                        #         skip_rigid_body_settings = True
                         
-                        if skip_rigid_body_settings==False and (hasattr(rigid_body_settings[ID], 'rigid_body')==False or not getattr(rigid_body_settings[ID], 'rigid_body')):
-                            raise Exception(f"010. No rigid_body in Rigid Body settings [{ID}]. {rigid_body_settings[ID].name+',' if rigid_body_settings[ID] else ''} pos[{I}]")
+                        # if skip_rigid_body_settings==False and (hasattr(rigid_body_settings[ID], 'rigid_body')==False or not getattr(rigid_body_settings[ID], 'rigid_body')):
+                        #     raise Exception(f"010. No rigid_body in Rigid Body settings [{ID}]. {rigid_body_settings[ID].name+',' if rigid_body_settings[ID] else ''} pos[{I}]")
                         
-                        if skip_rigid_body_settings==False:
-                            rigid_body_objects_for_animation.append(rigid_body_settings[ID])
-                            rigid_body = rigid_body_settings[ID].rigid_body
-                            for (name, param) in rigid_body_params.items():
-                                rigid_body_settings_ID[name] = getattr(rigid_body, name)
+                        #if skip_rigid_body_settings==False:
+                        # rigid_body_objects_for_animation.append(rigid_body_settings[ID])
+                        # rigid_body = rigid_body_settings[ID].rigid_body
+                        for (name, param) in rigid_body_params.items():
+                            rigid_body_settings_ID[name] = getattr(rigid_body, name)
 
                         if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,SETTINGS':
                             for (name, param) in rigid_body_params.items():
                                     priority_property_name = param['priority_property_name']
+                                    node_property_map_mode = param['node_property_map_mode']
                                     if getattr(self, priority_property_name)==True:
-                                        value = input_sockets_settings[name][ID]
+                                        property_map_mode = getattr(self, node_property_map_mode)
+                                        if property_map_mode=='RIGID_BODY_MAP,MAPPING':
+                                            value = input_sockets_settings[name][ID]
+                                        elif property_map_mode=='RIGID_BODY_MAP,INDEXING':
+                                            value = input_sockets_settings[name][I]
+                                        else:
+                                            # developer exception
+                                            raise Exception(f'0018. Unknown map mode "{property_map_mode}" for property {name}')
                                         rigid_body_settings_ID[name] = value
                                     else:
                                         pass
