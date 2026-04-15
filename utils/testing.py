@@ -873,7 +873,15 @@ if __name__ == "__main__":
             bpy.ops.wm.read_userpref()
 
         log_level = getattr(args, 'log_level', None)
-        result = run_all_tests(pattern = args.pattern,
+        pattern_dir, pattern_file = os.path.split(args.pattern)
+        if pattern_dir != "" and pattern_dir != "tests":
+            raise Exception("Tests pattern must either not include directory specification, or specify `tests/' directory")
+        pattern_base, pattern_ext = os.path.splitext(pattern_file)
+        if pattern_ext != "" and pattern_ext != ".py":
+            raise Exception("Tests pattern must either skip filename extension or specify .py")
+        if pattern_ext == "":
+            pattern_file = pattern_file + ".py"
+        result = run_all_tests(pattern = pattern_file,
                     log_file = args.output,
                     log_level = log_level,
                     verbosity = args.verbose,
