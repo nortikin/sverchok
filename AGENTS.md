@@ -16,20 +16,16 @@
 - **Blender** (Python API - bpy)
 - **Python** (3.x)
 - **NumPy** (array operations)
-- **Additional libraries**: scipy, geomdl, skimage, mcubes, circlify, cython, numba, numexpr, ezdxf, pyacvd, pySVCGAL, spyrrow
+- **Additional libraries**: scipy, geomdl, skimage, mcubes, circlify, cython, numba, numexpr, ezdxf, pyacvd, pySVCGAL, spyrrow, freecad
 
 ## Project Structure
 
-IMPORTANT: project, it's root directory and it's root module are called sverchok, not sverzok and not anyhow else!
-
-### Directory Organization
-
-The project root directory is named "sverchok", which is also the name of the root module. This means imports follow the pattern:
+**IMPORTANT**: Project, its root directory and its root module are called `sverchok`, not `sverzok` or anything else! Imports follow the pattern:
 - `import sverchok.core` → `sverchok/core/__init__.py`
 - `import sverchok.utils.curve.core` → `sverchok/utils/curve/core.py`
 - `import sverchok.nodes.geometry.mesh` → `sverchok/nodes/geometry/mesh.py`
 
-### Main Directories
+### Directory Organization
 
 | Directory | Purpose |
 |-----------|---------|
@@ -68,44 +64,11 @@ The `core/__init__.py` file contains the `init_architecture()` function that orc
 
 ### Registration System
 
-Node modules are automatically discovered and registered:
-
-```python
-# In nodes/__init__.py
-def automatic_collection():
-    for subdir, dirs, files in os.walk(directory):
-        current_dir = basename(subdir)
-        if current_dir == '__pycache__':
-            continue
-        for file in files:
-            if file == '__init__.py':
-                continue
-            if not file.endswith('.py'):
-                continue
-            nodes_dict[current_dir].append(file[:-3])
-```
+Node modules are automatically discovered and registered in `nodes/__init__.py` via `automatic_collection()` which walks the directory tree.
 
 ### Node Categories
 
-Nodes are organized into categories based on their functionality. Key categories include:
-
-- **geometry**: Basic geometry creation and manipulation
-- **modifier_change**: Modifiers for changing geometry
-- **modifier_make**: Modifiers for creating geometry
-- **generator**: Procedural geometry generators
-- **list**: List manipulation tools
-- **matrix**: Matrix operations
-- **vector**: Vector operations and math
-- **scalar**: Scalar operations
-- **scene**: Scene-related nodes
-- **surface**: Surface operations
-- **curve**: Curve operations
-- **solid**: Solid modeling operations
-- **text**: Text-related nodes
-- **old_nodes**: Legacy node implementations
-- **special**: Special-purpose nodes
-- **spatial**: Spatial operations (Voronoi, KD-Tree, etc.)
-- **sv_script**: Scripted node functionality
+Nodes are organized into categories: geometry, modifier_change, modifier_make, generator, list, matrix, vector, scalar, scene, surface, curve, solid, text, old_nodes, special, spatial, sv_script.
 
 ## Development Guidelines
 
@@ -124,33 +87,17 @@ Nodes are organized into categories based on their functionality. Key categories
 
 ### Testing
 
-To run tests:
 ```bash
 # Run all tests
 ./run_tests.sh
 
 # Run specific test module
-./run_tests.sh test_something.py
+./run_tests.sh test_module_name
 ```
 
-The test script automatically locates the installed Blender. Tests are located in the `tests/` directory.
+Tests are located in the `tests/` directory. The testing framework uses `SverchokTestCase` from `sverchok.utils.testing`.
 
 ### Dependencies
-
-Optional dependencies that extend Sverchok's functionality:
-- `scipy` - Scientific computing
-- `geomdl` - NURBS operations
-- `skimage` - Image processing
-- `mcubes` - Marching cubes algorithm
-- `circlify` - Circular layout algorithms
-- `cython` - Performance optimization
-- `numba` - JIT compilation
-- `numexpr` - Expression evaluation
-- `ezdxf` - DXF file handling
-- `pyacvd` - Quad Remeshing
-- `pySVCGAL` - Computational geometry
-- `spyrrow` - Curve generation
-- `freecad` - CAD operations
 
 See the [Dependencies wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for installation instructions.
 
@@ -169,7 +116,7 @@ See the [Dependencies wiki page](https://github.com/nortikin/sverchok/wiki/Depen
 2. **File I/O** (`utils/sv_json_import.py`, `utils/sv_json_export.py`, `utils/dxf.py`, `utils/svg.py`)
 3. **Visualization** (`utils/sv_viewer_utils.py`, `utils/visualize_data_tree.py`)
 4. **BMesh Operations** (`utils/sv_bmesh_utils.py`, `utils/blender_mesh.py`)
-5. **NURBS** (`utils/nurbs_common.py`, `utils/sv_curve_utils.py`, `utils/curve/nurbs.py`, `utils/curve/knotvector.py`, `utils/curve/nurbs_solver_applications.py`)
+5. **NURBS** (`utils/nurbs_common.py`, `utils/sv_curve_utils.py`, `utils/curve/`)
 
 ### NURBS Architecture
 
@@ -178,39 +125,21 @@ Sverchok implements NURBS curve operations with support for two backends:
 - **`SvGeomdlCurve`** (`utils/curve/nurbs.py`): Wrapper around the external `geomdl` library
 - **`SvNativeNurbsCurve`** (`utils/curve/nurbs.py`): Native implementation with full control over operations
 
-**Key Components:**
-
-| File | Purpose |
-|------|---------|
-| `utils/curve/nurbs.py` | Core NURBS operations: knot insertion/removal, degree elevation, basis functions evaluation |
-| `utils/curve/knotvector.py` | Knot vector generation and validation |
-| `utils/curve/nurbs_solver_applications.py` | Specialized applications (tangent-based knot vectors, etc.) |
-| `utils/nurbs_common.py` | Common utilities and exceptions (`CantInsertKnotException`, `CantRemoveKnotException`) |
+**Key Files:**
+- `utils/curve/nurbs.py` - Core NURBS operations: knot insertion/removal, degree elevation, basis functions
+- `utils/curve/knotvector.py` - Knot vector generation and validation
+- `utils/curve/nurbs_solver.py` - NURBS curve fitting solver
+- `utils/nurbs_common.py` - Common utilities and exceptions (`CantInsertKnotException`, `CantRemoveKnotException`)
 
 **NURBS Features:**
-
 - Support for both clamped (endpoint-fixed) and unclamped (free) curves
 - Rational curves with weight support
 - Knot insertion and removal with configurable tolerance
 - Cumulative error tracking for multiple knot operations
-- `if_possible=True/False` parameters for flexible error handling:
-  - `if_possible=False`: Raises `CantRemoveKnotException` if cumulative error exceeds tolerance
-  - `if_possible=True`: Stops gracefully when tolerance is exceeded without raising exception
+- `if_possible=True/False` parameters for flexible error handling
 
 **Testing:**
-
-Comprehensive test suite in `tests/nurbs_tests.py` with separate test classes:
-
-- `BezierTests`, `TaylorTests` - Basic curve operations
-- `InsertKnotTests` - Knot insertion with tolerance testing
-- `RemoveKnotTests` - Knot removal with cumulative error tracking
-- `RemoveKnotNonExistingTests` - Handling missing knots
-- `OtherNurbsTests` - Additional NURBS functionality
-
-To run NURBS-specific tests:
-```bash
-./run_tests.sh nurbs_tests.py
-```
+Comprehensive test suites in `tests/nurbs_tests.py` and `tests/nurbs_solver_tests.py`.
 
 ### UI Components
 
@@ -223,18 +152,11 @@ To run NURBS-specific tests:
 
 ### Module Import Path
 
-The project uses a non-standard structure where the root directory IS the module. When you see imports like:
+The project uses a non-standard structure where the root directory IS the module:
 ```python
-import sverchok.core
-import sverchok.utils.math
+import sverchok.core        # → sverchok/core/__init__.py
+import sverchok.utils.math  # → sverchok/utils/math.py
 ```
-
-These correspond to:
-- `sverchok/core/__init__.py`
-- `sverchok/utils/math.py`
-
-NOT:
-- `sverchok/sverchok/core/__init__.py` ❌
 
 ### Reload Event
 
@@ -243,38 +165,25 @@ Sverchok supports hot-reloading during development:
 reload_event = "import_sverchok" in locals()
 ```
 
-This allows developers to make changes without restarting Blender.
-
 ### Logging
 
-Sverchok has a sophisticated logging system configurable in preferences:
+Configurable in preferences via `settings.py` - `SverchokPreferences` class:
 - Log levels: DEBUG, INFO, WARNING, ERROR
 - Log destinations: Buffer, file, console
-- Configuration: `settings.py` - `SverchokPreferences` class
 
 ### Theme System
 
-Sverchok supports multiple themes:
-- Default, Nipon Blossom, Grey, Darker, Gruvbox Light, Gruvbox Dark
-- Automatic theme application on file open
-- Custom color customization for visualization, text, scene, layout, generator
+Sverchok supports multiple themes (Default, Nipon Blossom, Grey, Darker, Gruvbox Light/Dark) with automatic application and custom color customization.
 
 ## Common Development Tasks
 
 ### Adding a New Node
 
-1. Create a new Python file in the appropriate category under `nodes/`
+1. Create a Python file in the appropriate category under `nodes/`
 2. Implement the node class inheriting from `SverchokNode`
 3. Define `sv_icon`, `bl_idname`, `bl_label`, `bl_description`
 4. Implement `sv_get_inputs()`, `process_node()`, `sv_get_outputs()`
-5. Add to the category's node list (usually automatic via `automatic_collection()`)
-
-### Modifying Core Infrastructure
-
-1. Make changes in `core/` directory
-2. Test thoroughly with existing test suite
-3. Update documentation if needed
-4. Consider backward compatibility with existing node trees
+5. Nodes are auto-discovered via `automatic_collection()`
 
 ### Debugging
 
@@ -285,56 +194,11 @@ Sverchok supports multiple themes:
 
 ## Testing Framework
 
-The testing framework uses a custom setup that integrates with Blender's Python environment. Tests are organized in `tests/` directory with separate modules for different functionality areas.
-
-### Test Structure
-
-Tests use `SverchokTestCase` from `sverchok.utils.testing` which provides:
-
+Tests use `SverchokTestCase` from `sverchok.utils.testing` providing:
 - Temporary node tree context manager
 - Data structure testing utilities
 - Exception handling with Sverchok custom exceptions
 - Logging utilities specific to testing
-
-Typical test pattern:
-
-```python
-import bpy
-import numpy as np
-from sverchok.utils.testing import SverchokTestCase
-import unittest
-
-class MyTests(SverchokTestCase):
-    def test_something(self):
-        # Setup
-        curve = create_test_curve()
-        
-        # Action
-        result = curve.remove_knot(knot, if_possible=True)
-        
-        # Verify with tolerance for floating point
-        self.assertAlmostEqual(len(result), expected, delta=0.0001)
-```
-
-### Running Tests
-
-```bash
-# Run all tests
-./run_tests.sh
-
-# Run specific test module
-./run_tests.sh modulename
-
-# Run specific test file (without .py extension)
-./run_tests.sh nurbs_tests
-```
-
-**Important**: When testing NURBS operations, always account for floating point precision:
-- Don't test for exact equality: `if x == 0.5` ❌
-- Use tolerance-based comparisons: `if abs(x - 0.5) < tolerance` ✅
-- For cumulative error tests, track sum of individual errors
-
-See `tests/nurbs_tests.py` for comprehensive examples of testing knot insertion/removal operations.
 
 ## Release Process
 
@@ -354,9 +218,7 @@ See `tests/nurbs_tests.py` for comprehensive examples of testing knot insertion/
 
 ## Contributors
 
-See GitHub contributors page: https://github.com/nortikin/sverchok/graphs/contributors
-
-Major contributors include:
+See GitHub contributors page. Major contributors include:
 - Alexander Nedovizin (Cfyzzz)
 - Nikita Gorodetskiy (Nikitron)
 - Linus Yng (Ly29)
@@ -367,11 +229,10 @@ Major contributors include:
 
 ## Legacy Nodes
 
-The `old_nodes/` directory contains deprecated nodes that are maintained for backward compatibility. When refactoring:
+The `old_nodes/` directory contains deprecated nodes maintained for backward compatibility. When refactoring:
 1. Keep old nodes functional
 2. Create new versions in `nodes/` directory
 3. Mark old nodes as deprecated in documentation
-4. Migration path should be clear for users
 
 ## Performance Considerations
 
@@ -382,16 +243,10 @@ The `old_nodes/` directory contains deprecated nodes that are maintained for bac
 
 ## Documentation
 
-Documentation is built using Sphinx:
-- Source: `docs/` directory
-- Build: `./build_docs.sh`
-- Output: http://nortikin.github.io/sverchok/docs/
-
-Node documentation is auto-generated from docstrings and node descriptions.
+Documentation is built using Sphinx (`docs/` directory, `./build_docs.sh`). Node documentation is auto-generated from docstrings.
 
 ## Git Workflow
 
-The project uses standard Git workflow:
 - Main branch: `master`
 - Issue tracking via GitHub
 - Pull requests for contributions
@@ -407,11 +262,8 @@ The project uses standard Git workflow:
 4. **Theme not applying** → Check theme settings and auto-apply preferences
 5. **Node updates not happening** → Check update system and frame change mode
 
-### Development Mode
-
-Enable developer mode in preferences to access additional debugging tools and features.
+Enable developer mode in preferences for additional debugging tools.
 
 ---
 
-*This document should be kept up to date as the project evolves. Last updated: 2026-04-13*
-
+*This document should be kept up to date as the project evolves.*
