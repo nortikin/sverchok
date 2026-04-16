@@ -412,6 +412,10 @@ class SvGetObjectsDataMK5(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
             if not obj:
                 continue
 
+            # if obj.parent:
+            #     mtrx = obj.matrix_local
+            # else:
+            #     mtrx = obj.matrix_world
             mtrx = obj.matrix_world
 
             # Прочитать данные custom properties объекта в соответствии с массивом дополнительных сокетов:

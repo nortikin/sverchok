@@ -1203,7 +1203,7 @@ def calc_center_mass_bmesh(center_mode, mesh_vertices, mesh_edges, mesh_faces, m
 
             # shrink or extend list of mass if list of mass is not equals list of verts:
             mass_of_vertices_I_shrinked = mass_of_vertices_I[:len(vertices_I)]
-            mass_of_vertices_I_np1 = np.append( mass_of_vertices_I_shrinked, np.full( (len(vertices_I)-len(mass_of_vertices_I_shrinked)), mass_of_vertices_I_shrinked[-1]) )
+            mass_of_vertices_I_np1 = np.append( mass_of_vertices_I_shrinked, np.full( (len(vertices_I)-len(mass_of_vertices_I_shrinked)), mass_of_vertices_I_shrinked[-1], dtype=np.float64) )
             vertices_I_np = np.array(vertices_I)
             mass_of_vertices_I_np2  = np.array([mass_of_vertices_I_np1])
             mass_I = mass_of_vertices_I_np2.sum()

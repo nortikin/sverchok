@@ -52,71 +52,265 @@ for (params, params_settings) in rigid_body_params.items():
     socket_name = params_settings['socket_name']
     rigid_body_socket_names[socket_name] = params_settings
 
-# tests for copy animation
-def copy_rigid_body_animation(obj, list_target_objects, only_clear=False):
-    if not obj.animation_data or not obj.animation_data.action:
+# # tests for copy animation
+# def copy_rigid_body_animation(obj, list_target_objects, only_clear=False):
+#     if not obj.animation_data or not obj.animation_data.action:
+#         return
+
+#     src_action = obj.animation_data.action
+
+#     def is_rb_curve(fcurve):
+#         return any(
+#             fcurve.data_path == f"rigid_body.{param}"
+#             or fcurve.data_path.startswith(f"rigid_body.{param}[")
+#             for param in rigid_body_params
+#         )
+
+#     src_fcurves = []
+
+#     for slot in src_action.slots:
+#         if slot and hasattr(slot, "fcurves"):
+#             for fc in slot.fcurves:
+#                 if is_rb_curve(fc):
+#                     src_fcurves.append(fc)
+#                 pass
+#         pass
+
+#     for target in list_target_objects:
+
+#         if not target.rigid_body:
+#             continue
+
+#         # --- ОЧИСТКА АНИМАЦИИ ---
+#         if target.animation_data:
+#             if target.animation_data.action:
+#                 bpy.data.actions.remove(target.animation_data.action)
+#             target.animation_data_clear()
+#         if only_clear==True:
+#             continue
+
+#         target.animation_data_create()
+
+#         # создаём новый action
+#         new_action = bpy.data.actions.new(name=f"{target.name}_RB_Action")
+#         target.animation_data.action = new_action
+
+#         for fc in src_fcurves:
+#             new_fc = new_action.fcurves.new(
+#                 data_path=fc.data_path,
+#                 index=fc.array_index
+#             )
+
+#             new_fc.keyframe_points.add(len(fc.keyframe_points))
+
+#             for i, kp in enumerate(fc.keyframe_points):
+#                 new_kp = new_fc.keyframe_points[i]
+
+#                 new_kp.co = kp.co[:]
+#                 new_kp.handle_left = kp.handle_left[:]
+#                 new_kp.handle_right = kp.handle_right[:]
+
+#                 new_kp.handle_left_type = kp.handle_left_type
+#                 new_kp.handle_right_type = kp.handle_right_type
+#                 new_kp.interpolation = kp.interpolation
+
+#             new_fc.update()
+#         pass
+#     pass
+
+# def get_fcurves(obj):
+#     """
+#     Возвращает список всех FCurve, связанных с объектом:
+#     - активный Action
+#     - NLA (если используется)
+#     Поддерживает Blender 3.x–5.x
+#     """
+
+#     ad = obj.animation_data
+#     if not ad:
+#         return []
+
+#     fcurves = []
+
+#     # --- 1. Активный Action
+#     action = ad.action
+#     if action:
+#         # Новый API (Blender 5.x)
+#         if hasattr(action, "slots"):
+#             for slot in action.slots:
+#                 if hasattr(slot, "fcurves"):
+#                     fcurves.extend(slot.fcurves)
+
+#         # Старый API
+#         elif hasattr(action, "fcurves"):
+#             fcurves.extend(action.fcurves)
+
+#     # --- 2. NLA (если есть)
+#     for track in ad.nla_tracks:
+#         for strip in track.strips:
+#             act = strip.action
+#             if not act:
+#                 continue
+
+#             if hasattr(act, "slots"):
+#                 for slot in act.slots:
+#                     if hasattr(slot, "fcurves"):
+#                         fcurves.extend(slot.fcurves)
+
+#             elif hasattr(act, "fcurves"):
+#                 fcurves.extend(act.fcurves)
+
+#     return fcurves
+
+def get_fcurves(obj, remove_curves=False):
+    """
+    Blender 5.x:
+    Возвращает список FCurve для obj из active Action/Slot.
+    """
+
+    ad = obj.animation_data
+    if not ad or not ad.action:
+        return []
+
+    action = ad.action
+    slot = getattr(ad, "action_slot", None)
+    if action is None or slot is None:
+        return []
+
+    result = []
+
+    for layer in action.layers:
+        for strip in layer.strips:
+            # Нас интересует keyframe strip, который умеет вернуть channelbag для slot.
+            bag = None
+
+            # На разных сборках/переходных API имя может отличаться,
+            # поэтому пробуем несколько вариантов.
+            if hasattr(strip, "channelbag"):
+                try:
+                    bag = strip.channelbag(slot, ensure=False)
+                except TypeError:
+                    bag = strip.channelbag(slot)
+            elif hasattr(strip, "channelbag_for_slot"):
+                bag = strip.channelbag_for_slot(slot)
+            elif hasattr(strip, "channelbag_slot"):
+                bag = strip.channelbag_slot(slot)
+
+            if bag and hasattr(bag, "fcurves"):
+                if remove_curves==True:
+                    for fc_to_remove in bag.fcurves:
+                        bag.fcurves.remove(fc_to_remove)
+                    pass
+                else:
+                    result.extend(list(bag.fcurves))
+
+    return result
+
+
+def copy_fcurves(src_obj, target_obj, data_paths, only_clear=False):
+    """
+    Копирует FCurves с src_obj на target_obj только для указанных data_paths.
+    """
+
+    # --- Проверка источника
+    if not src_obj.animation_data or not src_obj.animation_data.action:
+        #print("[ERROR] Source has no animation")
         return
 
-    src_action = obj.animation_data.action
+    #src_action = src_obj.animation_data.action
+    src_fcurves = get_fcurves(src_obj)
 
-    def is_rb_curve(fcurve):
-        return any(
-            fcurve.data_path == f"rigid_body.{param}"
-            or fcurve.data_path.startswith(f"rigid_body.{param}[")
-            for param in rigid_body_params
+    # --- Проверка доступных путей
+    available_paths = {fc.data_path for fc in src_fcurves}
+    #print(f'available_paths={available_paths}')
+
+    valid_paths = []
+    invalid_paths = []
+    no_animation_paths = []
+
+    for path in data_paths:
+        # --- 1. Проверяем, что параметр вообще существует у target
+        try:
+            target_obj.path_resolve(path)
+        except Exception:
+            #print(f"[WARN] Path not valid for target object: {path}")
+            invalid_paths.append(path)
+            continue
+
+        # --- 2. Проверяем, есть ли анимация у source
+        if path not in available_paths:
+            #print(f"[INFO] No animation for path (skipped): {path}")
+            no_animation_paths.append(path)
+            continue
+
+        # --- 3. Всё ок
+        valid_paths.append(path)
+
+    #print(f'invalid_paths={invalid_paths}')
+    #print(f'no_animation_paths={no_animation_paths}')
+
+    # --- если есть реально невалидные параметры — останавливаемся
+    if invalid_paths:
+        #print(f"[ERROR] Invalid paths: {invalid_paths}")
+        return
+
+    # --- Подготовка target
+    if not target_obj.animation_data:
+        target_obj.animation_data_create()
+
+    if not target_obj.animation_data.action:
+        target_obj.animation_data.action = bpy.data.actions.new(
+            name=f"{target_obj.name}_Action"
         )
 
-    src_fcurves = []
+    dst_action = target_obj.animation_data.action
+    dst_fcurves = get_fcurves(target_obj, remove_curves=True)
 
-    for slot in src_action.slots:
-        if slot and hasattr(slot, "fcurves"):
-            for fc in slot.fcurves:
-                if is_rb_curve(fc):
-                    src_fcurves.append(fc)
-                pass
-        pass
+    # --- Удаление старых FCurves (ВАЖНО: через list)
+    fcurves_to_remove = [
+        fc for fc in list(dst_fcurves)
+        if fc.data_path in valid_paths
+    ]
 
-    for target in list_target_objects:
+    #print(f'Количество fcurves_to_remove: {len(fcurves_to_remove)}, {fcurves_to_remove}')
 
-        if not target.rigid_body:
+    for fc in fcurves_to_remove:
+        dst_fcurves.remove(fc)
+
+    if only_clear==True:
+        return
+
+    # --- Копирование
+    for fc in src_fcurves:
+        if fc.data_path not in valid_paths:
             continue
 
-        # --- ОЧИСТКА АНИМАЦИИ ---
-        if target.animation_data:
-            if target.animation_data.action:
-                bpy.data.actions.remove(target.animation_data.action)
-            target.animation_data_clear()
-        if only_clear==True:
-            continue
+        new_fc = dst_action.fcurve_ensure_for_datablock(
+            target_obj,
+            data_path=fc.data_path,
+            index=fc.array_index
+        )
 
-        target.animation_data_create()
+        # очищаем существующие ключи (если были)
+        new_fc.keyframe_points.clear()
 
-        # создаём новый action
-        new_action = bpy.data.actions.new(name=f"{target.name}_RB_Action")
-        target.animation_data.action = new_action
+        new_fc.keyframe_points.add(len(fc.keyframe_points))
 
-        for fc in src_fcurves:
-            new_fc = new_action.fcurves.new(
-                data_path=fc.data_path,
-                index=fc.array_index
-            )
+        for i, kp in enumerate(fc.keyframe_points):
+            new_kp = new_fc.keyframe_points[i]
 
-            new_fc.keyframe_points.add(len(fc.keyframe_points))
+            new_kp.co = kp.co.copy()
+            new_kp.handle_left = kp.handle_left.copy()
+            new_kp.handle_right = kp.handle_right.copy()
 
-            for i, kp in enumerate(fc.keyframe_points):
-                new_kp = new_fc.keyframe_points[i]
+            new_kp.interpolation = kp.interpolation
+            new_kp.handle_left_type = kp.handle_left_type
+            new_kp.handle_right_type = kp.handle_right_type
 
-                new_kp.co = kp.co[:]
-                new_kp.handle_left = kp.handle_left[:]
-                new_kp.handle_right = kp.handle_right[:]
-
-                new_kp.handle_left_type = kp.handle_left_type
-                new_kp.handle_right_type = kp.handle_right_type
-                new_kp.interpolation = kp.interpolation
-
-            new_fc.update()
+        new_fc.update()
         pass
-    pass
+
+    return
 
 def run_op_with_override(op, obj):
     if hasattr(bpy.context, "temp_override"):
@@ -162,20 +356,72 @@ class SvRigidBodyPrioritySocketsOnOff(bpy.types.Operator):
             pass
         return {'FINISHED'}
 
+class SvRigidBodyUIShowIcon(bpy.types.Operator):
+    '''Filled - socket connected, Circle - socket is not connected'''
+    bl_idname = "node.sv_rigid_body_ui_show_icon"
+    bl_label = ""
+
+    description_text: bpy.props.StringProperty(default='')
+
+    node_name: bpy.props.StringProperty(default='')
+    tree_name: bpy.props.StringProperty(default='')  # all item types should have actual name of a tree
+    fn_name  : bpy.props.StringProperty(default='')
+    idx      : bpy.props.IntProperty(default=0)
+
+    @classmethod
+    def description(cls, context, property):
+        s = property.description_text
+        return s
+
+    def invoke(self, context, event):
+        # node = context.node
+        # if node:
+        #     pass
+        return {'FINISHED'}
+
+class SvRigidBodyClearFCurvesOperator(bpy.types.Operator):
+    '''Filled - socket connected, Circle - socket is not connected'''
+    bl_idname = "node.sv_rigid_body_clear_animation_operator"
+    bl_label = "Clear Animations fcurves"
+
+    description_text: bpy.props.StringProperty(default='')
+
+    node_name: bpy.props.StringProperty(default='')
+    tree_name: bpy.props.StringProperty(default='')  # all item types should have actual name of a tree
+    fn_name  : bpy.props.StringProperty(default='')
+    idx      : bpy.props.IntProperty(default=0)
+
+    @classmethod
+    def description(cls, context, property):
+        s = property.description_text
+        return s
+
+    def invoke(self, context, event):
+        node = context.node
+        if node:
+            if node.some_properties_animated==True:
+                node.clear_objects_animation = True
+                node.process()
+            pass
+        return {'FINISHED'}
 
 def draw_properties(layout, node_group, node_name):
     node = bpy.data.node_groups[node_group].nodes[node_name]
     #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
-    root_grid = layout.grid_flow(row_major=True, columns=2, align=True)
+    #layout.alignment = 'LEFT'
+    root_grid = layout.column(align=True).grid_flow(row_major=True, columns=2, align=True, even_columns=False)
     root_grid.alignment = 'EXPAND'
-
-    root_grid.row(align=True).label(text='')
+    root_grid.column(align=True).row(align=True).label(text='')
+    #root_grid.column(align=True).row(align=True).label(text='')
+    #root_grid.column(align=True).row(align=True).label(text='')
+    
     grid2 = root_grid.grid_flow(row_major=False, columns=1, align=True)
     grid2.label(text='Priority params:')
     row0 = grid2.column(align=True)
     row0.label(text='- socket is priority', icon='CHECKBOX_HLT')
     row0.label(text='- socket is not priority', icon='CHECKBOX_DEHLT')
     grid2.separator()
+
     # row_op = grid2.row(align=True)
     # row_op.alignment = "LEFT"
     # op = row_op.operator(SvRigidBodyPrioritySocketsOnOff.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
@@ -191,15 +437,30 @@ def draw_properties(layout, node_group, node_name):
             if getattr(node, node_priority_property_name)==False:
                 prop_enabled = False
 
+        # if 'socket_name' in param_settings:
+        #     socket_name = param_settings['socket_name']
+        #     row = root_grid.row(align=True)
+        #     row.enabled = prop_enabled
+        #     row.alignment='RIGHT'
+        #     #row.template_icon(icon_value=2 if node.inputs[socket_name].is_linked else 3)
+        #     row.operator(SvRigidBodyUIShowIcon.bl_idname, icon='RADIOBUT_ON' if node.inputs[socket_name].is_linked else 'RADIOBUT_OFF', text='', emboss=False)
+
         if 'node_property_map_mode' in param_settings:
             node_property_map_mode = param_settings['node_property_map_mode']
+            socket_name = param_settings['socket_name']
             row = root_grid.row(align=True)
             row.enabled = prop_enabled
+            row.alignment='RIGHT'
+
+            op = row.operator(SvRigidBodyUIShowIcon.bl_idname, icon='RADIOBUT_ON' if node.inputs[socket_name].is_linked else 'RADIOBUT_OFF', text='', emboss=False)
+            op.description_text = 'Socket is connected.' if node.inputs[socket_name].is_linked==True else 'Socket is not connected.'
+
             row.prop(node, node_property_map_mode, expand=True)
 
         if 'priority_property_name' in param_settings:
             node_priority_property_name = param_settings['priority_property_name']
             row = root_grid.row(align=True)
+            row.alignment='LEFT'
             row.prop(node, node_priority_property_name,)
         
 
@@ -245,9 +506,13 @@ class SV_PT_ViewportDisplayPropertiesDialogRigidBody(bpy.types.Operator):
     def invoke(self, context, event):
         self.node_name = context.node.name
         self.node_group = context.annotation_data_owner.name_full
-        return context.window_manager.invoke_props_dialog(self, width=500)
+        return context.window_manager.invoke_props_dialog(self, width=350)
 
     def draw(self, context):
+        # Прочитать и определить здесь, какие парамерны аниммированы и вывести в окне
+        # признак, что параметр анимирован (что он не будет устанавливаться при анимации
+        # в работе этого нода, даже если выставлен priority, т.е. animated/kinetic
+        # отменяет приоритет)
         draw_properties(self.layout, self.node_group, self.node_name)
         pass
 
@@ -265,7 +530,7 @@ class SV_PT_ViewportDisplayPropertiesRigidBody(bpy.types.Panel):
     #     return s
 
     # horizontal size
-    bl_ui_units_x = 10
+    bl_ui_units_x = 20
 
     def draw(self, context):
         if hasattr(context, "node"):
@@ -273,6 +538,11 @@ class SV_PT_ViewportDisplayPropertiesRigidBody(bpy.types.Panel):
             node_group = context.annotation_data_owner.name_full
             draw_properties(self.layout, node_group, node_name)
         pass
+
+def updateNodeCopy(self, context):
+    if self.copy_objects_animation or self.clear_objects_animation:
+        self.process_node(context)
+    pass
 
 class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
     '''Set rigid Body params per object'''
@@ -288,20 +558,42 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         description = "Copy animation keys of mapped objects to objects",
         default     = False,
         options     = {'SKIP_SAVE'},
-        update      = updateNode,
+        update      = updateNodeCopy,
     )
     clear_objects_animation : BoolProperty(
         name        = "Clear Animation",
         description = "Copy animation keys of mapped objects to objects",
         default     = False,
         options     = {'SKIP_SAVE'},
-        update      = updateNode,
+        update      = updateNodeCopy,
     )
 
     node_in_use : BoolProperty(
         name        = "Enable",
         description = "On - add Rigid Body settings to all objects\nOff - remove Rigid Body settings from all objects.",
         default     = False,
+        update      = updateNode,
+    )
+
+    some_properties_animated : BoolProperty(
+        name        = "Copy Animation",
+        description = "Copy animation keys of mapped objects to objects",
+        default     = False,
+        options     = {'SKIP_SAVE'},
+        #update      = updateNodeCopy,
+    )
+
+
+    node_play_pause_modes = [
+            ('RIGID_BODY_NODE_PLAY,PLAY' , "Play" , "Rigid Body do it's work"         , 'PLAY' , 0),
+            ('RIGID_BODY_NODE_PLAY,PAUSE', "Pause", "Rigid Body skip objects throwght", 'PAUSE', 1),
+        ]
+
+    node_play_pause1 : bpy.props.EnumProperty(
+        name        = "Play",
+        description = "Apply params or skip node execution",
+        items       = node_play_pause_modes,
+        default     = 'RIGID_BODY_NODE_PLAY,PLAY',
         update      = updateNode,
     )
     
@@ -565,6 +857,9 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
                 # layout.use_property_split = True
             pass
 
+        if self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PAUSE':
+            layout.enabled = False
+
         col = layout.column(align=True)
         col.alignment = 'RIGHT'
         row = col.row(align=True)
@@ -597,9 +892,32 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     def sv_draw_buttons(self, context, layout):
+        col = layout.row(align=True)
+        col.alignment = "LEFT"
+        col.row(align=True)
+        col.prop(self, 'node_play_pause1', text='',expand=True)
+
         box = layout.box()
-        box.prop(self, 'node_in_use', text=('Rigid Body Activated' if self.node_in_use==True else 'Rigid Body Removed'), icon=('X' if self.node_in_use==True else 'RIGID_BODY') )
-        #box.prop(self, 'source_object_pointer' )
+        if self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PAUSE':
+            box.enabled = False
+            pass
+        row = box.row(align=True)
+        row.prop(self, 'node_in_use', text=('Rigid Body Activated' if self.node_in_use==True else 'Rigid Body Removed'), icon=('X' if self.node_in_use==True else 'RIGID_BODY') )
+        row.prop(self, 'copy_objects_animation', toggle=True, icon='RENDER_RESULT', text='')
+        # row.prop(self, 'clear_objects_animation', toggle=True, icon='CANCEL', text='')
+        row1 = row.row(align=True)
+        if self.some_properties_animated==True:
+            row1.alert = True
+            # op = row1.operator(SvRigidBodyUIShowIcon.bl_idname, icon='ERROR', text="", emboss=True, )
+            # op.description_text = "Objects contains animation. Some simulation of Rigid body can be broken. Remove animation."
+            op = row1.operator(SvRigidBodyClearFCurvesOperator.bl_idname, icon='ERROR', text="", emboss=True, )
+            op.description_text = 'These are animations fcurves data. Simulation results with Sverchok may be unexpected. It is recommended to clear the animation by clicking this button or deactivate the Sverchok scene in sidebar N/Sverchok tab.'
+        else:
+            # op = row1.operator(SvRigidBodyUIShowIcon.bl_idname, icon='BLANK1', text="", emboss=True, )
+            # op.description_text = "Objects doesn't contains animation."
+            op = row1.operator(SvRigidBodyClearFCurvesOperator.bl_idname, icon='ANIM_DATA', text="", emboss=True, )
+            op.description_text = 'These are no animations fcurves data. You can set up the Rigid Body settings.'
+
         elem = box.row(align=True)
         elem.label(text='Apply Rigid Body settings from:')
         
@@ -612,11 +930,6 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         elem = box.row(align=True)
         elem.prop(self, 'source_object_pointer_data_from1', expand=True)
 
-        
-        # col = elem.row()
-        # col.enabled = True if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS' else False
-        # col.prop(self, 'copy_objects_animation', toggle=True)
-        # col.prop(self, 'clear_objects_animation', toggle=True)
         elem = box.column(align=True)
         elem.row().label(text='Objects map mode:')
         elem.row(align=True).prop(self, 'objects_map_mode1', expand=True)
@@ -633,7 +946,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         return
 
     def custom_draw_input_sockets_objects_map(self, socket, context, layout):
-        if self.objects_map_mode1=='RIGID_BODY_MAP,INDEXING' or self.node_in_use==False:
+        if self.objects_map_mode1=='RIGID_BODY_MAP,INDEXING' or self.node_in_use==False or self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PAUSE':
             layout.enabled = False
         if socket.is_linked==True:
             layout.alignment = "LEFT"
@@ -643,7 +956,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         return
 
     def custom_draw_input_sockets_rigid_body_source_objects(self, socket, context, layout):
-        if self.node_in_use==False:
+        if self.node_in_use==False or self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PAUSE':
             layout.enabled = False
         if socket.is_linked==True:
             layout.alignment = "LEFT"
@@ -653,7 +966,7 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         return
 
     def custom_draw_input_sockets_rigid_body_params(self, socket, context, layout):
-        if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS' or self.node_in_use==False:
+        if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS' or self.node_in_use==False or self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PAUSE':
             layout.enabled = False
 
         if socket.name in rigid_body_socket_names:
@@ -696,9 +1009,9 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'rigid_body_deactivate_angular_velocity' ).prop_name = 'rigid_body_deactivate_angular_velocity1'
         
         for (sn, params) in (rigid_body_params | {
-                'objects'             : {'node_property_name': 'object_in_pointer1', 'socket_name': 'objects'},
-                'objects_map'         : {'node_property_name': 'objects_map1', 'socket_name': 'objects_map'},
-                'rigid_body_settings' : {'node_property_name': 'rigid_body_settings1', 'socket_name': 'rigid_body_settings'}
+                'objects'             : {'node_property_name': 'object_in_pointer1'     , 'socket_name': 'objects'              , },
+                'objects_map'         : {'node_property_name': 'objects_map1'           , 'socket_name': 'objects_map'          , },
+                'rigid_body_settings' : {'node_property_name': 'rigid_body_settings1'   , 'socket_name': 'rigid_body_settings'  , }
             }).items() :
             node_property_name = params['node_property_name']
             socket_name = params['socket_name']
@@ -732,278 +1045,259 @@ class SvRigidBodyNode(SverchCustomTreeNode, bpy.types.Node):
         if not any(socket.is_linked for socket in self.inputs):
             return
 
+        #bpy.context.view_layer.update()
+
         objects             = self.inputs['objects'             ].sv_get(deepcopy=False, default=[self.object_in_pointer1])
         objects_map         = self.inputs['objects_map'         ].sv_get(deepcopy=False, default=[self.objects_map1])
         rigid_body_settings = self.inputs['rigid_body_settings' ].sv_get(deepcopy=False, default=[self.rigid_body_settings1] if self.rigid_body_settings1 else [])
         if self.inputs['rigid_body_settings' ].is_linked==False:
             rigid_body_settings = [self.rigid_body_settings1] if self.rigid_body_settings1 else []
 
-        if self.node_in_use==True:
-            if self.inputs['objects_map'].is_linked==False:
-                objects_map = [self.objects_map1] * len(objects)
-                pass
+        if self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PLAY':
+            if self.node_in_use==True:
+                if self.inputs['objects_map'].is_linked==False:
+                    objects_map = [self.objects_map1] * len(objects)
+                    pass
 
-            if self.objects_map_mode1=='RIGID_BODY_MAP,INDEXING':
-                objects_map = [I for I in range(len(objects))]
-                pass
-            set_objects_map = set(objects_map)
-            len_objects_map = len(objects_map)
-            if len_objects_map==0:
-                raise Exception(f'001. Objects map has no elements: 0')
-            
-            index_min_settings = min(set_objects_map)
-            index_max_settings = max(set_objects_map)
-            len_rigid_body_settings = len(rigid_body_settings)
-            # indexes can be negative. )))
-            if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS' and self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' and (index_min_settings<-(len_rigid_body_settings-1) or (len_rigid_body_settings-1)<index_max_settings):
-                raise Exception(f'002. Indexes in Objects map is out of range: [{index_min_settings}:{index_max_settings}] out of Rigid Body settings [{-len_rigid_body_settings}:{len_rigid_body_settings}]')
+                if self.objects_map_mode1=='RIGID_BODY_MAP,INDEXING':
+                    objects_map = [I for I in range(len(objects))]
+                    pass
+                set_objects_map = set(objects_map)
+                len_objects_map = len(objects_map)
+                if len_objects_map==0:
+                    raise Exception(f'001. Objects map has no elements: 0')
+                
+                index_min_settings = min(set_objects_map)
+                index_max_settings = max(set_objects_map)
+                len_rigid_body_settings = len(rigid_body_settings)
+                # indexes can be negative. )))
+                if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS' and self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' and (index_min_settings<-(len_rigid_body_settings-1) or (len_rigid_body_settings-1)<index_max_settings):
+                    raise Exception(f'002. Indexes in Objects map is out of range: [{index_min_settings}:{index_max_settings}] out of Rigid Body settings [{-len_rigid_body_settings}:{len_rigid_body_settings}]')
 
-            input_sockets_settings = dict()
-            # read data in general input sockets
-            for (name, params) in rigid_body_params.items():
-                node_property_name = params['node_property_name']
-                socket_name = params['socket_name']
-                if socket_name not in self.inputs:
-                    raise Exception(f'003. No input socket with name {socket_name}.')
+                input_sockets_settings = dict()
+                # read data in general input sockets
+                for (name, params) in rigid_body_params.items():
+                    node_property_name = params['node_property_name']
+                    socket_name = params['socket_name']
+                    if socket_name not in self.inputs:
+                        raise Exception(f'003. No input socket with name {socket_name}.')
 
-                priority_property_name = params['priority_property_name']
-                property_priority = getattr(self, priority_property_name)
-                if property_priority==True:
-                    node_property_map_mode = params['node_property_map_mode']
-                    property_map_mode = getattr(self, node_property_map_mode)
+                    priority_property_name = params['priority_property_name']
+                    property_priority = getattr(self, priority_property_name)
+                    if property_priority==True:
+                        node_property_map_mode = params['node_property_map_mode']
+                        property_map_mode = getattr(self, node_property_map_mode)
 
-                    prop_type = None
-                    if hasattr(self.__class__, 'bl_rna')==True and node_property_name in self.__class__.bl_rna.properties:
-                        prop = self.__class__.bl_rna.properties[node_property_name]
-                        prop_type = prop.type
-                    else:
-                        # development error.
-                        raise Exception(f'004. Unknown property {node_property_name}. Check settings params')
-                    
-                    default_prop_value = getattr(self, node_property_name)
-                    if prop_type=='ENUM':
-                        # enum properties of default value has prefix to remove
-                        default_prop_value = default_prop_value.split(',')[-1]
-                        pass
-                    socket = self.inputs[socket_name]
-                    if socket.is_linked==True:
-                        socket_value = dict()
-                        _socket_value        = self.inputs[socket_name].sv_get(deepcopy=False)
-                        len_socket_value    = len(socket_value)
-                        # # align objects and input setting socket
-                        # if len_socket_value > len_objects_map:
-                        #     socket_value = socket_value[:len_objects_map]
-                        # elif len_socket_value < len_objects_map-1:
-                        #     socket_value = socket_value + [socket_value[-1]]*(len_objects_map-len(socket_value))
-                        # pass
-                        len_socket_value = len(_socket_value)
-                        try:
+                        prop_type = None
+                        if hasattr(self.__class__, 'bl_rna')==True and node_property_name in self.__class__.bl_rna.properties:
+                            prop = self.__class__.bl_rna.properties[node_property_name]
+                            prop_type = prop.type
+                        else:
+                            # development error.
+                            raise Exception(f'004. Unknown property {node_property_name}. Check settings params')
+                        
+                        default_prop_value = getattr(self, node_property_name)
+                        if prop_type=='ENUM':
+                            # enum properties of default value has prefix to remove
+                            default_prop_value = default_prop_value.split(',')[-1]
+                            pass
+                        socket = self.inputs[socket_name]
+                        if socket.is_linked==True:
+                            socket_value = dict()
+                            _socket_value        = self.inputs[socket_name].sv_get(deepcopy=False)
+                            try:
+                                if property_map_mode=='RIGID_BODY_MAP,MAPPING':
+                                    for I in objects_map:
+                                        socket_value[I] = _socket_value[I]
+                                    pass
+                                elif property_map_mode=='RIGID_BODY_MAP,INDEXING':
+                                    for I in range(len(objects)):
+                                        socket_value[I] = _socket_value[I]
+                                    pass
+                                else:
+                                    raise Exception(f'012. unknown map mode: {property_map_mode}.')
+                            except IndexError:
+                                raise Exception(f'013. {socket_name}[{I}] out of range in mode "{property_map_mode}". Length of data in this socket is {len(_socket_value)}')
+                            except Exception as _ex:
+                                raise Exception(f'014. Error getting {socket_name}[{I}]. {_ex}')
+                            pass
+                        else:
+                            # if socket is not connected then fill socket with default values
+                            socket_value = dict()
                             if property_map_mode=='RIGID_BODY_MAP,MAPPING':
                                 for I in objects_map:
-                                    socket_value[I] = _socket_value[I]
+                                    socket_value[I] = default_prop_value
                                 pass
                             elif property_map_mode=='RIGID_BODY_MAP,INDEXING':
                                 for I in range(len(objects)):
-                                    socket_value[I] = _socket_value[I]
+                                    socket_value[I] = default_prop_value
                                 pass
                             else:
-                                raise Exception(f'012. unknown map mode: {property_map_mode}.')
-                        except IndexError:
-                            raise Exception(f'013. {socket_name}[{I}] out of range in mode "{property_map_mode}". Length of data in this socket is {len(_socket_value)}')
-                        except Exception as _ex:
-                            raise Exception(f'014. Error getting {socket_name}[{I}]. {_ex}')
-                        pass
+                                raise Exception(f'011. unknown map mode: {property_map_mode}.')
+                            pass
+                        input_sockets_settings[name] = socket_value
                     else:
-                        # if socket is not connected then fill socket with default values
-                        socket_value = dict()
-                        if property_map_mode=='RIGID_BODY_MAP,MAPPING':
-                            for I in objects_map:
-                                socket_value[I] = default_prop_value
-                            pass
-                        elif property_map_mode=='RIGID_BODY_MAP,INDEXING':
-                            for I in range(len(objects)):
-                                socket_value[I] = default_prop_value
-                            pass
-                        else:
-                            raise Exception(f'011. unknown map mode: {property_map_mode}.')
                         pass
-                    input_sockets_settings[name] = socket_value
+                    pass
+
+                if len(objects)<len(objects_map):
+                    raise Exception(f"005. Number of Objects are less Number of Objects Map")
                 else:
-                    pass
-                pass
+                    if bpy.context.mode == 'OBJECT':
 
-            if len(objects)<len(objects_map):
-                raise Exception(f"005. Number of Objects are less Number of Objects Map")
-            else:
-                if bpy.context.mode == 'OBJECT':
-
-                    if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
-                        if len_rigid_body_settings==0:
-                            raise Exception(f'006. No Rigid Body settings')
-                    
-                    inputs_settings = []
-                    # read settings
-
-                    #rigid_body_objects_for_animation = []
-                    for I in ( range(len(objects_map)) if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else range(len(objects)) ):
-                        rigid_body_settings_ID = dict()
-                        ID = objects_map[I] if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else I
-                        try:
-                            object_rigid_body_settings_ID = rigid_body_settings[ID]
-                        except IndexError:
-                            raise Exception(f'0015. "Rigid Body settings"[{ID}] out of range.')
-                        except Exception as _ex:
-                            raise Exception(f'0016. "Rigid Body settings"[{ID}] exception: {_ex}')
+                        if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
+                            if len_rigid_body_settings==0:
+                                raise Exception(f'006. No Rigid Body settings')
                         
-                        if hasattr(object_rigid_body_settings_ID, 'rigid_body')==False:
-                            raise Exception(f'0016. No rigid_body attribute in "Rigid Body settings"[{ID}]. Check object can has rigid body settings')
-                        rigid_body = object_rigid_body_settings_ID.rigid_body
-                        if rigid_body:
-                            pass
-                        else:
-                            raise Exception(f'0017. "Rigid Body settings"[{ID}].rigid_body is None. Rigid body must not have a None value')
-
-                        #if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
-                        # skip_rigid_body_settings = False
-                        # if ID<-len_rigid_body_settings or len_rigid_body_settings-1<ID:
-                        #     if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
-                        #         raise Exception(f"007. No Rigid Body settings[{ID}] in the Objects Map[{I}]. Allowed range in Rigid Body settings is [{-(len_rigid_body_settings-1)}:{len_rigid_body_settings-1}]")
-                        #     else:
-                        #         skip_rigid_body_settings = True
-
-                        # if skip_rigid_body_settings==False and not rigid_body_settings[ID]:
-                        #     if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
-                        #         raise Exception(f"008. No Rigid Body settings [{ID}]. pos[{I}]")
-                        #     else:
-                        #         skip_rigid_body_settings = True
-
-                        # if skip_rigid_body_settings==False and hasattr(rigid_body_settings[ID], 'rigid_body')==False:
-                        #     if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,OBJECTS':
-                        #         raise Exception(f"009. No rigid_body params in Rigid Body settings [{ID}]. pos[{I}]")
-                        #     else:
-                        #         skip_rigid_body_settings = True
-                        
-                        # if skip_rigid_body_settings==False and (hasattr(rigid_body_settings[ID], 'rigid_body')==False or not getattr(rigid_body_settings[ID], 'rigid_body')):
-                        #     raise Exception(f"010. No rigid_body in Rigid Body settings [{ID}]. {rigid_body_settings[ID].name+',' if rigid_body_settings[ID] else ''} pos[{I}]")
-                        
-                        #if skip_rigid_body_settings==False:
-                        # rigid_body_objects_for_animation.append(rigid_body_settings[ID])
-                        # rigid_body = rigid_body_settings[ID].rigid_body
-                        for (name, param) in rigid_body_params.items():
-                            rigid_body_settings_ID[name] = getattr(rigid_body, name)
-
-                        if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,SETTINGS':
-                            for (name, param) in rigid_body_params.items():
-                                    priority_property_name = param['priority_property_name']
-                                    node_property_map_mode = param['node_property_map_mode']
-                                    if getattr(self, priority_property_name)==True:
-                                        property_map_mode = getattr(self, node_property_map_mode)
-                                        if property_map_mode=='RIGID_BODY_MAP,MAPPING':
-                                            value = input_sockets_settings[name][ID]
-                                        elif property_map_mode=='RIGID_BODY_MAP,INDEXING':
-                                            value = input_sockets_settings[name][I]
-                                        else:
-                                            # developer exception
-                                            raise Exception(f'0018. Unknown map mode "{property_map_mode}" for property {name}')
-                                        rigid_body_settings_ID[name] = value
-                                    else:
-                                        pass
-                            pass
-                        # else:
-                        #     # development exception. Check enum values
-                        #     raise Exception(f'Unknown type of self.source_object_pointer_data_from1={self.source_object_pointer_data_from1}')
-
-                        inputs_settings.append(rigid_body_settings_ID)
-                        pass
-                    pass
-
-                    if not bpy.context.scene.rigidbody_world:
-                        bpy.ops.rigidbody.world_add()
-
-                    for I, obj in enumerate(objects):
-                        if obj:
-                            # Add active object as Rigid Body
-                            if hasattr(obj, 'rigid_body')==False or obj.rigid_body==None:
-                                # bpy.context.view_layer.objects.active = obj
-                                # obj.select_set(True)
-                                # bpy.ops.rigidbody.object_add()
-
-                                # with bpy.context.temp_override(
-                                #     object                      =  obj,
-                                #     active_object               =  obj,
-                                #     selected_objects            = [obj],
-                                #     selected_editable_objects   = [obj],
-                                #     view_layer=bpy.context.view_layer, ):
-                                #         bpy.ops.rigidbody.object_add()
-                                #         pass
-                                run_op_with_override(bpy.ops.rigidbody.object_add, obj)
-                            pass
-
-                            # if self.copy_objects_animation:
-                            #     try:
-                            #         copy_rigid_body_animation(rigid_body_settings[I], [obj])
-                            #     except Exception as ex:
-                            #         print(f"Произошла ошибка при копировании анимации {ex}")
-                            #         pass
-                            #     pass
-                            # if self.clear_objects_animation:
-                            #     try:
-                            #         copy_rigid_body_animation(rigid_body_settings[I], [obj], only_clear=True)
-                            #     except Exception as ex:
-                            #         print(f"Произошла ошибка при очистке анимации {ex}")
-                            #         pass
-                            #     self.clear_objects_animation = False
-                            #     pass
+                        inputs_settings = []
+                        for I in ( range(len(objects_map)) if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else range(len(objects)) ):
+                            rigid_body_settings_ID = dict()
+                            ID = objects_map[I] if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else I
+                            try:
+                                object_rigid_body_settings_ID = rigid_body_settings[ID]
+                            except IndexError:
+                                raise Exception(f'0015. "Rigid Body settings"[{ID}] out of range. Number of objects in Socket "Rigid Body settings" [{len(objects_map)} items] in Indexing mode has to be equals to "Objects" sockets [{len(objects)}]')
+                            except Exception as _ex:
+                                raise Exception(f'0016. "Rigid Body settings"[{ID}] exception: {_ex}')
                             
-                            inputs_settings_I = inputs_settings[I]
-                            for (name, value) in inputs_settings_I.items():
-                                setattr( obj.rigid_body, name, value )
+                            if hasattr(object_rigid_body_settings_ID, 'rigid_body')==False:
+                                raise Exception(f'0016. No rigid_body attribute in "Rigid Body settings"[{ID}]. Check object can has rigid body settings')
+                            rigid_body = object_rigid_body_settings_ID.rigid_body
+                            if rigid_body:
+                                pass
+                            else:
+                                raise Exception(f'0017. "Rigid Body settings"[{ID}].rigid_body is None. Rigid body must not have a None value')
+
+                            for (name, param) in rigid_body_params.items():
+                                rigid_body_settings_ID[name] = getattr(rigid_body, name)
+
+                            if self.source_object_pointer_data_from1=='RIGID_BODY_DATA_FROM,SETTINGS':
+                                for (name, param) in rigid_body_params.items():
+                                        priority_property_name = param['priority_property_name']
+                                        node_property_map_mode = param['node_property_map_mode']
+                                        if getattr(self, priority_property_name)==True:
+                                            property_map_mode = getattr(self, node_property_map_mode)
+                                            if property_map_mode=='RIGID_BODY_MAP,MAPPING':
+                                                value = input_sockets_settings[name][ID]
+                                            elif property_map_mode=='RIGID_BODY_MAP,INDEXING':
+                                                value = input_sockets_settings[name][I]
+                                            else:
+                                                # developer exception
+                                                raise Exception(f'0018. Unknown map mode "{property_map_mode}" for property {name}')
+                                            rigid_body_settings_ID[name] = value
+                                        else:
+                                            pass
+                                pass
+
+                            inputs_settings.append(rigid_body_settings_ID)
+                            pass
+                        pass
+
+                        if not bpy.context.scene.rigidbody_world:
+                            bpy.ops.rigidbody.world_add()
+
+                        self.some_properties_animated = False
+                        for I, obj in enumerate(objects):
+                            ID = objects_map[I] if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else I
+                            if obj:
+                                # Add active object as Rigid Body
+                                if hasattr(obj, 'rigid_body')==False or obj.rigid_body==None:
+                                    # bpy.context.view_layer.objects.active = obj
+                                    # obj.select_set(True)
+                                    # bpy.ops.rigidbody.object_add()
+
+                                    # with bpy.context.temp_override(
+                                    #     object                      =  obj,
+                                    #     active_object               =  obj,
+                                    #     selected_objects            = [obj],
+                                    #     selected_editable_objects   = [obj],
+                                    #     view_layer=bpy.context.view_layer, ):
+                                    #         bpy.ops.rigidbody.object_add()
+                                    #         pass
+                                    run_op_with_override(bpy.ops.rigidbody.object_add, obj)
+                                pass
+
+                                if self.copy_objects_animation:
+                                    try:
+                                        copy_fcurves(rigid_body_settings[ID], obj, [f'rigid_body.{name}' for name in rigid_body_params])
+                                    except Exception as ex:
+                                        print(f"0019. Произошла ошибка при копировании анимации {ex}")
+                                        pass
+                                    pass
+                                if self.clear_objects_animation:
+                                    try:
+                                        copy_fcurves(rigid_body_settings[ID], obj, [f'rigid_body.{name}' for name in rigid_body_params], only_clear=True)
+                                    except Exception as ex:
+                                        print(f"0020. Произошла ошибка при очистке анимации {ex}")
+                                        pass
+                                    pass
+                                
+                                inputs_settings_I = inputs_settings[I]
+                                for (name, value) in inputs_settings_I.items():
+                                    obj_fcurved = get_fcurves(obj)
+                                    l = [fc.data_path for fc in obj_fcurved if fc.data_path=='rigid_body.'+name]
+                                    if not l:
+                                        # set value if property is not anmated
+                                        if getattr( obj.rigid_body, name, value )!=value:
+                                            setattr( obj.rigid_body, name, value )
+                                        else:
+                                            pass
+                                        pass
+                                    else:
+                                        # TODO: Alert user if property is animated
+                                        self.some_properties_animated = True
+                                        pass
+                                    pass
+                                pass
+                            else:
+                                #raise Exception(f"Object[{I}] is None")
                                 pass
                             pass
-                        else:
-                            #raise Exception(f"Object[{I}] is None")
-                            pass
+
+                        if self.copy_objects_animation or self.clear_objects_animation:
+                            self.copy_objects_animation = False
+                            self.clear_objects_animation = False
+
+                        # if selected:
+                        #     # # восстановить выделение
+                        #     # # TODO: Кажется срабатывает событие изменения сцены при этом. Нужно как-то отключить обработку этого события при восстановлении select
+                        #     # bpy.ops.object.select_all(action='DESELECT')
+                        #     # for obj in selected:
+                        #     #     obj.select_set(True)
+                        #     pass
+
+                        # восстановить активный
+                        # bpy.context.view_layer.objects.active = active_obj
                         pass
-                    # if self.copy_objects_animation or self.clear_objects_animation:
-                    #     self.copy_objects_animation = False
-                    #     self.clear_objects_animation = False
-
-                    # if selected:
-                    #     # # восстановить выделение
-                    #     # # TODO: Кажется срабатывает событие изменения сцены при этом. Нужно как-то отключить обработку этого события при восстановлении select
-                    #     # bpy.ops.object.select_all(action='DESELECT')
-                    #     # for obj in selected:
-                    #     #     obj.select_set(True)
-                    #     pass
-
-                    # восстановить активный
-                    # bpy.context.view_layer.objects.active = active_obj
+                    pass
+                pass
+            else:
+                for I, obj in enumerate(objects):
+                    if obj:
+                        # Remove Rigid Body settings from Object
+                        if hasattr(obj, 'rigid_body')==True and obj.rigid_body is not None:
+                            # bpy.context.view_layer.objects.active = obj
+                            # obj.select_set(True)
+                            # bpy.ops.rigidbody.object_remove()
+                            
+                            # with bpy.context.temp_override(
+                            #     object                      =  obj,
+                            #     active_object               =  obj,
+                            #     selected_objects            = [obj],
+                            #     selected_editable_objects   = [obj],
+                            #     view_layer=bpy.context.view_layer, ):
+                            #         bpy.ops.rigidbody.object_remove()
+                            #         pass
+                            run_op_with_override(bpy.ops.rigidbody.object_remove, obj)
+                        pass
                     pass
                 pass
             pass
         else:
-            for I, obj in enumerate(objects):
-                if obj:
-                    # Remove Rigid Body settings from Object
-                    if hasattr(obj, 'rigid_body')==True and obj.rigid_body is not None:
-                        # bpy.context.view_layer.objects.active = obj
-                        # obj.select_set(True)
-                        # bpy.ops.rigidbody.object_remove()
-                        
-                        # with bpy.context.temp_override(
-                        #     object                      =  obj,
-                        #     active_object               =  obj,
-                        #     selected_objects            = [obj],
-                        #     selected_editable_objects   = [obj],
-                        #     view_layer=bpy.context.view_layer, ):
-                        #         bpy.ops.rigidbody.object_remove()
-                        #         pass
-                        run_op_with_override(bpy.ops.rigidbody.object_remove, obj)
-                    pass
-                pass
             pass
         self.outputs['objects'].sv_set(objects)
+        #bpy.context.view_layer.update()
         pass
 
-classes = [SvRigidBodyPrioritySocketsOnOff, SV_PT_ViewportDisplayPropertiesRigidBody, SV_PT_ViewportDisplayPropertiesDialogRigidBody, SvRigidBodyNode]
+classes = [SvRigidBodyClearFCurvesOperator, SvRigidBodyUIShowIcon, SvRigidBodyPrioritySocketsOnOff, SV_PT_ViewportDisplayPropertiesRigidBody, SV_PT_ViewportDisplayPropertiesDialogRigidBody, SvRigidBodyNode]
 register, unregister = bpy.utils.register_classes_factory(classes)

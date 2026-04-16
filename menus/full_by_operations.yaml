@@ -975,6 +975,7 @@
     - ---
     - SvRigidBodyNode
     - SvCopyMaterialSlotsNode
+    - SvSetObjectsReleationNode
 
 - ---
 
