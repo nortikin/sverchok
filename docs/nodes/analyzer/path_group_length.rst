@@ -43,5 +43,5 @@ Examples
 
 Show length of edges with groups:
 
-.. image:: https://github.com/user-attachments/assets/020d287b-c10f-406a-8183-8ca10c88b41a
-  :target: https://github.com/user-attachments/assets/020d287b-c10f-406a-8183-8ca10c88b41a
+.. image:: https://github.com/user-attachments/assets/33372d19-cfb5-4566-a5ba-26aff5c72ad7
+  :target: https://github.com/user-attachments/assets/33372d19-cfb5-4566-a5ba-26aff5c72ad7
