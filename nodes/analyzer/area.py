@@ -91,7 +91,7 @@ class SvAreaNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                         break
                     pass
 
-                for k in sorted(group_polygons):
+                for k in sorted(group_polygons, key=lambda x: (x is not None, x)):
                     _polygons = group_polygons[k]
                     areas_of_group = areas_from_polygons(vertices, _polygons, sum_faces=self.sum_faces)
                     obj1_areas.extend(areas_of_group)
