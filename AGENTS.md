@@ -18,6 +18,14 @@
 - **NumPy** (array operations)
 - **Additional libraries**: scipy, geomdl, skimage, mcubes, circlify, cython, numba, numexpr, ezdxf, pyacvd, pySVCGAL, spyrrow, freecad
 
+## Required Knowledge
+
+In order to effectively develop Sverchok, one has to have understanding of analytical geometry, linear algebra and NURBS mathematics. Knowledge of Blender Python API is also required.
+
+If you do not know how do some mathematical concepts (especially in NURBS
+mathematics) work, or not sure how to use Blender Python API properly, try to
+use searxng tool (if it is available) to search information in the internet.
+
 ## Project Structure
 
 **IMPORTANT**: Project, its root directory and its root module are called `sverchok`, not `sverzok` or anything else! Imports follow the pattern:
