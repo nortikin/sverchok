@@ -385,6 +385,7 @@
     - SvDistancePointPlaneNode
     - SvDistancetLineLineNode
     - SvPathLengthMk2Node
+    - SvPathGroupLength
     - SvOrigins
     - SvGetNormalsNodeMk2
     - SvIntersectLineSphereNode
