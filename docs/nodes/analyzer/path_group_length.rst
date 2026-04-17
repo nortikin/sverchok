@@ -29,8 +29,8 @@ Outputs
 * **Merged Length** - Merged length in all objects with equals group number/name
 * **Grouped of Merged Length** - What group associated with Merged Length
 
-    .. image:: https://github.com/user-attachments/assets/39324386-a992-4ca0-b7fe-5c2c04c0d184
-      :target: https://github.com/user-attachments/assets/39324386-a992-4ca0-b7fe-5c2c04c0d184
+    .. image:: https://github.com/user-attachments/assets/bd49eef9-cc7d-4af5-b6e7-458e54bd9af3
+      :target: https://github.com/user-attachments/assets/bd49eef9-cc7d-4af5-b6e7-458e54bd9af3
 
 if Groups are not connected then default group is 0.
 
