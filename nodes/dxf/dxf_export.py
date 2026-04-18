@@ -184,7 +184,10 @@ class DXFEditOperator(bpy.types.Operator):
         col = box.column(align=True)
         col.label(text="Propose to download ZCAD (nice and easy LGPL2 freepascal CAD)")
         #
-        col.operator("wm.url_open", text="Download ZCAD (linux / windows) (LGPL2 license)", icon='URL').url = "https://github.com/zamtmn/zcad"
+        link_windows = "https://github.com/zamtmn/zcad"
+        link_linux = 'https://disk.yandex.ru/d/LooI-v2ZVwWAUw'
+        col.operator("wm.url_open", text="Download ZCAD (Windows) (LGPL2 license)", icon='URL').url = link_windows
+        col.operator("wm.url_open", text="Download ZCAD (GNU/Linux) (LGPL2 license)", icon='URL').url = link_linux
         #
         col.operator("node.dxf_select_editor", text="Select your DXF editor executable", icon='FILEBROWSER')
         # /home/ololo/git/zcad/cad/bin/zcad
