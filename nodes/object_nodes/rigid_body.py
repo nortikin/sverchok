@@ -171,7 +171,7 @@ def show_popup(message, title="Info", icon='INFO'):
 
 def get_action(ad):
     if hasattr(ad, "action_slot") and ad.action_slot:
-        return ad.action_slot.action
+        return ad.action_slot
     elif hasattr(ad, "action"):
         return ad.action
     else:
@@ -188,31 +188,36 @@ def get_fcurves(obj):
         return []
 
     action = ad.action
-    slot = getattr(ad, "action_slot", None)
+    slot = get_action(ad)
     if action is None or slot is None:
         return []
 
     result = []
 
-    for layer in action.layers:
-        for strip in layer.strips:
-            # Нас интересует keyframe strip, который умеет вернуть channelbag для slot.
-            bag = None
+    if hasattr(action, "fcurves"):
+        # Blender 3.0
+        result.extend( [fcurve for fcurve in action.fcurves] )
+    else:
+        for layer in action.layers:
+            for strip in layer.strips:
+                # Нас интересует keyframe strip, который умеет вернуть channelbag для slot.
+                bag = None
 
-            # На разных сборках/переходных API имя может отличаться,
-            # поэтому пробуем несколько вариантов.
-            if hasattr(strip, "channelbag"):
-                try:
-                    bag = strip.channelbag(slot, ensure=False)
-                except TypeError:
-                    bag = strip.channelbag(slot)
-            elif hasattr(strip, "channelbag_for_slot"):
-                bag = strip.channelbag_for_slot(slot)
-            elif hasattr(strip, "channelbag_slot"):
-                bag = strip.channelbag_slot(slot)
+                # На разных сборках/переходных API имя может отличаться,
+                # поэтому пробуем несколько вариантов.
+                if hasattr(strip, "channelbag"):
+                    try:
+                        bag = strip.channelbag(slot, ensure=False)
+                    except TypeError:
+                        bag = strip.channelbag(slot)
+                elif hasattr(strip, "channelbag_for_slot"):
+                    bag = strip.channelbag_for_slot(slot)
+                elif hasattr(strip, "channelbag_slot"):
+                    bag = strip.channelbag_slot(slot)
 
-            if bag and hasattr(bag, "fcurves"):
-                result.extend(list(bag.fcurves))
+                if bag and hasattr(bag, "fcurves"):
+                    result.extend(list(bag.fcurves))
+        pass
 
     return result
 
@@ -227,35 +232,43 @@ def remove_fcurves(obj, data_path):
         return []
 
     action = ad.action
-    slot = getattr(ad, "action_slot", None)
+    slot = get_action(ad)
     if action is None or slot is None:
         return []
 
     result = []
+    if hasattr(action, "fcurves"):
+        # Blender 3.0
+        for fcurve in list(action.fcurves):
+            action.fcurves.remove(fcurve)
+            #result.append(fcurve) # В Blender 3.0 нельзя обращаться к кривой после удаления. Возникает исключение An exception was raised: ReferenceError('StructRNA of type FCurve has been removed'). Если требуется прочитать свойства, то это нужно делать заранее.
+    else:
+        for layer in action.layers:
+            for strip in layer.strips:
+                # Нас интересует keyframe strip, который умеет вернуть channelbag для slot.
+                bag = None
 
-    for layer in action.layers:
-        for strip in layer.strips:
-            # Нас интересует keyframe strip, который умеет вернуть channelbag для slot.
-            bag = None
+                # На разных сборках/переходных API имя может отличаться,
+                # поэтому пробуем несколько вариантов.
+                if hasattr(strip, "channelbag"):
+                    try:
+                        bag = strip.channelbag(slot, ensure=False)
+                    except TypeError:
+                        bag = strip.channelbag(slot)
+                elif hasattr(strip, "channelbag_for_slot"):
+                    bag = strip.channelbag_for_slot(slot)
+                elif hasattr(strip, "channelbag_slot"):
+                    bag = strip.channelbag_slot(slot)
 
-            # На разных сборках/переходных API имя может отличаться,
-            # поэтому пробуем несколько вариантов.
-            if hasattr(strip, "channelbag"):
-                try:
-                    bag = strip.channelbag(slot, ensure=False)
-                except TypeError:
-                    bag = strip.channelbag(slot)
-            elif hasattr(strip, "channelbag_for_slot"):
-                bag = strip.channelbag_for_slot(slot)
-            elif hasattr(strip, "channelbag_slot"):
-                bag = strip.channelbag_slot(slot)
-
-            if bag and hasattr(bag, "fcurves"):
-                for fc_to_remove in bag.fcurves:
-                    if fc_to_remove.data_path in data_path:
-                        bag.fcurves.remove(fc_to_remove)
+                if bag and hasattr(bag, "fcurves"):
+                    for fc_to_remove in bag.fcurves:
+                        if fc_to_remove.data_path in data_path:
+                            bag.fcurves.remove(fc_to_remove)
+                            #result.append(fcurve)
+                        pass
                     pass
-                pass
+            pass
+        pass
 
     return result
 
@@ -318,48 +331,90 @@ def copy_fcurves(src_obj, target_obj, data_paths, only_clear=False):
     dst_action = target_obj.animation_data.action
     dst_fcurves = remove_fcurves(target_obj, valid_paths,)
 
-    # --- Удаление старых FCurves (ВАЖНО: через list)
-    fcurves_to_remove = [
-        fc for fc in list(dst_fcurves)
-        if fc.data_path in valid_paths
-    ]
+    ## --- Удаление старых FCurves (ВАЖНО: через list)
+    # 
+    # fcurves_to_remove = [
+    #     fc for fc in list(dst_fcurves)
+    #     if fc.data_path in valid_paths
+    # ]
 
-    #print(f'Количество fcurves_to_remove: {len(fcurves_to_remove)}, {fcurves_to_remove}')
+    # #print(f'Количество fcurves_to_remove: {len(fcurves_to_remove)}, {fcurves_to_remove}')
 
-    for fc in fcurves_to_remove:
-        dst_fcurves.remove(fc)
+    # for fc in fcurves_to_remove:
+    #     dst_fcurves.remove(fc)
 
     if only_clear==True:
         return
 
     # --- Копирование
-    for fc in src_fcurves:
-        if fc.data_path not in valid_paths:
-            continue
+    if hasattr(dst_action, "fcurve_ensure_for_datablock")==False:
+        # Blender 3.0
+        for fc in src_fcurves:
+            if fc.data_path not in valid_paths:
+                continue
 
-        new_fc = dst_action.fcurve_ensure_for_datablock(
-            target_obj,
-            data_path=fc.data_path,
-            index=fc.array_index
-        )
+            # В 3.0 нет fcurve_ensure_for_datablock
+            new_fc = dst_action.fcurves.find(fc.data_path, index=fc.array_index)
 
-        # очищаем существующие ключи (если были)
-        new_fc.keyframe_points.clear()
+            if new_fc is None:
+                new_fc = dst_action.fcurves.new(
+                    data_path=fc.data_path,
+                    index=fc.array_index
+                )
 
-        new_fc.keyframe_points.add(len(fc.keyframe_points))
+            # очищаем существующие ключи (если были)
+            kps = new_fc.keyframe_points
+            if hasattr(kps, "clear"):
+                kps.clear()
+            else:
+                for kp in list(kps):
+                    kps.remove(kp)
 
-        for i, kp in enumerate(fc.keyframe_points):
-            new_kp = new_fc.keyframe_points[i]
+            new_fc.keyframe_points.add(len(fc.keyframe_points))
 
-            new_kp.co = kp.co.copy()
-            new_kp.handle_left = kp.handle_left.copy()
-            new_kp.handle_right = kp.handle_right.copy()
+            for i, kp in enumerate(fc.keyframe_points):
+                new_kp = new_fc.keyframe_points[i]
 
-            new_kp.interpolation = kp.interpolation
-            new_kp.handle_left_type = kp.handle_left_type
-            new_kp.handle_right_type = kp.handle_right_type
+                new_kp.co = kp.co.copy()
+                new_kp.handle_left = kp.handle_left.copy()
+                new_kp.handle_right = kp.handle_right.copy()
 
-        new_fc.update()
+                new_kp.interpolation = kp.interpolation
+                new_kp.handle_left_type = kp.handle_left_type
+                new_kp.handle_right_type = kp.handle_right_type
+
+            # В 3.0 лучше обновлять так:
+            new_fc.keyframe_points.update()
+        pass
+    else:
+        for fc in src_fcurves:
+            if fc.data_path not in valid_paths:
+                continue
+
+            new_fc = dst_action.fcurve_ensure_for_datablock(
+                target_obj,
+                data_path=fc.data_path,
+                index=fc.array_index
+            )
+
+            # очищаем существующие ключи (если были)
+            new_fc.keyframe_points.clear()
+
+            new_fc.keyframe_points.add(len(fc.keyframe_points))
+
+            for i, kp in enumerate(fc.keyframe_points):
+                new_kp = new_fc.keyframe_points[i]
+
+                new_kp.co = kp.co.copy()
+                new_kp.handle_left = kp.handle_left.copy()
+                new_kp.handle_right = kp.handle_right.copy()
+
+                new_kp.interpolation = kp.interpolation
+                new_kp.handle_left_type = kp.handle_left_type
+                new_kp.handle_right_type = kp.handle_right_type
+
+            new_fc.update()
+            pass
         pass
 
     return
@@ -521,9 +576,16 @@ def draw_properties(layout, node_group, node_name):
             row = root_grid.row(align=True)
             row.alignment='LEFT'
             row.prop(node, node_property_name_apply,)
-        
-
         pass
+    if bpy.data.node_groups[node_group].sv_process==False:
+        row = layout.row(align=True)
+        row.alignment = 'CENTER'
+        row.alert = True
+        col = row.column(align=False)
+        col.alignment = 'CENTER'
+        col.label(text=f'WARNING! "Live update" is not enabled! ')
+        col.label(text=f'Sverchok node group "{node_group}" is not working ', icon='ERROR')
+
     pass
 
 def draw_copy_or_clear_animated_properties(layout, node_group, node_name):
@@ -566,10 +628,15 @@ def draw_copy_or_clear_animated_properties(layout, node_group, node_name):
             row.alignment='LEFT'
             row.prop(node, object_rb_property_name_animation_copy, icon='ANIM')
             pass
-       
-
         pass
-
+    if bpy.data.node_groups[node_group].sv_process==False:
+        row = layout.row(align=True)
+        row.alignment = 'CENTER'
+        row.alert = True
+        col = row.column(align=True)
+        col.alignment = 'CENTER'
+        col.label(text=f'WARNING! "Live update" is not enabled! ')
+        col.label(text=f'Copy/clear animation will not work ', icon='ERROR')
     pass
 
 class SV_PT_ViewportDisplayPropertiesDialogRigidBody(bpy.types.Operator):
@@ -634,10 +701,10 @@ class SV_PT_CopyAnimatedPropertiesDialogRigidBody(bpy.types.Operator):
     def invoke(self, context, event):
         self.node_name = context.node.name
         self.node_group = context.annotation_data_owner.name_full
-        return context.window_manager.invoke_props_dialog(self, width=350)
+        return context.window_manager.invoke_props_dialog(self, width=400)
 
     def draw(self, context):
-        # Прочитать и определить здесь, какие парамерны аниммированы и вывести в окне
+        # Прочитать и определить здесь, какие парамерны анимированы и вывести в окне
         # признак, что параметр анимирован (что он не будет устанавливаться при анимации
         # в работе этого нода, даже если выставлен priority, т.е. animated/kinetic
         # отменяет приоритет)

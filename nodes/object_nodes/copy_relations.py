@@ -246,7 +246,6 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
             pass
         else:
             try:
-                t1 = datetime.now()-datetime.now()
                 for I, obj in enumerate(object_target_pointers):
                     ID = objects_maps[I] if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else I
                     try:
@@ -257,14 +256,9 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
                         raise Exception(f'0002. "Rigid Body settings"[{ID}] exception: {_ex}')
 
                     #if self.copy_objects_parent==True:
-                    t2 = datetime.now()
                     copy_object_relations(object_source_pointers_ID, obj)
-                    t2 = datetime.now()-t2
-                    t1 += t2
                     pass
                 pass
-                #t1 = datetime.now()-t1
-                print(f"t1 = {t1}")
             except Exception as _ex:
                 pass
             self.copy_objects_parent=False
