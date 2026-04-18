@@ -973,7 +973,7 @@
     - SvSculptMaskNode
     - SvSelectMeshVerts
     - ---
-    - SvRigidBodyNode
+    - SvRigidBodyCopy
     - SvCopyMaterialSlotsNode
     - SvSetObjectsReleationNode
 

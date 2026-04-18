@@ -82,14 +82,15 @@ from sverchok.utils.handle_blender_data import BlModifier
 #     target_obj.matrix_local = local_matrix
 
 import bpy
+from datetime import datetime
 
 def copy_object_relations(src_obj, target_obj):
-    bpy.context.view_layer.update()
+    #bpy.context.view_layer.update()
 
     new_parent = src_obj
     # if target_obj.parent == new_parent and target_obj.parent_type == 'OBJECT' and target_obj.parent_bone == "":
     #     return
-
+    
     world_matrix = target_obj.matrix_world.copy()
 
     target_obj.matrix_world = new_parent.matrix_world.inverted() @ target_obj.matrix_world
@@ -139,22 +140,22 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     object_target_pointer1: bpy.props.PointerProperty(
-        name="Target Object",
+        name="Objects",
         description = "Where to copy material slots",
         type=bpy.types.Object,
     )
 
     objects_map1 : bpy.props.IntProperty(
-        name = "Original Object Id",
-        description = "Original Object Id of Material slots",
+        name = "Objects map",
+        description = "Original Object Id of Objects Parent list",
         default = 0,
         min = 0,
         update = updateNode)
 
 
     object_source_pointer1: bpy.props.PointerProperty(
-        name="Source Object",
-        description = "Source Object of material slots",
+        name="Objects Parent",
+        description = "Objects Parent of Objects",
         type=bpy.types.Object,
     )
 
@@ -179,6 +180,14 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
         row.prop(self, 'clear_objects_parent', toggle=True, icon='CANCEL', text='')
         pass
 
+    def custom_draw_input_sockets(self, socket, context, layout):
+        if socket.is_linked==True:
+            layout.label(text=socket.label + f". {socket.objects_number}")
+        else:
+            layout.prop(self, socket.prop_name, text=self.label or None)
+        return
+
+
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket' , 'object_target_pointers' ).prop_name  = 'object_target_pointer1'
         self.inputs.new('SvStringsSocket', 'objects_maps'           ).prop_name  = 'objects_map1'
@@ -189,13 +198,37 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs['object_source_pointers'].label  = 'Objects with Relations'
         
         self.outputs.new('SvObjectSocket', 'objects'                ).label = "Objects"
+
+        for si in self.inputs:
+        # for (sn, params) in ({
+        #         '1' : {'node_property_name': 'object_target_pointer1' , 'socket_name': 'object_target_pointers'   , },
+        #         '2' : {'node_property_name': 'objects_map1'           , 'socket_name': 'objects_maps'              , },
+        #         '3' : {'node_property_name': 'object_source_pointer1' , 'socket_name': 'object_source_pointers'   , }
+        #     }).items():
+            # node_property_name = si.prop_name
+            # socket_name = params['socket_name']
+            prop_name = None
+            type = None
+            description=None
+            if hasattr(self.__class__, 'bl_rna')==True and si.prop_name in self.__class__.bl_rna.properties:
+                prop = self.__class__.bl_rna.properties[si.prop_name]
+                prop_name = prop.name
+                type = prop.type
+                description = prop.description
+            if description:
+                si.description = f'{description}'
+            if prop_name:
+                si.label = f'{prop_name}'
+            si.custom_draw = 'custom_draw_input_sockets'
+            pass
+
         pass
 
     def process(self):
         if not any(socket.is_linked for socket in self.inputs):
             return
         
-        # bpy.context.view_layer.update()
+        bpy.context.view_layer.update()
         
         object_target_pointers  = self.inputs['object_target_pointers' ].sv_get(deepcopy=False, default=[self.object_target_pointer1 ])
         if self.inputs['object_target_pointers'].is_linked==False:
@@ -213,6 +246,7 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
             pass
         else:
             try:
+                t1 = datetime.now()-datetime.now()
                 for I, obj in enumerate(object_target_pointers):
                     ID = objects_maps[I] if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else I
                     try:
@@ -223,9 +257,14 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
                         raise Exception(f'0002. "Rigid Body settings"[{ID}] exception: {_ex}')
 
                     #if self.copy_objects_parent==True:
+                    t2 = datetime.now()
                     copy_object_relations(object_source_pointers_ID, obj)
+                    t2 = datetime.now()-t2
+                    t1 += t2
                     pass
                 pass
+                #t1 = datetime.now()-t1
+                print(f"t1 = {t1}")
             except Exception as _ex:
                 pass
             self.copy_objects_parent=False
