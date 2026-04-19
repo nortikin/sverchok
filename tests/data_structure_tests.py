@@ -368,3 +368,87 @@ class MapRecursiveTests(SverchokTestCase):
         result = unzip_dict_recursive(data)
         expected = {'A': [[1], [3], [5]], 'B': [[2], [4], [6]]}
         self.assert_dicts_equal(result, expected)
+
+
+class MatchShortTests(SverchokTestCase):
+    def test_match_short_first_shorter(self):
+        lsts = [[1, 2], [3, 4, 5, 6]]
+        result = match_short(lsts)
+        expected = [[1, 2], [3, 4]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_short_same_length(self):
+        lsts = [[1, 2], [3, 4], [5, 6]]
+        result = match_short(lsts)
+        expected = [[1, 2], [3, 4], [5, 6]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_short_second_shorter(self):
+        lsts = [[1, 2, 3, 4, 5], [10, 11]]
+        result = match_short(lsts)
+        expected = [[1, 2], [10, 11]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_short_empty_inner(self):
+        lsts = [[1, 2], []]
+        result = match_short(lsts)
+        expected = []
+        self.assertEqual(result, expected)
+
+    def test_match_short_empty_outer(self):
+        lsts = []
+        result = match_short(lsts)
+        expected = []
+        self.assertEqual(result, expected)
+
+
+class MatchCrossTests(SverchokTestCase):
+    def test_match_cross_first_shorter(self):
+        lsts = [[1, 2], [5, 6, 7]]
+        result = match_cross(lsts)
+        expected = [[1, 1, 1, 2, 2, 2], [5, 6, 7, 5, 6, 7]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross_three_lists(self):
+        lsts = [[1, 2], [3, 4], [5, 6]]
+        result = match_cross(lsts)
+        expected = [[1, 1, 1, 1, 2, 2, 2, 2], [3, 3, 4, 4, 3, 3, 4, 4], [5, 6, 5, 6, 5, 6, 5, 6]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross_longer_lists(self):
+        lsts = [[1, 2, 3, 4], [5, 6, 7, 8]]
+        result = match_cross(lsts)
+        expected = [[1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4], [5, 6, 7, 8, 5, 6, 7, 8, 5, 6, 7, 8, 5, 6, 7, 8]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross_empty_list(self):
+        lsts = [[1, 2], [], [3]]
+        result = match_cross(lsts)
+        expected = []
+        self.assertEqual(result, expected)
+
+
+class MatchCross2Tests(SverchokTestCase):
+    def test_match_cross2_first_shorter(self):
+        lsts = [[1], [2, 3]]
+        result = match_cross2(lsts)
+        expected = [[1, 1], [2, 3]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross2_three_lists(self):
+        lsts = [[1, 2], [3, 4], [5, 6]]
+        result = match_cross2(lsts)
+        expected = [[1, 2, 1, 2, 1, 2, 1, 2], [3, 3, 4, 4, 3, 3, 4, 4], [5, 5, 5, 5, 6, 6, 6, 6]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross2_standard_interleaving(self):
+        lsts = [[1, 2], [5, 6, 7]]
+        result = match_cross2(lsts)
+        expected = [[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross2_empty_list(self):
+        lsts = [[1, 2], [], [3]]
+        result = match_cross2(lsts)
+        expected = []
+        self.assertEqual(result, expected)
