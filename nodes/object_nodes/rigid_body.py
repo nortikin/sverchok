@@ -517,7 +517,7 @@ def draw_properties(layout, node_group, node_name):
     node = bpy.data.node_groups[node_group].nodes[node_name]
     #layout.use_property_split = True https://blender.stackexchange.com/questions/161581/how-to-display-the-animate-property-diamond-keyframe-insert-button-2-8x
     #layout.alignment = 'LEFT'
-    root_grid = layout.column(align=True).grid_flow(row_major=True, columns=2, align=True, even_columns=False)
+    root_grid = layout.column(align=True).grid_flow(row_major=True, columns=3, align=True, even_columns=False)
     root_grid.alignment = 'EXPAND'
     #root_grid.column(align=True).row(align=True).label(text='')
     #root_grid.column(align=True).row(align=True).label(text='')
@@ -540,8 +540,6 @@ def draw_properties(layout, node_group, node_name):
         prop_enabled = True
         if 'node_property_name_apply' in param_settings:
             node_property_name_apply = param_settings['node_property_name_apply']
-            # row = root_grid.row(align=True)
-            # row.prop(node, node_property_name_apply,)
             if getattr(node, node_property_name_apply)==False:
                 prop_enabled = False
 
@@ -557,12 +555,14 @@ def draw_properties(layout, node_group, node_name):
             node_property_map_mode = param_settings['node_property_map_mode']
             socket_name = param_settings['socket_name']
             row = root_grid.row(align=True)
-            row.enabled = prop_enabled
+            #row.enabled = prop_enabled
             row.alignment='RIGHT'
 
-            op = row.operator(SvRigidBodyUIShowIcon.bl_idname, icon='RADIOBUT_ON' if node.inputs[socket_name].is_linked else 'RADIOBUT_OFF', text='', emboss=False)
+            op = row.operator(SvRigidBodyUIShowIcon.bl_idname, icon='FORWARD' if node.inputs[socket_name].is_linked else 'RADIOBUT_OFF', text='', emboss=False)
             op.description_text = 'Socket is connected.' if node.inputs[socket_name].is_linked==True else 'Socket is not connected.'
 
+            row = root_grid.row(align=True)
+            row.enabled = prop_enabled
             row.prop(node, node_property_map_mode, expand=True)
 
         # if 'object_rb_property_name_animation_copy' in param_settings:
@@ -577,6 +577,7 @@ def draw_properties(layout, node_group, node_name):
             row.alignment='LEFT'
             row.prop(node, node_property_name_apply,)
         pass
+
     if bpy.data.node_groups[node_group].sv_process==False:
         row = layout.row(align=True)
         row.alignment = 'CENTER'
@@ -619,14 +620,14 @@ def draw_copy_or_clear_animated_properties(layout, node_group, node_name):
             #row.enabled = prop_enabled
             row.alignment='RIGHT'
 
-            op = row.operator(SvRigidBodyUIShowIcon.bl_idname, icon='RADIOBUT_ON' if node.inputs[socket_name].is_linked else 'RADIOBUT_OFF', text='', emboss=False)
+            op = row.operator(SvRigidBodyUIShowIcon.bl_idname, icon='FORWARD' if node.inputs[socket_name].is_linked else 'RADIOBUT_OFF', text='', emboss=False)
             op.description_text = 'Socket is connected.' if node.inputs[socket_name].is_linked==True else 'Socket is not connected.'
 
         if 'object_rb_property_name_animation_copy' in param_settings:
             object_rb_property_name_animation_copy = param_settings['object_rb_property_name_animation_copy']
             row = root_grid.row(align=False)
             row.alignment='LEFT'
-            row.prop(node, object_rb_property_name_animation_copy, icon='ANIM')
+            row.prop(node, object_rb_property_name_animation_copy, icon='KEYTYPE_KEYFRAME_VEC' if getattr(node, object_rb_property_name_animation_copy)==True else 'HANDLETYPE_FREE_VEC' )
             pass
         pass
     if bpy.data.node_groups[node_group].sv_process==False:
@@ -640,10 +641,10 @@ def draw_copy_or_clear_animated_properties(layout, node_group, node_name):
     pass
 
 class SV_PT_ViewportDisplayPropertiesDialogRigidBody(bpy.types.Operator):
-    '''Additional node properties\nYou can pan dialog window.'''
+    '''Overwrite Settings of Rigid Body properties node values and sockets'''
     # this combination do not show this panel on the right side panel
     bl_idname="sv.viewport_display_properties_dialog_rigid_body_objects"
-    bl_label = "Overwrite Rigid Body properties with node properties or connected sockets"
+    bl_label = "Overwrite Settings"
 
     # horizontal size
     # bl_ui_units_x = 40 - Has no influence in Dialog mode, use 'width' property in context.window_manager.invoke_props_dialog
@@ -661,7 +662,7 @@ class SV_PT_ViewportDisplayPropertiesDialogRigidBody(bpy.types.Operator):
     def invoke(self, context, event):
         self.node_name = context.node.name
         self.node_group = context.annotation_data_owner.name_full
-        return context.window_manager.invoke_props_dialog(self, width=350)
+        return context.window_manager.invoke_props_dialog(self, width=400)
 
     def draw(self, context):
         # Прочитать и определить здесь, какие парамерны аниммированы и вывести в окне
@@ -680,10 +681,10 @@ class SV_PT_ViewportDisplayPropertiesDialogRigidBody(bpy.types.Operator):
         return None
 
 class SV_PT_CopyAnimatedPropertiesDialogRigidBody(bpy.types.Operator):
-    '''Copy Animated Properties of Riged Body (FCurve)\nYou can pan dialog window.'''
+    '''Copy Animated Properties of Rigid Body settings (FCurve)'''
     # this combination do not show this panel on the right side panel
     bl_idname="sv.copy_animation_properties_dialog_rigid_body"
-    bl_label = "Copy Animated Properties of Rigid Body"
+    bl_label = "Copy Animated Properties of Rigid Body settings"
 
     # horizontal size
     # bl_ui_units_x = 40 - Has no influence in Dialog mode, use 'width' property in context.window_manager.invoke_props_dialog
@@ -724,9 +725,9 @@ class SV_PT_CopyAnimatedPropertiesDialogRigidBody(bpy.types.Operator):
         return None
 
 class SV_PT_ClearAnimatedPropertiesDialogRigidBody(bpy.types.Operator):
-    '''Clear selected Animated Properties of Riged Body (FCurve)\nYou can pan dialog window.'''
+    '''Clear Animated Properties of Rigid Body (FCurve)'''
     bl_idname="sv.clear_animation_properties_dialog_rigid_body"
-    bl_label = "Clear selected Animated Properties of Rigid Body"
+    bl_label = "Clear Animated Properties of Rigid Body"
 
     # horizontal size
     # bl_ui_units_x = 40 - Has no influence in Dialog mode, use 'width' property in context.window_manager.invoke_props_dialog
