@@ -197,9 +197,10 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
                 ast_node = self.get_node_from_function_name(new_func_name)
                 code = self.extract_code(ast_node, joined=True)
                 # locals().update(self.make_new_locals())  # maybe..
-                locals().update(self.snlite_aliases)
-                exec(code, locals(), locals())
-                callbacks[new_func_name] = locals()[new_func_name]
+                exec_dict = {'self': self}
+                exec_dict.update(self.snlite_aliases)
+                exec(code, exec_dict, exec_dict)
+                callbacks[new_func_name] = exec_dict[new_func_name]
 
     @property
     def sv_internal_links(self):
@@ -507,44 +508,53 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
         }
 
     def process_script(self):
+        exec_dict = {'self': self}
+
+        def flush_output_data(data_map):
+            for idx, output in enumerate(self.outputs):
+                self.outputs[idx].sv_set(data_map.get(output.name, []))
+
         __local__dict__ = self.make_new_locals()
-        locals().update(__local__dict__)
-        locals().update(self.snlite_aliases)
+
+        exec_dict.update(__local__dict__)
+        exec_dict.update(self.snlite_aliases)
 
         for output in self.outputs:
-            locals().update({output.name: []})
+            exec_dict[output.name] = []
 
         try:
             socket_info = self.current_node_dict['sockets']
 
             # inject once!
             if not self.injected_state:
-                self.inject_state(locals())
-                self.inject_function(locals(), func_name="ui", end="pass")
-                self.inject_function(locals(), func_name="sv_internal_links")
+                self.inject_state(exec_dict)
+                self.inject_function(exec_dict, func_name="ui", end="pass")
+                self.inject_function(exec_dict, func_name="sv_internal_links")
             else:
-                locals().update(socket_info['setup_state'])
+                exec_dict.update(socket_info['setup_state'])
 
             if self.inject_params:
-                locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
+                exec_dict['parameters'] = [__local__dict__.get(s.name) for s in self.inputs]
 
             if socket_info['inputs_required']:
                 # if not fully connected do not raise.
                 # should inform the user that the execution was halted because not 
                 # enough input was provided for the script to do anything useful.
                 if not self.socket_requirements_met(socket_info):
+                    flush_output_data(exec_dict)
                     return
 
-            exec(self.script_str, locals(), locals())
+            _local_out = {}
+            exec(self.script_str, exec_dict, _local_out)
+            exec_dict.update(_local_out)  # fix for Python 3.12 exec() scoping (Blender 5.1+)
 
-            for idx, _socket in enumerate(self.outputs):
-                vals = locals()[_socket.name]
-                self.outputs[idx].sv_set(vals)
+            flush_output_data(exec_dict)
 
             set_autocolor(self, True, READY_COLOR)
 
 
         except Exception as err:
+            flush_output_data(exec_dict)
 
 
             self.info(f"Unexpected error: {sys.exc_info()[0]}")
