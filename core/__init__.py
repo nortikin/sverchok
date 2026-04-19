@@ -67,7 +67,7 @@ def draw_node_manual(self, context):
             layout.separator()
             layout.operator(
                 "wm.url_open",
-                text="Online Manual",
+                text="Online Manual (SV)",
                 icon='HELP'
             ).url = help_url
             #layout.operator("wm.doc_view_manual", text="Online Manual" ) # do not work as expected in Blender <3.6
