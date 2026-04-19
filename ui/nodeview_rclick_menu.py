@@ -12,6 +12,7 @@ import sverchok.ui.nodeview_space_menu as sm
 from sverchok.utils.sv_node_utils import frame_adjust
 from sverchok.ui.presets import node_supports_presets, apply_default_preset
 from sverchok.core.sockets import SvCurveSocket, SvSurfaceSocket, SvStringsSocket, SvSolidSocket
+from sverchok.core import draw_node_manual
 
 
 supported_mesh_viewers = {'SvMeshViewer', 'SvViewerDrawMk4'}
@@ -314,6 +315,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_SvCategoryAllCategories", text='node menu')
         # layout.operator("node.duplicate_move")
         self.draw_conveniences(context, node)
+        draw_node_manual(self, context)
 
     def draw_conveniences(self, context, node):
         layout = self.layout

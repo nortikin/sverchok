@@ -3,6 +3,9 @@ import logging
 import sys
 import sverchok
 import bpy
+import types
+import inspect
+from pathlib import Path
 from sverchok.utils.development import get_version_string
 from sverchok.utils.sv_logging import add_file_handler, remove_console_handler
 
@@ -29,15 +32,98 @@ core_modules = [
 def imported_utils_modules():
     return [m for n, m in sys.modules.items() if 'sverchok.utils' in n]
 
+def iter_modules(module, visited=None):
+    if visited is None:
+        visited = set()
+
+    if module in visited:
+        return
+    visited.add(module)
+
+    yield module
+
+    for obj in module.__dict__.values():
+        if isinstance(obj, types.ModuleType)  and obj.__name__.startswith("sverchok.nodes"):
+            yield from iter_modules(obj, visited)
+    pass
+
+
+sverchok_help_prefix = "https://nortikin.github.io/sverchok/docs/nodes/"
+sverchok_nodes_map = tuple()
+sverchok_help_nodes_map_was_registered = False
+def sverchok_help_nodes_map():
+    return sverchok_help_prefix, sverchok_nodes_map
+
+def draw_node_manual(self, context):
+    layout = self.layout
+    node = context.active_node
+
+    if node:
+        node_name = node.bl_idname
+        node_name_lower = node_name.lower()
+        elem = [nm for nm in sverchok_nodes_map if nm[0].endswith("."+node_name_lower)]
+        if elem:
+            help_url = sverchok_help_prefix + elem[0][1]
+            layout.separator()
+            layout.operator(
+                "wm.url_open",
+                text="Online Manual (SV)",
+                icon='HELP'
+            ).url = help_url
+            #layout.operator("wm.doc_view_manual", text="Online Manual" ) # do not work as expected in Blender <3.6
+        pass
+    pass
+
 
 def sv_register_modules(modules):
+    global sverchok_help_prefix, sverchok_nodes_map, sverchok_help_nodes_map_was_registered
     for m in modules:
         if hasattr(m, "register"):
             # print("Registering module: {}".format(m.__name__))
             m.register()
+    _sverchok_nodes = [m for m in modules if m.__name__ == 'sverchok.nodes']
+    if _sverchok_nodes:
+        sverchok_nodes = _sverchok_nodes[0]
+        result = []
+        for mod in iter_modules(sverchok_nodes):
+            for _, cls in inspect.getmembers(mod, inspect.isclass):
+                if not cls.__module__.startswith(mod.__name__):
+                    continue
 
+                try:
+                    if issubclass(cls, bpy.types.Node):
+                        if hasattr(cls, 'bl_idname'):
+                            p = Path(mod.__file__)
+                            mod_filename = p.stem
+                            mod_parentdir_name = p.parent.name
+                            d = dict(c=cls, filename = mod_filename, parentdir = mod_parentdir_name)
+                            help_mapping = (f'bpy.types.{cls.bl_idname}'.lower(), f'{mod_parentdir_name}/{mod_filename}.html',)
+                            result.append(help_mapping)
+                        pass
+                    pass
+                except TypeError:
+                    pass
+                pass
+            pass
+        
+        if result:
+            try:
+                if bpy.app.version < (3, 6):
+                    # in the old versions of sverchok add/remove menu manually
+                    bpy.types.NODE_MT_context_menu.append(draw_node_manual)
+
+                sverchok_nodes_map = tuple(result)
+                bpy.utils.register_manual_map(sverchok_help_nodes_map)
+                sverchok_help_nodes_map_was_registered = True
+            except RuntimeError as e:
+                print("Error registering bpy.utils.register_manual_map")
+                pass
+            pass
+
+    pass
 
 def sv_unregister_modules(modules):
+    global sverchok_help_prefix, sverchok_nodes_map, sverchok_help_nodes_map_was_registered
     for m in reversed(modules):
         if hasattr(m, "unregister"):
             try:
@@ -45,6 +131,16 @@ def sv_unregister_modules(modules):
             except RuntimeError as e:
                 print("Error unregistering module: {}".format(m.__name__))
                 print(str(e))
+    try:
+        if sverchok_help_nodes_map_was_registered==True:
+            if bpy.app.version < (3, 6):
+                # in the old versions of sverchok add/remove menu manually
+                bpy.types.NODE_MT_context_menu.remove(draw_node_manual)
+            bpy.utils.unregister_manual_map(sverchok_help_nodes_map)
+        sverchok_help_nodes_map_was_registered = False
+    except RuntimeError as e:
+        print("Error unregistering bpy.utils.unregister_manual_map")
+    pass
 
 
 def import_nodes():
@@ -98,6 +194,18 @@ def import_logging(imported_modules):
 def import_all_modules(imported_modules, mods_bases):
     for mods, base in mods_bases:
         import_modules(mods, base, imported_modules)
+    # register context help
+    _sverchok_nodes = [m for m in imported_modules if m.__name__ == 'sverchok.nodes']
+    if _sverchok_nodes:
+        sverchok_nodes = _sverchok_nodes[0]
+        nodes_dict = sverchok_nodes.nodes_dict
+        for category_name in nodes_dict:
+            category = sverchok_nodes.nodes_dict[category_name]
+            for node_name in category:
+                node_help_map = ((f'bpy.types.{node_name}', f'{category_name}/{node_name}.html'))
+                pass
+
+    pass
 
 
 def init_architecture():
