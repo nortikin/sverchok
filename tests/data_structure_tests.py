@@ -79,19 +79,62 @@ class DataStructureTests(SverchokTestCase):
             result = ensure_nesting_level(data, 1)
             sv_logger.error("ensure_nesting_level() returned %s", result)
 
+    def test_ensure_nesting_level_already_correct(self):
+        result = ensure_nesting_level([17], 1)
+        self.assertEqual(result, [17])
+
     def test_transpose_list(self):
         self.subtest_assert_equals(transpose_list([[1,2], [3,4]]), [[1,3], [2, 4]])
 
-    def test_rotate_list_1(self):
-        input = [1, 2, 3]
+    def test_rotate_list_default(self):
+        input_data = [1, 2, 3]
         expected_output = [2, 3, 1]
-        output = rotate_list(input)
+        output = rotate_list(input_data)
         self.assertEqual(output, expected_output)
 
-    def test_rotate_list_2(self):
-        input = [1, 2, 3]
+    def test_rotate_list_custom_shift(self):
+        input_data = [1, 2, 3]
         expected_output = [3, 1, 2]
-        output = rotate_list(input, 2)
+        output = rotate_list(input_data, 2)
+        self.assertEqual(output, expected_output)
+
+    def test_rotate_list_empty(self):
+        output = rotate_list([])
+        self.assertEqual(output, [])
+
+    def test_rotate_list_zero_shift(self):
+        input_data = [1, 2, 3]
+        output = rotate_list(input_data, 0)
+        self.assertEqual(output, input_data)
+
+    def test_rotate_list_shift_greater_than_length(self):
+        input_data = [1, 2, 3]
+        expected_output = [3, 1, 2]
+        output = rotate_list(input_data, 5)
+        self.assertEqual(output, expected_output)
+
+    def test_match_long_repeat_all_same_length(self):
+        inputs = [[1, 2, 3], [4, 5, 6]]
+        output = match_long_repeat(inputs)
+        expected_output = [[1, 2, 3], [4, 5, 6]]
+        self.assertEqual(output, expected_output)
+
+    def test_match_long_repeat_single_element(self):
+        inputs = [[1], [2, 3]]
+        output = match_long_repeat(inputs)
+        expected_output = [[1, 1], [2, 3]]
+        self.assertEqual(output, expected_output)
+
+    def test_match_long_cycle_all_same_length(self):
+        inputs = [[1, 2, 3], [4, 5, 6]]
+        output = match_long_cycle(inputs)
+        expected_output = [[1, 2, 3], [4, 5, 6]]
+        self.assertEqual(output, expected_output)
+
+    def test_match_long_cycle_single_element(self):
+        inputs = [[1], [2, 3]]
+        output = match_long_cycle(inputs)
+        expected_output = [[1, 1], [2, 3]]
         self.assertEqual(output, expected_output)
 
     def test_describe_data_shape_1(self):
@@ -178,6 +221,12 @@ class DataStructureTests(SverchokTestCase):
         expected_result = [[1,2,3,4]]
         self.assert_sverchok_data_equal(result, expected_result)
 
+    def test_adjust_too_few_instructions(self):
+        instructions = [SvListLevelAdjustment()]
+        input_data = [[1], [2]]
+        with self.assertRaises(Exception):
+            list_levels_adjust(input_data, instructions)
+
     def test_flatten_1(self):
         data = [[1,2], [3,4]]
         result = flatten_data(data)
@@ -195,6 +244,17 @@ class DataStructureTests(SverchokTestCase):
         result = flatten_data(data, target_level=1)
         expected = [1,2, 3,4, 5,6, 7,8]
         self.assert_sverchok_data_equal(result, expected)
+
+    def test_flatten_already_at_target_level(self):
+        data = [[1,2,3,4]]
+        result = flatten_data(data, target_level=1)
+        expected = [1,2,3,4]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_flatten_level_too_shallow(self):
+        data = [1,2,3]
+        with self.assertRaises(TypeError):
+            flatten_data(data, target_level=2)
 
     def test_graft_1(self):
         data = [1,2,3]
@@ -427,6 +487,12 @@ class MatchCrossTests(SverchokTestCase):
         expected = []
         self.assertEqual(result, expected)
 
+    def test_match_cross_empty_outer(self):
+        lsts = []
+        result = match_cross(lsts)
+        expected = []
+        self.assertEqual(result, expected)
+
 
 class MatchCross2Tests(SverchokTestCase):
     def test_match_cross2_first_shorter(self):
@@ -449,6 +515,12 @@ class MatchCross2Tests(SverchokTestCase):
 
     def test_match_cross2_empty_list(self):
         lsts = [[1, 2], [], [3]]
+        result = match_cross2(lsts)
+        expected = []
+        self.assertEqual(result, expected)
+
+    def test_match_cross2_empty_outer(self):
+        lsts = []
         result = match_cross2(lsts)
         expected = []
         self.assertEqual(result, expected)
