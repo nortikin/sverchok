@@ -118,13 +118,46 @@ class SvLogicNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "output_numpy", expand=False)
 
     def migrate_from(self, old_node):
-        self.function_name = old_node.items_
-        self.inputs['A'].default_int_property = old_node.x
-        self.inputs['B'].default_int_property = old_node.y
-        self.inputs['A'].default_float_property = old_node.i_x
-        self.inputs['B'].default_float_property = old_node.i_y
-        self.inputs['A'].default_property_type = 'float' if old_node.prop_types[0] else 'int'
-        self.inputs['B'].default_property_type = 'float' if old_node.prop_types[1] else 'int'
+        if old_node.bl_idname == SvLogicNodeMK2.bl_idname:
+            return
+        elif old_node.bl_idname == 'SvLogicNode':
+            old_node_input_A = old_node.inputs.get('A')
+            old_node_input_B = old_node.inputs.get('B')
+            if hasattr(old_node, 'items_'):
+                self.function_name = old_node.items_
+            if hasattr(old_node, 'x'):
+                self.inputs['A'].default_int_property = old_node.x
+            elif old_node_input_A and hasattr(old_node_input_A, 'default_int_property'):
+                self.inputs['A'].default_int_property = old_node_input_A.default_int_property
+
+            if hasattr(old_node, 'y'):
+                self.inputs['B'].default_int_property = old_node.y
+            elif old_node_input_B and hasattr(old_node_input_B, 'default_int_property'):
+                self.inputs['B'].default_int_property = old_node_input_B.default_int_property
+
+            if hasattr(old_node, 'i_x'):
+                self.inputs['A'].default_float_property = old_node.i_x
+            elif old_node_input_A and hasattr(old_node_input_A, 'default_float_property'):
+                self.inputs['A'].default_float_property = old_node_input_A.default_float_property
+
+            if hasattr(old_node, 'i_y'):
+                self.inputs['B'].default_float_property = old_node.i_y
+            elif old_node_input_B and hasattr(old_node_input_B, 'default_float_property'):
+                self.inputs['B'].default_float_property = old_node_input_B.default_float_property
+
+            if hasattr(old_node, 'prop_types') and len(old_node.prop_types)>0:
+                self.inputs['A'].default_property_type = 'float' if old_node.prop_types[0] else 'int'
+            elif old_node_input_A and hasattr(old_node_input_A, 'default_property_type'):
+                self.inputs['A'].default_property_type = old_node_input_A.default_property_type
+            self.inputs['A'].use_prop = True # like sv_init
+            self.inputs['A'].show_property_type = True
+
+            if hasattr(old_node, 'prop_types') and len(old_node.prop_types)>1:
+                self.inputs['B'].default_property_type = 'float' if old_node.prop_types[1] else 'int'
+            elif old_node_input_B and hasattr(old_node_input_B, 'default_property_type'):
+                self.inputs['B'].default_property_type = old_node_input_B.default_property_type
+            self.inputs['B'].use_prop = True # like sv_init
+            self.inputs['B'].show_property_type = True
 
     def sv_init(self, context):
         a = self.inputs.new('SvStringsSocket', 'A')
