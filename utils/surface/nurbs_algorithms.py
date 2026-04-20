@@ -280,12 +280,43 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
 
     return [curve.transform(None, back) for curve, back in zip(iso_curves, back_vectors)]
 
-def interpolate_nurbs_surface(degree_u, degree_v, points,
+def interpolate_nurbs_surface_piegl(degree_u, degree_v, points,
                               metric='DISTANCE',
                               uknots=None, vknots=None,
                               knotvector_u = None, knotvector_v = None,
                               implementation = SvNurbsMaths.NATIVE,
                               logger=None):
+    """
+    Interpolate NURBS surface from array of points.
+
+    This implements an algorithm described in The NURBS Book, p. 9.2.5.
+    The direct algorithm located in sverchok.utils.surface.nurbs_solver
+    can be even faster if it is possible to use sparse matrices
+    from scipy.
+    So this method is considered as "legacy" and will be left here a) for
+    compatibility reasons; b) for those who can't use scipy but has to do
+    interpolations with a lot of points.
+
+    Args:
+        * degree_u, degree_v: surface degree along U and V direction.
+        * points: points to interpolate between. List of lists of points or
+            np.array of shape (n,m,3). Note: for historical reasons, this method
+            expects a "transposed" array of points: first index enumerates points
+            along V, second index enumerates points along U.
+        * metric: metric to calculate U and V parameters of points.
+        * uknots, vknots: U and V parameters of points. If not provided, will be
+            calculated from metric.
+        * knotvector_u, knotvector_v: surface knotvectors along U and V direction.
+            If not provided, will be calculated from uknots / vknots or from metric.
+            If provided, has to be compatible enough with uknots/vknots, otherwie
+            thre resulting surface can have werid shape (however it still will be
+            a valid interpolation).
+        * implementation: NURBS mathematics implementation
+        * logger: a logger instance
+
+    Returns:
+        * SvNurbsSurface instance.
+    """
     points = np.asarray(points)
     n = len(points)
     m = len(points[0])
