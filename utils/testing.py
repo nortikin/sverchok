@@ -24,6 +24,30 @@ from sverchok.utils.sv_json_import import JSONImporter
 sv_logger = logging.getLogger('sverchok.testing')
 
 
+class LoggingTextBuffer:
+    """
+    A file-like buffer that logs each complete line to a logger
+    as soon as it's available.
+    """
+    def __init__(self, logger):
+        self._logger = logger
+        self._buffer = ""
+
+    def write(self, s):
+        self._buffer += s
+        while '\n' in self._buffer:
+            line, self._buffer = self._buffer.split('\n', 1)
+            self._logger.info(line)
+    
+    def flush(self):
+        pass
+
+    def force_flush(self):
+        if self._buffer:
+            self._logger.info(self._buffer)
+            self._buffer = ""
+
+
 @contextmanager
 def only_test_logs():
     def filter_test_logs(record: logging.LogRecord):
@@ -239,14 +263,14 @@ def run_all_tests(pattern=None, log_file = 'sverchok_tests.log', log_level = Non
     try:
         loader = unittest.TestLoader()
         suite = loader.discover(start_dir = tests_path, pattern = pattern)
-        buffer = StringIO()
+        buffer = LoggingTextBuffer(sv_logger)
         runner = unittest.TextTestRunner(stream = buffer, verbosity=verbosity, failfast=failfast)
         old_nodes.register_all()
         with coverage_report(), only_test_logs():
-            sv_logger.warning("Run all tests with log level=[%s]",
+            sv_logger.info("Run all tests with log level=[%s]",
                               logging.getLevelName(sv_logger.getEffectiveLevel()))
             result = runner.run(suite)
-            sv_logger.info("Test cases result:\n%s", buffer.getvalue())
+            buffer.force_flush()
             return result
     finally:
         logging.getLogger().removeHandler(log_handler)
@@ -867,7 +891,6 @@ if __name__ == "__main__":
         parser.add_argument('--info', dest='log_level', action='store_const', const='INFO', help="Log only information messages")
 
         args = parser.parse_args(argv)
-        #print(args)
 
         if not bpy.app.binary_path:
             bpy.ops.wm.read_userpref()
