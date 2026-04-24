@@ -221,7 +221,7 @@ class BlModifier:
 
         # transfer field
         else:
-            self._mod[f"{name}_use_attribute"] = 1
+            self._mod[f"{name}_use_attribute"] = True
             self._mod[f"{name}_attribute_name"] = name
             obj = BlObject(self._mod.id_data)
             sock = self.gn_tree.inputs[name]
