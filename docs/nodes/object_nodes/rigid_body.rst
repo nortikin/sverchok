@@ -5,6 +5,9 @@ Rigid Body
   :target: https://github.com/user-attachments/assets/b37e081b-4552-476a-a195-cf9a05a880d3
 
 
+.. image:: https://github.com/user-attachments/assets/74b2f61f-1da0-4ce9-b17d-9918d2185fd6
+  :target: https://github.com/user-attachments/assets/74b2f61f-1da0-4ce9-b17d-9918d2185fd6
+
 Description
 -----------
 
