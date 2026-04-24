@@ -204,7 +204,7 @@ class BlModifier:
             data = data[:1]
         if len(data) == 1:
             value = data[0]
-            self._mod[f"{name}_use_attribute"] = 0
+            self._mod[f"{name}_use_attribute"] = False # False - as value, True - as attribute
             if isinstance(value, (list, tuple)):  # list of single vertex
                 # for some reason node modifier can't apply python sequences directly
                 for i, v in enumerate(value):
@@ -453,7 +453,7 @@ class BlSocket:
 
         if sv_sock.bl_idname == 'SvStringsSocket':
             attr_type_name = "type" if hasattr(self._sock, "type") else "socket_type" # "type" for Blender <4.x, "socket_type" for Blender >= 4.x
-            if getattr(self._sock, attr_type_name) in {'VALUE', 'NodeSocketValue'}: # {'VALUE',} - Blender < 4.x, {'NodeSocketValue'} - Blender >=4.x
+            if getattr(self._sock, attr_type_name) in {'VALUE', 'NodeSocketValue', 'NodeSocketFloat'}: # {'VALUE',} - Blender < 4.x, {'NodeSocketValue'} - Blender >=4.x, {'NodeSocketFloat'} - Blender > 5.x
                 sv_sock.default_property_type = 'float'
             elif getattr(self._sock, attr_type_name) in {'INT', 'BOOLEAN', 'NodeSocketInt', 'NodeSocketBoolean'}: # {'INT', 'BOOLEAN'} - Blender < 4.x, {'NodeSocketInt', 'NodeSocketBoolean'} - Blender >=4.x
                 sv_sock.default_property_type = 'int'
