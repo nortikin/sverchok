@@ -252,7 +252,7 @@ class SvGeoNodesViewerNode(
                 if mod is not None:
                     mod.remove()
         else:
-            for obj, prop in zip(objs, zip_props, strict=False):
+            for obj, prop in zip(objs, zip_props, strict=False) if bpy.app.version >= (3, 1) else zip(objs, zip_props):
                 mod = self.get_modifier(obj)
                 if mod.node_group != self.gn_tree:
                     mod.node_group = self.gn_tree

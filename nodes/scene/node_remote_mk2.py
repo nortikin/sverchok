@@ -122,8 +122,8 @@ class SvNodeRemoteNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             return
 
         named_input = node.inputs.get(self.input_idx)
-        
-        if ng.bl_idname == 'ScNodeTree':
+        print(ng.bl_idname)
+        if ng.bl_idname == 'SvNodeTree':
             # sorcar node tree it needs pure number
             data = self.inputs[0].sv_get()[0][0]
             if self.input_Sc == 'prop_float':
@@ -132,7 +132,12 @@ class SvNodeRemoteNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                 ng.set_value(node.name,'prop_int', data)
             elif self.input_Sc == 'prop_angle':
                 ng.set_value(node.name,'prop_angle', radians(data))
-
+        if 'SverchCustomTree' in ng.bl_idname and 'A Number' in node.name:
+            data = self.inputs[0].sv_get()[0][0]
+            if node.selected_mode == 'float':
+                node.float_ = float(data)
+            else:
+                node.int_ = int(data)
         elif named_input:
             data = self.inputs[0].sv_get()
             if 'value' in named_input:
