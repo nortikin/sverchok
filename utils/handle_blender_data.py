@@ -419,30 +419,37 @@ class BlSocket:
     }
 
     _sv_types = {
-        'VECTOR': 'SvVerticesSocket',
-        'VALUE': 'SvStringsSocket',
-        'RGBA': 'SvColorSocket',
-        'INT': 'SvStringsSocket',
-        'STRING': 'SvTextSocket',
-        'BOOLEAN': 'SvStringsSocket',
-        'OBJECT': 'SvObjectSocket',
-        'COLLECTION': 'SvCollectionSocket',
-        'MATERIAL': 'SvMaterialSocket',
-        'TEXTURE': 'SvTextureSocket',
-        'IMAGE': 'SvImageSocket',
+        'VECTOR'                : 'SvVerticesSocket',
+        'VALUE'                 : 'SvStringsSocket',
+        'RGBA'                  : 'SvColorSocket',
+        'INT'                   : 'SvStringsSocket',
+        'STRING'                : 'SvTextSocket',
+        'BOOLEAN'               : 'SvStringsSocket',
+        'OBJECT'                : 'SvObjectSocket',
+        'COLLECTION'            : 'SvCollectionSocket',
+        'MATERIAL'              : 'SvMaterialSocket',
+        'TEXTURE'               : 'SvTextureSocket',
+        'IMAGE'                 : 'SvImageSocket',
 
         # replaced in Blender 4.x:
-        'NodeSocketVector': 'SvVerticesSocket',
-        'NodeSocketValue': 'SvStringsSocket',
-        'NodeSocketRgba': 'SvColorSocket',
-        'NodeSocketInt': 'SvStringsSocket',
-        'NodeSocketString': 'SvTextSocket',
-        'NodeSocketBoolean': 'SvStringsSocket',
-        'NodeSocketObject': 'SvObjectSocket',
-        'NodeSocketCollection': 'SvCollectionSocket',
-        'NodeSocketMaterial': 'SvMaterialSocket',
-        'NodeSocketTexture': 'SvTextureSocket',
-        'NodeSocketImage': 'SvImageSocket',
+        'NodeSocketVector'      : 'SvVerticesSocket',
+        'NodeSocketValue'       : 'SvStringsSocket',
+        'NodeSocketRgba'        : 'SvColorSocket',
+        'NodeSocketInt'         : 'SvStringsSocket',
+        'NodeSocketString'      : 'SvTextSocket',
+        'NodeSocketBoolean'     : 'SvStringsSocket',
+        'NodeSocketObject'      : 'SvObjectSocket',
+        'NodeSocketCollection'  : 'SvCollectionSocket',
+        'NodeSocketMaterial'    : 'SvMaterialSocket',
+        'NodeSocketTexture'     : 'SvTextureSocket',
+        'NodeSocketImage'       : 'SvImageSocket',
+
+        # replaced in Blender 5.x:
+        'NodeSocketFloat'       : 'SvStringsSocket',
+        'NodeSocketBool'        : 'SvStringsSocket',
+        'NodeSocketColor'       : 'SvColorSocket',
+        'NodeSocketRotation'    : 'SvVerticesSocket',
+        # 'NodeSocketMatrix'      : 'SvMatrixSocket', cannot be used outside geonodes
     }
 
     def __init__(self, socket):
@@ -455,7 +462,7 @@ class BlSocket:
             attr_type_name = "type" if hasattr(self._sock, "type") else "socket_type" # "type" for Blender <4.x, "socket_type" for Blender >= 4.x
             if getattr(self._sock, attr_type_name) in {'VALUE', 'NodeSocketValue', 'NodeSocketFloat'}: # {'VALUE',} - Blender < 4.x, {'NodeSocketValue'} - Blender >=4.x, {'NodeSocketFloat'} - Blender > 5.x
                 sv_sock.default_property_type = 'float'
-            elif getattr(self._sock, attr_type_name) in {'INT', 'BOOLEAN', 'NodeSocketInt', 'NodeSocketBoolean'}: # {'INT', 'BOOLEAN'} - Blender < 4.x, {'NodeSocketInt', 'NodeSocketBoolean'} - Blender >=4.x
+            elif getattr(self._sock, attr_type_name) in {'INT', 'BOOLEAN', 'NodeSocketInt', 'NodeSocketBoolean', 'NodeSocketBool',}: # {'INT', 'BOOLEAN'} - Blender < 4.x, {'NodeSocketInt', 'NodeSocketBoolean'} - Blender >=4.x
                 sv_sock.default_property_type = 'int'
             else:
                 return  # There is no default property for such type
