@@ -845,6 +845,10 @@
     - SvLatticePropsNode
     - SvSculptMaskNode
     - SvSelectMeshVerts
+    - ---
+    - SvRigidBodyCopy
+    - SvCopyMaterialSlotsNode
+    - SvSetObjectsReleationNode
 
 - ---
 

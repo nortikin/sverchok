@@ -332,3 +332,22 @@ def listinput_drawF(node,col):
     for t in range(node.int_%32):
         col.prop(node, lists[node.int_//32], index=t, text=str(k))
         k += 1
+
+def unwrap_lowest_single_list(data):
+    '''Take only the first list at the minimum level. If data is not a list, wrap the value into the list'''
+    while isinstance(data, (list, tuple)) and len(data)>0 and isinstance(data[0], (list, tuple)):
+        data = data[0]
+    if isinstance(data, (list, tuple)):
+        res = data
+    else:
+        res = [data]
+    return data
+
+def unwrap_lowest_single_value(data):
+    '''Take only the first value at the minimum level'''
+    res = data
+    while isinstance(data, (list, tuple)) and len(data)>0 and isinstance(data[0], (list, tuple)):
+        data = data[0]
+    if isinstance(data, (list, tuple)):
+        res = data[0]
+    return res
