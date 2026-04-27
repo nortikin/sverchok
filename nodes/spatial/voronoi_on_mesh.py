@@ -1605,7 +1605,7 @@ class SvVoronoiOnMeshNodeMK5(SverchCustomTreeNode, bpy.types.Node):
         parent_objects_id_out = []
         for N in node_objects_id_out:
             val = _parent_objects_id_in2[N]
-            parent_objects_id_out.append(val)
+            parent_objects_id_out.append([val])
             pass
 
         self.outputs['vertices'             ].sv_set(verts_out)

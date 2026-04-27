@@ -12,6 +12,7 @@ from sverchok.data_structure import repeat_last
 from sverchok.data_structure import updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.handle_blender_data import BlModifier
+from sverchok.utils.listutils import unwrap_lowest_single_value, unwrap_lowest_single_list
 
 
 class SvCopyMaterialSlotsNode(SverchCustomTreeNode, bpy.types.Node):
@@ -63,7 +64,7 @@ class SvCopyMaterialSlotsNode(SverchCustomTreeNode, bpy.types.Node):
         object_target_pointers  = self.inputs['object_target_pointers' ].sv_get(deepcopy=False, default=[self.object_target_pointer ])
         object_source_ids       = self.inputs['object_source_ids'      ].sv_get(deepcopy=False, default=[self.object_source_id      ])
         if self.inputs['object_source_ids'].is_linked==False:
-            object_source_ids = [self.object_source_id] * len(object_target_pointers)
+            object_source_ids = [[self.object_source_id]] * len(object_target_pointers)
         object_source_pointers  = self.inputs['object_source_pointers' ].sv_get(deepcopy=False, default=[self.object_source_pointer ])
 
         if len(object_target_pointers)==0:
@@ -73,6 +74,7 @@ class SvCopyMaterialSlotsNode(SverchCustomTreeNode, bpy.types.Node):
                 raise Exception(f'Lengths of lists of Object Target and Objects Source Id are not equals ({len(object_target_pointers)}!={len(object_source_ids)})')
             else:
                 for I, (object_target, object_source_id) in enumerate(zip(object_target_pointers, object_source_ids)):
+                    object_source_id = unwrap_lowest_single_value(object_source_id)
                     if object_source_id<0 or object_source_id>len(object_source_pointers)-1:
                         raise Exception(f'No Object Source with [{object_source_id}] in [{I}]th elem of list Original Object Id')
                     object_target.data.materials.clear()

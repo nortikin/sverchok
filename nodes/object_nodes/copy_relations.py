@@ -12,6 +12,7 @@ from sverchok.data_structure import repeat_last
 from sverchok.data_structure import updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.handle_blender_data import BlModifier
+from sverchok.utils.listutils import unwrap_lowest_single_value, unwrap_lowest_single_list
 
 # def copy_object_relations(src_obj, target_obj):
 #     """
@@ -246,12 +247,13 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
             pass
         else:
             try:
+                objects_maps = [unwrap_lowest_single_value(val) for val in objects_maps]
                 for I, obj in enumerate(object_target_pointers):
                     ID = objects_maps[I] if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else I
                     try:
                         object_source_pointers_ID = object_source_pointers[ID]
                     except IndexError:
-                        raise Exception(f'0001. "Object"[{ID}] out of range. Number of objects in Socket "Rigid Body settings" [{len(objects_maps)} items] in Indexing mode has to be equals to "Objects" sockets [{len(objects)}]')
+                        raise Exception(f'0001. "Object"[{ID}] out of range. Number of objects in Socket "Rigid Body settings" [{len(objects_maps)} items] in Indexing mode has to be equals to "Objects" sockets [{len(object_target_pointers)}]')
                     except Exception as _ex:
                         raise Exception(f'0002. "Rigid Body settings"[{ID}] exception: {_ex}')
 
@@ -260,7 +262,7 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
                     pass
                 pass
             except Exception as _ex:
-                pass
+                raise _ex
             self.copy_objects_parent=False
         pass
 
