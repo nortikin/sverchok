@@ -144,14 +144,14 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
     def update_sockets(self):  # todo it lets simplify sockets API
         """Set properties of sockets of parent nodes and of output modes"""
         for node in self.parent_nodes():
-            for n_in_s, t_in_s in zip(node.inputs, self.sockets('INPUTS')):
+            for n_in_s, t_in_s in zip(node.inputs, self.sockets('INPUT')):
                 # also before getting data from socket `socket.use_prop` property should be set
                 if hasattr(n_in_s, 'default_property'):
                     n_in_s.use_prop = not t_in_s.hide_value
                 if hasattr(t_in_s, 'default_type'):
                     n_in_s.default_property_type = t_in_s.default_type
         for out_node in (n for n in self.nodes if n.bl_idname == 'NodeGroupOutput'):
-            for n_in_s, t_out_s in zip(out_node.inputs, self.sockets('OUTPUTS')):
+            for n_in_s, t_out_s in zip(out_node.inputs, self.sockets('OUTPUT')):
                 if hasattr(n_in_s, 'default_property'):
                     n_in_s.use_prop = not t_out_s.hide_value
                     if hasattr(t_out_s, 'default_type'):
@@ -271,7 +271,7 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
             # https://docs.blender.org/api/master/bpy.types.NodeTree.html#bpy.types.NodeTree.valid_socket_type
             return socket_type in socket_type_names()
 
-    def sockets(self, in_out='INTPUT'):
+    def sockets(self, in_out='INPUT'):
         if bpy.app.version >= (4, 0):
             for item in self.interface.items_tree:
                 if item.item_type == 'SOCKET':
@@ -279,6 +279,23 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
                         yield item
         else:
             yield from self.inputs if in_out == 'INPUT' else self.outputs
+
+
+def _copy_interface_default_value(interface_socket, group_node_socket):
+    """Copy `default_value` from a tree interface socket onto a freshly
+    created group node socket. Group nodes do not normally inherit defaults
+    set in the interface, so this is done manually right after socket creation.
+    """
+    if not hasattr(interface_socket, 'default_value'):
+        return
+    if not hasattr(group_node_socket, 'default_property'):
+        return
+    try:
+        group_node_socket.default_property = interface_socket.default_value
+    except (TypeError, AttributeError):
+        # Skip silently if value types are incompatible. This keeps adding
+        # group nodes safe even when the interface default cannot be applied.
+        pass
 
 
 class BaseNode:
@@ -331,10 +348,9 @@ class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
         # also default values should be fixed
         if self.node_tree:
             self.node_tree.use_fake_user = True
+            self.node_tree.update_sockets()  # properties of input socket properties should be updated
             for node_sock, interface_sock in zip(self.inputs, self.node_tree.sockets('INPUT')):
-                if hasattr(interface_sock, 'default_value') and hasattr(node_sock, 'default_property'):
-                    node_sock.default_property = interface_sock.default_value
-                self.node_tree.update_sockets()  # properties of input socket properties should be updated
+                _copy_interface_default_value(interface_sock, node_sock)
         else:  # in case if None is assigned to node_tree
             self.inputs.clear()
             self.outputs.clear()
@@ -455,8 +471,12 @@ class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
             for from_s, to_s in zip(from_sockets, to_sockets):
                 to_s.name = from_s.name
 
+        if not self.node_tree:
+            return
+
         tree_inputs = list(self.node_tree.sockets('INPUT'))
         tree_outputs = list(self.node_tree.sockets('OUTPUT'))
+        existing_input_ids = {s.identifier for s in self.inputs}
         if bpy.app.version >= (3, 5):  # sockets should be generated manually
             BlSockets(self.inputs).copy_sockets(tree_inputs)
             copy_socket_names(tree_inputs, self.inputs)
@@ -464,13 +484,15 @@ class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
             copy_socket_names(tree_outputs, self.outputs)
 
         # this code should work only first time a socket was added
-        if self.node_tree:
-            for n_in_s, t_in_s in zip(self.inputs, tree_inputs):
-                # also before getting data from socket `socket.use_prop` property should be set
-                if hasattr(n_in_s, 'default_property'):
-                    n_in_s.use_prop = not t_in_s.hide_value
-                if hasattr(t_in_s, 'default_type'):
-                    n_in_s.default_property_type = t_in_s.default_type
+        for n_in_s, t_in_s in zip(self.inputs, tree_inputs):
+            # also before getting data from socket `socket.use_prop` property should be set
+            if hasattr(n_in_s, 'default_property'):
+                n_in_s.use_prop = not t_in_s.hide_value
+            if hasattr(t_in_s, 'default_type'):
+                n_in_s.default_property_type = t_in_s.default_type
+            # propagate interface default value to the freshly created group node socket
+            if n_in_s.identifier not in existing_input_ids:
+                _copy_interface_default_value(t_in_s, n_in_s)
 
     def sv_copy(self, original):
         handle_event(ev.TreesGraphEvent())
