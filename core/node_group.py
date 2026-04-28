@@ -282,9 +282,10 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
 
 
 def _copy_interface_default_value(interface_socket, group_node_socket):
-    """Copy `default_value` from a tree interface socket onto a freshly
-    created group node socket. Group nodes do not normally inherit defaults
-    set in the interface, so this is done manually right after socket creation.
+    """Copy `default_value` from a tree interface socket onto a group node
+    socket's `default_property`. Group node sockets do not automatically
+    inherit defaults set on the tree interface, so callers must apply this
+    when sockets are first created or when a tree is freshly assigned.
     """
     if not hasattr(interface_socket, 'default_value'):
         return
@@ -293,8 +294,7 @@ def _copy_interface_default_value(interface_socket, group_node_socket):
     try:
         group_node_socket.default_property = interface_socket.default_value
     except (TypeError, AttributeError):
-        # Skip silently if value types are incompatible. This keeps adding
-        # group nodes safe even when the interface default cannot be applied.
+        # incompatible value type - leave the socket at its current default
         pass
 
 
