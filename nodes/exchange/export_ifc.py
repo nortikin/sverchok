@@ -102,7 +102,10 @@ class SvExportIfcNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "mode")
         layout.prop(self, "base_name")
         #print(SvExportIFCOperator.bl_idname)
-        self.wrapper_tracked_ui_draw_op(layout, "node.sv_export_ifc", icon='EXPORT', text="EXPORT") #SvExportIFCOperator.bl_idname
+        row = layout.row()
+        if self.prefs_over_sized_buttons:
+            row.scale_y = 4.0
+        self.wrapper_tracked_ui_draw_op(row, "node.sv_export_ifc", icon='EXPORT', text="EXPORT") #SvExportIFCOperator.bl_idname
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "max_faces")
