@@ -947,17 +947,19 @@ class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
 
     @default_property.setter
     def default_property(self, value):
-        if hasattr(self.node, 'node_tree'):  # belong to group node
-            interface_socket = self.node.node_tree.inputs[self.index]
-            if interface_socket.default_type == 'float':
-                self.default_float_property = value
-            elif interface_socket.default_type == 'int':
-                self.default_int_property = value
+        if hasattr(self.node, 'node_tree') and self.node.node_tree is not None:  # belong to group node
+            tree_inputs = list(self.node.node_tree.sockets('INPUT'))
+            interface_socket = tree_inputs[self.index] if self.index < len(tree_inputs) else None
+            if interface_socket is not None and hasattr(interface_socket, 'default_type'):
+                if interface_socket.default_type == 'float':
+                    self.default_float_property = value
+                elif interface_socket.default_type == 'int':
+                    self.default_int_property = value
+                return
+        if self.default_property_type == 'float':
+            self.default_float_property = value
         else:
-            if self.default_property_type == 'float':
-                self.default_float_property = value
-            else:
-                self.default_int_property = value
+            self.default_int_property = value
 
     def draw_property(self, layout, prop_origin=None, prop_name=None):
         if prop_origin and prop_name:
