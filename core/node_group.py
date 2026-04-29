@@ -309,7 +309,10 @@ class BaseNode:
 
 
 class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
-    """Node for keeping sub trees"""
+    """
+    Triggers: group node sub tree subtree monad
+    Tooltip: Node for keeping sub trees (group node)
+    """
     bl_idname = 'SvGroupTreeNode'
     bl_label = 'Group node (Alpha)'
 
