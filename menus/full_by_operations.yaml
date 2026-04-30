@@ -319,7 +319,6 @@
         - SvExBlendCurvesMk2Node
         - SvExFlipCurveNode
         - SvReparametrizeCurveNode
-        - SvExSurfaceBoundaryNode
         - ---
         - SvCurveInsertKnotNode
         - SvCurveRemoveKnotNode
@@ -353,7 +352,6 @@
         - SvFlipSurfaceNode
         - SvSwapSurfaceNode
         - SvReparametrizeSurfaceNode
-        - SvExNearestPointOnSurfaceNode
         - SvExOrthoProjectSurfaceNode
         - SvExRaycastSurfaceNode
         - SvExImplSurfaceRaycastNode
@@ -508,6 +506,8 @@
         - extra_menu: AdvancedObjectsPartialMenu
         - SvDeconstructSurfaceNode
         - ---
+        - SvExNearestPointOnSurfaceNode
+        - SvExSurfaceBoundaryNode
         - SvExSurfaceDomainNode
         - SvExSurfaceSubdomainNode
         - SvSurfaceNormalsNode
