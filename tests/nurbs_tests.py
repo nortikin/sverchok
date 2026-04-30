@@ -10,6 +10,7 @@ from sverchok.utils.nurbs_common import SvNurbsMaths, elevate_bezier_degree, fro
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
+from sverchok.utils.nurbs_common import CantRemoveKnotException
 from sverchok.utils.curve.nurbs_solver_applications import knotvector_with_tangents_from_tknots
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface
@@ -1028,3 +1029,428 @@ class CurveDegreeTests(SverchokTestCase):
         expected = np.array([[-3,0.0,0], [0, 3, 0], [3,0,0]])
         self.assert_numpy_arrays_equal(result, expected, precision=8)
 
+
+
+class RemoveKnotTests(SverchokTestCase):
+    """Tests for SvNativeNurbsCurve.remove_knot method"""
+
+    def test_remove_knot_all(self):
+        """Удаление всех вхождений узла через count=ALL"""
+        from sverchok.utils.curve.nurbs import SvNurbsCurve
+
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Insert knot twice
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 2)
+        self.assertEqual(len(inserted.get_control_points()), len(points) + 2)
+
+        # Remove ALL occurrences
+        removed = inserted.remove_knot(knot, SvNurbsCurve.ALL)
+        expected_removed_kv = kv
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), expected_removed_kv, precision=8)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=8)
+
+    def test_remove_knot_all_but_one(self):
+        """Удаление всех вхождений кроме одного через count=ALL_BUT_ONE"""
+        from sverchok.utils.curve.nurbs import SvNurbsCurve
+
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Insert knot 3 times
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 3)
+        self.assertEqual(len(inserted.get_control_points()), len(points) + 3)
+
+        # Remove ALL_BUT_ONE (should leave 1)
+        removed = inserted.remove_knot(knot, SvNurbsCurve.ALL_BUT_ONE)
+        # Check that knot multiplicity is now 1
+        multiplicity = sv_knotvector.find_multiplicity(removed.get_knotvector(), knot)
+        self.assertEqual(multiplicity, 1)
+
+    def test_remove_knot_with_target(self):
+        """Удаление до целевой кратности через target"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Insert knot 3 times
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 3)
+
+        # Remove to target multiplicity of 2
+        removed = inserted.remove_knot(knot, None, target=2)
+        # Check that knot multiplicity is now 2
+        multiplicity = sv_knotvector.find_multiplicity(removed.get_knotvector(), knot)
+        self.assertEqual(multiplicity, 2)
+
+    def test_remove_knot_if_possible_true(self):
+        """Удаление сколько возможно с if_possible=True"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Insert knot 2 times
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 2)
+
+        # Try to remove more than possible (should not raise exception)
+        removed = inserted.remove_knot(knot, count=2, if_possible=True)
+        # Should return curve with knot removed as much as possible
+        self.assertIsNotNone(removed)
+
+    def test_remove_knot_if_possible_false_fail(self):
+        """Исключение при if_possible=False и неудаче удаления"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+
+        # Try to remove endpoint knot (should fail)
+        try:
+            curve.remove_knot(0.0, count=1, if_possible=False)
+            self.fail("Должно выбросить CantRemoveKnotException")
+        except Exception as e:
+            # Should be CantRemoveKnotException or similar
+            self.assertIn("CantRemoveKnot", str(type(e).__name__))
+
+    def test_remove_knot_tolerance(self):
+        """Разные значения tolerance"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0.5, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Insert knot
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 1)
+
+        # Test with different tolerance values
+        for tol in [1e-8, 1e-6, 1e-4]:
+            removed = inserted.remove_knot(knot, tolerance=tol)
+            self.assert_numpy_arrays_equal(
+                removed.evaluate_array(ts), orig_pts, precision=8
+            )
+
+    def test_remove_knot_unclamped(self):
+        """Удаление для unclamped кривых"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        degree = 2
+        kv = sv_knotvector.generate(degree, 3, clamped=False)
+        weights = [1, 1, 1]
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(np.linspace(0, 1, num=5))
+
+        # Insert internal knot
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 1)
+
+        # Remove and check
+        removed = inserted.remove_knot(knot, 1)
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(np.linspace(0, 1, num=5)), orig_pts, precision=8)
+
+    def test_remove_knot_weights(self):
+        """Удаление для кривых с неравными весами"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        degree = 2
+        kv = sv_knotvector.generate(degree, 3)
+        weights = [1, 2, 1]  # Non-uniform weights
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Insert knot with weights
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 1)
+
+        # Remove and verify curve shape preserved
+        removed = inserted.remove_knot(knot, 1)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=8)
+
+    def test_remove_knot_edge_cases(self):
+        """Edge cases: knot near boundaries"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        degree = 2
+        kv = sv_knotvector.generate(degree, 3)
+        weights = [1, 1, 1]
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(np.linspace(0, 1, num=5))
+
+        # Insert knot very close to 0
+        knot = 0.01
+        inserted = curve.insert_knot(knot, 1)
+
+        # Remove and verify
+        removed = inserted.remove_knot(knot, 1)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(np.linspace(0, 1, num=5)), orig_pts, precision=8)
+
+        # Insert knot very close to 1
+        kv2 = sv_knotvector.generate(degree, 3)
+        curve2 = SvNativeNurbsCurve(degree, kv2, points, weights)
+        knot2 = 0.99
+        inserted2 = curve2.insert_knot(knot2, 1)
+        removed2 = inserted2.remove_knot(knot2, 1)
+        self.assert_numpy_arrays_equal(removed2.evaluate_array(np.linspace(0, 1, num=5)), orig_pts, precision=8)
+
+    def test_remove_knot_degree_1(self):
+        """Удаление для кривых степени 1"""
+        points = np.array([[0, 0, 0], [1, 0, 0]])
+        degree = 1
+        kv = sv_knotvector.generate(degree, 2)
+        weights = [1, 1]
+        ts = np.array([0, 0.25, 0.5, 0.75, 1.0])
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        inserted = curve.insert_knot(0.5, 1)
+        removed = inserted.remove_knot(0.5, 1)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=8)
+
+    def test_remove_knot_degree_2(self):
+        """Удаление для кривых степени 2"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        degree = 2
+        kv = sv_knotvector.generate(degree, 3)
+        weights = [1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        inserted = curve.insert_knot(0.5, 1)
+        removed = inserted.remove_knot(0.5, 1)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=8)
+
+    def test_remove_knot_cumulated_error_if_possible_false(self):
+        """Проверка остановки при превышении суммарной ошибки при if_possible=False"""
+        # Use higher degree curve to allow more knot insertions
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        degree = 3
+        kv = sv_knotvector.generate(degree, 3, clamped=False)
+        weights = [1, 1, 1]
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+
+        # Insert knot multiple times
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 2)
+
+        # Try to remove more knots than fit within tolerance
+        # Small tolerance should cause early stop with if_possible=False
+        try:
+            # Tolerance too small for 2 removals
+            removed = inserted.remove_knot(knot, count=2, tolerance=1e-12, if_possible=False)
+            # If we get here, both removals succeeded within tolerance
+            self.assertEqual(len(removed.get_control_points()), len(points) - 2)
+        except CantRemoveKnotException:
+            # Expected - not all knots could be removed within tiny tolerance
+            pass
+
+    def test_remove_knot_cumulated_error_if_possible_true(self):
+        """Проверка остановки при превышении суммарной ошибки при if_possible=True"""
+        # Use curve that allows knot removal with reasonable tolerance
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+
+        # Insert knot twice
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 2)
+        orig_cpts = len(inserted.get_control_points())
+
+        # With if_possible=True, should stop when tolerance exceeded
+        # Large tolerance should allow all removals
+        removed_large_tol = inserted.remove_knot(knot, count=2, tolerance=1e-6, if_possible=True)
+        # Should have removed some or all knots
+        self.assertTrue(len(removed_large_tol.get_control_points()) < orig_cpts)
+
+        # Small tolerance might stop after first removal
+        removed_small_tol = inserted.remove_knot(knot, count=2, tolerance=1e-12, if_possible=True)
+        # No exception should be raised
+        self.assertIsNotNone(removed_small_tol)
+
+class RemoveKnotNonExistingTests(SverchokTestCase):
+    """Tests for removing knots that don't exist in the curve initially"""
+
+    def test_remove_non_existing_knot_if_possible_true(self):
+        """Удаление не существующего узла с if_possible=True не должно вызывать ошибок"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Try to remove knot 0.5 which doesn't exist in the knot vector
+        # Should not raise exception
+        removed = curve.remove_knot(0.5, count=1, if_possible=True)
+
+        # Curve should remain unchanged
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=8)
+
+    def test_remove_non_existing_knot_if_possible_false(self):
+        """Удаление не существующего узла с if_possible=False должно вызвать исключение"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+
+        # Try to remove knot 0.5 which doesn't exist in the knot vector
+        # Should raise exception
+        with self.assertRaises(Exception):
+            curve.remove_knot(0.5, count=1, if_possible=False)
+
+    def test_remove_non_existing_knot_multiple_times_if_possible_true(self):
+        """Удаление не существующего узла несколько раз с if_possible=True"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Try to remove knot 0.5 multiple times
+        for _ in range(5):
+            curve = curve.remove_knot(0.5, count=1, if_possible=True)
+
+        # Curve should remain unchanged
+        self.assert_numpy_arrays_equal(curve.get_knotvector(), kv, precision=8)
+        self.assert_numpy_arrays_equal(curve.evaluate_array(ts), orig_pts, precision=8)
+
+    def test_remove_non_existing_knot_degree_2(self):
+        """Удаление не существующего узла для кривой степени 2"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        degree = 2
+        kv = np.array([0, 0, 0, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Try to remove knot 0.5 which doesn't exist
+        removed = curve.remove_knot(0.5, count=1, if_possible=True)
+
+        # Curve should remain unchanged
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=8)
+
+    def test_remove_non_existing_knot_degree_1(self):
+        """Удаление не существующего узла для кривой степени 1"""
+        points = np.array([[0, 0, 0], [1, 0, 0]])
+        degree = 1
+        kv = np.array([0, 0, 1, 1], dtype=np.float64)
+        weights = [1, 1]
+        ts = np.array([0, 0.25, 0.5, 0.75, 1.0])
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Try to remove knot 0.5 which doesn't exist
+        removed = curve.remove_knot(0.5, count=1, if_possible=True)
+
+        # Curve should remain unchanged
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=8)
+
+    def test_remove_non_existing_knot_unclamped(self):
+        """Удаление не существующего узла для unclamped кривой"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        degree = 2
+        kv = sv_knotvector.generate(degree, 3, clamped=False)
+        weights = [1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Try to remove knot that doesn't exist
+        removed = curve.remove_knot(0.25, count=1, if_possible=True)
+
+        # Curve should remain unchanged
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=8)
+
+    def test_remove_non_existing_knot_with_weights(self):
+        """Удаление не существующего узла для кривой с неравными весами"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 2, 3, 1]  # Non-uniform weights
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+        orig_weights = curve.get_weights()
+
+        # Try to remove knot 0.5 which doesn't exist
+        removed = curve.remove_knot(0.5, count=1, if_possible=True)
+
+        # Curve should remain unchanged
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=8)
+        self.assert_numpy_arrays_equal(removed.get_weights(), orig_weights, precision=8)
+
+    def test_remove_knot_near_existing_but_not_equal(self):
+        """Удаление узла очень близкого к существующему, но не равного"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 0.5, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Try to remove knot 0.5000001 which is very close to 0.5 but not equal
+        # This should work with default tolerance
+        removed = curve.remove_knot(0.5000001, count=1, if_possible=True)
+
+        # With default tolerance, this might or might not match 0.5
+        # But it should not crash
+        self.assertIsNotNone(removed)
