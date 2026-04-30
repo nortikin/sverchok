@@ -1473,7 +1473,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             return np.linalg.norm(p1 - p2)
             #return np.linalg.norm(np.array(p1) - np.array(p2))
 
-        def remove_one_knot(curve):
+        def remove_one_knot(curve, remaining_tolerance):
             ctrlpts = curve.get_homogenous_control_points()
             N = len(ctrlpts)
             knotvector = curve.get_knotvector()
@@ -1517,22 +1517,23 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                 jj -= 1
 
             # Check if the knot is removable
+            removal_error = 0.0
             if j - i < t:
-                dist = point_distance(temp_i[ii - 1], temp_j[jj + 1]) 
-                if dist <= tolerance:
+                removal_error = point_distance(temp_i[ii - 1], temp_j[jj + 1])
+                if removal_error <= remaining_tolerance:
                     can_remove = True
                 else:
                     if logger is not None:
-                        logger.debug(f"remove_knot: stop, distance={dist}")
+                        logger.debug(f"remove_knot: stop, distance={removal_error}")
             else:
                 alpha_i = knot_removal_alpha_i(u, knotvector, i)
                 ptn = alpha_i * temp_j[ii + t + 1] + (1.0 - alpha_i)*temp_i[ii - 1]
-                dist = point_distance(ctrlpts[i], ptn) 
-                if dist <= tolerance:
+                removal_error = point_distance(ctrlpts[i], ptn)
+                if removal_error <= remaining_tolerance:
                     can_remove = True
                 else:
                     if logger is not None:
-                        logger.debug(f"remove_knot: stop, distance={dist}")
+                        logger.debug(f"remove_knot: stop, distance={removal_error}")
 
             # Check if we can remove the knot and update new control points array
             if can_remove:
@@ -1578,21 +1579,28 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             ctrlpts_new = np.array(ctrlpts_new)
             control_points, weights = from_homogenous(ctrlpts_new)
 
-            return curve.copy(knotvector = new_kv, control_points = control_points, weights = weights)
+            return curve.copy(knotvector = new_kv, control_points = control_points, weights = weights), removal_error
 
         curve = self
         removed_count = 0
+        total_error = 0.0
+        remaining_tolerance = tolerance
+
         for i in range(count):
             try:
-                curve = remove_one_knot(curve)
+                curve, error = remove_one_knot(curve, remaining_tolerance)
+                total_error += error
+                remaining_tolerance -= error
                 removed_count += 1
+                if logger is not None:
+                    logger.debug(f"remove_knot iteration #{i}: error={error}, total_error={total_error}")
             except CantRemoveKnotException as e:
                 break
 
         if not if_possible and (removed_count < count):
             raise CantRemoveKnotException(f"Asked to remove knot t={u} for {count} times, but could remove it only {removed_count} times")
         if logger is not None:
-            logger.debug(f"Removed knot t={u} for {removed_count} times")
+            logger.debug(f"Removed knot t={u} for {removed_count} times, total_error={total_error}")
         return curve
 
 class SvNurbsDerivativesCalculator:

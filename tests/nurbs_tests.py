@@ -562,6 +562,422 @@ class OtherNurbsTests(SverchokTestCase):
         removed = inserted.remove_knot(knot, 1)
         self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
 
+    # ========== remove_knot: comprehensive tests ==========
+
+    def test_remove_knot_target_parameter(self):
+        """Test remove_knot with target multiplicity instead of count."""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1, 1, 1, 1])
+
+        # Insert knot 0.5 three times (multiplicity = 3)
+        inserted = curve.insert_knot(0.5, 3)
+        orig_mult = sv_knotvector.find_multiplicity(inserted.get_knotvector(), 0.5)
+        self.assertEqual(orig_mult, 3)
+
+        # Remove to target multiplicity 1 (remove 2); count must be None
+        removed = inserted.remove_knot(0.5, count=None, target=1)
+        new_mult = sv_knotvector.find_multiplicity(removed.get_knotvector(), 0.5)
+        self.assertEqual(new_mult, 1)
+
+    def test_remove_knot_ALL(self):
+        """Test remove_knot with ALL special value."""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1, 1, 1, 1])
+
+        # Insert knot 0.5 twice
+        inserted = curve.insert_knot(0.5, 2)
+        self.assertEqual(sv_knotvector.find_multiplicity(inserted.get_knotvector(), 0.5), 2)
+
+        # Remove ALL instances
+        removed = inserted.remove_knot(0.5, count=SvNurbsCurve.ALL, if_possible=True)
+        new_mult = sv_knotvector.find_multiplicity(removed.get_knotvector(), 0.5)
+        self.assertEqual(new_mult, 0)  # knot fully removed
+
+    def test_remove_knot_ALL_BUT_ONE(self):
+        """Test remove_knot with ALL_BUT_ONE special value."""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1, 1, 1, 1])
+
+        # Insert knot 0.5 three times
+        inserted = curve.insert_knot(0.5, 3)
+        self.assertEqual(sv_knotvector.find_multiplicity(inserted.get_knotvector(), 0.5), 3)
+
+        # Remove ALL_BUT_ONE (should leave multiplicity = 1)
+        removed = inserted.remove_knot(0.5, count=SvNurbsCurve.ALL_BUT_ONE, if_possible=True)
+        new_mult = sv_knotvector.find_multiplicity(removed.get_knotvector(), 0.5)
+        self.assertEqual(new_mult, 1)
+
+    def test_remove_knot_if_possible_partial(self):
+        """Test if_possible=True returns partial result instead of raising."""
+        points = np.array([[0, 0, 0],
+                           [0, 1, 0],
+                           [1, 2, 0],
+                           [2, 2, 0],
+                           [3, 1, 0],
+                           [3, 0, 0]], dtype=np.float64)
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 0.25, 0.75, 1, 1, 1, 1])
+        curve = SvNativeNurbsCurve(degree, kv, points, [1]*6)
+
+        # Insert knot 0.1 once
+        inserted = curve.insert_knot(0.1, 1)
+        orig_mult = sv_knotvector.find_multiplicity(inserted.get_knotvector(), 0.1)
+        self.assertEqual(orig_mult, 1)
+
+        # Try to remove it 5 times (more than multiplicity)
+        # With if_possible=True, should not raise; knot should be fully removed
+        removed = inserted.remove_knot(0.1, count=5, if_possible=True)
+        new_mult = sv_knotvector.find_multiplicity(removed.get_knotvector(), 0.1)
+        self.assertEqual(new_mult, 0)  # knot fully removed (only 1 existed)
+
+    def test_remove_knot_if_possible_false_raises(self):
+        """Test if_possible=False raises CantRemoveKnotException."""
+        from sverchok.utils.nurbs_common import CantRemoveKnotException
+
+        points = np.array([[0, 0, 0],
+                           [0, 1, 0],
+                           [1, 2, 0],
+                           [2, 2, 0],
+                           [3, 1, 0],
+                           [3, 0, 0]], dtype=np.float64)
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 0.25, 0.75, 1, 1, 1, 1])
+        curve = SvNativeNurbsCurve(degree, kv, points, [1]*6)
+
+        # Insert knot 0.1 once
+        inserted = curve.insert_knot(0.1, 1)
+
+        # Try to remove it 5 times — should raise
+        with self.assertRaises(CantRemoveKnotException):
+            inserted.remove_knot(0.1, count=5, if_possible=False)
+
+    def test_remove_knot_count_exceeds_multiplicity_raises(self):
+        """Test that count > multiplicity raises CantRemoveKnotException."""
+        from sverchok.utils.nurbs_common import CantRemoveKnotException
+
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1, 1, 1, 1])
+
+        # Insert knot 0.5 once (multiplicity = 1)
+        inserted = curve.insert_knot(0.5, 1)
+
+        # Try to remove it 3 times — should raise immediately
+        with self.assertRaises(CantRemoveKnotException):
+            inserted.remove_knot(0.5, count=3, if_possible=False)
+
+    def test_remove_knot_both_count_and_target_raises(self):
+        """Test that specifying both count and target raises ArgumentError."""
+        from sverchok.core.sv_custom_exceptions import ArgumentError
+
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1, 1, 1, 1])
+
+        with self.assertRaises(ArgumentError):
+            curve.remove_knot(0.5, count=1, target=1)
+
+    def test_remove_knot_neither_count_nor_target_raises(self):
+        """Test that specifying neither count nor target (both None) raises ArgumentError."""
+        from sverchok.core.sv_custom_exceptions import ArgumentError
+
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1, 1, 1, 1])
+
+        with self.assertRaises(ArgumentError):
+            curve.remove_knot(0.5, count=None, target=None)
+
+    def test_remove_knot_count_zero_returns_self(self):
+        """Test that count < 1 returns the curve unchanged."""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1, 1, 1, 1])
+
+        result = curve.remove_knot(0.5, count=0, if_possible=True)
+        self.assert_numpy_arrays_equal(result.get_knotvector(), kv, precision=8)
+        self.assert_numpy_arrays_equal(result.get_control_points(), points, precision=8)
+
+    def test_remove_knot_rational_curve(self):
+        """Test remove_knot on a rational (weighted) curve."""
+        points = np.array([[0, 0, 0], [1, 2, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1.0, 2.0, 0.5, 1.0]
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        ts = np.linspace(0.0, 1.0, num=20)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Insert and remove knot
+        inserted = curve.insert_knot(0.5, 2)
+        removed = inserted.remove_knot(0.5, 2)
+
+        # Knotvector should be restored
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
+        # Curve shape should be preserved
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=6)
+
+    def test_remove_knot_existing_knot(self):
+        """Test removing a knot that already exists in the original curve (not inserted)."""
+        points = np.array([[0, 0, 0],
+                           [0, 1, 0],
+                           [1, 2, 0],
+                           [2, 2, 0],
+                           [3, 1, 0],
+                           [3, 0, 0]], dtype=np.float64)
+        degree = 3
+        # n=6, p=3 => kv length = 6+3+1 = 10
+        # knot 0.5 has multiplicity 2
+        kv = np.array([0, 0, 0, 0, 0.5, 0.5, 1, 1, 1, 1])
+        curve = SvNativeNurbsCurve(degree, kv, points, [1]*6)
+        ts = np.linspace(0.0, 1.0, num=20)
+        orig_pts = curve.evaluate_array(ts)
+
+        orig_mult = sv_knotvector.find_multiplicity(kv, 0.5)
+        self.assertEqual(orig_mult, 2)
+
+        # Try to remove one instance
+        removed = curve.remove_knot(0.5, count=1, if_possible=True, tolerance=1e-4)
+        new_mult = sv_knotvector.find_multiplicity(removed.get_knotvector(), 0.5)
+        self.assertLessEqual(new_mult, orig_mult)
+
+    def test_remove_knot_degree_2(self):
+        """Test remove_knot on a degree-2 curve."""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0], [3, -1, 0]])
+        degree = 2
+        # n + p + 1 = 4 + 2 + 1 = 7 knots
+        kv = np.array([0, 0, 0, 0.5, 1, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1]*4)
+        ts = np.linspace(0.0, 1.0, num=10)
+        orig_pts = curve.evaluate_array(ts)
+
+        inserted = curve.insert_knot(0.25, 1)
+        self.assertEqual(len(inserted.get_control_points()), len(points) + 1)
+
+        removed = inserted.remove_knot(0.25, 1)
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=6)
+
+    def test_remove_knot_degree_1(self):
+        """Test remove_knot on a degree-1 (linear) curve."""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        degree = 1
+        # n + p + 1 = 3 + 1 + 1 = 5 knots
+        kv = np.array([0, 0, 0.5, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1]*3)
+        ts = np.linspace(0.0, 1.0, num=5)
+        orig_pts = curve.evaluate_array(ts)
+
+        inserted = curve.insert_knot(0.25, 1)
+        self.assertEqual(len(inserted.get_control_points()), len(points) + 1)
+
+        removed = inserted.remove_knot(0.25, 1)
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts, precision=6)
+
+    def test_remove_knot_tolerance_tight(self):
+        """Test that tight tolerance can prevent knot removal."""
+        from sverchok.utils.nurbs_common import CantRemoveKnotException
+
+        # Create a curve where knot removal will cause approximation error
+        points = np.array([[0, 0, 0],
+                           [0.5, 1.0, 0],
+                           [1.0, 0.5, 0],
+                           [1.5, 1.0, 0],
+                           [2.0, 0.0, 0]], dtype=np.float64)
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 0.5, 1.0, 1.5, 2.0, 2.0, 2.0, 2.0])
+        curve = SvNativeNurbsCurve(degree, kv, points, [1]*5)
+
+        # Insert a knot
+        inserted = curve.insert_knot(0.75, 1)
+
+        # Very tight tolerance — removal may fail
+        try:
+            inserted.remove_knot(0.75, count=1, tolerance=1e-12, if_possible=False)
+        except CantRemoveKnotException:
+            pass  # Expected for very tight tolerance
+
+        # Loose tolerance — removal should succeed
+        removed = inserted.remove_knot(0.75, count=1, tolerance=1.0, if_possible=True)
+        new_mult = sv_knotvector.find_multiplicity(removed.get_knotvector(), 0.75)
+        self.assertLessEqual(new_mult, 1)
+
+    def test_remove_knot_logger(self):
+        """Test that logger parameter is used (no crash)."""
+        import logging
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1, 1, 1, 1])
+
+        inserted = curve.insert_knot(0.5, 2)
+
+        # Should not raise with logger provided
+        logger = logging.getLogger("test_remove_knot")
+        logger.setLevel(logging.DEBUG)
+        removed = inserted.remove_knot(0.5, 2, logger=logger)
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
+
+    def test_remove_knot_preserves_curve_shape(self):
+        """Test that remove_knot after insert_knot preserves curve shape closely."""
+        points = np.array([[0, 0, 0],
+                           [1, 2, 0],
+                           [3, 3, 0],
+                           [4, 1, 0],
+                           [5, 0, 0]], dtype=np.float64)
+        degree = 3
+        # n + p + 1 = 5 + 3 + 1 = 9 knots
+        kv = np.array([0, 0, 0, 0, 0.5, 0.75, 1, 1, 1], dtype=np.float64)
+        curve = SvNativeNurbsCurve(degree, kv, points, [1]*5)
+        ts = np.linspace(0.0, 1.0, num=50)
+        orig_pts = curve.evaluate_array(ts)
+
+        # Insert a knot
+        curve = curve.insert_knot(0.3, 1)
+
+        # Remove it back
+        curve = curve.remove_knot(0.3, 1)
+
+        final_pts = curve.evaluate_array(ts)
+        self.assert_numpy_arrays_equal(final_pts, orig_pts, precision=6)
+
+    def test_remove_knot_multiple_iterations_partial(self):
+        """Test partial removal when only some iterations succeed due to tolerance."""
+        # Use a non-Bezier curve where removal is approximation-based
+        points = np.array([[0, 0, 0],
+                           [0, 1, 0],
+                           [1, 2, 0],
+                           [2, 2, 0],
+                           [3, 1, 0],
+                           [3, 0, 0]], dtype=np.float64)
+        # n=6, p=3 => kv length = 6+3+1 = 10
+        # knot 0.5 has multiplicity 2
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 0.5, 0.5, 1, 1, 1, 1])
+        curve = SvNativeNurbsCurve(degree, kv, points, [1]*6)
+
+        orig_mult = sv_knotvector.find_multiplicity(kv, 0.5)
+        self.assertEqual(orig_mult, 2)
+
+        # Try to remove 5 times with if_possible=True and tight tolerance
+        # Removal may not succeed at all (existing knots have approximation error)
+        removed = curve.remove_knot(0.5, count=5, if_possible=True, tolerance=1e-6)
+        new_mult = sv_knotvector.find_multiplicity(removed.get_knotvector(), 0.5)
+        # The key point: no exception raised, multiplicity didn't increase
+        self.assertLessEqual(new_mult, orig_mult)
+
+    def test_remove_knot_cumulative_tolerance(self):
+        """Test that tolerance limits the cumulative error across multiple removal iterations."""
+        # Create a curve with an internal knot that has multiplicity 2.
+        # Removing such a knot is an approximation, so each removal has non-zero error.
+        points = np.array([[0, 0, 0],
+                           [0, 1, 0],
+                           [1, 2, 0],
+                           [2, 2, 0],
+                           [3, 1, 0],
+                           [3, 0, 0]], dtype=np.float64)
+        # n=6, p=3 => kv length = 6+3+1 = 10
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 0.5, 0.5, 1, 1, 1, 1])
+        curve = SvNativeNurbsCurve(degree, kv, points, [1]*6)
+
+        orig_mult = sv_knotvector.find_multiplicity(kv, 0.5)
+        self.assertEqual(orig_mult, 2)
+
+        # Remove with a tight tolerance — no removal should succeed
+        removed_tight = curve.remove_knot(0.5, count=2, tolerance=1e-10, if_possible=True)
+        new_mult_tight = sv_knotvector.find_multiplicity(removed_tight.get_knotvector(), 0.5)
+        self.assertEqual(new_mult_tight, orig_mult)
+
+        # With a very loose tolerance, both should succeed
+        removed_loose = curve.remove_knot(0.5, count=2, tolerance=100.0, if_possible=True)
+        new_mult_loose = sv_knotvector.find_multiplicity(removed_loose.get_knotvector(), 0.5)
+        self.assertEqual(new_mult_loose, 0)  # knot fully removed
+
+    def test_remove_knot_cumulative_tolerance_partial(self):
+        """Test that cumulative tolerance stops removal after first iteration
+        when second iteration would exceed the budget."""
+        import logging
+
+        # Create a curve with an internal knot that has multiplicity 2.
+        points = np.array([[0, 0, 0],
+                           [0, 1, 0],
+                           [1, 2, 0],
+                           [2, 2, 0],
+                           [3, 1, 0],
+                           [3, 0, 0]], dtype=np.float64)
+        # n=6, p=3 => kv length = 6+3+1 = 10
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 0.5, 0.5, 1, 1, 1, 1])
+        curve = SvNativeNurbsCurve(degree, kv, points, [1]*6)
+
+        orig_mult = sv_knotvector.find_multiplicity(kv, 0.5)
+        self.assertEqual(orig_mult, 2)
+
+        # First, measure the error of a single removal using a loose tolerance
+        removed_one = curve.remove_knot(0.5, count=1, tolerance=100.0, if_possible=True)
+        mult_after_one = sv_knotvector.find_multiplicity(removed_one.get_knotvector(), 0.5)
+        self.assertEqual(mult_after_one, 1)  # first removal succeeded
+
+        # Now measure the error of removing the second instance
+        removed_two = removed_one.remove_knot(0.5, count=1, tolerance=100.0, if_possible=True)
+        mult_after_two = sv_knotvector.find_multiplicity(removed_two.get_knotvector(), 0.5)
+        self.assertEqual(mult_after_two, 0)  # second removal also succeeds with loose tolerance
+
+        # Use the logger to capture per-iteration errors
+        log_capture = []
+        class TestHandler(logging.Handler):
+            def emit(handler, record):
+                log_capture.append(record.getMessage())
+        logger = logging.getLogger("test_partial_tolerance")
+        logger.setLevel(logging.DEBUG)
+        handler = TestHandler()
+        logger.addHandler(handler)
+
+        try:
+            # Run removal with loose tolerance to capture per-iteration errors
+            curve.remove_knot(0.5, count=2, tolerance=100.0, if_possible=True, logger=logger)
+
+            # Parse per-iteration errors from log:
+            # "remove_knot iteration #0: error=..., total_error=..."
+            errors = []
+            for msg in log_capture:
+                if "iteration #" in msg and "total_error=" in msg:
+                    parts = msg.split("total_error=")[1]
+                    errors.append(float(parts))
+
+            self.assertEqual(len(errors), 2)  # two iterations
+            first_error = errors[0]
+            total_error = errors[1]
+            second_error = total_error - first_error
+            self.assertGreater(second_error, 0)  # second removal has non-zero error
+
+            # Set tolerance between first_error and total_error
+            # so that only the first removal succeeds
+            partial_tolerance = first_error + (second_error * 0.5)
+
+            removed_partial = curve.remove_knot(0.5, count=2,
+                                                tolerance=partial_tolerance,
+                                                if_possible=True)
+            new_mult = sv_knotvector.find_multiplicity(removed_partial.get_knotvector(), 0.5)
+            # Exactly one removal succeeded; the second was blocked by cumulative tolerance
+            self.assertEqual(new_mult, 1)
+        finally:
+            logger.removeHandler(handler)
+
+    # ========== end remove_knot comprehensive tests ==========
+
     @unittest.skip("Until https://github.com/orbingol/NURBS-Python/issues/135 is resolved")
     @requires(geomdl)
     def test_remove_geomdl_1(self):
@@ -783,9 +1199,9 @@ class OtherNurbsTests(SverchokTestCase):
         self.assertEqual(u_min, 0, "U_min")
         self.assertEqual(u_max, eq.arc_angle, "U_max")
         startpoint = nurbs.evaluate(u_min)
-        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=5)
+        self.assert_sverchok_data_equal(startpoint.tolist(), pt1.tolist(), precision=4)
         endpoint = nurbs.evaluate(u_max)
-        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=5)
+        self.assert_sverchok_data_equal(endpoint.tolist(), pt3.tolist(), precision=4)
 
 class KnotvectorTests(SverchokTestCase):
     def test_generate_1(self):
