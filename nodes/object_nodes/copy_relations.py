@@ -14,76 +14,21 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.handle_blender_data import BlModifier
 from sverchok.utils.listutils import unwrap_lowest_single_value, unwrap_lowest_single_list
 
-# def copy_object_relations(src_obj, target_obj):
-#     """
-#     Копирует relations (parent, parent_type, parent_bone),
-#     сохраняя мировую трансформацию target_obj (даже если у него уже был parent).
-#     """
-
-#     # сохраняем мировую матрицу ДО изменений
-#     world_matrix = target_obj.matrix_world.copy()
-
-#     new_parent = src_obj.parent
-
-#     if False and target_obj.parent == new_parent:
-#         pass
-#     else:
-
-#         # назначаем parent
-#         target_obj.parent = new_parent
-#         target_obj.parent_type = src_obj.parent_type
-#         target_obj.parent_bone = src_obj.parent_bone
-
-#         # КЛЮЧЕВОЙ МОМЕНТ:
-#         if new_parent:
-#             # сразу задаём корректный inverse
-#             target_obj.matrix_parent_inverse = new_parent.matrix_world.inverted() @ world_matrix
-#         else:
-#             target_obj.matrix_parent_inverse.identity()
-
-#         # теперь восстанавливаем world (уже стабильно)
-#         target_obj.matrix_world = world_matrix
-#         pass
-
-#     return
-
-
-
-# def copy_object_relations(src_obj, target_obj):
-#     """
-#     Копирует parent/relations,
-#     сохраняя ЛОКАЛЬНУЮ трансформацию target_obj
-#     (независимо от наличия parent).
-#     """
-
-#     # --- 1. сохраняем локальную матрицу
-#     local_matrix = target_obj.matrix_local.copy()
-
-#     # new_parent = src_obj.parent
-#     # new_parent_type = src_obj.parent_type
-#     # new_parent_bone = src_obj.parent_bone
-#     new_parent = src_obj.parent
-#     new_parent_type = src_obj.parent_type
-#     new_parent_bone = src_obj.parent_bone
-
-#     # --- 2. проверка: если ничего не меняется — выходим
-#     if (
-#         target_obj.parent == new_parent and
-#         target_obj.parent_type == new_parent_type and
-#         target_obj.parent_bone == new_parent_bone
-#     ):
-#         return
-
-#     # --- 3. назначаем parent
-#     target_obj.parent = new_parent
-#     target_obj.parent_type = new_parent_type
-#     target_obj.parent_bone = new_parent_bone
-
-#     # --- 4. восстанавливаем локальную трансформацию
-#     target_obj.matrix_local = local_matrix
-
 import bpy
 from datetime import datetime
+
+relations_params = {
+        'parent'                        : {'node_property_name': 'relations_parent1'                 , 'socket_name': 'relations_parent'                 , 'node_property_name_apply': 'node_parent_apply'                 , 'object_property_name_animation_copy': 'relations_parent_animation_copy'                 , 'object_property_name_copy': 'relations_parent_property_copy'                 , 'node_property_map_mode' : 'relations_parent_map_mode'                 , },
+        'parent_type'                   : {'node_property_name': 'relations_parent_type1'            , 'socket_name': 'relations_parent_type'            , 'node_property_name_apply': 'node_parent_type_apply'            , 'object_property_name_animation_copy': 'relations_parent_type_animation_copy'            , 'object_property_name_copy': 'relations_parent_type_property_copy'            , 'node_property_map_mode' : 'relations_parent_type_map_mode'            , },
+        'parent_vertices'               : {'node_property_name': 'relations_parent_vertices1'        , 'socket_name': 'relations_parent_vertices'        , 'node_property_name_apply': 'node_parent_vertices_apply'        , 'object_property_name_animation_copy': 'relations_parent_vertices_animation_copy'        , 'object_property_name_copy': 'relations_parent_vertices_property_copy'        , 'node_property_map_mode' : 'relations_parent_vertices_map_mode'        , },
+        'use_camera_lock_parent'        : {'node_property_name': 'relations_use_camera_lock_parent1' , 'socket_name': 'relations_use_camera_lock_parent' , 'node_property_name_apply': 'node_use_camera_lock_parent_apply' , 'object_property_name_animation_copy': 'relations_use_camera_lock_parent_animation_copy' , 'object_property_name_copy': 'relations_use_camera_lock_parent_property_copy' , 'node_property_map_mode' : 'relations_use_camera_lock_parent_map_mode' , },
+        'track_axis'                    : {'node_property_name': 'relations_track_axis1'             , 'socket_name': 'relations_track_axis'             , 'node_property_name_apply': 'node_track_axis_apply'             , 'object_property_name_animation_copy': 'relations_track_axis_animation_copy'             , 'object_property_name_copy': 'relations_track_axis_property_copy'             , 'node_property_map_mode' : 'relations_track_axis_map_mode'             , },
+        'up_axis'                       : {'node_property_name': 'relations_up_axis1'                , 'socket_name': 'relations_up_axis'                , 'node_property_name_apply': 'node_up_axis_apply'                , 'object_property_name_animation_copy': 'relations_up_axis_animation_copy'                , 'object_property_name_copy': 'relations_up_axis_property_copy'                , 'node_property_map_mode' : 'relations_up_axis_map_mode'                , },
+        'pass_index'                    : {'node_property_name': 'relations_pass_index1'             , 'socket_name': 'relations_pass_index'             , 'node_property_name_apply': 'node_pass_index_apply'             , 'object_property_name_animation_copy': 'relations_pass_index_animation_copy'             , 'object_property_name_copy': 'relations_pass_index_property_copy'             , 'node_property_map_mode' : 'relations_pass_index_map_mode'             , },
+
+        #{'object': '', 'node': 'rigid_body_', },
+    }
+
 
 def copy_object_relations(src_obj, target_obj):
     #bpy.context.view_layer.update()

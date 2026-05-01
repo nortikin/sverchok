@@ -26,6 +26,7 @@ from sverchok.utils.listutils import unwrap_lowest_single_value, unwrap_lowest_s
 
 from itertools import zip_longest
 
+# UI Propertis names. https://github.com/user-attachments/assets/b8a681e4-e9d1-49d8-9829-df6c3694b36f
 rigid_body_params = {
         'type'                          : {'node_property_name': 'rigid_body_type1'                        , 'socket_name': 'rigid_body_type'                       , 'node_property_name_apply': 'node_type_apply'                          , 'object_rb_property_name_animation_copy': 'object_rb_type_animation_copy'                          , 'object_rb_property_name_copy': 'object_rb_type_property_copy'                          , 'node_property_map_mode' : 'rigid_body_type_map_mode'                         , },
         'mass'                          : {'node_property_name': 'rigid_body_mass1'                        , 'socket_name': 'rigid_body_mass'                       , 'node_property_name_apply': 'node_mass_apply'                          , 'object_rb_property_name_animation_copy': 'object_rb_mass_animation_copy'                          , 'object_rb_property_name_copy': 'object_rb_mass_property_copy'                          , 'node_property_map_mode' : 'rigid_body_mass_map_mode'                         , },
@@ -53,116 +54,7 @@ for (params, params_settings) in rigid_body_params.items():
     socket_name = params_settings['socket_name']
     rigid_body_socket_names[socket_name] = params_settings
 
-# # tests for copy animation
-# def copy_rigid_body_animation(obj, list_target_objects, only_clear=False):
-#     if not obj.animation_data or not obj.animation_data.action:
-#         return
-
-#     src_action = obj.animation_data.action
-
-#     def is_rb_curve(fcurve):
-#         return any(
-#             fcurve.data_path == f"rigid_body.{param}"
-#             or fcurve.data_path.startswith(f"rigid_body.{param}[")
-#             for param in rigid_body_params
-#         )
-
-#     src_fcurves = []
-
-#     for slot in src_action.slots:
-#         if slot and hasattr(slot, "fcurves"):
-#             for fc in slot.fcurves:
-#                 if is_rb_curve(fc):
-#                     src_fcurves.append(fc)
-#                 pass
-#         pass
-
-#     for target in list_target_objects:
-
-#         if not target.rigid_body:
-#             continue
-
-#         # --- ОЧИСТКА АНИМАЦИИ ---
-#         if target.animation_data:
-#             if target.animation_data.action:
-#                 bpy.data.actions.remove(target.animation_data.action)
-#             target.animation_data_clear()
-#         if only_clear==True:
-#             continue
-
-#         target.animation_data_create()
-
-#         # создаём новый action
-#         new_action = bpy.data.actions.new(name=f"{target.name}_RB_Action")
-#         target.animation_data.action = new_action
-
-#         for fc in src_fcurves:
-#             new_fc = new_action.fcurves.new(
-#                 data_path=fc.data_path,
-#                 index=fc.array_index
-#             )
-
-#             new_fc.keyframe_points.add(len(fc.keyframe_points))
-
-#             for i, kp in enumerate(fc.keyframe_points):
-#                 new_kp = new_fc.keyframe_points[i]
-
-#                 new_kp.co = kp.co[:]
-#                 new_kp.handle_left = kp.handle_left[:]
-#                 new_kp.handle_right = kp.handle_right[:]
-
-#                 new_kp.handle_left_type = kp.handle_left_type
-#                 new_kp.handle_right_type = kp.handle_right_type
-#                 new_kp.interpolation = kp.interpolation
-
-#             new_fc.update()
-#         pass
-#     pass
-
-# def get_fcurves(obj):
-#     """
-#     Возвращает список всех FCurve, связанных с объектом:
-#     - активный Action
-#     - NLA (если используется)
-#     Поддерживает Blender 3.x–5.x
-#     """
-
-#     ad = obj.animation_data
-#     if not ad:
-#         return []
-
-#     fcurves = []
-
-#     # --- 1. Активный Action
-#     action = ad.action
-#     if action:
-#         # Новый API (Blender 5.x)
-#         if hasattr(action, "slots"):
-#             for slot in action.slots:
-#                 if hasattr(slot, "fcurves"):
-#                     fcurves.extend(slot.fcurves)
-
-#         # Старый API
-#         elif hasattr(action, "fcurves"):
-#             fcurves.extend(action.fcurves)
-
-#     # --- 2. NLA (если есть)
-#     for track in ad.nla_tracks:
-#         for strip in track.strips:
-#             act = strip.action
-#             if not act:
-#                 continue
-
-#             if hasattr(act, "slots"):
-#                 for slot in act.slots:
-#                     if hasattr(slot, "fcurves"):
-#                         fcurves.extend(slot.fcurves)
-
-#             elif hasattr(act, "fcurves"):
-#                 fcurves.extend(act.fcurves)
-
-#     return fcurves
-
+# Show popup. Example: https://github.com/user-attachments/assets/90107adc-85ce-4b3d-9e75-35c0ac93a32e
 def show_popup(message, title="Info", icon='INFO'):
 
     def draw(self, context):
@@ -679,7 +571,7 @@ class SV_PT_CopyAnimatedPropertiesDialogRigidBody(bpy.types.Operator):
     '''Copy Animated Properties of Rigid Body settings (FCurve)'''
     # this combination do not show this panel on the right side panel
     bl_idname="sv.copy_animation_properties_dialog_rigid_body"
-    bl_label = "Copy Animated Properties of Rigid Body settings"
+    bl_label = "Copy FCurve"
 
     # horizontal size
     # bl_ui_units_x = 40 - Has no influence in Dialog mode, use 'width' property in context.window_manager.invoke_props_dialog
@@ -722,7 +614,7 @@ class SV_PT_CopyAnimatedPropertiesDialogRigidBody(bpy.types.Operator):
 class SV_PT_ClearAnimatedPropertiesDialogRigidBody(bpy.types.Operator):
     '''Clear Animated Properties of Rigid Body (FCurve)'''
     bl_idname="sv.clear_animation_properties_dialog_rigid_body"
-    bl_label = "Clear Animated Properties of Rigid Body"
+    bl_label = "Clear FCurve"
 
     # horizontal size
     # bl_ui_units_x = 40 - Has no influence in Dialog mode, use 'width' property in context.window_manager.invoke_props_dialog
@@ -734,8 +626,8 @@ class SV_PT_ClearAnimatedPropertiesDialogRigidBody(bpy.types.Operator):
     # def is_extended():
     #     return True
 
-    def execute(self, context):
-        return {'FINISHED'}
+    # def execute(self, context):
+    #     return {'FINISHED'}
     
     def invoke(self, context, event):
         self.node_name = context.node.name
@@ -1182,7 +1074,7 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
             #box.enabled = False
             pass
         row = box.row(align=True)
-        row.prop(self, 'node_in_use', text=('Rigid Body Activated' if self.node_in_use==True else 'Rigid Body Removed'), icon=('X' if self.node_in_use==True else 'RIGID_BODY') )
+        row.prop(self, 'node_in_use', text=('Rigid Body [Activated]' if self.node_in_use==True else 'Rigid Body [Removed]'), icon=('X' if self.node_in_use==True else 'RIGID_BODY') )
         row.separator()
         row.row(align=True).operator(SV_PT_CopyAnimatedPropertiesDialogRigidBody.bl_idname, icon='KEYTYPE_KEYFRAME_VEC', text="", emboss=True)
         row1 = row.row(align=True)
