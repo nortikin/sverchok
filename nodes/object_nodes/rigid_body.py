@@ -23,34 +23,35 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, Bo
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat, fullList, get_data_nesting_level, describe_data_shape)
 from sverchok.utils.listutils import unwrap_lowest_single_value, unwrap_lowest_single_list
+from sverchok.utils.fcurves import get_fcurves, remove_fcurves, copy_fcurves
 
 from itertools import zip_longest
 
 # UI Propertis names. https://github.com/user-attachments/assets/b8a681e4-e9d1-49d8-9829-df6c3694b36f
-rigid_body_params = {
-        'type'                          : {'node_property_name': 'rigid_body_type1'                        , 'socket_name': 'rigid_body_type'                       , 'node_property_name_apply': 'node_type_apply'                          , 'object_rb_property_name_animation_copy': 'object_rb_type_animation_copy'                          , 'object_rb_property_name_copy': 'object_rb_type_property_copy'                          , 'node_property_map_mode' : 'rigid_body_type_map_mode'                         , },
-        'mass'                          : {'node_property_name': 'rigid_body_mass1'                        , 'socket_name': 'rigid_body_mass'                       , 'node_property_name_apply': 'node_mass_apply'                          , 'object_rb_property_name_animation_copy': 'object_rb_mass_animation_copy'                          , 'object_rb_property_name_copy': 'object_rb_mass_property_copy'                          , 'node_property_map_mode' : 'rigid_body_mass_map_mode'                         , },
-        'enabled'                       : {'node_property_name': 'rigid_body_enabled1'                     , 'socket_name': 'rigid_body_enabled'                    , 'node_property_name_apply': 'node_enabled_apply'                       , 'object_rb_property_name_animation_copy': 'object_rb_enabled_animation_copy'                       , 'object_rb_property_name_copy': 'object_rb_enabled_property_copy'                       , 'node_property_map_mode' : 'rigid_body_enabled_map_mode'                      , },
-        'kinematic'                     : {'node_property_name': 'rigid_body_kinematic1'                   , 'socket_name': 'rigid_body_kinematic'                  , 'node_property_name_apply': 'node_kinematic_apply'                     , 'object_rb_property_name_animation_copy': 'object_rb_kinematic_animation_copy'                     , 'object_rb_property_name_copy': 'object_rb_kinematic_property_copy'                     , 'node_property_map_mode' : 'rigid_body_kinematic_map_mode'                    , },
-        'collision_shape'               : {'node_property_name': 'rigid_body_collision_shape1'             , 'socket_name': 'rigid_body_collision_shape'            , 'node_property_name_apply': 'node_collision_shape_apply'               , 'object_rb_property_name_animation_copy': 'object_rb_collision_shape_animation_copy'               , 'object_rb_property_name_copy': 'object_rb_collision_shape_property_copy'               , 'node_property_map_mode' : 'rigid_body_collision_shape_map_mode'              , },
-        'mesh_source'                   : {'node_property_name': 'rigid_body_mesh_source1'                 , 'socket_name': 'rigid_body_mesh_source'                , 'node_property_name_apply': 'node_mesh_source_apply'                   , 'object_rb_property_name_animation_copy': 'object_rb_mesh_source_animation_copy'                   , 'object_rb_property_name_copy': 'object_rb_mesh_source_property_copy'                   , 'node_property_map_mode' : 'rigid_body_mesh_source_map_mode'                  , },
-        'use_deform'                    : {'node_property_name': 'rigid_body_use_deform1'                  , 'socket_name': 'rigid_body_use_deform'                 , 'node_property_name_apply': 'node_use_deform_apply'                    , 'object_rb_property_name_animation_copy': 'object_rb_use_deform_animation_copy'                    , 'object_rb_property_name_copy': 'object_rb_use_deform_property_copy'                    , 'node_property_map_mode' : 'rigid_body_use_deform_map_mode'                   , },
-        'friction'                      : {'node_property_name': 'rigid_body_friction1'                    , 'socket_name': 'rigid_body_friction'                   , 'node_property_name_apply': 'node_friction_apply'                      , 'object_rb_property_name_animation_copy': 'object_rb_friction_animation_copy'                      , 'object_rb_property_name_copy': 'object_rb_friction_property_copy'                      , 'node_property_map_mode' : 'rigid_body_friction_map_mode'                     , },
-        'restitution'                   : {'node_property_name': 'rigid_body_restitution1'                 , 'socket_name': 'rigid_body_restitution'                , 'node_property_name_apply': 'node_restitution_apply'                   , 'object_rb_property_name_animation_copy': 'object_rb_restitution_animation_copy'                   , 'object_rb_property_name_copy': 'object_rb_restitution_property_copy'                   , 'node_property_map_mode' : 'rigid_body_restitution_map_mode'                  , },
-        'use_margin'                    : {'node_property_name': 'rigid_body_use_margin1'                  , 'socket_name': 'rigid_body_use_margin'                 , 'node_property_name_apply': 'node_use_margin_apply'                    , 'object_rb_property_name_animation_copy': 'object_rb_use_margin_animation_copy'                    , 'object_rb_property_name_copy': 'object_rb_use_margin_property_copy'                    , 'node_property_map_mode' : 'rigid_body_use_margin_map_mode'                   , },
-        'collision_margin'              : {'node_property_name': 'rigid_body_collision_margin1'            , 'socket_name': 'rigid_body_collision_margin'           , 'node_property_name_apply': 'node_collision_margin_apply'              , 'object_rb_property_name_animation_copy': 'object_rb_collision_margin_animation_copy'              , 'object_rb_property_name_copy': 'object_rb_collision_margin_property_copy'              , 'node_property_map_mode' : 'rigid_body_collision_margin_map_mode'             , },
-        'collision_collections'         : {'node_property_name': 'rigid_body_collision_collections1'       , 'socket_name': 'rigid_body_collision_collections'      , 'node_property_name_apply': 'node_collision_collections_apply'         , 'object_rb_property_name_animation_copy': 'object_rb_collision_collections_animation_copy'         , 'object_rb_property_name_copy': 'object_rb_collision_collections_property_copy'         , 'node_property_map_mode' : 'rigid_body_collision_collections_map_mode'        , },
-        'linear_damping'                : {'node_property_name': 'rigid_body_linear_damping1'              , 'socket_name': 'rigid_body_linear_damping'             , 'node_property_name_apply': 'node_linear_damping_apply'                , 'object_rb_property_name_animation_copy': 'object_rb_linear_damping_animation_copy'                , 'object_rb_property_name_copy': 'object_rb_linear_damping_property_copy'                , 'node_property_map_mode' : 'rigid_body_linear_damping_map_mode'               , },
-        'angular_damping'               : {'node_property_name': 'rigid_body_angular_damping1'             , 'socket_name': 'rigid_body_angular_damping'            , 'node_property_name_apply': 'node_angular_damping_apply'               , 'object_rb_property_name_animation_copy': 'object_rb_angular_damping_animation_copy'               , 'object_rb_property_name_copy': 'object_rb_angular_damping_property_copy'               , 'node_property_map_mode' : 'rigid_body_angular_damping_map_mode'              , },
-        'use_deactivation'              : {'node_property_name': 'rigid_body_use_deactivation1'            , 'socket_name': 'rigid_body_use_deactivation'           , 'node_property_name_apply': 'node_use_deactivation_apply'              , 'object_rb_property_name_animation_copy': 'object_rb_use_deactivation_animation_copy'              , 'object_rb_property_name_copy': 'object_rb_use_deactivation_property_copy'              , 'node_property_map_mode' : 'rigid_body_use_deactivation_map_mode'             , },
-        'use_start_deactivated'         : {'node_property_name': 'rigid_body_use_start_deactivated1'       , 'socket_name': 'rigid_body_use_start_deactivated'      , 'node_property_name_apply': 'node_use_start_deactivated_apply'         , 'object_rb_property_name_animation_copy': 'object_rb_use_start_deactivated_animation_copy'         , 'object_rb_property_name_copy': 'object_rb_use_start_deactivated_property_copy'         , 'node_property_map_mode' : 'rigid_body_use_start_deactivated_map_mode'        , },
-        'deactivate_linear_velocity'    : {'node_property_name': 'rigid_body_deactivate_linear_velocity1'  , 'socket_name': 'rigid_body_deactivate_linear_velocity' , 'node_property_name_apply': 'node_deactivate_linear_velocity_apply'    , 'object_rb_property_name_animation_copy': 'object_rb_deactivate_linear_velocity_animation_copy'    , 'object_rb_property_name_copy': 'object_rb_deactivate_linear_velocity_property_copy'    , 'node_property_map_mode' : 'rigid_body_deactivate_linear_velocity_map_mode'   , },
-        'deactivate_angular_velocity'   : {'node_property_name': 'rigid_body_deactivate_angular_velocity1' , 'socket_name': 'rigid_body_deactivate_angular_velocity', 'node_property_name_apply': 'node_deactivate_angular_velocity_apply'   , 'object_rb_property_name_animation_copy': 'object_rb_deactivate_angular_velocity_animation_copy'   , 'object_rb_property_name_copy': 'object_rb_deactivate_angular_velocity_property_copy'   , 'node_property_map_mode' : 'rigid_body_deactivate_angular_velocity_map_mode'  , },
+object_params = {
+        'type'                          : {'node_property_name': 'rigid_body_type1'                        , 'socket_name': 'rigid_body_type'                       , 'node_property_name_apply': 'node_type_apply'                          , 'object_property_name_animation_copy': 'rigid_body_type_animation_copy'                          , 'object_property_name_copy': 'rigid_body_type_property_copy'                          , 'node_property_map_mode' : 'rigid_body_type_map_mode'                         , },
+        'mass'                          : {'node_property_name': 'rigid_body_mass1'                        , 'socket_name': 'rigid_body_mass'                       , 'node_property_name_apply': 'node_mass_apply'                          , 'object_property_name_animation_copy': 'rigid_body_mass_animation_copy'                          , 'object_property_name_copy': 'rigid_body_mass_property_copy'                          , 'node_property_map_mode' : 'rigid_body_mass_map_mode'                         , },
+        'enabled'                       : {'node_property_name': 'rigid_body_enabled1'                     , 'socket_name': 'rigid_body_enabled'                    , 'node_property_name_apply': 'node_enabled_apply'                       , 'object_property_name_animation_copy': 'rigid_body_enabled_animation_copy'                       , 'object_property_name_copy': 'rigid_body_enabled_property_copy'                       , 'node_property_map_mode' : 'rigid_body_enabled_map_mode'                      , },
+        'kinematic'                     : {'node_property_name': 'rigid_body_kinematic1'                   , 'socket_name': 'rigid_body_kinematic'                  , 'node_property_name_apply': 'node_kinematic_apply'                     , 'object_property_name_animation_copy': 'rigid_body_kinematic_animation_copy'                     , 'object_property_name_copy': 'rigid_body_kinematic_property_copy'                     , 'node_property_map_mode' : 'rigid_body_kinematic_map_mode'                    , },
+        'collision_shape'               : {'node_property_name': 'rigid_body_collision_shape1'             , 'socket_name': 'rigid_body_collision_shape'            , 'node_property_name_apply': 'node_collision_shape_apply'               , 'object_property_name_animation_copy': 'rigid_body_collision_shape_animation_copy'               , 'object_property_name_copy': 'rigid_body_collision_shape_property_copy'               , 'node_property_map_mode' : 'rigid_body_collision_shape_map_mode'              , },
+        'mesh_source'                   : {'node_property_name': 'rigid_body_mesh_source1'                 , 'socket_name': 'rigid_body_mesh_source'                , 'node_property_name_apply': 'node_mesh_source_apply'                   , 'object_property_name_animation_copy': 'rigid_body_mesh_source_animation_copy'                   , 'object_property_name_copy': 'rigid_body_mesh_source_property_copy'                   , 'node_property_map_mode' : 'rigid_body_mesh_source_map_mode'                  , },
+        'use_deform'                    : {'node_property_name': 'rigid_body_use_deform1'                  , 'socket_name': 'rigid_body_use_deform'                 , 'node_property_name_apply': 'node_use_deform_apply'                    , 'object_property_name_animation_copy': 'rigid_body_use_deform_animation_copy'                    , 'object_property_name_copy': 'rigid_body_use_deform_property_copy'                    , 'node_property_map_mode' : 'rigid_body_use_deform_map_mode'                   , },
+        'friction'                      : {'node_property_name': 'rigid_body_friction1'                    , 'socket_name': 'rigid_body_friction'                   , 'node_property_name_apply': 'node_friction_apply'                      , 'object_property_name_animation_copy': 'rigid_body_friction_animation_copy'                      , 'object_property_name_copy': 'rigid_body_friction_property_copy'                      , 'node_property_map_mode' : 'rigid_body_friction_map_mode'                     , },
+        'restitution'                   : {'node_property_name': 'rigid_body_restitution1'                 , 'socket_name': 'rigid_body_restitution'                , 'node_property_name_apply': 'node_restitution_apply'                   , 'object_property_name_animation_copy': 'rigid_body_restitution_animation_copy'                   , 'object_property_name_copy': 'rigid_body_restitution_property_copy'                   , 'node_property_map_mode' : 'rigid_body_restitution_map_mode'                  , },
+        'use_margin'                    : {'node_property_name': 'rigid_body_use_margin1'                  , 'socket_name': 'rigid_body_use_margin'                 , 'node_property_name_apply': 'node_use_margin_apply'                    , 'object_property_name_animation_copy': 'rigid_body_use_margin_animation_copy'                    , 'object_property_name_copy': 'rigid_body_use_margin_property_copy'                    , 'node_property_map_mode' : 'rigid_body_use_margin_map_mode'                   , },
+        'collision_margin'              : {'node_property_name': 'rigid_body_collision_margin1'            , 'socket_name': 'rigid_body_collision_margin'           , 'node_property_name_apply': 'node_collision_margin_apply'              , 'object_property_name_animation_copy': 'rigid_body_collision_margin_animation_copy'              , 'object_property_name_copy': 'rigid_body_collision_margin_property_copy'              , 'node_property_map_mode' : 'rigid_body_collision_margin_map_mode'             , },
+        'collision_collections'         : {'node_property_name': 'rigid_body_collision_collections1'       , 'socket_name': 'rigid_body_collision_collections'      , 'node_property_name_apply': 'node_collision_collections_apply'         , 'object_property_name_animation_copy': 'rigid_body_collision_collections_animation_copy'         , 'object_property_name_copy': 'rigid_body_collision_collections_property_copy'         , 'node_property_map_mode' : 'rigid_body_collision_collections_map_mode'        , },
+        'linear_damping'                : {'node_property_name': 'rigid_body_linear_damping1'              , 'socket_name': 'rigid_body_linear_damping'             , 'node_property_name_apply': 'node_linear_damping_apply'                , 'object_property_name_animation_copy': 'rigid_body_linear_damping_animation_copy'                , 'object_property_name_copy': 'rigid_body_linear_damping_property_copy'                , 'node_property_map_mode' : 'rigid_body_linear_damping_map_mode'               , },
+        'angular_damping'               : {'node_property_name': 'rigid_body_angular_damping1'             , 'socket_name': 'rigid_body_angular_damping'            , 'node_property_name_apply': 'node_angular_damping_apply'               , 'object_property_name_animation_copy': 'rigid_body_angular_damping_animation_copy'               , 'object_property_name_copy': 'rigid_body_angular_damping_property_copy'               , 'node_property_map_mode' : 'rigid_body_angular_damping_map_mode'              , },
+        'use_deactivation'              : {'node_property_name': 'rigid_body_use_deactivation1'            , 'socket_name': 'rigid_body_use_deactivation'           , 'node_property_name_apply': 'node_use_deactivation_apply'              , 'object_property_name_animation_copy': 'rigid_body_use_deactivation_animation_copy'              , 'object_property_name_copy': 'rigid_body_use_deactivation_property_copy'              , 'node_property_map_mode' : 'rigid_body_use_deactivation_map_mode'             , },
+        'use_start_deactivated'         : {'node_property_name': 'rigid_body_use_start_deactivated1'       , 'socket_name': 'rigid_body_use_start_deactivated'      , 'node_property_name_apply': 'node_use_start_deactivated_apply'         , 'object_property_name_animation_copy': 'rigid_body_use_start_deactivated_animation_copy'         , 'object_property_name_copy': 'rigid_body_use_start_deactivated_property_copy'         , 'node_property_map_mode' : 'rigid_body_use_start_deactivated_map_mode'        , },
+        'deactivate_linear_velocity'    : {'node_property_name': 'rigid_body_deactivate_linear_velocity1'  , 'socket_name': 'rigid_body_deactivate_linear_velocity' , 'node_property_name_apply': 'node_deactivate_linear_velocity_apply'    , 'object_property_name_animation_copy': 'rigid_body_deactivate_linear_velocity_animation_copy'    , 'object_property_name_copy': 'rigid_body_deactivate_linear_velocity_property_copy'    , 'node_property_map_mode' : 'rigid_body_deactivate_linear_velocity_map_mode'   , },
+        'deactivate_angular_velocity'   : {'node_property_name': 'rigid_body_deactivate_angular_velocity1' , 'socket_name': 'rigid_body_deactivate_angular_velocity', 'node_property_name_apply': 'node_deactivate_angular_velocity_apply'   , 'object_property_name_animation_copy': 'rigid_body_deactivate_angular_velocity_animation_copy'   , 'object_property_name_copy': 'rigid_body_deactivate_angular_velocity_property_copy'   , 'node_property_map_mode' : 'rigid_body_deactivate_angular_velocity_map_mode'  , },
         #{'object': '', 'node': 'rigid_body_', },
     }
 
 rigid_body_socket_names = dict()
-for (params, params_settings) in rigid_body_params.items():
+for (params, params_settings) in object_params.items():
     socket_name = params_settings['socket_name']
     rigid_body_socket_names[socket_name] = params_settings
 
@@ -61,256 +62,6 @@ def show_popup(message, title="Info", icon='INFO'):
         self.layout.label(text=message)
 
     bpy.context.window_manager.popup_menu(draw, title=title, icon=icon)
-
-def get_action(ad):
-    if hasattr(ad, "action_slot") and ad.action_slot:
-        return ad.action_slot
-    elif hasattr(ad, "action"):
-        return ad.action
-    else:
-        raise Exception("0021. Unknown property action for animation operations. ")
-
-def get_fcurves(obj):
-    """
-    Blender 5.x:
-    Возвращает список FCurve для obj из active Action/Slot.
-    """
-
-    ad = obj.animation_data
-    if not ad or not ad.action:
-        return []
-
-    action = ad.action
-    slot = get_action(ad)
-    if action is None or slot is None:
-        return []
-
-    result = []
-
-    if hasattr(action, "fcurves"):
-        # Blender 3.0
-        result.extend( [fcurve for fcurve in action.fcurves] )
-    else:
-        for layer in action.layers:
-            for strip in layer.strips:
-                # Нас интересует keyframe strip, который умеет вернуть channelbag для slot.
-                bag = None
-
-                # На разных сборках/переходных API имя может отличаться,
-                # поэтому пробуем несколько вариантов.
-                if hasattr(strip, "channelbag"):
-                    try:
-                        bag = strip.channelbag(slot, ensure=False)
-                    except TypeError:
-                        bag = strip.channelbag(slot)
-                elif hasattr(strip, "channelbag_for_slot"):
-                    bag = strip.channelbag_for_slot(slot)
-                elif hasattr(strip, "channelbag_slot"):
-                    bag = strip.channelbag_slot(slot)
-
-                if bag and hasattr(bag, "fcurves"):
-                    result.extend(list(bag.fcurves))
-        pass
-
-    return result
-
-def remove_fcurves(obj, data_path):
-    """
-    Blender 5.x:
-    Возвращает список FCurve для obj из active Action/Slot.
-    """
-
-    ad = obj.animation_data
-    if not ad or not ad.action:
-        return []
-
-    action = ad.action
-    slot = get_action(ad)
-    if action is None or slot is None:
-        return []
-
-    result = []
-    if hasattr(action, "fcurves"):
-        # Blender 3.0
-        for fcurve in list(action.fcurves):
-            action.fcurves.remove(fcurve)
-            #result.append(fcurve) # В Blender 3.0 нельзя обращаться к кривой после удаления. Возникает исключение An exception was raised: ReferenceError('StructRNA of type FCurve has been removed'). Если требуется прочитать свойства, то это нужно делать заранее.
-    else:
-        for layer in action.layers:
-            for strip in layer.strips:
-                # Нас интересует keyframe strip, который умеет вернуть channelbag для slot.
-                bag = None
-
-                # На разных сборках/переходных API имя может отличаться,
-                # поэтому пробуем несколько вариантов.
-                if hasattr(strip, "channelbag"):
-                    try:
-                        bag = strip.channelbag(slot, ensure=False)
-                    except TypeError:
-                        bag = strip.channelbag(slot)
-                elif hasattr(strip, "channelbag_for_slot"):
-                    bag = strip.channelbag_for_slot(slot)
-                elif hasattr(strip, "channelbag_slot"):
-                    bag = strip.channelbag_slot(slot)
-
-                if bag and hasattr(bag, "fcurves"):
-                    for fc_to_remove in bag.fcurves:
-                        if fc_to_remove.data_path in data_path:
-                            bag.fcurves.remove(fc_to_remove)
-                            #result.append(fcurve)
-                        pass
-                    pass
-            pass
-        pass
-
-    return result
-
-
-def copy_fcurves(src_obj, target_obj, data_paths, only_clear=False):
-    """
-    Копирует FCurves с src_obj на target_obj только для указанных data_paths.
-    """
-
-    # --- Проверка источника
-    if not src_obj.animation_data or not src_obj.animation_data.action:
-        #print("[ERROR] Source has no animation")
-        return
-
-    src_fcurves = get_fcurves(src_obj,)
-
-    # --- Проверка доступных путей
-    available_paths = {fc.data_path for fc in src_fcurves}
-    #print(f'available_paths={available_paths}')
-
-    valid_paths = []
-    invalid_paths = []
-    no_animation_paths = []
-
-    for path in data_paths:
-        # --- 1. Проверяем, что параметр вообще существует у target
-        try:
-            target_obj.path_resolve(path)
-        except Exception:
-            #print(f"[WARN] Path not valid for target object: {path}")
-            invalid_paths.append(path)
-            continue
-
-        # --- 2. Проверяем, есть ли анимация у source
-        if path not in available_paths:
-            #print(f"[INFO] No animation for path (skipped): {path}")
-            no_animation_paths.append(path)
-            continue
-
-        # --- 3. Всё ок
-        valid_paths.append(path)
-
-    #print(f'invalid_paths={invalid_paths}')
-    #print(f'no_animation_paths={no_animation_paths}')
-
-    # --- если есть реально невалидные параметры — останавливаемся
-    if invalid_paths:
-        #print(f"[ERROR] Invalid paths: {invalid_paths}")
-        return
-
-    # --- Подготовка target
-    if not target_obj.animation_data:
-        target_obj.animation_data_create()
-
-    if not target_obj.animation_data.action:
-        target_obj.animation_data.action = bpy.data.actions.new(
-            name=f"{target_obj.name}_Action"
-        )
-
-    dst_action = target_obj.animation_data.action
-    dst_fcurves = remove_fcurves(target_obj, valid_paths,)
-
-    ## --- Удаление старых FCurves (ВАЖНО: через list)
-    # 
-    # fcurves_to_remove = [
-    #     fc for fc in list(dst_fcurves)
-    #     if fc.data_path in valid_paths
-    # ]
-
-    # #print(f'Количество fcurves_to_remove: {len(fcurves_to_remove)}, {fcurves_to_remove}')
-
-    # for fc in fcurves_to_remove:
-    #     dst_fcurves.remove(fc)
-
-    if only_clear==True:
-        return
-
-    # --- Копирование
-    if hasattr(dst_action, "fcurve_ensure_for_datablock")==False:
-        # Blender 3.0
-        for fc in src_fcurves:
-            if fc.data_path not in valid_paths:
-                continue
-
-            # В 3.0 нет fcurve_ensure_for_datablock
-            new_fc = dst_action.fcurves.find(fc.data_path, index=fc.array_index)
-
-            if new_fc is None:
-                new_fc = dst_action.fcurves.new(
-                    data_path=fc.data_path,
-                    index=fc.array_index
-                )
-
-            # очищаем существующие ключи (если были)
-            kps = new_fc.keyframe_points
-            if hasattr(kps, "clear"):
-                kps.clear()
-            else:
-                for kp in list(kps):
-                    kps.remove(kp)
-
-            new_fc.keyframe_points.add(len(fc.keyframe_points))
-
-            for i, kp in enumerate(fc.keyframe_points):
-                new_kp = new_fc.keyframe_points[i]
-
-                new_kp.co = kp.co.copy()
-                new_kp.handle_left = kp.handle_left.copy()
-                new_kp.handle_right = kp.handle_right.copy()
-
-                new_kp.interpolation = kp.interpolation
-                new_kp.handle_left_type = kp.handle_left_type
-                new_kp.handle_right_type = kp.handle_right_type
-
-            # В 3.0 лучше обновлять так:
-            new_fc.keyframe_points.update()
-        pass
-    else:
-        for fc in src_fcurves:
-            if fc.data_path not in valid_paths:
-                continue
-
-            new_fc = dst_action.fcurve_ensure_for_datablock(
-                target_obj,
-                data_path=fc.data_path,
-                index=fc.array_index
-            )
-
-            # очищаем существующие ключи (если были)
-            new_fc.keyframe_points.clear()
-
-            new_fc.keyframe_points.add(len(fc.keyframe_points))
-
-            for i, kp in enumerate(fc.keyframe_points):
-                new_kp = new_fc.keyframe_points[i]
-
-                new_kp.co = kp.co.copy()
-                new_kp.handle_left = kp.handle_left.copy()
-                new_kp.handle_right = kp.handle_right.copy()
-
-                new_kp.interpolation = kp.interpolation
-                new_kp.handle_left_type = kp.handle_left_type
-                new_kp.handle_right_type = kp.handle_right_type
-
-            new_fc.update()
-            pass
-        pass
-
-    return
 
 def run_op_with_override(op, obj):
     '''Backward compatibility of operator context for Blender 3.0'''
@@ -332,7 +83,7 @@ def run_op_with_override(op, obj):
         }
         op(override)
 
-class SvRigidBodyPrioritySocketsOnOff(bpy.types.Operator):
+class SvPrioritySocketsOnOffRigidBody(bpy.types.Operator):
     '''Set On or Off Rigid Body parameters'''
     bl_idname = "node.sv_rigid_body_objects_priority_sockets_onoff"
     bl_label = "Select object as active"
@@ -357,9 +108,9 @@ class SvRigidBodyPrioritySocketsOnOff(bpy.types.Operator):
             pass
         return {'FINISHED'}
 
-class SvRigidBodyUIShowIcon(bpy.types.Operator):
+class SvUIShowIconRigidBody(bpy.types.Operator):
     '''Filled - socket connected, Circle - socket is not connected'''
-    bl_idname = "node.sv_rigid_body_ui_show_icon"
+    bl_idname = "node.sv_ui_show_icon_rigid_body"
     bl_label = ""
 
     description_text: bpy.props.StringProperty(default='')
@@ -425,22 +176,22 @@ def draw_properties(layout, node_group, node_name):
 
     # row_op = grid2.row(align=True)
     # row_op.alignment = "LEFT"
-    # op = row_op.operator(SvRigidBodyPrioritySocketsOnOff.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
+    # op = row_op.operator(SvPrioritySocketsOnOffRigidBody.bl_idname, icon='GP_CAPS_FLAT', text='Hide unlinked sockets', emboss=True)
     # op.node_group = node_group
     # op.node_name  = node_name
 
-    for (param_name, param_settings) in rigid_body_params.items():
+    for (param_name, param_settings) in object_params.items():
         prop_enabled = True
         if 'node_property_name_apply' in param_settings:
             node_property_name_apply = param_settings['node_property_name_apply']
             if getattr(node, node_property_name_apply)==False:
                 prop_enabled = False
 
-        if 'object_rb_property_name_copy' in param_settings:
-            object_rb_property_name_copy = param_settings['object_rb_property_name_copy']
+        if 'object_property_name_copy' in param_settings:
+            object_property_name_copy = param_settings['object_property_name_copy']
             row = root_grid.row(align=False)
             row.alignment='LEFT'
-            row.prop(node, object_rb_property_name_copy, icon='OBJECT_HIDDEN' if getattr(node, f'object_rb_{param_name}_property_copy')==False else 'OBJECT_DATA', text='')
+            row.prop(node, object_property_name_copy, icon='OBJECT_DATA', text='')
             
         if 'node_property_map_mode' in param_settings:
             node_property_map_mode = param_settings['node_property_map_mode']
@@ -448,7 +199,7 @@ def draw_properties(layout, node_group, node_name):
             row = root_grid.row(align=True)
             row.alignment='RIGHT'
 
-            op = row.operator(SvRigidBodyUIShowIcon.bl_idname, icon='FORWARD' if node.inputs[socket_name].is_linked else 'RADIOBUT_OFF', text='', emboss=False)
+            op = row.operator(SvUIShowIconRigidBody.bl_idname, icon='FORWARD' if node.inputs[socket_name].is_linked else 'RADIOBUT_OFF', text='', emboss=False)
             op.description_text = 'Socket is connected.' if node.inputs[socket_name].is_linked==True else 'Socket is not connected.'
 
         if 'node_property_map_mode' in param_settings:
@@ -493,7 +244,7 @@ def draw_copy_or_clear_animated_properties(layout, node_group, node_name):
     # row0.label(text='- socket is not priority', icon='CHECKBOX_DEHLT')
     # grid2.separator()
 
-    for (param_name, param_settings) in rigid_body_params.items():
+    for (param_name, param_settings) in object_params.items():
         prop_enabled = True
         if 'node_property_name_apply' in param_settings:
             node_property_name_apply = param_settings['node_property_name_apply']
@@ -507,14 +258,14 @@ def draw_copy_or_clear_animated_properties(layout, node_group, node_name):
             #row.enabled = prop_enabled
             row.alignment='RIGHT'
 
-            op = row.operator(SvRigidBodyUIShowIcon.bl_idname, icon='FORWARD' if node.inputs[socket_name].is_linked else 'RADIOBUT_OFF', text='', emboss=False)
+            op = row.operator(SvUIShowIconRigidBody.bl_idname, icon='FORWARD' if node.inputs[socket_name].is_linked else 'RADIOBUT_OFF', text='', emboss=False)
             op.description_text = 'Socket is connected.' if node.inputs[socket_name].is_linked==True else 'Socket is not connected.'
 
-        if 'object_rb_property_name_animation_copy' in param_settings:
-            object_rb_property_name_animation_copy = param_settings['object_rb_property_name_animation_copy']
+        if 'object_property_name_animation_copy' in param_settings:
+            object_property_name_animation_copy = param_settings['object_property_name_animation_copy']
             row = root_grid.row(align=False)
             row.alignment='LEFT'
-            row.prop(node, object_rb_property_name_animation_copy, icon='KEYTYPE_KEYFRAME_VEC' if getattr(node, object_rb_property_name_animation_copy)==True else 'HANDLETYPE_FREE_VEC' )
+            row.prop(node, object_property_name_animation_copy, icon='KEYTYPE_KEYFRAME_VEC' if getattr(node, object_property_name_animation_copy)==True else 'HANDLETYPE_FREE_VEC' )
             pass
         pass
     if bpy.data.node_groups[node_group].sv_process==False:
@@ -530,7 +281,7 @@ def draw_copy_or_clear_animated_properties(layout, node_group, node_name):
 class SV_PT_ViewportDisplayPropertiesDialogRigidBody(bpy.types.Operator):
     '''Overwrite Settings of Rigid Body properties node values and sockets'''
     # this combination do not show this panel on the right side panel
-    bl_idname="sv.viewport_display_properties_dialog_rigid_body_objects"
+    bl_idname="sv.viewport_display_properties_dialog_objects_rigid_body"
     bl_label = "Overwrite Settings"
 
     # horizontal size
@@ -741,13 +492,13 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     
-    object_in_pointer1: bpy.props.PointerProperty(
+    targeting_objects1: bpy.props.PointerProperty(
         name        = "Objects",
         description = "Objects where to copy Rigid Body settings",
         type        = bpy.types.Object,
     )
     
-    objects_map1 : bpy.props.IntProperty(
+    objects_indexes_maps1 : bpy.props.IntProperty(
         name        = "Objects Index Map",
         description = "Objects Index Mapping of Rigid Body settings",
         default     = 0,
@@ -766,16 +517,16 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
             ('RIGID_BODY_DATA_FROM,SETTINGS', "Node Settings", "Overlap Rigid Body settings with parameters in this node (also use properties dialog to select what settings to overlap)", 1),
         ]
 
-    objects_map_mode_modes = [
-            ('RIGID_BODY_MAP,MAPPING' , "Mapping" , "Mapping objects by input socket data"          , 'PARTICLES', 0),
-            ('RIGID_BODY_MAP,INDEXING', "Indexing", "Mapping objects by indexes (ignore mapping)"   , 'SORTSIZE' , 1),
+    objects_indexes_maps_mode_modes = [
+            ('OBJECT_INDEX_MAP,MAPPING' , "Mapping" , "Mapping objects by input socket data"          , 'PARTICLES', 0),
+            ('OBJECT_INDEX_MAP,INDEXING', "Indexing", "Mapping objects by indexes (ignore mapping)"   , 'SORTSIZE' , 1),
         ]
 
-    objects_map_mode1 : EnumProperty(
+    objects_indexes_maps_mode1 : EnumProperty(
         name        = "Objects map mode",
         description = "Mappings Objects by map or by Indexes",
-        items       = objects_map_mode_modes,
-        default     = 'RIGID_BODY_MAP,MAPPING',
+        items       = objects_indexes_maps_mode_modes,
+        default     = 'OBJECT_INDEX_MAP,MAPPING',
         update      = updateNode,
     )
 
@@ -792,9 +543,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_type_apply                 : BoolProperty( name = "Type", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_type_animation_copy   : BoolProperty( name = "Type", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, ) # This flag used in the operator so do not need to call update
-    object_rb_type_property_copy    : BoolProperty( name = "Type", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_type_map_mode        : EnumProperty( name = "Type", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_type_animation_copy  : BoolProperty( name = "Type", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, ) # This flag used in the operator so do not need to call update
+    rigid_body_type_property_copy   : BoolProperty( name = "Type", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_type_map_mode        : EnumProperty( name = "Type", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_mass1: FloatProperty(
         name        = "Mass",
@@ -805,9 +556,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_mass_apply                 : BoolProperty( name = "Mass", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_mass_animation_copy   : BoolProperty( name = "Mass", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_mass_property_copy    : BoolProperty( name = "Mass", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_mass_map_mode        : EnumProperty( name = "Mass", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_mass_animation_copy  : BoolProperty( name = "Mass", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_mass_property_copy   : BoolProperty( name = "Mass", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_mass_map_mode        : EnumProperty( name = "Mass", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
     
     rigid_body_enabled1 : BoolProperty(
         name        = "Dynamic",
@@ -815,9 +566,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         default     = True,
         update = updateNode)
     node_enabled_apply                  : BoolProperty( name = "Dynamic", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_enabled_animation_copy    : BoolProperty( name = "Dynamic", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_enabled_property_copy     : BoolProperty( name = "Dynamic", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_enabled_map_mode         : EnumProperty( name = "Dynamic", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_enabled_animation_copy   : BoolProperty( name = "Dynamic", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_enabled_property_copy    : BoolProperty( name = "Dynamic", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_enabled_map_mode         : EnumProperty( name = "Dynamic", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_kinematic1 : BoolProperty(
         name        = "Animated",
@@ -826,9 +577,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_kinematic_apply                : BoolProperty( name = "Animated", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_kinematic_animation_copy  : BoolProperty( name = "Animated", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_kinematic_property_copy   : BoolProperty( name = "Animated", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_kinematic_map_mode       : EnumProperty( name = "Animated", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_kinematic_animation_copy : BoolProperty( name = "Animated", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_kinematic_property_copy  : BoolProperty( name = "Animated", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_kinematic_map_mode       : EnumProperty( name = "Animated", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_collision_shape_modes = [
             ('RIGID_BODY_SHAPE_MODE,BOX'          , "Box"            , "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"                                      , 'MESH_CUBE'       , 0),
@@ -848,10 +599,10 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         default     = 'RIGID_BODY_SHAPE_MODE,CONVEX_HULL',
         update      = updateNode,
     )
-    node_collision_shape_apply              : BoolProperty( name = "Shape", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_collision_shape_animation_copy: BoolProperty( name = "Shape", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_collision_shape_property_copy : BoolProperty( name = "Shape", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_collision_shape_map_mode     : EnumProperty( name = "Shape", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    node_collision_shape_apply                  : BoolProperty( name = "Shape", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
+    rigid_body_collision_shape_animation_copy   : BoolProperty( name = "Shape", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_collision_shape_property_copy    : BoolProperty( name = "Shape", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_collision_shape_map_mode         : EnumProperty( name = "Shape", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_mesh_source_modes = [
             ('RIGID_BODY_MESH_SOURCE,BASE'   , "Base"   , "Base mesh"                                  , 0),
@@ -866,10 +617,10 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         default     = 'RIGID_BODY_MESH_SOURCE,DEFORM',
         update      = updateNode,
     )
-    node_mesh_source_apply              : BoolProperty( name = "Source", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_mesh_source_animation_copy: BoolProperty( name = "Source", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_mesh_source_property_copy : BoolProperty( name = "Source", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_mesh_source_map_mode     : EnumProperty( name = "Source", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    node_mesh_source_apply                  : BoolProperty( name = "Source", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
+    rigid_body_mesh_source_animation_copy   : BoolProperty( name = "Source", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_mesh_source_property_copy    : BoolProperty( name = "Source", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_mesh_source_map_mode         : EnumProperty( name = "Source", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
     
     rigid_body_use_deform1 : BoolProperty(
         name        = "Deforming",
@@ -878,9 +629,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_use_deform_apply               : BoolProperty( name = "Deforming", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_use_deform_animation_copy : BoolProperty( name = "Deforming", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_use_deform_property_copy  : BoolProperty( name = "Deforming", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_use_deform_map_mode      : EnumProperty( name = "Deforming", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_use_deform_animation_copy: BoolProperty( name = "Deforming", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_use_deform_property_copy : BoolProperty( name = "Deforming", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_use_deform_map_mode      : EnumProperty( name = "Deforming", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_friction1: FloatProperty(
         name        = "Friction",
@@ -891,9 +642,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_friction_apply                 : BoolProperty( name = "Friction", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_friction_animation_copy   : BoolProperty( name = "Friction", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_friction_property_copy    : BoolProperty( name = "Friction", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_friction_map_mode        : EnumProperty( name = "Friction", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_friction_animation_copy  : BoolProperty( name = "Friction", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_friction_property_copy   : BoolProperty( name = "Friction", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_friction_map_mode        : EnumProperty( name = "Friction", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_restitution1: FloatProperty(
         name        = "Bounciness",
@@ -903,10 +654,10 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         description = "Tendency of object to bounce after colliding with another (0 = stays still, 1 = perfectly elastic)",
         update      = updateNode,
     )
-    node_restitution_apply              : BoolProperty( name = "Bounciness", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_restitution_animation_copy: BoolProperty( name = "Bounciness", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_restitution_property_copy : BoolProperty( name = "Bounciness", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_restitution_map_mode     : EnumProperty( name = "Bounciness", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    node_restitution_apply                  : BoolProperty( name = "Bounciness", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
+    rigid_body_restitution_animation_copy   : BoolProperty( name = "Bounciness", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_restitution_property_copy    : BoolProperty( name = "Bounciness", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_restitution_map_mode         : EnumProperty( name = "Bounciness", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
     
     rigid_body_use_margin1 : BoolProperty(
         name        = "Collision Margin",
@@ -915,9 +666,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_use_margin_apply               : BoolProperty( name = "Collision Margin", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_use_margin_animation_copy : BoolProperty( name = "Collision Margin", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_use_margin_property_copy  : BoolProperty( name = "Collision Margin", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_use_margin_map_mode      : EnumProperty( name = "Collision Margin", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_use_margin_animation_copy: BoolProperty( name = "Collision Margin", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_use_margin_property_copy : BoolProperty( name = "Collision Margin", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_use_margin_map_mode      : EnumProperty( name = "Collision Margin", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_collision_margin1: FloatProperty(
         name        = "Margin",
@@ -928,20 +679,20 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_collision_margin_apply                 : BoolProperty( name = "Margin", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_collision_margin_animation_copy   : BoolProperty( name = "Margin", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_collision_margin_property_copy    : BoolProperty( name = "Margin", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_collision_margin_map_mode        : EnumProperty( name = "Margin", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_collision_margin_animation_copy  : BoolProperty( name = "Margin", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_collision_margin_property_copy   : BoolProperty( name = "Margin", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_collision_margin_map_mode        : EnumProperty( name = "Margin", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_collision_collections1: BoolVectorProperty(
         name        = "Collision Collection",
         description = "Collision collections rigid body belongs to",
-        size=20,
+        size        = 20,
         update      = updateNode,
     )
     node_collision_collections_apply                : BoolProperty( name = "Collision Collection", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_collision_collections_animation_copy  : BoolProperty( name = "Collision Collection", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_collision_collections_property_copy   : BoolProperty( name = "Collision Collection", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_collision_collections_map_mode       : EnumProperty( name = "Collision Collection", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_collision_collections_animation_copy : BoolProperty( name = "Collision Collection", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_collision_collections_property_copy  : BoolProperty( name = "Collision Collection", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_collision_collections_map_mode       : EnumProperty( name = "Collision Collection", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_linear_damping1: FloatProperty(
         name        = "Damping Translation",
@@ -953,9 +704,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_linear_damping_apply               : BoolProperty( name = "Damping Translation", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_linear_damping_animation_copy : BoolProperty( name = "Damping Translation", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_linear_damping_property_copy  : BoolProperty( name = "Damping Translation", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_linear_damping_map_mode      : EnumProperty( name = "Damping Translation", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_linear_damping_animation_copy: BoolProperty( name = "Damping Translation", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_linear_damping_property_copy : BoolProperty( name = "Damping Translation", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_linear_damping_map_mode      : EnumProperty( name = "Damping Translation", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_angular_damping1: FloatProperty(
         name        = "Rotation",
@@ -966,10 +717,10 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         precision   = 3,
         update      = updateNode,
     )
-    node_angular_damping_apply              : BoolProperty( name = "Rotation", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_angular_damping_animation_copy: BoolProperty( name = "Rotation", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_angular_damping_property_copy : BoolProperty( name = "Rotation", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_angular_damping_map_mode     : EnumProperty( name = "Rotation", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    node_angular_damping_apply                  : BoolProperty( name = "Rotation", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
+    rigid_body_angular_damping_animation_copy   : BoolProperty( name = "Rotation", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_angular_damping_property_copy    : BoolProperty( name = "Rotation", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_angular_damping_map_mode         : EnumProperty( name = "Rotation", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
     
     rigid_body_use_deactivation1 : BoolProperty(
         name        = "Deactivation",
@@ -978,9 +729,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_use_deactivation_apply                 : BoolProperty( name = "Deactivation", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_use_deactivation_animation_copy   : BoolProperty( name = "Deactivation", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_use_deactivation_property_copy    : BoolProperty( name = "Deactivation", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_use_deactivation_map_mode        : EnumProperty( name = "Deactivation", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_use_deactivation_animation_copy  : BoolProperty( name = "Deactivation", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_use_deactivation_property_copy   : BoolProperty( name = "Deactivation", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_use_deactivation_map_mode        : EnumProperty( name = "Deactivation", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
     
     rigid_body_use_start_deactivated1 : BoolProperty(
         name        = "Start Deactivated",
@@ -989,9 +740,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_use_start_deactivated_apply                : BoolProperty( name = "Start Deactivated", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_use_start_deactivated_animation_copy  : BoolProperty( name = "Start Deactivated", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_use_start_deactivated_property_copy   : BoolProperty( name = "Start Deactivated", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_use_start_deactivated_map_mode       : EnumProperty( name = "Start Deactivated", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_use_start_deactivated_animation_copy : BoolProperty( name = "Start Deactivated", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_use_start_deactivated_property_copy  : BoolProperty( name = "Start Deactivated", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_use_start_deactivated_map_mode       : EnumProperty( name = "Start Deactivated", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_deactivate_linear_velocity1: FloatProperty(
         name        = "Velocity Linear",
@@ -1002,9 +753,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         update      = updateNode,
     )
     node_deactivate_linear_velocity_apply               : BoolProperty( name = "Velocity Linear", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_deactivate_linear_velocity_animation_copy : BoolProperty( name = "Velocity Linear", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_deactivate_linear_velocity_property_copy  : BoolProperty( name = "Velocity Linear", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_deactivate_linear_velocity_map_mode      : EnumProperty( name = "Velocity Linear", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    rigid_body_deactivate_linear_velocity_animation_copy: BoolProperty( name = "Velocity Linear", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_deactivate_linear_velocity_property_copy : BoolProperty( name = "Velocity Linear", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_deactivate_linear_velocity_map_mode      : EnumProperty( name = "Velocity Linear", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
 
     rigid_body_deactivate_angular_velocity1: FloatProperty(
         name        = "Angular",
@@ -1014,10 +765,10 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         #max        = 1.0,
         update      = updateNode,
     )
-    node_deactivate_angular_velocity_apply              : BoolProperty( name = "Angular", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
-    object_rb_deactivate_angular_velocity_animation_copy: BoolProperty( name = "Angular", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
-    object_rb_deactivate_angular_velocity_property_copy : BoolProperty( name = "Angular", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
-    rigid_body_deactivate_angular_velocity_map_mode     : EnumProperty( name = "Angular", description = 'Mapping by "Objects Map" or by Indexes', items = objects_map_mode_modes, default = 'RIGID_BODY_MAP,MAPPING', update = updateNode, )
+    node_deactivate_angular_velocity_apply                  : BoolProperty( name = "Angular", description = "On - Overwrite Rigid Body settings\nOff - do not overwrite", default = False, update = updateNode)
+    rigid_body_deactivate_angular_velocity_animation_copy   : BoolProperty( name = "Angular", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
+    rigid_body_deactivate_angular_velocity_property_copy    : BoolProperty( name = "Angular", description = "On - Copy Rigid Body settings\nOff - do not copy from template", default = False, update = updateNode, )
+    rigid_body_deactivate_angular_velocity_map_mode         : EnumProperty( name = "Angular", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
     
     def custom_draw_collision_collections(self, socket, context, layout):
         if socket.name in rigid_body_socket_names:
@@ -1096,18 +847,18 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
 
         pass
 
-    def custom_draw_input_sockets_objects(self, socket, context, layout):
+    def custom_draw_input_sockets_targeting_objects(self, socket, context, layout):
         if socket.is_linked==True:
             layout.label(text=socket.label + f". {socket.objects_number or ''}")
         else:
             layout.prop(self, socket.prop_name, text=self.label or None)
         return
 
-    def custom_draw_input_sockets_objects_map(self, socket, context, layout):
+    def custom_draw_input_sockets_objects_indexes_maps(self, socket, context, layout):
         row = layout.row(align=True)
         split = row.split(factor=0.6)
         col = split.column(align=True)
-        if self.objects_map_mode1=='RIGID_BODY_MAP,INDEXING' or self.node_in_use==False or self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PAUSE':
+        if self.objects_indexes_maps_mode1=='OBJECT_INDEX_MAP,INDEXING' or self.node_in_use==False or self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PAUSE':
             col.enabled = False
         if socket.is_linked==True:
             col.alignment = "LEFT"
@@ -1115,7 +866,7 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         else:
             col.prop(self, socket.prop_name, text=self.label or None)
         row2 = split.row(align=True)
-        row2.prop(self, 'objects_map_mode1', text='',)
+        row2.prop(self, 'objects_indexes_maps_mode1', text='',)
         return
 
     def custom_draw_input_sockets_rigid_body_source_objects(self, socket, context, layout):
@@ -1128,7 +879,7 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
             layout.prop(self, socket.prop_name, text=self.label or None)
         return
 
-    def custom_draw_input_sockets_rigid_body_params(self, socket, context, layout):
+    def custom_draw_input_sockets_object_params(self, socket, context, layout):
         if self.node_in_use==False or self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PAUSE':
             layout.enabled = False
 
@@ -1149,8 +900,8 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
     def sv_init(self, context):
         self.width = 260
 
-        self.inputs.new('SvObjectSocket' , 'objects'                                ).prop_name = 'object_in_pointer1'
-        self.inputs.new('SvStringsSocket', 'objects_map'                            ).prop_name = 'objects_map1'
+        self.inputs.new('SvObjectSocket' , 'targeting_objects'                      ).prop_name = 'targeting_objects1'
+        self.inputs.new('SvStringsSocket', 'objects_indexes_maps'                   ).prop_name = 'objects_indexes_maps1'
         self.inputs.new('SvObjectSocket' , 'rigid_body_settings'                    ).prop_name = 'rigid_body_settings1'
         self.inputs.new('SvStringsSocket', 'rigid_body_type'                        ).prop_name = 'rigid_body_type1'
         self.inputs.new('SvStringsSocket', 'rigid_body_mass'                        ).prop_name = 'rigid_body_mass1'
@@ -1172,9 +923,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'rigid_body_deactivate_angular_velocity' ).prop_name = 'rigid_body_deactivate_angular_velocity1'
         
         # Назначить descriptions для сокетов, которым назначены параметры из этого класса:
-        for (sn, params) in (rigid_body_params | {
-                'objects'             : {'node_property_name': 'object_in_pointer1'     , 'socket_name': 'objects'              , },
-                'objects_map'         : {'node_property_name': 'objects_map1'           , 'socket_name': 'objects_map'          , },
+        for (sn, params) in (object_params | {
+                'targeting_objects'   : {'node_property_name': 'targeting_objects1'     , 'socket_name': 'targeting_objects'    , },
+                'objects_indexes_maps': {'node_property_name': 'objects_indexes_maps1'  , 'socket_name': 'objects_indexes_maps' , },
                 'rigid_body_settings' : {'node_property_name': 'rigid_body_settings1'   , 'socket_name': 'rigid_body_settings'  , }
             }).items() :
             node_property_name = params['node_property_name']
@@ -1191,18 +942,18 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
                 self.inputs[socket_name].description = f'{description}'
             if name:
                 self.inputs[socket_name].label = f'{name}'
-            self.inputs[socket_name].custom_draw = 'custom_draw_input_sockets_rigid_body_params'
+            self.inputs[socket_name].custom_draw = 'custom_draw_input_sockets_object_params'
             pass
 
         # rewrite some input sockets
-        self.inputs['objects'                           ].custom_draw = 'custom_draw_input_sockets_objects'
-        self.inputs['objects_map'                       ].custom_draw = 'custom_draw_input_sockets_objects_map'
+        self.inputs['targeting_objects'                 ].custom_draw = 'custom_draw_input_sockets_targeting_objects'
+        self.inputs['objects_indexes_maps'              ].custom_draw = 'custom_draw_input_sockets_objects_indexes_maps'
         self.inputs['rigid_body_collision_collections'  ].custom_draw = 'custom_draw_collision_collections'
         self.inputs['rigid_body_collision_collections'  ].label       = 'Collision Collection'
         self.inputs['rigid_body_settings'               ].custom_draw = 'custom_draw_input_sockets_rigid_body_source_objects'
         
-        self.outputs.new('SvObjectSocket', 'objects')
-        self.outputs['objects'].label       = 'Objects'
+        self.outputs.new('SvObjectSocket', 'resulting_objects')
+        self.outputs['resulting_objects'].label       = 'Objects'
         pass
 
     def process(self):
@@ -1211,32 +962,31 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
 
         #bpy.context.view_layer.update()
 
-        objects             = self.inputs['objects'             ].sv_get(deepcopy=False, default=[self.object_in_pointer1])
-        objects_map         = self.inputs['objects_map'         ].sv_get(deepcopy=False, default=[self.objects_map1])
-        rigid_body_settings = self.inputs['rigid_body_settings' ].sv_get(deepcopy=False, default=[self.rigid_body_settings1] if self.rigid_body_settings1 else [])
+        objects              = self.inputs['targeting_objects'   ].sv_get(deepcopy=False, default=[self.targeting_objects1])
+        objects_indexes_maps = self.inputs['objects_indexes_maps'].sv_get(deepcopy=False, default=[self.objects_indexes_maps1])
+        rigid_body_settings  = self.inputs['rigid_body_settings' ].sv_get(deepcopy=False, default=[self.rigid_body_settings1] if self.rigid_body_settings1 else [])
         if self.inputs['rigid_body_settings' ].is_linked==False:
             rigid_body_settings = [self.rigid_body_settings1] if self.rigid_body_settings1 else []
 
         if self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PLAY':
             if self.node_in_use==True:
-                if self.inputs['objects_map'].is_linked==False:
-                    objects_map = [self.objects_map1] * len(objects)
+                if self.inputs['objects_indexes_maps'].is_linked==False:
+                    objects_indexes_maps = [self.objects_indexes_maps1] * len(objects)
                     pass
 
-                if self.objects_map_mode1=='RIGID_BODY_MAP,INDEXING':
-                    objects_map = [I for I in range(len(objects))]
+                if self.objects_indexes_maps_mode1=='OBJECT_INDEX_MAP,INDEXING':
+                    objects_indexes_maps = [I for I in range(len(objects))]
                     pass
-                objects_map = [unwrap_lowest_single_value(val) for val in objects_map]
-                set_objects_map = set(objects_map)
-                len_objects_map = len(objects_map)
-                if len_objects_map==0:
+                objects_indexes_maps = [unwrap_lowest_single_value(val) for val in objects_indexes_maps]
+                len_objects_indexes_maps = len(objects_indexes_maps)
+                if len_objects_indexes_maps==0:
                     raise Exception(f'001. Objects map has no elements: 0')
                 
                 len_rigid_body_settings = len(rigid_body_settings)
 
                 input_sockets_settings = dict()
                 # read data in general input sockets
-                for (name, params) in rigid_body_params.items():
+                for (name, params) in object_params.items():
                     node_property_name = params['node_property_name']
                     socket_name = params['socket_name']
                     if socket_name not in self.inputs:
@@ -1267,7 +1017,7 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
                             socket_value = dict()
                             _socket_value        = self.inputs[socket_name].sv_get(deepcopy=False)
                             try:
-                                for I in objects_map if property_map_mode=='RIGID_BODY_MAP,MAPPING' else range(len(objects)):
+                                for I in objects_indexes_maps if property_map_mode=='OBJECT_INDEX_MAP,MAPPING' else range(len(objects)):
                                     # Если свойство объекта может быть массивом (в ridig body это Collision Collection - массив Boolean значений)
                                     if hasattr(prop, 'is_array'):
                                         if prop.is_array==True:
@@ -1288,11 +1038,11 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
                         else:
                             # if socket is not connected then fill socket with default values
                             socket_value = dict()
-                            if property_map_mode=='RIGID_BODY_MAP,MAPPING':
-                                for I in objects_map:
+                            if property_map_mode=='OBJECT_INDEX_MAP,MAPPING':
+                                for I in objects_indexes_maps:
                                     socket_value[I] = default_prop_value
                                 pass
-                            elif property_map_mode=='RIGID_BODY_MAP,INDEXING':
+                            elif property_map_mode=='OBJECT_INDEX_MAP,INDEXING':
                                 for I in range(len(objects)):
                                     socket_value[I] = default_prop_value
                                 pass
@@ -1304,16 +1054,16 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
                         pass
                     pass
 
-                if len(objects)<len(objects_map):
+                if len(objects)<len(objects_indexes_maps):
                     raise Exception(f"005. Number of Objects are less Number of Objects Map")
                 else:
                     if bpy.context.mode == 'OBJECT':
                         inputs_settings = []
                         inputs_objects_fcurves = []
-                        for I in ( range(len(objects_map)) if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else range(len(objects)) ):
+                        for I in ( range(len(objects_indexes_maps)) if self.objects_indexes_maps_mode1=='OBJECT_INDEX_MAP,MAPPING' else range(len(objects)) ):
                             rigid_body_settings_ID = dict()
                             inputs_settings.append(rigid_body_settings_ID)
-                            ID = objects_map[I] if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else I
+                            ID = objects_indexes_maps[I] if self.objects_indexes_maps_mode1=='OBJECT_INDEX_MAP,MAPPING' else I
                             object_rigid_body_settings_ID = None
                             object_rigid_body_settings_ID_fcurved = []
                             inputs_objects_fcurves.append(object_rigid_body_settings_ID_fcurved)
@@ -1322,7 +1072,7 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
                             except IndexError:
                                 # Если шаблоны заданы, а mapping не попал в какой-то шаблон, то выдать исключение
                                 if len_rigid_body_settings>0:
-                                    raise Exception(f'0015. "Rigid Body settings"[{ID}] out of range. Number of objects in Socket "Rigid Body settings" [{len(objects_map)} items] in Indexing mode has to be equals to "Objects" sockets [{len(objects)}]')
+                                    raise Exception(f'0015. "Rigid Body settings"[{ID}] out of range. Number of objects in Socket "Rigid Body settings" [{len(objects_indexes_maps)} items] in Indexing mode has to be equals to "Objects" sockets [{len(objects)}]')
                                 else:
                                     # Если шаблонов нет, то без разницы и просто не учитывать параметры шаблонов (не выдавать исключение). В дальнейшем применятся только параметры нода.
                                     pass
@@ -1341,21 +1091,21 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
                                     raise Exception(f'0017. You are trying to use object named "{object_rigid_body_settings_ID.name}" as Rigid Body [Socket Index Map ID={ID}], but Rigid Body in this object is not enabled. Enable Rigid Body for "{object_rigid_body_settings_ID.name}" in the propery panel')
 
                                 # Загрузить данные из шаблонных объектов
-                                for (name, param) in rigid_body_params.items():
-                                    if getattr(self, param['object_rb_property_name_copy'])==True:
+                                for (name, param) in object_params.items():
+                                    if getattr(self, param['object_property_name_copy'])==True:
                                         # Скопировать параметр из шаблона, если установлен признак копирования:
                                         rigid_body_settings_ID[name] = getattr(rigid_body, name)
                                     pass
                                 pass
 
-                            for (name, param) in rigid_body_params.items():
+                            for (name, param) in object_params.items():
                                 node_property_name_apply = param['node_property_name_apply']
                                 node_property_map_mode = param['node_property_map_mode']
                                 if getattr(self, node_property_name_apply)==True:
                                     property_map_mode = getattr(self, node_property_map_mode)
-                                    if property_map_mode=='RIGID_BODY_MAP,MAPPING':
+                                    if property_map_mode=='OBJECT_INDEX_MAP,MAPPING':
                                         value = input_sockets_settings[name][ID]
-                                    elif property_map_mode=='RIGID_BODY_MAP,INDEXING':
+                                    elif property_map_mode=='OBJECT_INDEX_MAP,INDEXING':
                                         value = input_sockets_settings[name][I]
                                     else:
                                         # developer exception
@@ -1408,7 +1158,7 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
 
                         self.some_properties_animated = False
                         for I, obj in enumerate(objects):
-                            ID = objects_map[I] if self.objects_map_mode1=='RIGID_BODY_MAP,MAPPING' else I
+                            ID = objects_indexes_maps[I] if self.objects_indexes_maps_mode1=='OBJECT_INDEX_MAP,MAPPING' else I
                             if obj:
                                 # Add active object as Rigid Body
                                 if hasattr(obj, 'rigid_body')==False or obj.rigid_body==None:
@@ -1433,7 +1183,7 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
                                         self.copy_objects_animation = False
                                         raise Exception(f'0024. No Rigid Body settings to copy animation.')
                                     try:
-                                        copy_fcurves(rigid_body_settings[ID], obj, [f'rigid_body.{name}' for name in rigid_body_params if getattr(self, rigid_body_params[name]['object_rb_property_name_animation_copy']) ])
+                                        copy_fcurves(rigid_body_settings[ID], obj, [f'rigid_body.{name}' for name in object_params if getattr(self, object_params[name]['object_property_name_animation_copy']) ])
                                     except Exception as ex:
                                         print(f"0019. Animation copy error: {ex}")
                                         pass
@@ -1441,7 +1191,7 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
                                 # Очистить анимацию, если включена опция очистки анимации
                                 if self.clear_objects_animation:
                                     try:
-                                        remove_fcurves(obj, [f'rigid_body.{name}' for name in rigid_body_params if getattr(self, rigid_body_params[name]['object_rb_property_name_animation_copy'])] )
+                                        remove_fcurves(obj, [f'rigid_body.{name}' for name in object_params if getattr(self, object_params[name]['object_property_name_animation_copy'])] )
                                     except Exception as ex:
                                         print(f"0020. Animation clear error: {ex}")
                                         pass
@@ -1535,9 +1285,9 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
             pass
         else:
             pass
-        self.outputs['objects'].sv_set(objects)
+        self.outputs['resulting_objects'].sv_set(objects)
         #bpy.context.view_layer.update()
         pass
 
-classes = [SvRigidBodyClearFCurvesOperator, SvRigidBodyUIShowIcon, SvRigidBodyPrioritySocketsOnOff, SV_PT_ViewportDisplayPropertiesRigidBody, SV_PT_CopyAnimatedPropertiesDialogRigidBody, SV_PT_ClearAnimatedPropertiesDialogRigidBody, SV_PT_ViewportDisplayPropertiesDialogRigidBody, SvRigidBodyCopy]
+classes = [SvRigidBodyClearFCurvesOperator, SvUIShowIconRigidBody, SvPrioritySocketsOnOffRigidBody, SV_PT_ViewportDisplayPropertiesRigidBody, SV_PT_CopyAnimatedPropertiesDialogRigidBody, SV_PT_ClearAnimatedPropertiesDialogRigidBody, SV_PT_ViewportDisplayPropertiesDialogRigidBody, SvRigidBodyCopy]
 register, unregister = bpy.utils.register_classes_factory(classes)
