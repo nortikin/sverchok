@@ -285,6 +285,11 @@ class SvNodeTreeImporterSilent(bpy.types.Operator):
             tree = bpy.data.node_groups.new(basename(self.filepath), 'SverchCustomTreeType')
             context.space_data.node_tree = tree  # pass this tree to the active node view
 
+        # if user is editing a subgroup, target the currently edited tree
+        # so the example is inserted into the subgroup, not the root tree
+        if len(context.space_data.path) > 1:
+            tree = context.space_data.path[-1].node_tree
+
         # Deselect everything, so as a result only imported nodes will be selected
         bpy.ops.node.select_all(action='DESELECT')
         JSONImporter.init_from_path(self.filepath).import_into_tree(tree)
