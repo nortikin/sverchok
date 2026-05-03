@@ -42,14 +42,14 @@ def show_popup(message, title="Info", icon='INFO'):
 
     bpy.context.window_manager.popup_menu(draw, title=title, icon=icon)
 
-def copy_object_relations(src_obj, target_obj):
+def copy_object_relations(reference_obj, receiver_obj):
     #bpy.context.view_layer.update()
 
-    new_parent = src_obj
+    #new_parent = src_obj
     # if target_obj.parent == new_parent and target_obj.parent_type == 'OBJECT' and target_obj.parent_bone == "":
     #     return
     
-    world_matrix = target_obj.matrix_world.copy()
+    world_matrix = receiver_obj.matrix_world.copy()
 
     # target_obj.matrix_world = new_parent.matrix_world.inverted() @ world_matrix
     # target_obj.parent = new_parent
@@ -57,12 +57,12 @@ def copy_object_relations(src_obj, target_obj):
     # target_obj.parent_bone = ""
     # target_obj.matrix_parent_inverse = new_parent.matrix_world.inverted()
 
-    target_obj.parent = None
-    target_obj.matrix_world = world_matrix
-    target_obj.parent = new_parent
-    target_obj.parent_type = 'OBJECT'
-    target_obj.parent_bone = ""
-    target_obj.matrix_parent_inverse = new_parent.matrix_world.inverted()
+    #receiver_obj.parent = None
+    receiver_obj.matrix_world = reference_obj.matrix_world.inverted() @ world_matrix
+    receiver_obj.parent = reference_obj
+    receiver_obj.parent_type = 'OBJECT'
+    receiver_obj.parent_bone = ""
+    receiver_obj.matrix_parent_inverse = reference_obj.matrix_world.inverted()
     pass
 
     #bpy.context.view_layer.update()
@@ -208,7 +208,7 @@ def draw_copy_or_clear_animated_properties(layout, node_group, node_name):
     pass
 
 class SV_PT_ViewportDisplayPropertiesDialogRelations(bpy.types.Operator):
-    '''Overwrite Settings of Rigid Body properties node values and sockets'''
+    '''Overwrite Settings of Relations properties node values and sockets'''
     # this combination do not show this panel on the right side panel
     bl_idname="sv.viewport_display_properties_dialog_objects_relations"
     bl_label = "Overwrite Settings"
@@ -273,7 +273,7 @@ class SV_PT_ViewportDisplayPropertiesRelations(bpy.types.Panel):
 
 
 class SV_PT_CopyAnimatedPropertiesDialogRelations(bpy.types.Operator):
-    '''Copy Animated Properties of Rigid Body settings (FCurve)'''
+    '''Copy Animated Properties of Relations settings (FCurve)'''
     # this combination do not show this panel on the right side panel
     bl_idname="sv.copy_animation_properties_dialog_relations"
     bl_label = "Copy FCurve"
@@ -318,7 +318,7 @@ class SV_PT_CopyAnimatedPropertiesDialogRelations(bpy.types.Operator):
 
 
 class SV_PT_ClearAnimatedPropertiesDialogRelations(bpy.types.Operator):
-    '''Clear Animated Properties of Rigid Body (FCurve)'''
+    '''Clear Animated Properties of Relations (FCurve)'''
     bl_idname="sv.clear_animation_properties_dialog_relations"
     bl_label = "Clear FCurve"
 
@@ -402,6 +402,19 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
         #update      = updateNodeCopy,
     )
 
+    node_play_pause_modes = [
+            ('NODE_PLAY,PLAY' , "Play" , "Node does its work"        , 'PLAY' , 0),
+            ('NODE_PLAY,PAUSE', "Pause", "Node skips objects through", 'PAUSE', 1),
+        ]
+
+    node_play_pause1 : bpy.props.EnumProperty(
+        name        = "Play",
+        description = "Apply params or skip node execution",
+        items       = node_play_pause_modes,
+        default     = 'NODE_PLAY,PLAY',
+        update      = updateNode,
+    )
+
     copy_objects_parent : bpy.props.BoolProperty(
         name        = "Copy Objects Parent",
         description = "Copy Objects Parent to objects",
@@ -418,13 +431,13 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
     )
 
 
-    targeting_objects1: bpy.props.PointerProperty(
+    receiver_objects1: bpy.props.PointerProperty(
         name="Objects",
         description = "Where to copy material slots",
         type=bpy.types.Object,
     )
 
-    objects_indexes_maps1 : bpy.props.IntProperty(
+    reference_reciever_indexes_maps1 : bpy.props.IntProperty(
         name = "Objects map",
         description = "Original Object Id of Objects Parent list",
         default = 0,
@@ -432,22 +445,22 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
         update = updateNode)
 
 
-    parent_objects1: bpy.props.PointerProperty(
-        name="Objects Parent",
+    reference_objects_settings1: bpy.props.PointerProperty(
+        name="Reference Objects",
         description = "Objects Parent of Objects",
         type=bpy.types.Object,
     )
 
-    objects_indexes_maps_mode_modes = [
-            ('OBJECT_INDEX_MAP,MAPPING' , "Mapping" , "Mapping objects by input socket data", 0),
-            ('OBJECT_INDEX_MAP,INDEXING', "Indexing", "Mapping objects by indexes (ignore mapping)"  , 1),
+    reference_reciever_indexes_maps_mode_modes = [
+            ('REFERENCE_RECEIVER_MAP,MAPPING' , "Mapping" , "Mapping objects by input socket data", 0),
+            ('REFERENCE_RECEIVER_MAP,INDEXING', "Indexing", "Mapping objects by indexes (ignore mapping)"  , 1),
         ]
 
-    objects_indexes_maps_mode1 : bpy.props.EnumProperty(
+    reference_reciever_indexes_maps_mode1 : bpy.props.EnumProperty(
         name        = "Objects map mode",
         description = "Mappings Objects by map or by Indexes",
-        items       = objects_indexes_maps_mode_modes,
-        default     = 'OBJECT_INDEX_MAP,MAPPING',
+        items       = reference_reciever_indexes_maps_mode_modes,
+        default     = 'REFERENCE_RECEIVER_MAP,MAPPING',
         update      = updateNode,
     )
 
@@ -470,7 +483,7 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
     node_parent_type_apply                : bpy.props.BoolProperty( name = "Parent Type", description = "On - Overwrite Relations settings\nOff - do not overwrite", default = False, update = updateNode)
     relations_parent_type_animation_copy  : bpy.props.BoolProperty( name = "Parent Type", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, ) # This flag used in the operator so do not need to call update
     relations_parent_type_property_copy   : bpy.props.BoolProperty( name = "Parent Type", description = "On - Copy Relations settings\nOff - do not copy from template", default = False, update = updateNode, )
-    relations_parent_type_map_mode        : bpy.props.EnumProperty( name = "Parent Type", description = 'Mapping by "Objects Map" or by Indexes', items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
+    relations_parent_type_map_mode        : bpy.props.EnumProperty( name = "Parent Type", description = 'Mapping by "Objects Map" or by Indexes', items = reference_reciever_indexes_maps_mode_modes, default = 'REFERENCE_RECEIVER_MAP,MAPPING', update = updateNode, )
 
     relations_use_parent_final_indices1 : bpy.props.BoolProperty(
         name        = "Use Final Indices",
@@ -480,7 +493,7 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
     node_use_parent_final_indices_apply                 : bpy.props.BoolProperty( name = "Use Final Indices", description = "On - Overwrite Relations settings\nOff - do not overwrite", default = False, update = updateNode)
     relations_use_parent_final_indices_animation_copy   : bpy.props.BoolProperty( name = "Use Final Indices", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
     relations_use_parent_final_indices_property_copy    : bpy.props.BoolProperty( name = "Use Final Indices", description = "On - Copy Relations settings\nOff - do not copy from template", default = False, update = updateNode, )
-    relations_use_parent_final_indices_map_mode         : bpy.props.EnumProperty( name = "Use Final Indices", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
+    relations_use_parent_final_indices_map_mode         : bpy.props.EnumProperty( name = "Use Final Indices", description = "Mapping by 'Objects Map' or by Indexes", items = reference_reciever_indexes_maps_mode_modes, default = 'REFERENCE_RECEIVER_MAP,MAPPING', update = updateNode, )
 
     relations_parent_vertices1 : bpy.props.IntVectorProperty(
         name        = "Parent Vertices",
@@ -491,7 +504,7 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
     node_parent_vertices_apply                 : bpy.props.BoolProperty( name = "Parent Vertices", description = "On - Overwrite Relations settings\nOff - do not overwrite", default = False, update = updateNode)
     relations_parent_vertices_animation_copy   : bpy.props.BoolProperty( name = "Parent Vertices", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
     relations_parent_vertices_property_copy    : bpy.props.BoolProperty( name = "Parent Vertices", description = "On - Copy Relations settings\nOff - do not copy from template", default = False, update = updateNode, )
-    relations_parent_vertices_map_mode         : bpy.props.EnumProperty( name = "Parent Vertices", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
+    relations_parent_vertices_map_mode         : bpy.props.EnumProperty( name = "Parent Vertices", description = "Mapping by 'Objects Map' or by Indexes", items = reference_reciever_indexes_maps_mode_modes, default = 'REFERENCE_RECEIVER_MAP,MAPPING', update = updateNode, )
 
     relations_use_camera_lock_parent1 : bpy.props.BoolProperty(
         name        = "Camera Parent Lock",
@@ -501,7 +514,7 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
     node_use_camera_lock_parent_apply                 : bpy.props.BoolProperty( name = "Camera Parent Lock", description = "On - Overwrite Relations settings\nOff - do not overwrite", default = False, update = updateNode)
     relations_use_camera_lock_parent_animation_copy   : bpy.props.BoolProperty( name = "Camera Parent Lock", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
     relations_use_camera_lock_parent_property_copy    : bpy.props.BoolProperty( name = "Camera Parent Lock", description = "On - Copy Relations settings\nOff - do not copy from template", default = False, update = updateNode, )
-    relations_use_camera_lock_parent_map_mode         : bpy.props.EnumProperty( name = "Camera Parent Lock", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
+    relations_use_camera_lock_parent_map_mode         : bpy.props.EnumProperty( name = "Camera Parent Lock", description = "Mapping by 'Objects Map' or by Indexes", items = reference_reciever_indexes_maps_mode_modes, default = 'REFERENCE_RECEIVER_MAP,MAPPING', update = updateNode, )
 
     relations_track_axis_modes = [
             ('RELATIONS_TRACK_AXIS,POS_X'   , "+X", "" , 0),
@@ -522,7 +535,7 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
     node_track_axis_apply                : bpy.props.BoolProperty( name = "Track Axis", description = "On - Overwrite Relations settings\nOff - do not overwrite", default = False, update = updateNode)
     relations_track_axis_animation_copy  : bpy.props.BoolProperty( name = "Track Axis", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, ) # This flag used in the operator so do not need to call update
     relations_track_axis_property_copy   : bpy.props.BoolProperty( name = "Track Axis", description = "On - Copy Relations settings\nOff - do not copy from template", default = False, update = updateNode, )
-    relations_track_axis_map_mode        : bpy.props.EnumProperty( name = "Track Axis", description = 'Mapping by "Objects Map" or by Indexes', items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
+    relations_track_axis_map_mode        : bpy.props.EnumProperty( name = "Track Axis", description = 'Mapping by "Objects Map" or by Indexes', items = reference_reciever_indexes_maps_mode_modes, default = 'REFERENCE_RECEIVER_MAP,MAPPING', update = updateNode, )
 
     relations_up_axis_modes = [
             ('RELATIONS_UP_AXIS,X'   , "X", "" , 0),
@@ -540,7 +553,7 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
     node_up_axis_apply                : bpy.props.BoolProperty( name = "Up Axis", description = "On - Overwrite Relations settings\nOff - do not overwrite", default = False, update = updateNode)
     relations_up_axis_animation_copy  : bpy.props.BoolProperty( name = "Up Axis", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, ) # This flag used in the operator so do not need to call update
     relations_up_axis_property_copy   : bpy.props.BoolProperty( name = "Up Axis", description = "On - Copy Relations settings\nOff - do not copy from template", default = False, update = updateNode, )
-    relations_up_axis_map_mode        : bpy.props.EnumProperty( name = "Up Axis", description = 'Mapping by "Objects Map" or by Indexes', items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
+    relations_up_axis_map_mode        : bpy.props.EnumProperty( name = "Up Axis", description = 'Mapping by "Objects Map" or by Indexes', items = reference_reciever_indexes_maps_mode_modes, default = 'REFERENCE_RECEIVER_MAP,MAPPING', update = updateNode, )
 
     relations_pass_index1 : bpy.props.IntProperty(
         name        = "Pass Index",
@@ -550,20 +563,28 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
     node_pass_index_apply                 : bpy.props.BoolProperty( name = "Pass Index", description = "On - Overwrite Relations settings\nOff - do not overwrite", default = False, update = updateNode)
     relations_pass_index_animation_copy   : bpy.props.BoolProperty( name = "Pass Index", description = "On - Copy Animation\nOff - do not copy animation", default = True, update = updateAnimationProperty, )
     relations_pass_index_property_copy    : bpy.props.BoolProperty( name = "Pass Index", description = "On - Copy Relations settings\nOff - do not copy from template", default = False, update = updateNode, )
-    relations_pass_index_map_mode         : bpy.props.EnumProperty( name = "Pass Index", description = "Mapping by 'Objects Map' or by Indexes", items = objects_indexes_maps_mode_modes, default = 'OBJECT_INDEX_MAP,MAPPING', update = updateNode, )
+    relations_pass_index_map_mode         : bpy.props.EnumProperty( name = "Pass Index", description = "Mapping by 'Objects Map' or by Indexes", items = reference_reciever_indexes_maps_mode_modes, default = 'REFERENCE_RECEIVER_MAP,MAPPING', update = updateNode, )
 
     def sv_draw_buttons(self, context, layout):
+        col = layout.row(align=True)
+        col.alignment = "LEFT"
+        col.row(align=True)
+        col.prop(self, 'node_play_pause1', text='',expand=True)
+
         box = layout.box()
         row = box.row(align=True)
         row.prop(self, 'copy_objects_parent', toggle=True, icon='RENDER_RESULT', text='')
         row.prop(self, 'clear_objects_parent', toggle=True, icon='CANCEL', text='')
 
         elem = box.row(align=True)
-        elem.label(text='Rigid Body copy settings:')
-        elem.separator()
+        elem.label(text='Relations copy settings:')
+        #elem.separator()
+
+        row = elem.row(align=True)
+        row.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogRelations.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
+        row.column(align=True).popover(panel=SV_PT_ViewportDisplayPropertiesRelations.bl_idname, icon='DOWNARROW_HLT', text="")
 
         row = box.row(align=True)
-        #row.prop(self, 'node_in_use', text=('Rigid Body [Activated]' if self.node_in_use==True else 'Rigid Body [Removed]'), icon=('X' if self.node_in_use==True else 'RIGID_BODY') )
         row.label(text="")
         row.separator()
         row.row(align=True).operator(SV_PT_CopyAnimatedPropertiesDialogRelations.bl_idname, icon='KEYTYPE_KEYFRAME_VEC', text="", emboss=True)
@@ -576,10 +597,6 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
             op = row1.operator(SV_PT_ClearAnimatedPropertiesDialogRelations.bl_idname, icon='HANDLETYPE_FREE_VEC', text="", emboss=True)
             op.description_text = 'These are no animations fcurves data. You can set up the Relations settings.'
 
-        row = elem.row(align=True)
-        row.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogRelations.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
-        row.column(align=True).popover(panel=SV_PT_ViewportDisplayPropertiesRelations.bl_idname, icon='DOWNARROW_HLT', text="")
-
         pass
 
     def custom_draw_input_sockets(self, socket, context, layout):
@@ -589,18 +606,18 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
             layout.prop(self, socket.prop_name, text=self.label or None)
         return
 
-    def custom_draw_input_sockets_targeting_objects(self, socket, context, layout):
+    def custom_draw_input_sockets_receiver_objects(self, socket, context, layout):
         if socket.is_linked==True:
             layout.label(text=socket.label + f". {socket.objects_number or ''}")
         else:
             layout.prop(self, socket.prop_name, text=self.label or None)
         return
 
-    def custom_draw_input_sockets_objects_indexes_maps(self, socket, context, layout):
+    def custom_draw_input_sockets_reference_reciever_indexes_maps(self, socket, context, layout):
         row = layout.row(align=True)
         split = row.split(factor=0.6)
         col = split.column(align=True)
-        if self.objects_indexes_maps_mode1=='OBJECT_INDEX_MAP,INDEXING': # or self.node_in_use==False or self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PAUSE':
+        if self.reference_reciever_indexes_maps_mode1=='REFERENCE_RECEIVER_MAP,INDEXING' or self.node_play_pause1=='NODE_PLAY,PAUSE':
             col.enabled = False
         if socket.is_linked==True:
             col.alignment = "LEFT"
@@ -608,12 +625,12 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             col.prop(self, socket.prop_name, text=self.label or None)
         row2 = split.row(align=True)
-        row2.prop(self, 'objects_indexes_maps_mode1', text='',)
+        row2.prop(self, 'reference_reciever_indexes_maps_mode1', text='',)
         return
 
     def custom_draw_input_sockets_object_params(self, socket, context, layout):
-        # if self.node_in_use==False or self.node_play_pause1=='RIGID_BODY_NODE_PLAY,PAUSE':
-        #     layout.enabled = False
+        if self.node_play_pause1=='NODE_PLAY,PAUSE':
+            layout.enabled = False
 
         if socket.name in relations_socket_names:
             node_property_name_apply = relations_socket_names[socket.name]['node_property_name_apply']
@@ -632,9 +649,9 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
 
     def sv_init(self, context):
         self.width = 260
-        self.inputs.new('SvObjectSocket' , 'targeting_objects'                  ).prop_name = 'targeting_objects1'
-        self.inputs.new('SvStringsSocket', 'objects_indexes_maps'               ).prop_name = 'objects_indexes_maps1'
-        self.inputs.new('SvObjectSocket' , 'parent_objects'                     ).prop_name = 'parent_objects1'
+        self.inputs.new('SvObjectSocket' , 'receiver_objects'                   ).prop_name = 'receiver_objects1'
+        self.inputs.new('SvStringsSocket', 'reference_reciever_indexes_maps'    ).prop_name = 'reference_reciever_indexes_maps1'
+        self.inputs.new('SvObjectSocket' , 'reference_objects_settings'         ).prop_name = 'reference_objects_settings1'
         self.inputs.new('SvStringsSocket', 'relations_parent_type'              ).prop_name = 'relations_parent_type1'
         self.inputs.new('SvStringsSocket', 'relations_use_parent_final_indices' ).prop_name = 'relations_use_parent_final_indices1'
         self.inputs.new('SvStringsSocket', 'relations_parent_vertices'          ).prop_name = 'relations_parent_vertices1'
@@ -643,17 +660,17 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'relations_up_axis'                  ).prop_name = 'relations_up_axis1'
         self.inputs.new('SvStringsSocket', 'relations_pass_index'               ).prop_name = 'relations_pass_index1'
 
-        self.inputs['targeting_objects'     ].label = 'Objects'
-        self.inputs['objects_indexes_maps'  ].label = 'Objects map'
-        self.inputs['parent_objects'        ].label = 'Objects with Relations'
+        self.inputs['receiver_objects'                  ].label = 'Objects'
+        self.inputs['reference_reciever_indexes_maps'   ].label = 'Objects map'
+        self.inputs['reference_objects_settings'        ].label = 'Objects with Relations'
         
         self.outputs.new('SvObjectSocket', 'resulting_objects' ).label = "Objects"
 
         # Назначить descriptions для сокетов, которым назначены параметры из этого класса:
         for (sn, params) in (object_params | {
-                'targeting_objects'     : {'node_property_name': 'targeting_objects1'       , 'socket_name': 'targeting_objects'    , },
-                'objects_indexes_maps'  : {'node_property_name': 'objects_indexes_maps1'    , 'socket_name': 'objects_indexes_maps' , },
-                'parent_objects'        : {'node_property_name': 'parent_objects1'          , 'socket_name': 'parent_objects'       , }
+                'receiver_objects'                  : {'node_property_name': 'receiver_objects1'                , 'socket_name': 'receiver_objects'                 , },
+                'reference_reciever_indexes_maps'   : {'node_property_name': 'reference_reciever_indexes_maps1' , 'socket_name': 'reference_reciever_indexes_maps'  , },
+                'reference_objects_settings'        : {'node_property_name': 'reference_objects_settings1'      , 'socket_name': 'reference_objects_settings'       , }
             }).items() :
             node_property_name = params['node_property_name']
             socket_name = params['socket_name']
@@ -672,8 +689,8 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
             self.inputs[socket_name].custom_draw = 'custom_draw_input_sockets_object_params'
             pass
 
-        self.inputs['targeting_objects'                 ].custom_draw = 'custom_draw_input_sockets_targeting_objects'
-        self.inputs['objects_indexes_maps'              ].custom_draw = 'custom_draw_input_sockets_objects_indexes_maps'
+        self.inputs['receiver_objects'                  ].custom_draw = 'custom_draw_input_sockets_receiver_objects'
+        self.inputs['reference_reciever_indexes_maps'   ].custom_draw = 'custom_draw_input_sockets_reference_reciever_indexes_maps'
 
         pass
 
@@ -683,54 +700,369 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
         
         bpy.context.view_layer.update()
         
-        targeting_objects  = self.inputs['targeting_objects' ].sv_get(deepcopy=False, default=[self.targeting_objects1 ])
-        if self.inputs['targeting_objects'].is_linked==False:
-            targeting_objects = []
-            if self.targeting_objects1:
-                targeting_objects = [self.targeting_objects1] * len(targeting_objects)
+        receiver_objects  = self.inputs['receiver_objects' ].sv_get(deepcopy=False, default=[self.receiver_objects1 ])
+        if self.inputs['receiver_objects'].is_linked==False:
+            receiver_objects = []
+            if self.receiver_objects1:
+                receiver_objects = [self.receiver_objects1] * len(receiver_objects)
 
-        objects_indexes_maps = self.inputs['objects_indexes_maps'].sv_get(deepcopy=False, default=[self.objects_indexes_maps1      ])
-        if self.inputs['objects_indexes_maps'].is_linked==False:
-            objects_indexes_maps = [self.objects_indexes_maps1] * len(targeting_objects)
+        reference_reciever_indexes_maps = self.inputs['reference_reciever_indexes_maps'].sv_get(deepcopy=False, default=[self.reference_reciever_indexes_maps1      ])
+        if self.inputs['reference_reciever_indexes_maps'].is_linked==False:
+            reference_reciever_indexes_maps = [self.reference_reciever_indexes_maps1] * len(receiver_objects)
 
-        parent_objects  = self.inputs['parent_objects'].sv_get(deepcopy=False, default=[self.parent_objects1 ])
+        reference_objects_settings  = self.inputs['reference_objects_settings'].sv_get(deepcopy=False, default=[self.reference_objects_settings1 ])
 
-        if len(targeting_objects)==0:
+        if len(receiver_objects)==0:
             pass
         else:
             try:
-                objects_indexes_maps = [unwrap_lowest_single_value(val) for val in objects_indexes_maps]
-                for I, obj in enumerate(targeting_objects):
-                    ID = objects_indexes_maps[I] if self.objects_indexes_maps_mode1=='OBJECT_INDEX_MAP,MAPPING' else I
-                    try:
-                        parent_objects_ID = parent_objects[ID]
-                    except IndexError:
-                        raise Exception(f'0001. "Object"[{ID}] out of range. Number of objects in Socket "Rigid Body settings" [{len(objects_indexes_maps)} items] in Indexing mode has to be equals to "Objects" sockets [{len(targeting_objects)}]')
-                    except Exception as _ex:
-                        raise Exception(f'0002. "Rigid Body settings"[{ID}] exception: {_ex}')
+                sub_object_name = ''
+                if self.node_play_pause1=='NODE_PLAY,PLAY':
+                    if self.inputs['reference_reciever_indexes_maps'].is_linked==False:
+                        reference_reciever_indexes_maps = [self.reference_reciever_indexes_maps1] * len(receiver_objects)
+                        pass
 
-                    if self.copy_objects_animation:
-                        if len(parent_objects)==0:
-                            self.copy_objects_animation = False
-                            raise Exception(f'0003. No Rigid Body settings to copy animation.')
-                        try:
-                            copy_fcurves(parent_objects[ID], obj, [f'{name}' for name in object_params if getattr(self, object_params[name]['object_property_name_animation_copy']) ])
-                        except Exception as ex:
-                            print(f"0004. Animation copy error: {ex}")
+                    if self.reference_reciever_indexes_maps_mode1=='REFERENCE_RECEIVER_MAP,INDEXING':
+                        reference_reciever_indexes_maps = [I for I in range(len(receiver_objects))]
+                        pass
+                    reference_reciever_indexes_maps = [unwrap_lowest_single_value(val) for val in reference_reciever_indexes_maps]
+                    len_reference_reciever_indexes_maps = len(reference_reciever_indexes_maps)
+                    if len_reference_reciever_indexes_maps==0:
+                        raise Exception(f'001. Objects map has no elements: 0')
+                    
+                    len_reference_objects_settings = len(reference_objects_settings)
+
+                    input_sockets_settings = dict()
+                    # read data in general input sockets
+                    for (name, params) in object_params.items():
+                        node_property_name = params['node_property_name']
+                        socket_name = params['socket_name']
+                        if socket_name not in self.inputs:
+                            raise Exception(f'003. No input socket with name {socket_name}.')
+
+                        node_property_name_apply = params['node_property_name_apply']
+                        node_property_priority_value = getattr(self, node_property_name_apply)
+                        if node_property_priority_value==True:
+                            node_property_map_mode = params['node_property_map_mode']
+                            property_map_mode = getattr(self, node_property_map_mode)
+
+                            prop = None
+                            prop_type = None
+                            if hasattr(self.__class__, 'bl_rna')==True and node_property_name in self.__class__.bl_rna.properties:
+                                prop = self.__class__.bl_rna.properties[node_property_name]
+                                prop_type = prop.type
+                            else:
+                                # development error.
+                                raise Exception(f'004. Unknown property {node_property_name}. Check settings params')
+                            
+                            default_prop_value = getattr(self, node_property_name)
+                            if prop_type=='ENUM':
+                                # enum properties of default value has prefix to remove
+                                default_prop_value = default_prop_value.split(',')[-1]
+                                pass
+                            socket = self.inputs[socket_name]
+                            if socket.is_linked==True:
+                                socket_value = dict()
+                                _socket_value        = self.inputs[socket_name].sv_get(deepcopy=False)
+                                try:
+                                    for I in reference_reciever_indexes_maps if property_map_mode=='REFERENCE_RECEIVER_MAP,MAPPING' else range(len(receiver_objects)):
+                                        # Если свойство объекта может быть массивом (в ridig body это Collision Collection - массив Boolean значений)
+                                        if hasattr(prop, 'is_array'):
+                                            if prop.is_array==True:
+                                                # Вот тут можно столкнуться с Collision Collection, остальные свойства Rigid Body 
+                                                socket_value[I] = unwrap_lowest_single_list(_socket_value[I])
+                                            else:
+                                                socket_value[I] = unwrap_lowest_single_value(_socket_value[I])
+                                            pass
+                                        else:
+                                            socket_value[I] = unwrap_lowest_single_value(_socket_value[I])
+                                            pass
+                                    pass
+                                except IndexError:
+                                    raise Exception(f'013. {socket_name}[{I}] out of range in mode "{property_map_mode}". Length of data in this socket is {len(_socket_value)}')
+                                except Exception as _ex:
+                                    raise Exception(f'014. Error getting {socket_name}[{I}]. {_ex}')
+                                pass
+                            else:
+                                # if socket is not connected then fill socket with default values
+                                socket_value = dict()
+                                if property_map_mode=='REFERENCE_RECEIVER_MAP,MAPPING':
+                                    for I in reference_reciever_indexes_maps:
+                                        socket_value[I] = default_prop_value
+                                    pass
+                                elif property_map_mode=='REFERENCE_RECEIVER_MAP,INDEXING':
+                                    for I in range(len(receiver_objects)):
+                                        socket_value[I] = default_prop_value
+                                    pass
+                                else:
+                                    raise Exception(f'011. unknown map mode: {property_map_mode}.')
+                                pass
+                            input_sockets_settings[name] = socket_value
+                        else:
                             pass
                         pass
-                    # Очистить анимацию, если включена опция очистки анимации
-                    if self.clear_objects_animation:
-                        try:
-                            remove_fcurves(obj, [f'{name}' for name in object_params if getattr(self, object_params[name]['object_property_name_animation_copy'])] )
-                        except Exception as ex:
-                            print(f"0005. Animation clear error: {ex}")
-                            pass
-                        pass    
 
-                    copy_object_relations(parent_objects_ID, obj)
-                    pass
-                pass
+                    if len(receiver_objects)<len(reference_reciever_indexes_maps):
+                        raise Exception(f"005. Number of Objects are less Number of Objects Map")
+                    else:
+                        if bpy.context.mode == 'OBJECT':
+                            inputs_settings = []
+                            inputs_objects_fcurves = []
+                            for I in ( range(len(reference_reciever_indexes_maps)) if self.reference_reciever_indexes_maps_mode1=='REFERENCE_RECEIVER_MAP,MAPPING' else range(len(receiver_objects)) ):
+                                data_objects_settings_ID = dict()
+                                inputs_settings.append(data_objects_settings_ID)
+                                ID = reference_reciever_indexes_maps[I] if self.reference_reciever_indexes_maps_mode1=='REFERENCE_RECEIVER_MAP,MAPPING' else I
+                                reference_objects_settings_ID = None
+                                reference_objects_settings_ID_fcurved = []
+                                inputs_objects_fcurves.append(reference_objects_settings_ID_fcurved)
+                                try:
+                                    reference_objects_settings_ID = reference_objects_settings[ID]
+                                except IndexError:
+                                    # Если шаблоны заданы, а mapping не попал в какой-то шаблон, то выдать исключение
+                                    if len_reference_objects_settings>0:
+                                        raise Exception(f'0015. "Rigid Body settings"[{ID}] out of range. Number of objects in Socket "Rigid Body settings" [{len(reference_reciever_indexes_maps)} items] in Indexing mode has to be equals to "Objects" sockets [{len(receiver_objects)}]')
+                                    else:
+                                        # Если шаблонов нет, то без разницы и просто не учитывать параметры шаблонов (не выдавать исключение). В дальнейшем применятся только параметры нода.
+                                        pass
+                                except Exception as _ex:
+                                    raise Exception(f'0016. "Rigid Body settings"[{ID}] exception: {_ex}')
+                                
+                                if reference_objects_settings_ID:
+                                    # Если входной параметр по заданному id существует, то скопировать его параметры:
+                                    if hasattr(reference_objects_settings_ID, 'rigid_body')==False:
+                                        raise Exception(f'0016. No rigid_body attribute in "Rigid Body settings"[{ID}]. Check object can has rigid body settings')
+                                    reference_objects_settings_ID_fcurved.extend( get_fcurves(reference_objects_settings_ID) )
+                                    if sub_object_name:
+                                        sub_object = getattr( reference_objects_settings_ID, sub_object_name, None )
+                                    else:
+                                        sub_object = reference_objects_settings_ID
+                                    #rigid_body = reference_objects_settings_ID.rigid_body
+                                    if sub_object:
+                                        pass
+                                    else:
+                                        raise Exception(f'0017. You are trying to use object named "{reference_objects_settings_ID.name}" as "{sub_object_name}" [Socket Index Map ID={ID}], but "{sub_object_name}" in this object is not enabled. Enable "{sub_object}" for "{reference_objects_settings_ID.name}" in the propery panel')
+
+                                    # Загрузить данные из шаблонных объектов
+                                    for (name, param) in object_params.items():
+                                        if getattr(self, param['object_property_name_copy'])==True:
+                                            # Скопировать параметр из шаблона, если установлен признак копирования:
+                                            data_objects_settings_ID[name] = getattr(sub_object, name)
+                                        pass
+                                    pass
+
+                                for (name, param) in object_params.items():
+                                    node_property_name_apply = param['node_property_name_apply']
+                                    node_property_map_mode = param['node_property_map_mode']
+                                    if getattr(self, node_property_name_apply)==True:
+                                        property_map_mode = getattr(self, node_property_map_mode)
+                                        if property_map_mode=='REFERENCE_RECEIVER_MAP,MAPPING':
+                                            value = input_sockets_settings[name][ID]
+                                        elif property_map_mode=='REFERENCE_RECEIVER_MAP,INDEXING':
+                                            value = input_sockets_settings[name][I]
+                                        else:
+                                            # developer exception
+                                            raise Exception(f'0018. Unknown map mode "{property_map_mode}" for property {name}')
+                                        
+                                        if hasattr(self.__class__, 'bl_rna')==True and (param['node_property_name'] in self.__class__.bl_rna.properties):
+                                            prop        = self.__class__.bl_rna.properties[param['node_property_name']]
+                                            prop_name   = prop.name
+                                            prop_type   = prop.type
+                                            description = prop.description
+                                            # Для свойств типа Enum можно либо напрямую загрузить свойства, если они указаны как строки,
+                                            # либо определить value, если оно указано как int value для enum
+                                            if prop_type=='ENUM':
+                                                if isinstance(value, str)==True:
+                                                    # проверить, что строка соответствует одному из enum:
+                                                    enum_item           = [(item.identifier, value, item, ) for item in prop.enum_items if item.identifier.split(',')[-1]==value]
+                                                    if enum_item:
+                                                        pass
+                                                    else:
+                                                        # if no value then raise Exception
+                                                        allowed_values  = [f'{item.value}' for item in prop.enum_items]
+                                                        allowed_names   = [item.identifier.split(',')[-1] for item in prop.enum_items]
+                                                        raise Exception(f'0022. Property "{prop_name}[{name}]" has no value for id "{value}". Allowed ids are [{",".join(allowed_values)}] or [{",".join(allowed_names)}].')
+                                                    pass
+                                                elif isinstance(value, int)==True:
+                                                    # convert ids value to string of enum:
+                                                    enum_item           = [item for item in prop.enum_items if item.value==value]
+                                                    if enum_item:
+                                                        value           = enum_item[0].identifier.split(',')[-1] # 'RIGID_BODY_SHAPE_MODE,BOX' => 'BOX'
+                                                    else:
+                                                        # if no value then raise Exception
+                                                        allowed_values  = [f'{item.value}' for item in prop.enum_items]
+                                                        allowed_names   = [item.identifier.split(',')[-1] for item in prop.enum_items]
+                                                        raise Exception(f'0023. Property "{prop_name}[{name}]" has no value for id "{value}". Allowed ids are [{",".join(allowed_values)}] or [{",".join(allowed_names)}].')
+                                                    pass
+                                                pass
+                                            pass
+                                        else:
+                                            # TODO??? continue or exception?
+                                            pass
+
+                                        data_objects_settings_ID[name] = value
+                                    else:
+                                        pass
+                                pass
+                            pass
+
+                        self.some_properties_animated = False
+                        for I, receiver_object in enumerate(receiver_objects):
+                            ID = reference_reciever_indexes_maps[I] if self.reference_reciever_indexes_maps_mode1=='REFERENCE_RECEIVER_MAP,MAPPING' else I
+                            if receiver_object:
+                                reference_objects_settings_ID = reference_objects_settings[ID]
+                                # Скопировать анимацию, если включена опция копирования анимации
+                                if self.copy_objects_animation:
+                                    if len_reference_objects_settings==0:
+                                        self.copy_objects_animation = False
+                                        raise Exception(f'0024. No Rigid Body settings to copy animation.')
+                                    try:
+                                        copy_fcurves(reference_objects_settings_ID, receiver_object, [f'rigid_body.{name}' for name in object_params if getattr(self, object_params[name]['object_property_name_animation_copy']) ])
+                                    except Exception as ex:
+                                        print(f"0019. Animation copy error: {ex}")
+                                        pass
+                                    pass
+                                # Очистить анимацию, если включена опция очистки анимации
+                                if self.clear_objects_animation:
+                                    try:
+                                        remove_fcurves(receiver_object, [f'rigid_body.{name}' for name in object_params if getattr(self, object_params[name]['object_property_name_animation_copy'])] )
+                                    except Exception as ex:
+                                        print(f"0020. Animation clear error: {ex}")
+                                        pass
+                                    pass
+                                
+                                inputs_settings_I = inputs_settings[I]
+                                inputs_objects_fcurves_I = inputs_objects_fcurves[I]
+                                obj_fcurved = get_fcurves(receiver_object)
+                                
+                                #world_matrix = receiver_object.matrix_world.copy()
+                                matrix_world            = reference_objects_settings_ID.matrix_world.copy()
+                                #receiver_object.parent = None
+                                # matrix_world            = reference_objects_settings_ID.matrix_world.inverted() @ matrix_world
+                                # matrix_parent_inverse   = reference_objects_settings_ID.matrix_world.inverted()
+                                # receiver_object.parent = None
+                                # receiver_object.matrix_world            = reference_objects_settings_ID.matrix_world.inverted() @ world_matrix
+                                # receiver_object.matrix_parent_inverse   = reference_objects_settings_ID.matrix_world.inverted()
+                                # #receiver_object.parent_type             = 'OBJECT'
+                                # receiver_object.parent = reference_objects_settings_ID.parent
+
+                                #receiver_object.parent = None
+                                #receiver_object.matrix_world            = reference_objects_settings_ID.matrix_world.copy()
+                                if receiver_object.parent == None:
+                                    receiver_object.parent = reference_objects_settings_ID.parent
+                                    receiver_object.parent_type = reference_objects_settings_ID.parent_type
+                                    if reference_objects_settings_ID.parent_type=='OBJECT':
+                                        pass
+                                    elif reference_objects_settings_ID.parent_type in ('VERTEX', 'VERTEX_3'):
+                                        receiver_object.parent_vertices = reference_objects_settings_ID.parent_vertices[:]
+                                        pass
+                                    #receiver_object.matrix_world = matrix_world
+                                    receiver_object.matrix_basis = reference_objects_settings_ID.matrix_basis.copy()
+                                    receiver_object.matrix_parent_inverse = reference_objects_settings_ID.matrix_parent_inverse.copy()
+                                else:
+                                    if receiver_object.parent == reference_objects_settings_ID.parent:
+                                        receiver_object.matrix_basis = reference_objects_settings_ID.matrix_basis.copy()
+                                        receiver_object.matrix_parent_inverse = reference_objects_settings_ID.matrix_parent_inverse.copy()
+                                        pass
+                                    else:
+                                        receiver_object.parent = None
+                                        receiver_object.matrix_world = matrix_world
+                                        receiver_object.parent = reference_objects_settings_ID.parent
+                                        receiver_object.matrix_world = matrix_world
+                                    
+                                #receiver_object.matrix_world = world_matrix
+
+                                for (name, value) in inputs_settings_I.items():
+                                    inputs_objects_fcurves_I_param = [fc.data_path for fc in inputs_objects_fcurves_I if fc.data_path=='rigid_body.'+name]
+                                    obj_fcurved_param = [fc.data_path for fc in obj_fcurved if fc.data_path==(f'{sub_object_name}.' if sub_object_name else '') +name]
+                                    
+                                    if inputs_objects_fcurves_I_param and obj_fcurved_param:
+                                        # if both params are animated they cannot overwrite each other
+                                        # Если у параметра задана анимация и пользователь выбрал присвоить значение, то пропустить присвоение значения. Анимация в приоритете.
+                                        continue
+
+                                    if not obj_fcurved_param:
+                                        # set value if property is not animated
+                                        if sub_object_name:
+                                            sub_object = getattr( receiver_object, sub_object_name, None )
+                                        else:
+                                            sub_object = receiver_object
+
+                                        if hasattr(sub_object, name):
+                                            obj_name_value = getattr( sub_object, name, value )
+                                            comp=True
+                                            if isinstance( obj_name_value, bpy.types.bpy_prop_array)==True:
+                                                # convert both value to list. bpy.types.bpy_prop_array is look like list, but they are not lists
+                                                # this happens with collision collection
+                                                value = [v for v in value]
+                                                obj_name_value = [v for v in obj_name_value]
+                                                comp = (len(obj_name_value)==len(value))
+                                                pass
+                                            
+                                            if comp==True and obj_name_value!=value:
+                                                # set value if params are different
+                                                setattr( sub_object, name, value )
+                                            elif name=='parent_vertices':
+                                                for IDX in range(min(len(obj_name_value), len(value))):
+                                                    getattr( sub_object, name )[IDX] = value[IDX]
+                                            else:
+                                                pass
+                                            pass
+                                        else:
+                                            # TODO what if no attribute???
+                                            pass
+                                    else:
+                                        # TODO: Alert user if property is animated
+                                        self.some_properties_animated = True
+                                        pass
+                                    pass
+                                
+                                #receiver_object.update_tag()
+                                #receiver_object.matrix_world = matrix_world
+                                #receiver_object.matrix_parent_inverse   = reference_objects_settings_ID.matrix_parent_inverse.copy()
+
+                                pass
+                            else:
+                                #raise Exception(f"Object[{I}] is None")
+                                pass
+                            pass
+
+                        if self.copy_objects_animation or self.clear_objects_animation:
+                            # Сбросить признаки копирования и очистки анимации (в принципе из всегда можно сбрасывать независимо от значения).
+                            self.copy_objects_animation = False
+                            self.clear_objects_animation = False
+
+                # reference_reciever_indexes_maps = [unwrap_lowest_single_value(val) for val in reference_reciever_indexes_maps]
+                # for I, obj in enumerate(receiver_objects):
+                #     ID = reference_reciever_indexes_maps[I] if self.reference_reciever_indexes_maps_mode1=='REFERENCE_RECEIVER_MAP,MAPPING' else I
+                #     try:
+                #         reference_objects_settings_ID = reference_objects_settings[ID]
+                #     except IndexError:
+                #         raise Exception(f'0001. "Object"[{ID}] out of range. Number of objects in Socket "Rigid Body settings" [{len(reference_reciever_indexes_maps)} items] in Indexing mode has to be equals to "Objects" sockets [{len(receiver_objects)}]')
+                #     except Exception as _ex:
+                #         raise Exception(f'0002. "Rigid Body settings"[{ID}] exception: {_ex}')
+
+                #     if self.copy_objects_animation:
+                #         if len(reference_objects_settings)==0:
+                #             self.copy_objects_animation = False
+                #             raise Exception(f'0003. No Rigid Body settings to copy animation.')
+                #         try:
+                #             copy_fcurves(reference_objects_settings[ID], obj, [f'{name}' for name in object_params if getattr(self, object_params[name]['object_property_name_animation_copy']) ])
+                #         except Exception as ex:
+                #             print(f"0004. Animation copy error: {ex}")
+                #             pass
+                #         pass
+                #     # Очистить анимацию, если включена опция очистки анимации
+                #     if self.clear_objects_animation:
+                #         try:
+                #             remove_fcurves(obj, [f'{name}' for name in object_params if getattr(self, object_params[name]['object_property_name_animation_copy'])] )
+                #         except Exception as ex:
+                #             print(f"0005. Animation clear error: {ex}")
+                #             pass
+                #         pass    
+
+                #     copy_object_relations(reference_objects_settings_ID, obj)
+                #     pass
+                # pass
 
             except Exception as _ex:
                 raise _ex
@@ -741,7 +1073,9 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
             self.copy_objects_parent=False
         pass
 
-        self.outputs['resulting_objects'].sv_set(targeting_objects)
+        bpy.context.view_layer.update()
+
+        self.outputs['resulting_objects'].sv_set(receiver_objects)
         #bpy.context.view_layer.update()
 
 classes = [SV_PT_CopyAnimatedPropertiesDialogRelations, SV_PT_ClearAnimatedPropertiesDialogRelations, SvUIShowIconRelations, SV_PT_ViewportDisplayPropertiesDialogRelations, SV_PT_ViewportDisplayPropertiesRelations, SvSetObjectsReleationNode, ]
