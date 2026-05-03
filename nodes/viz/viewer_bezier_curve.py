@@ -72,23 +72,6 @@ def _split_bezier(curves_s):
         result.append(out)
     return result
 
-def clear_unused_objects_in_collection_by_name(collection: bpy.types.bpy_prop_collection, names: list) -> None:
-    """
-    It takes collection property and add or remove its items so it will be equal to given length
-    If item has method `remove` it will be called before its deleting
-    """
-    unused_elements = [ (I, elem) for I, elem in enumerate(collection) if elem.name not in names]
-    unused_indexes = [elem[0] for elem in unused_elements]
-    unused_indexes = unused_indexes.sorted()
-
-    for I in unused_indexes.reversed():
-        try:
-            collection[I].remove_data()
-        except AttributeError:
-            pass
-        collection.remove(I)
-    return
-
 class SvBezierCurveOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
     """
     Triggers: Output Bezier Curve
@@ -99,7 +82,6 @@ class SvBezierCurveOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
     bl_label = 'Bezier Curve Out'
     bl_icon = 'CURVE_NCURVE'
 
-    curve_objects_cache: bpy.props.CollectionProperty(type=SvCurveData, options={'SKIP_SAVE'})
     data_kind: StringProperty(default='CURVE')
 
     def update_sockets(self, context):
@@ -195,8 +177,6 @@ class SvBezierCurveOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
         curve_object = bpy.data.objects.get(object_name)
         if not curve_object:
             curve_object = self.create_object(object_name, index, curve_data)
-            # elem = self.curve_objects_cache.add()
-            # elem.curve = curve_data
 
         if matrix is not None:
             curve_object.matrix_local = matrix
@@ -415,8 +395,6 @@ class SvBezierCurveOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
 
                 objects_out.append(curve_object)
         
-        correct_collection_length(self.curve_objects_cache, object_index)
-
         self.outputs['Objects'].sv_set(objects_out)
 
 classes = [SvBezierCurveOutNode]
