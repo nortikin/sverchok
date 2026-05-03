@@ -1,5 +1,5 @@
-Wifi In & Out
-=============
+Wifi In
+=======
 
 Functionality
 -------------
@@ -13,17 +13,15 @@ Concept
 A named Wifi Input node can be listened to by any number of Wifi Output nodes. 
 A Wifi Output node needs to be linked to a specific Wifi Input node using the dropdown list.
 
-
-
 Inputs
 ------
 
-In the Wifi In node there are N inputs named after variable name. 
+**a[0]** - In the Wifi In node there are N inputs named after variable name.   
 
-Outputs
--------
+Parameters
+----------
 
-In a linked Wifi Out there are N-1 output of matching type.
+**Var** - variable name   
 
 Notes
 -----
