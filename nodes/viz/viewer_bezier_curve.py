@@ -4,6 +4,10 @@
 #  
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
+#
+#
+# TODO: NEED REFACTOR TO REMOVE UNUSED OBJECTS LIKE MESH VIEWER
+# 
 
 import numpy as np
 
@@ -15,6 +19,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import Matrix_generate, match_long_repeat, updateNode, get_data_nesting_level, ensure_nesting_level, describe_data_shape, zip_long_repeat, numpy_full_list
 from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.curve.core import SvCurve 
+from sverchok.utils.nodes_mixins.generating_objects import SvViewerNode, SvCurveData
+from sverchok.utils.handle_blender_data import correct_collection_length
 
 def _split_points(vertices_s):
     result = []
@@ -109,6 +115,11 @@ class SvBezierCurveOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
     caps: BoolProperty(
             update = updateNode,
             description="Seals the ends of a beveled curve")
+
+    splines_merge: BoolProperty(
+            name="Merge curves",
+            update = updateNode,
+            description="Merge all curves into single curve (experimental feature. Can be removed without warning.)")
 
     bevel_depth: FloatProperty(
             name = "Bevel depth",
@@ -225,6 +236,34 @@ class SvBezierCurveOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
 
         return spline
 
+    def append_spline(self, spline, control_points, radiuses=None, tilts=None):
+        
+        spline.bezier_points.add(len(control_points))
+
+        first_point = start_point = spline.bezier_points[0]
+        for idx, segment in enumerate(control_points):
+            end_point = spline.bezier_points[idx+1]
+
+            start_point.co = Vector(segment[0])
+            start_point.handle_right = Vector(segment[1])
+
+            end_point.handle_left = Vector(segment[2])
+            end_point.co = Vector(segment[3])
+
+            start_point = end_point
+
+        first_point.handle_left = first_point.co
+        end_point.handle_right = end_point.co
+
+        if radiuses is not None:
+            spline.bezier_points.foreach_set('radius', numpy_full_list(radiuses, len(spline.bezier_points)))
+        if tilts is not None:
+            spline.bezier_points.foreach_set('tilt', numpy_full_list(tilts, len(spline.bezier_points)))
+
+        spline.use_smooth = self.use_smooth
+
+        return spline
+
     def find_curve(self, index):
         object_name = self.get_curve_name(index)
         return bpy.data.objects.get(object_name)
@@ -284,6 +323,7 @@ class SvBezierCurveOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
         col.prop(self, "preview_resolution_u")
         col.prop(self, 'resolution')
         col.prop(self, 'taper_radius_mode')
+        col.prop(self, 'splines_merge')
 
     def process(self):
         if not self.activate:
@@ -317,17 +357,44 @@ class SvBezierCurveOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
 
         objects_out = []
         object_index = 0
-        for matrix, control_points, radiuses, tilts, bevel, taper in zip_long_repeat(matrix_s, control_points_s, radius_s, tilt_s, bevel_s, taper_s):
-            object_index += 1
+        params = zip_long_repeat(matrix_s, control_points_s, radius_s, tilt_s, bevel_s, taper_s)
+        if self.splines_merge:
+            curve_object0 = None
+            for matrix, control_points, radiuses, tilts, bevel, taper in params:
+                matrix = matrix if matrix else Matrix()
+                if curve_object0 is None:
+                    curve_object0 = self.create_curve(object_index, matrix, bevel, taper)
+                    curve_object0.data.splines.clear()
+                    matrix0 = matrix
+                spline = curve_object0.data.splines.new(type='BEZIER')
+                matrix1 = matrix0.inverted() @ matrix
+                control_points_local = []
+                for lst0 in control_points:
+                    l = [ (matrix1 @ Vector(v)).to_tuple() for v in lst0 ]
+                    control_points_local.append(l)
+                        
 
-            curve_object = self.create_curve(object_index, matrix, bevel, taper)
-            self.debug("Object: %s", curve_object)
-            if not curve_object:
-                continue
-            self.create_spline(curve_object, control_points, radiuses, tilts)
+                object_index += 1
 
-            objects_out.append(curve_object)
+                self.debug("Object: %s", curve_object0)
+                if not curve_object0:
+                    continue
+                self.append_spline(spline, control_points_local, radiuses, tilts)
 
+            objects_out.append(curve_object0)
+            pass
+        else:
+            for matrix, control_points, radiuses, tilts, bevel, taper in params:
+                object_index += 1
+
+                curve_object = self.create_curve(object_index, matrix, bevel, taper)
+                self.debug("Object: %s", curve_object)
+                if not curve_object:
+                    continue
+                self.create_spline(curve_object, control_points, radiuses, tilts)
+
+                objects_out.append(curve_object)
+        
         self.outputs['Objects'].sv_set(objects_out)
 
 classes = [SvBezierCurveOutNode]
