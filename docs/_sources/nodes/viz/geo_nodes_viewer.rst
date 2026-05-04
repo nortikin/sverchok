@@ -157,7 +157,7 @@ Examples
    :width: 700px
 
    The Geometry Node group of Skin Masher Viewer also can be used for generating
-   Metaballs. It does not generate exectly metaballs but the result looks close.
+   Metaballs. It does not exactly generate metaballs but the result looks close.
 
 .. figure:: https://user-images.githubusercontent.com/28003269/193802557-d8187b64-9132-41fe-b0ea-8c3b015e4882.png
    :width: 700px

@@ -622,7 +622,7 @@ for moving separate elements of a mesh. Socket types for them are
 ``SvMatrixSocket`` and ``SvQuaternionSocket``.
 
 Sverchok has family of mathematical objects such as Curves, Surfaces,
-Feilds, Solids. All of them, except Solids, are defined as Python classes.
+Fields, Solids. All of them, except Solids, are defined as Python classes.
 Solids are used from FreeCAD library. They all have dedicated to them sockets
 in the ``core.sockets`` module.
 
@@ -919,7 +919,7 @@ a node should be introduced. It's not necessary step when changes should be
 applied to changes which were made in not released version of Sverchok. In this
 case changes can be done with breaking backward compatibility.
 
-Creating new version should be done togather with keeping previous one. In most
+Creating new version should be done together with keeping previous one. In most
 cases it's enough **to copy** module of current node into old_nodes folder. It
 should be done more carefully if in the module together with the node something
 else is registered.

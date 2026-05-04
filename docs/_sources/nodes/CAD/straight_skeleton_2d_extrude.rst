@@ -68,7 +68,7 @@ If you connect list of floats then it will be used per objects:
 
 - **Shapes mode**. Original, Exckude Holes, Invert Holes
 - **Restrict Height**.
-- **Height** - Height of object or objects. If used single value then this value vill be used for every objects. If socket is connected with float values then values will be used per objects:
+- **Height** - Height of object or objects. If used single value then this value will be used for every objects. If socket is connected with float values then values will be used per objects:
 
 .. raw:: html
 
@@ -131,7 +131,7 @@ Parameters
         .. image:: https://github.com/user-attachments/assets/e349df88-3e4b-4096-b2f5-2682b13ed48a
           :target: https://github.com/user-attachments/assets/e349df88-3e4b-4096-b2f5-2682b13ed48a
 
-    - **Verbose** - On will show more info in console while Extrude Straight Sceleton. Off will show less info.
+    - **Verbose** - On will show more info in console while Extrude Straight Skeleton. Off will show less info.
 
         .. image:: https://github.com/user-attachments/assets/f71aba10-3d00-48d0-b352-907f20b45ef8
           :target: https://github.com/user-attachments/assets/f71aba10-3d00-48d0-b352-907f20b45ef8

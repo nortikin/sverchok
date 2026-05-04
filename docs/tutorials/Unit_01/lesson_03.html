@@ -527,7 +527,7 @@ rounded down to the nearest whole number.</p></td>
 <p>A recipe which you should be able to hook up yourself by seeing the example image.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Vector</span> <span class="pre">In</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Sclar</span> <span class="pre">Math</span></code> (3x) notice I minimized the Multiplication Node.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Scalar</span> <span class="pre">Math</span></code> (3x) notice I minimized the Multiplication Node.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">Number</span></code> (2x)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Number</span> <span class="pre">Range</span></code> (int)</p></li>
 </ul>
@@ -583,7 +583,7 @@ rounded down to the nearest whole number.</p></td>
 <ul class="simple">
 <li><p>We know how many polygons we need (let’s call this number <code class="docutils literal notranslate"><span class="pre">j</span></code>)</p></li>
 </ul>
-<p>We know there are interuptions in the polygon pattern, between polygon index 2 and 3.  it is useful to think of an algorithm that produces these index sequences based on a range from <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">thru</span> <span class="pre">j-1</span></code> or <code class="docutils literal notranslate"><span class="pre">[0,1,2,3,4,5]</span></code>. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.</p>
+<p>We know there are interruptions in the polygon pattern, between polygon index 2 and 3.  It is useful to think of an algorithm that produces these index sequences based on a range from <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">thru</span> <span class="pre">j-1</span></code> or <code class="docutils literal notranslate"><span class="pre">[0,1,2,3,4,5]</span></code>. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You could already think ahead and consider that if we made <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">4*4</span> <span class="pre">grid</span></code> (so one more row, y becomes also <code class="docutils literal notranslate"><span class="pre">4</span></code>), and that there will be another jump in the pattern between polygon index 5 and 6:</p>

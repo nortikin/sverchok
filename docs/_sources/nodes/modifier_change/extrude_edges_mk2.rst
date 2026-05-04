@@ -52,7 +52,7 @@ This node has the following outputs:
 Examples of usage
 -----------------
 
-Extruded circle in Z direction by sinus, drived by pi*N:
+Extruded circle in Z direction by sinus, derived by pi*N:
 
 .. image:: https://user-images.githubusercontent.com/14288520/200052169-daf55b93-65a8-4926-9d03-c81f977f9b7f.png
   :target: https://user-images.githubusercontent.com/14288520/200052169-daf55b93-65a8-4926-9d03-c81f977f9b7f.png
@@ -66,7 +66,7 @@ Extruded circle in Z direction by sinus, drived by pi*N:
 
 ---------
 
-Extruded circle in XY directions by sinus and cosinus drived by pi*N:
+Extruded circle in XY directions by sinus and cosinus derived by pi*N:
 
 .. image:: https://user-images.githubusercontent.com/14288520/200053013-696b830d-9ec8-40c2-8662-1d08027d7c3b.png
   :target: https://user-images.githubusercontent.com/14288520/200053013-696b830d-9ec8-40c2-8662-1d08027d7c3b.png

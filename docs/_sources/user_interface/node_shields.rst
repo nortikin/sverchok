@@ -3,7 +3,7 @@ Node Shields
 
 .. image:: https://user-images.githubusercontent.com/28003269/194277098-66690aab-a6c6-4dfb-9469-65a4ad811587.png
 
-When node is added to a tree or when some file with Sverchok trees is oppened
+When node is added to a tree or when some file with Sverchok trees is opened
 nodes can be marked by putting them into special frames. Such frames mark
 nodes that they have a certain state. There are currently two states:
 
