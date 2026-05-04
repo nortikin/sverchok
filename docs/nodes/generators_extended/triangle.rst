@@ -33,15 +33,15 @@ Inputs / Parameters
 +------------+---------+-------------------------------------------------------------------------+
 | **C**      | Vector  | Vertex C of the triangle                                                |
 +------------+---------+-------------------------------------------------------------------------+
-| **a**      | Float   | length of side BC (opposite to vertex A)                                |
+| **a**      | Float   | Size side a (opposite to vertex A)                                      |
 +------------+---------+-------------------------------------------------------------------------+
-| **b**      | Float   | length of side AC (opposite to vertex B)                                |
+| **b**      | Float   | Size side b (opposite to vertex B)                                      |
 +------------+---------+-------------------------------------------------------------------------+
-| **c**      | Float   | length of side AB (opposite to vertex C)                                |
+| **c**      | Float   | Size side c (opposite to vertex C)                                      |
 +------------+---------+-------------------------------------------------------------------------+
-| **Alpha**  | Float   | Normal of the plane B                                                   |
+| **Alpha**  | Float   | Angle at vertice A                                                      |
 +------------+---------+-------------------------------------------------------------------------+
-| **Beta**   | Float   | Normal of the plane B                                                   |
+| **Beta**   | Float   | Angle at vertice B                                                      |
 +------------+---------+-------------------------------------------------------------------------+
 
 
