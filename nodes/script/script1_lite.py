@@ -544,9 +544,7 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
                     flush_output_data(exec_dict)
                     return
 
-            _local_out = {}
-            exec(self.script_str, exec_dict, _local_out)
-            exec_dict.update(_local_out)  # fix for Python 3.12 exec() scoping (Blender 5.1+)
+            exec(self.script_str, exec_dict, exec_dict)
 
             flush_output_data(exec_dict)
 
