@@ -62,7 +62,7 @@ This node has the following outputs:
 - **Vertices**. Vertices of the dual mesh.
 - **Edges**. Edges of the dual mesh.
 - **Polygons**. Faces of the dual mesh.
-- **Levels**. Repeat Levels input. For your convinience to use it as a Number node.
+- **Levels**. Repeat Levels input. For your convenience to use it as a Number node.
 
 Examples of Usage
 -----------------

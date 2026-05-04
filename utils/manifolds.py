@@ -137,16 +137,16 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
             # At first time get point of intersection with line segment not curve segment.
             # If new point of intersection is not segment_i then select prev or next segment.
             # If it is not help then raise exception and think again. )))
-            # 6 times is appoximating max count of attemps to count accurate point as nearest point.
+            # 6 times is approximating max count of attempts to count accurate point as nearest point.
             # Algorithm can go up to 5 times of selecting 
             for iter_over_segment in range(6):
                 if iter_over_segment>=5:
                     raise TypeError( f'Can not calc start point #{points_from.index(point_from)} on segment {segment_i}, {point_from}. Drawback of counting algorithm. Exceed limit of iterations {iter_over_segment}.' )
 
                 # Go throght the segment of curve
-                # Search plane at begining of segment
+                # Search plane at beginning of segment
                 if segment_i==0 and is_closed==False:
-                    # If current line segment is at begining of unclosed curve then searchable plane (red line) is perpendicular to current line segment
+                    # If current line segment is at beginning of unclosed curve then searchable plane (red line) is perpendicular to current line segment
                     # and plane's normal equals line segment (norm_1)
                     # https://user-images.githubusercontent.com/14288520/212556100-841744af-2f89-4787-8471-6fb8f173f7d9.png
                     p1 = np.array(points[segment_i+0])

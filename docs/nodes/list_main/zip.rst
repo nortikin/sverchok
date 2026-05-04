@@ -7,7 +7,7 @@ List Zip
 Functionality
 -------------
 
-Making pairs of data to mix togather as zip function.
+Making pairs of data to mix together as zip function.
 
 x = [[[1,2],[3,4]]]
 y = [[[5,6],[7,8]]]

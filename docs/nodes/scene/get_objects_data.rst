@@ -123,7 +123,7 @@ Parameters
 | **G E T**            | Button        | Button to get selected objects from scene.                               |
 +----------------------+---------------+--------------------------------------------------------------------------+
 | **Apply_Matrix**     | Bool,toggle   | Apply object Matrix to output sockets (Vertices, Vertex Normals,         |
-|                      |               | Poligon Centers, Polygon Normals). Has no infuence for Matrix and Object |
+|                      |               | Polygon Centers, Polygon Normals). Has no infuence for Matrix and Object |
 +----------------------+---------------+--------------------------------------------------------------------------+
 | **Merge**            | Bool,toggle   | Merge Meshes into one mesh                                               |
 +----------------------+---------------+--------------------------------------------------------------------------+

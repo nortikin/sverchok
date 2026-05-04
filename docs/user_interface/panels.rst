@@ -73,7 +73,7 @@ Animate
     which have property to_animate enabled.
 
 Scene update
-    If enabled togather with Live Update the tree will be reevaluated upon
+    If enabled together with Live Update the tree will be reevaluated upon
     changes in the scene. It will effect only nodes with `interactive`
     property enabled.
     

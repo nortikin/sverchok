@@ -567,7 +567,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                                            "faces": [f0.index, f1.index,], # If the frame of the stripe relates to a MANIFOLD edge, then a count of faces eq 2 always.
                                         } )  # 143(158) ms
             pass
-        # Move frames with non-manifold edges at the begining of list. Manifold frames will be moved to the end of list.
+        # Move frames with non-manifold edges at the beginning of list. Manifold frames will be moved to the end of list.
         # There is a situation when all frames have non-manifold edges, or all edges will be manifold. It is all ok.
 
         # Caching
@@ -586,7 +586,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
             for list_v0_frames_I in list_v0_frames:
                 stripe_extended = False
                 for stripe in list_stripes_v0:
-                    # Take the last frame in the stripe and test posibility of linking list_v0_frames_I to the tail of the stripe
+                    # Take the last frame in the stripe and test possibility of linking list_v0_frames_I to the tail of the stripe
                     frame_last_stripe_face = stripe[-1]["stripe_face"]  # 66ms
                     if frame_last_stripe_face in list_v0_frames_I["faces"]:
                         list_v0_frames_I_faces = list_v0_frames_I["faces"][:]  # 46 ms

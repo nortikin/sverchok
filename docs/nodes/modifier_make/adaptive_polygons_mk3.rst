@@ -12,7 +12,7 @@ face of another object, called **recipient**. Copies of donor objects are
 deformed (adapted) to match the shape and normals of recipient's face.
 
 This node works primarily with Quads and Tris; if you ask it to work with NGons
-(N > 4), it can produce weird resuls.
+(N > 4), it can produce weird results.
 
 As an option, the node can process NGons (and Quads / Tris, optionally) in so
 called "Frame / Fan" mode. In this mode, each face of recipient mesh is inset

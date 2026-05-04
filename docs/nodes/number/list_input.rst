@@ -100,7 +100,7 @@ View list of colors as 4D vector, Color with Alpha and Color Gamma without Alpha
 2. Using of Mask input socket
 -----------------------------
 
-If mask is true then element is hiding from output (is an oposite of selector 4)
+If mask is true then element is hiding from output (is an opposite of selector 4)
 
 You can use external data as mask for this node:
 
@@ -112,12 +112,12 @@ You can select what type of data are mask - boolean or indexes. You can invert m
 3. Matrixes
 -----------
 
-Matrixes are compicated elements. So they has a some controls to converts views. You can set view of every mastrix as you wish: as 4x4, or Euler Angles, or Angle Axis:
+Matrixes are complicated elements. They have some controls to convert views. You can set the view of every mastrix however you wish: as 4x4, or Euler Angles, or Angle Axis:
 
 .. image:: https://github.com/user-attachments/assets/7a08d702-f816-4820-b49c-d544c3e7f2c9
   :target: https://github.com/user-attachments/assets/7a08d702-f816-4820-b49c-d544c3e7f2c9
 
-if you choose matrix view as *Euler* or *Axis Angle* then you can also set a shears componets of matrix:
+if you choose matrix view as *Euler* or *Axis Angle* then you can also set a shears components of matrix:
 
 .. image:: https://github.com/user-attachments/assets/83fa740e-12b9-4711-b641-a17b60111610
   :target: https://github.com/user-attachments/assets/83fa740e-12b9-4711-b641-a17b60111610
