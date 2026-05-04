@@ -507,7 +507,7 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
     )
 
     reference_objects_settings1: bpy.props.PointerProperty(
-        name        = "Rigid Body settings",
+        name        = "Rigid Body reference",
         description = "Objects to get Rigid Body settings",
         type        = bpy.types.Object,
     )
@@ -952,8 +952,11 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         self.inputs['rigid_body_collision_collections'  ].label       = 'Collision Collection'
         self.inputs['reference_objects_settings'        ].custom_draw = 'custom_draw_input_sockets_rigid_body_source_objects'
         
-        self.outputs.new('SvObjectSocket', 'resulting_objects')
-        self.outputs['resulting_objects'].label       = 'Objects'
+        self.outputs.new('SvObjectSocket' , 'resulting_objects'                 )
+        self.outputs.new('SvStringsSocket', 'reference_reciever_indexes_maps'   ).prop_name = 'reference_reciever_indexes_maps1'
+
+        self.outputs['resulting_objects'                ].label       = 'Objects'
+        self.outputs['reference_reciever_indexes_maps'  ].label       = 'Objects map'
         pass
 
     def process(self):
@@ -968,16 +971,18 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         if self.inputs['reference_objects_settings' ].is_linked==False:
             reference_objects_settings = [self.reference_objects_settings1] if self.reference_objects_settings1 else []
 
+        if self.inputs['reference_reciever_indexes_maps'].is_linked==False:
+            reference_reciever_indexes_maps = [self.reference_reciever_indexes_maps1] * len(receiver_objects)
+            pass
+
+        if self.reference_reciever_indexes_maps_mode1=='REFERENCE_RECEIVER_MAP,INDEXING':
+            reference_reciever_indexes_maps = [I for I in range(len(receiver_objects))]
+            pass
+        reference_reciever_indexes_maps = [unwrap_lowest_single_value(val) for val in reference_reciever_indexes_maps]
+
+
         if self.node_play_pause1=='NODE_PLAY,PLAY':
             if self.node_in_use==True:
-                if self.inputs['reference_reciever_indexes_maps'].is_linked==False:
-                    reference_reciever_indexes_maps = [self.reference_reciever_indexes_maps1] * len(receiver_objects)
-                    pass
-
-                if self.reference_reciever_indexes_maps_mode1=='REFERENCE_RECEIVER_MAP,INDEXING':
-                    reference_reciever_indexes_maps = [I for I in range(len(receiver_objects))]
-                    pass
-                reference_reciever_indexes_maps = [unwrap_lowest_single_value(val) for val in reference_reciever_indexes_maps]
                 len_reference_reciever_indexes_maps = len(reference_reciever_indexes_maps)
                 if len_reference_reciever_indexes_maps==0:
                     raise Exception(f'001. Objects map has no elements: 0')
@@ -1251,6 +1256,7 @@ class SvRigidBodyCopy(SverchCustomTreeNode, bpy.types.Node):
         else:
             pass
         self.outputs['resulting_objects'].sv_set(receiver_objects)
+        self.outputs['reference_reciever_indexes_maps'].sv_set(reference_reciever_indexes_maps)
         #bpy.context.view_layer.update()
         pass
 

@@ -1282,7 +1282,7 @@ def calc_center_mass_bmesh(center_mode, mesh_vertices, mesh_edges, mesh_faces, m
 
     elif center_mode=='VOLUMES':
             
-        faces_I_np = np.array(faces_I)
+        faces_I_np = np.array(faces_I, dtype=object)
         if faces_I_np.size==0:
             # skip mesh if no faces at all:
             result_mask = False
