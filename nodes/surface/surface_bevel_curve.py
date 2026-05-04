@@ -12,7 +12,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.algorithms import SvIsoUvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.primitives import SvLine
@@ -244,11 +244,11 @@ class SvBendCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                     profile = SvNurbsCurve.to_nurbs(profile)
                     taper = SvNurbsCurve.to_nurbs(taper)
                     if path is None:
-                        raise Exception("One of paths is not a NURBS curve")
+                        raise UnsupportedCurveTypeException("One of paths is not a NURBS curve")
                     if profile is None:
-                        raise Exception("One of profiles is not a NURBS curve")
+                        raise UnsupportedCurveTypeException("One of profiles is not a NURBS curve")
                     if taper is None:
-                        raise Exception("One of tapers is not a NURBS curve")
+                        raise UnsupportedCurveTypeException("One of tapers is not a NURBS curve")
                     
                     surface = nurbs_bevel_curve(path, profile, taper,
                                 algorithm = self.algorithm,

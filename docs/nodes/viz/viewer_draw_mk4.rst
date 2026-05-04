@@ -1,11 +1,11 @@
 Viewer Draw
 ============
 
-.. image:: https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png
-  :target: https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png
+.. image:: https://github.com/user-attachments/assets/a2453dee-d147-4311-8e9d-263b523e864f
+  :target: https://github.com/user-attachments/assets/a2453dee-d147-4311-8e9d-263b523e864f
 
-.. image:: https://user-images.githubusercontent.com/14288520/201473680-b993c305-99b4-4eea-8af4-93baf8a7329b.png
-  :target: https://user-images.githubusercontent.com/14288520/201473680-b993c305-99b4-4eea-8af4-93baf8a7329b.png
+.. image:: https://github.com/user-attachments/assets/2ec88406-8eea-4dc0-8a13-27068e89ec8f
+  :target: https://github.com/user-attachments/assets/2ec88406-8eea-4dc0-8a13-27068e89ec8f
 
 Functionality
 -------------
@@ -35,6 +35,24 @@ The same calculations are performed as in facetted mode, but instead of each fac
 **custom shader**
 
 If this interests you, you should read the node's source code, and check out the development thread for examples. This is the more experimental part of the node and subject to changing eventually. At present this lets you load a VertexShader and FragmentShader from the bpy.data.texts block.
+
+Face Culling
+------------
+
+Blender: https://docs.blender.org/api/current/gpu.state.html#gpu.state.face_culling_set
+
+wiki: https://wikis.khronos.org/opengl/Face_Culling
+
+Visible only for Blender 3.5 and more. Used only in Blender 3D Viewport. Has no influence for render or baking mesh, edges or vertices.
+
+**None** - default. Show all faces
+
+**Front** - hide front faces
+
+**Back** - hide back faces
+
+.. image:: https://github.com/user-attachments/assets/a1315dea-5b22-4d24-b671-0810add0c005
+  :target: https://github.com/user-attachments/assets/a1315dea-5b22-4d24-b671-0810add0c005
 
 Features
 --------

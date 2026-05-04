@@ -1,0 +1,840 @@
+{
+  "export_version": "1.0",
+  "main_tree": {
+    "nodes": {
+      "Matrix In.001": {
+        "attributes": {
+          "location": [
+            2520.0,
+            -420.0
+          ],
+          "label": "Matrix",
+          "color": [
+            0.8576140403747559,
+            0.9321048259735107,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "angle": -64.0,
+          "axis": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        "inputs": {
+          "Location": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Location",
+            "properties": {
+              "prop_name": "location_"
+            }
+          },
+          "Scale": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Scale",
+            "properties": {
+              "prop_name": "scale",
+              "expanded": true
+            }
+          },
+          "Quaternion": {
+            "bl_idname": "SvQuaternionSocket",
+            "name": "Quaternion",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "quaternion"
+            }
+          },
+          "Angle X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle X",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_x"
+            }
+          },
+          "Angle Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle Y",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_y"
+            }
+          },
+          "Angle Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle Z",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_z"
+            }
+          },
+          "Axis": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Axis",
+            "properties": {
+              "prop_name": "axis",
+              "expanded": true
+            }
+          },
+          "Angle": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle",
+            "properties": {
+              "prop_name": "angle"
+            }
+          }
+        },
+        "outputs": {
+          "Matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrices"
+          }
+        },
+        "bl_idname": "SvMatrixInNodeMK4"
+      },
+      "Viewer Draw.001": {
+        "attributes": {
+          "location": [
+            4300.0,
+            -160.0
+          ],
+          "color": [
+            0.9999715685844421,
+            0.8993088603019714,
+            0.9742180705070496
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "vector_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_color": [
+            0.40212106704711914,
+            0.4116719365119934,
+            0.3927018642425537,
+            1.0
+          ],
+          "polygon_color": [
+            0.7991692423820496,
+            0.9055943489074707,
+            0.8849384784698486,
+            1.0
+          ],
+          "point_size": 2
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Cricket": {
+        "attributes": {
+          "location": [
+            2240.0,
+            -140.0
+          ],
+          "color": [
+            0.7721503973007202,
+            0.9200000166893005,
+            0.8091128468513489
+          ],
+          "use_custom_color": true
+        },
+        "inputs": {
+          "Scale": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Scale",
+            "properties": {
+              "prop_name": "cricket_scale"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          }
+        },
+        "bl_idname": "SvCricketNode"
+      },
+      "Polygons to Edges": {
+        "attributes": {
+          "location": [
+            2240.0,
+            -260.0
+          ],
+          "color": [
+            0.596470832824707,
+            0.9345773458480835,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "unique_edges": true
+        },
+        "inputs": {
+          "pols": {
+            "bl_idname": "SvStringsSocket",
+            "name": "pols",
+            "properties": {
+              "label": "Polygons"
+            }
+          }
+        },
+        "outputs": {
+          "edgs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edgs",
+            "properties": {
+              "label": "Edges"
+            }
+          }
+        },
+        "bl_idname": "SvPols2EdgsNodeMk2"
+      },
+      "Matrix Apply to Mesh": {
+        "attributes": {
+          "location": [
+            2520.0,
+            -180.0
+          ],
+          "color": [
+            0.8576140403747559,
+            0.9321048259735107,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          },
+          "Matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrices"
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          }
+        },
+        "bl_idname": "SvMatrixApplyJoinNode"
+      },
+      "Matrix In.002": {
+        "attributes": {
+          "location": [
+            2240.0,
+            -380.0
+          ],
+          "label": "Matrices",
+          "color": [
+            0.8576140403747559,
+            0.9321048259735107,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "angle": 90.0
+        },
+        "inputs": {
+          "Location": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Location",
+            "properties": {
+              "prop_name": "location_"
+            }
+          },
+          "Scale": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Scale",
+            "properties": {
+              "prop_name": "scale"
+            }
+          },
+          "Quaternion": {
+            "bl_idname": "SvQuaternionSocket",
+            "name": "Quaternion",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "quaternion"
+            }
+          },
+          "Angle X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle X",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_x"
+            }
+          },
+          "Angle Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle Y",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_y"
+            }
+          },
+          "Angle Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle Z",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_z"
+            }
+          },
+          "Axis": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Axis",
+            "properties": {
+              "prop_name": "axis",
+              "expanded": true
+            }
+          },
+          "Angle": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle",
+            "properties": {
+              "prop_name": "angle"
+            }
+          }
+        },
+        "outputs": {
+          "Matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrices"
+          }
+        },
+        "bl_idname": "SvMatrixInNodeMK4"
+      },
+      "Matrix Apply to Mesh.001": {
+        "attributes": {
+          "location": [
+            2800.0,
+            -300.0
+          ],
+          "color": [
+            0.8576140403747559,
+            0.9321048259735107,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "do_join": false
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          },
+          "Matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrices"
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          }
+        },
+        "bl_idname": "SvMatrixApplyJoinNode"
+      },
+      "2D Boundary": {
+        "attributes": {
+          "location": [
+            3420.0,
+            -320.0
+          ],
+          "color": [
+            0.8576140403747559,
+            0.9321048259735107,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "inputs": {
+          "Geometry": {
+            "bl_idname": "SvGeom2DSocket",
+            "name": "Geometry"
+          }
+        },
+        "outputs": {
+          "Geometry": {
+            "bl_idname": "SvGeom2DSocket",
+            "name": "Geometry"
+          }
+        },
+        "bl_idname": "SvExShapelyBoundaryNode"
+      },
+      "Mesh to 2D Geometry": {
+        "attributes": {
+          "location": [
+            3020.0,
+            -320.0
+          ],
+          "color": [
+            0.8576140403747559,
+            0.9321048259735107,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          }
+        },
+        "outputs": {
+          "Geometry": {
+            "bl_idname": "SvGeom2DSocket",
+            "name": "Geometry"
+          }
+        },
+        "bl_idname": "SvExShapelyFromMeshNode"
+      },
+      "2D Geometry to Mesh": {
+        "attributes": {
+          "location": [
+            3600.0,
+            -320.0
+          ],
+          "color": [
+            0.8576140403747559,
+            0.9321048259735107,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "inputs": {
+          "Geometry": {
+            "bl_idname": "SvGeom2DSocket",
+            "name": "Geometry"
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          }
+        },
+        "bl_idname": "SvExShapelyTriangulateNode"
+      },
+      "2D Dilate or Erode": {
+        "attributes": {
+          "location": [
+            3240.0,
+            -300.0
+          ],
+          "color": [
+            0.8576140403747559,
+            0.9321048259735107,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "quad_segs": 3
+        },
+        "inputs": {
+          "Geometry": {
+            "bl_idname": "SvGeom2DSocket",
+            "name": "Geometry"
+          },
+          "Distance": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Distance",
+            "properties": {
+              "prop_name": "distance"
+            }
+          },
+          "QuadSegs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "QuadSegs",
+            "properties": {
+              "prop_name": "quad_segs"
+            }
+          }
+        },
+        "outputs": {
+          "Geometry": {
+            "bl_idname": "SvGeom2DSocket",
+            "name": "Geometry"
+          }
+        },
+        "bl_idname": "SvExShapelyBufferNode"
+      },
+      "Merge by Distance": {
+        "attributes": {
+          "location": [
+            3820.0,
+            -280.0
+          ],
+          "color": [
+            0.596470832824707,
+            0.9345773458480835,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "PolyEdge": {
+            "bl_idname": "SvStringsSocket",
+            "name": "PolyEdge"
+          },
+          "FaceData": {
+            "bl_idname": "SvStringsSocket",
+            "name": "FaceData"
+          },
+          "Mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Mask"
+          },
+          "Distance": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Distance",
+            "properties": {
+              "prop_name": "distance"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "FaceData": {
+            "bl_idname": "SvStringsSocket",
+            "name": "FaceData"
+          },
+          "Doubles": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Doubles"
+          },
+          "Mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Mask"
+          }
+        },
+        "bl_idname": "SvMergeByDistanceNode"
+      },
+      "Edges to Faces 2D": {
+        "attributes": {
+          "location": [
+            4060.0,
+            -200.0
+          ],
+          "color": [
+            0.596470832824707,
+            0.9345773458480835,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "do_intersect": true,
+          "fill_holes": false
+        },
+        "inputs": {
+          "Verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          }
+        },
+        "outputs": {
+          "Verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          }
+        },
+        "bl_idname": "SvEdgesToFaces2D"
+      }
+    },
+    "links": [
+      {
+        "from_node": "Edges to Faces 2D",
+        "from_socket": "Verts",
+        "to_node": "Viewer Draw.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Edges to Faces 2D",
+        "from_socket": "Faces",
+        "to_node": "Viewer Draw.001",
+        "to_socket": "Polygons"
+      },
+      {
+        "from_node": "Cricket",
+        "from_socket": "Faces",
+        "to_node": "Polygons to Edges",
+        "to_socket": "pols"
+      },
+      {
+        "from_node": "Cricket",
+        "from_socket": "Vertices",
+        "to_node": "Matrix Apply to Mesh",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Polygons to Edges",
+        "from_socket": "edgs",
+        "to_node": "Matrix Apply to Mesh",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Cricket",
+        "from_socket": "Faces",
+        "to_node": "Matrix Apply to Mesh",
+        "to_socket": "Faces"
+      },
+      {
+        "from_node": "Matrix In.002",
+        "from_socket": "Matrices",
+        "to_node": "Matrix Apply to Mesh",
+        "to_socket": "Matrices"
+      },
+      {
+        "from_node": "Matrix Apply to Mesh",
+        "from_socket": "Vertices",
+        "to_node": "Matrix Apply to Mesh.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Matrix Apply to Mesh",
+        "from_socket": "Edges",
+        "to_node": "Matrix Apply to Mesh.001",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Matrix Apply to Mesh",
+        "from_socket": "Faces",
+        "to_node": "Matrix Apply to Mesh.001",
+        "to_socket": "Faces"
+      },
+      {
+        "from_node": "Matrix In.001",
+        "from_socket": "Matrices",
+        "to_node": "Matrix Apply to Mesh.001",
+        "to_socket": "Matrices"
+      },
+      {
+        "from_node": "2D Dilate or Erode",
+        "from_socket": "Geometry",
+        "to_node": "2D Boundary",
+        "to_socket": "Geometry"
+      },
+      {
+        "from_node": "Matrix Apply to Mesh.001",
+        "from_socket": "Vertices",
+        "to_node": "Mesh to 2D Geometry",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Matrix Apply to Mesh.001",
+        "from_socket": "Edges",
+        "to_node": "Mesh to 2D Geometry",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Matrix Apply to Mesh.001",
+        "from_socket": "Faces",
+        "to_node": "Mesh to 2D Geometry",
+        "to_socket": "Faces"
+      },
+      {
+        "from_node": "2D Boundary",
+        "from_socket": "Geometry",
+        "to_node": "2D Geometry to Mesh",
+        "to_socket": "Geometry"
+      },
+      {
+        "from_node": "Mesh to 2D Geometry",
+        "from_socket": "Geometry",
+        "to_node": "2D Dilate or Erode",
+        "to_socket": "Geometry"
+      },
+      {
+        "from_node": "2D Geometry to Mesh",
+        "from_socket": "Vertices",
+        "to_node": "Merge by Distance",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "2D Geometry to Mesh",
+        "from_socket": "Edges",
+        "to_node": "Merge by Distance",
+        "to_socket": "PolyEdge"
+      },
+      {
+        "from_node": "Merge by Distance",
+        "from_socket": "Vertices",
+        "to_node": "Edges to Faces 2D",
+        "to_socket": "Verts"
+      },
+      {
+        "from_node": "Merge by Distance",
+        "from_socket": "Edges",
+        "to_node": "Edges to Faces 2D",
+        "to_socket": "Edges"
+      }
+    ]
+  }
+}

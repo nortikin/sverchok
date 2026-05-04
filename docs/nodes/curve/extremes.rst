@@ -26,6 +26,10 @@ will be much faster to calculate points by formulas. This node, in turn, is
 most useful when you do not know exact formulas for the curve and / or for the
 scalar field - for example, if they were defined by approximation.
 
+If your curve is a non-rational NURBS (or NURBS-like) curve of degree 1, 2, 3
+or 4, and you need to find extremes along some direction, you can use "NURBS
+Curve Extremes" node, which is several times faster.
+
 .. image:: https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b
   :target: https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b
 

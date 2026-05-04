@@ -94,15 +94,16 @@ This node has the following inputs:
 * **Profile**. Profile curve or curves. The node can work with one profile
   curve per path curve, or list of profile curves per path curve. This input is
   mandatory.
-* **VSections**. Number of copies of profile curve (or interpolated curves, if
-  several profile curves are used) the node will generate for lofting. This
-  will be equal to number of control points of the resulting surface along it's
-  V direction. Bigger values usually correspond to better precision of sweeping
-  procedure; but too high numbers can cause weird results or be too slow. The
-  default value is 10.
+* **VSections**. This input is available only when **Key V values** parameter
+  is set to **Even T values**. Number of copies of profile curve (or
+  interpolated curves, if several profile curves are used) the node will
+  generate for lofting. This will be equal to number of control points of the
+  resulting surface along it's V direction. Bigger values usually correspond to
+  better precision of sweeping procedure; but too high numbers can cause weird
+  results or be too slow. The default value is 10.
 * **V**. Values of V parameter (i.e. path curve's T parameter), at which
   profile curves must be placed for lofting. This input is available and
-  mandatory if **Explicit V Values** parameter is checked. The node expects
+  mandatory if **Key T values** parameter is set to **Explicit**. The node expects
   number of values in this input equal to number of profile curves. For one
   profile curve, this input has no meaning.
 * **Resolution**. Number of samples for **Zero-Twist** or **Track normal**
@@ -146,11 +147,27 @@ This node has the following parameters:
     vectors.                                         
   * **Track normal**: try to maintain constant normal direction by tracking it along the curve.
 
-* **Explicit V Values**. If checked, then the user has the ability to provide
-  values of path curve's parameter values, at which the provided path curves
-  must be placed; otherwise, the node will calculate these parameters
-  automatically (evenly). This parameter has no meaning if there is only one
-  profile curve.
+* **Key V values**. This defines where along the path curve the copies of
+  profile will be placed. The available options are:
+
+  * **Greville abscissae**. Greville points of the path curves will be used.
+    This usually gives good enough result. Also this option does not require
+    the user to specify the number of profile copies - it will be calculated
+    automatically based on the number of path curve control points. This is the
+    default option.
+  * **Even T values**. Copies of the profile curve will be placed evenly in
+    path curve's T parameter space. The number of copies is specified in the
+    **VSections** input.
+  * **Explicit**. This allows the user to provide specific values of path
+    curve's T parameter, where copies of the profile curve are to be placed.
+    These values are provided in the **V** input.
+
+* **Use path tangents**. If checked, the node will consider tangents of the
+  Path curve when creating the shape of the Sweep surface. This creates
+  surfaces that follow Path curve more precisely even with lower values of **V
+  Sections** parameter. If not checked, the node will just generate a loft
+  surface through profile curves placed along the path curve. Unchecked by
+  default.
 * **U Knots**. This parameter is available in the N panel only. This defines
   how the node will modify input curves in order to make them use exactly the
   same knot vectors. Available options are:
@@ -167,6 +184,15 @@ This node has the following parameters:
   faster, and any following nodes working with the generated surface will work
   faster; but **Average** mode is less universal, and in many cases it gives
   less precise interpolations. The default value is **Unify**.
+
+* **Knotvector accuracy**. This parameter is available in the N panel only.
+  Accuracy (number of exact digits after decimal points) to be used for
+  knotvector unification algorithm. The default value is 6. Usually you do not
+  have to modify this parameter; but, if your curves have a lot of control
+  points (like, hundreds of them), or if knot values in curves knotvectors are
+  very near one another, you may wish to reduce accuracy in order to reduce the
+  number of control points in the resulting surface (the result will be less
+  precise, but will work faster).
 
 * **Metric**. This parameter is available in the N panel only. Distance type
   used for interpolation along V direction. The available values are:
@@ -207,4 +233,18 @@ Two Profile curves:
 Three Profile curves:
 
 .. image:: https://user-images.githubusercontent.com/284644/93505300-1be79980-f934-11ea-9b0b-71d150312ca2.png
+
+Example with low value of V Sections parameter. Note that the surface follows
+the path curve very loosely.
+
+.. image:: https://github.com/user-attachments/assets/c15a52ba-d6ed-4ded-9162-bea7971597ae
+  :target: https://github.com/user-attachments/assets/c15a52ba-d6ed-4ded-9162-bea7971597ae
+
+The same setup, with the same value of V Sections parameter, but with **Use
+path tangents** parameter enabled:
+
+.. image:: https://github.com/user-attachments/assets/1b34098e-6573-4e99-94eb-d5b3e54295c6
+  :target: https://github.com/user-attachments/assets/1b34098e-6573-4e99-94eb-d5b3e54295c6
+
+Now more control points are generated, but the surface follows the path much more accurately.
 

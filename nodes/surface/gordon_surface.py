@@ -9,12 +9,14 @@ import numpy as np
 import bpy
 from bpy.props import EnumProperty, BoolProperty, IntProperty
 
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length
 from sverchok.utils.math import supported_metrics
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.surface.gordon import gordon_surface
+from sverchok.utils.surface.gordon import gordon_surface, SegmentsReparametrizer, MonotoneReparametrizer
+from sverchok.dependencies import scipy
 
 class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -47,6 +49,46 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         min = 1, max = 10,
         update = updateNode)
 
+    reparametrize_methods = [
+            ('SEGMENTS', "Picewise Linear", "Simpler algorithm based on picewise linear reparametrization", 0)
+        ]
+
+    if scipy is not None:
+        reparametrize_methods.append(
+            ('MONOTONE', "Monotone Spline", "Reparametrization algorithm using monotone spline", 1)
+        )
+
+    reparametrize_method : EnumProperty(
+        name = "Reparametrization",
+        items = reparametrize_methods,
+        update = updateNode)
+
+    reparametrize_remove_knots : BoolProperty(
+        name = "Remove knots",
+        description = "Remove some of additional knots during reparametrization",
+        default = False,
+        update = updateNode)
+
+    reparametrize_accuracy : IntProperty(
+        name = "Reparametrization accuracy",
+        default = 6,
+        min = 1, max = 10,
+        update = updateNode)
+
+    reparametrize_samples_u : IntProperty(
+        name = "Samples U",
+        description = "Reparametrization samples along U direction",
+        default = 50,
+        min = 3,
+        update = updateNode)
+
+    reparametrize_samples_v : IntProperty(
+        name = "Samples V",
+        description = "Reparametrization samples along V direction",
+        default = 50,
+        min = 3,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'explicit_t_values')
 
@@ -54,6 +96,14 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         if not self.explicit_t_values:
             layout.prop(self, 'metric')
         layout.prop(self, 'knotvector_accuracy')
+        layout.prop(self, 'reparametrize_method')
+        if self.reparametrize_method == 'MONOTONE':
+            row = layout.row()
+            row.prop(self, 'reparametrize_samples_u')
+            row.prop(self, 'reparametrize_samples_v')
+        layout.prop(self, 'reparametrize_remove_knots')
+        if self.reparametrize_remove_knots:
+            layout.prop(self, 'reparametrize_accuracy')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "CurvesU")
@@ -79,6 +129,20 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
             t1_s = [[[]]]
             t2_s = [[[]]]
 
+        reparametrize_tolerance = 10**(-self.reparametrize_accuracy)
+
+        if scipy is None or self.reparametrize_method == 'SEGMENTS':
+            reparametrizer = SegmentsReparametrizer(
+                                remove_knots = self.reparametrize_remove_knots,
+                                tolerance = reparametrize_tolerance)
+        else:
+            reparametrizer = MonotoneReparametrizer(
+                                n_samples_u = self.reparametrize_samples_u,
+                                n_samples_v = self.reparametrize_samples_v,
+                                remove_knots = self.reparametrize_remove_knots,
+                                tolerance = reparametrize_tolerance,
+                                logger = self.sv_logger)
+
         u_curves_s = ensure_nesting_level(u_curves_s, 2, data_types=(SvCurve,))
         v_curves_s = ensure_nesting_level(v_curves_s, 2, data_types=(SvCurve,))
         t1_s = ensure_nesting_level(t1_s, 3)
@@ -89,33 +153,38 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         for u_curves, v_curves, t1s, t2s, intersections in zip_long_repeat(u_curves_s, v_curves_s, t1_s, t2_s, intersections_s):
             u_curves = [SvNurbsCurve.to_nurbs(c) for c in u_curves]
             if any(c is None for c in u_curves):
-                raise Exception("Some of U curves are not NURBS!")
+                raise UnsupportedCurveTypeException("Some of U curves are not NURBS!")
             v_curves = [SvNurbsCurve.to_nurbs(c) for c in v_curves]
             if any(c is None for c in v_curves):
-                raise Exception("Some of V curves are not NURBS!")
+                raise UnsupportedCurveTypeException("Some of V curves are not NURBS!")
 
             if self.explicit_t_values:
                 if len(t1s) < len(u_curves):
                     t1s = repeat_last_for_length(t1s, len(u_curves))
                 elif len(t1s) > len(u_curves):
-                    raise Exception(f"Number of items in T1 input {len(t1s)} > number of U-curves {len(u_curves)}")
+                    raise SvInvalidInputException(f"Number of items in T1 input {len(t1s)} > number of U-curves {len(u_curves)}")
 
                 if len(t1s[0]) != len(v_curves):
-                    raise Exception(f"Length of items in T1 input {len(t1s[0])} != number of V-curves {len(v_curves)}")
+                    raise SvInvalidInputException(f"Length of items in T1 input {len(t1s[0])} != number of V-curves {len(v_curves)}")
 
                 if len(t2s) < len(v_curves):
                     t2s = repeat_last_for_length(t2s, len(v_curves))
                 elif len(t2s) > len(v_curves):
-                    raise Exception(f"Number of items in T2 input {len(t2s)} > number of V-curves {len(v_curves)}")
+                    raise SvInvalidInputException(f"Number of items in T2 input {len(t2s)} > number of V-curves {len(v_curves)}")
 
                 if len(t2s[0]) != len(u_curves):
-                    raise Exception(f"Length of items in T2 input {len(t2s[0])} != number of U-curves {len(u_curves)}")
+                    raise SvInvalidInputException(f"Length of items in T2 input {len(t2s[0])} != number of U-curves {len(u_curves)}")
 
             if self.explicit_t_values:
                 kwargs = {'u_knots': np.array(t1s), 'v_knots': np.array(t2s)}
             else:
                 kwargs = dict()
-            _, _, _, surface = gordon_surface(u_curves, v_curves, intersections, metric=self.metric, knotvector_accuracy = self.knotvector_accuracy, **kwargs)
+            _, _, _, surface = gordon_surface(u_curves, v_curves,
+                                              intersections,
+                                              metric=self.metric,
+                                              knotvector_accuracy = self.knotvector_accuracy,
+                                              reparametrizer = reparametrizer,
+                                              **kwargs)
             surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)

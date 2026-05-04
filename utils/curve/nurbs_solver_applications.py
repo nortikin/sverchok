@@ -12,15 +12,17 @@ solver (`sverchok.utils.curve.nurbs_solver` module).
 
 import numpy as np
 
+from sverchok.core.sv_custom_exceptions import ArgumentError
 from sverchok.utils.math import falloff_array, distribute_int
 from sverchok.utils.geom import Spline
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolver, CurvatureIntegral
-from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.nurbs_common import SvNurbsMaths, to_homogenous
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots, concatenate_nurbs_curves
-from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveCotangents, SvNurbsCurveSolver
+from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveSolver
+from sverchok.utils.sv_logging import get_logger
 
-def adjust_curve_points(curve, us_bar, points, preserve_tangents=False):
+def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, tangents = None, logger=None):
     """
     Modify NURBS curve so that it would pass through specified points
     at specified parameter values.
@@ -33,20 +35,40 @@ def adjust_curve_points(curve, us_bar, points, preserve_tangents=False):
     Returns:
         an instance of SvNurbsCurve.
     """
+    if logger is None:
+        logger = get_logger()
     n_target_points = len(us_bar)
+    ndim = points.shape[-1]
     if len(points) != n_target_points:
-        raise Exception("Number of U parameters must be equal to number of points")
+        raise ArgumentError("Number of U parameters must be equal to number of points")
+    if preserve_tangents and tangents is not None:
+        raise ArgumentError("preserve_tangents and tangents can not be provided simultaneously")
 
-    solver = SvNurbsCurveSolver(src_curve=curve)
-    orig_pts = curve.evaluate_array(us_bar)
+    solver = SvNurbsCurveSolver(src_curve=curve, ndim=ndim)
+    solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector(), weights=curve.get_weights())
+    if ndim == 4:
+        orig_pts = curve.evaluate_homogenous_array(us_bar)
+        #orig_pts = curve.evaluate_array(us_bar)
+        #weights = np.ones((n_target_points,))
+        #orig_pts = to_homogenous(orig_pts, weights)
+    else:
+        orig_pts = curve.evaluate_array(us_bar)
     solver.add_goal(SvNurbsCurvePoints(us_bar, points - orig_pts, relative=True))
+    #print("Target delta: ", points - orig_pts)
     if preserve_tangents:
-        zeros = np.zeros((n_target_points,3))
+        #print("Add preserve_tangents")
+        zeros = np.zeros((n_target_points,ndim))
         solver.add_goal(SvNurbsCurveTangents(us_bar, zeros, relative=True))
-    solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector())
+    elif tangents is not None:
+        if ndim == 4 and tangents.shape[-1] == 3:
+            ones = np.ones((len(tangents),))
+            tangents = to_homogenous(tangents, ones)
+        #print(f"Add: Us {len(us_bar)}, tangents {tangents.shape}, target pts {n_target_points}")
+        solver.add_goal(SvNurbsCurveTangents(us_bar, tangents, relative=False))
     problem_type, residue, curve = solver.solve_ex(
                     problem_types = {SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED,
-                                     SvNurbsCurveSolver.PROBLEM_WELLDETERMINED}
+                                     SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                    logger = logger
                 )
     return curve
 
@@ -121,6 +143,7 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
 def prepare_solver_for_interpolation(degree, points,
                                      metric='DISTANCE',
                                      tknots=None,
+                                     knotvector = None,
                                      t_range = None,
                                      cyclic=False):
     n_points = len(points)
@@ -143,9 +166,11 @@ def prepare_solver_for_interpolation(degree, points,
         tangent = k*(points[1] - points[-2])
         solver.add_goal(SvNurbsCurveTangents.single(tknots[0], tangent))
         solver.add_goal(SvNurbsCurveTangents.single(tknots[-1], tangent))
-        knotvector = sv_knotvector.from_tknots(degree, tknots, include_endpoints=True)
-    else:
-        knotvector = sv_knotvector.from_tknots(degree, tknots)
+    if knotvector is None:
+        if cyclic:
+            knotvector = sv_knotvector.from_tknots(degree, tknots, include_endpoints=True)
+        else:
+            knotvector = sv_knotvector.from_tknots(degree, tknots)
 
     n_cpts = solver.guess_n_control_points()
     solver.set_curve_params(n_cpts, knotvector)
@@ -154,6 +179,7 @@ def prepare_solver_for_interpolation(degree, points,
 def interpolate_nurbs_curve(degree, points,
                             metric='DISTANCE',
                             tknots=None,
+                            knotvector=None,
                             t_range = None,
                             cyclic=False,
                             implementation=SvNurbsMaths.NATIVE, logger=None):
@@ -174,6 +200,7 @@ def interpolate_nurbs_curve(degree, points,
     """
     solver = prepare_solver_for_interpolation(degree, points,
                     metric = metric, tknots = tknots,
+                    knotvector = knotvector,
                     t_range = t_range,
                     cyclic = cyclic)
     problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
@@ -236,6 +263,7 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
     solver.add_goal(SvNurbsCurvePoints(tknots, points, relative=False))
     solver.add_goal(SvNurbsCurveTangents(tknots, tangents, relative=False))
     knotvector = knotvector_with_tangents_from_tknots(degree, tknots)
+    #print(f"Tknots {tknots} => Kv {knotvector}")
     n_cpts = solver.guess_n_control_points()
     solver.set_curve_params(n_cpts, knotvector)
     problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},

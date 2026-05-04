@@ -25,6 +25,8 @@ from sverchok.utils.curve.algorithms import curve_segment
 class SvLine(SvCurve):
     """
     Straight line segment curve.
+    SvLine(point,direction)
+    SvLine.from_two_points(v1,v2)
     """
 
     def __init__(self, point, direction, u_bounds=None):
@@ -54,6 +56,15 @@ class SvLine(SvCurve):
         if u_bounds is None:
             u_bounds = self.u_bounds
         return SvLine(self.point, self.direction, u_bounds=u_bounds)
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        return SvLine(m @ self.point, m @ self.direction, u_bounds = self.u_bounds)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        return SvLine(vector + self.point, self.direction, u_bounds = self.u_bounds)
 
     def get_degree(self):
         return 1
@@ -166,6 +177,15 @@ class SvPointCurve(SvCurve):
     def __init__(self, point):
         self.point = np.asarray(point)
 
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        return SvPointCurve(m @ self.point)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        return SvPointCurve(vector + self.point)
+
     def evaluate(self, t):
         return self.point
 
@@ -218,6 +238,8 @@ def rotate_radius(radius, normal, thetas):
 class SvCircle(SvCurve):
     """
     Circle (or circular arc) curve.
+    SvCircle(center,radius,normal,vectorx)
+    SvCircle(matrix,radius)
     """
 
     def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):
@@ -254,6 +276,23 @@ class SvCircle(SvCurve):
                     normal=self.normal,
                     vectorx=self.vectorx)
         circle.u_bounds = self.u_bounds
+        return circle
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        m = Matrix(m).to_4x4()
+        circle = SvCircle(radius = self.radius,
+                        center = m @ self.center,
+                        normal = m @ self.normal,
+                        vectorx = m @ self.vectorx)
+        circle.u_bounds = self.u_bounds
+        return circle
+
+    def translate(self, vector):
+        #vector = np.asarray(vector)
+        circle = self.copy()
+        circle.center = vector + self.center
         return circle
 
     def get_mu_matrix(self):
@@ -461,6 +500,8 @@ class SvCircle(SvCurve):
             return arc1.concatenate(arc2)
 
         if t_min < 0 or t_max > 2*pi + epsilon:
+            #t_min = t_min % (2*pi)
+            #t_max = t_max % (2*pi)
             raise UnsupportedCurveTypeException(f"Can't transform a circle arc out of 0-2pi bound ({t_min} - {t_max}) to NURBS")
 
         #print(f"T {t_min},{t_max}, 2pi {2*pi}")
@@ -745,6 +786,28 @@ class SvEllipse(SvCurve):
         self.u_bounds = (0, 2*pi)
         self.tangent_delta = 0.001
 
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        mu = Matrix(m)#.to_4x4()
+        matrix = (mu @ Matrix(self.matrix)).to_4x4()
+        matrix.translation = m @ self.center
+        ellipse = SvEllipse(matrix,
+                            self.a, self.b,
+                            center_type = self.center_type)
+        ellipse.u_bounds = self.u_bounds
+        return ellipse
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        mu = Matrix(self.matrix).to_4x4()
+        mu.translation = self.center + vector
+        ellipse = SvEllipse(mu,
+                            self.a, self.b,
+                            self.center_type)
+        ellipse.u_bounds = self.u_bounds
+        return ellipse
+
     def get_u_bounds(self):
         return self.u_bounds
 
@@ -859,6 +922,7 @@ class SvEllipse(SvCurve):
         matrix.translation = Vector(self.get_center())
         circle = SvCircle(matrix = matrix @ scale, radius = radius,
                     center = self.get_center())
+        circle.u_bounds = self.u_bounds
         return circle.to_nurbs(implementation)
 
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):

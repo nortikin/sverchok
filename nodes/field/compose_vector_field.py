@@ -6,7 +6,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, updateNode
 
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.field.vector import SvComposedVectorField
+from sverchok.utils.field.vector_operations import SvComposedVectorField
 
 class SvComposeVectorFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """

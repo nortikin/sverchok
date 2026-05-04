@@ -6,9 +6,9 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, IntProperty, EnumProperty
 import bmesh
 from mathutils import Vector, Matrix
+import json
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
@@ -21,55 +21,29 @@ from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
 import numpy as np
+from sverchok.ui.sv_object_names_utils import SvNodeInDataMK5, SV_PT_ViewportDisplayPropertiesDialogMK5, SV_PT_ViewportDisplayCustomPropertiesDialogMK5, ReadingObjectDataError, get_objects_from_item
 
+numpy_socket_names = ['vertices', 'edges', 'vertex_normals', 'material_idx', 'polygon_areas', 'polygon_centers', 'polygon_normals']
 
-class SvOB3BDataCollectionMK2(bpy.types.PropertyGroup):
-    name: bpy.props.StringProperty()
-    icon: bpy.props.StringProperty(default="BLANK1")
+def get_vertgroups(mesh):
+    return [k for k,v in enumerate(mesh.vertices) if v.groups.values()]
 
+def find_layer_collection(layer_coll, target_coll):
+    if layer_coll.collection == target_coll:
+        return layer_coll
+    for child in layer_coll.children:
+        found = find_layer_collection(child, target_coll)
+        if found:
+            return found
+    return None
 
-class ReadingObjectDataError(Exception):
-    pass
+class SvOB3BCallbackMK5(bpy.types.Operator, SvGenericNodeLocator):
 
-
-class SVOB3B_UL_NamesListMK2(bpy.types.UIList):
-
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-
-        item_icon = item.icon
-        if not item.icon or item.icon == "BLANK1":
-            try:
-                item_icon = 'OUTLINER_OB_' + bpy.data.objects[item.name].type
-            except:
-                item_icon = ""
-
-        layout.label(text=item.name, icon=item_icon)
-        action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_ob3b_collection_operator_mk2", icon='X', text='')
-        action.fn_name = 'REMOVE'
-        action.idx = index
-
-
-class SvOB3BItemOperatorMK2(bpy.types.Operator, SvGenericNodeLocator):
-
-    bl_idname = "node.sv_ob3b_collection_operator_mk2"
-    bl_label = "generic bladibla"
-
-    fn_name: StringProperty(default='')
-    idx: IntProperty()
-
-    def sv_execute(self, context, node):
-        if self.fn_name == 'REMOVE':
-            node.object_names.remove(self.idx)
-        node.process_node(None)
-
-
-class SvOB3CallbackMK2(bpy.types.Operator, SvGenericNodeLocator):
-
-    bl_idname = "node.ob3_callback_mk2"
-    bl_label = "Object In mk3 callback"
+    bl_idname = "node.ob3b_callback_mk5"
+    bl_label = "Object In mk5 callback"
     bl_options = {'INTERNAL'}
 
-    fn_name: StringProperty(default='')
+    fn_name: bpy.props.StringProperty(default='')
 
     def sv_execute(self, context, node):
         """
@@ -78,22 +52,18 @@ class SvOB3CallbackMK2(bpy.types.Operator, SvGenericNodeLocator):
         """
         getattr(node, self.fn_name)(self)
 
-def get_vertgroups(mesh):
-    return [k for k,v in enumerate(mesh.vertices) if v.groups.values()]
-
-numpy_socket_names = ['vertices', 'edges', 'vertex_normals', 'material_idx', 'polygon_areas', 'polygon_centers', 'polygon_normals']
-
-
-class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
+class SvGetObjectsDataMK5(Show3DProperties, SvNodeInDataMK5, bpy.types.Node):
     """
     Triggers: Object Info
     Tooltip: Get Scene Objects into Sverchok Tree
     """
 
-    bl_idname = 'SvGetObjectsDataMK3'
+    bl_idname = 'SvGetObjectsDataMK5'
     bl_label = 'Get Objects Data'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+
+    node_protected_socket_names = ['vertices', 'edges', 'polygons', 'vertices_select', 'vertices_crease', 'vertices_bevel_weight', 'edges_select', 'edges_crease', 'edges_seams', 'edges_sharps', 'edges_bevel_weight', 'polygon_selects', 'polygon_smooth', 'vertex_normals', 'material_idx', 'material_names', 'polygon_areas', 'polygon_centers', 'polygon_normals', 'object_names', 'matrices', 'objects', 'Vers_grouped']
 
     @property
     def is_scene_dependent(self):
@@ -111,118 +81,77 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         if self.vergroups and not showing_vg:
             outs.new('SvStringsSocket', 'Vers_grouped')
+            outs['Vers_grouped'].label = 'Vertex Groups'
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
-    modifiers: BoolProperty(
-        name='Modifiers',
+    modifiers: bpy.props.BoolProperty(
+        name='Post',
         description='Apply modifier geometry to import (original untouched)',
         default=False, update=updateNode) # type: ignore
 
-    vergroups: BoolProperty(
-        name='Vergroups',
+    vergroups: bpy.props.BoolProperty(
+        name='Vertex Groups',
         description='Use vertex groups to nesty insertion',
         default=False, update=hide_show_versgroups) # type: ignore
 
-    sort: BoolProperty(
-        name='sort by name',
+    sort: bpy.props.BoolProperty(
+        name='Sort',
         description='sorting inserted objects by names',
         default=True, update=updateNode) # type: ignore
-
-    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollectionMK2) # type: ignore
-
-    active_obj_index: bpy.props.IntProperty() # type: ignore
 
     out_np: bpy.props.BoolVectorProperty(
         name="Output Numpy",
         description="Output NumPy arrays (makes node faster)",
         size=7, update=updateNode) # type: ignore
 
-    output_np_all: BoolProperty(
+    output_np_all: bpy.props.BoolProperty(
         name='Output all numpy',
         description='Output numpy arrays if possible',
         default=False, update=updateNode) # type: ignore
     
-    apply_matrix: BoolProperty(
-        name = "Apply matrices",
-        description = "Apply objects matrices",
-        default = True,
-        update = updateNode) # type: ignore
-    
-    mesh_join : BoolProperty(
-        name = "merge",
+    mesh_join : bpy.props.BoolProperty(
+        name = "Mesh Join",
         description = "If checked, join mesh elements into one object",
         default = False,
         update = updateNode) # type: ignore
-
-    display_types = [
-            ('BOUNDS', "", "BOUNDS: Display the bounds of the object", "MATPLANE", 0),
-            ('WIRE', "", "WIRE: Display the object as a wireframe", "MESH_CUBE", 1),
-            ('SOLID', "", "SOLID: Display the object as a solid (if solid drawing is enabled in the viewport)", "SNAP_VOLUME", 2),  #custom_icon("SV_MAKE_SOLID")
-            ('TEXTURED', "", "TEXTURED: Display the object with textures (if textures are enabled in the viewport)", "TEXTURE",  3),
-        ]
     
-    def update_display_type(self, context):
-        for obj in self.object_names:
-            bpy.data.objects[obj.name].display_type=self.display_type
-        return
-    
-    display_type : EnumProperty(
-        name = "Display Types",
-        items = display_types,
-        default = 'WIRE',
-        update = update_display_type) # type: ignore
-    
-    hide_render_types = [
-            ('RESTRICT_RENDER_ON', "", "Render objects", "RESTRICT_RENDER_ON", 0),
-            ('RESTRICT_RENDER_OFF', "", "Do not render objects", "RESTRICT_RENDER_OFF", 1),
-        ]
-    
-    def update_render_type(self, context):
-        for obj in self.object_names:
-            bpy.data.objects[obj.name].hide_render = True if self.hide_render_type=='RESTRICT_RENDER_ON' else False
-        return
-    
-    hide_render_type : EnumProperty(
-        name = "Render Types",
-        items = hide_render_types,
-        default = 'RESTRICT_RENDER_OFF',
-        update = update_render_type) # type: ignore
-    
-    align_3dview_types = [
-            ('ISOLATE_CURRENT', "", "Toggle local view with only current selected object in the list\nPress again to restore view", "PIVOT_CURSOR", 0),
-            ('ISOLATE_ALL', "", "Toggle local view with all objects in the list\nPress again to restore view", "PIVOT_INDIVIDUAL", 1),
-        ]
-
-
-    def verts_sockets_update(self, context):
+    def _verts_sockets_update(self, context):
         for name in ['vertices_select', 'vertices_crease', 'vertices_bevel_weight']:
             self.outputs[name].hide = not(self.enable_verts_attribute_sockets)
+
+    def verts_sockets_update(self, context):
+        self._verts_sockets_update(context)
         updateNode(self, context)
 
-    def edges_sockets_update(self, context):
+    def _edges_sockets_update(self, context):
         for name in ['edges_select', 'edges_seams', 'edges_sharps', 'edges_crease', 'edges_bevel_weight',]:
             self.outputs[name].hide = not(self.enable_edges_attribute_sockets)
+
+    def edges_sockets_update(self, context):
+        self._edges_sockets_update(context)
         updateNode(self, context)
 
-    def polygons_sockets_update(self, context):
+    def _polygons_sockets_update(self, context):
         for name in ['polygon_selects', 'polygon_smooth', ]:
             self.outputs[name].hide = not(self.enable_polygons_attribute_sockets)
+    def polygons_sockets_update(self, context):
+        self._polygons_sockets_update(context)
         updateNode(self, context)
 
-    enable_verts_attribute_sockets: BoolProperty(
+    enable_verts_attribute_sockets: bpy.props.BoolProperty(
         name = "Show verts attribute sockets",
         description = "Show additional sockets for verts attributes:\n1. select\n2. crease\n3. bevel weight",
         default = False,
         update = verts_sockets_update) # type: ignore
 
-    enable_edges_attribute_sockets: BoolProperty(
+    enable_edges_attribute_sockets: bpy.props.BoolProperty(
         name = "Show edges attribute sockets",
         description = "Show additional sockets for edges attributes:\n1. select\n2. sharp\n3. seams\n4. crease\n4. bevel weight",
         default = False,
         update = edges_sockets_update) # type: ignore
 
-    enable_polygons_attribute_sockets: BoolProperty(
+    enable_polygons_attribute_sockets: bpy.props.BoolProperty(
         name = "Show polygons attribute sockets",
         description = "Show additional sockets for faces attributes:\n1. select\n2. smooth",
         default = False,
@@ -233,58 +162,11 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         ('ACTIVE_FACE_MAP', "", "Get faces indices, currently actived in Face Maps of object", "FACE_MAPS", 1),
     ]
 
-    vertex_attribute_type : EnumProperty(
+    vertex_attribute_type : bpy.props.EnumProperty(
         name = "Render Types",
         items = vertex_attribute_types,
         default = 'SELECTED',
         update = updateNode) # type: ignore
-
-    def update_align_3dview(self, context):
-        if len(self.object_names)==0:
-            return
-        obj_in_list = self.object_names[self.active_obj_index]
-        if obj_in_list:
-            # reset all selections
-            for obj in bpy.context.selected_objects:
-                obj.select_set(False)
-            
-            # select all objects in list of this node
-            if self.align_3dview_type=='ISOLATE_ALL':
-                for obj in self.object_names:
-                    if obj.name in bpy.data.objects:
-                        bpy.data.objects[obj.name].select_set(True)
-
-            if obj_in_list.name in bpy.data.objects:
-                obj_in_scene = bpy.data.objects[obj_in_list.name]
-                obj_in_scene.select_set(True)
-                bpy.context.view_layer.objects.active = obj_in_scene
-
-            for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    ctx = bpy.context.copy()
-                    ctx['area'] = area
-                    ctx['region'] = area.regions[-1]
-                    # test if current mode is local view: https://blender.stackexchange.com/questions/290669/checking-for-object-being-in-local-view
-                    if self.align_3dview_type_previous_value!=self.align_3dview_type and area.spaces.active.local_view:
-                        bpy.ops.view3d.localview(ctx, frame_selected=False)
-                    self.align_3dview_type_previous_value = self.align_3dview_type
-                    bpy.ops.view3d.localview(ctx, frame_selected=False)
-                    #bpy.ops.view3d.view_selected(ctx)
-                    break
-
-            pass
-        return
-    
-    align_3dview_type : EnumProperty(
-        name = "Local View",
-        items = align_3dview_types,
-        default = 'ISOLATE_CURRENT',
-        update = update_align_3dview) # type: ignore
-    
-    align_3dview_type_previous_value : EnumProperty(
-        name = "Local View",
-        items = align_3dview_types,
-        default = 'ISOLATE_CURRENT') # type: ignore
 
     def migrate_from(self, old_node):
         self.outputs["vertices_select"]         .hide = not(self.enable_verts_attribute_sockets)
@@ -307,10 +189,6 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             layout.separator()
 
     def draw_edges_out_socket(self, socket, context, layout):
-        layout.prop(self, 'hide_render_type', expand=True)
-        layout.separator()
-        layout.prop(self, 'align_3dview_type', expand=True)
-        layout.separator()
         layout.label(text=f'  {socket.label} ')
         layout.prop(self, 'enable_edges_attribute_sockets', icon='MESH_DATA', text='', toggle=True)
         if socket.is_linked:  # linked INPUT or OUTPUT
@@ -319,7 +197,6 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             layout.separator()
 
     def draw_polygons_out_socket(self, socket, context, layout):
-        layout.prop(self, 'display_type', expand=True, text='')
         layout.separator()
         layout.label(text=f'{socket.label} ')
         layout.prop(self, 'enable_polygons_attribute_sockets', icon='FILE_3D', text='', toggle=True)
@@ -328,160 +205,74 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         elif socket.is_output:  # unlinked OUTPUT
             layout.separator()
 
-    def sv_init(self, context):
-        #new = self.outputs.new
-        self.width = 225
+    def sv_init(self, context):        
+        self.width = 230
         
         self.inputs.new('SvObjectSocket'   , "objects")
+        self.inputs ['objects']         .label = 'Objects'
 
-        self.outputs.new('SvVerticesSocket', "vertices")
-        self.outputs.new('SvStringsSocket' , "edges")
-        self.outputs.new('SvStringsSocket' , "polygons")
-        self.outputs.new('SvStringsSocket' , "vertices_select")
-        self.outputs.new('SvStringsSocket' , "vertices_crease")
-        self.outputs.new('SvStringsSocket' , "vertices_bevel_weight")
-        self.outputs.new('SvStringsSocket' , "edges_select")
-        self.outputs.new('SvStringsSocket' , "edges_crease")
-        self.outputs.new('SvStringsSocket' , "edges_seams")
-        self.outputs.new('SvStringsSocket' , "edges_sharps")
-        self.outputs.new('SvStringsSocket' , "edges_bevel_weight")
-        self.outputs.new('SvStringsSocket' , "polygon_selects")
-        self.outputs.new('SvStringsSocket' , "polygon_smooth")
-        self.outputs.new('SvVerticesSocket', "vertex_normals")
-        self.outputs.new('SvStringsSocket' , "material_idx")
-        self.outputs.new('SvStringsSocket' , "polygon_areas")
-        self.outputs.new('SvVerticesSocket', "polygon_centers")
-        self.outputs.new('SvVerticesSocket', "polygon_normals")
-        self.outputs.new('SvMatrixSocket'  , "matrix")
-        self.outputs.new('SvObjectSocket'  , "object")
-
-        self.inputs ["objects"]         .label = "Objects"
-
-        self.outputs["vertices"]                .label = "Vertices"
-        self.outputs["edges"]                   .label = "Edges"
-        self.outputs["polygons"]                .label = "Polygons"
-        self.outputs["vertices_select"]         .label = "(*) Vertices Select"
-        self.outputs["vertices_crease"]         .label = "(*) Vertices Crease"
-        self.outputs["vertices_bevel_weight"]   .label = "(*) Vertices Bevel Weight"
-        self.outputs["edges_select"]            .label = "(|) Edges Select"
-        self.outputs["edges_seams"]             .label = "(|) Edges Seam"
-        self.outputs["edges_sharps"]            .label = "(|) Edges Sharp"
-        self.outputs["edges_crease"]            .label = "(|) Edges Crease"
-        self.outputs["edges_bevel_weight"]      .label = "(|) Edges Bevel Weight"
-        self.outputs["polygon_selects"]         .label = "(+) Polygons Select"
-        self.outputs["polygon_smooth"]          .label = "(+) Polygons Smooth"
-        self.outputs["vertex_normals"]          .label = "Vertex Normals"
-        self.outputs["material_idx"]            .label = "Material Idx"
-        self.outputs["polygon_areas"]           .label = "Polygon Areas"
-        self.outputs["polygon_centers"]         .label = "Polygon Centers"
-        self.outputs["polygon_normals"]         .label = "Polygon Normals"
-        self.outputs["matrix"]                  .label = "Matrix"
-        self.outputs["object"]                  .label = "Object"
-
-        self.outputs["vertices_select"]         .hide = not(self.enable_verts_attribute_sockets)
-        self.outputs["vertices_crease"]         .hide = not(self.enable_verts_attribute_sockets)
-        self.outputs["vertices_bevel_weight"]   .hide = not(self.enable_verts_attribute_sockets)
-        self.outputs["edges_select"]            .hide = not(self.enable_edges_attribute_sockets)
-        self.outputs["edges_seams"]             .hide = not(self.enable_edges_attribute_sockets)
-        self.outputs["edges_sharps"]            .hide = not(self.enable_edges_attribute_sockets)
-        self.outputs["edges_crease"]            .hide = not(self.enable_edges_attribute_sockets)
-        self.outputs["edges_bevel_weight"]      .hide = not(self.enable_edges_attribute_sockets)
-        self.outputs["polygon_selects"]         .hide = not(self.enable_polygons_attribute_sockets)
-        self.outputs["polygon_smooth"]          .hide = not(self.enable_polygons_attribute_sockets)
-
-        self.outputs["vertices"].custom_draw = 'draw_vertices_out_socket'
-        self.outputs["edges"].custom_draw = 'draw_edges_out_socket'
-        self.outputs["polygons"].custom_draw = 'draw_polygons_out_socket'
-
-    def get_objects_from_scene(self, ops):
-        """
-        Collect selected objects
-        """
-        self.object_names.clear()
-
-        names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
-
-        if self.sort:
-            names.sort()
-
-        for name in names:
-            item = self.object_names.add()
-            item.name = name
-            item.icon = 'OUTLINER_OB_' + bpy.data.objects[name].type
-
-        if not self.object_names:
-            ops.report({'WARNING'}, "Warning, no selected objects in the scene")
-            return
-
-        self.process_node(None)
-
-    def set_objects_selected_scene(self, ops):
-        """
-        Collect selected objects
-        """
-        #self.object_names.clear()
-        if len(self.object_names)>0:
-            for obj in self.object_names:
-                if obj.name in bpy.data.objects:
-                    bobj = bpy.data.objects[obj.name]
-                    if bpy.context.scene in bobj.users_scene:
-                        bobj.select_set(True)
-                    else:
-                        print(f'Object {obj.name} is not on the current scene. You can switch from [{bpy.context.scene.name}] to [{";".join([s.name for s in bobj.users_scene ])}]')
-                else:
-                    print(f'{obj.name} not in the scene')
-        else:
-            print(f"No object in list of 'Get objects Data' '{self.name}'")
-
-    def deselect_objects_from_scene(self, ops):
-        """
-        Collect selected objects
-        """
-        #self.object_names.clear()
-        if len(self.object_names)>0:
-            for obj in self.object_names:
-                if obj.name in bpy.data.objects:
-                    bobj = bpy.data.objects[obj.name]
-                    if bpy.context.scene in bobj.users_scene:
-                        bobj.select_set(False)
-                    else:
-                        print(f'Object {obj.name} is not on the current scene. You can switch from [{bpy.context.scene.name}] to [{";".join([s.name for s in bobj.users_scene ])}]')
-                else:
-                    print(f'{obj.name} not in the scene')
-        else:
-            print(f"No object in list of 'Get objects Data' '{self.name}'")
-
-        # names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
-
-        # if self.sort:
-        #     names.sort()
-
-        # for name in names:
-        #     item = self.object_names.add()
-        #     item.name = name
-        #     item.icon = 'OUTLINER_OB_' + bpy.data.objects[name].type
-
-        # if not self.object_names:
-        #     ops.report({'WARNING'}, "Warning, no selected objects in the scene")
-        #     return
-
-        self.process_node(None)
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket' , 'edges')
+        self.outputs.new('SvStringsSocket' , 'polygons')
+        self.outputs.new('SvStringsSocket' , 'vertices_select')
+        self.outputs.new('SvStringsSocket' , 'vertices_crease')
+        self.outputs.new('SvStringsSocket' , 'vertices_bevel_weight')
+        self.outputs.new('SvStringsSocket' , 'edges_select')
+        self.outputs.new('SvStringsSocket' , 'edges_crease')
+        self.outputs.new('SvStringsSocket' , 'edges_seams')
+        self.outputs.new('SvStringsSocket' , 'edges_sharps')
+        self.outputs.new('SvStringsSocket' , 'edges_bevel_weight')
+        self.outputs.new('SvStringsSocket' , 'polygon_selects')
+        self.outputs.new('SvStringsSocket' , 'polygon_smooth')
+        self.outputs.new('SvVerticesSocket', 'vertex_normals')
+        self.outputs.new('SvStringsSocket' , 'material_idx')
+        self.outputs.new('SvStringsSocket' , 'material_names')
+        self.outputs.new('SvStringsSocket' , 'polygon_areas')
+        self.outputs.new('SvVerticesSocket', 'polygon_centers')
+        self.outputs.new('SvVerticesSocket', 'polygon_normals')
+        self.outputs.new('SvStringsSocket' , 'object_names')
+        self.outputs.new('SvMatrixSocket'  , 'matrices')
+        self.outputs.new('SvObjectSocket'  , 'objects')
 
 
-    def select_objs(self, ops):
-        """select all objects referenced by node"""
-        for item in self.object_names:
-            bpy.data.objects[item.name].select = True
+        self.outputs['vertices']                .label = 'Vertices'
+        self.outputs['edges']                   .label = 'Edges'
+        self.outputs['polygons']                .label = 'Polygons'
+        self.outputs['vertices_select']         .label = '(*) Vertices Select'
+        self.outputs['vertices_crease']         .label = '(*) Vertices Crease'
+        self.outputs['vertices_bevel_weight']   .label = '(*) Vertices Bevel Weight'
+        self.outputs['edges_select']            .label = '(|) Edges Select'
+        self.outputs['edges_seams']             .label = '(|) Edges Seam'
+        self.outputs['edges_sharps']            .label = '(|) Edges Sharp'
+        self.outputs['edges_crease']            .label = '(|) Edges Crease'
+        self.outputs['edges_bevel_weight']      .label = '(|) Edges Bevel Weight'
+        self.outputs['polygon_selects']         .label = '(+) Polygons Select'
+        self.outputs['polygon_smooth']          .label = '(+) Polygons Smooth'
+        self.outputs['vertex_normals']          .label = 'Vertex Normals'
+        self.outputs['material_idx']            .label = 'Used Material Slot Id'
+        self.outputs['material_names']          .label = 'Material Slot Names'
+        self.outputs['polygon_areas']           .label = 'Polygon Areas'
+        self.outputs['polygon_centers']         .label = 'Polygon Centers'
+        self.outputs['polygon_normals']         .label = 'Polygon Normals'
+        self.outputs['object_names']            .label = 'Object Names'
+        self.outputs['matrices']                .label = 'Matrices'
+        self.outputs['objects']                 .label = 'Objects'
 
-        if not self.object_names:
-            ops.report({'WARNING'}, "Warning, no object associated with the obj in Node")
+        self.outputs['vertices_select']         .hide = not(self.enable_verts_attribute_sockets)
+        self.outputs['vertices_crease']         .hide = not(self.enable_verts_attribute_sockets)
+        self.outputs['vertices_bevel_weight']   .hide = not(self.enable_verts_attribute_sockets)
+        self.outputs['edges_select']            .hide = not(self.enable_edges_attribute_sockets)
+        self.outputs['edges_seams']             .hide = not(self.enable_edges_attribute_sockets)
+        self.outputs['edges_sharps']            .hide = not(self.enable_edges_attribute_sockets)
+        self.outputs['edges_crease']            .hide = not(self.enable_edges_attribute_sockets)
+        self.outputs['edges_bevel_weight']      .hide = not(self.enable_edges_attribute_sockets)
+        self.outputs['polygon_selects']         .hide = not(self.enable_polygons_attribute_sockets)
+        self.outputs['polygon_smooth']          .hide = not(self.enable_polygons_attribute_sockets)
 
-
-    def draw_obj_names(self, layout):
-        if self.object_names:
-            layout.template_list("SVOB3B_UL_NamesListMK2", "", self, "object_names", self, "active_obj_index")
-        else:
-            layout.label(text='--None--')
+        self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
+        self.outputs['edges']   .custom_draw = 'draw_edges_out_socket'
+        self.outputs['polygons'].custom_draw = 'draw_polygons_out_socket'
+        pass
 
     @property
     def by_input(self):
@@ -492,35 +283,38 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         by_input = self.by_input
         if not by_input:
             row = col.row()
+            row.alignment='EXPAND'
 
             op_text = "Get selection"  # fallback
-            callback = 'node.ob3_callback_mk2'
+            callback = SvOB3BCallbackMK5.bl_idname
 
             if self.prefs_over_sized_buttons:
                 row.scale_y = 4.0
                 op_text = "G E T"
 
-            self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
+            self.wrapper_tracked_ui_draw_op(row, callback, text=op_text, icon='IMPORT').fn_name = 'get_objects_from_scene'
 
-        col = layout.column(align=True)
+        grid = layout.grid_flow(row_major=False, columns=2, align=True)
+        grid.column(align=True).prop(self, 'sort')
+        grid.column(align=True).prop(self, 'apply_matrix')
+        grid.column(align=True).prop(self, 'mesh_join')
+        grid.column(align=True).prop(self, 'modifiers')
+        grid.column(align=True).prop(self, 'vergroups')
+        row0 = grid.row(align=True)
+        row0.column(align=True).operator(SV_PT_ViewportDisplayPropertiesDialogMK5.bl_idname, icon='TOOL_SETTINGS', text="", emboss=True)
+        row0.column(align=True).popover(panel="SV_PT_ViewportDisplayPropertiesMK5", icon='DOWNARROW_HLT', text="")
+        row0.separator()
+        op = row0.column(align=True).operator(SV_PT_ViewportDisplayCustomPropertiesDialogMK5.bl_idname, icon='SHORTDISPLAY', text="", emboss=True)
 
-        row = col.row(align=True)
-        row.prop(self, "apply_matrix", text="Apply matrix", toggle=True)
-        row.prop(self, "mesh_join", text="merge", toggle=True)
-        
-        col = layout.column(align=True)
-        row = col.row(align=True)
         if not by_input:
-            row.prop(self, 'sort', text='Sort', toggle=True)
-        row.prop(self, "modifiers", text="Post", toggle=True)
-        row.prop(self, "vergroups", text="VeGr", toggle=True)
-        if not by_input:
-            self.draw_obj_names(layout)
-
-        if len(self.object_names)>0:
-            row = layout.row()
-            self.wrapper_tracked_ui_draw_op(row, 'node.ob3_callback_mk2', text=f"Select objects ({len(self.object_names)})").fn_name = 'set_objects_selected_scene'
-            self.wrapper_tracked_ui_draw_op(row, 'node.ob3_callback_mk2', text="Deselect objects").fn_name = 'deselect_objects_from_scene'
+            if self.object_names:
+                col = layout.column(align=True)
+                elem = col.row(align=True)
+                self.draw_controls(elem)
+                self.draw_object_names(col.row(align=True))
+            else:
+                layout.label(text='--None--')
+        pass
 
     def sv_draw_buttons_ext(self, context, layout):
         r = layout.column(align=True)
@@ -545,7 +339,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
     def draw_buttons_3dpanel(self, layout):
         if not self.by_input:
-            callback = 'node.ob3_callback_mk2'
+            callback = SvOB3BCallbackMK5.bl_idname
             row = layout.row(align=True)
             row.label(text=self.label if self.label else self.name)
             colo = row.row(align=True)
@@ -561,204 +355,653 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         return [face.material_index for face in bm.faces[:]]
 
     def process(self):
-        objs = self.inputs[0].sv_get(default=[[]])
-        if not self.object_names and not objs[0]:
-            return
-        
-        data_objects = bpy.data.objects
-        outputs = self.outputs
+        objs = self.get_objects('objects')
+        self.apply_custom_property(objs)
 
         vers_out_grouped = []
 
-        o_vertices, o_edges, o_polygons, o_vertices_select, o_vertices_crease, o_vertices_bevel_weight, o_edges_select, o_edges_crease, o_edges_seams, o_edges_sharps, o_edges_bevel_weight, o_polygon_selects, o_polygon_smooth, o_vertex_normals, o_material_idx, o_polygon_areas, o_polygon_centers, o_polygon_normals, o_matrices, o_objects = [s.is_linked for s in self.outputs[:20]]
-        l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_crease, l_edges_seams, l_edges_sharps, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_matrices = [[] for s in self.outputs[:19]]
+        o_vertices, o_edges, o_polygons, o_vertices_select, o_vertices_crease, o_vertices_bevel_weight, o_edges_select, o_edges_crease, o_edges_seams, o_edges_sharps, o_edges_bevel_weight, o_polygon_selects, o_polygon_smooth, o_vertex_normals, o_material_idx, o_material_names, o_polygon_areas, o_polygon_centers, o_polygon_normals, o_object_names, o_matrices, o_objects = [ (self.outputs[socket_name].is_linked if socket_name in self.outputs else False) for socket_name in self.node_protected_socket_names if socket_name not in ['Vers_grouped']]
+        l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_crease, l_edges_seams, l_edges_sharps, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_material_names, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_object_names, l_matrices            = [[]                                  for socket_name in self.node_protected_socket_names if socket_name not in ['objects', 'Vers_grouped']]
+
+        # Есть ли что-то, подключенное к кастомным сокетам с типом materials?
+        o_material_custom_properties = False
+        for elem in self.custom_properties_sockets:
+            if elem.socket_type=='MATERIAL':
+                if elem.socket_inner_name in self.outputs and self.outputs[elem.socket_inner_name].is_linked==True:
+                    o_material_custom_properties = True
+                    break
+                pass
+        sv_depsgraph = None
         if self.modifiers:
             sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
         out_np = self.out_np if not self.output_np_all else [True for i in range(7)]
-        if isinstance(objs[0], list):
-            objs = objs[0]
-        if not objs:
-            objs = (data_objects.get(o.name) for o in self.object_names)
+
+        # Список для загрузки custom properties по object, data и materials
+        custom_properties_data = dict()
+        for elem in self.custom_properties_sockets:
+            custom_properties_data[elem.socket_inner_name] = []
+
+        def get_prop_value(obj, elem):
+            '''Получение value custrom property с учётом того, что иногда свойство может быть типом IDPropertyArray
+               и тогда его надо преобразовать в list. Если свойства нет (Хотя обычно перет чтением свойств они создаются
+               со значениями типа default), то вернуть None'''
+            value = None
+            if obj:
+                if elem.custom_property_name in obj:
+                    value = obj[elem.custom_property_name]
+                    if isinstance(value, (int, float, bool, str))==False:
+                        value = list(value)
+                else:
+                    if elem.custom_property_is_array:
+                        value = []
+                    else:
+                        value = None
+            else:
+                if elem.custom_property_is_array:
+                    # Если объект не поддерживает это custom property, но при этом заявлено. что custom property
+                    # должно быть, и оно типа array, то вернуть его как пустой массив 
+                    value = []
+                else:
+                    value = None
+            return value
 
         # iterate through references
-        for obj in objs:
+        for I, obj in enumerate(objs):
 
             if not obj:
                 continue
 
             mtrx = obj.matrix_world
-            if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
+
+            # Прочитать данные custom properties объекта в соответствии с массивом дополнительных сокетов:
+            obj_custom_properties = dict({})
+            for elem in self.custom_properties_sockets:
+                if elem.socket_type=='OBJECT':
+                    #obj_custom_properties[elem.socket_inner_name] = obj[elem.custom_property_name]
+                    value = get_prop_value(obj, elem)
+                    if value is not None:
+                        value = [value]
+                    custom_properties_data[elem.socket_inner_name].append( value )
+                    obj_custom_properties[elem.custom_property_name] = value
+                elif elem.socket_type=='DATA':
+                    value = get_prop_value(obj.data, elem)
+                    if value is not None:
+                        value = [value]
+                    custom_properties_data[elem.socket_inner_name].append( value )
+                    obj_custom_properties[elem.custom_property_name] = value
+                elif elem.socket_type=='MATERIAL':
+                    # not used
+                    # materials_custom_properties = []
+                    # if obj.material_slots:
+                    #     materials_info = dict([(id, dict(material_name=(None if obj.material_slots[id].material is None else obj.material_slots[id].material.name), material=(None if obj.material_slots[id].material is None else obj.material_slots[id].material),)) for id in range(len(obj.material_slots))])
+                    #     for I, k in enumerate(materials_info):
+                    #         material_name = materials_info[k]['material_name']
+                    #         mi = materials_info[k]['material']
+                    #         value = get_prop_value(mi, elem)
+                    #         materials_custom_properties.append(value)
+                    #         # При чтении материалов
+                    #         obj_custom_properties.setdefault(elem.custom_property_name, []).append(value)
+                    #         pass
+                    #     pass
+                    # custom_properties_data[elem.socket_inner_name].append(materials_custom_properties)
+                    pass
+                pass
+            #custom_properties_data.append(obj_custom_properties)
+
+            if o_object_names:
+                l_object_names.append([obj.name])
+
+            if obj.type in {'EMPTY', 'CAMERA', 'LAMP', 'LIGHT' }:
                 if o_matrices:
                     l_matrices.append(mtrx)
-                continue
-            try:
-                if obj.mode == 'EDIT' and obj.type == 'MESH':
-                    # Mesh objects do not currently return what you see
-                    # from 3dview while in edit mode when using obj.to_mesh.
-                    me = obj.data
-                    bm = bmesh.from_edit_mesh(me)
-                    # verts, edgs, pols = pydata_from_bmesh(bm)
+                if o_vertices or o_edges or o_polygons or self.vergroups:
+                    verts = []
+                if o_edges:
+                    edgs = []
+                if o_polygons:
+                    pols = []
+                if o_vertices_select:
+                    vertices_select1 = []
+                if self.vergroups:
+                    vert_groups = []
 
-                    if o_vertices:
-                        verts = [ v.co[:] for v in bm.verts]  # v.co is a Vector()
-                    if o_edges:
-                        edgs = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
-                    if o_polygons:
-                        pols = [[i.index for i in p.verts] for p in bm.faces]
-                    if o_vertices_select:
-                        vertices_select1 = [v.select for v in bm.verts]
-                    if o_vertices_crease:
-                        crease_layer = bm.verts.layers.crease.verify()
-                        vertices_crease1 = [v[crease_layer] for v in bm.verts]
-                    if o_vertices_bevel_weight:
-                        bevel_weight_layer = bm.verts.layers.bevel_weight.verify()
-                        vertices_bevel_weight1 = [v[bevel_weight_layer] for v in bm.verts]
-                    if o_edges_select:
-                        edges_select1 = [e.select for e in bm.edges]
-                    if o_edges_seams:
-                        edges_seams1 = [e.seam for e in bm.edges]
-                    if o_edges_sharps:
-                        edges_sharps1 = [not(e.smooth) for e in bm.edges]
-                    if o_edges_crease:
-                        crease_layer = bm.edges.layers.crease.verify()
-                        edges_crease1 = [ e[crease_layer] for e in bm.edges ]
-                    if o_edges_bevel_weight:
-                        bevel_weight_layer = bm.edges.layers.bevel_weight.verify()
-                        edges_bevel_weight1 = [e[bevel_weight_layer] for e in bm.edges]
-                    if o_polygon_selects:
-                        polygon_selects1 = [f.select for f in bm.faces]
-                    if o_polygon_smooth:
-                        polygon_smooth1 = [f.smooth for f in bm.faces]
-                    if self.vergroups:
-                        vert_groups      = get_vertgroups(obj.data)
-                    if o_vertex_normals:
-                        vertex_normals = [ v.normal[:] for v in bm.verts] # v.normal is a Vector()
-                    if o_material_idx:
-                        material_indexes = self.get_materials_from_bmesh(bm)
-                    if o_polygon_areas:
-                        polygons_areas = [ p.calc_area() for p in bm.faces ]
-                    if o_polygon_centers:
-                        polygon_centers = [ p.calc_center_median()[:] for p in bm.faces ]
-                    if o_polygon_normals:
-                        polygon_normals = [ p.normal[:] for p in bm.faces ]
 
-                    del bm
-                else:
+                material_indexes = []
+                materials_info = dict()
+            else:
+                try:
+                    if obj.mode == 'EDIT' and obj.type == 'MESH':
+                        # Mesh objects do not currently return what you see
+                        # from 3dview while in edit mode when using obj.to_mesh.
+                        me = obj.data
+                        bm = bmesh.from_edit_mesh(me)
+                        # verts, edgs, pols = pydata_from_bmesh(bm)
 
-                    # https://developer.blender.org/T99661
-                    if obj.type == 'CURVE' and obj.mode == 'EDIT' and bpy.app.version[:2] == (3, 2):
-                        raise ReadingObjectDataError("Does not support curves in edit mode in Blender 3.2")
-                    elif self.modifiers:
-                        obj = sv_depsgraph.objects[obj.name]
-                        obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-                    else:
-                        obj_data = obj.to_mesh()
-                    
-                    T, R, S = mtrx.decompose()
+                        if o_vertices or o_edges or o_polygons or self.vergroups:
+                            if self.apply_matrix:
+                                verts = [ (mtrx @ Vector(v.co[:]))[:] for v in bm.verts]  # v.co is a Vector()
+                            else:
+                                verts = [ (Vector(v.co[:]))[:] for v in bm.verts]  # v.co is a Vector()
+                            if o_edges:
+                                edgs = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
+                            if o_polygons:
+                                pols = [[i.index for i in p.verts] for p in bm.faces]
+                            if self.vergroups:
+                                vert_groups      = get_vertgroups(obj.data)
 
-                    if o_vertices:
-                        verts            = [ ((mtrx @ v.co) if self.apply_matrix else v.co)[:] for v in obj_data.vertices]  # v.co is a Vector()
-                    if o_edges:
-                        edgs             = [[ e.vertices[0], e.vertices[1] ] for e in obj_data.edges]
-                    if o_polygons:
-                        pols             = [list(p.vertices) for p in obj_data.polygons]
-                    if o_vertices_select:
-                        vertices_select1 = [v.select for v in obj_data.vertices]
-                    if o_vertices_crease:
-                        creases = obj_data.vertex_creases[0]
-                        vertices_crease1 = [creases.data[i].value for i, v in enumerate(obj_data.vertices)]
-                    if o_vertices_bevel_weight:
-                        vertices_bevel_weight1 = [v.bevel_weight for v in obj_data.vertices]
-                    if o_edges_select:
-                        edges_select1 = [e.select for e in obj_data.edges]
-                    if o_edges_seams:
-                        edges_seams1 = [e.use_seam for e in obj_data.edges]
-                    if o_edges_sharps:
-                        edges_sharps1 = [e.use_edge_sharp for e in obj_data.edges]
-                    if o_edges_crease:
-                        edges_crease1 = [e.crease for e in obj_data.edges]
-                    if o_edges_bevel_weight:
-                        edges_bevel_weight1 = [e.bevel_weight for e in obj_data.edges]
-                    if o_polygon_selects:
-                        polygon_selects1 = [p.select for p in obj_data.polygons]
-                    if o_polygon_smooth:
-                        polygon_smooth1 = [p.use_smooth for p in obj_data.polygons]
-                    if self.vergroups:
-                        vert_groups      = get_vertgroups(obj_data)
-                    if o_vertex_normals:
-                        vertex_normals   = [ ((   R @ v.co) if self.apply_matrix else v.normal)[:] for v in obj_data.vertices ] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
-                    if o_material_idx:
-                        material_indexes = read_materials_idx(obj_data, out_np[3])
-                    if o_polygon_areas:
-                        polygons_areas   = [ polygon.area for polygon in obj_data.polygons]
-                    if o_polygon_centers:
-                        polygon_centers  = [ ((mtrx @ polygon.center) if self.apply_matrix else polygon.center)[:] for polygon in obj_data.polygons]
-                    if o_polygon_normals:
-                        polygon_normals  = [ ((   R @ polygon.normal) if self.apply_matrix else polygon.normal)[:] for polygon in obj_data.polygons]
+                        if o_vertices_select:
+                            vertices_select1 = [v.select for v in bm.verts]
 
-                obj.to_mesh_clear()
-                
-                if o_vertices:
-                    l_vertices.append( verts )
+                        if o_vertices_crease:
+                            if hasattr(bm.verts.layers, 'crease'):
+                                # before blender 4.0
+                                crease_layer = bm.verts.layers.crease.verify()
+                                vertices_crease1 = [v[crease_layer] for v in bm.verts]
+                            elif hasattr(bm.verts.layers, 'float') and 'crease_vert' in bm.verts.layers.float:
+                                # after blender 4.0
+                                crease_vert_layer = bm.verts.layers.float.get('crease_vert')
+                                vertices_crease1 = [v[crease_vert_layer] for v in bm.verts]
+                            else:
+                                # if no layer then all creases are 0.0
+                                vertices_crease1 = [0.0 for v in bm.verts]
+
+                        if o_vertices_bevel_weight:
+                            if hasattr(bm.verts.layers, 'bevel_weight'):
+                                # before blender 4.0
+                                bevel_weight_layer = bm.verts.layers.bevel_weight.verify()
+                                vertices_bevel_weight1 = [v[bevel_weight_layer] for v in bm.verts]
+                            elif hasattr(bm.verts.layers, 'float') and 'bevel_weight_vert' in bm.verts.layers.float:
+                                # after blender 4.0
+                                bevel_weight_vert_layer = bm.verts.layers.float.get('bevel_weight_vert')
+                                vertices_bevel_weight1 = [v[bevel_weight_vert_layer] for v in bm.verts]
+                            else:
+                                # if no layer then all bevels are 0.0
+                                vertices_bevel_weight1 = [0.0 for v in bm.verts]
+
+                        if o_edges_select:
+                            edges_select1 = [e.select for e in bm.edges]
+                        if o_edges_seams:
+                            edges_seams1  = [e.seam for e in bm.edges]
+                        if o_edges_sharps:
+                            edges_sharps1 = [not(e.smooth) for e in bm.edges]
+
+                        if o_edges_crease:
+                            if hasattr(bm.edges.layers, "crease"):
+                                # before blender 4.0
+                                crease_layer = bm.edges.layers.crease.verify()
+                                edges_crease1 = [ e[crease_layer] for e in bm.edges ]
+                            elif hasattr(bm.edges.layers, 'float') and 'crease_edge' in bm.edges.layers.float:
+                                # after blender 4.0
+                                cel = bm.edges.layers.float.get("crease_edge") # crease edge layer
+                                edges_crease1 = [e[cel] for e in bm.edges]
+                            else:
+                                # edges has no data for crease (not initalized)
+                                edges_crease1 = [0.0 for e in bm.edges]
+                            pass
+
+                        if o_edges_bevel_weight:
+                            if hasattr(bm.edges.layers, "bevel_weight"):
+                                # before blender 4.0
+                                bevel_weight_layer = bm.edges.layers.bevel_weight.verify()
+                                edges_bevel_weight1 = [e[bevel_weight_layer] for e in bm.edges]
+                            elif hasattr(bm.edges.layers, 'float') and 'bevel_weight_edge' in bm.edges.layers.float:
+                                # after blender 4.0
+                                bevel_weight_layer = bm.edges.layers.float.get("bevel_weight_edge") # crease edge layer
+                                edges_bevel_weight1 = [e[bevel_weight_layer] for e in bm.edges]
+                            else:
+                                # edges has no data for bevel (not initalized)
+                                edges_bevel_weight1 = [0.0 for e in bm.edges]
+                            pass
+
+                        if o_polygon_selects:
+                            polygon_selects1 = [f.select for f in bm.faces]
+                        if o_polygon_smooth:
+                            polygon_smooth1 = [f.smooth for f in bm.faces]
+                        # if self.vergroups:
+                        #     vert_groups      = get_vertgroups(obj.data)
+                        if o_vertex_normals:
+                            vertex_normals = [ v.normal[:] for v in bm.verts] # v.normal is a Vector()
+                        if o_material_idx or o_material_names or o_material_custom_properties:
+                            if hasattr(bm, 'faces')==True:
+                                if hasattr(obj, 'material_slots'):
+                                    if len(obj.material_slots)>0:
+                                        material_indexes = self.get_materials_from_bmesh(bm)
+                                        material_socket_ids = set(material_indexes)
+                                        # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
+                                        materials_info = dict()
+                                        # В случае, когда попадаются дубликаты материалов в слотах, то комбинировать такие слоты по одному материалу. Считать одинаковые материалы по первому слоту, в котором этот материал появился
+                                        materials_name_id = dict()
+                                        for id in range(len(obj.material_slots)):
+                                            is_faces = (id in material_socket_ids),
+                                            material_name = (None if obj.material_slots[id].material is None else obj.material_slots[id].material.name)
+                                            if material_name in materials_name_id:
+                                                _id = materials_name_id[material_name]
+                                                # Не все слоты могут быть назначены faces. Если оказывается, что один из слотов с тем же материалом назначен faces, а другие нет,
+                                                # то это надо учесть и сделать признак, что этот материал всё-таки назначен faces:
+                                                materials_info[_id]['is_faces'] = materials_info[_id]['is_faces'] or is_faces
+                                                for I, index in enumerate(material_indexes):
+                                                    if index==id:
+                                                        material_indexes[I] = _id
+                                                pass
+                                            else:
+                                                _id = len(materials_name_id)
+                                                materials_name_id[material_name] = _id
+                                                materials_info[_id] = dict(material_name = material_name,
+                                                                            is_faces = (id in material_socket_ids),
+                                                                            custom_properties = dict()
+                                                                        )
+                                                for I, index in enumerate(material_indexes):
+                                                    if index==id:
+                                                        material_indexes[I] = _id
+                                                # Прочитать custom property для динамических сокетов
+                                                for elem in self.custom_properties_sockets:
+                                                    if elem.socket_type=='MATERIAL':
+                                                        mi = obj.material_slots[id].material
+                                                        materials_info[_id]['custom_properties'][elem.custom_property_name] = get_prop_value(mi, elem)
+                                                        pass
+                                                    pass
+                                                pass
+                                            pass
+                                        pass
+                                    else:
+                                        # Пустой material_slots
+                                        material_indexes = [0]*len(bm.faces)
+                                        materials_info = dict( [(0,dict(material_name=None, is_faces=True, custom_properties = dict()))] )
+                                else:
+                                    # Странная ситуация - полигоны есть, а materials slots - нет.
+                                    # Вроде как такого не должно быть, но предположим, что обработать надо так
+                                    # же как и пустой material_slots
+                                    material_indexes = [0]*len(bm.faces)
+                                    materials_info = dict( [(0,dict(material_name=None, is_faces=True, custom_properties = dict()))] )
+                                    pass
+                                        
+                            else:
+                                # POINT_CLOUDS has no polygons
+                                material_indexes = []
+                                materials_info = dict()
+                                pass
+
+                        if o_polygon_areas:
+                            polygons_areas = [ p.calc_area() for p in bm.faces ]
+                        if o_polygon_centers:
+                            polygon_centers = [ p.calc_center_median()[:] for p in bm.faces ]
+                        if o_polygon_normals:
+                            polygon_normals = [ p.normal[:] for p in bm.faces ]
+
+                        del bm
+
+                    else: # do in Object mode
+
+                        # https://developer.blender.org/T99661
+                        if obj.type == 'CURVE' and obj.mode == 'EDIT' and bpy.app.version[:2] == (3, 2):
+                            raise ReadingObjectDataError("Does not support curves in edit mode in Blender 3.2")
+                        elif self.modifiers:
+                            if obj.type in ['META']:
+                                if sv_depsgraph is None:
+                                    sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                obj_data = sv_depsgraph.objects[obj.name].to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                            elif obj.type in ['POINTCLOUD']:
+                                # PointCound могут быть получены только через depsgraph (что с модификатором, что без модификатора)
+                                if sv_depsgraph is None:
+                                    sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                obj_eval = sv_depsgraph.objects[obj.name].evaluated_get(sv_depsgraph)
+                                obj_data = obj_eval.data
+                            else:
+                                obj_data = sv_depsgraph.objects[obj.name].to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                        else:
+                            if obj.type in ['META']:
+                                if sv_depsgraph is None:
+                                    sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                obj_data = sv_depsgraph.objects[obj.name].to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                            elif obj.type in ['POINTCLOUD']:
+                                # PointCound могут быть получены только через depsgraph (что с модификатором, что без модификатора)
+                                if sv_depsgraph is None:
+                                    sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+                                obj_eval = sv_depsgraph.objects[obj.name].evaluated_get(sv_depsgraph)
+                                obj_data = obj_eval.data
+                            else:
+                                obj_data = obj.to_mesh()
+                        
+                        T, R, S = mtrx.decompose()
+
+                        if obj.type in ['POINTCLOUD']:
+                            if o_vertices or o_edges or o_polygons or self.vergroups:
+                                # any of verts, edges, faces or vergroups are connected to verts
+                                verts            = [ ((mtrx @ v.co)[:] if self.apply_matrix else v.co)[:] for v in obj_data.points]  # v.co is a Vector()
+                                if o_edges:
+                                    edgs         = []
+                                if o_polygons:
+                                    pols         = []
+                                if self.vergroups:
+                                    vert_groups  = []
+
+                            if o_vertices_select:
+                                vertices_select1 = []
+                            if o_vertices_crease:
+                                vertices_crease1 = []
+                            if o_vertices_bevel_weight:
+                                vertices_bevel_weight1 = []
+                            if o_edges_select:
+                                edges_select1 = []
+                            if o_edges_seams:
+                                edges_seams1  = []
+                            if o_edges_sharps:
+                                edges_sharps1 = []
+                            if o_edges_crease:
+                                edges_crease1 = []
+                            if o_edges_bevel_weight:
+                                edges_bevel_weight1 = []
+                            if o_polygon_selects:
+                                polygon_selects1 = []
+                            if o_polygon_smooth:
+                                polygon_smooth1  = []
+                            if o_vertex_normals:
+                                vertex_normals   = [] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
+                            if o_material_idx or o_material_names or o_material_custom_properties:
+                                if hasattr(obj_data, 'polygons')==True:
+                                    if hasattr(obj, 'material_slots'):
+                                        if len(obj.material_slots)>0:
+                                            material_indexes = read_materials_idx(obj_data, out_np[3])
+                                            material_socket_ids = set(material_indexes)
+                                            # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
+                                            materials_info = dict()
+                                            # В случае, когда попадаются дубликаты материалов в слотах, то комбинировать такие слоты по одному материалу. Считать одинаковые материалы по первому слоту, в котором этот материал появился
+                                            materials_name_id = dict()
+                                            for id in range(len(obj.material_slots)):
+                                                is_faces = (id in material_socket_ids),
+                                                material_name = (None if obj.material_slots[id].material is None else obj.material_slots[id].material.name)
+                                                if material_name in materials_name_id:
+                                                    _id = materials_name_id[material_name]
+                                                    # Не все слоты могут быть назначены faces. Если оказывается, что один из слотов с тем же материалом назначен faces, а другие нет,
+                                                    # то это надо учесть и сделать признак, что этот материал всё-таки назначен faces:
+                                                    materials_info[_id]['is_faces'] = materials_info[_id]['is_faces'] or is_faces
+                                                    for I, index in enumerate(material_indexes):
+                                                        if index==id:
+                                                            material_indexes[I] = _id
+                                                    pass
+                                                else:
+                                                    _id = len(materials_name_id)
+                                                    materials_name_id[material_name] = _id
+                                                    materials_info[_id] = dict(material_name = material_name,
+                                                                            is_faces = (id in material_socket_ids),
+                                                                            custom_properties = dict()
+                                                                            )
+                                                    for I, index in enumerate(material_indexes):
+                                                        if index==id:
+                                                            material_indexes[I] = _id
+                                                    # Прочитать custom property для динамических сокетов
+                                                    for elem in self.custom_properties_sockets:
+                                                        if elem.socket_type=='MATERIAL':
+                                                            mi = obj.material_slots[id].material
+                                                            materials_info[_id]['custom_properties'][elem.custom_property_name] = get_prop_value(mi, elem)
+                                                            pass
+                                                        pass
+                                                    pass
+                                                pass
+                                            pass
+                                        else:
+                                            # Пустой material_slots
+                                            material_indexes = [0]*len(obj_data.polygons)
+                                            materials_info = dict( [(0,dict(material_name=None, is_faces=True, custom_properties = dict()))] )
+                                    else:
+                                        # Странная ситуация - полигоны есть, а materials slots - нет.
+                                        # Вроде как такого не должно быть, но предположим, что обработать надо так
+                                        # же как и пустой material_slots
+                                        material_indexes = [0]*len(obj_data.polygons)
+                                        materials_info = dict( [(0,dict(material_name=None, is_faces=True, custom_properties = dict()))] )
+                                        pass
+                                else:
+                                    # POINT_CLOUDS has no polygons
+                                    material_indexes = []
+                                    materials_info = dict()
+                                    pass
+
+                            if o_polygon_areas:
+                                polygons_areas   = []
+                            if o_polygon_centers:
+                                polygon_centers  = []
+                            if o_polygon_normals:
+                                polygon_normals  = []
+
+                        else:
+                            if o_vertices or o_edges or o_polygons or self.vergroups:
+                                # any of verts, edges, faces or vergroups are connected to verts
+                                verts            = [ ((mtrx @ v.co)[:] if self.apply_matrix else v.co)[:] for v in obj_data.vertices]  # v.co is a Vector()
+                                if o_edges:
+                                    edgs         = [[ e.vertices[0], e.vertices[1] ] for e in obj_data.edges]
+                                if o_polygons:
+                                    pols         = [list(p.vertices) for p in obj_data.polygons]
+
+                            if o_vertices_select:
+                                vertices_select1 = [v.select for v in obj_data.vertices]
+
+                            if o_vertices_crease:
+                                if hasattr(obj_data, 'vertex_creases') and (obj_data.vertex_creases is not None) and hasattr(obj_data.vertex_creases, '__len__') and len(obj_data.vertex_creases)>0:
+                                    # it is very hard to identify creases in object mode in blender before 4.0
+                                    creases = obj_data.vertex_creases[0]
+                                    vertices_crease1 = [creases.data[i].value for i, v in enumerate(obj_data.vertices)]
+                                elif 'crease_vert' in obj_data.attributes:
+                                    # get creases of vertices in Blender 4.x
+                                    vertices_crease1 = [e.value for e in obj_data.attributes['crease_vert'].data]
+                                else:
+                                    # if no data then all creases are 0.0
+                                    vertices_crease1 = [0.0 for i in range( len(obj_data.vertices) )]
+                                pass
+
+                            if o_vertices_bevel_weight:
+                                if 'bevel_weight_vert' in obj_data.attributes:
+                                    # after Blender 4.0
+                                    vertices_bevel_weight1 = [e.value for e in obj_data.attributes['bevel_weight_vert'].data]
+                                elif len(obj_data.vertices)>0 and hasattr(obj_data.vertices[0], 'bevel_weight'):
+                                    # before Blender 4.0
+                                    vertices_bevel_weight1 = [v.bevel_weight for v in obj_data.vertices]
+                                else:
+                                    # vertices has no data in e (not initalized)
+                                    vertices_bevel_weight1 = [0.0 for i in range( len(obj_data.vertices) )]
+                                pass
+
+                            if o_edges_select:
+                                edges_select1 = [e.select for e in obj_data.edges]
+                            if o_edges_seams:
+                                edges_seams1 = [e.use_seam for e in obj_data.edges]
+                            if o_edges_sharps:
+                                edges_sharps1 = [e.use_edge_sharp for e in obj_data.edges]
+
+                            if o_edges_crease:
+                                if 'crease_edge' in obj_data.attributes:
+                                    # after blender 4.0
+                                    edges_crease1 = [e.value for e in obj_data.attributes['crease_edge'].data]
+                                elif len(obj_data.edges)>0 and hasattr(obj_data.edges[0], 'crease'):
+                                    # before Blender 4.0
+                                    edges_crease1 = [e.crease for e in obj_data.edges]
+                                else:
+                                    # edges has no data in e (not initalized)
+                                    edges_crease1 = [0.0 for e in obj_data.edges]
+                                pass
+                            
+                            if o_edges_bevel_weight:
+                                if 'bevel_weight_edge' in obj_data.attributes:
+                                    # after Blender 4.0
+                                    edges_bevel_weight1 = [e.value for e in obj_data.attributes['bevel_weight_edge'].data]
+                                elif len(obj_data.edges)>0 and hasattr(obj_data.edges[0], 'bevel_weight'):
+                                    # before Blender 4.0
+                                    edges_bevel_weight1 = [e.bevel_weight for e in obj_data.edges]
+                                else:
+                                    # edges has no data for bevel (not initalized)
+                                    edges_bevel_weight1 = [0.0 for e in obj_data.edges]
+                                pass
+                                    
+                            if o_polygon_selects:
+                                polygon_selects1 = [p.select for p in obj_data.polygons]
+                            if o_polygon_smooth:
+                                polygon_smooth1 = [p.use_smooth for p in obj_data.polygons]
+                            if self.vergroups:
+                                vert_groups      = get_vertgroups(obj_data)
+                            if o_vertex_normals:
+                                vertex_normals   = [ ((   R @ v.co) if self.apply_matrix else v.normal)[:] for v in obj_data.vertices ] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
+                            if o_material_idx or o_material_names or o_material_custom_properties:
+                                if hasattr(obj_data, 'polygons')==True:
+                                    if hasattr(obj, 'material_slots'):
+                                        if len(obj.material_slots)>0:
+                                            material_indexes = read_materials_idx(obj_data, out_np[3])
+                                            material_socket_ids = set(material_indexes)
+                                            # save all sockets materials in materials sockets of object (materials name if it is not null and info about faces)
+                                            materials_info = dict()
+                                            # В случае, когда попадаются дубликаты материалов в слотах, то комбинировать такие слоты по одному материалу. Считать одинаковые материалы по первому слоту, в котором этот материал появился
+                                            materials_name_id = dict()
+                                            for id in range(len(obj.material_slots)):
+                                                is_faces = (id in material_socket_ids),
+                                                material_name = (None if obj.material_slots[id].material is None else obj.material_slots[id].material.name)
+                                                if material_name in materials_name_id:
+                                                    _id = materials_name_id[material_name]
+                                                    # Не все слоты могут быть назначены faces. Если оказывается, что один из слотов с тем же материалом назначен faces, а другие нет,
+                                                    # то это надо учесть и сделать признак, что этот материал всё-таки назначен faces:
+                                                    materials_info[_id]['is_faces'] = materials_info[_id]['is_faces'] or is_faces
+                                                    for I, index in enumerate(material_indexes):
+                                                        if index==id:
+                                                            material_indexes[I] = _id
+                                                    pass
+                                                else:
+                                                    #_id = id
+                                                    _id = len(materials_name_id)
+                                                    materials_name_id[material_name] = _id
+                                                    materials_info[_id] = dict(material_name = material_name,
+                                                                            is_faces = (id in material_socket_ids),
+                                                                            custom_properties = dict()
+                                                                            )
+                                                    for I, index in enumerate(material_indexes):
+                                                        if index==id:
+                                                            material_indexes[I] = _id
+                                                    # Прочитать custom property для динамических сокетов
+                                                    for elem in self.custom_properties_sockets:
+                                                        if elem.socket_type=='MATERIAL':
+                                                            mi = obj.material_slots[id].material
+                                                            materials_info[_id]['custom_properties'][elem.custom_property_name] = get_prop_value(mi, elem)
+                                                            pass
+                                                        pass
+                                                    pass
+                                                pass
+                                            pass
+                                        else:
+                                            # Пустой material_slots
+                                            material_indexes = [0]*len(obj_data.polygons)
+                                            materials_info = dict( [(0,dict(material_name=None, is_faces=True, custom_properties = dict()))] )
+                                    else:
+                                        # Странная ситуация - полигоны есть, а materials slots - нет.
+                                        # Вроде как такого не должно быть, но предположим, что обработать надо так
+                                        # же как и пустой material_slots
+                                        material_indexes = [0]*len(obj_data.polygons)
+                                        materials_info = dict( [(0,dict(material_name=None, is_faces=True, custom_properties = dict()))] )
+                                        pass
+                                else:
+                                    # У POINT_CLOUDS, например, has no polygons
+                                    material_indexes = []
+                                    materials_info = dict()
+                                    pass
+
+                            if o_polygon_areas:
+                                polygons_areas   = [ polygon.area for polygon in obj_data.polygons]
+                            if o_polygon_centers:
+                                polygon_centers  = [ ((mtrx @ polygon.center) if self.apply_matrix else polygon.center)[:] for polygon in obj_data.polygons]
+                            if o_polygon_normals:
+                                polygon_normals  = [ ((   R @ polygon.normal) if self.apply_matrix else polygon.normal)[:] for polygon in obj_data.polygons]
+
+                    if o_matrices:
+                        l_matrices.append(mtrx)
+
+                    obj.to_mesh_clear()
+                except ReadingObjectDataError as _ex:
+                    raise
+                except Exception as err:
+                    # it's not clear which cases this try catch should handle
+                    # probably it should skip wrong object types
+                    self.debug('failure in process between frozen area', self.name, err)
+
+            pass
+        
+            if o_vertices or o_edges or o_polygons or self.vergroups:
+                l_vertices.append( verts )
                 if o_edges:
                     l_edges.append( edgs )
                 if o_polygons:
                     l_polygons.append( pols )
-                if o_vertices_select:
-                    l_vertices_select.append( vertices_select1 )
-                if o_vertices_crease:
-                    l_vertices_crease.append( vertices_crease1 )
-                if o_vertices_bevel_weight:
-                    l_vertices_bevel_weight.append( vertices_bevel_weight1 )
-                if o_edges_select:
-                    l_edges_select.append( edges_select1 )
-                if o_edges_seams:
-                    l_edges_seams.append( edges_seams1 )
-                if o_edges_sharps:
-                    l_edges_sharps.append( edges_sharps1 )
-                if o_edges_crease:
-                    l_edges_crease.append( edges_crease1 )
-                if o_edges_bevel_weight:
-                    l_edges_bevel_weight.append( edges_bevel_weight1 )
-                if o_polygon_selects:
-                    l_polygon_selects.append( polygon_selects1 )
-                if o_polygon_smooth:
-                    l_polygon_smooth.append( polygon_smooth1 )
                 if self.vergroups:
                     vers_out_grouped.append( vert_groups )
-                if o_vertex_normals:
-                    l_vertex_normals.append( vertex_normals )
-                if o_material_idx:
-                    l_material_idx.append( material_indexes )
-                if o_polygon_areas:
-                    l_polygon_areas.append( polygons_areas )
-                if o_polygon_centers:
-                    l_polygon_centers.append( polygon_centers )
-                if o_polygon_normals:
-                    l_polygon_normals.append( polygon_normals )
 
-            except ReadingObjectDataError:
-                raise
-            except Exception as err:
-                # it's not clear which cases this try catch should handle
-                # probably it should skip wrong object types
-                self.debug('failure in process between frozen area', self.name, err)
+            if o_vertices_select:
+                l_vertices_select.append( vertices_select1 )
+            if o_vertices_crease:
+                l_vertices_crease.append( vertices_crease1 )
+            if o_vertices_bevel_weight:
+                l_vertices_bevel_weight.append( vertices_bevel_weight1 )
+            if o_edges_select:
+                l_edges_select.append( edges_select1 )
+            if o_edges_seams:
+                l_edges_seams.append( edges_seams1 )
+            if o_edges_sharps:
+                l_edges_sharps.append( edges_sharps1 )
+            if o_edges_crease:
+                l_edges_crease.append( edges_crease1 )
+            if o_edges_bevel_weight:
+                l_edges_bevel_weight.append( edges_bevel_weight1 )
+            if o_polygon_selects:
+                l_polygon_selects.append( polygon_selects1 )
+            if o_polygon_smooth:
+                l_polygon_smooth.append( polygon_smooth1 )
+            if o_vertex_normals:
+                l_vertex_normals.append( vertex_normals )
+            if o_material_idx or o_material_names or o_material_custom_properties:
+                l_material_idx.append( material_indexes )
+                l_material_names.append(materials_info)
+            if o_polygon_areas:
+                l_polygon_areas.append( polygons_areas )
+            if o_polygon_centers:
+                l_polygon_centers.append( polygon_centers )
+            if o_polygon_normals:
+                l_polygon_normals.append( polygon_normals )
+            
+            pass
 
-            if o_matrices:
-                l_matrices.append(mtrx)
+            
 
         if self.mesh_join:
-            # l_vertices, l_edges, l_polygons, l_vertex_normals, l_material_idx, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_matrices
             offset = 0
             _vertices, _edges, _polygons, _vertices_select, _vertices_crease, _vertices_bevel_weight, _edges_select, _edges_seams, _edges_sharps, _edges_crease, _edges_bevel_weight, _polygon_selects, _polygon_smooth, _vertex_normals, _polygon_areas, _polygon_centers, _polygon_normals, _vg = [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
-            for idx, vertices in enumerate(l_vertices):
-                _vertices.extend(vertices)
-                if l_edges:
-                    _edges.extend( [[i + offset for i in o] for o in l_edges[idx] ] ) # edges
-                if l_polygons:
-                    _polygons.extend( [[i + offset for i in o] for o in l_polygons[idx] ] ) # polygons
-                #_l_vertex_normals.extend( [tuple(i + offset for i in o) for o in ps[idx] ] ) # vers_out_grouped. Skip in mesh_join
+
+            # Create dict of unique materials before join polygons
+            _materials_ids = []
+            _materials_custom_properties = []
+            _l_materials_names_unique = set()  # Unique materials names before sorting: {'Material.002.Red', None, 'Material.005.Green', 'Material.001.Blue'}
+            _materials_custom_properties_unique = dict()
+            for l_material in l_material_names:
+                for K in l_material:
+                    # do not use material if it has no faces
+                    if l_material[K]['is_faces']==True:
+                        len_0 = len(_l_materials_names_unique)
+                        l_material_K = l_material[K]
+                        material_K_material_name = l_material_K['material_name']
+                        material_K_custom_properties = l_material_K['custom_properties']
+                        _l_materials_names_unique.update( [material_K_material_name] )
+                        len_1 = len(_l_materials_names_unique)
+                        if(len_1>len_0):
+                            _materials_custom_properties_unique[material_K_material_name] = material_K_custom_properties
+                            pass
+                    pass
+                pass
+            _l_materials_names_unique_sorted = sorted(_l_materials_names_unique, key=lambda x: (x is None, x)) # # sorted unique names, None is a last element (for convinience reading, has no influence for mesh join): ['Material.001.Blue', 'Material.002.Red', 'Material.005.Green', None]
+            _l_materials_names_uniques = dict( zip( _l_materials_names_unique_sorted, list(range(len(_l_materials_names_unique))))) # Global materials idx: {'Material.001.Blue': 0, 'Material.002.Red': 1, 'Material.005.Green': 2, None: 3}
+            for idx, obj in enumerate(objs):
+                if l_vertices or l_edges or l_polygons or vers_out_grouped:
+                    _vertices.extend(l_vertices[idx])
+                    if l_edges:
+                        _edges.extend( [[i + offset for i in o] for o in l_edges[idx] ] ) # edges
+                    if l_polygons:
+                        _polygons.extend( [[i + offset for i in o] for o in l_polygons[idx] ] ) # polygons
+                    if vers_out_grouped:
+                        _vg.extend( [ i + offset for i in vers_out_grouped[idx] ] ) # vertex groups
+                    offset += len(l_vertices[idx])
+
                 if l_vertices_select:
                     _vertices_select.extend( l_vertices_select[idx] )
                 if l_vertices_crease:
@@ -781,23 +1024,48 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     _polygon_smooth.extend( l_polygon_smooth[idx] )
                 if l_vertex_normals:
                     _vertex_normals.extend( l_vertex_normals[idx] ) # vertex normals
-                # _l_material_idx - materia index. Do not change
-                # if l_material_idx and len(l_material_idx)>idx:
-                #     _l_material_idx.extend( l_material_idx[idx] ) # Skip in mesh_join
+
+                if l_material_idx:
+                    # material changes in mesh join:
+                    l_material_idx_I   = l_material_idx[idx]    # what sockets idx: [2, 1, 0, 3, 1, 1]
+                    l_material_info_I  = l_material_names[idx]  # what materials info of sockets: {0: {'material_name': 'Material.006', 'is_faces': False}, 1: {'material_name': 'Material.005.Green', 'is_faces': True}, 2: {'material_name': 'Material.007_Object', 'is_faces': False}}
+                    l_material_names_I = dict([(K, l_material_info_I[K]['material_name']) for K in l_material_info_I if l_material_info_I[K]['is_faces']==True]) # What used materials info: {0: None, 1: 'Material.001.Blue', 2: 'Material.002.Red', 3: 'Material.005.Green'}
+
+                    l_materials_I_repack_materials = dict([(k, _l_materials_names_uniques[l_material_names_I[k]]) for k in l_material_names_I])   # repack info of materials for global materials indexes: {0: 3, 1: 0, 2: 1, 3: 2}
+                    l_material_idx_I_repack        = [l_materials_I_repack_materials[s] for s in l_material_idx_I]                                # replace local sockets idx for global materials idx: [1, 0, 3, 2, 0, 0] This idx may do not equals Mesh Join in reality, but algorithm does equals results
+                    _materials_ids.extend(l_material_idx_I_repack)
+
                 if l_polygon_areas:
                     _polygon_areas.extend( l_polygon_areas[idx] ) # polygon area
                 if l_polygon_centers:
                     _polygon_centers.extend( l_polygon_centers[idx] ) # polygon center
                 if l_polygon_normals:
                     _polygon_normals.extend( l_polygon_normals[idx] ) # polygon normal
-                # if l_matrices: Do not change
-                #     _ms.append( l_matrices[idx] ) # matrices. Skip in mesh_join
-                if vers_out_grouped:
-                    _vg.extend( [ i + offset for i in vers_out_grouped[idx] ] ) # vertex groups
-                
-                offset += len(vertices)
             
-            l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_seams, l_edges_sharps, l_edges_crease, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_polygon_areas, l_polygon_centers, l_polygon_normals, vers_out_grouped = [_vertices], [_edges], [_polygons], [_vertices_select], [_vertices_crease], [_vertices_bevel_weight], [_edges_select], [_edges_seams], [_edges_sharps], [_edges_crease], [_edges_bevel_weight], [_polygon_selects], [_polygon_smooth], [_vertex_normals], [_polygon_areas], [_polygon_centers], [_polygon_normals], [_vg]
+            (l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight,
+            l_edges_select, l_edges_seams, l_edges_sharps, l_edges_crease, l_edges_bevel_weight,
+            l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_material_names, l_polygon_areas, l_polygon_centers,
+            l_polygon_normals, vers_out_grouped) = ([_vertices], [_edges], [_polygons], [_vertices_select], [_vertices_crease], [_vertices_bevel_weight],
+            [_edges_select], [_edges_seams], [_edges_sharps], [_edges_crease], [_edges_bevel_weight],
+            [_polygon_selects], [_polygon_smooth], [_vertex_normals], [_materials_ids], [ list(_l_materials_names_uniques.keys())], [_polygon_areas], [_polygon_centers],
+            [_polygon_normals], [_vg])
+
+            l_materials_custom_properties = []
+            for l in l_material_names:
+                l_materials_custom_properties.append([_materials_custom_properties_unique[mn] for mn in l])
+            pass
+        else:
+            _t = []
+            l_materials_custom_properties = []
+            for materials_of_object in l_material_names:
+                #_to = []
+                _to = [materials_of_object[material_socket]['material_name'] for material_socket in sorted(materials_of_object.keys())]
+                # for material_socket in sorted(materials_of_object.keys()):
+                #     _to.append(materials_of_object[material_socket]['material_name'])
+                _t.append(_to)
+                l_materials_custom_properties.append([materials_of_object[material_socket]['custom_properties'] for material_socket in sorted(materials_of_object.keys())])
+            l_material_names = _t
+            pass
 
         if o_vertices and (out_np[0]):
             l_vertices = [np.array(vert) for vert in l_vertices]
@@ -818,19 +1086,104 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         if o_polygon_normals and (out_np[6]):
             l_polygon_normals = [np.array(polygon_normals) for polygon_normals in l_polygon_normals]
 
-        for i, i2 in zip(self.outputs, [l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_crease, l_edges_seams, l_edges_sharps, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_matrices]):
-            if i.is_linked:
-                i.sv_set(i2)
+        for socket_name, values in zip([socket_name for socket_name in self.node_protected_socket_names if socket_name not in ['objects']] , [l_vertices, l_edges, l_polygons,
+                                        l_vertices_select, l_vertices_crease, l_vertices_bevel_weight,
+                                        l_edges_select, l_edges_crease, l_edges_seams, l_edges_sharps, l_edges_bevel_weight,
+                                        l_polygon_selects, l_polygon_smooth, l_vertex_normals,
+                                        l_material_idx, l_material_names, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_object_names, l_matrices]):
+            if socket_name in self.outputs:
+                if self.outputs[socket_name].is_linked:
+                    self.outputs[socket_name].sv_set(values)
 
         if vers_out_grouped and vers_out_grouped[0]:
-            if 'Vers_grouped' in outputs and self.vergroups:
-                outputs['Vers_grouped'].sv_set(vers_out_grouped)
+            if 'Vers_grouped' in self.outputs and self.vergroups:
+                self.outputs['Vers_grouped'].sv_set(vers_out_grouped)
         if o_objects:
-            if self.by_input:
-                outputs['object'].sv_set(objs)
+            self.outputs['objects'].sv_set(objs)
+            pass
+        
+        # Вывести динамические данные в динамические сокеты:
+        for elem in self.custom_properties_sockets:
+            if elem.socket_inner_name in self.outputs:
+                if elem.socket_type=='MATERIAL':
+                    socket_material_custom_property=[]
+                    for I,l_material_names_I in enumerate(l_material_names):
+                        cp_I = l_materials_custom_properties[I]
+                        socket_material_custom_property.append( [cp_I_elem[elem.custom_property_name] if cp_I_elem and elem.custom_property_name in cp_I_elem else None for cp_I_elem in cp_I] )
+                    self.outputs[elem.socket_inner_name].sv_set(socket_material_custom_property)
+                    pass
+                else:
+                    self.outputs[elem.socket_inner_name].sv_set(custom_properties_data[elem.socket_inner_name])
+        pass
+    pass
+
+    def migrate_links_from(self, old_node, operator):
+        '''replace socket names to lowercase'''
+        # copy of "ui\nodes_replacement.py"
+        self.recreate_custom_properties_socket_with_socket()
+
+        tree = self.id_data
+        # Copy incoming / outgoing links
+        old_in_links = [link for link in tree.links if link.to_node == old_node]
+        old_out_links = [link for link in tree.links if link.from_node == old_node]
+
+        for old_link in old_in_links:
+            new_target_socket_name = operator.get_new_input_name(old_link.to_socket.name)
+            new_target_socket_name = new_target_socket_name.lower()
+            if new_target_socket_name in self.inputs:
+                new_target_socket = self.inputs[new_target_socket_name]
+                new_link = tree.links.new(old_link.from_socket, new_target_socket)
             else:
-                outputs['object'].sv_set([data_objects.get(o.name) for o in self.object_names])
+                self.debug("New node %s has no input named %s, skipping", self.name, new_target_socket_name)
+            tree.links.remove(old_link)
+
+        for old_link in old_out_links:
+            new_source_socket_name = operator.get_new_output_name(old_link.from_socket.name)
+            new_source_socket_name = new_source_socket_name.lower()
+            if new_source_socket_name=='object':
+                new_source_socket_name='objects'
+            elif new_source_socket_name=='matrix':
+                new_source_socket_name='matrices'
+            # We have to remove old link before creating new one
+            # Blender would not allow two links pointing to the same target socket
+            old_target_socket = old_link.to_socket
+            tree.links.remove(old_link)
+            if new_source_socket_name in self.outputs:
+                new_source_socket = self.outputs[new_source_socket_name]
+                new_link = tree.links.new(new_source_socket, old_target_socket)
+            else:
+                self.debug("New node %s has no output named %s, skipping", self.name, new_source_socket_name)
+        
+        # recreate hide property of socket:
+        for s in old_node.outputs:
+            if s.name in self.outputs:
+                self.outputs[s.name].hide = old_node.outputs[s.name].hide
+            pass
+        pass
+            
+
+    def migrate_from(self, old_node):
+        if hasattr(self, 'location_absolute'):
+            # Blender 3.0 has no this attribute
+            self.location_absolute = old_node.location_absolute
+        
+        #copy old objects to new object_names table (old table has only names of objects, no pointers):
+        for I, item in enumerate(old_node.object_names):
+            if I<=len(self.object_names)-1:
+                if hasattr(item, 'pointer_type')==False:
+                    if hasattr(item, 'name')==True:
+                        if item.name in bpy.data.objects:
+                            self.object_names[I].object_pointer = bpy.data.objects[item.name]
+                        pass
+                    pass
+                pass
+            pass
+
+        pass
 
 
-classes = [SvOB3BItemOperatorMK2, SvOB3BDataCollectionMK2, SVOB3B_UL_NamesListMK2, SvOB3CallbackMK2, SvGetObjectsDataMK3]
+classes = [
+    SvOB3BCallbackMK5,
+    SvGetObjectsDataMK5,
+]
 register, unregister = bpy.utils.register_classes_factory(classes)

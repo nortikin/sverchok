@@ -43,7 +43,8 @@ def uset(self, value, origin, min_prop, max_prop):
         self[origin] = MIN
     return None
 
-
+# if you are preparing new MK node version, please:
+# change nodes/logic/evolver - GENE_NODES by adding new bl_idname
 class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.Node):
     ''' Integer / Float input value. [default]
     mode: [float] / int

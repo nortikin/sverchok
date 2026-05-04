@@ -8,9 +8,10 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException, SvExternalLibraryException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.freecad import curve_to_freecad_nurbs
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
@@ -70,13 +71,13 @@ class SvSweepSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
             self.warning("The profile face is not planar; FreeCAD probably will not be able to generate a Solid object")
         section = face.OuterWire
         if not section.isClosed():
-            raise Exception("Face's outer wire is not closed")
+            raise SvInvalidInputException("Face's outer wire is not closed")
         api.add(section, self.move_face, self.rotate_face)
         if not api.isReady():
-            raise Exception("Unexpected: API object is not ready")
+            raise SvExternalLibraryException("Unexpected: API object is not ready")
         api.build()
         if not api.makeSolid():
-            raise Exception("Can not build a Solid object")
+            raise SvExternalLibraryException("Can not build a Solid object")
         return api.shape()
 
     def process(self):
@@ -95,7 +96,7 @@ class SvSweepSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
                     face_surface = surface_to_freecad(face_surface, make_face=True)
                 curve = curve_to_freecad_nurbs(curve)
                 if curve is None:
-                    raise Exception("Path curve is not a NURBS!")
+                    raise UnsupportedCurveTypeException("Path curve is not a NURBS!")
 
                 solid = self.make_solid(face_surface.face, curve.curve)
                 solid_out.append(solid)

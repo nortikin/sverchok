@@ -220,9 +220,9 @@ def numpy_data_from_bmesh(bm, out_np, face_data=None):
 
 def pydata_from_bmesh(bm, face_data=None, ret_verts=True, ret_edges=True, ret_faces=True):
 
-    verts = [v.co[:] for v in bm.verts] if ret_verts==True and face_data is None else None
-    edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges] if ret_edges==True and face_data is None else None
-    faces = [[i.index for i in p.verts] for p in bm.faces] if ret_faces==True and face_data is None else None
+    verts = [v.co[:] for v in bm.verts] if ret_verts==True else None
+    edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges] if ret_edges==True else None
+    faces = [[i.index for i in p.verts] for p in bm.faces] if ret_faces==True else None
 
     if face_data is None:
         return verts, edges, faces
@@ -1343,3 +1343,12 @@ def calc_center_mass_bmesh(center_mode, mesh_vertices, mesh_edges, mesh_faces, m
         raise Exception(f'calc_center_of_mesh: param \'center_mode\'={center_mode} must be in [\'VERTICES\', \'EDGES\', \'FACES\', \'VOLUMES\']')
 
     return result_mask, result_vertices_I, result_edges_I, result_polygons_I, result_center_mass_mesh_I, result_mass_mesh_I, result_size_mesh_I
+
+def dissolve_internal_edges(bm, use_verts=True, use_face_split=True):
+    internal_edges = [e for e in bm.edges if e.is_manifold and not e.is_boundary]
+    bmesh.ops.dissolve_edges(bm,
+                             edges = internal_edges,
+                             use_verts = use_verts,
+                             use_face_split = use_face_split)
+    return bm
+

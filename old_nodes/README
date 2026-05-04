@@ -1,8 +1,10 @@
 When a node has been deprecated we want to keep it around to permit old files to load the node.
 
 All you do is:
-- move the old node into this directory
-- remove the old node's classname from `index.md`
+- move the old node into this directory;
+- remove the old node's classname from `index.yaml` and menu directory other yamls;
+- define replacement new node as in any of that old nodes. For example for old SvFormulaNodeMk4 will be: '''replacement_nodes = [('SvFormulaNodeMk5', None, None)]''' or for some node '''replacement_nodes = [('SvSomeNodeMk5', dict(verts='Vertices'), dict(verts='Vertices', edges='Edges'))]''' where arguments are Node_name, new_input_socket_name_dict, new_output_socket_name_dict. If socket was Vertices, than it will be verts in example. If no sockets changed names, even if there are new sockets, define '''None''';
+- IF you get new dependency on libs with pip, please define '''sv_dependencies = {'scipy'}''' or something.
 
 Sverchok will do the rest.
 

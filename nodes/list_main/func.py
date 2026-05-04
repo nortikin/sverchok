@@ -88,9 +88,18 @@ class ListFuncNode(SverchCustomTreeNode, bpy.types.Node):
         ("AND",         "Logical AND",    "", 7)
     ]
 
+    def update_operation(self, context):
+        func_name = self.func_.title()
+        func_params = [mi for mi in self.mode_items if self.func_==mi[0]][0][1]
+        if func_params:
+            func_name = [mi for mi in self.mode_items if self.func_==mi[0]][0][1]
+        self.label = f'{ListFuncNode.bl_label}: {func_name}'
+        self.update_sockets()
+        updateNode(self, context)
+
     func_: EnumProperty(
         name="Function", description="Function choice",
-        default="AVR", items=mode_items, update=updateNode)
+        default="AVR", items=mode_items, update=update_operation)
 
     level: IntProperty(
         name='level_to_count',
@@ -103,7 +112,8 @@ class ListFuncNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
-        layout.prop(self, "func_", text="Functions")
+        layout.label(text="Function:")
+        layout.prop(self, "func_", text="")
         layout.prop(self, "wrap", text="Wrap")
 
     def draw_buttons_ext(self, context, layout):

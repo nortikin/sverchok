@@ -82,7 +82,7 @@ class SvSolidWireFaceNode(SverchCustomTreeNode, bpy.types.Node):
                     if np.linalg.norm(p1 - p2) > tolerance:
                         line = SvLine.from_two_points(p2, p1)
                         curves = curves + [line]
-                face = curves_to_face(curves, planar=self.planar, force_nurbs=False, tolerance=tolerance)
+                face = curves_to_face(curves, planar=self.planar, force_nurbs=False, tolerance=tolerance, logger=self.sv_logger)
                 new_faces.append(face)
             faces_out.append(new_faces)
 

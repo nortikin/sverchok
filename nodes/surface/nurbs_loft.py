@@ -1,15 +1,20 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.math import supported_metrics
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.surface.nurbs import simple_loft
+from sverchok.utils.surface.nurbs_algorithms import simple_loft
 from sverchok.dependencies import geomdl
-
 
 class SvNurbsLoftNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -31,6 +36,12 @@ class SvNurbsLoftNode(SverchCustomTreeNode, bpy.types.Node):
             description = "How to make slice curves knot vectors equal",
             items = u_knots_modes,
             default = 'UNIFY',
+            update = updateNode)
+
+    knotvector_accuracy : IntProperty(
+            name = "Knotvector accuracy",
+            min = 1,
+            default = 6,
             update = updateNode)
 
     metric : EnumProperty(
@@ -63,6 +74,7 @@ class SvNurbsLoftNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.prop(self, 'u_knots_mode')
+        layout.prop(self, 'knotvector_accuracy')
         layout.prop(self, 'metric')
 
     def sv_init(self, context):
@@ -97,6 +109,7 @@ class SvNurbsLoftNode(SverchCustomTreeNode, bpy.types.Node):
                                     degree_v = degree_v,
                                     knots_u = self.u_knots_mode,
                                     metric = self.metric,
+                                    knotvector_accuracy = self.knotvector_accuracy,
                                     implementation = self.nurbs_implementation)
                 new_surfaces.append(new_surface)
                 new_curves.extend(unified_curves)

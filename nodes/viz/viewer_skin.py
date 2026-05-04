@@ -149,7 +149,12 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
             sd = obj.modifiers['sv_subsurf']
             obj.modifiers.remove(sd)
 
-        _ = obj.modifiers.new(type='SKIN', name='sv_skin')
+        sk = obj.modifiers.new(type='SKIN', name='sv_skin')
+        sk.branch_smoothing = node.branch_smoothing
+        sk.use_x_symmetry   = node.use_x_symmetry
+        sk.use_y_symmetry   = node.use_y_symmetry
+        sk.use_z_symmetry   = node.use_z_symmetry
+        sk.use_smooth_shade = node.use_smooth_shade
         b = obj.modifiers.new(type='SUBSURF', name='sv_subsurf')
         b.levels = node.levels
         b.render_levels = node.render_levels
@@ -196,6 +201,36 @@ class SvSkinViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
     use_root: BoolProperty(default=True, update=updateNode)
     use_slow_root: BoolProperty(default=False, update=updateNode)
 
+    branch_smoothing : FloatProperty(
+        default=0.0, min=0.0, max=1.0, precision=3,
+        name='Branch Smoothing',
+        description='Smooth complex geometry around branches',
+        update=updateNode)
+    use_x_symmetry : BoolProperty(
+        name='Symmetry X',
+        description='Avoiding making unsymmetrical quads across the X axis',
+        default=True,
+        update = updateNode,
+    )
+    use_y_symmetry : BoolProperty(
+        name='Symmetry Y',
+        description='Avoiding making unsymmetrical quads across the Y axis',
+        default=False,
+        update = updateNode,
+    )
+    use_z_symmetry : BoolProperty(
+        name='Symmetry Z',
+        description='Avoiding making unsymmetrical quads across the Z axis',
+        default=False,
+        update = updateNode,
+    )
+    use_smooth_shade : BoolProperty(
+        name='Smooth shading',
+        description='Output faces with smooth shading rather than flat shaded',
+        default=False,
+        update = updateNode,
+    )
+
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
@@ -218,13 +253,19 @@ class SvSkinViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
 
 
     def draw_buttons_ext(self, context, layout):
-        k = layout.box()
-        r = k.row(align=True)
-        r.label(text="setting roots")
-        r = k.row(align=True)
+        box = layout
+        box.use_property_decorate = False
+        box.use_property_split = True
+        r = box.row(align=True, heading="Setting roots")
         r.prop(self, "use_root", text="mark all", toggle=True)
         r.prop(self, "use_slow_root", text="mark some", toggle=True)
-
+        box.row(align=True).prop(self, 'branch_smoothing')
+        r = box.row(align=True, heading='Symmetry')
+        r.prop(self, 'use_x_symmetry', toggle=True, text='X')
+        r.prop(self, 'use_y_symmetry', toggle=True, text='Y')
+        r.prop(self, 'use_z_symmetry', toggle=True, text='Z')
+        box.row(align=True).prop(self, 'use_smooth_shade')
+        pass
 
     def get_geometry_from_sockets(self):
         i = self.inputs
@@ -296,7 +337,7 @@ class SvSkinViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
         pass
 
     def draw_label(self):
-        return f"SK {self.basedata_name}"
+        return f"{SvSkinViewerNodeV28.bl_label} ({self.basedata_name})"
 
 def register():
     bpy.utils.register_class(SvSkinViewerNodeV28)

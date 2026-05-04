@@ -7,7 +7,6 @@ from sverchok.data_structure import updateNode
 
 from sverchok.utils.field.scalar import SvCoordinateScalarField
 
-
 class SvCoordScalarFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Coordinate Scalar Field

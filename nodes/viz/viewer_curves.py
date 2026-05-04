@@ -349,7 +349,6 @@ class SvCurveViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
         self.set_corresponding_materials()
         self.remove_cloner_curve(obj_index)
 
-
 def register():
     bpy.utils.register_class(SvCurveViewerNodeV28)
 

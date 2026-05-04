@@ -27,8 +27,8 @@ def iter_classes_from_module(module, base_types):
         relative_address = ".".join(relative_path.parts)
         nest_module = sys.modules.get(relative_address, None)
         if nest_module is None:
+            #print(f'Looks like module="{relative_address}" was not imported')
             pass
-            # print(f'Looks like module="{relative_address}" was not imported')
         else:
             classes = inspect.getmembers(nest_module, inspect.isclass)
             for _, cls in classes:

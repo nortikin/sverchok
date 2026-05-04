@@ -51,6 +51,10 @@ class LazyDist:
 
 imported_mods = {}
 old_bl_idnames = LazyDist()  # to save some time during initialization
+old_bl_id_wrongnames = {
+    # class name -> bl_idname wrong name (ex. errata)
+    'SvFillHolesNode': 'SvFillsHoleNode',
+}
 
 
 def is_old(node_info: Union[str, bpy.types.Node]):
@@ -83,8 +87,9 @@ def mark_old(node, text="Deprecated node!"):
 
 def mark_all():
     """Add frames with deprecated label to all deprecated nodes if necessary"""
+    old_bl_id_wrongnames_reverse = {v: k for k, v in old_bl_id_wrongnames.items()}
     for node in (n for t in BlTrees().sv_trees for n in t.nodes):
-        if node.bl_idname in old_bl_idnames:
+        if node.bl_idname in old_bl_idnames or (node.bl_idname in old_bl_id_wrongnames_reverse):
             mark_old(node)
 
     def has_old_nodes(tree) -> bool:
@@ -111,10 +116,14 @@ def register_old(bl_id):
         res = inspect.getmembers(mod)
         for name, cls in res:
             if inspect.isclass(cls):
-                if issubclass(cls, bpy.types.Node) and cls.bl_idname == bl_id:
+                if issubclass(cls, bpy.types.Node) and (cls.bl_idname == bl_id or bl_id in old_bl_id_wrongnames and cls.bl_idname==old_bl_id_wrongnames[bl_id]):
                     if bl_id not in imported_mods:
                         mod.register()
                         imported_mods[bl_id] = mod
+                    pass
+                pass
+            pass
+        pass
     else:
         raise LookupError(f"Cannot find {bl_id} among old nodes")
 

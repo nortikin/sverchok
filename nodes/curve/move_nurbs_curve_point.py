@@ -10,9 +10,10 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
+from sverchok.core.sv_custom_exceptions import SvUnsupportedOptionException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, repeat_last_for_length
-from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import (
             move_curve_point_by_moving_control_point,
@@ -133,7 +134,7 @@ class SvNurbsCurveMovePointNode(SverchCustomTreeNode, bpy.types.Node):
             for curve, t_value, index, distance, vector in zip_long_repeat(*params):
                 curve = SvNurbsCurve.to_nurbs(curve)
                 if curve is None:
-                    raise Exception("One of curves is not NURBS")
+                    raise UnsupportedCurveTypeException("One of curves is not NURBS")
 
                 vector = np.array(vector)
                 if self.method == 'ONE_CPT':
@@ -151,7 +152,7 @@ class SvNurbsCurveMovePointNode(SverchCustomTreeNode, bpy.types.Node):
                 elif self.method == 'INSERT_KNOT':
                     new_curve = move_curve_point_by_inserting_knot(curve, t_value, vector, relative=relative)
                 else:
-                    raise Exception("Unsupported method")
+                    raise SvUnsupportedOptionException("Unsupported method")
 
                 new_curves.append(new_curve)
 

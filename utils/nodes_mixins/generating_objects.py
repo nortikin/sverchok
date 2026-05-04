@@ -437,6 +437,9 @@ class SvViewerNode(BlenderObjects):
         else:
             self.show_objects_update(None, is_show)
 
+    def toggle_viewer(self, context):
+        self.show_objects = not self.show_objects
+
     def load_from_json(self, node_data: dict, import_version: float):
         """
         Manually serialization node properties
@@ -575,7 +578,7 @@ class SvObjectNames(bpy.types.PropertyGroup):
     @staticmethod
     def get_random_name():
         """Generate random name from random letters"""
-        return ''.join(random.sample(set(string.ascii_uppercase), 6))
+        return ''.join(random.sample(list(set(string.ascii_uppercase)), 6))
 
 
 class SearchNode:

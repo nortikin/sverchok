@@ -8,21 +8,23 @@ from mathutils import bvhtree
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 
-from sverchok.utils.field.scalar import (SvScalarFieldPointDistance,
-            SvMergedScalarField, SvKdtScalarField,
-            SvLineAttractorScalarField, SvPlaneAttractorScalarField, 
-            SvCircleAttractorScalarField,
-            SvEdgeAttractorScalarField,
-            SvBvhAttractorScalarField,
-            SvBvhEdgesAttractorScalarField
+from sverchok.utils.field.scalar import SvMergedScalarField
+from sverchok.utils.field.vector_operations import (
+        SvAverageVectorField,
+        SvSelectVectorField)
+from sverchok.utils.field.attractor import (SvScalarFieldPointDistance,
+        SvKdtScalarField,
+        SvLineAttractorScalarField, SvPlaneAttractorScalarField, 
+        SvCircleAttractorScalarField,
+        SvEdgeAttractorScalarField,
+        SvBvhAttractorScalarField,
+        SvVectorFieldPointDistance,
+        SvKdtVectorField,
+        SvLineAttractorVectorField, SvPlaneAttractorVectorField,
+        SvCircleAttractorVectorField,
+        SvEdgeAttractorVectorField,
+        SvBvhAttractorVectorField
         )
-from sverchok.utils.field.vector import (SvVectorFieldPointDistance,
-            SvAverageVectorField, SvKdtVectorField, 
-            SvLineAttractorVectorField, SvPlaneAttractorVectorField,
-            SvCircleAttractorVectorField,
-            SvEdgeAttractorVectorField,
-            SvBvhAttractorVectorField,
-            SvSelectVectorField)
 from sverchok.utils.math import all_falloff_types, falloff_array
 from sverchok.utils.kdtree import SvKdTree
 

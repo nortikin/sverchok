@@ -1,6 +1,9 @@
 NURBS Input
 ===========
 
+.. image:: https://github.com/user-attachments/assets/07f09b8e-1434-4e5f-a7ce-5372c1a87aeb
+  :target: https://github.com/user-attachments/assets/07f09b8e-1434-4e5f-a7ce-5372c1a87aeb
+
 Dependencies
 ------------
 
@@ -15,17 +18,26 @@ This node allows to bring NURBS_ Curve and / or Surface objects from Blender's s
 
 .. _NURBS: https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline
 
+Additional description see :doc:`Get Objects Data </nodes/scene/get_objects_data>`.
+
+If objects has red color then they cannot be used as NURBS (Mesh, Nurbs, Empty, Lamp and other). If collection has red color then some objects cannot be used as NURBS.
+
+  .. image:: https://github.com/user-attachments/assets/e3d10f06-7791-4f79-bfcd-3088e049d8af
+    :target: https://github.com/user-attachments/assets/e3d10f06-7791-4f79-bfcd-3088e049d8af
+
+Unprocessed objects also shown in the node buttom with yellow color.
+
 Inputs
 ------
 
-This node does not have any inputs.
+Objects Socket. You can select object or link to Collection picker node to select a collection.
 
 Operators
 ---------
 
 This node has the following operator button:
 
-* **GET**. When pressed, the node will update the list of objects bringed into
+* **GET Selection**. When pressed, the node will update the list of objects bringed into
   Sverchok with a list of currently selected objects. If there are objects
   along selected ones, which are not NURBS curves or surfaces, the node will
   skip them.

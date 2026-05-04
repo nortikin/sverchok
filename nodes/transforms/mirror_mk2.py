@@ -63,8 +63,9 @@ def mirror_plane_matrix(vertices, matrixes):
         eul = matrix.to_euler()
         normal = Vector((0.0, 0.0, 1.0))
         normal.rotate(eul)
-        trans = Matrix.Translation(2 * matrix.to_translation())
-        v = Vector(i)
+        trans = Matrix.Translation(matrix.to_translation())
+        transminus = Matrix.Translation(matrix.to_translation()*-1)
+        v = transminus @ Vector(i)
         r = v.reflect(normal)
         vert.append((trans @ r)[:])
     return vert

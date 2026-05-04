@@ -33,14 +33,14 @@ class SVOB3B_UL_NamesList(bpy.types.UIList):
                 item_icon = ""
 
         layout.label(text=item.name, icon=item_icon)
-        action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_ob3b_collection_operator", icon='X', text='')
+        action = data.wrapper_tracked_ui_draw_op(layout, SvOB3BItemOperatorRemove.bl_idname, icon='X', text='')
         action.fn_name = 'REMOVE'
         action.idx = index
 
 
-class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3BItemOperatorRemove(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_ob3b_collection_operator"
+    bl_idname = "node.sv_ob3b_collection_operator_remove"
     bl_label = "generic bladibla"
 
     fn_name: StringProperty(default='')
@@ -55,7 +55,7 @@ class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
 
 class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.ob3_callback"
+    bl_idname = "node.ob3_callback_mk3"
     bl_label = "Object In mk3 callback"
     bl_options = {'INTERNAL'}
 
@@ -309,5 +309,5 @@ class SvObjectsNodeMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 self.object_names.add().name = named_object
 
 
-classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvObjectsNodeMK3]
+classes = [SvOB3BItemOperatorRemove, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvObjectsNodeMK3]
 register, unregister = bpy.utils.register_classes_factory(classes)

@@ -350,13 +350,27 @@ class FileStruct(Struct):
             if old_nodes.is_old(node):
                 old_nodes.mark_old(node)
 
+    def _get_main_tree_nodes(self):
+        if "main_tree" in self._struct:
+            return self._struct["main_tree"].get("nodes", dict())
+        elif "node" in self._struct:
+            return self._struct["node"]
+        else:
+            return dict()
+
+    def _get_main_tree_links(self):
+        if "main_tree" in self._struct:
+            return self._struct["main_tree"].get("links", [])
+        else:
+            return []
+
     def _build_nodes(self, tree, factories, imported_structs):
         """Build nodes of the main tree, other dependencies should be already initialized"""
         with tree.init_tree():
             # first all nodes should be created without applying their inner data
             # because some nodes can have `parent` property which points into another node
             node_structs = []
-            for node_name, raw_structure in self._struct["main_tree"]["nodes"].items():
+            for node_name, raw_structure in self._get_main_tree_nodes().items():
                 with self.logger.add_fail("Init node (main tree)", f"Name: {node_name}"):
                     node_struct = factories.node(node_name, self.logger, raw_structure)
 
@@ -376,7 +390,7 @@ class FileStruct(Struct):
                     node = tree.nodes[new_name]
                     node_struct.build(node, factories, imported_structs)
 
-            for raw_struct in self._struct["main_tree"]["links"]:
+            for raw_struct in self._get_main_tree_links():
                 with self.logger.add_fail("Build link (main tree)", f"Struct: {raw_struct}"):
                     factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
 
@@ -630,7 +644,11 @@ class NodeStruct(Struct):
         _set_optional(self._struct["attributes"], "label", node.label)
         _set_optional(self._struct["attributes"], "hide", node.hide)
         _set_optional(self._struct["attributes"], "use_custom_color", node.use_custom_color)
-        _set_optional(self._struct["attributes"], "color", node.color[:], node.use_custom_color)
+        if type(node.color) == int: # dxf nodes use int for colors
+            col = node.color
+        else:
+            col = node.color[:]
+        _set_optional(self._struct["attributes"], "color", col, node.use_custom_color)
         if node.parent:  # the node is inside of a frame node
             prop = BPYProperty(node, "parent")
             raw_struct = factories.prop("parent", self.logger).export(prop, factories, dependencies)
@@ -745,12 +763,14 @@ class SocketStruct(Struct):
         _set_optional(self._struct["attributes"], 'hide', socket.hide)
         _set_optional(self._struct, "attributes", self._struct["attributes"])
 
+
         for prop_name in socket.keys():
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
                 if raw_struct is not None:
                     self._struct["properties"][prop.name] = raw_struct
+        
         _set_optional(self._struct, "properties", self._struct["properties"])
 
         return self._struct

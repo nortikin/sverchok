@@ -1,8 +1,8 @@
 """
-in radius1_in s
-in radius2_in s
-in teeth_count_in s
-in tangent_k_in s
+in radius1_in s d=2.0 n=0
+in radius2_in s d=1.0 n=0
+in teeth_count_in s d=5 n=0
+in tangent_k_in s d=1.0 n=0
 out curves_out C
 """
 
@@ -10,9 +10,14 @@ import numpy as np
 from math import pi
 
 from mathutils import Matrix
-from sverchok.data_structure import zip_long_repeat
+from sverchok.data_structure import zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.bezier import SvBezierCurve
+
+_radius1_in = ensure_nesting_level(radius1_in, 2)
+_radius2_in = ensure_nesting_level(radius2_in, 2)
+_teeth_count_in = ensure_nesting_level(teeth_count_in, 2)
+_tangent_k_in = ensure_nesting_level(tangent_k_in, 2)
 
 def interweave(a, b):
     w,h = a.shape
@@ -22,7 +27,7 @@ def interweave(a, b):
     return c
 
 curves_out = []
-for radius1s, radius2s, teeth_counts, tangent_ks in zip_long_repeat(radius1_in, radius2_in, teeth_count_in, tangent_k_in):
+for radius1s, radius2s, teeth_counts, tangent_ks in zip_long_repeat(_radius1_in, _radius2_in, _teeth_count_in, _tangent_k_in):
     for radius1, radius2, teeth_count, tangent_k in zip_long_repeat(radius1s, radius2s, teeth_counts, tangent_ks):
         circle1 = SvCircle(Matrix(), radius1)
         circle2 = SvCircle(Matrix(), radius2)

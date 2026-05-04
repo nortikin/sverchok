@@ -8,6 +8,7 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty
 
+from sverchok.core.sv_custom_exceptions import SvUnsupportedOptionException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, zip_long_repeat,
                                      ensure_nesting_level, get_data_nesting_level)
@@ -108,7 +109,7 @@ class SvSolidBooleanNode(SverchCustomTreeNode, bpy.types.Node):
         elif self.selected_mode == 'DIFF':
             solid = base.cut(rest)
         else:
-            raise Exception("Unknown mode")
+            raise SvUnsupportedOptionException("Unknown mode")
         do_refine = self.refine_solid and self.selected_mode in {'UNION'}
         if do_refine:
             solid = solid.removeSplitter()
@@ -129,7 +130,7 @@ class SvSolidBooleanNode(SverchCustomTreeNode, bpy.types.Node):
         elif self.selected_mode == 'DIFF':
             solid = fused.get_clean_part_by_idx(0, refine=do_refine)
         else:
-            raise Exception("Unknown mode")
+            raise SvUnsupportedOptionException("Unknown mode")
 
         edge_mask = []
         edge_map = []

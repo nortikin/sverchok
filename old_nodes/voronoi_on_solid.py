@@ -42,6 +42,7 @@ class SvVoronoiOnSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
     sv_dependencies = {'scipy', 'FreeCAD'}
+    replacement_nodes = [('SvVoronoiOnSolidNodeMK2', None, None)]
 
     modes = [
             ('SURFACE', "Surface", "Generate regions of Voronoi diagram on the surface of the solid", 0),

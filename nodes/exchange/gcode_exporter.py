@@ -58,6 +58,12 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
 
     last_e: FloatProperty(name="Pull", default=5.0, min=0, soft_max=10)
     path_length: FloatProperty(name="Pull", default=5.0, min=0, soft_max=10)
+    
+    areas_nozzle_section = [
+            ("SQUR", "Square", ""),
+            ("CRCL", "Circle", ""),
+            ("BOTH", "Both", "")
+        ]
 
     folder : StringProperty(name="File", default="", subtype='FILE_PATH')
     pull : FloatProperty(name="Pull", default=5.0, min=0, soft_max=10)
@@ -76,11 +82,13 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
     nozzle : FloatProperty(name="Nozzle", default=0.4, min=0, soft_max=10)
     layer_height : FloatProperty(name="Layer Height", default=0.1, min=0, soft_max=10)
     filament : FloatProperty(name="Filament (\u03A6)", default=1.75, min=0, soft_max=120)
+    scale_all : FloatProperty(name="Scale", default=1.0, min=0.1, soft_max=100000.0)
 
     gcode_mode : EnumProperty(items=[
             ("CONT", "Continuous", ""),
             ("RETR", "Retraction", "")
         ], default='CONT', name="Mode")
+    nozzle_section : EnumProperty(items=areas_nozzle_section, default='SQUR', name="Section")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Layer Height',) #.custom_draw = 'layer_height'
@@ -109,9 +117,11 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
         #col.prop(self, 'esteps')
         col.prop(self, 'filament')
         col.prop(self, 'nozzle')
+        col.prop(self, 'nozzle_section')
         col.separator()
         col.label(text="Speed (Feed Rate F):", icon='DRIVER')
         col.prop(self, 'feed', text='Print')
+        col.prop(self, 'scale_all', text='Scale')
         if self.gcode_mode == 'RETR':
             col.prop(self, 'feed_vertical', text='Z Lift')
             col.prop(self, 'feed_horizontal', text='Travel')
@@ -137,9 +147,12 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
 
     def process(self):
         # manage data
+        if not self.inputs['Vertices'].is_linked:
+            return
         feed = self.feed
         feed_v = self.feed_vertical
         feed_h = self.feed_horizontal
+        scale = self.scale_all
         layer = self.layer_height
         layer = self.inputs['Layer Height'].sv_get()
         vertices = self.inputs['Vertices'].sv_get()
@@ -193,7 +206,7 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
             curve = vertices[i]
             first_id = len(printed_verts)
             for j in range(len(curve)):
-                v = curve[j]
+                v = [i*scale for i in curve[j]]
                 #print('_______________',len(layer))
                 v_flow_mult = flow_mult[i][0][j]
                 v_layer = layer[i][0][j]
@@ -230,7 +243,12 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
                         v0 = mathutils.Vector(curve[j-1])
                         dist = (v1-v0).length
                         #print(dist)
-                        area = v_layer * self.nozzle + pi*(v_layer/2)**2 # rectangle + circle
+                        if self.nozzle_section == "SQUR":
+                            area = v_layer * self.nozzle # rectangle
+                        elif self.nozzle_section == "CRCL":
+                            area = pi*(v_layer/2)**2 # circle
+                        else:
+                            area = v_layer * self.nozzle + pi*(v_layer/2)**2 # rectangle + circle
                         cylinder = pi*(self.filament/2)**2
                         flow = area / cylinder
                         e += dist * v_flow_mult * flow
@@ -247,7 +265,12 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
 
                     v1 = mathutils.Vector(curve[0])
                     dist = (v0-v1).length
-                    area = v_layer * self.nozzle + pi*(v_layer/2)**2 # rectangle + circle
+                    if self.nozzle_section == "SQUR":
+                        area = v_layer * self.nozzle # rectangle
+                    elif self.nozzle_section == "CRCL":
+                        area = pi*(v_layer/2)**2 # circle
+                    else:
+                        area = v_layer * self.nozzle + pi*(v_layer/2)**2 # rectangle + circle
                     cylinder = pi*(self.filament/2)**2
                     flow = area / cylinder
                     e += dist * v_flow_mult * flow

@@ -19,7 +19,6 @@
 
 import bpy
 
-
 def viewerdraw_showhide(operator, context):
     space = context.space_data
     node_tree = space.node_tree
@@ -32,10 +31,8 @@ def viewerdraw_showhide(operator, context):
         return  {'CANCELLED'}
 
     for node in selected_nodes:
-        res = any([i in node.name for i in ['Viewer','Stethoscope']])
-        if  res:
-            node.activate = not node.activate
-
+        if hasattr(node, 'toggle_viewer'):
+            node.toggle_viewer(context)
 
 class SvNodeVDShowHideOperator(bpy.types.Operator):
     """Viewer Draw Node Show Hide Toggle"""

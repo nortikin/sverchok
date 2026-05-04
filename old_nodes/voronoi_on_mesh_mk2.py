@@ -37,6 +37,7 @@ class SvVoronoiOnMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
     sv_dependencies = {'scipy'}
+    replacement_nodes = [('SvVoronoiOnMeshNodeMK3', None, None)]
 
     modes = [
             ('VOLUME', "Split Volume", "Split volume of the mesh into regions of Voronoi diagram", 0),

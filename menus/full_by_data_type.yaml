@@ -16,6 +16,7 @@
     - Generate Mesh:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: OBJECT_DATAMODE  # icon name to show
+        - color_category: Generator
         - SvPlaneNodeMk3
         - SvBoxNodeMk2
         - SvCylinderNodeMK2
@@ -42,6 +43,7 @@
     - Generate Path:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: SV_POLYLINE
+        - color_category: Generator
         - SvLineNodeMK4  # bl_idname of a node
         - SvSegmentGenerator
         - SvNGonNode
@@ -108,7 +110,7 @@
         - SvPols2EdgsNodeMk2
         - SvMeshJoinNodeMk2
         - ---
-        - SvFillsHoleNode
+        - SvFillsHoleNodeMK2
         - SvRecalcNormalsNode
         - SvFlipNormalsNode
         - ---
@@ -128,13 +130,13 @@
     - Modifier Make:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: MODIFIER
-        - LineConnectNodeMK2
+        - LineConnectNodeMK3
         - ---
         - SvOpenSubdivisionNode
         - SvSubdivideNodeMK2
         - SvSubdivideToQuadsNode
         - SvUnsubdivideNode
-        - SvOffsetLineNode
+        - SvOffsetLineNodeMK2
         - SvContourNode
         - ---
         - SvQuadriFlowNode
@@ -158,7 +160,7 @@
     - Mesh CAD:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: TOOL_SETTINGS
-        - SvBevelNode
+        - SvBevelNodeMK2
         - SvIntersectEdgesNodeMK3
         - SvOffsetNode
         - SvInsetSpecialMk2
@@ -177,10 +179,13 @@
         - SvEmbedMesh
         - SvCropMesh2D
         - SvCSGBooleanNodeMK2
+        - SvInternalBooleanNode
         - SvWafelNode
         - ---
         - SvStraightSkeleton2DOffset
         - SvStraightSkeleton2DExtrude
+        - ---
+        - SvSpyrrowNesterNode
 
     - Analyze Mesh:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
@@ -190,13 +195,14 @@
         - SvComponentAnalyzerNode
         - SvDiameterNode
         - SvVolumeNodeMK2
-        - SvAreaNode
+        - SvAreaNodeMK2
         - DistancePPNode
         - SvWeightedVectorSumNode
         - SvDistancePointLineNode
         - SvDistancePointPlaneNode
         - SvDistancetLineLineNode
         - SvPathLengthMk2Node
+        - SvPathGroupLength
         - SvOrigins
         - SvGetNormalsNodeMk2
         - SvIntersectLineSphereNode
@@ -234,6 +240,7 @@
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Curve:
         - icon_name: OUTLINER_OB_CURVE
+        - color_category: Generator
         - SvExLineCurveNode
         - SvCircleCurveMk2Node
         - SvEllipseCurveNodeMK2
@@ -256,13 +263,16 @@
         - SvExRbfCurveNode
         - SvExCirclifyNode
         - ---
+        - SvMonotoneSplineNode
         - SvPointCurveNode
     - Generate Bezier Curve:
         - icon_name: EVENT_B
+        - color_category: Generator
         - SvBezierSplineNode
         - SvExBezierCurveFitNode
     - Generate NURBS Curve:
         - icon_name: EVENT_N
+        - color_category: Generator
         - SvExNurbsCurveNode
         - SvApproxNurbsCurveMk3Node
         - SvExInterpolateNurbsCurveNodeMK2
@@ -272,8 +282,9 @@
     - Modify Curve:
         - icon_name: TOOL_SETTINGS
         - SvExApplyFieldToCurveNode
+        - SvSymmetrizeCurveNode
         - SvExCastCurveNode
-        - SvOffsetCurveMk2Node
+        - SvOffsetCurveMk3Node
         - SvCurveOffsetOnSurfaceNode
         - SvExIsoUvCurveNode
         - SvExCurveOnSurfaceNode
@@ -316,11 +327,13 @@
         - SvExCurveCurvatureNode
         - SvExCurveTorsionNode
         - SvExCurveExtremesNode
+        - SvNurbsCurveExtremesNode
         - SvExCurveZeroTwistFrameNode
         - SvExSlerpCurveFrameNode
         - SvCurveLengthParameterMk2Node
         - SvExCrossCurvePlaneNode
         - SvExCrossCurveSurfaceNode
+        - SvCrossCurveSphereNode
     - Analyze NURBS Curve:
         - icon_name: VIEWZOOM
         - SvIntersectNurbsCurvesNode
@@ -332,7 +345,7 @@
     - SvExMSquaresOnSurfaceNode
     - ---
     - SvAdaptivePlotNurbsCurveNode
-    - SvAdaptivePlotCurveNode
+    - SvAdaptivePlotCurveMk2Node
     - SvExEvalCurveNode
 
 - Surfaces:
@@ -340,6 +353,7 @@
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Surface:
         - icon_name: SURFACE_DATA
+        - color_category: Generator
         - SvExPlaneSurfaceNode
         - SvExSphereNode
         - SvExSurfaceFormulaNode
@@ -361,15 +375,18 @@
         - SvBlendSurfaceNodeMk2
     - Generate NURBS Surface:
         - icon_name: EVENT_N
+        - color_category: Generator
         - SvExNurbsSurfaceNode
         - SvExApproxNurbsSurfaceNodeMK2
         - SvExInterpolateNurbsSurfaceNodeMK2
         - SvNurbsLoftNode
-        - SvNurbsSweepNode
-        - SvNurbsBirailNode
+        - SvNurbsSweepMk2Node
+        - SvNurbsBirailMk2Node
         - SvGordonSurfaceNode
         - ---
         - SvExQuadsToNurbsNode
+        - ---
+        - SvConcatSurfacesNode
     - Modify Surface:
         - icon_name: TOOL_SETTINGS
         - SvExApplyFieldToSurfaceNode
@@ -386,6 +403,9 @@
         - ---
         - SvSurfaceElevateDegreeNode
         - SvSurfaceReduceDegreeNode
+        - ---
+        - SvAdjustNurbsSurfaceNode
+        - SvSnapSurfacesNode
     - Analyze Surface:
         - icon_name: VIEWZOOM
         - SvExSurfaceDomainNode
@@ -410,6 +430,7 @@
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Field:
         - icon_name: OUTLINER_OB_FORCE_FIELD
+        - color_category: Generator
         - SvCoordScalarFieldNode
         - SvExScalarFieldFormulaNode
         - SvExVectorFieldFormulaNode
@@ -417,6 +438,8 @@
         - SvExDecomposeVectorFieldNode
         - SvExScalarFieldPointNode
         - SvAttractorFieldNodeMk2
+        - SvTwistFieldNode
+        - SvTaperFieldNode
         - SvRotationFieldNode
         - SvExImageFieldNode
         - SvMeshSurfaceFieldNode
@@ -433,6 +456,7 @@
         - icon_name: TOOL_SETTINGS
         - SvExScalarFieldMathNode
         - SvExVectorFieldMathNode
+        - SvVectorFieldFilterNode
         - SvScalarFieldCurveMapNode
         - SvExFieldDiffOpsNode
         - SvScalarFieldCurvatureNode
@@ -452,6 +476,7 @@
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Solid:
         - icon_name: MESH_CUBE
+        - color_category: Generator
         - SvBoxSolidNode
         - SvCylinderSolidNode
         - SvConeSolidNode
@@ -479,6 +504,7 @@
         - SvSolidSectionNode
         - SvSolidGeneralFuseNode
         - SvMirrorSolidNode
+        - SvSymmetrizeSolidNode
         - SvOffsetSolidNode
         - SvSplitSolidNode
         - SvHollowSolidNode
@@ -519,7 +545,7 @@
     - SvExVoronoi3DNode
     - SvExVoronoiSphereNode
     - SvVoronoiOnSurfaceNode
-    - SvVoronoiOnMeshNodeMK4
+    - SvVoronoiOnMeshNodeMK5
     - SvVoronoiOnSolidNodeMK2
     - ---
     - SvLloyd2dNode
@@ -626,7 +652,7 @@
     - SvSwitchNodeMK2
     - SvInputSwitchNodeMOD
     - SvNeuroElman1LNode
-    - SvCustomSwitcher
+    - SvCustomSwitcherMK2
     - SvRangeSwitchNode
     - ---
     - SvLoopInNode
@@ -724,6 +750,8 @@
     - SvTextureViewerNode
     - SvTextureViewerNodeLite
     - SvWaveformViewer
+    - ---
+    - SvDataTreeVizNode
     - SvConsoleNode
 
 - Text:
@@ -741,18 +769,18 @@
     - SvGTextNode
     - ---
     - SvStringsToolsNode
-    - SvSimpleTextNode
+    - SvSimpleTextNodeMK2
 
 - Scene:
     - icon_name: SCENE_DATA
     - extra_menu: ConnectionPartialMenu
-    - SvGetObjectsDataMK3
+    - SvGetObjectsDataMK5
     - SvObjInLite
     - SvCurveInputNode
     - SvFCurveInNodeMK1
     - SvCollectionPicker
-    - SvBezierInNode
-    - SvExNurbsInNode
+    - SvBezierInNodeMK3
+    - SvExNurbsInNodeMK3
     - SvParticlesMK2Node
     - ---
     - SvSelectionGrabberLite
@@ -767,6 +795,7 @@
     - SvExJsonToNurbsNode
     - SvImportSolidNode
     - SvExportSolidNode
+    - SvExportIfcNode
     - SvReceiveFromSorcarNode
     - SvExportGcodeNode
     - SvReadFCStdNode
@@ -775,6 +804,7 @@
     - SvReadFCStdSketchNode
     - SvFCStdSpreadsheetNode
     - SvApproxSubdtoNurbsNode
+    - SvGlbExportNode
 
 - Layout:
     - icon_name: NODETREE
@@ -876,12 +906,27 @@
     - SvSvgFillStrokeNodeMk2
     - SvSvgPatternNode
 
+- DXF:
+    - icon_name: SV_SVG
+    - extra_menu: ConnectionPartialMenu
+    - SvDxfImportNode
+    - SvDxfExportNode
+    - SvDxfLinDimsNode
+    - SvDxfTextsNode
+    - SvDxfHatchNode
+    - SvDxfLinesNode
+    - SvDxfCirclesNode
+    - SvDxfPolygonsNode
+
 - ---
 
-- Group:  # label of custom menu to show
-    - custom_menu: NODE_MT_SverchokGroupMenu  # bl_idname of the custom menu
+- Group:  # Group sub-tree (monad) node category
     - icon_name: NODETREE
     - extra_menu: UiToolsPartialMenu
+    - SvGroupTreeNode  # listed directly so the node is discoverable via search
+    - Group tools:  # extra operators (input/output/from-selected)
+        - custom_menu: NODE_MT_SverchokGroupMenu
+        - icon_name: NODETREE
 
 - Presets:
     - custom_menu: NODEVIEW_MT_AddPresetMenu

@@ -150,7 +150,7 @@ class SvVectorMathNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         text = self.current_op.replace("_", " ")
         if text in {'SCALAR', '1/SCALAR'}:
             text = f'A * {text}'
-        return text
+        return f'{SvVectorMathNodeMK3.bl_label}: {text}'
 
 
     def draw_buttons(self, ctx, layout):

@@ -229,5 +229,4 @@ class SvMetaballOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
             objects = self.get_children()
             self.outputs['Objects'].sv_set(objects)
 
-
 register, unregister = bpy.utils.register_classes_factory([SvMetaballOutNode])

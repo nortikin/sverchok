@@ -1,8 +1,8 @@
 Skin Mesher
 ===========
 
-.. image:: https://user-images.githubusercontent.com/14288520/190384670-3491809c-c890-44c5-8995-8ff6a3970ca9.png
-  :target: https://user-images.githubusercontent.com/14288520/190384670-3491809c-c890-44c5-8995-8ff6a3970ca9.png
+.. image:: https://github.com/user-attachments/assets/a178dc63-a16f-4737-9be1-439b6f1ef1dc
+  :target: https://github.com/user-attachments/assets/a178dc63-a16f-4737-9be1-439b6f1ef1dc
 
 .. image:: https://user-images.githubusercontent.com/14288520/190581380-acb569e2-d9c0-498e-8ba9-666642008309.png
   :target: https://user-images.githubusercontent.com/14288520/190581380-acb569e2-d9c0-498e-8ba9-666642008309.png

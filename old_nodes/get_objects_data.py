@@ -9,8 +9,6 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty
 import bmesh
 
-#from sverchok.nodes.scene.get_objects_data_mk2 import SvOB3BDataCollectionMK2, SVOB3B_UL_NamesListMK2, SvOB3BItemOperatorMK2, SvOB3CallbackMK2
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode
@@ -19,9 +17,10 @@ from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
+from sverchok.old_nodes.objects_mk3 import SVOB3B_UL_NamesList
 
 
-class SvOB3BDataCollectionMK2(bpy.types.PropertyGroup):
+class SvOB3BDataCollection(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
     icon: bpy.props.StringProperty(default="BLANK1")
 
@@ -29,27 +28,9 @@ class SvOB3BDataCollectionMK2(bpy.types.PropertyGroup):
 class ReadingObjectDataError(Exception):
     pass
 
+class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
 
-class SVOB3B_UL_NamesListMK2(bpy.types.UIList):
-
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-
-        item_icon = item.icon
-        if not item.icon or item.icon == "BLANK1":
-            try:
-                item_icon = 'OUTLINER_OB_' + bpy.data.objects[item.name].type
-            except:
-                item_icon = ""
-
-        layout.label(text=item.name, icon=item_icon)
-        action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_ob3b_collection_operator_mk2", icon='X', text='')
-        action.fn_name = 'REMOVE'
-        action.idx = index
-
-
-class SvOB3BItemOperatorMK2(bpy.types.Operator, SvGenericNodeLocator):
-
-    bl_idname = "node.sv_ob3b_collection_operator_mk2"
+    bl_idname = "node.sv_ob3b_collection_operator"
     bl_label = "generic bladibla"
 
     fn_name: StringProperty(default='')
@@ -61,9 +42,9 @@ class SvOB3BItemOperatorMK2(bpy.types.Operator, SvGenericNodeLocator):
         node.process_node(None)
 
 
-class SvOB3CallbackMK2(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.ob3_callback_mk2"
+    bl_idname = 'node.ob3_callback'
     bl_label = "Object In mk3 callback"
     bl_options = {'INTERNAL'}
 
@@ -128,7 +109,7 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollectionMK2)
+    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection)
 
     active_obj_index: bpy.props.IntProperty()
 
@@ -191,7 +172,7 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
     def draw_obj_names(self, layout):
         if self.object_names:
-            layout.template_list("SVOB3B_UL_NamesListMK2", "", self, "object_names", self, "active_obj_index")
+            layout.template_list("SVOB3B_UL_NamesList", "", self, "object_names", self, "active_obj_index")
         else:
             layout.label(text='--None--')
 
@@ -206,7 +187,7 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             row = col.row()
 
             op_text = "Get selection"  # fallback
-            callback = 'node.ob3_callback_mk2'
+            callback = SvOB3Callback.bl_idname
 
             if self.prefs_over_sized_buttons:
                 row.scale_y = 4.0
@@ -244,7 +225,7 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons_3dpanel(self, layout):
         if not self.by_input:
-            callback = 'node.ob3_callback_mk2'
+            callback = SvOB3Callback.bl_idname
             row = layout.row(align=True)
             row.label(text=self.label if self.label else self.name)
             colo = row.row(align=True)
@@ -381,6 +362,5 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
-classes = [SvOB3BItemOperatorMK2, SvOB3BDataCollectionMK2, SVOB3B_UL_NamesListMK2, SvOB3CallbackMK2, SvGetObjectsData]
-#classes = [SvGetObjectsData]
+classes = [SvOB3BItemOperator, SvOB3BDataCollection, SvOB3Callback, SvGetObjectsData]
 register, unregister = bpy.utils.register_classes_factory(classes)

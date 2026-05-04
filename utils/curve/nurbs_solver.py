@@ -39,26 +39,27 @@ There can be the following situations:
 import numpy as np
 from collections import defaultdict
 
+from sverchok.core.sv_custom_exceptions import AlgorithmError, ArgumentError, InvalidStateError
 from sverchok.utils.sv_logging import get_logger
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
+from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, to_homogenous
 
 class SvNurbsCurveGoal(object):
     """
     Abstract class for curve goal.
     """
     def copy(self):
-        raise Exception("Not implemented")
+        raise NotImplementedError("Not implemented")
 
     def add(self, other):
-        raise Exception("Not implemented")
+        raise NotImplementedError("Not implemented")
         
     def get_equations(self, solver):
-        raise Exception("Not implemented")
+        raise NotImplementedError("Not implemented")
 
     def get_n_defined_control_points(self):
-        raise Exception("Not implemented")
+        raise NotImplementedError("Not implemented")
 
 class SvNurbsCurvePoints(SvNurbsCurveGoal):
     """
@@ -68,12 +69,12 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
     def __init__(self, us, points, weights = None, relative=False):
         self.us = np.asarray(us)
         if self.us.ndim != 1:
-            raise Exception(f"T values array must be 1-dimensional, but got {self.us.shape}")
+            raise ArgumentError(f"T values array must be 1-dimensional, but got {self.us.shape}")
         self.vectors = np.asarray(points)
         if self.vectors.ndim != 2:
-            raise Exception(f"Points must be 2-dimensional, but got {self.vectors.shape}")
+            raise ArgumentError(f"Points must be 2-dimensional, but got {self.vectors.shape}")
         if len(us) != len(self.vectors):
-            raise Exception(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
+            raise ArgumentError(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
         self.relative = relative
         if weights is None:
             self.weights = None
@@ -127,7 +128,10 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         return alphas
 
     def get_src_points(self, solver):
-        return solver.src_curve.evaluate_array(self.us)
+        if solver.ndim == 3:
+            return solver.src_curve.evaluate_array(self.us)
+        else:
+            return solver.src_curve.evaluate_homogenous_array(self.us)
 
     def get_n_defined_control_points(self):
         return len(self.us)
@@ -157,7 +161,7 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
 
         if solver.src_curve is None:
             if self.relative:
-                raise Exception("Can not solve relative constraint without original curve")
+                raise InvalidStateError("Can not solve relative constraint without original curve")
             else:
                 src_points = None
         else:
@@ -181,12 +185,12 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
     def __init__(self, us, tangents, weights = None, relative=False):
         self.us = np.asarray(us)
         if self.us.ndim != 1:
-            raise Exception(f"T values array must be 1-dimensional, but got {self.us.shape}")
+            raise ArgumentError(f"T values array must be 1-dimensional, but got {self.us.shape}")
         self.vectors = np.asarray(tangents)
         if self.vectors.ndim != 2:
-            raise Exception(f"Points must be 2-dimensional, but got {self.vectors.shape}")
+            raise ArgumentError(f"Points must be 2-dimensional, but got {self.vectors.shape}")
         if len(us) != len(self.vectors):
-            raise Exception(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
+            raise ArgumentError(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
         self.relative = relative
         if weights is None:
             self.weights = None
@@ -237,19 +241,23 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
         return numerator / denominator
     
     def get_src_points(self, solver):
-        return solver.src_curve.tangent_array(self.us)
+        tangents = solver.src_curve.tangent_array(self.us)
+        if solver.ndim == 4 and tangents.shape[-1] == 3:
+            ones = np.ones((len(tangents),))
+            tangents = to_homogenous(tangents, ones)
+        return tangents
 
 class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
     def __init__(self, order, us, vectors, weights = None, relative=False):
         self.order = order
         self.us = np.asarray(us)
         if self.us.ndim != 1:
-            raise Exception(f"T values array must be 1-dimensional, but got {self.us.shape}")
+            raise ArgumentError(f"T values array must be 1-dimensional, but got {self.us.shape}")
         self.vectors = np.asarray(vectors)
         if self.vectors.ndim != 2:
-            raise Exception(f"Vectors must be 2-dimensional, but got {self.vectors.shape}")
+            raise ArgumentError(f"Vectors must be 2-dimensional, but got {self.vectors.shape}")
         if len(us) != len(self.vectors):
-            raise Exception(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
+            raise ArgumentError(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
         self.relative = relative
         if weights is None:
             self.weights = None
@@ -291,7 +299,11 @@ class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
         return betas
     
     def get_src_points(self, solver):
-        return solver.src_curve.tangent_array(self.us)
+        tangents = solver.src_curve.tangent_array(self.us)
+        if solver.ndim == 4 and tangents.shape[-1] == 3:
+            ones = np.ones((len(tangents),))
+            tangents = to_homogenous(tangents, ones)
+        return tangents
 
 class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
     """
@@ -300,7 +312,7 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
     """
     def __init__(self, us1, us2, weights = None, relative_u=False, relative=False):
         if len(us1) != len(us2):
-            raise Exception("Lengths of us1 and us2 must be equal")
+            raise ArgumentError("Lengths of us1 and us2 must be equal")
         self.us1 = np.asarray(us1)
         self.us2 = np.asarray(us2)
         self.relative_u = relative_u
@@ -390,7 +402,7 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
 
         if self.relative:
             if solver.src_curve is None:
-                raise Exception("Can not solve relative constraint without original curve")
+                raise InvalidStateError("Can not solve relative constraint without original curve")
             else:
                 points1, points2 = self.calc_vectors(solver)
                 for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
@@ -406,7 +418,7 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
     """
     def __init__(self, us1, us2, weights = None, relative_u=False, relative=False):
         if len(us1) != len(us2):
-            raise Exception("Lengths of us1 and us2 must be equal")
+            raise ArgumentError("Lengths of us1 and us2 must be equal")
         self.us1 = np.asarray(us1)
         self.us2 = np.asarray(us2)
         self.relative_u = relative_u
@@ -472,7 +484,7 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
 
         if self.relative:
             if solver.src_curve is None:
-                raise Exception("Can not solve relative constraint without original curve")
+                raise InvalidStateError("Can not solve relative constraint without original curve")
             else:
                 points1, points2 = self.calc_vectors(solver)
                 for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
@@ -551,7 +563,7 @@ class SvNurbsCurveControlPoints(SvNurbsCurveGoal):
 
         if solver.src_curve is None:
             if self.relative:
-                raise Exception("Can not solve relative constraint without original curve")
+                raise InvalidStateError("Can not solve relative constraint without original curve")
             else:
                 src_points = None
         else:
@@ -588,9 +600,9 @@ class SvNurbsCurveSolver(SvCurve):
     """
     def __init__(self, degree=None, src_curve=None, ndim=3):
         if degree is None and src_curve is None:
-            raise Exception("Either degree or src_curve must be provided")
+            raise ArgumentError("Either degree or src_curve must be provided")
         elif degree is not None and src_curve is not None and src_curve.get_degree() != degree:
-            raise Exception("If src_curve is provided, then degree must not be provided")
+            raise ArgumentError("If src_curve is provided, then degree must not be provided")
         self.src_curve = src_curve
         if src_curve is not None and degree is None:
             self.degree = src_curve.get_degree()
@@ -603,6 +615,7 @@ class SvNurbsCurveSolver(SvCurve):
         self.knotvector = None
         self.goals = []
         self.A = self.B = None
+        self._inited = False
 
     @staticmethod
     def _check_is_rational(weights):
@@ -657,7 +670,7 @@ class SvNurbsCurveSolver(SvCurve):
 
     def set_curve_weights(self, weights):
         if len(weights) != self.n_cpts:
-            raise Exception("Number of weights must be equal to the number of control points")
+            raise ArgumentError("Number of weights must be equal to the number of control points")
         self.curve_weights = np.asarray(weights)
 
     def set_curve_params(self, n_cpts, knotvector = None, weights = None):
@@ -665,7 +678,7 @@ class SvNurbsCurveSolver(SvCurve):
         if knotvector is not None:
             err = sv_knotvector.check(self.degree, knotvector, n_cpts)
             if err is not None:
-                raise Exception(err)
+                raise AlgorithmError(err)
             self.knotvector = np.asarray(knotvector)
         else:
             self.knotvector = sv_knotvector.generate(self.degree, n_cpts)
@@ -712,10 +725,12 @@ class SvNurbsCurveSolver(SvCurve):
         self.goals = goals
 
     def _init(self):
+        if self._inited:
+            return
         if self.n_cpts is None:
-            raise Exception("Number of control points is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()")
+            raise InvalidStateError("Number of control points is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()")
         if self.knotvector is None:
-            raise Exception("Knotvector is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()")
+            raise InvalidStateError("Knotvector is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()")
         ndim = self.ndim
         n = self.n_cpts
         p = self.degree
@@ -732,6 +747,21 @@ class SvNurbsCurveSolver(SvCurve):
             Bs.append(Bi)
         self.A = np.concatenate(As)
         self.B = np.concatenate(Bs)
+        self._inited = True
+
+    def get_matrices(self):
+        self._init()
+        return self.A, self.B
+
+    def get_problem_type(self):
+        self._init()
+        n_equations, n_unknowns = self.A.shape
+        if n_equations == n_unknowns:
+            return SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
+        elif n_equations < n_unknowns:
+            return SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
+        else: # n_equations > n_unknowns
+            return SvNurbsCurveSolver.PROBLEM_OVERDETERMINED
 
     PROBLEM_WELLDETERMINED = 'WELLDETERMINED'
     PROBLEM_UNDERDETERMINED = 'UNDERDETERMINED'
@@ -761,42 +791,43 @@ class SvNurbsCurveSolver(SvCurve):
             #logger.debug(f"Solving well-determined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
             problem_type = SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
             if problem_type not in problem_types:
-                raise Exception("The problem is well-determined")
+                raise AlgorithmError("The problem is well-determined")
             try:
                 A1 = np.linalg.inv(self.A)
                 X = (A1 @ self.B).T
             except np.linalg.LinAlgError as e:
                 logger.error(f"Matrix: {self.A}")
-                raise Exception(f"Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}") from e
+                raise AlgorithmError(f"Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}") from e
         elif n_equations < n_unknowns:
             #logger.debug(f"Solving underdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
             problem_type = SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
             if problem_type not in problem_types:
-                raise Exception("The problem is underdetermined")
+                raise AlgorithmError("The problem is underdetermined")
             A1 = np.linalg.pinv(self.A)
             X = (A1 @ self.B).T
         else: # n_equations > n_unknowns
             #logger.debug(f"Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
             problem_type = SvNurbsCurveSolver.PROBLEM_OVERDETERMINED
             if problem_type not in problem_types:
-                raise Exception("The system is overdetermined")
+                raise AlgorithmError("The system is overdetermined")
             X, residues, rank, singval = np.linalg.lstsq(self.A, self.B)
             residue = residues.sum()
             
         d_cpts = X.reshape((n, ndim))
         if ndim == 4:
-            d_cpts, d_weights = from_homogenous(d_cpts)
+            #print("D cpts 4", d_cpts)
             if self.src_curve is None:
-                weights = d_weights
+                cpts, weights = from_homogenous(d_cpts)
             else:
-                weights = self.curve_weights + d_weights
+                cpts, weights = from_homogenous(d_cpts + self.src_curve.get_homogenous_control_points())
+                #print("Res_weights", weights)
         else:
+            if self.src_curve is None:
+                cpts = d_cpts
+            else:
+                cpts = self.src_curve.get_control_points() + d_cpts
             weights = self.curve_weights
-        if self.src_curve is None:
-            curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, d_cpts, weights)
-        else:
-            cpts = self.src_curve.get_control_points() + d_cpts
-            curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
+        curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
         return problem_type, residue, curve
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):

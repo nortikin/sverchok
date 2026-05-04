@@ -28,9 +28,9 @@ class SvEllipseCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                        (SvEllipse.F2, "F2", "Ellipse focal point 2", 3)]
 
     def update_sockets(self, context):
-        self.inputs['Minor Radius'].enabled = (self.mode == "AB")
-        self.inputs['Eccentricity'].enabled = (self.mode == "AE")
-        self.inputs['Focal Length'].enabled = (self.mode == "AC")
+        self.inputs['Minor Radius'].hide_safe = (self.mode != "AB")
+        self.inputs['Eccentricity'].hide_safe = (self.mode != "AE")
+        self.inputs['Focal Length'].hide_safe = (self.mode != "AC")
 
         updateNode(self, context)
 

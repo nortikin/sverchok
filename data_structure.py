@@ -39,7 +39,6 @@ from numpy import (
 from sverchok.utils.sv_logging import sv_logger
 import numpy as np
 
-
 RELOAD_EVENT = False
 
 cache_viewer_baker = {}
@@ -142,6 +141,17 @@ def match_long_repeat(lsts):
 def zip_long_repeat(*lists):
     objects = match_long_repeat(lists)
     return zip(*objects)
+
+def zip_long_repeat_recursive(max_level, *lists):
+    def helper(level, *sublists):
+        sub_result = []
+        for items in zip_long_repeat(*sublists):
+            if level == 0:
+                sub_result.append(items)
+            else:
+                sub_result.append(helper(level-1, *items))
+        return sub_result
+    return helper(max_level-1, *lists)[0]
 
 def match_long_cycle(lsts):
     """return matched list, cycling the shorter lists
@@ -553,6 +563,22 @@ def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES, search_first_data
     res = helper(data, 0)
     return res[0] 
 
+def get_max_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
+    def helper(data, recursion_depth):
+        if isinstance(data, data_types):
+            return 0
+        elif isinstance(data, (list, tuple, ndarray)):
+            if len(data) == 0:
+                return 1
+            else:
+                nesting = [helper(item, recursion_depth+1)+1 for item in data]
+                return max(nesting)
+        elif data is None:
+            raise TypeError("get_data_nesting_level: encountered None at nesting level {}".format(recursion_depth))
+        else:
+            return 0
+    return helper(data,0)
+
 def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
     """
     data: number, or list of numbers, or list of lists, etc.
@@ -575,7 +601,7 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input
     current_level = get_data_nesting_level(data, data_types)
     if current_level > target_level:
         if input_name is None:
-            raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+            raise TypeError("Input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
         else:
             raise TypeError("Input data in socket {} already has nesting level of {}. Required level was {}.".format(input_name, current_level, target_level))
     result = data

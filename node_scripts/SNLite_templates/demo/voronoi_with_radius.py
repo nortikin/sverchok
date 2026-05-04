@@ -1,7 +1,7 @@
 '''
 in verts_in v d=[] n=0
-in radius s d=1.0 n=1
-in resolution s d=0.1 n=1
+in radius s d=1.0 n=2
+in resolution s d=0.1 n=2
 out verts_out v
 out polys_out s
 '''
@@ -130,7 +130,7 @@ def get_arc(start_v, end_v, center_v, resolution, mode='clockwise'):
 
 def get_circle(center_v, radius, resolution):
     #return points of circle
-    count = TWO_PI * radius / resolution
+    count = int (TWO_PI * radius / resolution)
     count = count if count >= 5 else 5
     steps_angle = list(np.linspace(0, TWO_PI, count))[:-1]
     vectors = [Vector((sin(ang),cos(ang))) * radius + center_v for ang in steps_angle]

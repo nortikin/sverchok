@@ -10,7 +10,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, repeat_last_for_length
-from sverchok.utils.surface import SvSurface
+from sverchok.utils.surface import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 
 class SvSurfaceReduceDegreeNode(SverchCustomTreeNode, bpy.types.Node):
@@ -103,7 +103,7 @@ class SvSurfaceReduceDegreeNode(SverchCustomTreeNode, bpy.types.Node):
             for surface, degree, tolerance in zip_long_repeat(*params):
                 surface = SvNurbsSurface.get(surface)
                 if surface is None:
-                    raise Exception("One of surfaces is not NURBS")
+                    raise UnsupportedSurfaceTypeException("One of surfaces is not NURBS")
                 if self.mode == 'DELTA':
                     kwargs = dict(delta = degree)
                 else:

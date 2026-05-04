@@ -13,7 +13,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.fillet import (
         SMOOTH_POSITION, SMOOTH_TANGENT, SMOOTH_ARC, SMOOTH_BIARC, SMOOTH_QUAD, SMOOTH_NORMAL, SMOOTH_CURVATURE,
@@ -146,7 +146,7 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
             for curve, radiuses, cut_offset, bulge_factor in zip_long_repeat(*params):
                 curve = SvNurbsCurve.to_nurbs(curve)
                 if curve is None:
-                    raise Exception("One of curves is not a NURBS")
+                    raise UnsupportedCurveTypeException("One of curves is not a NURBS")
                 if self.is_polyline:
                     curve, centers, radiuses = fillet_polyline_from_curve(curve, radiuses,
                                 smooth = self.smooth_mode,

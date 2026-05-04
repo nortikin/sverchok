@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
 from sverchok.utils.field.vector import SvVectorField
-from sverchok.utils.curve import SvDeformedByFieldCurve, SvCurve
+from sverchok.utils.curve import SvDeformedByFieldCurve, SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 class SvApplyFieldToCurveNode(SverchCustomTreeNode, bpy.types.Node):
@@ -71,7 +71,7 @@ class SvApplyFieldToCurveNode(SverchCustomTreeNode, bpy.types.Node):
                         if nurbs is not None:
                             control_points = nurbs.get_control_points()
                         else:
-                            raise Exception("Curve is not a NURBS!")
+                            raise UnsupportedCurveTypeException("Curve is not a NURBS!")
 
                         cpt_xs = control_points[:,0]
                         cpt_ys = control_points[:,1]

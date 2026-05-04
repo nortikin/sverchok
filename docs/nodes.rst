@@ -40,3 +40,4 @@ Nodes
    Pulga Physics <nodes/pulga_physics/pulga_physics_index>
    Exchange <nodes/exchange/exchange_index>
    SVG <nodes/svg/svg_index>
+   DXF <nodes/dxf/dxf_index>

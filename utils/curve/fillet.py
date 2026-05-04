@@ -153,10 +153,11 @@ def fillet_nurbs_curve(curve, smooth, cut_offset,
         bulge_factor = 0.5,
         biarc_parameter = 1.0,
         planar_tolerance = 1e-6,
-        tangent_tolerance = 1e-6):
+        angle_tolerance = 1e-6,
+        amplitude_tolerance = 1e-6):
 
     cyclic = curve.is_closed()
-    segments = curve.split_at_fracture_points(tangent_tolerance = tangent_tolerance)
+    segments = curve.split_at_fracture_points(angle_tolerance = angle_tolerance, amplitude_tolerance = amplitude_tolerance)
     n = len(segments)
     cuts = [cut_ends(s, cut_offset, cut_start = (i > 0 or cyclic), cut_end = (i < n-1 or cyclic)) for i, s in enumerate(segments)]
     fillets = [calc_single_fillet(smooth, s1, s2, dt1, dt2, bulge_factor, biarc_parameter, planar_tolerance) for (dt1,s1), (dt2,s2) in zip(cuts, cuts[1:])]

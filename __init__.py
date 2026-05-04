@@ -44,7 +44,7 @@
 bl_info = {
     "name": "Sverchok",
     "author": "sverchok-b3d@ya.ru various authors see https://github.com/nortikin/sverchok/graphs/contributors",
-    "version": (1, 2, 0),
+    "version": (1, 4, 0),
     "blender": (3, 5, 0),
     "location": "Node Editor",
     "category": "Node",
@@ -54,7 +54,7 @@ bl_info = {
     "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679"
 }
 
-VERSION = 'v1.3.0'  # looks like the only way to have custom format for the version
+VERSION = 'v1.4.0'  # looks like the only way to have custom format for the version
 
 reload_event = "import_sverchok" in locals()  # reloading does not clear previous module names
 

@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import math
 from itertools import cycle
 
 from mathutils import Vector, Matrix
@@ -27,7 +27,7 @@ from sverchok.utils.modules.drawing_abstractions import drawing, shading_3d
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.polygon_utils import pols_normals
 from sverchok.utils.modules.vertex_utils import np_vertex_normals
-from sverchok.utils.math import np_dot
+from sverchok.utils.math import np_dot, np_ambient_occlusion
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
 from sverchok.utils.sv_obj_baker import SvObjBakeMK3
 
@@ -65,7 +65,7 @@ default_geometry_shader = '''
         vec3 ab = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
         vec3 ac = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
         vec3 normal3 = normalize(cross(ab, ac));
-        vec4 normal4 = vec4(normal3, 1.0);
+        vec4 normal4 = vec4(normal3, 0.5);
         vs_out.FaceNormal = normal3;
         vec4 rescale = vec4(0.00003, 0.00003, 0.00003, 0.0);
         vec4 offset = vec4(normal4 * rescale);
@@ -83,17 +83,17 @@ default_geometry_shader = '''
 
 default_fragment_shader = '''
 
-    in VS_OUT
-    {
-        vec3 FaceNormal;
-    } fs_in;
+in VS_OUT
+{
+    vec3 FaceNormal;
+} fs_in;
 
-    out vec4 gl_FragColor;
+out vec4 fragColor;
 
-    void main()
-    {
-        gl_FragColor = vec4(fs_in.FaceNormal.xyz, 0.7);
-    }
+void main()
+{
+    fragColor = vec4(fs_in.FaceNormal.xyz, 0.7);
+}
 '''
 
 
@@ -183,10 +183,13 @@ def view_3d_geom(context, args):
         else:
             if config.uniform_pols:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
+                drawing.set_polygonmode_fill(config.face_culling_set)
                 config.p_shader.bind()
                 config.p_shader.uniform_float("color", config.poly_color[0][0])
+                pass
             else:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices, "color": geom.p_vertex_colors}, indices=geom.p_indices)
+                drawing.set_polygonmode_fill(config.face_culling_set)
                 config.p_shader.bind()
 
         p_batch.draw(config.p_shader)
@@ -195,7 +198,7 @@ def view_3d_geom(context, args):
             drawing.disable_polygon_offset_fill()
         if config.draw_gl_wireframe:
             # this is to reset the state of drawing to fill
-            drawing.set_polygonmode_fill()
+            drawing.set_polygonmode_fill(config.face_culling_set)
 
 
     if config.draw_edges:
@@ -213,27 +216,134 @@ def view_3d_geom(context, args):
             shader.uniform_float("m_color", geom.e_vertex_colors[0])
             batch.draw(shader)
         else:
-            if config.uniform_edges:
-                e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
-                config.e_shader.bind()
-                config.e_shader.uniform_float("color", config.edge_color[0][0])
-                e_batch.draw(config.e_shader)
-            else:
-                e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
-                config.e_shader.bind()
-                e_batch.draw(config.e_shader)
+            if bpy.app.version < (4, 5, 0):
+                depthBias = 3e-5 # ~1e-6..1e-4
+                ctx  = bpy.context
+                space = getattr(ctx, "space_data", None)
+                if hasattr(space, "clip_start") and hasattr(space, "clip_end"):
+                    clip_start = space.clip_start
+                    depthBias  = depthBias/(0.01/clip_start)
+                    depthBias = max(depthBias, 1e-6)
+                    depthBias = min(depthBias, 1e-4)
 
-        drawing.reset_line_width()
+                if config.uniform_edges:
+                    if bpy.app.version < (3, 5, 0):
+                        e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
+                        config.e_shader.bind()
+                        config.e_shader.uniform_float("color", config.edge_color[0][0])
+                        e_batch.draw(config.e_shader)
+                    elif bpy.app.version < (4, 5, 0):
+                        ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
+                        VERT_BIAS = """
+                        in vec3 pos;
+                        uniform mat4 modelViewMatrix;
+                        uniform mat4 projectionMatrix;
+
+                        void main()
+                        {
+                            vec4 v = modelViewMatrix * vec4(pos,1.0);
+                            gl_Position = projectionMatrix * v;
+                        }
+                        """
+                        FRAG_BIAS = """
+                        uniform vec4 color;
+                        uniform float depthBias;  // ~1e-6..1e-4
+                        out vec4 FragColor;
+                        void main(){
+                            FragColor = color;
+                            float adaptive = depthBias * gl_FragCoord.w;
+                            float z = gl_FragCoord.z - adaptive;
+                            gl_FragDepth = clamp(z, 0.0, 1.0);
+                        }
+                        """
+                        shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
+                        config.e_shader = shader_bias
+                        e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
+                        drawing.enable_depth_test()
+                        drawing.disable_blendmode()
+                        config.e_shader.bind()
+                        config.e_shader.uniform_float(           "color", config.edge_color[0][0])
+                        config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
+                        config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
+                        config.e_shader.uniform_float(       "depthBias", depthBias)
+                        e_batch.draw(config.e_shader)
+
+                        pass
+                    pass
+
+                else:
+                    if bpy.app.version < (3, 5, 0):
+                        e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+                        config.e_shader.bind()
+                        e_batch.draw(config.e_shader)
+                    elif bpy.app.version < (4, 5, 0):
+
+                        ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
+                        VERT_BIAS = """
+                        in vec3 pos;
+                        in vec4 color;
+                        uniform mat4 modelViewMatrix;
+                        uniform mat4 projectionMatrix;
+                        out vec4 vColor;
+
+                        void main()
+                        {
+                            vec4 v = modelViewMatrix * vec4(pos,1.0);
+                            gl_Position = projectionMatrix * v;
+                            vColor = color;
+                        }
+                        """
+                        FRAG_BIAS = """
+                        in vec4 vColor;
+                        uniform float depthBias;  // ~1e-6..1e-4
+                        out vec4 FragColor;
+                        void main(){
+                            FragColor = vColor;
+                            float adaptive = depthBias * gl_FragCoord.w;
+                            float z = gl_FragCoord.z - adaptive;
+                            gl_FragDepth = clamp(z, 0.0, 1.0);
+                        }
+                        """
+                        shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
+                        config.e_shader = shader_bias
+                        e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+                        drawing.enable_depth_test()
+                        drawing.disable_blendmode()
+                        config.e_shader.bind()
+                        config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
+                        config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
+                        config.e_shader.uniform_float(       "depthBias", depthBias)
+                        e_batch.draw(config.e_shader)
+
+                        pass
+
+                    pass
+
+            else: # from 4.5, 5.0 versions
+                # Упрощённая отрисовка линий для Blender 4.5+
+                if config.uniform_edges:
+                    e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
+                    config.e_shader.bind()
+                    config.e_shader.uniform_float("color", config.edge_color[0][0])
+                    e_batch.draw(config.e_shader)
+                else:
+                    e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+                    config.e_shader.bind()
+                    e_batch.draw(config.e_shader)
+
+            drawing.reset_line_width()
 
     if config.draw_verts:
         if geom.v_vertices and (len(geom.v_vertices[0])==3):
             drawing.set_point_size(config.point_size)
             if config.uniform_verts:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
+                drawing.enable_depth_test()
                 config.v_shader.bind()
                 config.v_shader.uniform_float("color", config.vector_color[0][0])
             else:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices, "color": geom.points_color})
+                drawing.enable_depth_test()
                 config.v_shader.bind()
 
             v_batch.draw(config.v_shader)
@@ -252,12 +362,16 @@ def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offs
     vertex_colors_extend = vertex_colors.extend
     for pol, idx in zip(polygon_indices, original_idx):
         p_vertices_extend([v_path[c] for c in pol])
-        color = cols[idx % cols_len]
-        # vertex_colors.extend([cols[idx % cols_len] for c in pol])
-        vertex_colors_extend([color, color, color])
+        factor = light_factor[idx]
+
+        col = cols[idx % cols_len]
+        
+        col_pol = colors_adjustment(col, factor)
+        vertex_colors_extend([col_pol, col_pol, col_pol])
         pol_offset = idx_offset + total_p_verts
         indices_append([pol_offset, pol_offset + 1, pol_offset + 2])
         total_p_verts += 3
+
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
@@ -275,13 +389,13 @@ def splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, cols, id
         factor = light_factor[idx]
 
         col = cols[idx % cols_len]
-        col_pol = [col[0] * factor, col[1] * factor, col[2] * factor, col[3]]
-
+        
+        col_pol = colors_adjustment(col, factor)
         vertex_colors_extend([col_pol, col_pol, col_pol])
         pol_offset = idx_offset + total_p_verts
-
         indices_append([pol_offset, pol_offset + 1, pol_offset + 2])
         total_p_verts += 3
+
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
@@ -303,7 +417,7 @@ def splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, c
 
         for c in pol:
             col = cols[c % cols_len]
-            colors.append([col[0] * factor, col[1] * factor, col[2] * factor, col[3]])
+            colors.append(colors_adjustment(col, factor))
 
         vertex_colors_extend(colors)
         pol_offset = idx_offset + total_p_verts
@@ -328,9 +442,8 @@ def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, i
         colors = []
         col = cols[idx % cols_len]
         for c in pol:
-
             factor = light_factor[c]
-            colors.append([col[0] * factor, col[1] * factor, col[2] * factor, col[3]])
+            colors.append(colors_adjustment(col, factor, glossy=True))
 
         vertex_colors_extend(colors)
         pol_offset = idx_offset + total_p_verts
@@ -340,13 +453,18 @@ def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, i
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
-
+def colors_adjustment(col, factor, glossy=False):
+    if not glossy:
+        return [((col[0]*0.8+0.2) * factor)-col[0]*0.1, ((col[1]*0.8+0.2) * factor)-col[0]*0.1, ((col[2]*0.8+0.2) * factor)-col[0]*0.1, col[3]] # (col[2]*0.7+0.3) * factor
+    else:
+        colval = [((col[0]*0.8+0.2) * factor)-col[0]*0.1, ((col[1]*0.8+0.2) * factor)-col[0]*0.1, ((col[2]*0.8+0.2) * factor)-col[0]*0.1]
+        return [i if i<0.8 else 1.5 for i in colval] + col[3]
 
 def face_light_factor(vecs, polygons, light):
-    return (np_dot(pols_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5).tolist()
+    return (np_ambient_occlusion(np_dot(pols_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5)).tolist()
 
 def vert_light_factor(vecs, polygons, light):
-    return (np_dot(np_vertex_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5).tolist()
+    return np_ambient_occlusion((np_dot(np_vertex_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5)).tolist()
 
 def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices, v_path, p_cols, idx_p_offset, points_colors):
     '''generates polygons geometry'''
@@ -573,10 +691,28 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
     node_dict = {}
 
-    selected_draw_mode: EnumProperty(
-        items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
-        description="pick how the node will draw faces",
-        default="flat", update=updateNode)
+    face_culling_set: EnumProperty(
+        items=[
+            ( 'NONE',  'None', 'none facets can be culled', 'SNAP_VOLUME', 0),
+            ('FRONT', 'Front', 'front-facing facets can be culled', 'SNAP_FACE', 1),
+            ( 'BACK',  'Back', 'back-facing facets can be culled', 'SELECT_SUBTRACT', 2),
+        ],
+        description="none, front-facing or back-facing facets can be culled. Viewport Only. No influence for render or bake of mesh.",
+        default="NONE",
+        update=updateNode
+    )
+
+
+    if bpy.app.version < (5, 0, 0):
+        selected_draw_mode: EnumProperty(
+            items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
+            description="pick how the node will draw faces",
+            default="facet", update=updateNode)
+    else:
+        selected_draw_mode: EnumProperty(
+            items=enum_item_5(["flat", "facet", "smooth"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED']),
+            description="pick how the node will draw faces",
+            default="facet", update=updateNode)
 
     activate: BoolProperty(
         name='Show', description='Activate drawing',
@@ -584,6 +720,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
     draw_gl_polygonoffset: BoolProperty(
         name="Draw gl polygon offset",
+        description="BGL parameter. Has no influence on Blender >= 3.5",
         default=False, update=updateNode)
 
     draw_gl_wireframe: BoolProperty(
@@ -605,7 +742,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         description='tessellate quads using geometry.tessellate_polygon, expect some speed impact')
 
     point_size: IntProperty(
-        min=1, default=4, name='Verts Size',
+        min=1, default=3, name='Verts Size',
         description='Point Size', update=updateNode)
 
     line_width: IntProperty(
@@ -651,7 +788,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         description='Colorize edges using vertices color')
 
     edge_color: FloatVectorProperty(
-        update=updateNode, name='Edges Color', default=(.9, .9, .35, 1.0),
+        update=updateNode, name='Edges Color', default=(0.9, 0.7, 0.25, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR')
 
     display_edges: BoolProperty(
@@ -718,6 +855,14 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         if self.selected_draw_mode == 'fragment':
             layout.prop(self, "custom_shader_location", icon='TEXT', text='')
 
+        if bpy.app.version < (3, 5, 0):
+            # do not show this settings in Blender<3.5
+            pass
+        else:
+            row = layout.row(align=True)
+            row.label(text=' ')
+            row.prop(self, "face_culling_set", expand=True, text='')
+            pass
         row = layout.row(align=True)
         row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
         self.wrapper_tracked_ui_draw_op(row, SvObjBakeMK3.bl_idname, icon='OUTLINER_OB_MESH', text="B A K E")
@@ -752,7 +897,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         layout.separator()
         self.node_replacement_menu(context, layout)
 
-    def bake(self):
+    def bake(self, context):
         bpy.ops.node.sverchok_mesh_baker_mk3(
             node_name=self.name, tree_name=self.id_data.name
         )
@@ -935,7 +1080,11 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
             if not total_verts:
                 raise LookupError("Empty vertices list")
             edges = inputs['Edges'].sv_get(deepcopy=False, default=[[]])
+            if len(edges)==0:
+                edges=[[]]
             polygons = inputs['Polygons'].sv_get(deepcopy=False, default=[[]])
+            if len(polygons)==0:
+                polygons=[[]]
             matrix = inputs['Matrix'].sv_get(deepcopy=False, default=[[]])
             vector_color = inputs['Vector Color'].sv_get(deepcopy=False, default=[[self.vector_color]])
             edge_color = inputs['Edge Color'].sv_get(deepcopy=False, default=[[self.edge_color]])
@@ -953,8 +1102,10 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
             config.polygons = polygons
             config.matrix = matrix
-            if not inputs['Edges'].is_linked and self.display_edges:
-                config.edges = polygons_to_edges_np(polygons, unique_edges=True)
+            config.face_culling_set = self.face_culling_set
+            if not inputs['Edges'].is_linked and self.display_edges or (not edges or len(edges)==1 and len(edges[0])==0):
+                if polygons and (not edges or len(edges)==1 and len(edges[0])==0):
+                    config.edges = polygons_to_edges_np(polygons, unique_edges=True)
 
             geom = generate_mesh_geom(config, vecs)
 
@@ -978,6 +1129,9 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
     def sv_free(self):
         callback_disable(node_id(self))
+
+    def toggle_viewer(self, context):
+        self.activate = not self.activate
 
     def show_viewport(self, is_show: bool):
         """It should be called by node tree to show/hide objects"""

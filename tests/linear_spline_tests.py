@@ -39,7 +39,7 @@ class LinearSplineTests(SverchokTestCase):
 
     def test_control_points(self):
         points = self.spline.get_control_points()
-        self.assertEquals(points.shape, (3,2,3))
+        self.assertEqual(points.shape, (3,2,3))
         expected = np.array(list(zip(self.control_points, self.control_points[1:])))
         self.assert_numpy_arrays_equal(points, expected)
 

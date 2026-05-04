@@ -276,7 +276,7 @@ class SvTypeViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
         for obj_index, txt_content in enumerate(text):
             matrix = matrices[obj_index % len(matrices)]
             if isinstance(txt_content, list) and (len(txt_content) == 1):
-                txt_content = txt_content[0]
+                txt_content = str(txt_content[0])
             else:
                 txt_content = str(txt_content)
 
@@ -303,7 +303,6 @@ class SvTypeViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
 
     def draw_label(self):
         return f"TV {self.basedata_name}"
-
 
 classes = [SvTypeViewerNodeV28, SvFontFileImporterOpV28]
 register, unregister = bpy.utils.register_classes_factory(classes)

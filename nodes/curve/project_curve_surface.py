@@ -11,7 +11,7 @@ from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, ensure_nesting_level,
                                      get_data_nesting_level, updateNode)
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, SvSolidEdgeCurve, curve_to_freecad_nurbs
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
@@ -77,7 +77,7 @@ class SvProjectCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     def project(self, face_surface, sv_curve, point, vector):
         nurbs_curve = curve_to_freecad_nurbs(sv_curve)
         if nurbs_curve is None:
-            raise Exception("Curve is not NURBS!")
+            raise UnsupportedCurveTypeException("Curve is not NURBS!")
         fc_curve = nurbs_curve.curve
         fc_edge = Part.Edge(fc_curve)
         # face_surface : SvFreeCadNurbsSurface

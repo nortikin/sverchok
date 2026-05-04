@@ -3,7 +3,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 class SvAdaptivePlotNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
@@ -72,7 +72,7 @@ class SvAdaptivePlotNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
             for curve, init_cuts, tolerance in zip_long_repeat(*params):
                 curve = SvNurbsCurve.to_nurbs(curve)
                 if curve is None:
-                    raise Exception("Curve is not NURBS")
+                    raise UnsupportedCurveTypeException("Curve is not NURBS")
                 ts = curve.calc_linear_segment_knots(splits = init_cuts, tolerance = tolerance)
                 new_ts.append(ts.tolist())
                 if need_verts:

@@ -7,54 +7,54 @@ class DataStructureTests(SverchokTestCase):
         inputs = [[1,2,3,4,5], [10,11]]
         output = match_long_repeat(inputs)
         expected_output = [[1,2,3,4,5], [10,11,11,11,11]]
-        self.assertEquals(output, expected_output)
+        self.assertEqual(output, expected_output)
 
     def test_match_long_repeat_2(self):
         inputs = [[1], [2]]
         output = match_long_repeat(inputs)
         expected_output = [[1], [2]]
-        self.assertEquals(output, expected_output)
+        self.assertEqual(output, expected_output)
 
     def test_match_long_cycle(self):
         inputs = [[1,2,3,4,5] ,[10,11]]
         output = match_long_cycle(inputs)
         expected_output = [[1,2,3,4,5] ,[10,11,10,11,10]]
-        self.assertEquals(output, expected_output)
+        self.assertEqual(output, expected_output)
 
     def test_full_list_1(self):
         data = [1,2,3]
         fullList(data, 7)
-        self.assertEquals(data, [1, 2, 3, 3, 3, 3, 3])
+        self.assertEqual(data, [1, 2, 3, 3, 3, 3, 3])
 
     def test_full_list_2(self):
         data = [[1], [2], [3]]
         fullList(data, 7)
-        self.assertEquals(data, [[1], [2], [3], [3], [3], [3], [3]])
+        self.assertEqual(data, [[1], [2], [3], [3], [3], [3], [3]])
 
     def test_full_list_deep_copy(self):
         data = [[3], [2], [1]]
         fullList_deep_copy(data, 7)
-        self.assertEquals(data, [[3], [2], [1], [1], [1], [1], [1]])
+        self.assertEqual(data, [[3], [2], [1], [1], [1], [1], [1]])
 
     def test_repeat_last_for_length_1(self):
         data = None
         result = repeat_last_for_length(data, 4)
-        self.assertEquals(result, None)
+        self.assertEqual(result, None)
 
     def test_repeat_last_for_length_2(self):
         data = []
         result = repeat_last_for_length(data, 4)
-        self.assertEquals(result, [])
+        self.assertEqual(result, [])
 
     def test_repeat_last_for_length_3(self):
         data = [1,2,3,4]
         result = repeat_last_for_length(data, 4)
-        self.assertEquals(result, data)
+        self.assertEqual(result, data)
 
     def test_repeat_last_for_length_4(self):
         data = [1,2,3]
         result = repeat_last_for_length(data, 4)
-        self.assertEquals(result, [1,2,3,3])
+        self.assertEqual(result, [1,2,3,3])
 
     def test_get_data_nesting_level_1(self):
         self.subtest_assert_equals(get_data_nesting_level(1), 0)
@@ -79,20 +79,63 @@ class DataStructureTests(SverchokTestCase):
             result = ensure_nesting_level(data, 1)
             sv_logger.error("ensure_nesting_level() returned %s", result)
 
+    def test_ensure_nesting_level_already_correct(self):
+        result = ensure_nesting_level([17], 1)
+        self.assertEqual(result, [17])
+
     def test_transpose_list(self):
         self.subtest_assert_equals(transpose_list([[1,2], [3,4]]), [[1,3], [2, 4]])
 
-    def test_rotate_list_1(self):
-        input = [1, 2, 3]
+    def test_rotate_list_default(self):
+        input_data = [1, 2, 3]
         expected_output = [2, 3, 1]
-        output = rotate_list(input)
-        self.assertEquals(output, expected_output)
+        output = rotate_list(input_data)
+        self.assertEqual(output, expected_output)
 
-    def test_rotate_list_2(self):
-        input = [1, 2, 3]
+    def test_rotate_list_custom_shift(self):
+        input_data = [1, 2, 3]
         expected_output = [3, 1, 2]
-        output = rotate_list(input, 2)
-        self.assertEquals(output, expected_output)
+        output = rotate_list(input_data, 2)
+        self.assertEqual(output, expected_output)
+
+    def test_rotate_list_empty(self):
+        output = rotate_list([])
+        self.assertEqual(output, [])
+
+    def test_rotate_list_zero_shift(self):
+        input_data = [1, 2, 3]
+        output = rotate_list(input_data, 0)
+        self.assertEqual(output, input_data)
+
+    def test_rotate_list_shift_greater_than_length(self):
+        input_data = [1, 2, 3]
+        expected_output = [3, 1, 2]
+        output = rotate_list(input_data, 5)
+        self.assertEqual(output, expected_output)
+
+    def test_match_long_repeat_all_same_length(self):
+        inputs = [[1, 2, 3], [4, 5, 6]]
+        output = match_long_repeat(inputs)
+        expected_output = [[1, 2, 3], [4, 5, 6]]
+        self.assertEqual(output, expected_output)
+
+    def test_match_long_repeat_single_element(self):
+        inputs = [[1], [2, 3]]
+        output = match_long_repeat(inputs)
+        expected_output = [[1, 1], [2, 3]]
+        self.assertEqual(output, expected_output)
+
+    def test_match_long_cycle_all_same_length(self):
+        inputs = [[1, 2, 3], [4, 5, 6]]
+        output = match_long_cycle(inputs)
+        expected_output = [[1, 2, 3], [4, 5, 6]]
+        self.assertEqual(output, expected_output)
+
+    def test_match_long_cycle_single_element(self):
+        inputs = [[1], [2, 3]]
+        output = match_long_cycle(inputs)
+        expected_output = [[1, 1], [2, 3]]
+        self.assertEqual(output, expected_output)
 
     def test_describe_data_shape_1(self):
         self.subtest_assert_equals(describe_data_shape(None), 'Level 0: NoneType')
@@ -178,6 +221,12 @@ class DataStructureTests(SverchokTestCase):
         expected_result = [[1,2,3,4]]
         self.assert_sverchok_data_equal(result, expected_result)
 
+    def test_adjust_too_few_instructions(self):
+        instructions = [SvListLevelAdjustment()]
+        input_data = [[1], [2]]
+        with self.assertRaises(Exception):
+            list_levels_adjust(input_data, instructions)
+
     def test_flatten_1(self):
         data = [[1,2], [3,4]]
         result = flatten_data(data)
@@ -195,6 +244,17 @@ class DataStructureTests(SverchokTestCase):
         result = flatten_data(data, target_level=1)
         expected = [1,2, 3,4, 5,6, 7,8]
         self.assert_sverchok_data_equal(result, expected)
+
+    def test_flatten_already_at_target_level(self):
+        data = [[1,2,3,4]]
+        result = flatten_data(data, target_level=1)
+        expected = [1,2,3,4]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_flatten_level_too_shallow(self):
+        data = [1,2,3]
+        with self.assertRaises(TypeError):
+            flatten_data(data, target_level=2)
 
     def test_graft_1(self):
         data = [1,2,3]
@@ -226,49 +286,49 @@ class CalcMaskTests(SverchokTestCase):
         set = [1, 2, 3]
         mask = calc_mask(subset, set, level=0)
         expected = [True, False, False]
-        self.assertEquals(mask, expected)
+        self.assertEqual(mask, expected)
 
     def test_calc_mask_2(self):
         subset = [1]
         set = [1, 2, 3]
         mask = calc_mask(subset, set, negate=True)
         expected = [False, True, True]
-        self.assertEquals(mask, expected)
+        self.assertEqual(mask, expected)
 
     def test_calc_mask_3(self):
         subset = [[1, 2], [3, 4]]
         set = [[1, 2], [3, 4], [5, 6]]
         mask = calc_mask(subset, set, level=0)
         expected = [True, True, False]
-        self.assertEquals(mask, expected)
+        self.assertEqual(mask, expected)
 
     def test_calc_mask_4(self):
         subset = [[1, 2], [3, 4]]
         set = [[1, 2], [3, 4], [5, 6]]
         mask = calc_mask(subset, set, level=1)
         expected = [[True, True], [True, True], [False, False]]
-        self.assertEquals(mask, expected)
+        self.assertEqual(mask, expected)
 
     def test_calc_mask_5(self):
         subset = [[1], [5,6]]
         set = [[1, 2, 3], [7, 8, 9]]
         mask = calc_mask(subset, set, level=0)
         expected = [False, False]
-        self.assertEquals(mask, expected)
+        self.assertEqual(mask, expected)
 
     def test_calc_mask_6(self):
         subset = [[1], [5,6]]
         set = [[1, 2, 3], [7, 8, 9]]
         mask = calc_mask(subset, set, level=1)
         expected = [[True, False, False], [False, False, False]]
-        self.assertEquals(mask, expected)
+        self.assertEqual(mask, expected)
 
     def test_calc_mask_7(self):
         subset = [[1, 2], [3, 4]]
         set = [[2, 1], [5, 6]]
         mask = calc_mask(subset, set, ignore_order=True)
         expected = [True, False]
-        self.assertEquals(mask, expected)
+        self.assertEqual(mask, expected)
 
 class MapRecursiveTests(SverchokTestCase):
     def test_map_1(self):
@@ -368,3 +428,99 @@ class MapRecursiveTests(SverchokTestCase):
         result = unzip_dict_recursive(data)
         expected = {'A': [[1], [3], [5]], 'B': [[2], [4], [6]]}
         self.assert_dicts_equal(result, expected)
+
+
+class MatchShortTests(SverchokTestCase):
+    def test_match_short_first_shorter(self):
+        lsts = [[1, 2], [3, 4, 5, 6]]
+        result = match_short(lsts)
+        expected = [[1, 2], [3, 4]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_short_same_length(self):
+        lsts = [[1, 2], [3, 4], [5, 6]]
+        result = match_short(lsts)
+        expected = [[1, 2], [3, 4], [5, 6]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_short_second_shorter(self):
+        lsts = [[1, 2, 3, 4, 5], [10, 11]]
+        result = match_short(lsts)
+        expected = [[1, 2], [10, 11]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_short_empty_inner(self):
+        lsts = [[1, 2], []]
+        result = match_short(lsts)
+        expected = []
+        self.assertEqual(result, expected)
+
+    def test_match_short_empty_outer(self):
+        lsts = []
+        result = match_short(lsts)
+        expected = []
+        self.assertEqual(result, expected)
+
+
+class MatchCrossTests(SverchokTestCase):
+    def test_match_cross_first_shorter(self):
+        lsts = [[1, 2], [5, 6, 7]]
+        result = match_cross(lsts)
+        expected = [[1, 1, 1, 2, 2, 2], [5, 6, 7, 5, 6, 7]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross_three_lists(self):
+        lsts = [[1, 2], [3, 4], [5, 6]]
+        result = match_cross(lsts)
+        expected = [[1, 1, 1, 1, 2, 2, 2, 2], [3, 3, 4, 4, 3, 3, 4, 4], [5, 6, 5, 6, 5, 6, 5, 6]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross_longer_lists(self):
+        lsts = [[1, 2, 3, 4], [5, 6, 7, 8]]
+        result = match_cross(lsts)
+        expected = [[1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4], [5, 6, 7, 8, 5, 6, 7, 8, 5, 6, 7, 8, 5, 6, 7, 8]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross_empty_list(self):
+        lsts = [[1, 2], [], [3]]
+        result = match_cross(lsts)
+        expected = []
+        self.assertEqual(result, expected)
+
+    def test_match_cross_empty_outer(self):
+        lsts = []
+        result = match_cross(lsts)
+        expected = []
+        self.assertEqual(result, expected)
+
+
+class MatchCross2Tests(SverchokTestCase):
+    def test_match_cross2_first_shorter(self):
+        lsts = [[1], [2, 3]]
+        result = match_cross2(lsts)
+        expected = [[1, 1], [2, 3]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross2_three_lists(self):
+        lsts = [[1, 2], [3, 4], [5, 6]]
+        result = match_cross2(lsts)
+        expected = [[1, 2, 1, 2, 1, 2, 1, 2], [3, 3, 4, 4, 3, 3, 4, 4], [5, 5, 5, 5, 6, 6, 6, 6]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross2_standard_interleaving(self):
+        lsts = [[1, 2], [5, 6, 7]]
+        result = match_cross2(lsts)
+        expected = [[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_match_cross2_empty_list(self):
+        lsts = [[1, 2], [], [3]]
+        result = match_cross2(lsts)
+        expected = []
+        self.assertEqual(result, expected)
+
+    def test_match_cross2_empty_outer(self):
+        lsts = []
+        result = match_cross2(lsts)
+        expected = []
+        self.assertEqual(result, expected)

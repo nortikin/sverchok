@@ -34,7 +34,7 @@ def get_sv_nodeclasses(path, old_node_file):
         classes = [n for n in node.body if isinstance(n, ast.ClassDef)]
         for c in classes:
             for k in c.bases:
-                if hasattr(k, 'id') and k.id == 'SverchCustomTreeNode':
+                if hasattr(k, 'id') and k.id == 'SverchCustomTreeNode' or hasattr(k, 'attr') and k.attr == 'Node':
                     collection.append([c.name, old_node_file])
 
     return collection

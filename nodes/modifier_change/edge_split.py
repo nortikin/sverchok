@@ -36,8 +36,8 @@ class SvSplitEdgesMk3Node(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     def update_mode(self, context):
         self.inputs['Factor'].hide = False  # This can be True in old nodes
         self.inputs['Cuts'].hide = False  # This can be True in old nodes
-        self.inputs['Factor'].hide_safe = self.mode != 'MULTI'
-        self.inputs['Cuts'].hide_safe = self.mode == 'MULTI'
+        self.inputs['Factor'].hide_safe = self.mode == 'MULTI'
+        self.inputs['Cuts'].hide_safe = self.mode != 'MULTI'
         self.process_node(context)
 
     factor: bpy.props.FloatProperty(

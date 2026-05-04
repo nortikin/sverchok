@@ -6,22 +6,42 @@
 # License-Filename: LICENSE
 
 
+
 import bpy
+from bpy.utils import previews
+import os
+import addon_utils #noqa
+import sverchok
+
+
+def get_addon_root_dir():
+    path = ""
+    for mod in addon_utils.modules():
+        if mod.bl_info.get("name") == "Sverchok":
+            path = mod.__file__.replace("__init__.py", "")
+            break
+    return path
+
+preview_collections = {}
 
 
 class SV_PT_3DPanel(bpy.types.Panel):
     """Panel to manipulate parameters in Sverchok layouts"""
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'Tool'
+    bl_category = 'SV'
     bl_label = "3D Panel (Sverchok)"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        col = self.layout.column()
+        plugin_icons = preview_collections['sverchok_logo']
+        row = self.layout.row()
+        row.template_icon(icon_value=plugin_icons['sverchock_icon_b.png'].icon_id, scale=2.2)
+        col = row.column()
         col.operator('node.sverchok_update_all', text='Update all trees')
         col.operator('node.sv_scan_properties', text='Scan for props')
 
+        col = self.layout.column()
         col_edit = col.column()
         col_edit.use_property_split = True
         col_edit.prop(context.scene.sv_ui_node_props, 'edit')
@@ -158,7 +178,8 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
             if not ui_list.edit:
                 row = row.row(align=True)
                 row.alignment = 'RIGHT'
-                row.ui_units_x = 4.5
+                scale_x = 6.5 if bpy.context.preferences.addons.get(sverchok.__name__).preferences.over_sized_buttons else 5.0
+                row.ui_units_x = scale_x
                 row.operator('node.sverchok_bake_all', text='B').node_tree_name = list_item.tree_name
                 row.prop(tree, 'sv_show',
                          icon=f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
@@ -166,6 +187,37 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
                 row.prop(tree, 'sv_scene_update', icon='SCENE_DATA', text=' ')
                 row.prop(tree, "sv_process", toggle=True, text="P")
                 row.prop(tree, "sv_draft", toggle=True, text="D")
+                row.operator('node.sv_clear_tree', text='X').node_tree_name = list_item.tree_name
+
+class SvClearTree (bpy.types.Operator):
+    """Clear node tree \
+    Please, check if you not need it"""      
+    bl_idname = "node.sv_clear_tree"
+    bl_label = "Remove node tree"
+    bl_options = {'REGISTER', 'UNDO'} 
+    
+    
+    @classmethod
+    def poll(cls, self):
+        for area in bpy.context.window.screen.areas:
+            if area.type == 'NODE_EDITOR':
+                return False
+        return True
+    
+    node_tree_name: bpy.props.StringProperty(default='', name='removenodetree', description='remove node tree')
+    
+    def invoke(self, context, event):
+        wm = context.window_manager
+        wm.invoke_props_dialog(self, width=250)
+        return {'RUNNING_MODAL'}
+    
+    def execute(self, context):
+        if self.node_tree_name:
+            bpy.data.node_groups[self.node_tree_name].user_clear()
+            bpy.data.node_groups.remove(bpy.data.node_groups[self.node_tree_name])
+        else:
+            return {'CENCELLED'}
+        return {'FINISHED'}
 
 
 class Sv3DNodeProperties(bpy.types.PropertyGroup):
@@ -428,16 +480,35 @@ classes = [
     Sv3dPropRemoveItem,
     Sv3DNodeProperties,
     SvPopupEditLabel,
+    SvClearTree,
 ]
 
 
 def register():
+    plugin_icons = previews.new()
+    # \sverchok-master\ui\logo\png
+    if bpy.app.version >= (5,1,0):
+        plugin_icons.load(
+            'sverchock_icon_b.png',
+            os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
+            'IMAGE'
+        )
+    else:
+        plugin_icons.load(
+            name='sverchock_icon_b.png',
+            path=os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
+            path_type='IMAGE'
+        )
+    preview_collections['sverchok_logo'] = plugin_icons
     [bpy.utils.register_class(cls) for cls in classes]
 
     bpy.types.Scene.sv_ui_node_props = bpy.props.PointerProperty(type=Sv3DNodeProperties)
+    
 
 
 def unregister():
     [bpy.utils.unregister_class(cls) for cls in classes[::-1]]
 
     del bpy.types.Scene.sv_ui_node_props
+    for plugin_icons in preview_collections.values():
+        bpy.utils.previews.remove(plugin_icons)

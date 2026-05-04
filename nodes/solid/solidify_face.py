@@ -8,6 +8,7 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
 from sverchok.utils.surface.core import SvSurface
@@ -83,7 +84,7 @@ class SvSolidFaceSolidifyNode(SverchCustomTreeNode, bpy.types.Node):
 
                 continuity = face_surface.get_min_continuity()
                 if continuity >= 0 and continuity < 1:
-                    raise Exception("This node requires at least C1 continuity of the surface; only C0 is guaranteed by surface's knotvector")
+                    raise SvInvalidInputException("This node requires at least C1 continuity of the surface; only C0 is guaranteed by surface's knotvector")
                 fc_face = face_surface.face
                 shape = fc_face.makeOffsetShape(offset, tolerance, fill=True)
                 new_solids.append(shape)

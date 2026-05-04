@@ -1,0 +1,474 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import numpy as np
+from numpy.polynomial import Polynomial as np_Polynomial
+from math import pi
+
+from sverchok.utils.math import binomial_array
+
+COEFF_TYPES = (int,float, np.float64, np.ndarray)
+
+class Polynomial:
+    def __init__(self, coeffs):
+        self.coeffs = np.asarray(coeffs, dtype=np.float64)
+
+    def __repr__(self):
+        if self.is_zero():
+            return "0"
+        first = True
+        result = ""
+        for d, c in reversed(list(enumerate(self.coeffs))):
+            if not first:
+                result += " + "
+            first = False
+            if isinstance(c, (int, float, np.float64)) and c == 0:
+                continue
+            if isinstance(c, np.ndarray) and (c == 0).all():
+                continue
+            elif d == 0:
+                result += str(c)
+            elif isinstance(c, (int, float, np.float64)) and c == 1.0:
+                result += "x^" + str(d)
+            else:
+                result += f"{c}*x^{d}"
+        return result
+
+    @staticmethod
+    def Constant(k, ndim=None):
+        if ndim is None:
+            shape = (1,)
+        else:
+            shape = (1,ndim)
+        coeffs = np.zeros(shape)
+        if len(shape) == 2:
+            coeffs[0,:] = k
+        elif len(shape) == 1:
+            coeffs[0] = k
+        else:
+            raise ValueError(f"Unsupported shape: {shape}")
+        return Polynomial(coeffs)
+
+    @staticmethod
+    def Zero(ndim=None):
+        return Polynomial.Constant(0, ndim=ndim)
+
+    @staticmethod
+    def Monomial(coefficient=1.0, degree=1, ndim=None):
+        if ndim is None:
+            shape = (degree+1,)
+        else:
+            shape = (degree+1,ndim)
+        coeffs = np.zeros(shape)
+        if len(shape) == 1:
+            coeffs[degree] = coefficient
+        elif len(shape) == 2:
+            coeffs[degree,:] = coefficient
+        else:
+            raise ValueError(f"Unsupported shape: {shape}")
+        return Polynomial(coeffs)
+
+    @staticmethod
+    def Binomial(k, c, degree=1, ndim=None):
+        if degree == 0:
+            return Polynomial.Constant(1, ndim=ndim)
+        elif degree == 1:
+            return Polynomial.Constant(c, ndim=ndim) + Polynomial.Monomial(k, ndim=ndim)
+        C = binomial_array(degree+1)
+        if ndim is None:
+            shape = (degree+1,)
+        else:
+            shape = (degree+1,ndim)
+        coeffs = np.zeros(shape)
+        if ndim is None:
+            coeffs[:] = C[degree,:]
+        else:
+            for i in range(coeffs.shape[-1]):
+                coeffs[:,i] = C[degree,:]
+        j = np.arange(degree+1)
+        if ndim is not None:
+            j = j[np.newaxis].T
+        #    k = np.full((1,ndim), k)
+        coeffs *= k ** j
+        coeffs *= c ** (degree - j)
+        return Polynomial(coeffs)
+
+    def is_zero(self):
+        if len(self.coeffs) == 0:
+            return True
+        ndim = self.get_ndim()
+        for coeff in self.coeffs:
+            if ndim is None:
+                if coeff != 0:
+                    return False
+            else:
+                if (coeff != 0).any():
+                    return False
+        return True
+
+    def get_degree(self):
+        return len(self.coeffs) - 1
+
+    def get_ndim(self):
+        if self.coeffs.ndim == 1:
+            return None
+        else:
+            return self.coeffs.shape[-1]
+
+    def evaluate(self, x):
+        return self.evaluate_array(np.array([x]))[0]
+
+    def evaluate_array(self, xs):
+        n = len(self.coeffs)
+        ds = np.arange(n)
+        if self.get_ndim() is None:
+            xs = xs[np.newaxis].T
+            return (self.coeffs * xs ** ds).sum(axis=1)
+        else:
+            #print("X", xs, ds)
+            xs = xs[np.newaxis].T ** ds
+            xs = np.transpose(xs[np.newaxis], axes=(1,2,0))
+            #xs = xs[np.newaxis]
+            #coeffs = np.transpose(self.coeffs[np.newaxis], axes=(1,2,0))
+            coeffs = self.coeffs[np.newaxis]
+            #print(f"X* {coeffs.shape} {xs.shape}")
+            xs = coeffs * xs
+            #print("Sum shape", xs.shape)
+            xs = xs.sum(axis=1)
+            #print("X shape", xs.shape)
+            return xs
+
+    def derivative(self):
+        shape = self.coeffs.shape
+        if len(shape) == 1:
+            n = shape[0]
+            shape = (n-1,)
+        else:
+            n = shape[0]
+            if n < 1:
+                n = 1
+            ndim = shape[-1]
+            shape = (n-1, ndim)
+        coeffs = np.zeros(shape)
+        for i in range(self.get_degree()):
+            coeffs[i] = (i+1) * self.coeffs[i+1]
+        return Polynomial(coeffs)
+
+    def nth_derivative(self, order=1):
+        poly = self
+        for i in range(order):
+            poly = poly.derivative()
+        return poly
+
+    def linear_substitute(self, k, c):
+        poly = Polynomial.Zero(ndim=self.get_ndim())
+        for i, a in enumerate(self.coeffs):
+            poly = poly + Polynomial.Binomial(k, c, degree=i, ndim=self.get_ndim()) * a
+        return poly
+
+    def scale(self, scalar):
+        if isinstance(scalar, (int, float, np.float64)):
+            return Polynomial(scalar * self.coeffs)
+        elif isinstance(scalar, np.ndarray) and scalar.ndim == 1:
+            coeffs = scalar[np.newaxis] * self.coeffs
+            return Polynomial(coeffs)
+        else:
+            raise TypeError("Unsupported argument types")
+
+    def negate(self):
+        return Polynomial(-1 * self.coeffs)
+
+    def add(self, other):
+        if isinstance(other, COEFF_TYPES):
+            other = Polynomial.Constant(other, ndim=self.get_ndim())
+        if self.coeffs.ndim != other.coeffs.ndim:
+            raise ValueError(f"Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}")
+        n = max(len(self.coeffs), len(other.coeffs))
+        if self.coeffs.ndim == 1:
+            coeffs = np.zeros((n,))
+            coeffs[:len(self.coeffs)] += self.coeffs
+            coeffs[:len(other.coeffs)] += other.coeffs
+            return Polynomial(coeffs)
+        elif self.coeffs.ndim == 2:
+            shape = list(self.coeffs.shape)
+            shape[0] = n
+            coeffs = np.zeros(shape)
+            coeffs[:len(self.coeffs),:] += self.coeffs
+            coeffs[:len(other.coeffs),:] += other.coeffs
+            return Polynomial(coeffs)
+        else:
+            raise TypeError("Unsupported argument types")
+
+    def __add__(self, other):
+        return self.add(other)
+
+    def __sub__(self, other):
+        if isinstance(other, COEFF_TYPES):
+            other = Polynomial.Constant(other, ndim=self.get_ndim())
+        return self.add(other.negate())
+
+    def mul(self, other):
+        d1 = self.get_degree()
+        d2 = other.get_degree()
+        if self.coeffs.ndim != other.coeffs.ndim:
+            raise ValueError(f"Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}")
+        if self.get_ndim() != other.get_ndim():
+            raise ValueError(f"Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}")
+        ndim = self.get_ndim()
+        if ndim is None:
+            coeffs = np.zeros((d1+d2+1,))
+        else:
+            dim = self.coeffs.shape[-1]
+            coeffs = np.zeros((d1+d2+1, dim))
+        #print("Mul", coeffs.shape)
+        for i in range(d1+1):
+            for j in range(d2+1):
+                d = i + j
+                #print(f"C[{i} + {j} = {d}] += {self.coeffs[i] * other.coeffs[j]}")
+                coeffs[d] += self.coeffs[i] * other.coeffs[j]
+        return Polynomial(coeffs)
+
+    def __mul__(self, other):
+        if isinstance(other, COEFF_TYPES):
+            return self.scale(other)
+        if other.get_degree() == 1:
+            n = len(self.coeffs)
+            shape = list(self.coeffs.shape)
+            shape[0] = n+1
+            coeffs = np.zeros(shape)
+            coeffs[1:] = self.coeffs
+            coeffs *= other.coeffs[1]
+            return Polynomial(coeffs) + Polynomial(other.coeffs[0] * self.coeffs)
+        return self.mul(other)
+
+    def cross(self, other):
+        d1 = self.get_degree()
+        d2 = other.get_degree()
+        if self.coeffs.ndim != other.coeffs.ndim:
+            raise ValueError(f"Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}")
+        if self.get_ndim() != other.get_ndim():
+            raise ValueError(f"Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}")
+        dim = self.coeffs.shape[-1]
+        coeffs = np.zeros((d1+d2+1, dim))
+        for i in range(d1+1):
+            for j in range(d2+1):
+                d = i + j
+                coeffs[d] += np.cross(self.coeffs[i], other.coeffs[j])
+        return Polynomial(coeffs)
+
+    def dot(self, other):
+        d1 = self.get_degree()
+        d2 = other.get_degree()
+        if self.coeffs.ndim != other.coeffs.ndim:
+            raise ValueError(f"Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}")
+        if self.get_ndim() != other.get_ndim():
+            raise ValueError(f"Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}")
+        coeffs = np.zeros((d1+d2+1, 1))
+        for i in range(d1+1):
+            for j in range(d2+1):
+                d = i + j
+                coeffs[d] += np.dot(self.coeffs[i], other.coeffs[j])
+        return Polynomial(coeffs)
+
+    def scalar_square(self):
+        return self.dot(self)
+
+    def power(self, d):
+        poly = self
+        for i in range(d-1):
+            poly = poly.mul(self)
+        return poly
+
+    def roughen(self, tolerance):
+        sums = np.cumsum(abs(self.coeffs[::-1]))
+        k = sums.searchsorted(tolerance)
+        n = len(self.coeffs)
+        return Polynomial(self.coeffs[:n-k])
+
+    def truncate(self, max_degree):
+        n = min(len(self.coeffs), max_degree+1)
+        return Polynomial(self.coeffs[:n])
+
+    def to_1d(self):
+        ndim = self.get_ndim()
+        if ndim is None:
+            return self
+        elif ndim == 1:
+            coeffs = self.coeffs[:,0]
+            return Polynomial(coeffs)
+        else:
+            raise Exception(f"Root finding is supported for 1D-polynomials only, got {ndim}")
+
+    def roots(self, domain=None, real_only=True):
+        poly = np_Polynomial(self.to_1d().coeffs)
+        roots = poly.roots()
+        if domain is not None:
+            x1, x2 = domain
+            roots = [r for r in roots if x1 <= r.real <= x2]
+        if real_only:
+            roots = [r.real for r in roots if np.isreal(r)]
+        return np.array(roots)
+    
+    def find_all_extremes(self, domain, sign=-1):
+        poly = self.to_1d()
+        derivative_roots = poly.derivative().roots(domain)
+        candidates = derivative_roots
+        candidates = np.append(candidates, domain)
+        second_derivative = poly.nth_derivative(2)
+        result = []
+        for x in candidates:
+            #print("X", x)
+            second_derivative_value = second_derivative.evaluate(x)
+            if second_derivative_value * sign < 0:
+                result.append(x)
+        return np.array(sorted(result))
+
+class Rational:
+    def __init__(self, numerator, denominator):
+        if isinstance(numerator, np.ndarray):
+            numerator = Polynomial(numerator)
+        self.numerator = numerator
+        if isinstance(denominator, np.ndarray):
+            denominator = Polynomial(denominator)
+        self.denominator = denominator
+
+    def evaluate(self, t):
+        n = self.numerator.evaluate(t)
+        d = self.denominator.evaluate(t)
+        return n / d
+
+    def evaluate_array(self, ts):
+        n = self.numerator.evaluate_array(ts)
+        d = self.denominator.evaluate_array(ts)
+        return n / d
+    
+    def derivative(self):
+        n = self.numerator.derivative() * self.denominator - self.numerator * self.denominator.derivative()
+        d = self.denominator.power(2)
+        return Rational(n, d)
+
+    def nth_derivative(self, order=1):
+        ratio = self
+        for i in range(order):
+            ratio = ratio.derivative()
+        return ratio
+
+    def roots(self, domain=None, real_only=True):
+        return self.numerator.roots(domain=domain, real_only=real_only)
+
+    def to_1d(self):
+        return Rational(self.numerator.to_1d(), self.denominator.to_1d())
+
+    def find_all_extremes(self, domain, sign=-1):
+        ratio = self.to_1d()
+        derivative_roots = ratio.derivative().roots(domain)
+        candidates = derivative_roots
+        candidates = np.append(candidates, domain)
+        second_derivative = ratio.nth_derivative(2)
+        result = []
+        for x in candidates:
+            second_derivative_value = second_derivative.evaluate(x)
+            if second_derivative_value * sign < 0:
+                result.append(x)
+        return np.array(sorted(result))
+
+def lagrange_basis(n, i, xs, ndim=None):
+    poly = Polynomial.Constant(1, ndim=ndim)
+    x = Polynomial.Monomial(ndim=ndim)
+    for j in range(n):
+        if i == j:
+            continue
+        p = (x - xs[j]) * (1.0/(xs[i] - xs[j]))
+        #print(f"P[{i},{j}]: (x - {xs[j]}) / ({xs[i] - xs[j]})")
+        poly = poly * p
+    return poly
+
+def chebyshev_nodes(n):
+    ks = np.arange(1, n+1)
+    xs = (2*ks - 1)*pi/(2*n)
+    return np.cos(xs)[::-1]
+
+def chebyshev_nodes_transform(tknots):
+    t_min = tknots[0]
+    t_max = tknots[-1]
+    n = len(tknots)
+    ks = (n-1) * (tknots - t_min) / (t_max - t_min) + 1
+    xs = (2*ks - 1)*pi/(2*n)
+    return np.cos(xs)[::-1]
+
+def chebyshev_T(n, ndim=None):
+    if n == 0:
+        return Polynomial.Constant(1.0, ndim=ndim)
+    elif n == 1:
+        return Polynomial.Monomial(ndim=ndim)
+    else:
+        tn1 = chebyshev_T(n-1, ndim=ndim)
+        tn2 = chebyshev_T(n-2, ndim=ndim)
+        return tn1 * Polynomial.Monomial(coefficient=2, ndim=ndim) - tn2
+
+def legendre_P(n, ndim=None):
+    if n == 0:
+        return Polynomial.Constant(1.0, ndim=ndim)
+    elif n == 1:
+        return Polynomial.Monomial(ndim=ndim)
+    else:
+        pn1 = legendre_P(n-1, ndim=ndim)
+        pn2 = legendre_P(n-2, ndim=ndim)
+        poly = pn1 * Polynomial.Monomial(2*n-1, degree=1, ndim=ndim)
+        poly = poly - pn2*(n-1)
+        poly = poly * (1.0 / n)
+        return poly
+
+def polynomial_interpolate(basis, xs, ys, max_degree=None, tolerance=None):
+    n = len(xs)
+
+    if max_degree is None:
+        degree = n
+    else:
+        degree = min(max_degree, n)
+
+    if ys.ndim == 1:
+        ndim = None
+        A = np.zeros((n, degree))
+    else:
+        ndim = ys.shape[-1]
+        A = np.zeros((ndim, n, degree))
+
+    polys = [basis(i, ndim=ndim) for i in range(degree)]
+    for i in range(degree):
+        if ndim is None:
+            A[:,i] = polys[i].evaluate_array(xs)
+        else:
+            A[:,:,i] = polys[i].evaluate_array(xs).T
+    if degree == n:
+        ks = np.linalg.solve(A, ys.T).T
+    else:
+        if ndim is None:
+            ks, residuals, rank, s = np.linalg.lstsq(A, ys.T)
+        else:
+            ks, residuals, rank, s = np.linalg.lstsq(A[0], ys)
+
+    if tolerance is not None:
+        sums = np.cumsum(abs(ks[::-1]), axis=0)
+        sums = sums.max(axis=1)
+        k = sums.searchsorted(tolerance)
+        #print("Ks", ks, sums, k)
+        if k > 0:
+            print("K delta:", abs(ks[-k:]).sum(axis=0), k)
+            ks = ks[:-k]
+
+    solution = Polynomial.Zero(ndim=ndim)
+    for i,k in enumerate(ks):
+        solution = solution + polys[i] * k
+    return solution
+
+def chebyshev_T_interpolate(xs,ys, max_degree=None, tolerance=None):
+    return polynomial_interpolate(chebyshev_T, xs, ys, max_degree=max_degree, tolerance=tolerance)
+
+def legendre_interpolate(xs,ys, max_degree=None, tolerance=None):
+    return polynomial_interpolate(legendre_P, xs, ys, max_degree=max_degree, tolerance=tolerance)
+

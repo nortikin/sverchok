@@ -46,6 +46,10 @@ class SvNodeViewDrawMixin():
         scale, multiplier = self.get_preferences()
         self.location_theta = multiplier
 
+    def toggle_viewer(self, context):
+        self.activate = not self.activate
+
+
 @njit(cache=True)
 def faces_from_xy(ncx, ncy):
     r"""

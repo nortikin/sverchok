@@ -98,6 +98,19 @@ class VariableCollector(ast.NodeVisitor):
 
         self.generic_visit(node)
 
+def check_eval_syntax(string):
+    if not string:
+        return
+    string = string.strip()
+    try:
+        ast.parse(string, mode='eval')
+    except SyntaxError as e:
+        if e.offset == e.end_offset:
+            location = "location unknown"
+        else:
+            location = f"problematic fragment: «{string[e.offset-1 : e.end_offset]}»"
+        raise SyntaxError(f"Unparsed text: «{string}», {location}, problem: {e.msg}")
+
 def get_variables(string):
     """
     Get set of free variables used by formula
@@ -105,11 +118,18 @@ def get_variables(string):
     string = string.strip()
     if not len(string):
         return set()
-    root = ast.parse(string, mode='eval')
-    visitor = VariableCollector()
-    visitor.visit(root)
-    result = visitor.variables
-    return result.difference(safe_names.keys())
+    try:
+        root = ast.parse(string, mode='eval')
+        visitor = VariableCollector()
+        visitor.visit(root)
+        result = visitor.variables
+        return result.difference(safe_names.keys())
+    except SyntaxError as e:
+        if e.offset == e.end_offset:
+            location = "location unknown"
+        else:
+            location = f"problematic fragment: «{string[e.offset-1 : e.end_offset]}»"
+        raise SyntaxError(f"Unparsed text: «{string}», {location}, problem: {e.msg}")
 
 def sv_compile(string):
     try:
@@ -117,7 +137,7 @@ def sv_compile(string):
         return compile(root, "<expression>", 'eval')
     except SyntaxError as e:
         logging.exception(e)
-        raise Exception("Invalid expression syntax: " + str(e))
+        raise SyntaxError("Invalid expression syntax: " + str(e))
 
 def safe_eval_compiled(compiled, variables, allowed_names = None):
     """
@@ -134,7 +154,7 @@ def safe_eval_compiled(compiled, variables, allowed_names = None):
         return eval(compiled, env)
     except SyntaxError as e:
         sv_logging.exception(e)
-        raise Exception("Invalid expression syntax: " + str(e))
+        raise SyntaxError("Invalid expression syntax: " + str(e))
 
 # It could be safer...
 def safe_eval(string, variables):
@@ -151,5 +171,5 @@ def safe_eval(string, variables):
         return eval(compile(root, "<expression>", 'eval'), env)
     except SyntaxError as e:
         logging.exception(e)
-        raise Exception("Invalid expression syntax: " + str(e))
+        raise SyntaxError("Invalid expression syntax: " + str(e))
 

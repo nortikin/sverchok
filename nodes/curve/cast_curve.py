@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
 from sverchok.utils.geom import SphereEquation, CylinderEquation, PlaneEquation
-from sverchok.utils.curve import SvCurve, SvCastCurveToPlane, SvCastCurveToSphere, SvCastCurveToCylinder
+from sverchok.utils.curve import SvCurve, SvCastCurveToPlane, SvCastCurveToSphere, SvCastCurveToCylinder, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import cast_nurbs_curve
 
@@ -95,7 +95,7 @@ class SvCastCurveNode(SverchCustomTreeNode, bpy.types.Node):
         def _cast_nurbs(self, curve, center, direction, radius, coeff):
             curve = SvNurbsCurve.to_nurbs(curve)
             if curve is None:
-                raise Exception("Provided curve is not a NURBS")
+                raise UnsupportedCurveTypeException("Provided curve is not a NURBS")
             if self.form == 'PLANE':
                 target = PlaneEquation.from_normal_and_point(direction, center)
             elif self.form == 'SPHERE':

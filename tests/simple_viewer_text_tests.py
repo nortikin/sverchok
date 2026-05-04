@@ -25,4 +25,4 @@ class TextViewerTest(EmptyTreeTestCase):
         # in the file from the first test run.
         with open(self.get_reference_file_path("text_viewer_out.txt"), "r") as f:
             expected_text = f.read()
-            self.assertEquals(text, expected_text)
+            self.assertEqual(text, expected_text)

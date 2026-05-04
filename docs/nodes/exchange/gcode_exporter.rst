@@ -39,6 +39,7 @@ Continuous
 - **Filament (Ф)** - Thickness of fliament    
 - **Nozzle** - Coeffitient of nozzle diameter    
 - **Print** - Printing Speed general    
+- **Scale** - Scale for all model (they say, 1000 value will fix scale for some printers, meters in blender will become 1000 mm)     
 
 Retraction
 ----------

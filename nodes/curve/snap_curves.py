@@ -12,7 +12,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_solver_applications import (
         snap_curves,
@@ -119,7 +119,7 @@ class SvSnapCurvesNode(SverchCustomTreeNode, bpy.types.Node):
         for curves in curves_s:
             curves = [SvNurbsCurve.to_nurbs(c) for c in curves]
             if any(c is None for c in curves):
-                raise Exception("Some of curves are not NURBS!")
+                raise UnsupportedCurveTypeException("Some of curves are not NURBS!")
             new_curves = snap_curves(curves,
                                      bias = self.bias,
                                      tangent = self.tangent,

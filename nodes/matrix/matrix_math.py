@@ -105,8 +105,11 @@ class SvMatrixMathNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_MATH'
 
+    def draw_label(self):
+        return f'{SvMatrixMathNode.bl_label}: {self.function_name}'
+
     def update_operation(self, context):
-        self.label = "Matrix " + self.operation.title()
+        self.label = f'{SvMatrixMathNode.bl_label}: {self.operation.title()}'
         self.update_sockets()
         updateNode(self, context)
 

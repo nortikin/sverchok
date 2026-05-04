@@ -10,7 +10,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, repeat_last_for_length
-from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import remove_excessive_knots
 
@@ -56,7 +56,7 @@ class SvCurveRemoveExcessiveKnotsNode(SverchCustomTreeNode, bpy.types.Node):
             for curve in curves:
                 curve = SvNurbsCurve.to_nurbs(curve)
                 if curve is None:
-                    raise Exception("One of curves is not NURBS")
+                    raise UnsupportedCurveTypeException("One of curves is not NURBS")
                 curve = remove_excessive_knots(curve, tolerance=tolerance)
                 new_curves.append(curve)
             if flat_output:

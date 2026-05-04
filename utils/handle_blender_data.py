@@ -204,7 +204,7 @@ class BlModifier:
             data = data[:1]
         if len(data) == 1:
             value = data[0]
-            self._mod[f"{name}_use_attribute"] = 0
+            self._mod[f"{name}_use_attribute"] = False # False - as value, True - as attribute
             if isinstance(value, (list, tuple)):  # list of single vertex
                 # for some reason node modifier can't apply python sequences directly
                 for i, v in enumerate(value):
@@ -221,7 +221,7 @@ class BlModifier:
 
         # transfer field
         else:
-            self._mod[f"{name}_use_attribute"] = 1
+            self._mod[f"{name}_use_attribute"] = True
             self._mod[f"{name}_attribute_name"] = name
             obj = BlObject(self._mod.id_data)
             sock = self.gn_tree.inputs[name]
@@ -310,8 +310,12 @@ class BlTrees:
 class BlTree:
     def __init__(self, tree):
         self._tree = tree
-        self.inputs = {s.identifier: s for s in tree.inputs}
-        self.outputs = {s.identifier: s for s in tree.outputs}
+        if bpy.app.version>=(4,0,0):
+            self.inputs  = {s.from_socket.identifier: s.from_socket for s in tree.links if s.from_node.type=='GROUP_INPUT'}
+            self.outputs = {s.to_socket.identifier: s.to_socket for s in tree.links if s.to_node.type=='GROUP_OUTPUT'}
+        else:
+            self.inputs = {s.identifier: s for s in tree.inputs}
+            self.outputs = {s.identifier: s for s in tree.outputs}
 
         self.is_field = lru_cache(self._is_field)  # for performance
 
@@ -415,17 +419,37 @@ class BlSocket:
     }
 
     _sv_types = {
-        'VECTOR': 'SvVerticesSocket',
-        'VALUE': 'SvStringsSocket',
-        'RGBA': 'SvColorSocket',
-        'INT': 'SvStringsSocket',
-        'STRING': 'SvTextSocket',
-        'BOOLEAN': 'SvStringsSocket',
-        'OBJECT': 'SvObjectSocket',
-        'COLLECTION': 'SvCollectionSocket',
-        'MATERIAL': 'SvMaterialSocket',
-        'TEXTURE': 'SvTextureSocket',
-        'IMAGE': 'SvImageSocket',
+        'VECTOR'                : 'SvVerticesSocket',
+        'VALUE'                 : 'SvStringsSocket',
+        'RGBA'                  : 'SvColorSocket',
+        'INT'                   : 'SvStringsSocket',
+        'STRING'                : 'SvTextSocket',
+        'BOOLEAN'               : 'SvStringsSocket',
+        'OBJECT'                : 'SvObjectSocket',
+        'COLLECTION'            : 'SvCollectionSocket',
+        'MATERIAL'              : 'SvMaterialSocket',
+        'TEXTURE'               : 'SvTextureSocket',
+        'IMAGE'                 : 'SvImageSocket',
+
+        # replaced in Blender 4.x:
+        'NodeSocketVector'      : 'SvVerticesSocket',
+        'NodeSocketValue'       : 'SvStringsSocket',
+        'NodeSocketRgba'        : 'SvColorSocket',
+        'NodeSocketInt'         : 'SvStringsSocket',
+        'NodeSocketString'      : 'SvTextSocket',
+        'NodeSocketBoolean'     : 'SvStringsSocket',
+        'NodeSocketObject'      : 'SvObjectSocket',
+        'NodeSocketCollection'  : 'SvCollectionSocket',
+        'NodeSocketMaterial'    : 'SvMaterialSocket',
+        'NodeSocketTexture'     : 'SvTextureSocket',
+        'NodeSocketImage'       : 'SvImageSocket',
+
+        # replaced in Blender 5.x:
+        'NodeSocketFloat'       : 'SvStringsSocket',
+        'NodeSocketBool'        : 'SvStringsSocket',
+        'NodeSocketColor'       : 'SvColorSocket',
+        'NodeSocketRotation'    : 'SvVerticesSocket',
+        # 'NodeSocketMatrix'      : 'SvMatrixSocket', cannot be used outside geonodes
     }
 
     def __init__(self, socket):
@@ -435,9 +459,10 @@ class BlSocket:
         sv_sock.name = self._sock.name
 
         if sv_sock.bl_idname == 'SvStringsSocket':
-            if self._sock.type == 'VALUE':
+            attr_type_name = "type" if hasattr(self._sock, "type") else "socket_type" # "type" for Blender <4.x, "socket_type" for Blender >= 4.x
+            if getattr(self._sock, attr_type_name) in {'VALUE', 'NodeSocketValue', 'NodeSocketFloat'}: # {'VALUE',} - Blender < 4.x, {'NodeSocketValue'} - Blender >=4.x, {'NodeSocketFloat'} - Blender > 5.x
                 sv_sock.default_property_type = 'float'
-            elif self._sock.type in {'INT', 'BOOLEAN'}:
+            elif getattr(self._sock, attr_type_name) in {'INT', 'BOOLEAN', 'NodeSocketInt', 'NodeSocketBoolean', 'NodeSocketBool',}: # {'INT', 'BOOLEAN'} - Blender < 4.x, {'NodeSocketInt', 'NodeSocketBoolean'} - Blender >=4.x
                 sv_sock.default_property_type = 'int'
             else:
                 return  # There is no default property for such type
@@ -479,7 +504,9 @@ class BlSocket:
 
     @property
     def sverchok_type(self):
-        if (sv_type := self._sv_types.get(self._sock.type)) is None:
+        attr_type_name = "type" if hasattr(self._sock, "type") else "socket_type" # "type" for Blender <4.x, "socket_type" for Blender >= 4.x
+        attr_value = getattr(self._sock, attr_type_name)
+        if (sv_type := self._sv_types.get(attr_value)) is None:
             return 'SvStringsSocket'
         return sv_type
 

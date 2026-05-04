@@ -283,7 +283,7 @@ class NumberMultiGene(NamedTuple):
 
 evolver_mem = {}
 
-GENE_NODES = ["SvNumberNode", "SvListInputNode", "SvGenesHolderNode"]
+GENE_NODES = ["SvNumberNode", "SvListInputNode", "SvGenesHolderNode", "SvListInputNodeMK2"]
 
 def is_valid_node(node, genotype_frame):
 
@@ -371,7 +371,9 @@ class DNA:
                 except Exception:
                     raise
 
-            agent_fitness = node.inputs[0].sv_get(deepcopy=False)[0]
+            agent_fitness = node.inputs[0].sv_get(deepcopy=False)
+            print(agent_fitness)
+            agent_fitness = agent_fitness[0]
             if isinstance(agent_fitness, list):
                 agent_fitness = agent_fitness[0]
             self.fitness = agent_fitness
@@ -556,13 +558,13 @@ class SvEvolverRun(bpy.types.Operator, SvGenericNodeLocator):
         np.random.seed(node.r_seed)
         population = Population(genotype_frame, node, tree)
         population.evolve()
-        node.process_node(None)
+        node.process_node(context) #None
 
 
 class SvEvolverSetFittest(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.evolver_set_fittest"
-    bl_label = "Evolver Run"
+    bl_label = "Evolver Set Fitness"
 
     def sv_execute(self, context, node):
         tree = node.id_data

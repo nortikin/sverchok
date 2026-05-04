@@ -43,9 +43,9 @@ class GeneralFuseTests(NodeProcessTestCase):
 
         out = self.get_output_data("Solid")
         out_level = get_data_nesting_level(out, data_types=(Part.Shape,))
-        self.assertEquals(out_level, 1)
+        self.assertEqual(out_level, 1)
         out_len = len(out)
-        self.assertEquals(out_len, 1)
+        self.assertEqual(out_len, 1)
 
         map = self.get_output_data("SolidSources")
         self.assert_sverchok_data_equal(map, [[0, 1]])
@@ -86,9 +86,9 @@ class GeneralFuseTests(NodeProcessTestCase):
 
         out = self.get_output_data("Solid")
         out_level = get_data_nesting_level(out, data_types=(Part.Shape,))
-        self.assertEquals(out_level, 1)
+        self.assertEqual(out_level, 1)
         out_len = len(out)
-        self.assertEquals(out_len, 3)
+        self.assertEqual(out_len, 3)
 
         map = self.get_output_data("SolidSources")
         self.assert_sverchok_data_equal(map, [[0], [0,1], [1]])
@@ -126,9 +126,9 @@ class GeneralFuseTests(NodeProcessTestCase):
 
         out = self.get_output_data("Solid")
         out_level = get_data_nesting_level(out, data_types=(Part.Shape,))
-        self.assertEquals(out_level, 1)
+        self.assertEqual(out_level, 1)
         out_len = len(out)
-        self.assertEquals(out_len, 1)
+        self.assertEqual(out_len, 1)
 
         map = self.get_output_data("SolidSources")
         self.assert_sverchok_data_equal(map, [[0,1]])
@@ -166,9 +166,9 @@ class GeneralFuseTests(NodeProcessTestCase):
 
         out = self.get_output_data("Solid")
         out_level = get_data_nesting_level(out, data_types=(Part.Shape,))
-        self.assertEquals(out_level, 2)
+        self.assertEqual(out_level, 2)
         #out_len = len(out)
-        #self.assertEquals(out_len, 1)
+        #self.assertEqual(out_len, 1)
 
         map = self.get_output_data("SolidSources")
         self.assert_sverchok_data_equal(map, [[[0], [0,1], [1]]])

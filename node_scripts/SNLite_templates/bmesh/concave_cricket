@@ -27,7 +27,7 @@ def alpha_shape_3D(pos, alpha):
     # By definition, radius of the sphere fitting inside the tetrahedral needs 
     # to be smaller than alpha value
     # http://mathworld.wolfram.com/Circumsphere.html
-    tetrapos = np.take(pos,tetra.vertices,axis=0)
+    tetrapos = np.take(pos,tetra.simplices,axis=0)
     normsq = np.sum(tetrapos**2,axis=2)[:,:,None]
     ones = np.ones((tetrapos.shape[0],tetrapos.shape[1],1))
     a = np.linalg.det(np.concatenate((tetrapos,ones),axis=2))

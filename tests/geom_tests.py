@@ -12,19 +12,19 @@ class GeometryTests(SverchokTestCase):
         input = [(0, 0, 0)]
         output = center(input)
         expected_output = input[0]
-        self.assertEquals(output, expected_output)
+        self.assertEqual(output, expected_output)
 
     def test_center_quad(self):
         inputs = [(-1, 0, 0), (0, -1, 0), (0, 1, 0), (1, 0, 0)]
         output = center(inputs)
         expected_output = (0, 0, 0)
-        self.assertEquals(output, expected_output)
+        self.assertEqual(output, expected_output)
 
     def test_normal_quad(self):
         inputs = [(-1, 0, 0), (0, -1, 0), (1, 0, 0), (0, 1, 0)]
         output = calc_normal(inputs)
         expected_output = Vector((0, 0, 1))
-        self.assertEquals(output, expected_output)
+        self.assertEqual(output, expected_output)
 
     def test_circle_equal_1(self):
         circle1 = SvCircle(Matrix(), 1.0)
@@ -116,7 +116,7 @@ class GeometryTests(SverchokTestCase):
         plane = PlaneEquation.from_coordinate_plane('XY')
         point = (1,1,1)
         uv = tuple(plane.point_uv_projection(point))
-        self.assertEquals(uv, (1,1))
+        self.assertEqual(uv, (1,1))
 
     def test_intersect_planes_1(self):
         plane1 = PlaneEquation.from_coordinate_plane('XY')

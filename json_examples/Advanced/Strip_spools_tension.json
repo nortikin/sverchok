@@ -8,7 +8,7 @@
             -30.0,
             10.0
           ],
-          "height": 354.0,
+          "height": 388.0,
           "width": 423.0,
           "label": "\u041a\u0420\u0423\u0413"
         },
@@ -20,7 +20,7 @@
             3.123554229736328,
             85.8200454711914
           ],
-          "height": 286.0,
+          "height": 290.0,
           "width": 612.0,
           "label": "\u0426\u0415\u041d\u0422\u0420\u042b \u041e\u041a\u0420\u0423\u0416\u041d\u041e\u0421\u0422\u0415\u0419"
         },
@@ -32,7 +32,7 @@
             -106.45096588134766,
             -7.181072235107422
           ],
-          "height": 354.0,
+          "height": 388.0,
           "width": 395.0,
           "label": "\u041c\u0410\u0422\u0420\u0418\u0426\u042b \u041e\u041a\u0420\u0423\u0416\u041d\u041e\u0421\u0422\u0415\u0419"
         },
@@ -44,7 +44,7 @@
             -0.30179786682128906,
             18.00433921813965
           ],
-          "height": 354.0,
+          "height": 388.0,
           "width": 623.0,
           "label": "\u0421\u041a\u0420\u0423\u0413\u041b\u0415\u041d\u0418\u0415 \u0423\u0413\u041b\u041e\u0412"
         },
@@ -56,7 +56,7 @@
             -44.71268081665039,
             241.9759979248047
           ],
-          "height": 390.0,
+          "height": 429.0,
           "width": 971.000244140625,
           "label": "\u041e\u041f\u0420\u0415\u0414\u0415\u041b\u0415\u041d\u0418\u0415 \u0423\u0413\u041b\u041e\u0412 \u041c\u0415\u0416\u0414\u0423 \u0412\u0415\u0420\u0428\u0418\u041d"
         },
@@ -68,7 +68,7 @@
             -251.06382751464844,
             -60.414764404296875
           ],
-          "height": 354.0,
+          "height": 388.0,
           "width": 400.0,
           "label": "\u041e\u0421\u0418"
         },
@@ -80,7 +80,7 @@
             -251.06382751464844,
             -60.414764404296875
           ],
-          "height": 454.0,
+          "height": 458.0,
           "width": 382.0,
           "label": "\u0411\u0410\u0411\u0418\u041d\u042b"
         },
@@ -92,7 +92,7 @@
             -81.494384765625,
             234.6116943359375
           ],
-          "height": 324.0,
+          "height": 328.0,
           "width": 580.0,
           "label": "\u041d\u0410\u0427\u0410\u041b\u042c\u041d\u041e\u0415"
         },
@@ -104,7 +104,7 @@
             -32.11316680908203,
             7.884646415710449
           ],
-          "height": 140.0,
+          "height": 144.0,
           "width": 460.0,
           "label": "nikitron 2022 - strip rounding with rolling circles withtension"
         },
@@ -318,6 +318,12 @@
             4547.033710479736,
             1156.0256118774414
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.009"
@@ -476,6 +482,12 @@
             5044.895713806152,
             1248.170124053955
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.007"
@@ -588,39 +600,6 @@
         },
         "bl_idname": "SvViewerDrawMk4"
       },
-      "UV Connection.001": {
-        "attributes": {
-          "location": [
-            4551.090291976929,
-            904.5394954681396
-          ],
-          "parent": {
-            "type": "NODE",
-            "value": "Frame.010"
-          }
-        },
-        "inputs": {
-          "vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "vertices"
-          },
-          "vertices 1": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "vertices 1"
-          }
-        },
-        "outputs": {
-          "vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "vertices"
-          },
-          "data": {
-            "bl_idname": "SvStringsSocket",
-            "name": "data"
-          }
-        },
-        "bl_idname": "LineConnectNodeMK2"
-      },
       "Smooth Lines": {
         "attributes": {
           "location": [
@@ -711,6 +690,12 @@
             3689.0966453552246,
             1110.840072631836
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.011"
@@ -736,6 +721,12 @@
             3874.1632957458496,
             1110.840072631836
           ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.011"
@@ -835,7 +826,7 @@
           }
         },
         "properties": {
-          "location_theta": 1.0,
+          "location_theta": 1.0080000162124634,
           "num_elements": 1,
           "compact": true,
           "line_width": 120
@@ -852,7 +843,7 @@
         "attributes": {
           "location": [
             3321.9677391052246,
-            1108.3677215576172
+            1108.367660522461
           ],
           "parent": {
             "type": "NODE",
@@ -923,7 +914,7 @@
         "attributes": {
           "location": [
             3506.8420066833496,
-            1108.3677215576172
+            1108.367660522461
           ],
           "parent": {
             "type": "NODE",
@@ -1144,8 +1135,8 @@
           }
         },
         "properties": {
-          "meridians": 48,
-          "height": 0.10000000149011612
+          "height": 0.10000000149011612,
+          "meridians": 48
         },
         "inputs": {
           "RadiusT": {
@@ -1247,7 +1238,6 @@
           }
         },
         "properties": {
-          "selected_draw_mode": "facet",
           "display_verts": false,
           "edge_color": [
             0.14000000059604645,
@@ -1332,7 +1322,7 @@
         "attributes": {
           "location": [
             2699.276123046875,
-            1100.5407104492188
+            1100.540771484375
           ],
           "parent": {
             "type": "NODE",
@@ -1340,7 +1330,7 @@
           }
         },
         "properties": {
-          "int_": 6,
+          "int_": 5,
           "selected_mode": "int",
           "int_max": 50,
           "int_min": 4
@@ -1520,7 +1510,6 @@
           }
         },
         "properties": {
-          "n_id": "-7712133623339889914",
           "text": "nikitron 2022 - strip rounding with rolling circles withtension",
           "show_text": false
         },
@@ -1543,6 +1532,43 @@
           }
         },
         "bl_idname": "NoteNode"
+      },
+      "UV Connection MK3": {
+        "attributes": {
+          "location": [
+            4551.090291976929,
+            904.5394954681396
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.010"
+          }
+        },
+        "inputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "vertices 1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices 1"
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges"
+          },
+          "polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons"
+          }
+        },
+        "bl_idname": "LineConnectNodeMK3"
       }
     },
     "links": [
@@ -1607,7 +1633,7 @@
         "to_socket": "data"
       },
       {
-        "from_node": "UV Connection.001",
+        "from_node": "UV Connection MK3",
         "from_socket": "vertices",
         "to_node": "Viewer Draw.004",
         "to_socket": "Vertices"
@@ -1619,16 +1645,10 @@
         "to_socket": "Edges"
       },
       {
-        "from_node": "UV Connection.001",
-        "from_socket": "data",
+        "from_node": "UV Connection MK3",
+        "from_socket": "polygons",
         "to_node": "Viewer Draw.004",
         "to_socket": "Polygons"
-      },
-      {
-        "from_node": "Smooth Lines",
-        "from_socket": "verts",
-        "to_node": "UV Connection.001",
-        "to_socket": "vertices"
       },
       {
         "from_node": "Noise Displace",
@@ -1797,6 +1817,12 @@
         "from_socket": "Polygons",
         "to_node": "Noise Displace",
         "to_socket": "Polygons"
+      },
+      {
+        "from_node": "Smooth Lines",
+        "from_socket": "verts",
+        "to_node": "UV Connection MK3",
+        "to_socket": "vertices"
       }
     ]
   }

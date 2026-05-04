@@ -75,6 +75,7 @@
         - SvBiArcNode
         - SvPolyArcNode
         - ---
+        - SvMonotoneSplineNode
         - SvPointCurveNode
     - SvExCurveFormulaNode
     - SvExCubicSplineNode
@@ -94,6 +95,7 @@
         - SvFilletCurveNode
         - SvDeconstructCurveNode
         - SvNurbsCurveNodesNode
+        - SvNurbsCurveExtremesNode
         - ---
         - SvNurbsCurveMovePointNode
         - SvSnapCurvesNode
@@ -114,8 +116,9 @@
     - ---
     - SvExApplyFieldToCurveNode
     - SvExCastCurveNode
+    - SvSymmetrizeCurveNode
     - SvProjectCurveSurfaceNode
-    - SvOffsetCurveMk2Node
+    - SvOffsetCurveMk3Node
     - SvCurveOffsetOnSurfaceNode
     - SvExIsoUvCurveNode
     - SvExCurveOnSurfaceNode
@@ -149,8 +152,9 @@
     - SvLengthRebuildCurveNode
     - SvExCrossCurvePlaneNode
     - SvExCrossCurveSurfaceNode
+    - SvCrossCurveSphereNode
     - ---
-    - SvAdaptivePlotCurveNode
+    - SvAdaptivePlotCurveMk2Node
     - SvExEvalCurveNode
 
 - Surfaces:
@@ -167,8 +171,8 @@
         - SvExApproxNurbsSurfaceNodeMK2
         - SvExInterpolateNurbsSurfaceNodeMK2
         - SvNurbsLoftNode
-        - SvNurbsSweepNode
-        - SvNurbsBirailNode
+        - SvNurbsSweepMk2Node
+        - SvNurbsBirailMk2Node
         - SvGordonSurfaceNode
         - SvDeconstructSurfaceNode
         - ---
@@ -180,6 +184,11 @@
         - ---
         - SvSurfaceElevateDegreeNode
         - SvSurfaceReduceDegreeNode
+        - ---
+        - SvAdjustNurbsSurfaceNode
+        - SvSnapSurfacesNode
+        - ---
+        - SvConcatSurfacesNode
     - ---
     - SvRevolutionSurfaceNodeMK2
     - SvExTaperSweepSurfaceNode
@@ -224,6 +233,8 @@
     - SvExDecomposeVectorFieldNode
     - SvExScalarFieldPointNode
     - SvAttractorFieldNodeMk2
+    - SvTwistFieldNode
+    - SvTaperFieldNode
     - SvRotationFieldNode
     - SvExImageFieldNode
     - SvMeshSurfaceFieldNode
@@ -235,6 +246,7 @@
     - ---
     - SvExScalarFieldMathNode
     - SvExVectorFieldMathNode
+    - SvVectorFieldFilterNode
     - SvScalarFieldCurveMapNode
     - SvExFieldDiffOpsNode
     - SvScalarFieldCurvatureNode
@@ -278,6 +290,7 @@
     - SvSolidSectionNode
     - SvSolidGeneralFuseNode
     - SvMirrorSolidNode
+    - SvSymmetrizeSolidNode
     - SvOffsetSolidNode
     - SvSplitSolidNode
     - SvHollowSolidNode
@@ -320,7 +333,7 @@
     - SvExVoronoi3DNode
     - SvExVoronoiSphereNode
     - SvVoronoiOnSurfaceNode
-    - SvVoronoiOnMeshNodeMK4
+    - SvVoronoiOnMeshNodeMK5
     - SvVoronoiOnSolidNodeMK2
     - ---
     - SvLloyd2dNode
@@ -365,13 +378,14 @@
     - SvComponentAnalyzerNode
     - SvDiameterNode
     - SvVolumeNodeMK2
-    - SvAreaNode
+    - SvAreaNodeMK2
     - DistancePPNode
     - SvWeightedVectorSumNode
     - SvDistancePointLineNode
     - SvDistancePointPlaneNode
     - SvDistancetLineLineNode
     - SvPathLengthMk2Node
+    - SvPathGroupLength
     - SvOrigins
     - SvGetNormalsNodeMk2
     - SvIntersectLineSphereNode
@@ -430,7 +444,7 @@
         - SvPols2EdgsNodeMk2
         - SvMeshJoinNodeMk2
         - ---
-        - SvFillsHoleNode
+        - SvFillsHoleNodeMK2
         - SvRecalcNormalsNode
         - SvFlipNormalsNode
         - ---
@@ -448,13 +462,13 @@
         - SvFlatGeometryNode
 
     - Modifier Make:
-        - LineConnectNodeMK2
+        - LineConnectNodeMK3
         - ---
         - SvOpenSubdivisionNode
         - SvSubdivideNodeMK2
         - SvSubdivideToQuadsNode
         - SvUnsubdivideNode
-        - SvOffsetLineNode
+        - SvOffsetLineNodeMK2
         - SvContourNode
         - ---
         - SvQuadriFlowNode
@@ -478,7 +492,7 @@
 - CAD:
     - icon_name: TOOL_SETTINGS
     - extra_menu: MeshPartialMenu
-    - SvBevelNode
+    - SvBevelNodeMK2
     - SvIntersectEdgesNodeMK3
     - SvOffsetNode
     - SvInsetSpecialMk2
@@ -497,10 +511,13 @@
     - SvEmbedMesh
     - SvCropMesh2D
     - SvCSGBooleanNodeMK2
+    - SvInternalBooleanNode
     - SvWafelNode
     - ---
     - SvStraightSkeleton2DOffset
     - SvStraightSkeleton2DExtrude
+    - ---
+    - SvSpyrrowNesterNode
 
 - ---
 
@@ -597,7 +614,7 @@
     - SvSwitchNodeMK2
     - SvInputSwitchNodeMOD
     - SvNeuroElman1LNode
-    - SvCustomSwitcher
+    - SvCustomSwitcherMK2
     - SvRangeSwitchNode
     - ---
     - SvLoopInNode
@@ -695,6 +712,7 @@
     - SvTextureViewerNode
     - SvTextureViewerNodeLite
     - SvWaveformViewer
+    - SvDataTreeVizNode
     - SvConsoleNode
 
 - Text:
@@ -712,18 +730,18 @@
     - SvGTextNode
     - ---
     - SvStringsToolsNode
-    - SvSimpleTextNode
+    - SvSimpleTextNodeMK2
 
 - Scene:
     - icon_name: SCENE_DATA
     - extra_menu: ConnectionPartialMenu
-    - SvGetObjectsDataMK3
+    - SvGetObjectsDataMK5
     - SvObjInLite
     - SvCurveInputNode
     - SvFCurveInNodeMK1
     - SvCollectionPicker
-    - SvBezierInNode
-    - SvExNurbsInNode
+    - SvBezierInNodeMK3
+    - SvExNurbsInNodeMK3
     - SvParticlesMK2Node
     - ---
     - SvSelectionGrabberLite
@@ -738,6 +756,7 @@
     - SvExJsonToNurbsNode
     - SvImportSolidNode
     - SvExportSolidNode
+    - SvExportIfcNode
     - SvReceiveFromSorcarNode
     - SvExportGcodeNode
     - SvReadFCStdNode
@@ -746,6 +765,7 @@
     - SvReadFCStdSketchNode
     - SvFCStdSpreadsheetNode
     - SvApproxSubdtoNurbsNode
+    - SvGlbExportNode
 
 - Layout:
     - icon_name: NODETREE
@@ -847,12 +867,27 @@
     - SvSvgFillStrokeNodeMk2
     - SvSvgPatternNode
 
+- DXF:
+    - icon_name: SV_SVG
+    - extra_menu: ConnectionPartialMenu
+    - SvDxfImportNode
+    - SvDxfExportNode
+    - SvDxfLinDimsNode
+    - SvDxfTextsNode
+    - SvDxfHatchNode
+    - SvDxfLinesNode
+    - SvDxfCirclesNode
+    - SvDxfPolygonsNode
+
 - ---
 
-- Group:  # label of custom menu to show
-    - custom_menu: NODE_MT_SverchokGroupMenu  # bl_idname of the custom menu
+- Group:  # Group sub-tree (monad) node category
     - icon_name: NODETREE
     - extra_menu: UiToolsPartialMenu
+    - SvGroupTreeNode  # listed directly so the node is discoverable via search
+    - Group tools:  # extra operators (input/output/from-selected)
+        - custom_menu: NODE_MT_SverchokGroupMenu
+        - icon_name: NODETREE
 
 - Presets:
     - custom_menu: NODEVIEW_MT_AddPresetMenu

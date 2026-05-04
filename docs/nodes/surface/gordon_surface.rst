@@ -1,6 +1,11 @@
 NURBS Surface from Curves Net
 =============================
 
+Dependencies
+------------
+
+This node can optionally use SciPy library.
+
 Functionality
 -------------
 
@@ -45,10 +50,19 @@ will pass through the curves only approximately.
 
 If intersections of your curves are located arbitrarily in parameter spaces of
 curves, the node can try to reparametrize curves in order to make intersections
-located "even" in parameter spaces. Note that reparametrization algorithm is
-somewhat rude, so it can produce unwanted additional control points, and/or
-create "bad" parametrization of resulting surface. In some cases, it is
-possible to get a better parametrization by manually removing excessive knots.
+located "even" in parameter spaces. There are two algorithms implemented:
+
+* Picewise-linear algorithm. This reparametrization algorithm is somewhat rude,
+  so it can produce unwanted additional control points, and/or create "bad"
+  parametrization of resulting surface; sometimes it can produce not very
+  smooth surfaces. In some cases, it is possible to get a better
+  parametrization by manually removing excessive knots. 
+* Monotone spline algorithm. This algorithm requires SciPy library to work.
+  This algorithm is more precise, because it generates smoother
+  reparametrization; as a result, usually more smooth surfaces are generated,
+  even for badly parametrized original curves. But this algorithm also
+  generates more control points. Probably you will want to use "Remove
+  excessive knots" node afterwards.
 
 To clear the issue of intersections location in parameter space, let's draw some pictures.
 
@@ -113,6 +127,30 @@ This node has the following parameters:
   give more exact results, but can produce a number of knots / control points
   located very close to each other, most of them being just an artefact of
   floating-point precision issues. The default value is 4.
+* **Reparametrization algorithm**. This parameter is only avaialble in the N
+  panel. The available options are:
+
+  * **Picewise Linear**. This is the default option.
+  * **Monotone Spline**. This option is only available when SciPy library is
+    available.
+
+  See discussion of reparametrization above in the **Functionality** section.
+
+* **SamplesU**, **SamplesV**. These parameters are available in the N panel
+  only, and only when the **Reparametrization algorithm** parameter is set to
+  **Monotone Spline**. Number of samples along U and V surface directions,
+  which are used for interpolation during the reparametrization procedure.
+  Bigger values usually generate more precise surfaces; however, have in mind
+  that the surface will have at least **SamplesU * SamplesV** control points
+  (usually more). The default value is 50 for both parameters.
+* **Remove knots**. This parameter is available in the N panel only. If this
+  parameter is checked, then after reparametrization the node will try to
+  remove excessively generated knots from base curves. This reduces the number
+  of generates control points, but reduces the precision. Unchecked by default.
+* **Reparametrization accuracy**. This parameter is available in the N panel
+  only, and only when the **Remove knots** parameter is checked. Accuracy
+  (number of decimal digits ager decimal point) of excessive knots removing
+  procedure. The default value is 4.
 
 Outputs
 -------

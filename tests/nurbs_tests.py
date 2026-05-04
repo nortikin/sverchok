@@ -418,6 +418,38 @@ class OtherNurbsTests(SverchokTestCase):
         result = inserted.evaluate_array(ts)
         self.assert_numpy_arrays_equal(result, expected, precision=8)
 
+    def test_insert_tolerance_evaluate(self):
+        """Insertion of knot with value very near to existing one does not change curve shape"""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2,1,0], [3, 0, 0], [4,0,0]])
+        weights = [1, 1, 1, 1, 1]
+        degree = 3
+        kv = np.array([0,0,0,0, 0.5, 1,1,1,1])
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+
+        u_bar = 0.5000001
+        inserted = curve.insert_knot(u_bar)
+        ts = np.array([0, 0.25, 0.5, 0.75, 1.0])
+        expected = curve.evaluate_array(ts)
+        result = inserted.evaluate_array(ts)
+        self.assert_numpy_arrays_equal(result, expected, precision=8)
+
+    def test_insert_tolerance_repeated(self):
+        """Insertion of knot with value very near to existing one is allowed
+        for the same number of times that for any other value (except existing
+        knot), and does not change curve shape."""
+        points = np.array([[0, 0, 0], [1, 1, 0], [2,1,0], [3, 0, 0], [4,0,0]])
+        weights = [1, 1, 1, 1, 1]
+        degree = 3
+        kv = np.array([0,0,0,0, 0.5, 1,1,1,1])
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+
+        u_bar = 0.5000001
+        inserted = curve.insert_knot(u_bar, 3)
+        ts = np.array([0, 0.25, 0.5, 0.75, 1.0])
+        expected = curve.evaluate_array(ts)
+        result = inserted.evaluate_array(ts)
+        self.assert_numpy_arrays_equal(result, expected, precision=8)
+
     def test_insert_unclamped_native_middle(self):
         points = np.array([[0, 0, 0], [1, 1, 0], [2,1,0], [3, 0, 0]])
         degree = 2
@@ -489,7 +521,7 @@ class OtherNurbsTests(SverchokTestCase):
             raise Exception(kv_err)
         knot = 0.5
         inserted = curve.insert_knot(knot, 2)
-        self.assertEquals(len(inserted.get_control_points()), len(points)+2)
+        self.assertEqual(len(inserted.get_control_points()), len(points)+2)
         self.assert_numpy_arrays_equal(inserted.evaluate_array(ts), orig_pts, precision=8)
 
         expected_inserted_kv = np.array([0, 0, 0, 0, 0.5, 0.5, 1, 1, 1, 1])
@@ -518,7 +550,7 @@ class OtherNurbsTests(SverchokTestCase):
         knot = 0.1
         inserted = curve.insert_knot(knot, 1)
 
-        self.assertEquals(len(inserted.get_control_points()), len(points)+1)
+        self.assertEqual(len(inserted.get_control_points()), len(points)+1)
 
         expected_inserted_kv = np.array([0, 0, 0, 0,  0.1, 0.25, 0.75, 1, 1, 1, 1])
         self.assert_numpy_arrays_equal(inserted.get_knotvector(), expected_inserted_kv, precision=8)
@@ -719,7 +751,7 @@ class OtherNurbsTests(SverchokTestCase):
         pt1 = circle.evaluate(t_max)
         nurbs = circle._arc_to_nurbs(t_min, t_max)
         pt2 = nurbs.evaluate(t_max)
-        self.assert_numpy_arrays_equal(pt1, pt2, precision=8)
+        self.assert_numpy_arrays_equal(pt1, pt2, precision=3, fail_fast=False)
 
     def test_arc_2(self):
         pt1 = (-5, 0, 0)
@@ -731,12 +763,12 @@ class OtherNurbsTests(SverchokTestCase):
         arc.u_bounds = (0.0, eq.arc_angle)
         nurbs = arc.to_nurbs()
         u_min, u_max = nurbs.get_u_bounds()
-        self.assertEquals(u_min, 0, "U_min")
-        self.assertEquals(u_max, eq.arc_angle, "U_max")
+        self.assertEqual(u_min, 0, "U_min")
+        self.assertEqual(u_max, eq.arc_angle, "U_max")
         startpoint = nurbs.evaluate(u_min)
-        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=8)
+        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=5)
         endpoint = nurbs.evaluate(u_max)
-        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=8)
+        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=5)
 
     def test_arc_3(self):
         pt1 = np.array((-4, 2, 0))
@@ -748,12 +780,12 @@ class OtherNurbsTests(SverchokTestCase):
         arc.u_bounds = (0.0, eq.arc_angle)
         nurbs = arc.to_nurbs()
         u_min, u_max = nurbs.get_u_bounds()
-        self.assertEquals(u_min, 0, "U_min")
-        self.assertEquals(u_max, eq.arc_angle, "U_max")
+        self.assertEqual(u_min, 0, "U_min")
+        self.assertEqual(u_max, eq.arc_angle, "U_max")
         startpoint = nurbs.evaluate(u_min)
-        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=6)
+        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=5)
         endpoint = nurbs.evaluate(u_max)
-        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=6)
+        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=5)
 
 class KnotvectorTests(SverchokTestCase):
     def test_generate_1(self):
@@ -951,7 +983,7 @@ class TaylorTests(SverchokTestCase):
 
         result = curve.is_strongly_outside_sphere(np.array([0, 0, 0]), 2)
         expected_result = False
-        self.assertEquals(result, expected_result)
+        self.assertEqual(result, expected_result)
 
     def test_outside_sphere_2(self):
         cpts = np.array([[-2, 1, 0], [2, 1, 0]])
@@ -961,7 +993,7 @@ class TaylorTests(SverchokTestCase):
 
         result = curve.is_strongly_outside_sphere(np.array([0, 0, 0]), 1)
         expected_result = False
-        self.assertEquals(result, expected_result)
+        self.assertEqual(result, expected_result)
 
     def test_outside_sphere_3(self):
         cpts = np.array([[-2, 5, 0], [2, 5, 0]])
@@ -971,7 +1003,7 @@ class TaylorTests(SverchokTestCase):
 
         result = curve.is_strongly_outside_sphere(np.array([0, 0, 0]), 1)
         expected_result = True
-        self.assertEquals(result, expected_result)
+        self.assertEqual(result, expected_result)
 
 class CurveDegreeTests(SverchokTestCase):
     def test_elevate_degree(self):

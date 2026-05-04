@@ -1,0 +1,354 @@
+{
+  "export_version": "1.0",
+  "main_tree": {
+    "nodes": {
+      "NGon": {
+        "attributes": {
+          "location": [
+            260.0,
+            540.0
+          ],
+          "color": [
+            0.7721503973007202,
+            0.9200000166893005,
+            0.8091128468513489
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "rad_": 1.1080000400543213
+        },
+        "inputs": {
+          "Radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Radius",
+            "properties": {
+              "prop_name": "rad_"
+            }
+          },
+          "N Sides": {
+            "bl_idname": "SvStringsSocket",
+            "name": "N Sides",
+            "properties": {
+              "prop_name": "sides_"
+            }
+          },
+          "Divisions": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Divisions",
+            "properties": {
+              "prop_name": "divisions"
+            }
+          },
+          "RandomR": {
+            "bl_idname": "SvStringsSocket",
+            "name": "RandomR",
+            "properties": {
+              "prop_name": "rand_r_"
+            }
+          },
+          "RandomPhi": {
+            "bl_idname": "SvStringsSocket",
+            "name": "RandomPhi",
+            "properties": {
+              "prop_name": "rand_phi_"
+            }
+          },
+          "RandomSeed": {
+            "bl_idname": "SvStringsSocket",
+            "name": "RandomSeed",
+            "properties": {
+              "prop_name": "rand_seed_"
+            }
+          },
+          "Shift": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Shift",
+            "properties": {
+              "prop_name": "shift_"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          }
+        },
+        "bl_idname": "SvNGonNode"
+      },
+      "Viewer Draw": {
+        "attributes": {
+          "location": [
+            1020.0,
+            580.0
+          ],
+          "color": [
+            0.9999715685844421,
+            0.8993088603019714,
+            0.9742180705070496
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "edge_color": [
+            0.866829514503479,
+            0.939659059047699,
+            1.0,
+            1.0
+          ],
+          "selected_draw_mode": "facet",
+          "point_size": 2,
+          "polygon_color": [
+            0.14000000059604645,
+            0.5400000214576721,
+            0.8100000023841858,
+            0.31296128034591675
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Matrix Normal": {
+        "attributes": {
+          "location": [
+            500.0,
+            440.0
+          ],
+          "color": [
+            0.8576140403747559,
+            0.9321048259735107,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "track": "X",
+          "up": "Y"
+        },
+        "inputs": {
+          "Location": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Location",
+            "properties": {
+              "use_prop": true
+            }
+          },
+          "Normal": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Normal",
+            "properties": {
+              "use_prop": true
+            }
+          }
+        },
+        "outputs": {
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          }
+        },
+        "bl_idname": "SvMatrixNormalNode"
+      },
+      "Solidify": {
+        "attributes": {
+          "location": [
+            780.0,
+            580.0
+          ],
+          "color": [
+            0.596470832824707,
+            0.9345773458480835,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "offset": 0.0,
+          "thickness": 0.31300002336502075,
+          "even": false
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Thickness": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Thickness",
+            "properties": {
+              "prop_name": "thickness"
+            }
+          },
+          "Offset": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Offset",
+            "properties": {
+              "prop_name": "offset"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "New Pols": {
+            "bl_idname": "SvStringsSocket",
+            "name": "New Pols"
+          },
+          "Rim Pols": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Rim Pols"
+          },
+          "Pols Group": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Pols Group"
+          },
+          "New Verts Mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "New Verts Mask"
+          }
+        },
+        "bl_idname": "SvSolidifyNodeMk2"
+      }
+    },
+    "links": [
+      {
+        "from_node": "Solidify",
+        "from_socket": "Vertices",
+        "to_node": "Viewer Draw",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Solidify",
+        "from_socket": "Edges",
+        "to_node": "Viewer Draw",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Solidify",
+        "from_socket": "Polygons",
+        "to_node": "Viewer Draw",
+        "to_socket": "Polygons"
+      },
+      {
+        "from_node": "Matrix Normal",
+        "from_socket": "Matrix",
+        "to_node": "Viewer Draw",
+        "to_socket": "Matrix"
+      },
+      {
+        "from_node": "NGon",
+        "from_socket": "Vertices",
+        "to_node": "Matrix Normal",
+        "to_socket": "Location"
+      },
+      {
+        "from_node": "NGon",
+        "from_socket": "Vertices",
+        "to_node": "Matrix Normal",
+        "to_socket": "Normal"
+      },
+      {
+        "from_node": "NGon",
+        "from_socket": "Vertices",
+        "to_node": "Solidify",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "NGon",
+        "from_socket": "Edges",
+        "to_node": "Solidify",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "NGon",
+        "from_socket": "Polygons",
+        "to_node": "Solidify",
+        "to_socket": "Polygons"
+      }
+    ]
+  }
+}

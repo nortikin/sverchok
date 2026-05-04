@@ -25,6 +25,7 @@ then optimized only for speed, never for aesthetics or line count or cleverness.
 
 '''
 
+import enum
 import math
 from math import sin, cos, sqrt, acos, pi, atan
 import numpy as np
@@ -34,6 +35,7 @@ import mathutils
 from mathutils import Matrix, Vector
 from mathutils.geometry import interpolate_bezier, intersect_line_line, intersect_point_line
 
+from sverchok.core.sv_custom_exceptions import ArgumentError
 from sverchok.utils.modules.geom_primitives import (
     circle, arc, quad, arc_slice, rect, grid, line)
 
@@ -44,6 +46,10 @@ from sverchok.utils.sv_logging import sv_logger
 # njit is a light-wrapper around numba.njit, if found
 from sverchok.dependencies import numba  # not strictly needed i think...
 from sverchok.utils.decorators_compilation import njit
+
+class RangeBoundary(enum.Enum):
+    MIN = enum.auto()
+    MAX = enum.auto()
 
 def bounding_box_aligned(verts, evec_external=None, factor=1.0):
     ''' Build bounding box around vectors. If evec_external is not none then it can be used with factor.
@@ -116,6 +122,39 @@ def bounding_box_aligned(verts, evec_external=None, factor=1.0):
     mat_scale[0][0], mat_scale[1][1], mat_scale[2][2] = abbox_size
     mat = mathutils.Matrix.Translation(abbox_center) @ Matrix(evec_target).to_euler().to_matrix().to_4x4() @ mat_scale
     return rrc, mat, abbox_size  # verts, matrix (not use for a while)
+
+def aligned_bounding_box_2d(points):
+    points = np.asarray(points).T
+    ndim, n = points.shape
+    if ndim != 2:
+        raise ArgumentError("Points must be list of 2-tuples")
+    means = np.mean(points, axis=1)
+    points -= means[np.newaxis].T
+    cov = np.cov(points)
+    evalues, evec = np.linalg.eig(cov)
+    evec = evec.T
+    maxidx = np.argmax(abs(evalues))
+
+    vec1 = np.zeros((3,))
+    vec2 = np.zeros((3,))
+    vec1[:2] = evec[maxidx]
+    vec2[:2] = evec[1 - maxidx]
+
+    vec3 = np.cross(vec1, vec2)
+    vec2 = np.cross(vec3, vec1)
+
+    res = np.zeros((2, 2))
+    res[0,:] = vec1[:2]
+    res[1,:] = vec2[:2]
+    det = np.linalg.det(res)
+    if det < 0:
+        res[1,:] = -vec2[:2]
+
+    rotated_pts = (res @ points).T
+    size_0 = rotated_pts[:,0].max() - rotated_pts[:,0].min()
+    size_1 = rotated_pts[:,1].max() - rotated_pts[:,1].min()
+    return rotated_pts, size_0, size_1
+
 
 identity_matrix = Matrix()
 
@@ -374,7 +413,7 @@ class CubicSpline(Spline):
     def from_2d_points(cls, xs, ys):
         vertices = np.zeros((len(xs), 3))
         vertices[:,0] = np.array(xs)
-        vertices[:,1] = np.zrray(ys)
+        vertices[:,1] = np.array(ys)
         return CubicSpline(vertices, metric='X', is_cyclic=False)
 
     def eval(self, t_in, tknots = None):
@@ -1288,9 +1327,8 @@ class LineEquation(object):
                A       B        C
     """
 
-    def __init__(self, a, b, c, point):
-        epsilon = 1e-8
-        if a*a + b*b + c*c < epsilon:
+    def __init__(self, a, b, c, point, epsilon=1e-8):
+        if a*a + b*b + c*c < epsilon*epsilon:
             raise Exception("Direction is (nearly) zero: {}, {}, {}".format(a, b, c))
         self.a = a
         self.b = b
@@ -1303,7 +1341,7 @@ class LineEquation(object):
         return eq
 
     @classmethod
-    def from_two_points(cls, p1, p2):
+    def from_two_points(cls, p1, p2, epsilon=1e-8):
         if p1 is None or p2 is None:
             raise TypeError("None was passed instead of one of points")
         if (mathutils.Vector(p1) - mathutils.Vector(p2)).length < 1e-8:
@@ -1315,12 +1353,12 @@ class LineEquation(object):
         b = y2 - y1
         c = z2 - z1
 
-        return LineEquation(a, b, c, p1)
+        return LineEquation(a, b, c, p1, epsilon=epsilon)
 
     @classmethod
-    def from_direction_and_point(cls, direction, point):
+    def from_direction_and_point(cls, direction, point, epsilon=1e-8):
         a, b, c = tuple(direction)
-        return LineEquation(a, b, c, point)
+        return LineEquation(a, b, c, point, epsilon=epsilon)
 
     @classmethod
     def from_coordinate_axis(cls, axis_name):
@@ -1486,59 +1524,37 @@ def locate_linear(p1, p2, p):
     #print(f"L: {p1} - {p2}: {p} => {u}")
     return u
 
+SEGMENTS_PARALLEL = 'PARALLEL'
+
 def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3, tolerance=1e-3):
     x1,y1,z1 = v1
     x2,y2,z2 = v2
     x3,y3,z3 = v3
     x4,y4,z4 = v4
 
-    #d1 = distance(v1, v2)
-    #d2 = distance(v3, v4)
-    #m = np.array([v2-v1, v3-v1, v4-v1])
-    #det_m = np.linalg.det(m)
-    #if abs(det_m) > 1e-6:
-    #    print(f"Det_m: {det_m}")
-    #    return None
-
-    line1 = LineEquation.from_two_points(v1, v2)
-    line2 = LineEquation.from_two_points(v3, v4)
-    dist = line1.distance_to_line(line2)
-    if dist > tolerance:
-        #print(f"Distance: {dist}")
+    if (max(x1, x2) < min(x3, x4) or
+        max(y1, y2) < min(y3, y4) or
+        max(z1, z2) < min(z3, z4)):
+        #print("Bounding boxes do not intersect")
+        return None
+    if (max(x3, x4) < min(x1, x2) or
+        max(y3, y4) < min(y1, y2) or
+        max(z3, z4) < min(z1, z2)):
+        #print("Bounding boxes do not intersect")
         return None
 
-    ds = line1.distance_to_points([v3, v4])
-    if ds[0] < tolerance:
-        u = locate_linear(v1, v2, v3)
-        return u, 0.0, np.asarray(v3)
-    if ds[1] < tolerance:
-        u = locate_linear(v1, v2, v4)
-        return u, 1.0, np.asarray(v4)
-
-    ds = line2.distance_to_points([v1, v2])
-    if ds[0] < tolerance:
-        v = locate_linear(v3, v4, v1)
-        return 0.0, v, np.asarray(v1)
-    if ds[1] < tolerance:
-        v = locate_linear(v3, v4, v2)
-        return 1.0, v, np.asarray(v2)
-
-    denom = np.linalg.det(np.array([
-            [x1-x2, x4-x3],
-            [y1-y2, y4-y3]
-        ]))
-
-    num1 = np.linalg.det(np.array([
-            [x4-x2, x4-x3],
-            [y4-y2, y4-y3]
-        ]))
-    num2 = np.linalg.det(np.array([
-            [x1-x2, x4-x2],
-            [y1-y2, y4-y2]
-        ]))
-
-    u = num1 / denom
-    v = num2 / denom
+    A = np.array([[x2-x1, x3-x4], [y2-y1, y3-y4], [z2-z1, z3-z4]])
+    B = np.array([[x3-x1], [y3-y1], [z3-z1]])
+    #print("A", A)
+    #print("B", B)
+    xs, res, rank, sing = np.linalg.lstsq(A, B, rcond=None)
+    u, v = xs[0][0], xs[1][0]
+    if len(res) == 0:
+        return SEGMENTS_PARALLEL
+    #if not res or res[0] > tolerance:
+    #print("Res:", res, u, v)
+    #if res[0] > tolerance:
+    #    return None
 
     et = endpoint_tolerance
     if not ((0.0-et <= u <= 1.0+et) and (0.0-et <= v <= 1.0+et)):
@@ -1553,9 +1569,9 @@ def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3, tolerance
 #     if v > 0.0:
 #         v = 1.0
 
-    x = u*(x1-x2) + x2
-    y = u*(y1-y2) + y2
-    z = u*(z1-z2) + z2
+    x = u*(x2-x1) + x1
+    y = u*(y2-y1) + y1
+    z = u*(z2-z1) + z1
     pt = np.array([x,y,z])
 
     return u, v, pt
@@ -2768,6 +2784,24 @@ def rotate_vector_around_vector_np(v, k, theta):
     s3 = p1 * p2 * k
     return s1 + s2 + s3
 
+def rotate_around_vector_matrix(k, theta):
+    if isinstance(theta, (list,tuple,np.ndarray)):
+        theta = np.array(theta)
+        theta = theta[np.newaxis,np.newaxis].T
+    kx, ky, kz = k
+    K = np.zeros((3,3))
+    K[0,1] = -kz
+    K[0,2] = ky
+    K[1,2] = -kx
+    K[1,0] = -K[0,1]
+    K[2,0] = -K[0,2]
+    K[2,1] = -K[1,2]
+    I = np.eye(3)
+    st = np.sin(theta)
+    ct = np.cos(theta)
+    R = I + st * K + (1 - ct)*(K @ K)
+    return R
+
 def calc_bounds(vertices, allowance=0):
     x_min = min(v[0] for v in vertices)
     y_min = min(v[1] for v in vertices)
@@ -2829,4 +2863,24 @@ def is_convex_2d(verts):
         elif sign * n[2] < 0:
             return False
     return True
+
+def calc_polygon_area(points):
+    """
+    Calc area of the polygon.
+    It is assumed that all points are in the same plane
+    (one can check it with are_points_coplanar() method).
+
+    Args:
+        points: np.array of shape (n,3)
+
+    Returns:
+        number.
+    """
+    points = np.asarray(points)
+    p0 = points[0]
+    vectors = points - p0
+    sum_cross = np.zeros((3,))
+    for v1, v2 in zip(vectors[1:], vectors[2:]):
+        sum_cross += np.cross(v1, v2)
+    return np.linalg.norm(sum_cross) / 2.0
 

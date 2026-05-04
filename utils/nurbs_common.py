@@ -64,6 +64,13 @@ class SvNurbsMaths(object):
         return nurbs_class.interpolate(degree, points, metric=metric, **kwargs)
 
     @staticmethod
+    def interpolate_with_tangents(implementation, degree, points, tangents, **kwargs):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None and isinstance(implementation, type):
+            nurbs_class = implementation
+        return nurbs_class.interpolate_with_tangents(degree, points, tangents, **kwargs)
+
+    @staticmethod
     def to_nurbs_curve(curve, implementation = NATIVE):
         nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
         if nurbs_class is None:
@@ -182,10 +189,21 @@ def from_homogenous(control_points):
     else:
         raise Exception(f"control_points have ndim={control_points.ndim}, supported are only 2 and 3")
 
+def to_homogenous(control_points, weights=None):
+    if weights is None:
+        weights = np.ones((len(control_points),))
+    if weights.ndim < 2:
+        weights = weights[np.newaxis].T
+    weighted = weights * control_points
+    return np.concatenate((weighted, weights), axis=1)
+
 class SvNurbsBasisFunctions(object):
     def __init__(self, knotvector):
         self.knotvector = np.array(knotvector)
         self._cache = dict()
+
+    def evaluate(self, degree, n_cpts, order, ts):
+        return np.array([[self.derivative(i, degree, d)(ts) for i in range(n_cpts)] for d in range(order)]) # (order, k, n)
 
     def function(self, i, p, reset_cache=True):
         if reset_cache:
@@ -315,11 +333,14 @@ class SvNurbsBasisFunctions(object):
 
 
 class CantInsertKnotException(Exception):
+    __description__ = "Cannot insert knot"
     pass
 
 class CantRemoveKnotException(Exception):
+    __description__ = "Cannot remove knot"
     pass
 
 class CantReduceDegreeException(Exception):
+    __description__ = "Cannot reduce degree"
     pass
 

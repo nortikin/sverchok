@@ -1,0 +1,4097 @@
+{
+  "export_version": "1.0",
+  "main_tree": {
+    "nodes": {
+      "Frame.005": {
+        "attributes": {
+          "location": [
+            196.0,
+            -10.0
+          ],
+          "height": 649.0,
+          "width": 848.0,
+          "label": "original lines"
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.007": {
+        "attributes": {
+          "location": [
+            9.0,
+            30.0
+          ],
+          "height": 385.0,
+          "width": 201.0,
+          "label": "separate"
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.004": {
+        "attributes": {
+          "location": [
+            527.107666015625,
+            66.77210998535156
+          ],
+          "height": 861.0,
+          "width": 2858.0,
+          "label": "shifting"
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.002": {
+        "attributes": {
+          "location": [
+            1733.8895263671875,
+            61.31825256347656
+          ],
+          "height": 500.0,
+          "width": 898.0,
+          "label": "size display"
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame": {
+        "attributes": {
+          "location": [
+            1628.941162109375,
+            -18.320898056030273
+          ],
+          "height": 388.0,
+          "width": 1229.999755859375,
+          "label": "final size"
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.001": {
+        "attributes": {
+          "location": [
+            1370.597900390625,
+            284.8363952636719
+          ],
+          "height": 388.0,
+          "width": 769.000244140625,
+          "label": "full size"
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.003": {
+        "attributes": {
+          "location": [
+            1322.791015625,
+            125.82783508300781
+          ],
+          "height": 351.0,
+          "width": 857.0,
+          "label": "organize"
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.008": {
+        "attributes": {
+          "location": [
+            131.888916015625,
+            411.4369659423828
+          ],
+          "height": 654.0,
+          "width": 1264.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.006": {
+        "attributes": {
+          "location": [
+            127.0,
+            240.0
+          ],
+          "height": 967.0,
+          "width": 336.0,
+          "label": "inputs"
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Plane": {
+        "attributes": {
+          "location": [
+            -349.7518310546875,
+            -43.04649353027344
+          ],
+          "width": 153.9774169921875,
+          "color": [
+            0.9200000166893005,
+            0.9200000166893005,
+            0.9200000166893005
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "center": true,
+          "numx": 15,
+          "numy": 15
+        },
+        "inputs": {
+          "Size X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Size X",
+            "properties": {
+              "prop_name": "sizex"
+            }
+          },
+          "Size Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Size Y",
+            "properties": {
+              "prop_name": "sizey"
+            }
+          },
+          "Num X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Num X",
+            "properties": {
+              "prop_name": "numx"
+            }
+          },
+          "Num Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Num Y",
+            "properties": {
+              "prop_name": "numy"
+            }
+          },
+          "Step X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Step X",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "stepx"
+            }
+          },
+          "Step Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Step Y",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "stepy"
+            }
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          }
+        },
+        "bl_idname": "SvPlaneNodeMk3"
+      },
+      "List Split.002": {
+        "attributes": {
+          "location": [
+            -149.22360229492188,
+            -60.75642395019531
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          },
+          "Split": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Split",
+            "properties": {
+              "prop_name": "split"
+            }
+          }
+        },
+        "outputs": {
+          "Split": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Split"
+          }
+        },
+        "bl_idname": "SvListSplitNode"
+      },
+      "Matrix In": {
+        "attributes": {
+          "location": [
+            -326.38037109375,
+            188.5360870361328
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "location_": [
+            40.07999801635742,
+            0.0,
+            0.0
+          ]
+        },
+        "inputs": {
+          "Location": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Location",
+            "properties": {
+              "prop_name": "location_",
+              "expanded": true
+            }
+          },
+          "Scale": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Scale",
+            "properties": {
+              "prop_name": "scale"
+            }
+          },
+          "Quaternion": {
+            "bl_idname": "SvQuaternionSocket",
+            "name": "Quaternion",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "quaternion"
+            }
+          },
+          "Angle X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle X",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_x"
+            }
+          },
+          "Angle Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle Y",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_y"
+            }
+          },
+          "Angle Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle Z",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_z"
+            }
+          },
+          "Axis": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Axis",
+            "properties": {
+              "prop_name": "axis"
+            }
+          },
+          "Angle": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle",
+            "properties": {
+              "prop_name": "angle"
+            }
+          }
+        },
+        "outputs": {
+          "Matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrices"
+          }
+        },
+        "bl_idname": "SvMatrixInNodeMK4"
+      },
+      "Viewer Draw": {
+        "attributes": {
+          "location": [
+            297.7392578125,
+            259.682861328125
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "display_faces": false,
+          "display_verts": false,
+          "edge_color": [
+            0.8999999761581421,
+            0.8999999761581421,
+            0.3499999940395355,
+            1.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "prop_name": "vector_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "prop_name": "edge_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "prop_name": "polygon_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "List Flip.001": {
+        "attributes": {
+          "location": [
+            -147.77069091796875,
+            -220.07728576660156
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "level": 1
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          }
+        },
+        "outputs": {
+          "data": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "data"
+          }
+        },
+        "bl_idname": "ListFlipNode"
+      },
+      "List First & Last": {
+        "attributes": {
+          "location": [
+            590.927734375,
+            159.79263305664062
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.007"
+          }
+        },
+        "properties": {
+          "level": 1
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          }
+        },
+        "outputs": {
+          "Middl": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Middl"
+          },
+          "First": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "First"
+          },
+          "Last": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Last"
+          }
+        },
+        "bl_idname": "ListFLNode"
+      },
+      "List First & Last.001": {
+        "attributes": {
+          "location": [
+            589.871337890625,
+            -11.838191986083984
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.007"
+          }
+        },
+        "properties": {
+          "level": 1
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          }
+        },
+        "outputs": {
+          "Middl": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Middl"
+          },
+          "First": {
+            "bl_idname": "SvStringsSocket",
+            "name": "First"
+          },
+          "Last": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Last"
+          }
+        },
+        "bl_idname": "ListFLNode"
+      },
+      "Stethoscope MK2.001": {
+        "attributes": {
+          "location": [
+            1059.232666015625,
+            250.0923614501953
+          ],
+          "color": [
+            1.0,
+            0.8993440270423889,
+            0.9742509722709656
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "properties": {
+          "text_color": [
+            0.949999988079071,
+            0.949999988079071,
+            0.949999988079071
+          ],
+          "location_theta": 1.0,
+          "num_elements": 6,
+          "compact": true,
+          "line_width": 205,
+          "activate": false
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          }
+        },
+        "bl_idname": "SvStethoscopeNodeMK2"
+      },
+      "List Item": {
+        "attributes": {
+          "location": [
+            862.1785583496094,
+            38.57334899902344
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          },
+          "Index": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Index",
+            "properties": {
+              "prop_name": "index"
+            }
+          }
+        },
+        "outputs": {
+          "Item": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Item"
+          },
+          "Other": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Other"
+          }
+        },
+        "bl_idname": "SvListItemNode"
+      },
+      "Vector Lerp": {
+        "attributes": {
+          "location": [
+            1060.0,
+            20.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "Factor": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Factor",
+            "properties": {
+              "prop_name": "factor_"
+            }
+          },
+          "Vertices A": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices A"
+          },
+          "Vertices B": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices B"
+          }
+        },
+        "outputs": {
+          "EvPoint": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "EvPoint"
+          }
+        },
+        "bl_idname": "SvVectorLerp"
+      },
+      "List Match": {
+        "attributes": {
+          "location": [
+            1270.3441162109375,
+            82.36085510253906
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "Data 0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data 0"
+          },
+          "Data 1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data 1"
+          },
+          "Data 2": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data 2"
+          }
+        },
+        "outputs": {
+          "Data 0": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Data 0"
+          },
+          "Data 1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Data 1"
+          },
+          "Data 2": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data 2"
+          },
+          "Data 1_001": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_002": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_003": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_004": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_005": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_006": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_007": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_008": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_009": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_010": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_011": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1_012": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          }
+        },
+        "bl_idname": "ListMatchNode"
+      },
+      "Vector Math": {
+        "attributes": {
+          "location": [
+            1471.3671875,
+            121.09685516357422
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "properties": {
+          "current_op": "SUB"
+        },
+        "inputs": {
+          "A": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "A",
+            "properties": {
+              "prop_name": "v3_input_0"
+            }
+          },
+          "B": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "B",
+            "properties": {
+              "prop_name": "v3_input_1"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvVectorMathNodeMK3"
+      },
+      "Polygon Boom.001": {
+        "attributes": {
+          "location": [
+            6126.7850341796875,
+            -136.89599609375
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "inputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "edg_pol": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edg_pol"
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "edg_pol": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edg_pol"
+          }
+        },
+        "bl_idname": "PolygonBoomNode"
+      },
+      "Origins": {
+        "attributes": {
+          "location": [
+            6472.5999755859375,
+            -32.667015075683594
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "mode": "Faces"
+        },
+        "inputs": {
+          "Verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          }
+        },
+        "outputs": {
+          "Origin": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Origin"
+          },
+          "Normal": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Normal"
+          },
+          "Tangent": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangent"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          }
+        },
+        "bl_idname": "SvOrigins"
+      },
+      "List Zip": {
+        "attributes": {
+          "location": [
+            6478.2498779296875,
+            167.53750610351562
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "data 1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 1"
+          },
+          "data 2": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 2"
+          }
+        },
+        "outputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          }
+        },
+        "bl_idname": "ZipNode"
+      },
+      "Scalar Math.002": {
+        "attributes": {
+          "location": [
+            6649.3651123046875,
+            162.7446746826172
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "current_op": "ROUND-N",
+          "y_": 2.0
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Stethoscope MK2": {
+        "attributes": {
+          "location": [
+            6651.2845458984375,
+            -24.9093017578125
+          ],
+          "color": [
+            1.0,
+            0.8993440270423889,
+            0.9742509722709656
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "text_color": [
+            0.949999988079071,
+            0.949999988079071,
+            0.949999988079071
+          ],
+          "num_elements": 154,
+          "compact": true,
+          "line_width": 156,
+          "rounding": 4,
+          "location_theta": 1.0080000162124634,
+          "activate": false
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          }
+        },
+        "bl_idname": "SvStethoscopeNodeMK2"
+      },
+      "Viewer Index+": {
+        "attributes": {
+          "location": [
+            6824.6810302734375,
+            170.2257537841797
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "numid_verts_col": [
+            0.5,
+            1.0,
+            0.5,
+            1.0
+          ]
+        },
+        "inputs": {
+          "verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "verts"
+          },
+          "edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges"
+          },
+          "faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "faces"
+          },
+          "matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrix"
+          },
+          "text": {
+            "bl_idname": "SvStringsSocket",
+            "name": "text"
+          }
+        },
+        "bl_idname": "SvIDXViewer28"
+      },
+      "Vector out.002": {
+        "attributes": {
+          "location": [
+            5053.989501953125,
+            -202.96292686462402
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "inputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "outputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X"
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y"
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z"
+          }
+        },
+        "bl_idname": "VectorsOutNode"
+      },
+      "Vector in.002": {
+        "attributes": {
+          "location": [
+            5480.2216796875,
+            -199.4165554046631
+          ],
+          "width": 100.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "inputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "GenVectorsNode"
+      },
+      "Scalar Math.008": {
+        "attributes": {
+          "location": [
+            5280.5771484375,
+            -320.5958003997803
+          ],
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "current_op": "SUB"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Scalar Math.009": {
+        "attributes": {
+          "location": [
+            5280.5771484375,
+            -274.00775718688965
+          ],
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "current_op": "MODULO"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Scalar Math.012": {
+        "attributes": {
+          "location": [
+            5280.5771484375,
+            -226.19028282165527
+          ],
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "current_op": "SUB"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Scalar Math.013": {
+        "attributes": {
+          "location": [
+            5280.5771484375,
+            -179.60223960876465
+          ],
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "current_op": "MODULO"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Offset": {
+        "attributes": {
+          "location": [
+            4847.97509765625,
+            -137.5525188446045
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "offset": 0.05000000074505806,
+          "radius": 9.999999747378752e-05
+        },
+        "inputs": {
+          "Vers": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vers"
+          },
+          "Pols": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Pols"
+          },
+          "Offset": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Offset",
+            "properties": {
+              "prop_name": "offset"
+            }
+          },
+          "N sides": {
+            "bl_idname": "SvStringsSocket",
+            "name": "N sides",
+            "properties": {
+              "prop_name": "nsides"
+            }
+          },
+          "Radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Radius",
+            "properties": {
+              "prop_name": "radius"
+            }
+          }
+        },
+        "outputs": {
+          "Vers": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vers"
+          },
+          "Edgs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edgs"
+          },
+          "OutPols": {
+            "bl_idname": "SvStringsSocket",
+            "name": "OutPols"
+          },
+          "InPols": {
+            "bl_idname": "SvStringsSocket",
+            "name": "InPols"
+          }
+        },
+        "bl_idname": "SvOffsetNode"
+      },
+      "Delete Loose": {
+        "attributes": {
+          "location": [
+            5657.681396484375,
+            -169.16306114196777
+          ],
+          "width": 128.1943359375,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "PolyEdge": {
+            "bl_idname": "SvStringsSocket",
+            "name": "PolyEdge"
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "PolyEdge": {
+            "bl_idname": "SvStringsSocket",
+            "name": "PolyEdge",
+            "properties": {
+              "label": "Polygons"
+            }
+          },
+          "VertsMask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "VertsMask"
+          }
+        },
+        "bl_idname": "SvDeleteLooseNode"
+      },
+      "Vector out.003": {
+        "attributes": {
+          "location": [
+            4836.704345703125,
+            107.94683837890625
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "inputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "outputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X"
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y"
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z"
+          }
+        },
+        "bl_idname": "VectorsOutNode"
+      },
+      "Vector in.003": {
+        "attributes": {
+          "location": [
+            5265.414794921875,
+            155.49722290039062
+          ],
+          "width": 100.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "inputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "GenVectorsNode"
+      },
+      "Scalar Math.006": {
+        "attributes": {
+          "location": [
+            5070.988037109375,
+            23.065765380859375
+          ],
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "current_op": "SUB"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Scalar Math.007": {
+        "attributes": {
+          "location": [
+            5070.988037109375,
+            69.65380859375
+          ],
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "current_op": "MODULO"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Scalar Math.001": {
+        "attributes": {
+          "location": [
+            5070.988037109375,
+            117.47128295898438
+          ],
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "current_op": "SUB"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Scalar Math": {
+        "attributes": {
+          "location": [
+            5073.657470703125,
+            157.37811279296875
+          ],
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "current_op": "MODULO"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Vector in.001": {
+        "attributes": {
+          "location": [
+            3160.0,
+            80.0
+          ],
+          "width": 100.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "GenVectorsNode"
+      },
+      "List Split": {
+        "attributes": {
+          "location": [
+            2426.3349609375,
+            -155.7213592529297
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.008"
+          }
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          },
+          "Split": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Split",
+            "properties": {
+              "prop_name": "split"
+            }
+          }
+        },
+        "outputs": {
+          "Split": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Split"
+          }
+        },
+        "bl_idname": "SvListSplitNode"
+      },
+      "Smooth Numbers": {
+        "attributes": {
+          "location": [
+            2255.525390625,
+            -164.82835388183594
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.008"
+          }
+        },
+        "properties": {
+          "iterations": 7,
+          "cyclic": true
+        },
+        "inputs": {
+          "Values": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Values"
+          },
+          "Iterations": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Iterations",
+            "properties": {
+              "prop_name": "iterations"
+            }
+          },
+          "Factor": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Factor",
+            "properties": {
+              "prop_name": "factor"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvSmoothNumbersNode"
+      },
+      "List Join": {
+        "attributes": {
+          "location": [
+            2083.81494140625,
+            -58.7730712890625
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "properties": {
+          "JoinLevel": 2
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "data 1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 1"
+          }
+        },
+        "outputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          }
+        },
+        "bl_idname": "ListJoinNode"
+      },
+      "Scalar Math.010": {
+        "attributes": {
+          "location": [
+            2594.270263671875,
+            -25.349960327148438
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.008"
+          }
+        },
+        "properties": {
+          "current_op": "DIV"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Temporal Stethoscope": {
+        "attributes": {
+          "location": [
+            2748.31005859375,
+            -140.2732391357422
+          ],
+          "label": "Temporal Stethoscope",
+          "color": [
+            0.3360449969768524,
+            0.3360449969768524,
+            0.6666539907455444
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.008"
+          }
+        },
+        "properties": {
+          "text_color": [
+            0.949999988079071,
+            0.949999988079071,
+            0.949999988079071
+          ],
+          "location_theta": 1.0080000162124634,
+          "num_elements": 140,
+          "compact": true,
+          "line_width": 120,
+          "activate": false
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          }
+        },
+        "bl_idname": "SvStethoscopeNodeMK2"
+      },
+      "Vector out": {
+        "attributes": {
+          "location": [
+            2065.08837890625,
+            118.8995590209961
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "outputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X"
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y"
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z"
+          }
+        },
+        "bl_idname": "VectorsOutNode"
+      },
+      "Vector in": {
+        "attributes": {
+          "location": [
+            2237.67041015625,
+            109.95053100585938
+          ],
+          "width": 100.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "GenVectorsNode"
+      },
+      "List Join.001": {
+        "attributes": {
+          "location": [
+            3320.0,
+            240.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "data 1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 1"
+          },
+          "data 2": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 2"
+          },
+          "data 3": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 3"
+          }
+        },
+        "outputs": {
+          "data": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "data"
+          }
+        },
+        "bl_idname": "ListJoinNode"
+      },
+      "List Join.002": {
+        "attributes": {
+          "location": [
+            3320.0,
+            0.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "data 1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 1"
+          },
+          "data 2": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 2"
+          },
+          "data 3": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 3"
+          }
+        },
+        "outputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          }
+        },
+        "bl_idname": "ListJoinNode"
+      },
+      "Polygon Boom.002": {
+        "attributes": {
+          "location": [
+            3513.0859375,
+            -103.80714416503906
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "edg_pol": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edg_pol"
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "edg_pol": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edg_pol"
+          }
+        },
+        "bl_idname": "PolygonBoomNode"
+      },
+      "Scalar Math.003": {
+        "attributes": {
+          "location": [
+            3902.92041015625,
+            -240.7550506591797
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "properties": {
+          "current_op": "-1"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "List Flip": {
+        "attributes": {
+          "location": [
+            4125.859375,
+            -73.17626953125
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "properties": {
+          "level": 3
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          }
+        },
+        "outputs": {
+          "data": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "data"
+          }
+        },
+        "bl_idname": "ListFlipNode"
+      },
+      "List Split.001": {
+        "attributes": {
+          "location": [
+            3908.1435546875,
+            -71.7774658203125
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "properties": {
+          "split": 14,
+          "unwrap": false,
+          "level": 0
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          },
+          "Split": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Split",
+            "properties": {
+              "prop_name": "split"
+            }
+          }
+        },
+        "outputs": {
+          "Split": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Split"
+          }
+        },
+        "bl_idname": "SvListSplitNode"
+      },
+      "Distance": {
+        "attributes": {
+          "location": [
+            1884.796875,
+            -70.9385986328125
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "vertices1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices1"
+          },
+          "matrix1": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrix1"
+          },
+          "vertices2": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices2"
+          },
+          "matrix2": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrix2"
+          }
+        },
+        "outputs": {
+          "distances": {
+            "bl_idname": "SvStringsSocket",
+            "name": "distances"
+          }
+        },
+        "bl_idname": "DistancePPNode"
+      },
+      "List Split.003": {
+        "attributes": {
+          "location": [
+            1448.8568115234375,
+            -146.2858123779297
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          },
+          "Split": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Split",
+            "properties": {
+              "prop_name": "split"
+            }
+          }
+        },
+        "outputs": {
+          "Split": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Split"
+          }
+        },
+        "bl_idname": "SvListSplitNode"
+      },
+      "Random Vector": {
+        "attributes": {
+          "location": [
+            1265.63818359375,
+            -387.99717712402344
+          ],
+          "color": [
+            0.9200000166893005,
+            0.9200000166893005,
+            0.9200000166893005
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "properties": {
+          "seed": 2
+        },
+        "inputs": {
+          "Count": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Count",
+            "properties": {
+              "prop_name": "count_inner"
+            }
+          },
+          "Seed": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Seed",
+            "properties": {
+              "prop_name": "seed"
+            }
+          },
+          "Scale": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Scale",
+            "properties": {
+              "prop_name": "scale"
+            }
+          }
+        },
+        "outputs": {
+          "Random": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Random"
+          }
+        },
+        "bl_idname": "RandomVectorNodeMK3"
+      },
+      "Polygon Boom": {
+        "attributes": {
+          "location": [
+            859.8543090820312,
+            186.38288116455078
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "edg_pol": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edg_pol"
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "edg_pol": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edg_pol"
+          }
+        },
+        "bl_idname": "PolygonBoomNode"
+      },
+      "List Length": {
+        "attributes": {
+          "location": [
+            1060.0,
+            -160.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "properties": {
+          "level": 0
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          }
+        },
+        "outputs": {
+          "Length": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Length"
+          }
+        },
+        "bl_idname": "ListLengthNode"
+      },
+      "Vector out.001": {
+        "attributes": {
+          "location": [
+            2960.0,
+            60.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "outputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X"
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y"
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z"
+          }
+        },
+        "bl_idname": "VectorsOutNode"
+      },
+      "Switch": {
+        "attributes": {
+          "location": [
+            1684.9573974609375,
+            -166.09898376464844
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.008"
+          }
+        },
+        "inputs": {
+          "State": {
+            "bl_idname": "SvStringsSocket",
+            "name": "State",
+            "properties": {
+              "prop_name": "switch_state"
+            }
+          },
+          "A_0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "A_0",
+            "properties": {
+              "prop_name": "A_0"
+            }
+          },
+          "B_0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "B_0",
+            "properties": {
+              "prop_name": "B_0"
+            }
+          }
+        },
+        "outputs": {
+          "Out_0": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Out_0"
+          }
+        },
+        "bl_idname": "SvSwitchNodeMK2"
+      },
+      "Switch.001": {
+        "attributes": {
+          "location": [
+            1688.513916015625,
+            -14.759140014648438
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.008"
+          }
+        },
+        "inputs": {
+          "State": {
+            "bl_idname": "SvStringsSocket",
+            "name": "State",
+            "properties": {
+              "prop_name": "switch_state"
+            }
+          },
+          "A_0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "A_0",
+            "properties": {
+              "prop_name": "A_0"
+            }
+          },
+          "B_0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "B_0",
+            "properties": {
+              "prop_name": "B_0"
+            }
+          }
+        },
+        "outputs": {
+          "Out_0": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Out_0"
+          }
+        },
+        "bl_idname": "SvSwitchNodeMK2"
+      },
+      "Vector Math.001": {
+        "attributes": {
+          "location": [
+            2373.18212890625,
+            96.27462005615234
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "properties": {
+          "current_op": "NORMALIZE",
+          "socket_info": "v v"
+        },
+        "inputs": {
+          "A": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "A",
+            "properties": {
+              "prop_name": "v3_input_0"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvVectorMathNodeMK3"
+      },
+      "Move.001": {
+        "attributes": {
+          "location": [
+            2749.062744140625,
+            107.80430603027344
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.008"
+          }
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Movement Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Movement Vectors",
+            "properties": {
+              "prop_name": "movement_vectors"
+            }
+          },
+          "Strength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Strength",
+            "properties": {
+              "prop_name": "strength"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvMoveNodeMk3"
+      },
+      "Vector Math.002": {
+        "attributes": {
+          "location": [
+            2387.505859375,
+            249.72354125976562
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.008"
+          }
+        },
+        "properties": {
+          "current_op": "SCALAR",
+          "socket_info": "vs v",
+          "amount": 0.5
+        },
+        "inputs": {
+          "A": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "A",
+            "properties": {
+              "prop_name": "v3_input_0"
+            }
+          },
+          "B": {
+            "bl_idname": "SvStringsSocket",
+            "name": "B",
+            "properties": {
+              "prop_name": "amount"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvVectorMathNodeMK3"
+      },
+      "Switch.002": {
+        "attributes": {
+          "location": [
+            2564.9658203125,
+            120.18220520019531
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.008"
+          }
+        },
+        "inputs": {
+          "State": {
+            "bl_idname": "SvStringsSocket",
+            "name": "State",
+            "properties": {
+              "prop_name": "switch_state"
+            }
+          },
+          "A_0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "A_0",
+            "properties": {
+              "prop_name": "A_0"
+            }
+          },
+          "B_0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "B_0",
+            "properties": {
+              "prop_name": "B_0"
+            }
+          }
+        },
+        "outputs": {
+          "Out_0": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Out_0"
+          }
+        },
+        "bl_idname": "SvSwitchNodeMK2"
+      },
+      "A Number.001": {
+        "attributes": {
+          "location": [
+            -655.6759033203125,
+            280.0846252441406
+          ],
+          "label": "\u0442\u043e\u0447\u043d\u043e\u0441\u0442\u044c",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "float_": 0.019999999552965164,
+          "draw_3dpanel": true
+        },
+        "inputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "prop_name": "float_"
+            }
+          }
+        },
+        "outputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "A Number.002": {
+        "attributes": {
+          "location": [
+            -655.6759033203125,
+            180.6705322265625
+          ],
+          "label": "sizeX",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "int_": 12,
+          "selected_mode": "int",
+          "draw_3dpanel": true
+        },
+        "inputs": {
+          "Int": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Int",
+            "properties": {
+              "prop_name": "int_"
+            }
+          }
+        },
+        "outputs": {
+          "Int": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Int",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "A Number.003": {
+        "attributes": {
+          "location": [
+            -655.6759033203125,
+            89.80293273925781
+          ],
+          "label": "sizeY",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "int_": 15,
+          "selected_mode": "int",
+          "draw_3dpanel": true
+        },
+        "inputs": {
+          "Int": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Int",
+            "properties": {
+              "prop_name": "int_"
+            }
+          }
+        },
+        "outputs": {
+          "Int": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Int",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "A Number.004": {
+        "attributes": {
+          "location": [
+            -655.794677734375,
+            -24.1751708984375
+          ],
+          "label": "offset",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "float_": 0.05000000074505806
+        },
+        "inputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "prop_name": "float_"
+            }
+          }
+        },
+        "outputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "A Number": {
+        "attributes": {
+          "location": [
+            -658.9239501953125,
+            -223.06622314453125
+          ],
+          "label": "divider",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "float_": 1.093999981880188,
+          "float_min": 0.009999999776482582,
+          "draw_3dpanel": true
+        },
+        "inputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "prop_name": "float_"
+            }
+          }
+        },
+        "outputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "A Number.005": {
+        "attributes": {
+          "location": [
+            -654.349853515625,
+            -323.40362548828125
+          ],
+          "label": "shift coef",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "float_": 0.5,
+          "float_min": 0.0,
+          "float_max": 2.0,
+          "draw_3dpanel": true
+        },
+        "inputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "prop_name": "float_"
+            }
+          }
+        },
+        "outputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "Viewer Draw.001": {
+        "attributes": {
+          "location": [
+            5877.681396484375,
+            -126.89130973815918
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "selected_draw_mode": "flat",
+          "display_verts": false,
+          "display_faces": false,
+          "vector_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "prop_name": "vector_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "prop_name": "edge_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "prop_name": "polygon_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Viewer Draw.002": {
+        "attributes": {
+          "location": [
+            5405.6123046875,
+            260.9754638671875
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "selected_draw_mode": "flat",
+          "display_faces": false,
+          "display_verts": false,
+          "edge_color": [
+            1.0,
+            0.2002968192100525,
+            0.13025054335594177,
+            1.0
+          ],
+          "vector_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "prop_name": "vector_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "prop_name": "edge_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "prop_name": "polygon_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Viewer Draw.003": {
+        "attributes": {
+          "location": [
+            3518.413818359375,
+            247.30557250976562
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "properties": {
+          "edge_color": [
+            0.12704533338546753,
+            0.4057784080505371,
+            1.0,
+            1.0
+          ],
+          "vector_color": [
+            0.12704533338546753,
+            0.4057784080505371,
+            1.0,
+            1.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "prop_name": "vector_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "prop_name": "edge_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "prop_name": "polygon_color",
+              "custom_draw": "draw_color_socket"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "UV Connection MK3": {
+        "attributes": {
+          "location": [
+            4340.02099609375,
+            -58.74839782714844
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "properties": {
+          "slice_polygons": false
+        },
+        "inputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "vertices 1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices 1"
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges"
+          },
+          "polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons"
+          }
+        },
+        "bl_idname": "LineConnectNodeMK3"
+      },
+      "Mesh Join.001": {
+        "attributes": {
+          "location": [
+            4560.0,
+            -80.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "is_mandatory": true,
+              "default_mode": "NONE"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "nesting_level": 3
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons",
+            "properties": {
+              "nesting_level": 3
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          }
+        },
+        "bl_idname": "SvMeshJoinNodeMk2"
+      },
+      "Bounding Box": {
+        "attributes": {
+          "location": [
+            6297.3505859375,
+            122.50390625
+          ]
+        },
+        "properties": {
+          "size_list": [
+            true,
+            true,
+            false
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "is_mandatory": true
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Mean": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Mean"
+          },
+          "Center": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Center"
+          },
+          "Min X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Min X",
+            "attributes": {
+              "hide": true
+            }
+          },
+          "Min Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Min Y",
+            "attributes": {
+              "hide": true
+            }
+          },
+          "Min Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Min Z",
+            "attributes": {
+              "hide": true
+            }
+          },
+          "Max X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Max X",
+            "attributes": {
+              "hide": true
+            }
+          },
+          "Max Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Max Y",
+            "attributes": {
+              "hide": true
+            }
+          },
+          "Max Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Max Z",
+            "attributes": {
+              "hide": true
+            }
+          },
+          "Size X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Size X"
+          },
+          "Size Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Size Y"
+          },
+          "Size Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Size Z",
+            "attributes": {
+              "hide": true
+            }
+          }
+        },
+        "bl_idname": "SvBBoxNodeMk3"
+      },
+      "UV Connection MK3.001": {
+        "attributes": {
+          "location": [
+            76.9464111328125,
+            14.88433837890625
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "output_type": "Edges"
+        },
+        "inputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "vertices 1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices 1"
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices"
+          },
+          "edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges"
+          },
+          "polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons"
+          }
+        },
+        "bl_idname": "LineConnectNodeMK3"
+      },
+      "Reroute": {
+        "attributes": {
+          "location": [
+            -384.8888244628906,
+            -156.75587463378906
+          ],
+          "width": 16.0
+        },
+        "bl_idname": "NodeReroute"
+      },
+      "Reroute.001": {
+        "attributes": {
+          "location": [
+            -381.1568298339844,
+            -454.339111328125
+          ],
+          "width": 16.0
+        },
+        "bl_idname": "NodeReroute"
+      },
+      "Logic Functions": {
+        "attributes": {
+          "location": [
+            -660.0,
+            -120.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "function_name": "FALSE"
+        },
+        "inputs": {
+          "A": {
+            "bl_idname": "SvStringsSocket",
+            "name": "A",
+            "properties": {
+              "use_prop": true,
+              "show_property_type": true,
+              "default_property_type": "int"
+            }
+          },
+          "B": {
+            "bl_idname": "SvStringsSocket",
+            "name": "B",
+            "properties": {
+              "use_prop": true,
+              "show_property_type": true,
+              "default_property_type": "int"
+            }
+          }
+        },
+        "outputs": {
+          "Result": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Result"
+          }
+        },
+        "bl_idname": "SvLogicNodeMK2"
+      },
+      "List Input.001": {
+        "attributes": {
+          "location": [
+            -790.115478515625,
+            -420.8173828125
+          ],
+          "width": 225.873779296875,
+          "label": "attractor",
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "int_list_items": [
+            {}
+          ],
+          "draw_3dpanel": true,
+          "list_items_type": "VECTOR_LIST_MODE",
+          "vector_list_items": [
+            {
+              "elem": [
+                -2.2200000286102295,
+                -2.429999828338623,
+                0.0
+              ]
+            }
+          ]
+        },
+        "inputs": {
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask",
+            "properties": {
+              "label": "Mask",
+              "custom_draw": "draw_mask_in_socket"
+            }
+          }
+        },
+        "outputs": {
+          "data_output_001": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "data_output",
+            "properties": {
+              "label": "Vectors"
+            }
+          }
+        },
+        "bl_idname": "SvListInputNodeMK2"
+      },
+      "Simple Text": {
+        "attributes": {
+          "location": [
+            -542.0274047851562,
+            425.1713562011719
+          ],
+          "color": [
+            1.0,
+            0.8993440270423889,
+            0.9742509722709656
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "text_prop": "nikitron 2026 - pavement_distribution",
+          "draw_3dpanel": true
+        },
+        "inputs": {
+          "Text": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text",
+            "properties": {
+              "prop_name": "text_prop"
+            }
+          }
+        },
+        "outputs": {
+          "Text": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text",
+            "properties": {
+              "use_unwrap": true
+            }
+          }
+        },
+        "bl_idname": "SvSimpleTextNodeMK2"
+      },
+      "Stethoscope MK2.002": {
+        "attributes": {
+          "location": [
+            -359.42230224609375,
+            400.1134338378906
+          ],
+          "hide": true,
+          "color": [
+            1.0,
+            0.8993440270423889,
+            0.9742509722709656
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "location_theta": 1.0080000162124634,
+          "num_elements": 1
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          }
+        },
+        "bl_idname": "SvStethoscopeNodeMK2"
+      }
+    },
+    "links": [
+      {
+        "from_node": "A Number.002",
+        "from_socket": "Int",
+        "to_node": "Plane",
+        "to_socket": "Num X"
+      },
+      {
+        "from_node": "A Number.003",
+        "from_socket": "Int",
+        "to_node": "Plane",
+        "to_socket": "Num Y"
+      },
+      {
+        "from_node": "Plane",
+        "from_socket": "Vertices",
+        "to_node": "List Split.002",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "A Number.002",
+        "from_socket": "Int",
+        "to_node": "List Split.002",
+        "to_socket": "Split"
+      },
+      {
+        "from_node": "UV Connection MK3.001",
+        "from_socket": "vertices",
+        "to_node": "Viewer Draw",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "UV Connection MK3.001",
+        "from_socket": "edges",
+        "to_node": "Viewer Draw",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Matrix In",
+        "from_socket": "Matrices",
+        "to_node": "Viewer Draw",
+        "to_socket": "Matrix"
+      },
+      {
+        "from_node": "List Split.002",
+        "from_socket": "Split",
+        "to_node": "List Flip.001",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "UV Connection MK3.001",
+        "from_socket": "vertices",
+        "to_node": "List First & Last",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "UV Connection MK3.001",
+        "from_socket": "edges",
+        "to_node": "List First & Last.001",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "Polygon Boom",
+        "from_socket": "vertices",
+        "to_node": "Stethoscope MK2.001",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "Polygon Boom",
+        "from_socket": "vertices",
+        "to_node": "List Item",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "List Item",
+        "from_socket": "Item",
+        "to_node": "Vector Lerp",
+        "to_socket": "Vertices A"
+      },
+      {
+        "from_node": "List Item",
+        "from_socket": "Other",
+        "to_node": "Vector Lerp",
+        "to_socket": "Vertices B"
+      },
+      {
+        "from_node": "Vector Lerp",
+        "from_socket": "EvPoint",
+        "to_node": "List Match",
+        "to_socket": "Data 0"
+      },
+      {
+        "from_node": "Reroute.001",
+        "from_socket": "Output",
+        "to_node": "List Match",
+        "to_socket": "Data 1"
+      },
+      {
+        "from_node": "List Match",
+        "from_socket": "Data 0",
+        "to_node": "Vector Math",
+        "to_socket": "A"
+      },
+      {
+        "from_node": "List Match",
+        "from_socket": "Data 1",
+        "to_node": "Vector Math",
+        "to_socket": "B"
+      },
+      {
+        "from_node": "Delete Loose",
+        "from_socket": "Vertices",
+        "to_node": "Polygon Boom.001",
+        "to_socket": "vertices"
+      },
+      {
+        "from_node": "Delete Loose",
+        "from_socket": "PolyEdge",
+        "to_node": "Polygon Boom.001",
+        "to_socket": "edg_pol"
+      },
+      {
+        "from_node": "Polygon Boom.001",
+        "from_socket": "vertices",
+        "to_node": "Origins",
+        "to_socket": "Verts"
+      },
+      {
+        "from_node": "Polygon Boom.001",
+        "from_socket": "edg_pol",
+        "to_node": "Origins",
+        "to_socket": "Faces"
+      },
+      {
+        "from_node": "Bounding Box",
+        "from_socket": "Size X",
+        "to_node": "List Zip",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "Bounding Box",
+        "from_socket": "Size Y",
+        "to_node": "List Zip",
+        "to_socket": "data 1"
+      },
+      {
+        "from_node": "List Zip",
+        "from_socket": "data",
+        "to_node": "Scalar Math.002",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Scalar Math.002",
+        "from_socket": "Out",
+        "to_node": "Stethoscope MK2",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "Origins",
+        "from_socket": "Origin",
+        "to_node": "Viewer Index+",
+        "to_socket": "verts"
+      },
+      {
+        "from_node": "Scalar Math.002",
+        "from_socket": "Out",
+        "to_node": "Viewer Index+",
+        "to_socket": "text"
+      },
+      {
+        "from_node": "Offset",
+        "from_socket": "Vers",
+        "to_node": "Vector out.002",
+        "to_socket": "Vectors"
+      },
+      {
+        "from_node": "Scalar Math.012",
+        "from_socket": "Out",
+        "to_node": "Vector in.002",
+        "to_socket": "X"
+      },
+      {
+        "from_node": "Scalar Math.008",
+        "from_socket": "Out",
+        "to_node": "Vector in.002",
+        "to_socket": "Y"
+      },
+      {
+        "from_node": "Vector out.002",
+        "from_socket": "Y",
+        "to_node": "Scalar Math.008",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Scalar Math.009",
+        "from_socket": "Out",
+        "to_node": "Scalar Math.008",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "Vector out.002",
+        "from_socket": "Y",
+        "to_node": "Scalar Math.009",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "A Number.001",
+        "from_socket": "Float",
+        "to_node": "Scalar Math.009",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "Vector out.002",
+        "from_socket": "X",
+        "to_node": "Scalar Math.012",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Scalar Math.013",
+        "from_socket": "Out",
+        "to_node": "Scalar Math.012",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "Vector out.002",
+        "from_socket": "X",
+        "to_node": "Scalar Math.013",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "A Number.001",
+        "from_socket": "Float",
+        "to_node": "Scalar Math.013",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "Mesh Join.001",
+        "from_socket": "Vertices",
+        "to_node": "Offset",
+        "to_socket": "Vers"
+      },
+      {
+        "from_node": "Mesh Join.001",
+        "from_socket": "Polygons",
+        "to_node": "Offset",
+        "to_socket": "Pols"
+      },
+      {
+        "from_node": "A Number.004",
+        "from_socket": "Float",
+        "to_node": "Offset",
+        "to_socket": "Offset"
+      },
+      {
+        "from_node": "Vector in.002",
+        "from_socket": "Vectors",
+        "to_node": "Delete Loose",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Offset",
+        "from_socket": "InPols",
+        "to_node": "Delete Loose",
+        "to_socket": "PolyEdge"
+      },
+      {
+        "from_node": "UV Connection MK3",
+        "from_socket": "vertices",
+        "to_node": "Vector out.003",
+        "to_socket": "Vectors"
+      },
+      {
+        "from_node": "Scalar Math.001",
+        "from_socket": "Out",
+        "to_node": "Vector in.003",
+        "to_socket": "X"
+      },
+      {
+        "from_node": "Scalar Math.006",
+        "from_socket": "Out",
+        "to_node": "Vector in.003",
+        "to_socket": "Y"
+      },
+      {
+        "from_node": "Vector out.003",
+        "from_socket": "Y",
+        "to_node": "Scalar Math.006",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Scalar Math.007",
+        "from_socket": "Out",
+        "to_node": "Scalar Math.006",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "Vector out.003",
+        "from_socket": "Y",
+        "to_node": "Scalar Math.007",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "A Number.001",
+        "from_socket": "Float",
+        "to_node": "Scalar Math.007",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "Vector out.003",
+        "from_socket": "X",
+        "to_node": "Scalar Math.001",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Scalar Math",
+        "from_socket": "Out",
+        "to_node": "Scalar Math.001",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "Vector out.003",
+        "from_socket": "X",
+        "to_node": "Scalar Math",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "A Number.001",
+        "from_socket": "Float",
+        "to_node": "Scalar Math",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "Vector out.001",
+        "from_socket": "X",
+        "to_node": "Vector in.001",
+        "to_socket": "X"
+      },
+      {
+        "from_node": "Vector out.001",
+        "from_socket": "Y",
+        "to_node": "Vector in.001",
+        "to_socket": "Y"
+      },
+      {
+        "from_node": "Smooth Numbers",
+        "from_socket": "Out",
+        "to_node": "List Split",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "List Join",
+        "from_socket": "data",
+        "to_node": "Smooth Numbers",
+        "to_socket": "Values"
+      },
+      {
+        "from_node": "Distance",
+        "from_socket": "distances",
+        "to_node": "List Join",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "A Number",
+        "from_socket": "Float",
+        "to_node": "Scalar Math.010",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "List Split",
+        "from_socket": "Split",
+        "to_node": "Scalar Math.010",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "List Split",
+        "from_socket": "Split",
+        "to_node": "Temporal Stethoscope",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "Switch.001",
+        "from_socket": "Out_0",
+        "to_node": "Vector out",
+        "to_socket": "Vectors"
+      },
+      {
+        "from_node": "Vector out",
+        "from_socket": "X",
+        "to_node": "Vector in",
+        "to_socket": "X"
+      },
+      {
+        "from_node": "List First & Last",
+        "from_socket": "First",
+        "to_node": "List Join.001",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "Vector in.001",
+        "from_socket": "Vectors",
+        "to_node": "List Join.001",
+        "to_socket": "data 1"
+      },
+      {
+        "from_node": "List First & Last",
+        "from_socket": "Last",
+        "to_node": "List Join.001",
+        "to_socket": "data 2"
+      },
+      {
+        "from_node": "List First & Last.001",
+        "from_socket": "First",
+        "to_node": "List Join.002",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "Polygon Boom",
+        "from_socket": "edg_pol",
+        "to_node": "List Join.002",
+        "to_socket": "data 1"
+      },
+      {
+        "from_node": "List First & Last.001",
+        "from_socket": "Last",
+        "to_node": "List Join.002",
+        "to_socket": "data 2"
+      },
+      {
+        "from_node": "List Join.001",
+        "from_socket": "data",
+        "to_node": "Polygon Boom.002",
+        "to_socket": "vertices"
+      },
+      {
+        "from_node": "List Join.002",
+        "from_socket": "data",
+        "to_node": "Polygon Boom.002",
+        "to_socket": "edg_pol"
+      },
+      {
+        "from_node": "A Number.003",
+        "from_socket": "Int",
+        "to_node": "Scalar Math.003",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "List Split.001",
+        "from_socket": "Split",
+        "to_node": "List Flip",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "Polygon Boom.002",
+        "from_socket": "vertices",
+        "to_node": "List Split.001",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "Scalar Math.003",
+        "from_socket": "Out",
+        "to_node": "List Split.001",
+        "to_socket": "Split"
+      },
+      {
+        "from_node": "List Match",
+        "from_socket": "Data 0",
+        "to_node": "Distance",
+        "to_socket": "vertices1"
+      },
+      {
+        "from_node": "Switch",
+        "from_socket": "Out_0",
+        "to_node": "Distance",
+        "to_socket": "vertices2"
+      },
+      {
+        "from_node": "Random Vector",
+        "from_socket": "Random",
+        "to_node": "List Split.003",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "List Length",
+        "from_socket": "Length",
+        "to_node": "Random Vector",
+        "to_socket": "Count"
+      },
+      {
+        "from_node": "List First & Last",
+        "from_socket": "Middl",
+        "to_node": "Polygon Boom",
+        "to_socket": "vertices"
+      },
+      {
+        "from_node": "List First & Last.001",
+        "from_socket": "Middl",
+        "to_node": "Polygon Boom",
+        "to_socket": "edg_pol"
+      },
+      {
+        "from_node": "Polygon Boom",
+        "from_socket": "vertices",
+        "to_node": "List Length",
+        "to_socket": "Data"
+      },
+      {
+        "from_node": "Move.001",
+        "from_socket": "Vertices",
+        "to_node": "Vector out.001",
+        "to_socket": "Vectors"
+      },
+      {
+        "from_node": "Reroute",
+        "from_socket": "Output",
+        "to_node": "Switch",
+        "to_socket": "State"
+      },
+      {
+        "from_node": "List Match",
+        "from_socket": "Data 1",
+        "to_node": "Switch",
+        "to_socket": "A_0"
+      },
+      {
+        "from_node": "List Split.003",
+        "from_socket": "Split",
+        "to_node": "Switch",
+        "to_socket": "B_0"
+      },
+      {
+        "from_node": "Reroute",
+        "from_socket": "Output",
+        "to_node": "Switch.001",
+        "to_socket": "State"
+      },
+      {
+        "from_node": "Vector Math",
+        "from_socket": "Out",
+        "to_node": "Switch.001",
+        "to_socket": "A_0"
+      },
+      {
+        "from_node": "List Split.003",
+        "from_socket": "Split",
+        "to_node": "Switch.001",
+        "to_socket": "B_0"
+      },
+      {
+        "from_node": "Vector in",
+        "from_socket": "Vectors",
+        "to_node": "Vector Math.001",
+        "to_socket": "A"
+      },
+      {
+        "from_node": "Polygon Boom",
+        "from_socket": "vertices",
+        "to_node": "Move.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Switch.002",
+        "from_socket": "Out_0",
+        "to_node": "Move.001",
+        "to_socket": "Movement Vectors"
+      },
+      {
+        "from_node": "Scalar Math.010",
+        "from_socket": "Out",
+        "to_node": "Move.001",
+        "to_socket": "Strength"
+      },
+      {
+        "from_node": "Vector in",
+        "from_socket": "Vectors",
+        "to_node": "Vector Math.002",
+        "to_socket": "A"
+      },
+      {
+        "from_node": "A Number.005",
+        "from_socket": "Float",
+        "to_node": "Vector Math.002",
+        "to_socket": "B"
+      },
+      {
+        "from_node": "Reroute",
+        "from_socket": "Output",
+        "to_node": "Switch.002",
+        "to_socket": "State"
+      },
+      {
+        "from_node": "Vector Math.001",
+        "from_socket": "Out",
+        "to_node": "Switch.002",
+        "to_socket": "A_0"
+      },
+      {
+        "from_node": "Vector Math.002",
+        "from_socket": "Out",
+        "to_node": "Switch.002",
+        "to_socket": "B_0"
+      },
+      {
+        "from_node": "Delete Loose",
+        "from_socket": "Vertices",
+        "to_node": "Viewer Draw.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Delete Loose",
+        "from_socket": "PolyEdge",
+        "to_node": "Viewer Draw.001",
+        "to_socket": "Polygons"
+      },
+      {
+        "from_node": "Vector in.003",
+        "from_socket": "Vectors",
+        "to_node": "Viewer Draw.002",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "UV Connection MK3",
+        "from_socket": "polygons",
+        "to_node": "Viewer Draw.002",
+        "to_socket": "Polygons"
+      },
+      {
+        "from_node": "List Join.001",
+        "from_socket": "data",
+        "to_node": "Viewer Draw.003",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "List Join.002",
+        "from_socket": "data",
+        "to_node": "Viewer Draw.003",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "List Flip",
+        "from_socket": "data",
+        "to_node": "UV Connection MK3",
+        "to_socket": "vertices"
+      },
+      {
+        "from_node": "UV Connection MK3",
+        "from_socket": "vertices",
+        "to_node": "Mesh Join.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "UV Connection MK3",
+        "from_socket": "polygons",
+        "to_node": "Mesh Join.001",
+        "to_socket": "Polygons"
+      },
+      {
+        "from_node": "Polygon Boom.001",
+        "from_socket": "vertices",
+        "to_node": "Bounding Box",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "List Flip.001",
+        "from_socket": "data",
+        "to_node": "UV Connection MK3.001",
+        "to_socket": "vertices"
+      },
+      {
+        "from_node": "Logic Functions",
+        "from_socket": "Result",
+        "to_node": "Reroute",
+        "to_socket": "Input"
+      },
+      {
+        "from_node": "List Input.001",
+        "from_socket": "data_output_001",
+        "to_node": "Reroute.001",
+        "to_socket": "Input"
+      },
+      {
+        "from_node": "Simple Text",
+        "from_socket": "Text",
+        "to_node": "Stethoscope MK2.002",
+        "to_socket": "Data"
+      }
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "export_version": "1.0",
+  "node": {
+    "Solid Viewer": {
+      "attributes": {
+        "location": [
+          -46.16729736328125,
+          -84.34854125976562
+        ]
+      },
+      "properties": {
+        "angle_deviation": 5.0,
+        "edge_color": [
+          0.45395687222480774,
+          0.215073823928833,
+          0.011323291808366776,
+          1.0
+        ],
+        "face_color": [
+          0.6795386672019958,
+          0.31854718923568726,
+          0.015208602882921696,
+          0.953301191329956
+        ],
+        "precision": 0.10000000149011612,
+        "selected_draw_mode": "facet",
+        "surface_deviation": 0.10000000149011612,
+        "vert_color": [
+          0.1552659124135971,
+          0.07643099129199982,
+          0.005540451500564814,
+          1.0
+        ],
+        "draw_gl_polygonoffset": false
+      },
+      "inputs": {
+        "Solid": {
+          "bl_idname": "SvSolidSocket",
+          "name": "Solid"
+        }
+      },
+      "bl_idname": "SvSolidViewerNode"
+    }
+  }
+}

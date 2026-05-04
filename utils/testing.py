@@ -370,7 +370,7 @@ class SverchokTestCase(unittest.TestCase):
         """
         actual_data = self.serialize_json(actual_json)
         expected_data = self.serialize_json(expected_json)
-        self.assertEquals(actual_data, expected_data)
+        self.assertEqual(actual_data, expected_data)
 
     def assert_json_equals_file(self, actual_json, expected_json_file_name):
         """
@@ -411,7 +411,7 @@ class SverchokTestCase(unittest.TestCase):
         if not node2.inputs[node2_input_name].is_linked:
             raise AssertionError("Input `{}' of node `{}' is not linked to anything", node2_input_name, node2_name)
 
-        self.assertEquals(node1.outputs[node1_output_name].other, node2.inputs[node2_input_name])
+        self.assertEqual(node1.outputs[node1_output_name].other, node2.inputs[node2_input_name])
 
     def assert_nodes_are_equal(self, actual, reference):
         """
@@ -460,17 +460,18 @@ class SverchokTestCase(unittest.TestCase):
             step = len(prev_indicies) 
             if step == arr1.ndim:
                 ind = tuple(prev_indicies)
+                a1 = arr1[ind]
+                a2 = arr2[ind]
                 if precision is None:
-                    a1 = arr1[ind]
-                    a2 = arr2[ind]
+                    ok = a1 == a2
                 else:
-                    a1 = round(arr1[ind], precision)
-                    a2 = round(arr2[ind], precision)
+                    tolerance = 10**(-precision)
+                    ok = abs(a1 - a2) < tolerance
 
                 if fail_fast:
-                    self.assertEqual(a1, a2, "Array 1 [{}] != Array 2 [{}]".format(ind, ind))
+                    self.assertTrue(ok, "Array 1 [{}] = {} != Array 2 [{}] = {}".format(ind, a1, ind, a2))
                 else:
-                    if a1 != a2:
+                    if not ok:
                         fails.append((a1, a2, ind))
             else:
                 for idx in range(shape[step]):
@@ -527,7 +528,7 @@ class SverchokTestCase(unittest.TestCase):
             else:
                 l1 = len(item1)
                 l2 = len(item2)
-                self.assertEquals(l1, l2, format_message(f"Size of data 1 at level {step} != size of data 2"))
+                self.assertEqual(l1, l2, format_message(f"Size of data 1 at level {step} != size of data 2"))
                 for next_idx in range(len(item1[index])):
                     new_indicies = prev_indicies[:]
                     new_indicies.append(next_idx)
@@ -541,7 +542,7 @@ class SverchokTestCase(unittest.TestCase):
         # sv_logger.info("Data: %s", data)
         # sv_logger.info("Expected data: %s", expected_data)
         self.assert_sverchok_data_equal(data, expected_data, precision=precision)
-        #self.assertEquals(data, expected_data)
+        #self.assertEqual(data, expected_data)
     
     def assert_dicts_equal(self, first, second, precision=None):
         keys1 = set(first.keys())
@@ -614,14 +615,14 @@ class SverchokTestCase(unittest.TestCase):
 
     def subtest_assert_equals(self, value1, value2, message=None):
         """
-        The same as assertEquals(), but within subtest.
+        The same as assertEqual(), but within subtest.
         Use this to do several assertions per test method,
         for case test execution not to be stopped at
         the first failure.
         """
 
         with self.subTest():
-            self.assertEquals(value1, value2, message)
+            self.assertEqual(value1, value2, message)
 
 
 class EmptyTreeTestCase(SverchokTestCase):
@@ -723,7 +724,7 @@ class NodeProcessTestCase(EmptyTreeTestCase):
         output socket output_name.
         """
         data = self.get_output_data(output_name)
-        self.assertEquals(data, expected_data, message)
+        self.assertEqual(data, expected_data, message)
 
     def assert_output_data_equals_file(self, output_name, expected_data_file_name, message=None):
         """
@@ -872,7 +873,15 @@ if __name__ == "__main__":
             bpy.ops.wm.read_userpref()
 
         log_level = getattr(args, 'log_level', None)
-        result = run_all_tests(pattern = args.pattern,
+        pattern_dir, pattern_file = os.path.split(args.pattern)
+        if pattern_dir != "" and pattern_dir != "tests":
+            raise Exception("Tests pattern must either not include directory specification, or specify `tests/' directory")
+        pattern_base, pattern_ext = os.path.splitext(pattern_file)
+        if pattern_ext != "" and pattern_ext != ".py":
+            raise Exception("Tests pattern must either skip filename extension or specify .py")
+        if pattern_ext == "":
+            pattern_file = pattern_file + ".py"
+        result = run_all_tests(pattern = pattern_file,
                     log_file = args.output,
                     log_level = log_level,
                     verbosity = args.verbose,

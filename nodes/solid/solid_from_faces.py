@@ -8,6 +8,7 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatProperty
 
+from sverchok.core.sv_custom_exceptions import SvInvalidResultException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import ensure_nesting_level, updateNode, get_data_nesting_level
 from sverchok.utils.surface.core import SvSurface
@@ -72,10 +73,10 @@ class SvSolidFromFacesNode(SverchCustomTreeNode, bpy.types.Node):
             if self.validate:
                 ok = shape.fix(self.tolerance, self.tolerance, self.tolerance)
                 if not ok:
-                    raise Exception("Constructed Solid object is not valid and can't be fixed automatically")
+                    raise SvInvalidResultException("Constructed Solid object is not valid and can't be fixed automatically")
         if self.check_closed:
             if not shape.isClosed():
-                raise Exception("Constructed Solid object is not closed")
+                raise SvInvalidResultException("Constructed Solid object is not closed")
         return shape
 
     def process(self):

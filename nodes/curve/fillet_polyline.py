@@ -5,6 +5,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils import Vector
 
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, ensure_nesting_level
 from sverchok.utils.curve.fillet import FILLET_ARC, FILLET_BEZIER, fillet_polyline_from_vertices
@@ -103,7 +104,7 @@ class SvFilletPolylineNode(SverchCustomTreeNode, bpy.types.Node):
         centers_out = []
         for vertices, radiuses in zip_long_repeat(verts_s, radius_s):
             if len(vertices) < 3:
-                raise Exception("At least three vertices are required to make a fillet")
+                raise SvInvalidInputException("At least three vertices are required to make a fillet")
             radiuses = repeat_last_for_length(radiuses, len(vertices))
             curve, centers, _ = fillet_polyline_from_vertices(vertices, radiuses,
                                 cyclic = self.cyclic,

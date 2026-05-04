@@ -53,6 +53,8 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
 
 .. image:: https://user-images.githubusercontent.com/10011941/78453090-d4c06180-768f-11ea-8631-422fe63f994e.gif
 
+**F5** - Re-evaluate current node-tree.
+
 **F6** - Enables/Disables the processing of the current node-tree
 
 **F7** - Enables/Disables the Draft mode of the current node-tree
@@ -66,6 +68,8 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
 **Ctrl + Right Click** - Cut Links
 
 **Right Click** - Access to Sverchok Right Click Menu
+
+**Alt + Right Click** - Access to Sverchok Right Click Menu
 
 **Shift + P** - on a node in Node Editor - open Load / Save Preset menu for this node
 

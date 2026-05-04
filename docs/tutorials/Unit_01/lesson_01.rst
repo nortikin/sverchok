@@ -15,7 +15,7 @@ Let's make a Plane, we will need 4 vectors and we'll define them using math. I'l
 
    *Note*: The perimeter of a circle is C=2*PI*r . In the unit-circle radius=1 so it's perimter is C=2*PI . For the square we need 4 vertexes with equal distance apart so 2*PI/4=0.5*PI. If you consider that a circle represents an angle of 360 degrees then 2πr=360º and this means that 0*π places represents a vertex at 0 degrees of the circle: 0PI=0º ; 0.5PI=90º ; 1PI=180º ; 1.5PI=270º
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5426922/20290ef0-837b-11e4-9863-8a0a586aed7d.png
+.. image:: https://github.com/user-attachments/assets/b3de3367-4f23-4227-84e0-b1abdfef2ca7
 
 We will rotate the square 45º to match the Blender's Plane. So the starting vertex will not be at 0*PI=0º but at 0.25PI=45º
 

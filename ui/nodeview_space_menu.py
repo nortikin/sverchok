@@ -260,11 +260,12 @@ class Category(MenuItem):
     `Category.from_config` method generates menu classes. They should be
      registered by calling `Category.register`
      """
-    def __init__(self, name, menu_cls, icon_name='BLANK1', extra_menu=''):
+    def __init__(self, name, menu_cls, icon_name='BLANK1', extra_menu='', color_category=None):
         self.name = name
         self.icon = icon_name
         self.extra_menu = extra_menu
         self.menu_cls: CategoryMenuTemplate = menu_cls
+        self.color_category = color_category
 
     def draw(self, layout):
         icon_prop = icon(self.icon) if get_icon_switch() else {}
@@ -279,6 +280,14 @@ class Category(MenuItem):
         for elem in self.menu_cls.draw_data:
             if hasattr(elem, 'walk_categories'):
                 yield from elem.walk_categories()
+
+    def walk_categories_hierarchy(self) -> 'Category':
+        def helper(category, *rest):
+            yield (category, *rest)
+            for elem in category.menu_cls.draw_data:
+                if hasattr(elem, 'walk_categories'):
+                    yield from helper(elem, category, *rest)
+        yield from helper(self)
 
     def get_submenus_for_extra_menu(self, extra_menu_name):
         if getattr(self, 'extra_menu', '') == extra_menu_name:
@@ -355,6 +364,17 @@ class Category(MenuItem):
           - "AdvancedObjectsPartialMenu"
           - "ConnectionPartialMenu"
           - "UiToolsPartialMenu"
+
+        - {'color_category': 'SOME_CATEGORY'} - Classify this category as one of
+          several generic categories; these are used to assign node colors upon
+          creation, according to theme specified in preferences.
+          Possible values:
+
+          - "Generator"
+          - "Layout"
+          - "Scene"
+          - "Text"
+          - "Viz"
 
         Operators options:
 
@@ -590,6 +610,7 @@ class NodeCategoryMenu(SverchokContext, bpy.types.Menu):
             cats = defaultdict(list)
             # todo replace with `bpy.types.Node.bl_rna_get_subclass_py` after dummy nodes refactoring
             for cls in iter_classes_from_module(sverchok.nodes, [bpy.types.Node]):
+                print("F", cls)
                 if name := getattr(cls, 'sv_category', None):
                     cats[name].append(AddNode(cls.bl_idname))
             self._categories = cats

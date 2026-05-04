@@ -1,0 +1,356 @@
+{
+  "export_version": "1.0",
+  "main_tree": {
+    "nodes": {
+      "Split Solid by Face": {
+        "attributes": {
+          "location": [
+            580.0,
+            -340.0
+          ]
+        },
+        "inputs": {
+          "Solid": {
+            "bl_idname": "SvSolidSocket",
+            "name": "Solid"
+          },
+          "SolidFace": {
+            "bl_idname": "SvSurfaceSocket",
+            "name": "SolidFace"
+          }
+        },
+        "outputs": {
+          "Solids": {
+            "bl_idname": "SvSolidSocket",
+            "name": "Solids",
+            "properties": {
+              "use_unwrap": true
+            }
+          },
+          "CutFaces": {
+            "bl_idname": "SvSurfaceSocket",
+            "name": "CutFaces"
+          }
+        },
+        "bl_idname": "SvSplitSolidNode"
+      },
+      "Box (Solid)": {
+        "attributes": {
+          "location": [
+            180.0,
+            -160.0
+          ],
+          "color": [
+            0.9200000166893005,
+            0.9200000166893005,
+            0.9200000166893005
+          ],
+          "use_custom_color": true
+        },
+        "inputs": {
+          "Length": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Length",
+            "properties": {
+              "prop_name": "box_length"
+            }
+          },
+          "Width": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Width",
+            "properties": {
+              "prop_name": "box_width"
+            }
+          },
+          "Height": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Height",
+            "properties": {
+              "prop_name": "box_height"
+            }
+          },
+          "Origin": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Origin",
+            "properties": {
+              "prop_name": "origin"
+            }
+          },
+          "Direction": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Direction",
+            "properties": {
+              "prop_name": "direction"
+            }
+          }
+        },
+        "outputs": {
+          "Solid": {
+            "bl_idname": "SvSolidSocket",
+            "name": "Solid"
+          }
+        },
+        "bl_idname": "SvBoxSolidNode"
+      },
+      "Sphere (Solid)": {
+        "attributes": {
+          "location": [
+            180.0,
+            -380.0
+          ],
+          "color": [
+            0.9200000166893005,
+            0.9200000166893005,
+            0.9200000166893005
+          ],
+          "use_custom_color": true
+        },
+        "inputs": {
+          "Radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Radius",
+            "properties": {
+              "prop_name": "sphere_radius"
+            }
+          },
+          "Angle 1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle 1",
+            "properties": {
+              "prop_name": "sphere_angle1"
+            }
+          },
+          "Angle 2": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle 2",
+            "properties": {
+              "prop_name": "sphere_angle2"
+            }
+          },
+          "Angle 3": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle 3",
+            "properties": {
+              "prop_name": "sphere_angle3"
+            }
+          },
+          "Origin": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Origin",
+            "properties": {
+              "prop_name": "origin"
+            }
+          },
+          "Direction": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Direction",
+            "properties": {
+              "prop_name": "direction"
+            }
+          }
+        },
+        "outputs": {
+          "Solid": {
+            "bl_idname": "SvSolidSocket",
+            "name": "Solid"
+          }
+        },
+        "bl_idname": "SvSphereSolidNode"
+      },
+      "Solid Faces (Surfaces)": {
+        "attributes": {
+          "location": [
+            360.0,
+            -380.0
+          ]
+        },
+        "properties": {
+          "flat_output": true
+        },
+        "inputs": {
+          "Solid": {
+            "bl_idname": "SvSolidSocket",
+            "name": "Solid"
+          }
+        },
+        "outputs": {
+          "Solid Faces": {
+            "bl_idname": "SvSurfaceSocket",
+            "name": "Solid Faces"
+          },
+          "Outer Wire": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Outer Wire"
+          },
+          "TrimCurves": {
+            "bl_idname": "SvCurveSocket",
+            "name": "TrimCurves"
+          }
+        },
+        "bl_idname": "SvSolidFacesNode"
+      },
+      "Solid Viewer": {
+        "attributes": {
+          "location": [
+            1000.0,
+            -260.0
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "selected_draw_mode": "facet"
+        },
+        "inputs": {
+          "Solid": {
+            "bl_idname": "SvSolidSocket",
+            "name": "Solid"
+          }
+        },
+        "bl_idname": "SvSolidViewerNode"
+      },
+      "List Mask (Out)": {
+        "attributes": {
+          "location": [
+            800.0,
+            -260.0
+          ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask"
+          }
+        },
+        "outputs": {
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask"
+          },
+          "ind_true": {
+            "bl_idname": "SvStringsSocket",
+            "name": "ind_true"
+          },
+          "ind_false": {
+            "bl_idname": "SvStringsSocket",
+            "name": "ind_false"
+          },
+          "dataTrue_001": {
+            "bl_idname": "SvSolidSocket",
+            "name": "dataTrue"
+          },
+          "dataFalse_001": {
+            "bl_idname": "SvSolidSocket",
+            "name": "dataFalse"
+          }
+        },
+        "bl_idname": "MaskListNode"
+      },
+      "Number Range": {
+        "attributes": {
+          "location": [
+            -40.0,
+            -440.0
+          ],
+          "color": [
+            0.602957010269165,
+            0.6740000247955322,
+            0.5642769932746887
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "start_float": 0.20000000298023224,
+          "range_mode": "RANGE_COUNT",
+          "current_mode": "RANGE_COUNT",
+          "stop_float": 1.0,
+          "count_": 8
+        },
+        "inputs": {
+          "Start": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Start",
+            "properties": {
+              "prop_name": "start_float"
+            }
+          },
+          "Step": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Step",
+            "properties": {
+              "prop_name": "stop_float",
+              "label": "stop"
+            }
+          },
+          "Stop": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Stop",
+            "properties": {
+              "prop_name": "count_",
+              "label": "count"
+            }
+          }
+        },
+        "outputs": {
+          "Range": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Range"
+          }
+        },
+        "bl_idname": "SvGenNumberRange"
+      }
+    },
+    "links": [
+      {
+        "from_node": "Box (Solid)",
+        "from_socket": "Solid",
+        "to_node": "Split Solid by Face",
+        "to_socket": "Solid"
+      },
+      {
+        "from_node": "Solid Faces (Surfaces)",
+        "from_socket": "Solid Faces",
+        "to_node": "Split Solid by Face",
+        "to_socket": "SolidFace"
+      },
+      {
+        "from_node": "Number Range",
+        "from_socket": "Range",
+        "to_node": "Sphere (Solid)",
+        "to_socket": "Radius"
+      },
+      {
+        "from_node": "Sphere (Solid)",
+        "from_socket": "Solid",
+        "to_node": "Solid Faces (Surfaces)",
+        "to_socket": "Solid"
+      },
+      {
+        "from_node": "List Mask (Out)",
+        "from_socket": "dataTrue_001",
+        "to_node": "Solid Viewer",
+        "to_socket": "Solid"
+      },
+      {
+        "from_node": "Split Solid by Face",
+        "from_socket": "Solids",
+        "to_node": "List Mask (Out)",
+        "to_socket": "data"
+      }
+    ]
+  }
+}

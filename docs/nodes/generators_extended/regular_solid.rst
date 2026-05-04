@@ -7,10 +7,11 @@ Regular Solid
 Functionality
 -------------
 
-This node is a port to the Regular Solid functions (by dreampainter) now part of the Extra Objects Add-on bundled with Blender
+This node is a port to the Regular Solid functions (by dreampainter) now part of the 'Extra Mesh Objects' Add-on that can be downloaded from the "Get Extensions" panel in the Blender properties
 (https://archive.blender.org/wiki/index.php/Extensions:2.6/Py/Scripts/Add_Mesh/Add_Solid/)
 
 It creates Platonic, Archimedean or Catalan solids
+
 
 Inputs & Parameters
 -------------------
@@ -69,3 +70,9 @@ Variations of the cube:
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * List->List Struct-> :doc:`List Repeater </nodes/list_struct/repeater>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+
+Notes
+-----
+
+As this node takes functions form the 'Extra Mesh Objects' add-on it wont work if the add-on is not installed, please download it before using the node

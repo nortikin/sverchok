@@ -21,6 +21,7 @@
 
 import bpy
 from bpy.props import IntProperty
+from sverchok.core.sv_custom_exceptions import DependencyError
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
@@ -67,7 +68,7 @@ class SvOpenSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
 
     def process(self):
         if not enable_module:
-            raise Exception("The dependent library is not installed (pyOpenSubdiv).")
+            raise DependencyError("The dependent library is not installed (pyOpenSubdiv).")
 
         vert_sets = self.inputs['Vertices'].sv_get(default=[],deepcopy=False)
         edges = []         

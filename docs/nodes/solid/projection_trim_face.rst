@@ -53,6 +53,14 @@ This node has the following parameters:
   the tolerance for checking if ends of curves coincide. Bigger values mean
   that ends of curves must coincide with better precision. The default value is
   8.
+* **On no projection**. This parameter is only available in the N panel. This
+  defines what will be done in case when projection of the curve to the surface
+  is empty. The available options are:
+
+  * **Raise exception**. An exception will be raised, and the processing will
+    stop. This is the default option.
+  * **Skip**. The node will skip processing of this surface, but continue with
+    other surfaces (if there are several surfaces provided).
 
 Outputs
 -------

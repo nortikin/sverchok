@@ -184,7 +184,6 @@ class SvNodeTreeExporter(bpy.types.Operator):
         col.prop(self, 'selected_only')
         col.prop(self, 'compress', text="Create ZIP archive")
 
-
 class SvNodeTreeImporter(bpy.types.Operator):
 
     '''Importing operation will let you pick a file to import from'''
@@ -203,13 +202,17 @@ class SvNodeTreeImporter(bpy.types.Operator):
 
     current_tree_name: bpy.props.StringProperty()  # from where it was called
     new_nodetree_name: bpy.props.StringProperty()
+    #_selected_tree_name: bpy.props.StringProperty()
+    io_panel_properties: bpy.props.PointerProperty(type=SvIOPanelProperties)
 
     def execute(self, context):
         if len(context.space_data.path) > 1:
             self.report({"WARNING"}, "Import is not supported inside node groups")
             return {'CANCELLED'}
 
-        ng = context.scene.io_panel_properties.import_tree
+        # ng = self.io_panel_properties.import_tree
+        ng = context.window_manager.io_panel_properties.import_tree
+
         if not ng:
             self.report(type={'WARNING'}, message="The tree was not chosen, have a look at property (N) panel")
             return {'CANCELLED'}
@@ -226,7 +229,8 @@ class SvNodeTreeImporter(bpy.types.Operator):
     def invoke(self, context, event):
         # it will set current tree as default
         current_tree = bpy.data.node_groups.get(self.current_tree_name)
-        context.scene.io_panel_properties.import_tree = current_tree
+        context.window_manager.io_panel_properties.import_tree = current_tree
+
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
@@ -234,7 +238,7 @@ class SvNodeTreeImporter(bpy.types.Operator):
     def draw(self, context):
         col = self.layout.column()
         col.label(text="Destination tree to import JSON:")
-        col.template_ID(context.scene.io_panel_properties, 'import_tree', new='node.new_import_tree')
+        col.template_ID(context.window_manager.io_panel_properties, 'import_tree', new='node.new_import_tree')
 
 
 class SvNodeTreeImportFromGist(bpy.types.Operator):
@@ -433,7 +437,7 @@ class SvNewImportTree(bpy.types.Operator):
 
     def execute(self, context):
         tree = bpy.data.node_groups.new(name="Import tree", type='SverchCustomTreeType')
-        context.scene.io_panel_properties.import_tree = tree
+        context.window_manager.io_panel_properties.import_tree = tree
         return {'FINISHED'}
 
 
@@ -467,9 +471,12 @@ classes = [
 
 def register():
     [bpy.utils.register_class(cls) for cls in classes]
-    bpy.types.Scene.io_panel_properties = bpy.props.PointerProperty(type=SvIOPanelProperties)
+    # bpy.types.Scene.io_panel_properties = bpy.props.PointerProperty(type=SvIOPanelProperties) In Blender 3.0-3.3 it call exception Access Violation on exit Blender after import any valid JSON!!! So place to keep IO setting changed to WindowManeger - it is safe for depsgraph!
+    bpy.types.WindowManager.io_panel_properties = bpy.props.PointerProperty(type=SvIOPanelProperties)
+
 
 
 def unregister():
-    del bpy.types.Scene.io_panel_properties
+    del bpy.types.WindowManager.io_panel_properties
+    # del bpy.types.Scene.io_panel_properties
     [bpy.utils.unregister_class(cls) for cls in classes[::-1]]

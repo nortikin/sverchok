@@ -10,7 +10,7 @@ from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.prepare_curves_net import prepare_curves_net, UNIFORM, FIT, EXPLICIT, PRIMARY_U, PRIMARY_V
 
@@ -146,9 +146,9 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
                 u_curves = [SvNurbsCurve.to_nurbs(c) for c in u_curves]
                 v_curves = [SvNurbsCurve.to_nurbs(c) for c in v_curves]
                 if any(c is None for c in u_curves):
-                    raise Exception("Some of U curves are not NURBS curves")
+                    raise UnsupportedCurveTypeException("Some of U curves are not NURBS curves")
                 if any(c is None for c in v_curves):
-                    raise Exception("Some of V curves are not NURBS curves")
+                    raise UnsupportedCurveTypeException("Some of V curves are not NURBS curves")
                 res = prepare_curves_net(u_curves, v_curves,
                                          u_values, v_values,
                                          bias = self.bias,

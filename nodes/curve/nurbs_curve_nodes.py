@@ -13,7 +13,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting_level,
                                      get_data_nesting_level)
-from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 class SvNurbsCurveNodesNode(SverchCustomTreeNode, bpy.types.Node):
@@ -48,7 +48,7 @@ class SvNurbsCurveNodesNode(SverchCustomTreeNode, bpy.types.Node):
             for curve in curves:
                 curve = SvNurbsCurve.to_nurbs(curve)
                 if curve is None:
-                    raise Exception("Curve is not NURBS!")
+                    raise UnsupportedCurveTypeException("Curve is not NURBS!")
                 ts = curve.calc_greville_ts()
                 pts = curve.evaluate_array(ts)
                 t_list.append(ts.tolist())

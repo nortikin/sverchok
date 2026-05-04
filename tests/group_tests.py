@@ -35,5 +35,44 @@ class GroupingTest(SverchokTestCase):
                     bpy.ops.node.ungroup_group_tree({'node': group_node})
 
 
+class GroupInputDefaultsTest(SverchokTestCase):
+    """Regression test for #5286 - group node sockets should pick up the
+    default values configured on the group tree's interface sockets.
+    """
+
+    def _new_interface_socket(self, sub_tree, name, socket_type, in_out='INPUT'):
+        if bpy.app.version >= (4, 0):
+            return sub_tree.interface.new_socket(
+                name=name, in_out=in_out, socket_type=socket_type)
+        socks = sub_tree.inputs if in_out == 'INPUT' else sub_tree.outputs
+        return socks.new(socket_type, name)
+
+    @unittest.skipIf(bpy.app.background, "Blender should be lunched with UI")
+    def test_default_value_propagates_to_group_node_socket(self):
+        with self.temporary_node_tree("DefaultsTestTree") as new_tree:
+            bpy.context.area.ui_type = 'SverchCustomTreeType'
+            bpy.context.space_data.node_tree = new_tree
+            new_tree.sv_process = False
+
+            sub_tree = bpy.data.node_groups.new('Sverchok group defaults', 'SvGroupTree')
+            sub_tree.use_fake_user = True
+            try:
+                interface_sock = self._new_interface_socket(
+                    sub_tree, 'Size', 'SvStringsSocket')
+                interface_sock.default_type = 'float'
+                interface_sock.default_float_value = 4.2
+
+                group_node = new_tree.nodes.new('SvGroupTreeNode')
+                group_node.group_tree = sub_tree
+
+                self.assertTrue(len(group_node.inputs) >= 1)
+                node_sock = group_node.inputs[0]
+                self.assertAlmostEqual(
+                    node_sock.default_property, 4.2, places=5,
+                    msg="interface default value should be copied to the new group node socket")
+            finally:
+                bpy.data.node_groups.remove(sub_tree)
+
+
 if __name__ == '__main__':
     unittest.main(exit=False)

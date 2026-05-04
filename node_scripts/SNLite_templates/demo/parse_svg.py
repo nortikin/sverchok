@@ -1,5 +1,5 @@
 """
->in filepath FP
+in filepath FP
 out verts v
 """
 
@@ -16,6 +16,7 @@ import xml.etree.ElementTree as ET
 # therefore use [0][0] to extract the path string
 
 file_path = filepath[0][0]
+print(file_path)
 
 with open(file_path) as ofile:
     file_string = re.sub("inkscape:", '', ofile.read())

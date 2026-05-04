@@ -10,6 +10,7 @@ import numpy as np
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException, SvExternalLibraryException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode, repeat_last_for_length, get_data_nesting_level
 
@@ -70,20 +71,20 @@ class SvHollowSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
     def make_solid(self, solid, thickness, mask):
         if not solid.isValid():
-            raise Exception("Input solid is not valid")
+            raise SvInvalidInputException("Input solid is not valid")
         if self.mask_usage == 'REMOVE':
             mask = [not c for c in mask]
         if all(mask):
             self.info("No faces are selected to be removed; the node will operate as `Offset' operation")
         if not any(mask):
-            raise Exception("Invalid faces mask: all faces are to be removed")
+            raise SvInvalidInputException("Invalid faces mask: all faces are to be removed")
         mask = repeat_last_for_length(mask, len(solid.Faces))
         faces = [face for c, face in zip(mask, solid.Faces) if not c]
         try:
             shape = solid.makeThickness(faces, thickness, self.tolerance)
             return shape
         except Part.OCCError as e:
-            raise Exception(f"FreeCAD API method failed: {e}. Incorrect faces mask?")
+            raise SvExternalLibraryException(f"FreeCAD API method failed: {e}. Incorrect faces mask?")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

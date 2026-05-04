@@ -32,6 +32,7 @@ from sverchok.utils.macros.switch_macros import switch_macros
 from sverchok.utils.macros.gp_macros import gp_macro_one, gp_macro_two
 from sverchok.utils.macros.hotswap_macros import swap_vd_mv
 from sverchok.utils.macros.get_objects_data import objdata_macro_one
+from sverchok.utils.macros.straight_curve_macros import streighten_macros
 
 # pylint: disable=c0301
 
@@ -39,7 +40,7 @@ def simple_macro(description="", term="", macro_handler="verbose_macro_handler")
     return {
         'display_name': description,
         'file': 'macro',
-        'ident': [macro_handler, term]}    
+        'ident': [macro_handler, term]}
 
 macros = {
     "> obj vd": simple_macro(description="active_obj into objlite + vdmk2", term='obj vd'),
@@ -65,11 +66,12 @@ macros = {
     "> sw123": simple_macro(description="connect nodes to switch", term='switch123'),
     "> gp +": simple_macro(description="grease pencil setup", term='gp +'),
     "> gp + 2": simple_macro(description="grease pencil setup", term='gp + 2'),
-    "> hotswap vd mv": simple_macro(description="hotswap vd->meshviewer", term='hotswap'),    
+    "> hotswap vd mv": simple_macro(description="hotswap vd->meshviewer", term='hotswap'),
     "> url": simple_macro(description="download archive from url", term='url'),
     "> blend 2 zip": simple_macro(description="archive blend as zip", term='blend 2 zip'),
     "> all numpy True": simple_macro(description="existing nodes to numpy", term='output numpy True'),
-    "> all numpy False": simple_macro(description="existing nodes to python", term='output numpy False')
+    "> all numpy False": simple_macro(description="existing nodes to python", term='output numpy False'),
+    "> curve straighten": simple_macro(description="straighten curves polylines", term='straighten'),
 }
 
 
@@ -133,7 +135,7 @@ class DefaultMacros():
             vd_node = nodes.new('SvViewerDrawMk4')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
 
-            # this macro could detect specifically if the node found edges or faces or both... 
+            # this macro could detect specifically if the node found edges or faces or both...
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
             links.new(obj_in_node.outputs[8], vd_node.inputs[3])
@@ -142,7 +144,7 @@ class DefaultMacros():
             objdata_macro_one(context, operator, term, nodes, links)
 
         elif term == "3dcursor_to_vector_in":
-            
+
             MOUSE_X, MOUSE_Y = context.space_data.cursor_location
             cursor = context.scene.cursor.location
 
@@ -154,7 +156,7 @@ class DefaultMacros():
 
             def flattened(matrix):
                 return list(matrix[0]) + list(matrix[1]) + list(matrix[2]) + list(matrix[3])
-            
+
             MOUSE_X, MOUSE_Y = context.space_data.cursor_location
             matrix = context.scene.cursor.matrix
 
@@ -272,6 +274,8 @@ class DefaultMacros():
         elif term == 'blend 2 zip':
             bpy.ops.node.blend_to_archive(archive_ext="zip")
 
+        elif term == 'straighten':
+            streighten_macros(context, operator, term, nodes, links)
 
 """
 to the reader: when we run 'bpy.ops.wm.open_mainfile( )' there's a considerations
