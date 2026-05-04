@@ -18,7 +18,7 @@ We accept one-liner PRs, but might also reject them and instead add the same (or
 Informal code suggestions
 =========================
 
-If you don't want to go through the git / github interface you can suggest an edit using the issue tracker. Open a new issue, state succintly in the title what the edit hopes to achieve. In the issue you can use Markdown to show us which file and section of code you're talking about and what changes you think would be beneficial (and why). You can copy / paste a permalink ( https://github.com/blog/2415-introducing-embedded-code-snippets ) into the issue for this purpose.
+If you don't want to go through the git / github interface you can suggest an edit using the issue tracker. Open a new issue, state succinctly in the title what the edit hopes to achieve. In the issue you can use Markdown to show us which file and section of code you're talking about and what changes you think would be beneficial (and why). You can copy / paste a permalink ( https://github.com/blog/2415-introducing-embedded-code-snippets ) into the issue for this purpose.
 
 And below it write the following "differential". 
 

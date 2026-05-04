@@ -6,7 +6,7 @@ Celling design
 
 I want to present you series of lessons on product creation with Sverchok addon for Blender.
 
-Celling 01 - Intriduction and discription of overall concept
+Celling 01 - Introduction and description of overall concept
 ------------------------------------------------------------
 
 You will meet complex tree for real life plates creation. Hope to see it realized ASAP. 

@@ -92,7 +92,7 @@ def get_len_line(len_mode, number, size, step):
 
 
 def get_corner_points(dir_mode=DIRECTION.x, center=False, vert_a=None, vert_b=None, len_line=None):
-    # returns coordinates of firs and last points of live according properties of the node
+    # returns coordinates of first and last points of live according properties of the node
     directions = {'X': (1, 0, 0), 'Y': (0, 1, 0), 'Z': (0, 0, 1)}
     origin = np.array(vert_a) if dir_mode in (DIRECTION.op, DIRECTION.od) else np.array((0, 0, 0))
     if dir_mode == DIRECTION.op:

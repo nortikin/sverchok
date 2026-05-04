@@ -406,7 +406,7 @@ class SvProfileImportOperator(bpy.types.Operator):
 class SvProfileNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: svg-like 2d profiles
-    Tooltip: Generate multiple parameteric 2d profiles using SVG like syntax
+    Tooltip: Generate multiple parametric 2d profiles using SVG like syntax
 
     SvProfileNode generates one or more profiles / elevation segments using;
     assignments, variables, and a string descriptor similar to SVG.

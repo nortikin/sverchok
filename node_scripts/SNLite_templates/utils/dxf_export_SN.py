@@ -42,7 +42,7 @@ def make(self, context):
 
     def triangl(vertices,edges,faces):
         ''' WIP
-            triangulation for mesh represantation
+            triangulation for mesh representation
             with metadata vectorized for triangles '''
         from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
         import bmesh
@@ -93,7 +93,7 @@ def make(self, context):
         '''
     def polygondance_draw(p,v,d1,d2,scal,lpols,msp,APPID):
         ''' draw polygons if there is metadata d1 d2
-            needed triangulation for mesh represantation
+            needed triangulation for mesh representation
             with metadata vectorized for triangles '''
 
         from sverchok.data_structure import match_long_repeat as mlr

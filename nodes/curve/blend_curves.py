@@ -61,13 +61,13 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
     smooth_modes = [
             (BlendCurveSmoothness.C0, "C0 - Position", "Connect ends of curves with straight line segment", 0),
-            (BlendCurveSmoothness.C1, "G1 - Tangency", "Connect curves such that their tangents are continuosly joined", 1),
-            (BlendCurveSmoothness.C1_BIARC, "G1 - Bi Arc", "Connect curves with Bi Arc, such that tangents are continuosly joined", 2),
-            (BlendCurveSmoothness.C2_BEZIER, "C2 - Smooth Normals (Bezier)", "Connect curves such that their second derivatives are continuosly joined", 3),
-            (BlendCurveSmoothness.C3_BEZIER, "C3 - Smooth Curvature (Bezier)", "Connect curves such that their third derivatives are continuosly joined", 4),
-            (BlendCurveSmoothness.G2_BEZIER, "G2 - Curvature (Bezier)", "Connect curves such that their tangents, normals and curvatures are continuosly joined", 5),
-            (BlendCurveSmoothness.C2_NURBS, "C2 - Smooth Normals (NURBS)", "Connect curves such that their second derivatives are continuosly joined", 6),
-            (BlendCurveSmoothness.G2_NURBS, "G2 - Curvature (NURBS)", "Connect curves such that their tangents, normals and curvatures are continuosly joined", 7)
+            (BlendCurveSmoothness.C1, "G1 - Tangency", "Connect curves such that their tangents are continuously joined", 1),
+            (BlendCurveSmoothness.C1_BIARC, "G1 - Bi Arc", "Connect curves with Bi Arc, such that tangents are continuously joined", 2),
+            (BlendCurveSmoothness.C2_BEZIER, "C2 - Smooth Normals (Bezier)", "Connect curves such that their second derivatives are continuously joined", 3),
+            (BlendCurveSmoothness.C3_BEZIER, "C3 - Smooth Curvature (Bezier)", "Connect curves such that their third derivatives are continuously joined", 4),
+            (BlendCurveSmoothness.G2_BEZIER, "G2 - Curvature (Bezier)", "Connect curves such that their tangents, normals and curvatures are continuously joined", 5),
+            (BlendCurveSmoothness.C2_NURBS, "C2 - Smooth Normals (NURBS)", "Connect curves such that their second derivatives are continuously joined", 6),
+            (BlendCurveSmoothness.G2_NURBS, "G2 - Curvature (NURBS)", "Connect curves such that their tangents, normals and curvatures are continuously joined", 7)
         ]
 
     smooth_mode : EnumProperty(

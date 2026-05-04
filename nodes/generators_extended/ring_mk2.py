@@ -83,7 +83,7 @@ def ring_edges(N1, N2, a1, a2, u):
         #arr_verts  = np.arange( N1*(u+1)*N2, dtype=np.int32 ).reshape(N2, N1*(u+1))
         arr_verts  = np.arange( N1*(u+1)*N2, dtype=np.int32 ).T.reshape(N1*(u+1), N2).T
         arr_verts  = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first row to bottom to horizontal circle
-        # horizintal edges are cicled
+        # horizontal edges are circled
         _arr_h_edges = np.zeros((N2, N1*(u+1), 2), 'i' )
         _arr_h_edges[:, :, 0] = arr_verts[ : ,  :-1 ]  # hor_edges
         _arr_h_edges[:, :, 1] = arr_verts[ : , 1:   ]  # hor_edges
@@ -125,7 +125,7 @@ def ring_polygons(N1, N2, a1, a2, u):
     if closed_ring:
         arr_verts  = np.arange( N1*(u+1)*N2, dtype=np.int32 ).T.reshape(N1*(u+1), N2).T
         arr_verts  = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first row to bottom to horizontal circle
-        # faces are cicled horizintally
+        # faces are circled horizontally
         _arr_faces = np.zeros((N2-1, N1*(u+1), 4), 'i' )
         _arr_faces[:, :, 0] = arr_verts[1:  ,  :-1 ]
         _arr_faces[:, :, 1] = arr_verts[1:  , 1:   ]
