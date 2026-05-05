@@ -44,6 +44,7 @@ def create_staircase(stair_width, floor_height, distance_between_flights):
     
     vertices = []
     polygons = []
+    thickness = []
     base_z = 0
     # Количество этажей (округляем вниз до целого)
     #num_floors = int(building_height // floor_height)
@@ -117,7 +118,7 @@ def create_staircase(stair_width, floor_height, distance_between_flights):
         if mode == 'STEPS':
             svers = []
             #print('svers', v0,v3,v8,v11)
-            for i in range(1+int(floor_height_//0.3)):
+            for i in range(int(round(floor_height_,2)//0.299)):
                 svers.extend([
                             [v0[0],  v0[1]+i*0.3,          v0[2]+(i+1)*0.15 ],
                             [v1[0],  v1[1]+i*0.3,          v1[2]+(i+1)*0.15 ],
@@ -138,7 +139,6 @@ def create_staircase(stair_width, floor_height, distance_between_flights):
         elif mode == 'STEPS':
             r = 8 + int(len(svers)/4)
         # Каждый полигон - это 4 вершины (прямоугольник)
-        thickness = []
         for i in range(r):
             polygon = [vertex_offset + i*4 + j for j in range(4)]
             polygons.append(polygon)
@@ -147,7 +147,7 @@ def create_staircase(stair_width, floor_height, distance_between_flights):
         elif mode == 'RAILS':
             thickness.extend([platethick for i in range(4*4)])
             thickness.extend([railthick for i in range(4*4)])
-        else:
+        elif mode == 'STEPS':
             thickness.extend([platethick for i in range(4*4)])
             thickness.extend([railthick for i in range(4*4)])
             thickness.extend([platethick for i in range(4*int(len(svers)/4))])
