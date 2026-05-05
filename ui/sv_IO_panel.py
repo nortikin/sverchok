@@ -68,6 +68,7 @@ class SV_PT_IOExportMenu(ExportImportPanels, bpy.types.Panel):
         imp = col.operator('node.tree_exporter', text='Export to JSON', icon='FILE_BACKUP')
         imp.id_tree = context.space_data.node_tree.name if context.space_data.node_tree else ''
 
+        col.operator('node.tree_export_to_clipboard', text='Export to Clipboard', icon='COPYDOWN')
         col.operator('node.tree_export_to_gist', text='Export to GIST', icon='URL')
         col.operator('node.blend_to_archive', text='Archive .blend (zip/gz)')
 
@@ -362,6 +363,56 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         col.prop(self, 'selected_only')
 
 
+class SvNodeTreeExportToClipboard(bpy.types.Operator):
+    """Export current tree JSON to clipboard"""
+    bl_idname = "node.tree_export_to_clipboard"
+    bl_label = "Export to Clipboard"
+
+    selected_only: bpy.props.BoolProperty(name="Selected only", default=False)
+    compact: bpy.props.BoolProperty(default=True, description="Compact representation of the JSON data")
+
+    @classmethod
+    def poll(cls, context):
+        return bool(getattr(context.space_data, 'node_tree', None))
+
+    def execute(self, context):
+        if len(context.space_data.path) > 1:
+            self.report({"WARNING"}, "Export is not supported inside node groups")
+            return {'CANCELLED'}
+
+        ng = context.space_data.node_tree
+        layout_dict = JSONExporter.get_tree_structure(ng, self.selected_only)
+        if not layout_dict:
+            msg = 'no update list found - did not export'
+            self.report({"WARNING"}, msg)
+            sv_logger.warning(msg)
+            return {'CANCELLED'}
+
+        try:
+            indent = None if self.compact else 2
+            context.window_manager.clipboard = json.dumps(layout_dict, indent=indent)
+            self.report({'INFO'}, "Copied JSON to clipboard")
+            return {'FINISHED'}
+        except Exception as err:
+            sv_logger.exception(err)
+            self.report({'ERROR'}, "Failed to export JSON to clipboard")
+            return {'CANCELLED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
+    def draw(self, context):
+        try:
+            col = self.layout.column(heading="Options")
+        except TypeError:
+            col = self.layout.column()
+
+        col.use_property_split = True
+        col.prop(self, 'compact')
+        col.prop(self, 'selected_only')
+
+
 class SvBlendToArchive(bpy.types.Operator):
     """ Archive this blend file as zip or gz """
 
@@ -462,6 +513,7 @@ classes = [
     SvNodeTreeExporter,
     SvNodeTreeImporter,
     SvNodeTreeImportFromGist,
+    SvNodeTreeExportToClipboard,
     SvNodeTreeExportToGist,
     SvBlendToArchive,
     SvNewImportTree,

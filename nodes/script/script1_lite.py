@@ -197,9 +197,10 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
                 ast_node = self.get_node_from_function_name(new_func_name)
                 code = self.extract_code(ast_node, joined=True)
                 # locals().update(self.make_new_locals())  # maybe..
-                locals().update(self.snlite_aliases)
-                exec(code, locals(), locals())
-                callbacks[new_func_name] = locals()[new_func_name]
+                exec_dict = {'self': self}
+                exec_dict.update(self.snlite_aliases)
+                exec(code, exec_dict, exec_dict)
+                callbacks[new_func_name] = exec_dict[new_func_name]
 
     @property
     def sv_internal_links(self):
@@ -262,7 +263,11 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
             lambda self, c: self.return_enumeration(enum_name='custom_enum_2')),
         description="enum 2", update=updateNode)
 
-    snlite_raise_exception: BoolProperty(name="raise exception")
+    snlite_raise_exception: BoolProperty(
+        name="raise exception",
+        description="Display errors during operation",
+        default=True,
+    )
 
     def draw_label(self):
         if self.script_name:
@@ -507,44 +512,51 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
         }
 
     def process_script(self):
+        exec_dict = {'self': self}
+
+        def flush_output_data(data_map):
+            for idx, output in enumerate(self.outputs):
+                self.outputs[idx].sv_set(data_map.get(output.name, []))
+
         __local__dict__ = self.make_new_locals()
-        locals().update(__local__dict__)
-        locals().update(self.snlite_aliases)
+
+        exec_dict.update(__local__dict__)
+        exec_dict.update(self.snlite_aliases)
 
         for output in self.outputs:
-            locals().update({output.name: []})
+            exec_dict[output.name] = []
 
         try:
             socket_info = self.current_node_dict['sockets']
 
             # inject once!
             if not self.injected_state:
-                self.inject_state(locals())
-                self.inject_function(locals(), func_name="ui", end="pass")
-                self.inject_function(locals(), func_name="sv_internal_links")
+                self.inject_state(exec_dict)
+                self.inject_function(exec_dict, func_name="ui", end="pass")
+                self.inject_function(exec_dict, func_name="sv_internal_links")
             else:
-                locals().update(socket_info['setup_state'])
+                exec_dict.update(socket_info['setup_state'])
 
             if self.inject_params:
-                locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
+                exec_dict['parameters'] = [__local__dict__.get(s.name) for s in self.inputs]
 
             if socket_info['inputs_required']:
                 # if not fully connected do not raise.
                 # should inform the user that the execution was halted because not 
                 # enough input was provided for the script to do anything useful.
                 if not self.socket_requirements_met(socket_info):
+                    flush_output_data(exec_dict)
                     return
 
-            exec(self.script_str, locals(), locals())
+            exec(self.script_str, exec_dict, exec_dict)
 
-            for idx, _socket in enumerate(self.outputs):
-                vals = locals()[_socket.name]
-                self.outputs[idx].sv_set(vals)
+            flush_output_data(exec_dict)
 
             set_autocolor(self, True, READY_COLOR)
 
 
         except Exception as err:
+            flush_output_data(exec_dict)
 
 
             self.info(f"Unexpected error: {sys.exc_info()[0]}")
@@ -602,17 +614,19 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
     def sv_draw_buttons(self, context, layout):
         sn_callback = 'node.scriptlite_ui_callback'
 
+        elem = layout.box()
         if not self.script_str:
-            col = layout.column(align=True)
-            row = col.row()
+            row = elem.row()
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
             self.wrapper_tracked_ui_draw_op(row, SvSnliteScriptSearch.bl_idname, text="", icon="VIEWZOOM")
+            elem.column().menu(SV_MT_ScriptNodeLitePyMenu.bl_idname)
         else:
-            col = layout.column(align=True)
-            row = col.row()
+            row = elem.row()
             row.operator(sn_callback, text='Reload').fn_name = 'load'
             row.operator(sn_callback, text='Clear').fn_name = 'nuke_me'
+
+        elem.prop(self, "snlite_raise_exception", text="raise errors")
 
         self.custom_draw(context, layout)
 

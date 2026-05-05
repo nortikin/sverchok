@@ -764,7 +764,7 @@ class SocketStruct(Struct):
         _set_optional(self._struct, "attributes", self._struct["attributes"])
 
 
-        for prop_name in socket.keys():
+        for prop_name in _iter_idprop_names(socket):
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -832,7 +832,7 @@ class InterfaceStruct(Struct):
         _set_optional(self._struct["attributes"], 'hide_value', socket.hide_value)
         _set_optional(self._struct, "attributes", self._struct["attributes"])
 
-        for prop_name in socket.keys():
+        for prop_name in _iter_idprop_names(socket):
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -1125,6 +1125,20 @@ def _ordered_links(tree) -> Generator[bpy.types.NodeLink]:
         for input_socket in node.inputs:
             for link in input_socket.links:
                 yield link
+
+
+def _iter_idprop_names(bpy_obj) -> tuple[str, ...]:
+    """
+    Return IDProperty keys for a Blender object.
+    Some RNA types (including certain sockets in newer Blender versions) do not
+    support IDProperties and raise TypeError on keys().
+    """
+    try:
+        return tuple(bpy_obj.keys())
+    except TypeError as ex:
+        if "doesn't support IDProperties" in str(ex):
+            return ()
+        raise
 
 
 def _set_optional(data: dict, key, value, condition=None):
