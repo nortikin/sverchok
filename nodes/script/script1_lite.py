@@ -532,6 +532,7 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
 
         try:
             socket_info = self.current_node_dict['sockets']
+            exec_dict['socket_info'] = socket_info
 
             # inject once!
             if not self.injected_state:
