@@ -22,7 +22,7 @@ class SvRunTests(bpy.types.Operator):
     """
 
     bl_idname = "node.sv_testing_run_tests"
-    bl_label = "Run tests"
+    bl_label = "Tests"
     bl_options = {'INTERNAL'}
 
     test_module: bpy.props.EnumProperty(
