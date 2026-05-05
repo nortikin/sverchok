@@ -114,6 +114,12 @@ def create_staircase(stair_width, floor_height, distance_between_flights):
                     [v2[0],v8[1],v8[2]],
                     [v8[0],v8[1],v8[2]],
                     ]
+            if floor == num_floors-1:
+                rvers = rvers[:-4]
+                rvers.extend([[v8[0],v8[1],v8[2]+rail],
+                              [v12[0],v8[1],v8[2]+rail],
+                              [v12[0],v8[1],v8[2]],
+                              [v8[0],v8[1],v8[2]],])
             vertices.extend(rvers)
         if mode == 'STEPS':
             svers = []
@@ -150,7 +156,8 @@ def create_staircase(stair_width, floor_height, distance_between_flights):
         elif mode == 'STEPS':
             thickness.extend([platethick for i in range(4*4)])
             thickness.extend([railthick for i in range(4*4)])
-            thickness.extend([platethick for i in range(4*int(len(svers)/4))])
+            thickness.extend([platethick+0.15 for i in range(8)])
+            thickness.extend([platethick for i in range(len(svers)-8)])
         base_z = base_z + floor_height_
     maxz = max([i[2] for i in vertices])+stair_width
     if mode == 'RAILS':
