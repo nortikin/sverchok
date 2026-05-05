@@ -71,9 +71,13 @@ class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
         global menu_file_index
         global dict_file_name_to_index
         
-        if context.active_node:
-
+        node = None
+        if hasattr(context, "node"):
+            node = context.node
+        if not node and context.active_node:
             node = context.active_node
+
+        if node:
             if (node.selected_mode == 'To_TextBlok'):
                 args = dict(operator='text.open', props_default={'internal': True}, display_name=display_file_name,)
             else:
@@ -620,7 +624,8 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
             self.wrapper_tracked_ui_draw_op(row, SvSnliteScriptSearch.bl_idname, text="", icon="VIEWZOOM")
-            elem.column().menu(SV_MT_ScriptNodeLitePyMenu.bl_idname)
+            menu = elem.column().menu(SV_MT_ScriptNodeLitePyMenu.bl_idname)
+            pass
         else:
             row = elem.row()
             row.operator(sn_callback, text='Reload').fn_name = 'load'
