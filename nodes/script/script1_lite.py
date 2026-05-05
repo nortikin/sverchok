@@ -263,7 +263,11 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
             lambda self, c: self.return_enumeration(enum_name='custom_enum_2')),
         description="enum 2", update=updateNode)
 
-    snlite_raise_exception: BoolProperty(name="raise exception")
+    snlite_raise_exception: BoolProperty(
+        name="raise exception",
+        description="Display errors during operation",
+        default=True,
+    )
 
     def draw_label(self):
         if self.script_name:
@@ -610,17 +614,19 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
     def sv_draw_buttons(self, context, layout):
         sn_callback = 'node.scriptlite_ui_callback'
 
+        elem = layout.box()
         if not self.script_str:
-            col = layout.column(align=True)
-            row = col.row()
+            row = elem.row()
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
             self.wrapper_tracked_ui_draw_op(row, SvSnliteScriptSearch.bl_idname, text="", icon="VIEWZOOM")
+            elem.column().menu(SV_MT_ScriptNodeLitePyMenu.bl_idname)
         else:
-            col = layout.column(align=True)
-            row = col.row()
+            row = elem.row()
             row.operator(sn_callback, text='Reload').fn_name = 'load'
             row.operator(sn_callback, text='Clear').fn_name = 'nuke_me'
+
+        elem.prop(self, "snlite_raise_exception", text="raise errors")
 
         self.custom_draw(context, layout)
 
