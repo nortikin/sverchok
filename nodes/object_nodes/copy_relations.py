@@ -904,6 +904,10 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
                                         pass
                                 pass
                             pass
+                        else:
+                            # bpy.context.mode != 'OBJECT':
+                            # TODO: What to do???
+                            pass
 
                         self.some_properties_animated = False
                         for I, receiver_object in enumerate(receiver_objects):
@@ -1037,45 +1041,18 @@ class SvSetObjectsReleationNode(SverchCustomTreeNode, bpy.types.Node):
                                 #raise Exception(f"Object[{I}] is None")
                                 pass
                             pass
+                        pass
 
                         if self.copy_objects_animation or self.clear_objects_animation:
                             # Сбросить признаки копирования и очистки анимации (в принципе из всегда можно сбрасывать независимо от значения).
                             self.copy_objects_animation = False
                             self.clear_objects_animation = False
-
-                # reference_reciever_indexes_maps = [unwrap_lowest_single_value(val) for val in reference_reciever_indexes_maps]
-                # for I, obj in enumerate(receiver_objects):
-                #     ID = reference_reciever_indexes_maps[I] if self.reference_reciever_indexes_maps_mode1=='REFERENCE_RECEIVER_MAP,MAPPING' else I
-                #     try:
-                #         reference_objects_settings_ID = reference_objects_settings[ID]
-                #     except IndexError:
-                #         raise Exception(f'0001. "Object"[{ID}] out of range. Number of objects in Socket "Rigid Body settings" [{len(reference_reciever_indexes_maps)} items] in Indexing mode has to be equals to "Objects" sockets [{len(receiver_objects)}]')
-                #     except Exception as _ex:
-                #         raise Exception(f'0002. "Rigid Body settings"[{ID}] exception: {_ex}')
-
-                #     if self.copy_objects_animation:
-                #         if len(reference_objects_settings)==0:
-                #             self.copy_objects_animation = False
-                #             raise Exception(f'0003. No Rigid Body settings to copy animation.')
-                #         try:
-                #             copy_fcurves(reference_objects_settings[ID], obj, [f'{name}' for name in object_params if getattr(self, object_params[name]['object_property_name_animation_copy']) ])
-                #         except Exception as ex:
-                #             print(f"0004. Animation copy error: {ex}")
-                #             pass
-                #         pass
-                #     # Очистить анимацию, если включена опция очистки анимации
-                #     if self.clear_objects_animation:
-                #         try:
-                #             remove_fcurves(obj, [f'{name}' for name in object_params if getattr(self, object_params[name]['object_property_name_animation_copy'])] )
-                #         except Exception as ex:
-                #             print(f"0005. Animation clear error: {ex}")
-                #             pass
-                #         pass    
-
-                #     copy_object_relations(reference_objects_settings_ID, obj)
-                #     pass
-                # pass
-
+                        pass
+                    pass
+                else:
+                    # if self.node_play_pause1 != 'NODE_PLAY,PLAY':
+                    pass
+                pass
             except Exception as _ex:
                 raise _ex
             # Сбросить признаки копирования и очистки анимации (в принципе из всегда можно сбрасывать независимо от значения).
