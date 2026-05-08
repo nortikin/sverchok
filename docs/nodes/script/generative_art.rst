@@ -3,6 +3,9 @@ Generative Art
 
 *destination after Beta: Generators*
 
+	.. image:: https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9
+	  :target: https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9
+
 Functionality
 -------------
 
