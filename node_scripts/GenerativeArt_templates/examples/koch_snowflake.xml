@@ -1,0 +1,18 @@
+<rules max_depth="100">
+    <rule name="entry">
+        <call transforms="ty 0.5*3**0.5" rule="R1"/>
+        <call transforms="rz 120 ty 0.5*3**0.5" rule="R1"/>
+        <call transforms="rz 240 ty 0.5*3**0.5" rule="R1"/>
+    </rule>
+    
+    <rule name="R1" max_depth="{max_depth}" successor="unit">
+        <call transforms="tx -1 sa 1.0/3.0" rule="R1"/>
+        <call transforms="tx -0.25 ty 0.25*3**0.5 rz 60 sa 1.0/3.0" rule="R1"/>      
+        <call transforms="tx 0.25 ty 0.25*3**0.5 rz -60 sa 1.0/3.0" rule="R1"/>
+        <call transforms="tx 1 sa 1.0/3.0" rule="R1"/>
+
+    </rule>
+    <rule name="unit">
+        <instance transforms="tx -1.5 sa 1" shape="line"/>
+    </rule>
+</rules>

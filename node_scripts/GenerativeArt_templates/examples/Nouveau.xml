@@ -1,0 +1,18 @@
+<rules max_depth="1000">
+    <rule name="entry">
+        <call count="2" transforms="rz 60" rule="r"/>
+    </rule>
+    <rule name="r"><call rule="y180"/></rule>
+    <rule name="r"><call rule="z180"/></rule>
+    <rule name="y180" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="ry -2 tx 0.1 sa 0.996" rule="y180"/>
+    </rule>
+    <rule name="z180" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="rz 2 tx 0.1 sa 0.996" rule="z180"/>
+    </rule>
+    <rule name="dbox">
+        <instance transforms="s 0.55 2.0 1.25 ry 90 rz 45" shape="box"/>
+    </rule>
+</rules>
