@@ -67,8 +67,9 @@ class SvBakeCurveOp(bpy.types.Operator, SvGenericNodeLocator):
 
     def sv_execute(self, context, node):
         curve_data = node.get_curve_data()
+        #print(curve_data)
         for i, item in enumerate(curve_data):
-            item.bake(f"Sv_Curve_{i}")
+            item[0].bake(f"Sv_Curve_{i}")
         return {'FINISHED'}
 
 class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):

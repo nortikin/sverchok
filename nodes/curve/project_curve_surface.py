@@ -69,6 +69,7 @@ class SvProjectCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'projection_type', text='')
 
     def get_trim(self, fc_face, fc_edge):
+        ' most greedy function here, especially first one '
         trim, m, M = fc_face.curveOnSurface(fc_edge)
         trim = trim.toBSpline(m, M)
         trim = SvFreeCadNurbsCurve(trim, ndim=2)
@@ -149,3 +150,5 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvProjectCurveSurfaceNode)
+
+if __name__ == '__main__': register()
