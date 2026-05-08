@@ -36,6 +36,14 @@ Outputs
 - **Shapes Matrices** - For each *shape* attribute defined in the xml file a named output will be generated. This output is a list  list of matrices that define the structure.
 
 
+Additionally
+------------
+
+If you import .json-file and the xml file specified in the node is not found in bpy.data.texts, the node will create a new text block with the name specified in the file_name parameter and fill it with the content of xml_str parameter (inner node string). This allows to import Sverchok Schema from .json-file without having to separately import .xml files.
+
+	.. image:: https://github.com/user-attachments/assets/5c61eaca-a1c3-48d0-bd03-6efd388b8663
+	  :target: https://github.com/user-attachments/assets/5c61eaca-a1c3-48d0-bd03-6efd388b8663
+
 Examples of usage
 ------------------
 

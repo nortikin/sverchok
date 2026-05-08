@@ -489,10 +489,10 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
 
     
     def init_sockets(self, value):
-        if value and (value in bpy.data.texts):
+        if value and (value in bpy.data.texts or self.xml_str):
             try:
-                internal_file = bpy.data.texts[value]
-                xml_str = internal_file.as_string()
+                internal_file = bpy.data.texts[value].as_string() if value in bpy.data.texts else self.xml_str
+                xml_str = internal_file
                 xml_tree = fromstring(xml_str)
                 
                 d_constants = {}
@@ -715,6 +715,15 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
                                     faces_out.append(f)
 
                         mat_sublist = []
+                    pass
+
+                if self.file_name not in bpy.data.texts:
+                    # export to data.tests. This can be happens after import Sverchok Schema from .json-file.
+                    text_block = bpy.data.texts.new(self.file_name)
+                    text_block.from_string(self.xml_str)
+
+                self.is_xml_valid = True
+                self.is_xml_error_text = ''
 
                 self.outputs['Vertices'].sv_set(verts_out)
                 self.outputs['Edges'].sv_set(edges_out)
