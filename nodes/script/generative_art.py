@@ -26,6 +26,7 @@ import math
 import string
 import random
 from xml.etree.cElementTree import fromstring
+from dataclasses import dataclass
 
 import bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty
@@ -206,13 +207,18 @@ class SvGenerativeArtSearch(bpy.types.Operator, SvGenericNodeLocator):
         return {'FINISHED'}
 
 
+@dataclass
+class LSystemLevel:
+    rule: object
+    depth: int
+    matrix: mu.Matrix
+    matrix_prev: mu.Matrix
+
 """
 ---------------------------------------------------
     LSystem
 ---------------------------------------------------
 """
-
-
 class LSystem:
 
     """
@@ -220,7 +226,7 @@ class LSystem:
     """
     def __init__(self, xml_tree, maxObjects):
         self._tree = xml_tree
-        self._maxDepth = int(self._tree.get("max_depth"))
+        self.global_max_depth = int(self._tree.get("max_depth"))
         self._progressCount = 0
         self._maxObjects = maxObjects
 
@@ -231,7 +237,7 @@ class LSystem:
     def evaluate(self, seed=0):
         random.seed(seed)
         rule = _pickRule(self._tree, "entry")
-        entry = (rule, 0, mu.Matrix.Identity(4))
+        entry = LSystemLevel(rule=rule, depth=0, matrix=mu.Matrix.Identity(4), matrix_prev=mu.Matrix.Identity(4))
         shapes = self._evaluate(entry)
         return shapes
 
@@ -244,26 +250,40 @@ class LSystem:
                 print('max objects reached')
                 break
 
-            rule, depth, matrix = stack.pop()
+            level = stack.pop()
+            
+            rule_name = level.rule.get('name')
+            local_max_depth = self.global_max_depth-len(stack)
+            if "max_depth" in level.rule.attrib:
+                local_max_depth = int(level.rule.get("max_depth"))
+                if local_max_depth<=0:
+                    continue
+                pass
 
-            local_max_depth = self._maxDepth
-            if "max_depth" in rule.attrib:
-                local_max_depth = int(rule.get("max_depth"))
-
-            if len(stack) > self._maxDepth:
+            if len(stack) > self.global_max_depth:
                 shapes.append(None)
                 continue
 
-            if depth > local_max_depth:
-                if "successor" in rule.attrib:
-                    successor = rule.get("successor")
-                    rule = _pickRule(self._tree, successor)
-                    stack.append((rule, 0, matrix))
+            if level.depth > local_max_depth:
+                if "successor" in level.rule.attrib:
+                    successor = level.rule.get("successor")
+                    sub_rule = _pickRule(self._tree, successor)
+                    sub_rule_name   = sub_rule.get('name')
+                    sub_rule_depth = 0
+                    if (sub_rule_name==rule_name):
+                        sub_rule_depth = level.depth+1
+                    else:
+                        if ("max_depth" in sub_rule.attrib):
+                            sub_rule_depth = 0
+                        else:
+                            sub_rule_depth = level.depth+1
+                        pass
+                    stack.append(LSystemLevel(rule=sub_rule, depth=sub_rule_depth, matrix=level.matrix_prev.copy(), matrix_prev=level.matrix_prev.copy()))
                 shapes.append(None)
                 continue
 
-            base_matrix = matrix.copy()
-            for statement in rule:
+            base_matrix = level.matrix.copy()
+            for statement in level.rule:
                 tstr = statement.get("transforms", "")
                 if not(tstr):
                     tstr = ''
@@ -273,33 +293,52 @@ class LSystem:
                         if tvalue:
                             n = eval(tvalue)
                             tstr += "{} {:f} ".format(t, n)
+                        pass
+                    pass
                 xform = _parseXform(tstr)
                 count = int(statement.get("count", 1))
                 count_xform = mu.Matrix.Identity(4)
-                for n in range(count):
-                    count_xform @= xform
-                    matrix = base_matrix @ count_xform
+                if count >= 1:
+                    for n in range(count):
+                        matrix_prev = base_matrix @ count_xform
+                        count_xform @= xform
+                        matrix = base_matrix @ count_xform
 
-                    if statement.tag == "call":
-                        rule = _pickRule(self._tree, statement.get("rule"))
-                        cloned_matrix = matrix.copy()
-                        entry = (rule, depth + 1, cloned_matrix)
-                        stack.append(entry)
+                        if statement.tag == "call":
+                            sub_rule = _pickRule(self._tree, statement.get("rule"))
+                            cloned_matrix = matrix.copy()
+                            sub_rule_name   = sub_rule.get('name')
+                            sub_rule_depth = 0
+                            if (sub_rule_name==rule_name):
+                                sub_rule_depth = level.depth+1
+                            elif (sub_rule_name!=rule_name):
+                                if ("max_depth" in sub_rule.attrib):
+                                    sub_rule_depth = 0
+                                else:
+                                    sub_rule_depth = level.depth+1
+                                pass
 
-                    elif statement.tag == "instance":
-                        name = statement.get("shape")
-                        if name == "None":
-                            shapes.append(None)
+                            entry = LSystemLevel(rule=sub_rule, depth=sub_rule_depth, matrix=cloned_matrix, matrix_prev=matrix_prev.copy())
+                            stack.append(entry)
+
+                        elif statement.tag == "instance":
+                            name = statement.get("shape")
+                            if name == "None" or name is None:
+                                shapes.append(None)
+                            else:
+                                shape = (name, matrix.copy())
+                                shapes.append(shape)
+                                nobjects += 1
+
                         else:
-                            shape = (name, matrix)
-                            shapes.append(shape)
-                            nobjects += 1
+                            raise ValueError("bad xml", statement.tag)
+                        
+                        pass
 
-                    else:
-                        raise ValueError("bad xml", statement.tag)
-
-                if count > 1:
-                    shapes.append(None)
+                    if count > 1:
+                        shapes.append(None)
+                else:
+                    pass
 
         return shapes
         # end of _evaluate
@@ -520,6 +559,10 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
                 # output sockets to match shape attribute values
                 shape_names = set([x.attrib.get('shape')
                                     for x in xml_tree.iter('instance')])
+                if None in shape_names:
+                    self.is_xml_valid = True
+                    self.is_xml_error_text = "Some 'instance' tags in xml file are missing 'shape' attribute. Please fix xml file and try again."
+                    raise Exception(self.is_xml_error_text)
                 # new output sockets
                 for s_name in sorted(shape_names):
                     if s_name not in self.outputs:
