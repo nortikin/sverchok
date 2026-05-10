@@ -289,6 +289,46 @@ class GeometricTransformationTests(unittest.TestCase):
         self.assertIsInstance(transforms[2], RotateZ)
 
 
+class FractionParsingTests(unittest.TestCase):
+    """Test parsing of fractional numeric values."""
+
+    @staticmethod
+    def _parse_transforms(code):
+        """Helper: parse transformations from a block '{ code }'."""
+        for transforms, _ in parse_transformation_block(f"{{{code}}}"):
+            return transforms
+        raise AssertionError("No transformations parsed")
+
+    def test_simple_fraction_in_scale(self):
+        transforms = self._parse_transforms("s 1/3 1 1.3")
+        self.assertEqual(len(transforms), 1)
+        scale = transforms[0]
+        self.assertAlmostEqual(scale.x, 1/3, places=10)
+        self.assertAlmostEqual(scale.y, 1.0)
+        self.assertAlmostEqual(scale.z, 1.3)
+
+    def test_fraction_in_translate(self):
+        transforms = self._parse_transforms("x 1/4 y 2/3")
+        self.assertAlmostEqual(transforms[0].value, 0.25, places=10)
+        self.assertAlmostEqual(transforms[1].value, 2/3, places=10)
+
+    def test_negative_fraction(self):
+        transforms = self._parse_transforms("x -1/3")
+        self.assertAlmostEqual(transforms[0].value, -1/3, places=10)
+
+    def test_fraction_in_rotation(self):
+        transforms = self._parse_transforms("rz 1/6")
+        self.assertAlmostEqual(transforms[0].angle, 1/6, places=10)
+
+    def test_fraction_in_rule_body(self):
+        prog = parse("rule start { { s 1/2 1/3 1/4 } box }")
+        branch = prog.rules[0].body[0]
+        scale = branch.repetitions[0].transformations[0]
+        self.assertAlmostEqual(scale.x, 0.5)
+        self.assertAlmostEqual(scale.y, 1/3, places=10)
+        self.assertAlmostEqual(scale.z, 0.25)
+
+
 class ColorTransformationTests(unittest.TestCase):
     """Test parsing of color transformations inside blocks."""
 

@@ -184,8 +184,9 @@ def parse_triangle_coords(src):
 # We use regex for reliability since the parsec sequence combinator
 # returns (tuple_of_results, rest) and we need the rest value.
 
-# Regex for a float value
-_float_tok = r"-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?"
+# Regex for a numeric value: integer, decimal, scientific, or fraction (e.g. 1/3)
+_num = r"-?(?:0|[1-9]\d*)"
+_float_tok = r"" + _num + r"(?:\.\d+)?(?:[eE][+-]?\d+)?(?:\s*/\s*" + _num + r"(?:\.\d+)?)?"
 
 # Translation: x/y/z <float>
 _translate_x_re = re.compile(r"x\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
@@ -250,6 +251,14 @@ _blend_re = re.compile(
 )
 
 
+def _to_float(s):
+    """Convert a numeric string to float, supporting fractions like '1/3'."""
+    if "/" in s:
+        parts = s.split("/")
+        return float(parts[0].strip()) / float(parts[1].strip())
+    return float(s)
+
+
 def _try_regex_parse(regex, src, factory):
     """Helper: try to match regex on src, yield factory(result), rest."""
     match = regex.match(src.lstrip())
@@ -260,52 +269,52 @@ def _try_regex_parse(regex, src, factory):
 
 def parse_TranslateX(src):
     def make(g):
-        return TranslateX(float(g[0]))
+        return TranslateX(_to_float(g[0]))
     yield from _try_regex_parse(_translate_x_re, src, make)
 
 
 def parse_TranslateY(src):
     def make(g):
-        return TranslateY(float(g[0]))
+        return TranslateY(_to_float(g[0]))
     yield from _try_regex_parse(_translate_y_re, src, make)
 
 
 def parse_TranslateZ(src):
     def make(g):
-        return TranslateZ(float(g[0]))
+        return TranslateZ(_to_float(g[0]))
     yield from _try_regex_parse(_translate_z_re, src, make)
 
 
 def parse_RotateX(src):
     def make(g):
-        return RotateX(float(g[0]))
+        return RotateX(_to_float(g[0]))
     yield from _try_regex_parse(_rotate_x_re, src, make)
 
 
 def parse_RotateY(src):
     def make(g):
-        return RotateY(float(g[0]))
+        return RotateY(_to_float(g[0]))
     yield from _try_regex_parse(_rotate_y_re, src, make)
 
 
 def parse_RotateZ(src):
     def make(g):
-        return RotateZ(float(g[0]))
+        return RotateZ(_to_float(g[0]))
     yield from _try_regex_parse(_rotate_z_re, src, make)
 
 
 def parse_Scale(src):
     def make(g):
-        x = float(g[0])
-        y = float(g[1]) if g[1] else None
-        z = float(g[2]) if g[2] else None
+        x = _to_float(g[0])
+        y = _to_float(g[1]) if g[1] else None
+        z = _to_float(g[2]) if g[2] else None
         return Scale(x, y, z)
     yield from _try_regex_parse(_scale_re, src, make)
 
 
 def parse_MatrixTransform(src):
     def make(g):
-        return MatrixTransform([float(g[i]) for i in range(9)])
+        return MatrixTransform([_to_float(g[i]) for i in range(9)])
     yield from _try_regex_parse(_matrix_re, src, make)
 
 
@@ -329,25 +338,25 @@ def parse_MirrorZ(src):
 
 def parse_HueShift(src):
     def make(g):
-        return HueShift(float(g[0]))
+        return HueShift(_to_float(g[0]))
     yield from _try_regex_parse(_hue_re, src, make)
 
 
 def parse_SaturationMul(src):
     def make(g):
-        return SaturationMul(float(g[0]))
+        return SaturationMul(_to_float(g[0]))
     yield from _try_regex_parse(_sat_re, src, make)
 
 
 def parse_BrightnessMul(src):
     def make(g):
-        return BrightnessMul(float(g[0]))
+        return BrightnessMul(_to_float(g[0]))
     yield from _try_regex_parse(_bright_re, src, make)
 
 
 def parse_AlphaMul(src):
     def make(g):
-        return AlphaMul(float(g[0]))
+        return AlphaMul(_to_float(g[0]))
     yield from _try_regex_parse(_alpha_re, src, make)
 
 
@@ -365,7 +374,7 @@ def parse_BlendColor(src):
         color = g[0]
         if color.startswith("'") and color.endswith("'"):
             color = color[1:-1]
-        return BlendColor(color, float(g[1]))
+        return BlendColor(color, _to_float(g[1]))
     yield from _try_regex_parse(_blend_re, src, make)
 
 
