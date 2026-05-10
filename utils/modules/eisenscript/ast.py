@@ -116,14 +116,18 @@ class Rule(AstNode):
     Attributes:
         name: Rule identifier (string).
         maxdepth: Optional maximum recursion depth for this rule (int or None).
+        retirement_rule: Optional rule to substitute when maxdepth is reached
+            (string or None).  Written as 'maxdepth N > retirement_rule'.
         weight: Ambiguity weight for random rule selection (float or None,
                 default 1.0).
         body: List of Branch nodes forming the rule body.
     """
 
-    def __init__(self, name, maxdepth=None, weight=None, body=None):
+    def __init__(self, name, maxdepth=None, retirement_rule=None,
+                 weight=None, body=None):
         self.name = name
         self.maxdepth = maxdepth
+        self.retirement_rule = retirement_rule
         self.weight = weight if weight is not None else 1.0
         self.body = body or []
 

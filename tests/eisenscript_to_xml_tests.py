@@ -191,7 +191,7 @@ class AstToXmlBasicTests(unittest.TestCase):
         ])
         root = ast_to_xml(prog)
         rules = root.findall("rule")
-        self.assertEqual(rules[0].get("weight"), "3.0")
+        self.assertEqual(rules[0].get("weight"), "3")
 
     def test_rule_with_maxdepth(self):
         prog = Program(rules=[
@@ -257,7 +257,8 @@ class AstToXmlBasicTests(unittest.TestCase):
         self.assertIn("rz 90", transforms)
         self.assertIn("sa 0.5", transforms)
 
-    def test_rule_retirement(self):
+    def test_rule_retirement_on_ref(self):
+        """RuleRef with retirement_depth + retirement_rule -> call max_depth + successor."""
         ref = RuleRef("leaf", retirement_depth=5, retirement_rule="fallback")
         prog = Program(rules=[
             Rule(name="start", body=[
@@ -268,6 +269,21 @@ class AstToXmlBasicTests(unittest.TestCase):
         calls = root[0].findall("call")
         self.assertEqual(calls[0].get("max_depth"), "5")
         self.assertEqual(calls[0].get("successor"), "fallback")
+
+    def test_rule_retirement_on_definition(self):
+        """Rule with retirement_rule -> rule element has successor attribute."""
+        prog = Program(rules=[
+            Rule(name="split", maxdepth=3, retirement_rule="square",
+                 weight=5.0, body=[
+                Branch(repetitions=[], terminal=RuleRef("split")),
+            ]),
+        ])
+        root = ast_to_xml(prog)
+        rules = root.findall("rule")
+        self.assertEqual(rules[0].get("name"), "split")
+        self.assertEqual(rules[0].get("max_depth"), "3")
+        self.assertEqual(rules[0].get("successor"), "square")
+        self.assertEqual(rules[0].get("weight"), "5")
 
     def test_all_primitives(self):
         prog = Program(rules=[
@@ -318,7 +334,7 @@ class EisenScriptToXmlTests(unittest.TestCase):
         root = eisenscript_to_xml(src)
         rule = root[0]
         self.assertEqual(rule.get("max_depth"), "20")
-        self.assertEqual(rule.get("weight"), "3.0")
+        self.assertEqual(rule.get("weight"), "3")
 
     def test_implicit_start_rule(self):
         src = "10 * { x 1 ry 36 } box"
@@ -404,6 +420,16 @@ class EisenScriptToXmlTests(unittest.TestCase):
         transforms = instances[0].get("transforms", "")
         self.assertIn("color red", transforms)
         self.assertIn("blend blue 0.5", transforms)
+
+    def test_rule_retirement_from_source(self):
+        """maxdepth N > retirement_rule in source -> successor on <rule>."""
+        src = "rule split w 5 maxdepth 3 > square { split }"
+        root = eisenscript_to_xml(src)
+        rules = root.findall("rule")
+        self.assertEqual(rules[0].get("name"), "split")
+        self.assertEqual(rules[0].get("max_depth"), "3")
+        self.assertEqual(rules[0].get("successor"), "square")
+        self.assertEqual(rules[0].get("weight"), "5")
 
     def test_matrix_transform(self):
         src = "rule start { { m 1 0 0 0 1 0 0 0 1 } box }"
@@ -513,7 +539,7 @@ class FullProgramXmlTests(unittest.TestCase):
         r2_rules = [r for r in rules if r.get("name") == "r2"]
         self.assertEqual(len(r2_rules), 2)
         # Second r2 has weight 2
-        self.assertEqual(r2_rules[1].get("weight"), "2.0")
+        self.assertEqual(r2_rules[1].get("weight"), "2")
 
     def test_nested_repetitions_create_intermediate_rules(self):
         """Multiple repetitions in a branch produce intermediate rules.

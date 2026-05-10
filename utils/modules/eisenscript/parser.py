@@ -747,6 +747,7 @@ def parse_rule_definition(src):
             rule = Rule(
                 name=name,
                 maxdepth=maxdepth,
+                retirement_rule=retirement_rule,
                 weight=weight,
                 body=branches,
             )
