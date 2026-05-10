@@ -21,9 +21,10 @@ Parser for the EisenScript language using the combinator parser framework
 from sverchok.utils.parsec.
 
 Grammar (EBNF):
-    program           -> (set_statement | rule_definition)*
+    program           -> (set_statement | rule_definition | implicit_start)*
     set_statement     -> 'set' setting_name value*
     rule_definition   -> 'rule'? identifier rule_modifier* '{' rule_body '}'
+    implicit_start    -> branch  // bare branch → rule 'start' { branch }
     rule_modifier     -> ('maxdepth' | 'md') int ['>' identifier]
                       | ('weight' | 'w') float
     rule_body         -> branch*
@@ -859,6 +860,13 @@ def parse_top_statement(src):
     # Try implicit rule definition: identifier followed by branch
     for rule, rest in parse_implicit_rule(src):
         yield rule, rest
+        return
+
+    # Try implicit start rule: a bare branch without a rule name.
+    # This is shorthand for 'rule start { branch }'.
+    for branch, rest in parse_branch(src):
+        rule = Rule(name="start", body=[branch])
+        yield rule, rest.lstrip() if rest else ""
         return
 
 
