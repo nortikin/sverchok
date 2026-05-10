@@ -38,7 +38,7 @@ from sverchok.utils.modules.eisenscript.to_xml import (
     eisenscript_to_xml,
     xml_to_string,
     _trans_to_token,
-    _collect_transforms,
+    _rep_transforms_str,
 )
 from sverchok.utils.modules.eisenscript.ast import (
     Program,
@@ -117,28 +117,29 @@ class TransformTokenTests(unittest.TestCase):
         self.assertEqual(_trans_to_token(BlendColor("blue", 0.5), support_colors=True), "blend blue 0.5")
 
 
-class CollectTransformsTests(unittest.TestCase):
-    """Test _collect_transforms helper."""
+class RepTransformsStrTests(unittest.TestCase):
+    """Test _rep_transforms_str helper."""
 
-    def test_empty(self):
-        transforms, count = _collect_transforms([])
-        self.assertEqual(transforms, "")
-        self.assertIsNone(count)
+    def test_empty_transforms(self):
+        rep = Repeat(10, [])
+        self.assertEqual(_rep_transforms_str(rep), "")
 
-    def test_single_repeat(self):
-        reps = [Repeat(10, [TranslateX(1), RotateY(36)])]
-        transforms, count = _collect_transforms(reps)
-        self.assertEqual(transforms, "tx 1 ry 36")
-        self.assertEqual(count, 10)
+    def test_single_transform(self):
+        rep = Repeat(5, [TranslateX(1)])
+        self.assertEqual(_rep_transforms_str(rep), "tx 1")
 
-    def test_multiple_repeats(self):
-        reps = [
-            Repeat(3, [TranslateX(1)]),
-            Repeat(5, [RotateZ(10)]),
-        ]
-        transforms, count = _collect_transforms(reps)
-        self.assertEqual(transforms, "tx 1 rz 10")
-        self.assertEqual(count, 5)  # last count wins
+    def test_multiple_transforms(self):
+        rep = Repeat(10, [TranslateX(1), RotateY(36)])
+        self.assertEqual(_rep_transforms_str(rep), "tx 1 ry 36")
+
+    def test_color_ignored_default(self):
+        rep = Repeat(3, [TranslateX(1), HueShift(60), RotateZ(10)])
+        self.assertEqual(_rep_transforms_str(rep), "tx 1 rz 10")
+
+    def test_color_supported(self):
+        rep = Repeat(3, [TranslateX(1), HueShift(60), RotateZ(10)])
+        self.assertEqual(_rep_transforms_str(rep, support_colors=True),
+                         "tx 1 h 60 rz 10")
 
 
 class AstToXmlBasicTests(unittest.TestCase):
@@ -466,9 +467,13 @@ class FullProgramXmlTests(unittest.TestCase):
         root = eisenscript_to_xml(src)
         self.assertEqual(root.get("max_depth"), "100")
         rules = root.findall("rule")
-        # entry (implicit start) + 3 r1 rules
-        self.assertEqual(len(rules), 4)
+        # entry + 2 intermediates (for 3 nested reps) + 3 r1 rules = 6
+        self.assertEqual(len(rules), 6)
         self.assertEqual(rules[0].get("name"), "entry")
+        # Entry calls intermediate with count=10
+        entry_calls = rules[0].findall("call")
+        self.assertEqual(entry_calls[0].get("count"), "10")
+        self.assertEqual(entry_calls[0].get("rule"), "__intermediate_0")
 
     def test_original_sample(self):
         src = """
@@ -492,9 +497,10 @@ class FullProgramXmlTests(unittest.TestCase):
         root = eisenscript_to_xml(src)
         self.assertEqual(root.get("max_depth"), "100")
         rules = root.findall("rule")
-        self.assertEqual(len(rules), 4)
+        # r1 (implicit, 1 rep) + r1 explicit (2 branches, 1 with 2 reps) + 2 r2 + 1 intermediate = 5
+        self.assertEqual(len(rules), 5)
 
-        # Check implicit r1
+        # Check implicit r1 (single rep, no intermediate needed)
         self.assertEqual(rules[0].get("name"), "r1")
         calls = rules[0].findall("call")
         self.assertEqual(calls[0].get("count"), "36")
@@ -503,9 +509,54 @@ class FullProgramXmlTests(unittest.TestCase):
         self.assertEqual(rules[1].get("name"), "r1")
         self.assertEqual(rules[1].get("max_depth"), "10")
 
-        # Check r2 with weight
-        self.assertEqual(rules[3].get("name"), "r2")
-        self.assertEqual(rules[3].get("weight"), "2.0")
+        # Find r2 rules by name (intermediate rules may shift indices)
+        r2_rules = [r for r in rules if r.get("name") == "r2"]
+        self.assertEqual(len(r2_rules), 2)
+        # Second r2 has weight 2
+        self.assertEqual(r2_rules[1].get("weight"), "2.0")
+
+    def test_nested_repetitions_create_intermediate_rules(self):
+        """Multiple repetitions in a branch produce intermediate rules.
+
+        10 * { x 1 } 30 * { ry 10 } child
+        -> entry(count=10, tx 1) -> __intermediate_0(count=30, ry 10) -> child
+
+        The last repetition's transforms+count are applied directly to the
+        terminal call, so only N-1 intermediate rules are created for N reps.
+        """
+        src = "rule start { 10 * { x 1 } 30 * { ry 10 } child }"
+        root = eisenscript_to_xml(src)
+        rules = root.findall("rule")
+
+        # entry + 1 intermediate (2 reps - 1) = 2 rules
+        self.assertEqual(len(rules), 2)
+
+        # Entry calls intermediate with count=10
+        entry = rules[0]
+        self.assertEqual(entry.get("name"), "entry")
+        entry_calls = entry.findall("call")
+        self.assertEqual(entry_calls[0].get("rule"), "__intermediate_0")
+        self.assertEqual(entry_calls[0].get("count"), "10")
+        self.assertIn("tx 1", entry_calls[0].get("transforms"))
+
+        # Intermediate_0 calls child directly with count=30 (last rep)
+        inter0 = rules[1]
+        self.assertEqual(inter0.get("name"), "__intermediate_0")
+        inter0_calls = inter0.findall("call")
+        self.assertEqual(inter0_calls[0].get("rule"), "child")
+        self.assertEqual(inter0_calls[0].get("count"), "30")
+        self.assertIn("ry 10", inter0_calls[0].get("transforms"))
+
+    def test_single_repetition_no_intermediate(self):
+        """A single repetition does NOT create intermediate rules."""
+        src = "rule start { 10 * { x 1 ry 36 } child }"
+        root = eisenscript_to_xml(src)
+        rules = root.findall("rule")
+        # Only entry, no intermediates
+        self.assertEqual(len(rules), 1)
+        calls = rules[0].findall("call")
+        self.assertEqual(calls[0].get("rule"), "child")
+        self.assertEqual(calls[0].get("count"), "10")
 
 
 if __name__ == "__main__":

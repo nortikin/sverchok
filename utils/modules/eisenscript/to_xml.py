@@ -52,6 +52,7 @@ Transformation token mapping:
 """
 
 from xml.etree import ElementTree as ET
+from collections import Counter
 
 from sverchok.utils.modules.eisenscript.parser import parse as parse_eisenscript
 from sverchok.utils.modules.eisenscript.ast import (
@@ -150,55 +151,30 @@ def _trans_to_token(trans, support_colors=False):
     return ""
 
 
-def _collect_transforms(repetitions, support_colors=False):
-    """
-    Collect all transformations from a list of Repeat nodes into a single
-    transforms string.
-
-    Each Repeat contributes its transformations. The count of the *last*
-    Repeat (if any) becomes the 'count' attribute of the XML element.
-
-    Args:
-        repetitions: List of Repeat nodes.
-        support_colors: If False, color transformations are skipped.
-    """
+def _rep_transforms_str(rep, support_colors=False):
+    """Get the transforms string for a single Repeat node."""
     tokens = []
-    count = None
-    for rep in repetitions:
-        for trans in rep.transformations:
-            token = _trans_to_token(trans, support_colors=support_colors)
-            if token:
-                tokens.append(token)
-        count = rep.count
-    return " ".join(tokens), count
+    for trans in rep.transformations:
+        token = _trans_to_token(trans, support_colors=support_colors)
+        if token:
+            tokens.append(token)
+    return " ".join(tokens)
 
 
 # ---------------------------------------------------------------------------
-# Branch -> <call> or <instance>
+# Branch -> <call> / <instance> + optional intermediate rules
 # ---------------------------------------------------------------------------
 
-def _branch_to_xml(parent, branch, support_colors=False):
+def _make_terminal_elem(parent, terminal, transforms_str=None, count=None):
     """
-    Append a <call> or <instance> child to *parent* for the given Branch.
+    Create a <call> or <instance> element under *parent* for the given
+    terminal (RuleRef or Primitive).
 
-    - RuleRef terminal  -> <call rule="...">
-    - Primitive terminal -> <instance shape="...">
-
-    Args:
-        parent: Parent XML element.
-        branch: Branch AST node.
-        support_colors: If False, color transformations are skipped.
+    Returns the created element.
     """
-    repetitions = branch.repetitions
-    terminal = branch.terminal
-
-    transforms_str, count = _collect_transforms(repetitions, support_colors=support_colors)
-
     if isinstance(terminal, RuleRef):
         elem = ET.SubElement(parent, "call")
         elem.set("rule", terminal.name)
-
-        # Rule retirement: md N > fallback -> max_depth + successor
         if terminal.retirement_depth is not None:
             elem.set("max_depth", str(terminal.retirement_depth))
         if terminal.retirement_rule is not None:
@@ -221,33 +197,117 @@ def _branch_to_xml(parent, branch, support_colors=False):
     elif isinstance(terminal, Triangle):
         elem = ET.SubElement(parent, "instance")
         elem.set("shape", "triangle")
-        # Store vertices as a semicolon-separated attribute
         coords = []
         for v in terminal.vertices:
             coords.append(",".join(str(c) for c in v))
         elem.set("vertices", ";".join(coords))
     else:
-        # Unknown terminal — skip
-        return
+        return None
 
     if transforms_str:
         elem.set("transforms", transforms_str)
     if count is not None:
         elem.set("count", str(count))
+    return elem
+
+
+def _branch_to_xml(rules_elem, parent_rule_elem, branch, support_colors=False,
+                   name_counter=None):
+    """
+    Convert a Branch into XML, creating intermediate rules for nested
+    repetitions when needed.
+
+    Each repetition in a branch represents a nested loop:
+        10 * { A } 30 * { B } r1
+    becomes:
+        <call count="10" transforms="A" rule="__intermediate_0"/>
+        <rule name="__intermediate_0">
+            <call count="30" transforms="B" rule="r1"/>
+        </rule>
+
+    Args:
+        rules_elem: The root <rules> element (for appending intermediate rules).
+        parent_rule_elem: The parent <rule> element (for the first <call>).
+        branch: Branch AST node.
+        support_colors: If False, color transformations are skipped.
+        name_counter: Counter for generating unique intermediate rule names.
+
+    Returns:
+        None
+    """
+    if name_counter is None:
+        name_counter = Counter()
+
+    repetitions = branch.repetitions
+    terminal = branch.terminal
+
+    if len(repetitions) == 0:
+        # No repetitions — direct terminal
+        _make_terminal_elem(parent_rule_elem, terminal)
+        return
+
+    if len(repetitions) == 1:
+        # Single repetition — straightforward
+        rep = repetitions[0]
+        tstr = _rep_transforms_str(rep, support_colors=support_colors)
+        _make_terminal_elem(parent_rule_elem, terminal,
+                            transforms_str=tstr or None,
+                            count=rep.count)
+        return
+
+    # Multiple repetitions — create a chain of intermediate rules.
+    # Walk from outermost to innermost, linking each to the next.
+    current_parent = parent_rule_elem
+
+    for i, rep in enumerate(repetitions):
+        tstr = _rep_transforms_str(rep, support_colors=support_colors)
+        is_last = (i == len(repetitions) - 1)
+
+        if is_last:
+            # Last repetition calls the terminal directly
+            _make_terminal_elem(current_parent, terminal,
+                                transforms_str=tstr or None,
+                                count=rep.count)
+        else:
+            # Create an intermediate rule for the next level
+            idx = name_counter["intermediate"]
+            name_counter["intermediate"] += 1
+            inter_name = f"__intermediate_{idx}"
+
+            # Call from current parent to the intermediate rule
+            call_elem = ET.SubElement(current_parent, "call")
+            call_elem.set("rule", inter_name)
+            if tstr:
+                call_elem.set("transforms", tstr)
+            call_elem.set("count", str(rep.count))
+
+            # Create the intermediate rule at the <rules> level
+            inter_rule = ET.SubElement(rules_elem, "rule")
+            inter_rule.set("name", inter_name)
+            current_parent = inter_rule
 
 
 # ---------------------------------------------------------------------------
 # Rule -> <rule>
 # ---------------------------------------------------------------------------
 
-def _rule_to_xml(rules_elem, rule, support_colors=False):
+
+# ---------------------------------------------------------------------------
+# Rule -> <rule>
+# ---------------------------------------------------------------------------
+
+def _rule_to_xml(rules_elem, rule, support_colors=False, name_counter=None):
     """Append a <rule> child to the <rules> element.
 
     Args:
         rules_elem: The <rules> root element.
         rule: Rule AST node.
         support_colors: If False, color transformations are skipped.
+        name_counter: Shared counter for unique intermediate rule names.
     """
+    if name_counter is None:
+        name_counter = Counter()
+
     rule_elem = ET.SubElement(rules_elem, "rule")
     # In XML format, the start rule is always called 'entry'
     xml_name = "entry" if rule.name == "start" else rule.name
@@ -259,7 +319,9 @@ def _rule_to_xml(rules_elem, rule, support_colors=False):
         rule_elem.set("weight", str(rule.weight))
 
     for branch in rule.body:
-        _branch_to_xml(rule_elem, branch, support_colors=support_colors)
+        _branch_to_xml(rules_elem, rule_elem, branch,
+                       support_colors=support_colors,
+                       name_counter=name_counter)
 
 
 # ---------------------------------------------------------------------------
@@ -297,8 +359,10 @@ def ast_to_xml(program, support_colors=False):
         rules_elem.set("max_depth", "1000")
 
     # Convert rules
+    name_counter = Counter()
     for rule in program.rules:
-        _rule_to_xml(rules_elem, rule, support_colors=support_colors)
+        _rule_to_xml(rules_elem, rule, support_colors=support_colors,
+                     name_counter=name_counter)
 
     return rules_elem
 
