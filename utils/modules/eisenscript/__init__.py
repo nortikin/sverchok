@@ -28,3 +28,8 @@ See: https://github.com/massivetrees/eisen
 
 from sverchok.utils.modules.eisenscript.ast import *
 from sverchok.utils.modules.eisenscript.parser import parse
+from sverchok.utils.modules.eisenscript.to_xml import (
+    ast_to_xml,
+    eisenscript_to_xml,
+    xml_to_string,
+)
