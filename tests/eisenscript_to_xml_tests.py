@@ -99,22 +99,22 @@ class TransformTokenTests(unittest.TestCase):
         self.assertEqual(_trans_to_token(MirrorZ()), "fz")
 
     def test_hue_short(self):
-        self.assertEqual(_trans_to_token(HueShift(180)), "h 180")
+        self.assertEqual(_trans_to_token(HueShift(180), support_colors=True), "h 180")
 
     def test_saturation(self):
-        self.assertEqual(_trans_to_token(SaturationMul(0.5)), "sat 0.5")
+        self.assertEqual(_trans_to_token(SaturationMul(0.5), support_colors=True), "sat 0.5")
 
     def test_brightness(self):
-        self.assertEqual(_trans_to_token(BrightnessMul(0.8)), "b 0.8")
+        self.assertEqual(_trans_to_token(BrightnessMul(0.8), support_colors=True), "b 0.8")
 
     def test_alpha(self):
-        self.assertEqual(_trans_to_token(AlphaMul(0.5)), "a 0.5")
+        self.assertEqual(_trans_to_token(AlphaMul(0.5), support_colors=True), "a 0.5")
 
     def test_set_color(self):
-        self.assertEqual(_trans_to_token(SetColor("red")), "color red")
+        self.assertEqual(_trans_to_token(SetColor("red"), support_colors=True), "color red")
 
     def test_blend_color(self):
-        self.assertEqual(_trans_to_token(BlendColor("blue", 0.5)), "blend blue 0.5")
+        self.assertEqual(_trans_to_token(BlendColor("blue", 0.5), support_colors=True), "blend blue 0.5")
 
 
 class CollectTransformsTests(unittest.TestCase):
@@ -340,15 +340,69 @@ class EisenScriptToXmlTests(unittest.TestCase):
         self.assertIn("tx 1", transforms)
         self.assertIn("rz 72", transforms)
 
-    def test_color_transforms(self):
+    def test_color_transforms_default_ignored(self):
+        """By default (support_colors=False), color transforms are omitted."""
         src = "rule start { { h 120 sat 0.8 b 0.9 a 0.5 } box }"
         root = eisenscript_to_xml(src)
+        instances = root[0].findall("instance")
+        transforms = instances[0].get("transforms", "")
+        self.assertNotIn("h 120", transforms)
+        self.assertNotIn("sat 0.8", transforms)
+        self.assertNotIn("b 0.9", transforms)
+        self.assertNotIn("a 0.5", transforms)
+        # Transforms string should be empty (no geometric transforms)
+        self.assertEqual(transforms.strip(), "")
+
+    def test_color_transforms_with_support(self):
+        """With support_colors=True, color transforms are included."""
+        src = "rule start { { h 120 sat 0.8 b 0.9 a 0.5 } box }"
+        root = eisenscript_to_xml(src, support_colors=True)
         instances = root[0].findall("instance")
         transforms = instances[0].get("transforms", "")
         self.assertIn("h 120", transforms)
         self.assertIn("sat 0.8", transforms)
         self.assertIn("b 0.9", transforms)
         self.assertIn("a 0.5", transforms)
+
+    def test_mixed_transforms_colors_ignored(self):
+        """Geometric transforms kept, color transforms dropped when default."""
+        src = "rule start { { x 1 h 60 rz 30 sat 0.5 } box }"
+        root = eisenscript_to_xml(src)
+        instances = root[0].findall("instance")
+        transforms = instances[0].get("transforms", "")
+        self.assertIn("tx 1", transforms)
+        self.assertIn("rz 30", transforms)
+        self.assertNotIn("h 60", transforms)
+        self.assertNotIn("sat 0.5", transforms)
+
+    def test_mixed_transforms_colors_supported(self):
+        """All transforms included when support_colors=True."""
+        src = "rule start { { x 1 h 60 rz 30 sat 0.5 } box }"
+        root = eisenscript_to_xml(src, support_colors=True)
+        instances = root[0].findall("instance")
+        transforms = instances[0].get("transforms", "")
+        self.assertIn("tx 1", transforms)
+        self.assertIn("rz 30", transforms)
+        self.assertIn("h 60", transforms)
+        self.assertIn("sat 0.5", transforms)
+
+    def test_set_color_ignored_default(self):
+        """color and blend transforms are omitted by default."""
+        src = "rule start { { color red blend blue 0.5 } box }"
+        root = eisenscript_to_xml(src)
+        instances = root[0].findall("instance")
+        transforms = instances[0].get("transforms", "")
+        self.assertNotIn("color", transforms)
+        self.assertNotIn("blend", transforms)
+
+    def test_set_color_supported(self):
+        """color and blend transforms included when support_colors=True."""
+        src = "rule start { { color red blend blue 0.5 } box }"
+        root = eisenscript_to_xml(src, support_colors=True)
+        instances = root[0].findall("instance")
+        transforms = instances[0].get("transforms", "")
+        self.assertIn("color red", transforms)
+        self.assertIn("blend blue 0.5", transforms)
 
     def test_matrix_transform(self):
         src = "rule start { { m 1 0 0 0 1 0 0 0 1 } box }"

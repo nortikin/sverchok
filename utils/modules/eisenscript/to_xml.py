@@ -94,8 +94,13 @@ from sverchok.utils.modules.eisenscript.ast import (
 # Transformation -> XML token
 # ---------------------------------------------------------------------------
 
-def _trans_to_token(trans):
-    """Convert a single Transformation AST node to an XML token string."""
+def _trans_to_token(trans, support_colors=False):
+    """Convert a single Transformation AST node to an XML token string.
+
+    Args:
+        trans: A Transformation AST node.
+        support_colors: If False, color transformations are skipped.
+    """
     if isinstance(trans, TranslateX):
         return f"tx {trans.value}"
     if isinstance(trans, TranslateY):
@@ -125,38 +130,43 @@ def _trans_to_token(trans):
     if isinstance(trans, MirrorZ):
         return "fz"
 
-    # Color transformations
-    if isinstance(trans, HueShift):
-        return f"h {trans.value}"
-    if isinstance(trans, SaturationMul):
-        return f"sat {trans.value}"
-    if isinstance(trans, BrightnessMul):
-        return f"b {trans.value}"
-    if isinstance(trans, AlphaMul):
-        return f"a {trans.value}"
+    # Color transformations — only when supported
+    if support_colors:
+        if isinstance(trans, HueShift):
+            return f"h {trans.value}"
+        if isinstance(trans, SaturationMul):
+            return f"sat {trans.value}"
+        if isinstance(trans, BrightnessMul):
+            return f"b {trans.value}"
+        if isinstance(trans, AlphaMul):
+            return f"a {trans.value}"
 
-    if isinstance(trans, SetColor):
-        return f"color {trans.color}"
-    if isinstance(trans, BlendColor):
-        return f"blend {trans.color} {trans.strength}"
+        if isinstance(trans, SetColor):
+            return f"color {trans.color}"
+        if isinstance(trans, BlendColor):
+            return f"blend {trans.color} {trans.strength}"
 
     # Unknown transformation — skip silently
     return ""
 
 
-def _collect_transforms(repetitions):
+def _collect_transforms(repetitions, support_colors=False):
     """
     Collect all transformations from a list of Repeat nodes into a single
     transforms string.
 
     Each Repeat contributes its transformations. The count of the *last*
     Repeat (if any) becomes the 'count' attribute of the XML element.
+
+    Args:
+        repetitions: List of Repeat nodes.
+        support_colors: If False, color transformations are skipped.
     """
     tokens = []
     count = None
     for rep in repetitions:
         for trans in rep.transformations:
-            token = _trans_to_token(trans)
+            token = _trans_to_token(trans, support_colors=support_colors)
             if token:
                 tokens.append(token)
         count = rep.count
@@ -167,17 +177,22 @@ def _collect_transforms(repetitions):
 # Branch -> <call> or <instance>
 # ---------------------------------------------------------------------------
 
-def _branch_to_xml(parent, branch):
+def _branch_to_xml(parent, branch, support_colors=False):
     """
     Append a <call> or <instance> child to *parent* for the given Branch.
 
     - RuleRef terminal  -> <call rule="...">
     - Primitive terminal -> <instance shape="...">
+
+    Args:
+        parent: Parent XML element.
+        branch: Branch AST node.
+        support_colors: If False, color transformations are skipped.
     """
     repetitions = branch.repetitions
     terminal = branch.terminal
 
-    transforms_str, count = _collect_transforms(repetitions)
+    transforms_str, count = _collect_transforms(repetitions, support_colors=support_colors)
 
     if isinstance(terminal, RuleRef):
         elem = ET.SubElement(parent, "call")
@@ -225,8 +240,14 @@ def _branch_to_xml(parent, branch):
 # Rule -> <rule>
 # ---------------------------------------------------------------------------
 
-def _rule_to_xml(rules_elem, rule):
-    """Append a <rule> child to the <rules> element."""
+def _rule_to_xml(rules_elem, rule, support_colors=False):
+    """Append a <rule> child to the <rules> element.
+
+    Args:
+        rules_elem: The <rules> root element.
+        rule: Rule AST node.
+        support_colors: If False, color transformations are skipped.
+    """
     rule_elem = ET.SubElement(rules_elem, "rule")
     # In XML format, the start rule is always called 'entry'
     xml_name = "entry" if rule.name == "start" else rule.name
@@ -238,19 +259,22 @@ def _rule_to_xml(rules_elem, rule):
         rule_elem.set("weight", str(rule.weight))
 
     for branch in rule.body:
-        _branch_to_xml(rule_elem, branch)
+        _branch_to_xml(rule_elem, branch, support_colors=support_colors)
 
 
 # ---------------------------------------------------------------------------
 # Program -> <rules> (root)
 # ---------------------------------------------------------------------------
 
-def ast_to_xml(program):
+def ast_to_xml(program, support_colors=False):
     """
     Convert an EisenScript AST :class:`Program` to an XML ElementTree element.
 
     Args:
         program: A :class:`sverchok.utils.modules.eisenscript.ast.Program` instance.
+        support_colors: If False (default), color transformations (hue,
+            saturation, brightness, alpha, color, blend) are omitted
+            from the XML output.
 
     Returns:
         xml.etree.ElementTree.Element -- the root ``<rules>`` element.
@@ -274,7 +298,7 @@ def ast_to_xml(program):
 
     # Convert rules
     for rule in program.rules:
-        _rule_to_xml(rules_elem, rule)
+        _rule_to_xml(rules_elem, rule, support_colors=support_colors)
 
     return rules_elem
 
@@ -283,12 +307,15 @@ def ast_to_xml(program):
 # Convenience: source string -> XML
 # ---------------------------------------------------------------------------
 
-def eisenscript_to_xml(source):
+def eisenscript_to_xml(source, support_colors=False):
     """
     Parse EisenScript source and convert to XML in one step.
 
     Args:
         source: EisenScript source code (string).
+        support_colors: If False (default), color transformations (hue,
+            saturation, brightness, alpha, color, blend) are omitted
+            from the XML output.
 
     Returns:
         xml.etree.ElementTree.Element -- the root ``<rules>`` element.
@@ -297,7 +324,7 @@ def eisenscript_to_xml(source):
         SyntaxError: If the source cannot be parsed.
     """
     program = parse_eisenscript(source)
-    return ast_to_xml(program)
+    return ast_to_xml(program, support_colors=support_colors)
 
 
 # ---------------------------------------------------------------------------
