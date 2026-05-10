@@ -316,7 +316,7 @@ def _rule_to_xml(rules_elem, rule, support_colors=False, name_counter=None):
     if rule.maxdepth is not None:
         rule_elem.set("max_depth", str(rule.maxdepth))
     if rule.weight is not None and rule.weight != 1.0:
-        rule_elem.set("weight", str(rule.weight))
+        rule_elem.set("weight", str(int(rule.weight)))
 
     for branch in rule.body:
         _branch_to_xml(rules_elem, rule_elem, branch,
