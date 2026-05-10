@@ -95,6 +95,12 @@ from sverchok.utils.modules.eisenscript.ast import (
 # Transformation -> XML token
 # ---------------------------------------------------------------------------
 
+def coalesce(value, dflt):
+    if value is None:
+        return dflt
+    else:
+        return value
+
 def _trans_to_token(trans, support_colors=False):
     """Convert a single Transformation AST node to an XML token string.
 
@@ -119,7 +125,7 @@ def _trans_to_token(trans, support_colors=False):
     if isinstance(trans, Scale):
         if trans.is_uniform:
             return f"sa {trans.x}"
-        return f"s {trans.x} {trans.y} {trans.z}"
+        return f"s {coalesce(trans.x, 1)} {coalesce(trans.y, 1)} {coalesce(trans.z, 1)}"
 
     if isinstance(trans, MatrixTransform):
         return "m " + " ".join(str(v) for v in trans.matrix)
