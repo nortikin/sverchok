@@ -165,7 +165,7 @@ class AstToXmlBasicTests(unittest.TestCase):
         root = ast_to_xml(prog)
         rules = root.findall("rule")
         self.assertEqual(len(rules), 1)
-        self.assertEqual(rules[0].get("name"), "start")
+        self.assertEqual(rules[0].get("name"), "entry")
         instances = rules[0].findall("instance")
         self.assertEqual(len(instances), 1)
         self.assertEqual(instances[0].get("shape"), "box")
@@ -201,6 +201,31 @@ class AstToXmlBasicTests(unittest.TestCase):
         root = ast_to_xml(prog)
         rules = root.findall("rule")
         self.assertEqual(rules[0].get("max_depth"), "20")
+
+    def test_start_renamed_to_entry(self):
+        """Rule named 'start' in AST must become 'entry' in XML."""
+        prog = Program(rules=[
+            Rule(name="start", body=[
+                Branch(repetitions=[], terminal=Box()),
+            ]),
+        ])
+        root = ast_to_xml(prog)
+        self.assertEqual(root[0].get("name"), "entry")
+
+    def test_other_names_preserved(self):
+        """Non-start rule names are preserved in XML."""
+        prog = Program(rules=[
+            Rule(name="tree", body=[
+                Branch(repetitions=[], terminal=Box()),
+            ]),
+            Rule(name="leaf", body=[
+                Branch(repetitions=[], terminal=Sphere()),
+            ]),
+        ])
+        root = ast_to_xml(prog)
+        rules = root.findall("rule")
+        self.assertEqual(rules[0].get("name"), "tree")
+        self.assertEqual(rules[1].get("name"), "leaf")
 
     def test_branch_with_repetition(self):
         prog = Program(rules=[
@@ -277,7 +302,7 @@ class EisenScriptToXmlTests(unittest.TestCase):
         root = eisenscript_to_xml(src)
         self.assertEqual(root.tag, "rules")
         self.assertEqual(len(root.findall("rule")), 1)
-        self.assertEqual(root[0].get("name"), "start")
+        self.assertEqual(root[0].get("name"), "entry")
 
     def test_multiple_rules(self):
         src = """
@@ -299,7 +324,7 @@ class EisenScriptToXmlTests(unittest.TestCase):
         root = eisenscript_to_xml(src)
         rules = root.findall("rule")
         self.assertEqual(len(rules), 1)
-        self.assertEqual(rules[0].get("name"), "start")
+        self.assertEqual(rules[0].get("name"), "entry")
 
     def test_set_maxdepth(self):
         src = "set maxdepth 500\nrule start { box }"
@@ -387,9 +412,9 @@ class FullProgramXmlTests(unittest.TestCase):
         root = eisenscript_to_xml(src)
         self.assertEqual(root.get("max_depth"), "100")
         rules = root.findall("rule")
-        # start (implicit) + 3 r1 rules
+        # entry (implicit start) + 3 r1 rules
         self.assertEqual(len(rules), 4)
-        self.assertEqual(rules[0].get("name"), "start")
+        self.assertEqual(rules[0].get("name"), "entry")
 
     def test_original_sample(self):
         src = """

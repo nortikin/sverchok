@@ -228,7 +228,9 @@ def _branch_to_xml(parent, branch):
 def _rule_to_xml(rules_elem, rule):
     """Append a <rule> child to the <rules> element."""
     rule_elem = ET.SubElement(rules_elem, "rule")
-    rule_elem.set("name", rule.name)
+    # In XML format, the start rule is always called 'entry'
+    xml_name = "entry" if rule.name == "start" else rule.name
+    rule_elem.set("name", xml_name)
 
     if rule.maxdepth is not None:
         rule_elem.set("max_depth", str(rule.maxdepth))
