@@ -31,43 +31,13 @@ EisenScript specification, a NOTE is added in the test docstring.
 """
 
 import unittest
-import sys
-import os
 
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
-import importlib.util
-
-# ------------------------------------------------------------------
-# Direct module loading (avoids bpy import in sverchok/__init__.py)
-# ------------------------------------------------------------------
-
-def _load_module(name, path):
-    spec = importlib.util.spec_from_file_location(name, path)
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules[name] = mod
-    spec.loader.exec_module(mod)
-    return mod
-
-ast_mod = _load_module(
-    "sverchok.utils.modules.eisenscript.ast",
-    os.path.join(project_root, "utils/modules/eisenscript/ast.py"))
-parser_mod = _load_module(
-    "sverchok.utils.modules.eisenscript.parser",
-    os.path.join(project_root, "utils/modules/eisenscript/parser.py"))
-to_xml_mod = _load_module(
-    "sverchok.utils.modules.eisenscript.to_xml",
-    os.path.join(project_root, "utils/modules/eisenscript/to_xml.py"))
-interp_mod = _load_module(
-    "sverchok.utils.modules.eisenscript.interpreter",
-    os.path.join(project_root, "utils/modules/eisenscript/interpreter.py"))
-
-parse = parser_mod.parse
-Interpreter = interp_mod.Interpreter
-ast_to_xml = to_xml_mod.ast_to_xml
-eisenscript_to_xml = to_xml_mod.eisenscript_to_xml
+from sverchok.utils.modules.eisenscript.parser import parse
+from sverchok.utils.modules.eisenscript.interpreter import Interpreter
+from sverchok.utils.modules.eisenscript.to_xml import (
+    ast_to_xml,
+    eisenscript_to_xml,
+)
 
 # ------------------------------------------------------------------
 # Legacy LSystem helpers (re-implemented without bpy dependency)
