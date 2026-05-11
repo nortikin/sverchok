@@ -415,6 +415,116 @@ class MaxDepthTests(unittest.TestCase):
         self.assertIn("box", result.matrices)
 
 
+class SizeTests(unittest.TestCase):
+    """Test minsize/maxsize termination (S5)."""
+
+    def test_initial_size_is_sqrt3(self):
+        """Initial diagonal of unit cube is sqrt(3) ≈ 1.732."""
+        from sverchok.utils.modules.eisenscript.interpreter import _compute_size
+        from mathutils import Matrix
+        import math
+        m = Matrix.Identity(4)
+        self.assertAlmostEqual(_compute_size(m), math.sqrt(3), places=5)
+
+    def test_minsize_terminates_small_branch(self):
+        """S5: Branch terminated when size < minsize."""
+        prog = parse("""
+        set minsize 1.0
+        1 * { s 0.1 } box
+        """)
+        result = Interpreter.interpret(prog)
+        # s 0.1 scales diagonal from sqrt(3) to 0.1*sqrt(3) ≈ 0.173 < 1.0
+        self.assertEqual(len(result.matrices.get("box", [])), 0)
+
+    def test_maxsize_terminates_large_branch(self):
+        """S5: Branch terminated when size > maxsize."""
+        prog = parse("""
+        set maxsize 1.0
+        1 * { s 2 } box
+        """)
+        result = Interpreter.interpret(prog)
+        # s 2 scales diagonal from sqrt(3) to 2*sqrt(3) ≈ 3.464 > 1.0
+        self.assertEqual(len(result.matrices.get("box", [])), 0)
+
+    def test_minsize_maxsize_both(self):
+        """S5: Both minsize and maxsize can be set."""
+        prog = parse("""
+        set minsize 0.5
+        set maxsize 3.0
+        1 * { s 0.1 } box
+        1 * { s 2 } sphere
+        """)
+        result = Interpreter.interpret(prog)
+        # box: 0.1*sqrt(3) ≈ 0.173 < 0.5 → terminated
+        # sphere: 2*sqrt(3) ≈ 3.464 > 3.0 → terminated
+        self.assertEqual(len(result.matrices.get("box", [])), 0)
+        self.assertEqual(len(result.matrices.get("sphere", [])), 0)
+
+    def test_minsize_maxsize_allows_valid_size(self):
+        """S5: Branch allowed when size is within [minsize, maxsize]."""
+        prog = parse("""
+        set minsize 0.5
+        set maxsize 2.0
+        1 * { s 0.5 } box
+        """)
+        result = Interpreter.interpret(prog)
+        # s 0.5 scales diagonal from sqrt(3) to 0.5*sqrt(3) ≈ 0.866
+        # 0.5 ≤ 0.866 ≤ 2.0 → allowed
+        self.assertIn("box", result.matrices)
+        self.assertEqual(len(result.matrices["box"]), 1)
+
+    def test_minsize_terminates_rule_call(self):
+        """S5: Rule call terminated when size < minsize."""
+        prog = parse("""
+        set minsize 1.0
+        1 * { s 0.1 } child
+        rule child { 1 * {} box }
+        """)
+        result = Interpreter.interpret(prog)
+        # s 0.1 scales diagonal to 0.1*sqrt(3) ≈ 0.173 < 1.0
+        self.assertNotIn("box", result.matrices)
+
+    def test_maxsize_terminates_rule_call(self):
+        """S5: Rule call terminated when size > maxsize."""
+        prog = parse("""
+        set maxsize 1.0
+        1 * { s 2 } child
+        rule child { 1 * {} box }
+        """)
+        result = Interpreter.interpret(prog)
+        # s 2 scales diagonal to 2*sqrt(3) ≈ 3.464 > 1.0
+        self.assertNotIn("box", result.matrices)
+
+    def test_minsize_maxsize_with_repetition(self):
+        """S5: Repetitions respect minsize/maxsize per instance."""
+        prog = parse("""
+        set minsize 0.5
+        3 * { s 0.3 x 1 } box
+        """)
+        result = Interpreter.interpret(prog)
+        # Cumulative transforms:
+        # Iter 1: s 0.3 → 0.3*sqrt(3) ≈ 0.520 ≥ 0.5 → OK
+        # Iter 2: s 0.3^2 → 0.09*sqrt(3) ≈ 0.156 < 0.5 → terminated
+        # Iter 3: s 0.3^3 → 0.027*sqrt(3) ≈ 0.047 < 0.5 → terminated
+        self.assertIn("box", result.matrices)
+        self.assertEqual(len(result.matrices["box"]), 1)
+
+    def test_minsize_maxsize_recursive_termination(self):
+        """S5: Recursive rules terminate when size drops below minsize."""
+        prog = parse("""
+        set minsize 0.5
+        set maxdepth 100
+        1 * { s 0.5 } start
+        rule start { 1 * { s 0.5 } start }
+        rule start { 1 * {} box }
+        """)
+        result = Interpreter.interpret(prog)
+        # Each recursion multiplies size by 0.5
+        # sqrt(3) → 0.5*sqrt(3) ≈ 0.866 → 0.25*sqrt(3) ≈ 0.433 < 0.5
+        # So recursion terminates after 2 levels
+        self.assertIn("box", result.matrices)
+
+
 class MaxObjectsTests(unittest.TestCase):
     """Test max_objects cap."""
 

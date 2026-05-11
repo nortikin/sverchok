@@ -99,6 +99,10 @@ class Interpreter:
         origin_as_center: If True, transformations use (0,0,0) as center
             (legacy LSystem behavior). If False (default), use (0.5,0.5,0.5)
             per the EisenScript specification.
+        min_size: Minimum diagonal length of the unit cube before terminating
+            a branch. None means no lower bound.
+        max_size: Maximum diagonal length of the unit cube before terminating
+            a branch. None means no upper bound.
     """
 
     def __init__(
@@ -107,11 +111,15 @@ class Interpreter:
         max_objects: Optional[int] = None,
         seed: int = 0,
         origin_as_center: bool = True,
+        min_size: Optional[float] = None,
+        max_size: Optional[float] = None,
     ) -> None:
         self.max_depth = max_depth
         self.max_objects = max_objects
         self.seed = seed
         self.origin_as_center = origin_as_center
+        self.min_size = min_size
+        self.max_size = max_size
 
     # ------------------------------------------------------------------
     # Public API
@@ -131,12 +139,14 @@ class Interpreter:
                 use (0.5,0.5,0.5) per the EisenScript specification.
                 Default is True for compatibility with the legacy LSystem.
 
-        Reads ``maxdepth``, ``seed`` and ``maxobjects`` from program
-        settings when present.
+        Reads ``maxdepth``, ``seed``, ``maxobjects``, ``minsize`` and
+        ``maxsize`` from program settings when present.
         """
         global_maxdepth: int = 1000
         seed: int = 0
         max_objects: Optional[int] = None
+        min_size: Optional[float] = None
+        max_size: Optional[float] = None
 
         for s in program.settings:
             if s.name == "maxdepth":
@@ -149,12 +159,18 @@ class Interpreter:
                     seed = int(val)
             elif s.name == "maxobjects":
                 max_objects = int(s.value)
+            elif s.name == "minsize":
+                min_size = float(s.value)
+            elif s.name == "maxsize":
+                max_size = float(s.value)
 
         interp = Interpreter(
             max_depth=global_maxdepth,
             max_objects=max_objects,
             seed=seed,
             origin_as_center=origin_as_center,
+            min_size=min_size,
+            max_size=max_size,
         )
         return interp._interpret(program)
 
@@ -218,6 +234,7 @@ class Interpreter:
                     matrix, depth, stack, result,
                     total_objects, self.max_objects,
                     self.origin_as_center,
+                    self.min_size, self.max_size,
                 )
                 # Update total_objects count after branch
                 for mats in result.matrices.values():
@@ -241,12 +258,15 @@ def _interpret_branch(
     total_objects: int,
     max_objects: Optional[int],
     origin_as_center: bool,
+    min_size: Optional[float],
+    max_size: Optional[float],
 ) -> None:
     """
     Interpret a single Branch AST node.
 
     Builds the accumulated transform from all repetitions, then
     dispatches to the terminal (RuleRef or Primitive).
+    Terminates the branch if the current size is outside [min_size, max_size].
     """
     repetitions = branch.repetitions
     terminal = branch.terminal
@@ -271,11 +291,13 @@ def _interpret_branch(
         _dispatch_call(
             terminal, rule_map, defines, _resolve,
             parent_matrix, depth, stack, rep_info,
+            min_size, max_size,
         )
     else:
         _dispatch_instance(
             terminal, result, parent_matrix, rep_info,
             total_objects, max_objects,
+            min_size, max_size,
         )
 
 
@@ -288,6 +310,8 @@ def _dispatch_call(
     depth: int,
     stack: list,
     rep_info: list,
+    min_size: Optional[float],
+    max_size: Optional[float],
 ) -> None:
     """Handle a RuleRef terminal: push called rule(s) onto the stack."""
     target_rule = _pick_rule(rule_map, ref.name)
@@ -301,13 +325,14 @@ def _dispatch_call(
     if not rep_info:
         # No repetitions — direct call
         cloned = parent_matrix.copy()
-        entry = (target_rule, depth + 1, cloned)
-        if call_max_depth is not None:
-            # Wrap with a retirement rule
-            entry = (_make_retirement_wrapper(target_rule, call_max_depth,
-                                              call_successor, rule_map),
-                     depth + 1, cloned)
-        stack.append(entry)
+        if _size_in_bounds(cloned, min_size, max_size):
+            entry = (target_rule, depth + 1, cloned)
+            if call_max_depth is not None:
+                # Wrap with a retirement rule
+                entry = (_make_retirement_wrapper(target_rule, call_max_depth,
+                                                  call_successor, rule_map),
+                         depth + 1, cloned)
+            stack.append(entry)
         return
 
     # Build cumulative transforms for each repetition level
@@ -318,6 +343,7 @@ def _dispatch_call(
         rep_info, 0, base_matrix,
         target_rule, depth, call_max_depth, call_successor,
         rule_map, stack,
+        min_size, max_size,
     )
 
 
@@ -331,17 +357,20 @@ def _emit_calls_recursive(
     call_successor: Optional[str],
     rule_map: Dict[str, List[Rule]],
     stack: list,
+    min_size: Optional[float],
+    max_size: Optional[float],
 ) -> None:
     """Recursively emit stack entries for nested repetition levels."""
     if level == len(rep_info):
         # Base case: push the terminal call
-        cloned = current_matrix.copy()
-        entry = (target_rule, depth + 1, cloned)
-        if call_max_depth is not None:
-            entry = (_make_retirement_wrapper(target_rule, call_max_depth,
-                                              call_successor, rule_map),
-                     depth + 1, cloned)
-        stack.append(entry)
+        if _size_in_bounds(current_matrix, min_size, max_size):
+            cloned = current_matrix.copy()
+            entry = (target_rule, depth + 1, cloned)
+            if call_max_depth is not None:
+                entry = (_make_retirement_wrapper(target_rule, call_max_depth,
+                                                  call_successor, rule_map),
+                         depth + 1, cloned)
+            stack.append(entry)
         return
 
     count, tmat = rep_info[level]
@@ -354,6 +383,7 @@ def _emit_calls_recursive(
             target_rule, depth,
             call_max_depth, call_successor,
             rule_map, stack,
+            min_size, max_size,
         )
 
 
@@ -364,6 +394,8 @@ def _dispatch_instance(
     rep_info: list,
     total_objects: int,
     max_objects: Optional[int],
+    min_size: Optional[float],
+    max_size: Optional[float],
 ) -> None:
     """Handle a Primitive terminal: emit placement matrix(es)."""
     shape_name = _primitive_name(terminal)
@@ -375,14 +407,16 @@ def _dispatch_instance(
 
     if not rep_info:
         # No repetitions — single instance
-        if max_objects is None or total_objects < max_objects:
-            result.matrices[shape_name].append(parent_matrix.copy())
+        if _size_in_bounds(parent_matrix, min_size, max_size):
+            if max_objects is None or total_objects < max_objects:
+                result.matrices[shape_name].append(parent_matrix.copy())
         return
 
     # Build cumulative transforms for each repetition level
     _emit_instances_recursive(
         rep_info, 0, parent_matrix,
         shape_name, result, total_objects, max_objects,
+        min_size, max_size,
     )
 
 
@@ -394,14 +428,17 @@ def _emit_instances_recursive(
     result: InterpreterResult,
     total_objects: int,
     max_objects: Optional[int],
+    min_size: Optional[float],
+    max_size: Optional[float],
 ) -> None:
     """Recursively emit instance matrices for nested repetition levels."""
     if max_objects is not None and total_objects >= max_objects:
         return
 
     if level == len(rep_info):
-        # Base case: emit the instance
-        result.matrices[shape_name].append(current_matrix.copy())
+        # Base case: emit the instance if size is in bounds
+        if _size_in_bounds(current_matrix, min_size, max_size):
+            result.matrices[shape_name].append(current_matrix.copy())
         return
 
     count, tmat = rep_info[level]
@@ -415,6 +452,7 @@ def _emit_instances_recursive(
             rep_info, level + 1,
             current_matrix @ cumulative,
             shape_name, result, new_total, max_objects,
+            min_size, max_size,
         )
 
 
@@ -463,6 +501,56 @@ def _make_retirement_wrapper(
         weight=target_rule.weight,
         body=target_rule.body,
     )
+
+
+# ---------------------------------------------------------------------------
+# Size helpers (S5: minsize / maxsize)
+# ---------------------------------------------------------------------------
+
+_diagonal_vector = mu.Vector((1.0, 1.0, 1.0))
+
+
+def _compute_size(matrix: Matrix) -> float:
+    """
+    Compute the "size" of the unit cube under *matrix*.
+
+    The size is the length of the diagonal of a unit cube (from (0,0,0)
+    to (1,1,1)) after applying the linear part of *matrix*.
+
+    Per spec: "The 'size' parameter refers to the length of the diagonal
+    of a unit cube in the current local state."
+    """
+    # Transform the diagonal vector (1,1,1) by the linear part of the matrix
+    # We use the upper-left 3x3 submatrix
+    diag = mu.Vector((
+        matrix[0][0] + matrix[0][1] + matrix[0][2],
+        matrix[1][0] + matrix[1][1] + matrix[1][2],
+        matrix[2][0] + matrix[2][1] + matrix[2][2],
+    ))
+    return diag.length
+
+
+def _size_in_bounds(
+    matrix: Matrix,
+    min_size: Optional[float],
+    max_size: Optional[float],
+) -> bool:
+    """
+    Return True if the current size is within [min_size, max_size].
+
+    If min_size is None, no lower bound is enforced.
+    If max_size is None, no upper bound is enforced.
+    """
+    if min_size is None and max_size is None:
+        return True
+
+    size = _compute_size(matrix)
+
+    if min_size is not None and size < min_size:
+        return False
+    if max_size is not None and size > max_size:
+        return False
+    return True
 
 
 def _build_transform_matrix(
