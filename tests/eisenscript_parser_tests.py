@@ -161,6 +161,15 @@ class SetStatementTests(unittest.TestCase):
         self.assertEqual(prog.settings[1].name, "maxobjects")
         self.assertEqual(prog.settings[2].name, "seed")
 
+    def test_duplicate_set_same_name(self):
+        """T7: Multiple set statements with same name — both are stored."""
+        prog = parse("set maxdepth 100\nset maxdepth 3")
+        self.assertEqual(len(prog.settings), 2)
+        self.assertEqual(prog.settings[0].name, "maxdepth")
+        self.assertEqual(prog.settings[0].value, 100)
+        self.assertEqual(prog.settings[1].name, "maxdepth")
+        self.assertEqual(prog.settings[1].value, 3)
+
 
 class DefineStatementTests(unittest.TestCase):
     """Test parsing of #define statements."""
@@ -198,6 +207,12 @@ class DefineStatementTests(unittest.TestCase):
         self.assertIsInstance(trans, RotateY)
         self.assertIsInstance(trans.angle, VariableRef)
         self.assertEqual(trans.angle.name, "angle")
+
+    def test_define_shadowing(self):
+        """T10: Later #define overrides earlier one with same name."""
+        prog = parse("#define n 3\n#define n 7")
+        # Second #define should override the first
+        self.assertEqual(prog.defines, {"n": 7.0})
 
 
 class PrimitiveTests(unittest.TestCase):
@@ -448,6 +463,15 @@ class RepetitionTests(unittest.TestCase):
             list(parse_repetition("-5 * { ry 10 } sphere"))
         self.assertIn("-5", str(ctx.exception))
 
+    def test_zero_count_parsed(self):
+        """T8: Zero repetition count is valid (produces no instances)."""
+        for rep, rest in parse_repetition("0 * { x 1 } box"):
+            self.assertEqual(rep.count, 0)
+            self.assertEqual(len(rep.transformations), 1)
+            break
+        else:
+            self.fail("No repetition parsed")
+
     def test_multiple_transformations_in_repeat(self):
         for rep, _ in parse_repetition("10 * { x 1 ry 36 } box"):
             self.assertEqual(len(rep.transformations), 2)
@@ -634,6 +658,13 @@ class RuleDefinitionTests(unittest.TestCase):
         self.assertEqual(len(prog.rules), 2)
         self.assertEqual(prog.rules[0].weight, 3.0)
         self.assertEqual(prog.rules[1].weight, 1.0)
+
+    def test_empty_rule_body(self):
+        """T5: Rule with empty body parses correctly."""
+        prog = parse("rule empty {}")
+        self.assertEqual(len(prog.rules), 1)
+        self.assertEqual(prog.rules[0].name, "empty")
+        self.assertEqual(len(prog.rules[0].body), 0)
 
 
 class FullProgramTests(unittest.TestCase):
