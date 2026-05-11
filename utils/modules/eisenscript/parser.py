@@ -512,9 +512,8 @@ def parse_repetition(src):
         if count < 0:
             return
         transforms = _parse_transformations_from_string(inner)
-        if transforms:
-            yield Repeat(count, transforms), rest.lstrip()
-            return
+        yield Repeat(count, transforms), rest.lstrip()
+        return
 
     # Try: identifier * { ... } (variable reference as count)
     rep_id_re = re.compile(
@@ -525,9 +524,8 @@ def parse_repetition(src):
     if match:
         name, inner, rest = match.groups()
         transforms = _parse_transformations_from_string(inner)
-        if transforms:
-            from sverchok.utils.modules.eisenscript.ast import VariableRef
-            yield Repeat(VariableRef(name), transforms), rest.lstrip()
+        from sverchok.utils.modules.eisenscript.ast import VariableRef
+        yield Repeat(VariableRef(name), transforms), rest.lstrip()
 
 
 # ---------------------------------------------------------------------------
