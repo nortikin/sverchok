@@ -323,15 +323,15 @@ class LSystem:
                                     sub_rule_depth = level.depth+1
                                 pass
                             
-                            name = statement.get("shape")
-                            if name == "None" or name is None:
-                                #shapes.append(None)
-                                pass
-                            else:
-                                #shape = (name, matrix @ xform.inverted())
-                                shape = (name, cloned_matrix )
-                                shapes.append(shape)
-                                nobjects += 1
+                            # name = statement.get("shape")
+                            # if name == "None" or name is None:
+                            #     #shapes.append(None)
+                            #     pass
+                            # else:
+                            #     #shape = (name, matrix @ xform.inverted())
+                            #     shape = (name, cloned_matrix )
+                            #     shapes.append(shape)
+                            #     nobjects += 1
 
                             entry = LSystemLevel(rule=sub_rule, depth=sub_rule_depth, matrix=cloned_matrix, matrix_prev=matrix_prev.copy())
                             stack.append(entry)
