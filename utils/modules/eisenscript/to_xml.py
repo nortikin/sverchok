@@ -62,6 +62,7 @@ from sverchok.utils.modules.eisenscript.ast import (
     Branch,
     Repeat,
     RuleRef,
+    VariableRef,
     # Geometrical transformations
     TranslateX,
     TranslateY,
@@ -92,43 +93,90 @@ from sverchok.utils.modules.eisenscript.ast import (
 
 
 # ---------------------------------------------------------------------------
-# Transformation -> XML token
+# Helpers
 # ---------------------------------------------------------------------------
 
 def coalesce(value, dflt):
     if value is None:
         return dflt
-    else:
-        return value
+    return value
 
-def _trans_to_token(trans, support_colors=False):
+
+def _resolve_var(value, defines):
+    """
+    Resolve a value that may be a VariableRef to its numeric value.
+
+    Args:
+        value: A float or VariableRef.
+        defines: Dict of variable names to their values.
+
+    Returns:
+        The resolved float value.
+
+    Raises:
+        ValueError: If the variable is not defined.
+    """
+    if isinstance(value, VariableRef):
+        if value.name not in defines:
+            raise ValueError(f"Undefined variable: {value.name}")
+        return defines[value.name]
+    return value
+
+
+def _fmt(value, defines, as_int=False):
+    """
+    Format a value (float or VariableRef) for XML output.
+
+    Args:
+        value: A float or VariableRef.
+        defines: Dict of variable names to their values.
+        as_int: If True, round to integer.
+
+    Returns:
+        Formatted string.
+    """
+    resolved = _resolve_var(value, defines)
+    if as_int:
+        return str(round(resolved))
+    return str(resolved)
+
+
+# ---------------------------------------------------------------------------
+# Transformation -> XML token
+# ---------------------------------------------------------------------------
+
+def _trans_to_token(trans, support_colors=False, defines=None):
     """Convert a single Transformation AST node to an XML token string.
 
     Args:
         trans: A Transformation AST node.
         support_colors: If False, color transformations are skipped.
+        defines: Dict of variable names to their values.
     """
+    if defines is None:
+        defines = {}
+
     if isinstance(trans, TranslateX):
-        return f"tx {trans.value}"
+        return f"tx {_fmt(trans.value, defines)}"
     if isinstance(trans, TranslateY):
-        return f"ty {trans.value}"
+        return f"ty {_fmt(trans.value, defines)}"
     if isinstance(trans, TranslateZ):
-        return f"tz {trans.value}"
+        return f"tz {_fmt(trans.value, defines)}"
 
     if isinstance(trans, RotateX):
-        return f"rx {trans.angle}"
+        return f"rx {_fmt(trans.angle, defines)}"
     if isinstance(trans, RotateY):
-        return f"ry {trans.angle}"
+        return f"ry {_fmt(trans.angle, defines)}"
     if isinstance(trans, RotateZ):
-        return f"rz {trans.angle}"
+        return f"rz {_fmt(trans.angle, defines)}"
 
     if isinstance(trans, Scale):
         if trans.is_uniform:
-            return f"sa {trans.x}"
-        return f"s {coalesce(trans.x, 1)} {coalesce(trans.y, 1)} {coalesce(trans.z, 1)}"
+            return f"sa {_fmt(trans.x, defines)}"
+        return f"s {_fmt(trans.x, defines)} {_fmt(coalesce(trans.y, 1), defines)} {_fmt(coalesce(trans.z, 1), defines)}"
 
     if isinstance(trans, MatrixTransform):
-        return "m " + " ".join(str(v) for v in trans.matrix)
+        return "m " + " ".join(_fmt(v, defines) for v in trans.matrix)
 
     if isinstance(trans, MirrorX):
         return "fx"
@@ -140,18 +188,18 @@ def _trans_to_token(trans, support_colors=False):
     # Color transformations — only when supported
     if support_colors:
         if isinstance(trans, HueShift):
-            return f"h {trans.value}"
+            return f"h {_fmt(trans.value, defines)}"
         if isinstance(trans, SaturationMul):
-            return f"sat {trans.value}"
+            return f"sat {_fmt(trans.value, defines)}"
         if isinstance(trans, BrightnessMul):
-            return f"b {trans.value}"
+            return f"b {_fmt(trans.value, defines)}"
         if isinstance(trans, AlphaMul):
-            return f"a {trans.value}"
+            return f"a {_fmt(trans.value, defines)}"
 
         if isinstance(trans, SetColor):
             return f"color {trans.color}"
         if isinstance(trans, BlendColor):
-            return f"blend {trans.color} {trans.strength}"
+            return f"blend {trans.color} {_fmt(trans.strength, defines)}"
 
     # Unknown transformation — skip with warning
     import logging
@@ -162,11 +210,13 @@ def _trans_to_token(trans, support_colors=False):
     return ""
 
 
-def _rep_transforms_str(rep, support_colors=False):
+def _rep_transforms_str(rep, support_colors=False, defines=None):
     """Get the transforms string for a single Repeat node."""
+    if defines is None:
+        defines = {}
     tokens = []
     for trans in rep.transformations:
-        token = _trans_to_token(trans, support_colors=support_colors)
+        token = _trans_to_token(trans, support_colors=support_colors, defines=defines)
         if token:
             tokens.append(token)
     return " ".join(tokens)
@@ -176,13 +226,16 @@ def _rep_transforms_str(rep, support_colors=False):
 # Branch -> <call> / <instance> + optional intermediate rules
 # ---------------------------------------------------------------------------
 
-def _make_terminal_elem(parent, terminal, transforms_str=None, count=None):
+def _make_terminal_elem(parent, terminal, transforms_str=None, count=None, defines=None):
     """
     Create a <call> or <instance> element under *parent* for the given
     terminal (RuleRef or Primitive).
 
     Returns the created element.
     """
+    if defines is None:
+        defines = {}
+
     if isinstance(terminal, RuleRef):
         elem = ET.SubElement(parent, "call")
         elem.set("rule", terminal.name)
@@ -218,12 +271,14 @@ def _make_terminal_elem(parent, terminal, transforms_str=None, count=None):
     if transforms_str:
         elem.set("transforms", transforms_str)
     if count is not None:
-        elem.set("count", str(count))
+        # count can be a VariableRef — resolve it
+        resolved_count = _resolve_var(count, defines)
+        elem.set("count", str(round(resolved_count)))
     return elem
 
 
 def _branch_to_xml(rules_elem, parent_rule_elem, branch, support_colors=False,
-                   name_counter=None):
+                   name_counter=None, defines=None):
     """
     Convert a Branch into XML, creating intermediate rules for nested
     repetitions when needed.
@@ -242,28 +297,31 @@ def _branch_to_xml(rules_elem, parent_rule_elem, branch, support_colors=False,
         branch: Branch AST node.
         support_colors: If False, color transformations are skipped.
         name_counter: Counter for generating unique intermediate rule names.
+        defines: Dict of variable names to their values.
 
     Returns:
         None
     """
     if name_counter is None:
         name_counter = Counter()
+    if defines is None:
+        defines = {}
 
     repetitions = branch.repetitions
     terminal = branch.terminal
 
     if len(repetitions) == 0:
         # No repetitions — direct terminal
-        _make_terminal_elem(parent_rule_elem, terminal)
+        _make_terminal_elem(parent_rule_elem, terminal, defines=defines)
         return
 
     if len(repetitions) == 1:
         # Single repetition — straightforward
         rep = repetitions[0]
-        tstr = _rep_transforms_str(rep, support_colors=support_colors)
+        tstr = _rep_transforms_str(rep, support_colors=support_colors, defines=defines)
         _make_terminal_elem(parent_rule_elem, terminal,
                             transforms_str=tstr or None,
-                            count=rep.count)
+                            count=rep.count, defines=defines)
         return
 
     # Multiple repetitions — create a chain of intermediate rules.
@@ -271,14 +329,14 @@ def _branch_to_xml(rules_elem, parent_rule_elem, branch, support_colors=False,
     current_parent = parent_rule_elem
 
     for i, rep in enumerate(repetitions):
-        tstr = _rep_transforms_str(rep, support_colors=support_colors)
+        tstr = _rep_transforms_str(rep, support_colors=support_colors, defines=defines)
         is_last = (i == len(repetitions) - 1)
 
         if is_last:
             # Last repetition calls the terminal directly
             _make_terminal_elem(current_parent, terminal,
                                 transforms_str=tstr or None,
-                                count=rep.count)
+                                count=rep.count, defines=defines)
         else:
             # Create an intermediate rule for the next level
             idx = name_counter["intermediate"]
@@ -290,7 +348,8 @@ def _branch_to_xml(rules_elem, parent_rule_elem, branch, support_colors=False,
             call_elem.set("rule", inter_name)
             if tstr:
                 call_elem.set("transforms", tstr)
-            call_elem.set("count", str(rep.count))
+            resolved_count = _resolve_var(rep.count, defines)
+            call_elem.set("count", str(round(resolved_count)))
 
             # Create the intermediate rule at the <rules> level
             inter_rule = ET.SubElement(rules_elem, "rule")
@@ -302,7 +361,8 @@ def _branch_to_xml(rules_elem, parent_rule_elem, branch, support_colors=False,
 # Rule -> <rule>
 # ---------------------------------------------------------------------------
 
-def _rule_to_xml(rules_elem, rule, support_colors=False, name_counter=None):
+def _rule_to_xml(rules_elem, rule, support_colors=False, name_counter=None,
+                 defines=None):
     """Append a <rule> child to the <rules> element.
 
     Args:
@@ -310,9 +370,12 @@ def _rule_to_xml(rules_elem, rule, support_colors=False, name_counter=None):
         rule: Rule AST node.
         support_colors: If False, color transformations are skipped.
         name_counter: Shared counter for unique intermediate rule names.
+        defines: Dict of variable names to their values.
     """
     if name_counter is None:
         name_counter = Counter()
+    if defines is None:
+        defines = {}
 
     rule_elem = ET.SubElement(rules_elem, "rule")
     # In XML format, the start rule is always called 'entry'
@@ -320,16 +383,18 @@ def _rule_to_xml(rules_elem, rule, support_colors=False, name_counter=None):
     rule_elem.set("name", xml_name)
 
     if rule.maxdepth is not None:
-        rule_elem.set("max_depth", str(rule.maxdepth))
+        resolved_md = _resolve_var(rule.maxdepth, defines)
+        rule_elem.set("max_depth", str(round(resolved_md)))
     if rule.retirement_rule is not None:
         rule_elem.set("successor", rule.retirement_rule)
     if rule.weight is not None and rule.weight != 1.0:
-        rule_elem.set("weight", str(round(rule.weight)))
+        resolved_w = _resolve_var(rule.weight, defines)
+        rule_elem.set("weight", str(round(resolved_w)))
 
     for branch in rule.body:
         _branch_to_xml(rules_elem, rule_elem, branch,
                        support_colors=support_colors,
-                       name_counter=name_counter)
+                       name_counter=name_counter, defines=defines)
 
 
 # ---------------------------------------------------------------------------
@@ -370,7 +435,7 @@ def ast_to_xml(program, support_colors=False):
     name_counter = Counter()
     for rule in program.rules:
         _rule_to_xml(rules_elem, rule, support_colors=support_colors,
-                     name_counter=name_counter)
+                     name_counter=name_counter, defines=program.defines)
 
     return rules_elem
 

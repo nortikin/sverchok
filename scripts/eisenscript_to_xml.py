@@ -16,8 +16,6 @@ parser.add_argument('output', metavar="SCRIPT.XML", help = "Path to output XML f
 
 args = parser.parse_args(argv)
 
-eisencsript_path = args.script
-
 with open(args.script) as inf:
     text = inf.read()
     xml = eisenscript_to_xml(text)

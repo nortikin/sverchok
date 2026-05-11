@@ -469,6 +469,53 @@ class XmlToStringTests(unittest.TestCase):
         self.assertGreater(len(lines), 1)
 
 
+class VariableSubstitutionTests(unittest.TestCase):
+    """Test #define variable substitution in XML output."""
+
+    def test_variable_in_count(self):
+        src = "#define n 10\nrule start { n * { x 1 } box }"
+        root = eisenscript_to_xml(src)
+        instances = root[0].findall("instance")
+        self.assertEqual(instances[0].get("count"), "10")
+
+    def test_variable_in_transform(self):
+        src = "#define angle 36\nrule start { 10 * { ry angle } box }"
+        root = eisenscript_to_xml(src)
+        instances = root[0].findall("instance")
+        transforms = instances[0].get("transforms", "")
+        self.assertIn("ry 36.0", transforms)
+
+    def test_variable_in_scale(self):
+        src = "#define sc 0.5\nrule start { 1 * { s sc 1 1 } box }"
+        root = eisenscript_to_xml(src)
+        instances = root[0].findall("instance")
+        transforms = instances[0].get("transforms", "")
+        self.assertIn("s 0.5 1.0 1.0", transforms)
+
+    def test_variable_rounded_in_count(self):
+        src = "#define n 10.7\nrule start { n * { x 1 } box }"
+        root = eisenscript_to_xml(src)
+        instances = root[0].findall("instance")
+        self.assertEqual(instances[0].get("count"), "11")
+
+    def test_undefined_variable_raises(self):
+        src = "rule start { n * { x 1 } box }"
+        with self.assertRaises(ValueError):
+            eisenscript_to_xml(src)
+
+    def test_multiple_variables(self):
+        src = """
+        #define steps 20
+        #define ang 18
+        rule start { steps * { ry ang } box }
+        """
+        root = eisenscript_to_xml(src)
+        instances = root[0].findall("instance")
+        self.assertEqual(instances[0].get("count"), "20")
+        transforms = instances[0].get("transforms", "")
+        self.assertIn("ry 18.0", transforms)
+
+
 class FullProgramXmlTests(unittest.TestCase):
     """Test conversion of complete EisenScript programs."""
 

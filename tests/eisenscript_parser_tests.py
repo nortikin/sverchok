@@ -52,6 +52,7 @@ from sverchok.utils.modules.eisenscript.ast import (
     Branch,
     Repeat,
     RuleRef,
+    VariableRef,
     TranslateX, TranslateY, TranslateZ,
     RotateX, RotateY, RotateZ,
     Scale,
@@ -159,6 +160,44 @@ class SetStatementTests(unittest.TestCase):
         self.assertEqual(prog.settings[0].name, "maxdepth")
         self.assertEqual(prog.settings[1].name, "maxobjects")
         self.assertEqual(prog.settings[2].name, "seed")
+
+
+class DefineStatementTests(unittest.TestCase):
+    """Test parsing of #define statements."""
+
+    def test_simple_define(self):
+        prog = parse("#define n 10")
+        self.assertEqual(prog.defines, {"n": 10.0})
+
+    def test_multiple_defines(self):
+        prog = parse("#define steps 20\n#define angle 18")
+        self.assertEqual(prog.defines, {"steps": 20.0, "angle": 18.0})
+
+    def test_define_with_fraction(self):
+        prog = parse("#define ratio 1/3")
+        self.assertAlmostEqual(prog.defines["ratio"], 1/3, places=10)
+
+    def test_define_with_float(self):
+        prog = parse("#define scale 0.75")
+        self.assertEqual(prog.defines["scale"], 0.75)
+
+    def test_define_in_program(self):
+        prog = parse("#define n 10\nrule start { n * { x 1 } box }")
+        self.assertEqual(prog.defines, {"n": 10.0})
+        self.assertEqual(len(prog.rules), 1)
+
+    def test_variable_as_count(self):
+        prog = parse("#define n 10\nrule start { n * { x 1 } box }")
+        rep = prog.rules[0].body[0].repetitions[0]
+        self.assertIsInstance(rep.count, VariableRef)
+        self.assertEqual(rep.count.name, "n")
+
+    def test_variable_as_transform_value(self):
+        prog = parse("#define angle 36\nrule start { 10 * { ry angle } box }")
+        trans = prog.rules[0].body[0].repetitions[0].transformations[0]
+        self.assertIsInstance(trans, RotateY)
+        self.assertIsInstance(trans.angle, VariableRef)
+        self.assertEqual(trans.angle.name, "angle")
 
 
 class PrimitiveTests(unittest.TestCase):
@@ -420,7 +459,8 @@ class RepetitionTests(unittest.TestCase):
     def test_variable_count(self):
         for rep, rest in parse_repetition("n * { x 1 } box"):
             self.assertIsInstance(rep, Repeat)
-            self.assertEqual(rep.count, "n")
+            self.assertIsInstance(rep.count, VariableRef)
+            self.assertEqual(rep.count.name, "n")
             break
         else:
             self.fail("No repetition parsed")

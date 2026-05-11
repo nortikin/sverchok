@@ -75,16 +75,18 @@ class Program(AstNode):
     Top-level AST node representing a complete EisenScript program.
 
     Attributes:
+        defines: Dict mapping variable names to their numeric values (float).
         settings: List of SetStatement nodes (global settings).
         rules: List of Rule nodes (rule definitions).
     """
 
-    def __init__(self, settings=None, rules=None):
+    def __init__(self, defines=None, settings=None, rules=None):
+        self.defines = defines or {}
         self.settings = settings or []
         self.rules = rules or []
 
     def __repr__(self):
-        return f"Program(settings={len(self.settings)}, rules={len(self.rules)})"
+        return f"Program(defines={len(self.defines)}, settings={len(self.settings)}, rules={len(self.rules)})"
 
 
 class SetStatement(AstNode):
@@ -103,6 +105,21 @@ class SetStatement(AstNode):
 
     def __repr__(self):
         return f"Set({self.name}, {self.value!r})"
+
+
+class VariableRef(AstNode):
+    """
+    Reference to a #define variable.
+
+    Attributes:
+        name: Variable name (string).
+    """
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return f"Var({self.name!r})"
 
 
 # ---------------------------------------------------------------------------

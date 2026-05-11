@@ -149,37 +149,41 @@ def parse_color_string(src):
 
 # Regex for a numeric value: integer, decimal, scientific, or fraction (e.g. 1/3)
 _num = r"-?(?:0|[1-9]\d*)"
-_float_tok = r"" + _num + r"(?:\.\d+)?(?:[eE][+-]?\d+)?(?:\s*/\s*" + _num + r"(?:\.\d+)?)?"
+_float_tok = _num + r"(?:\.\d+)?(?:[eE][+-]?\d+)?(?:\s*/\s*" + _num + r"(?:\.\d+)?)?"
+# Extended token: number or identifier (for variable references)
+# Exclude known transformation keywords to avoid matching 'rz' as a variable in 's 0.9 rz 5'
+_transform_kw = r"(?:x|y|z|rx|ry|rz|s|m|fx|fy|fz|hue|h|sat|brightness|b|alpha|a|color|blend)"
+_num_or_id = r"(?:" + _float_tok + r"|(?!" + _transform_kw + r"\b)[a-zA-Z_][a-zA-Z0-9_]*)"
 
 # Translation: x/y/z <float>
-_translate_x_re = re.compile(r"x\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
-_translate_y_re = re.compile(r"y\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
-_translate_z_re = re.compile(r"z\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
+_translate_x_re = re.compile(r"x\s+(" + _num_or_id + r")\s*(.*)", re.DOTALL)
+_translate_y_re = re.compile(r"y\s+(" + _num_or_id + r")\s*(.*)", re.DOTALL)
+_translate_z_re = re.compile(r"z\s+(" + _num_or_id + r")\s*(.*)", re.DOTALL)
 
 # Rotation: rx/ry/rz <float>
-_rotate_x_re = re.compile(r"rx\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
-_rotate_y_re = re.compile(r"ry\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
-_rotate_z_re = re.compile(r"rz\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
+_rotate_x_re = re.compile(r"rx\s+(" + _num_or_id + r")\s*(.*)", re.DOTALL)
+_rotate_y_re = re.compile(r"ry\s+(" + _num_or_id + r")\s*(.*)", re.DOTALL)
+_rotate_z_re = re.compile(r"rz\s+(" + _num_or_id + r")\s*(.*)", re.DOTALL)
 
 # Scale: s <f> or s <f1> <f2> <f3>
 _scale_re = re.compile(
-    r"s\s+(" + _float_tok + r")\s*"
-    r"(" + _float_tok + r")?\s*"
-    r"(" + _float_tok + r")?\s*(.*)",
+    r"s\s+(" + _num_or_id + r")\s*"
+    r"(" + _num_or_id + r")?\s*"
+    r"(" + _num_or_id + r")?\s*(.*)",
     re.DOTALL,
 )
 
 # Matrix: m <f1> ... <f9>
 _matrix_re = re.compile(
-    r"m\s+(" + _float_tok + r")\s+"
-    r"(" + _float_tok + r")\s+"
-    r"(" + _float_tok + r")\s+"
-    r"(" + _float_tok + r")\s+"
-    r"(" + _float_tok + r")\s+"
-    r"(" + _float_tok + r")\s+"
-    r"(" + _float_tok + r")\s+"
-    r"(" + _float_tok + r")\s+"
-    r"(" + _float_tok + r")\s*(.*)",
+    r"m\s+(" + _num_or_id + r")\s+"
+    r"(" + _num_or_id + r")\s+"
+    r"(" + _num_or_id + r")\s+"
+    r"(" + _num_or_id + r")\s+"
+    r"(" + _num_or_id + r")\s+"
+    r"(" + _num_or_id + r")\s+"
+    r"(" + _num_or_id + r")\s+"
+    r"(" + _num_or_id + r")\s+"
+    r"(" + _num_or_id + r")\s*(.*)",
     re.DOTALL,
 )
 
@@ -189,16 +193,16 @@ _mirror_y_re = re.compile(r"fy\s*(.*)", re.DOTALL)
 _mirror_z_re = re.compile(r"fz\s*(.*)", re.DOTALL)
 
 # Hue: h|hue <float>
-_hue_re = re.compile(r"(?:hue|h)\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
+_hue_re = re.compile(r"(?:hue|h)\s+(" + _num_or_id + r")\s*(.*)", re.DOTALL)
 
 # Saturation: sat <float>
-_sat_re = re.compile(r"sat\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
+_sat_re = re.compile(r"sat\s+(" + _num_or_id + r")\s*(.*)", re.DOTALL)
 
 # Brightness: b|brightness <float>
-_bright_re = re.compile(r"(?:brightness|b)\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
+_bright_re = re.compile(r"(?:brightness|b)\s+(" + _num_or_id + r")\s*(.*)", re.DOTALL)
 
 # Alpha: a|alpha <float>
-_alpha_re = re.compile(r"(?:alpha|a)\s+(" + _float_tok + r")\s*(.*)", re.DOTALL)
+_alpha_re = re.compile(r"(?:alpha|a)\s+(" + _num_or_id + r")\s*(.*)", re.DOTALL)
 
 # Color: color <color_string>
 _setcolor_re = re.compile(
@@ -209,7 +213,7 @@ _setcolor_re = re.compile(
 # Blend: blend <color> <float>
 _blend_re = re.compile(
     r"blend\s+((?:#[0-9a-fA-F]{3,8})|(?:'[^']*')|(?:[a-zA-Z][a-zA-Z0-9]*))\s+"
-    r"(" + _float_tok + r")\s*(.*)",
+    r"(" + _num_or_id + r")\s*(.*)",
     re.DOTALL,
 )
 
@@ -222,6 +226,23 @@ def _to_float(s):
     return float(s)
 
 
+def _to_num_or_var(s):
+    """
+    Convert a string to either a float or a VariableRef.
+
+    If the string is a valid number (int, float, fraction), returns the float.
+    If the string is an identifier, returns a VariableRef.
+    """
+    # Check if it's a number (try parsing it)
+    try:
+        return _to_float(s)
+    except (ValueError, ZeroDivisionError):
+        pass
+    # It's an identifier — return a VariableRef
+    from sverchok.utils.modules.eisenscript.ast import VariableRef
+    return VariableRef(s)
+
+
 def _try_regex_parse(regex, src, factory):
     """Helper: try to match regex on src, yield factory(result), rest."""
     match = regex.match(src.lstrip())
@@ -232,52 +253,52 @@ def _try_regex_parse(regex, src, factory):
 
 def parse_TranslateX(src):
     def make(g):
-        return TranslateX(_to_float(g[0]))
+        return TranslateX(_to_num_or_var(g[0]))
     yield from _try_regex_parse(_translate_x_re, src, make)
 
 
 def parse_TranslateY(src):
     def make(g):
-        return TranslateY(_to_float(g[0]))
+        return TranslateY(_to_num_or_var(g[0]))
     yield from _try_regex_parse(_translate_y_re, src, make)
 
 
 def parse_TranslateZ(src):
     def make(g):
-        return TranslateZ(_to_float(g[0]))
+        return TranslateZ(_to_num_or_var(g[0]))
     yield from _try_regex_parse(_translate_z_re, src, make)
 
 
 def parse_RotateX(src):
     def make(g):
-        return RotateX(_to_float(g[0]))
+        return RotateX(_to_num_or_var(g[0]))
     yield from _try_regex_parse(_rotate_x_re, src, make)
 
 
 def parse_RotateY(src):
     def make(g):
-        return RotateY(_to_float(g[0]))
+        return RotateY(_to_num_or_var(g[0]))
     yield from _try_regex_parse(_rotate_y_re, src, make)
 
 
 def parse_RotateZ(src):
     def make(g):
-        return RotateZ(_to_float(g[0]))
+        return RotateZ(_to_num_or_var(g[0]))
     yield from _try_regex_parse(_rotate_z_re, src, make)
 
 
 def parse_Scale(src):
     def make(g):
-        x = _to_float(g[0])
-        y = _to_float(g[1]) if g[1] else None
-        z = _to_float(g[2]) if g[2] else None
+        x = _to_num_or_var(g[0])
+        y = _to_num_or_var(g[1]) if g[1] else None
+        z = _to_num_or_var(g[2]) if g[2] else None
         return Scale(x, y, z)
     yield from _try_regex_parse(_scale_re, src, make)
 
 
 def parse_MatrixTransform(src):
     def make(g):
-        return MatrixTransform([_to_float(g[i]) for i in range(9)])
+        return MatrixTransform([_to_num_or_var(g[i]) for i in range(9)])
     yield from _try_regex_parse(_matrix_re, src, make)
 
 
@@ -301,25 +322,25 @@ def parse_MirrorZ(src):
 
 def parse_HueShift(src):
     def make(g):
-        return HueShift(_to_float(g[0]))
+        return HueShift(_to_num_or_var(g[0]))
     yield from _try_regex_parse(_hue_re, src, make)
 
 
 def parse_SaturationMul(src):
     def make(g):
-        return SaturationMul(_to_float(g[0]))
+        return SaturationMul(_to_num_or_var(g[0]))
     yield from _try_regex_parse(_sat_re, src, make)
 
 
 def parse_BrightnessMul(src):
     def make(g):
-        return BrightnessMul(_to_float(g[0]))
+        return BrightnessMul(_to_num_or_var(g[0]))
     yield from _try_regex_parse(_bright_re, src, make)
 
 
 def parse_AlphaMul(src):
     def make(g):
-        return AlphaMul(_to_float(g[0]))
+        return AlphaMul(_to_num_or_var(g[0]))
     yield from _try_regex_parse(_alpha_re, src, make)
 
 
@@ -337,7 +358,7 @@ def parse_BlendColor(src):
         color = g[0]
         if color.startswith("'") and color.endswith("'"):
             color = color[1:-1]
-        return BlendColor(color, _to_float(g[1]))
+        return BlendColor(color, _to_num_or_var(g[1]))
     yield from _try_regex_parse(_blend_re, src, make)
 
 
@@ -493,7 +514,7 @@ def parse_repetition(src):
             yield Repeat(count, transforms), rest.lstrip()
             return
 
-    # Try: identifier * { ... }
+    # Try: identifier * { ... } (variable reference as count)
     rep_id_re = re.compile(
         r"([a-zA-Z_][a-zA-Z0-9_]*)\s*\*\s*\{([^}]*)\}\s*(.*)",
         re.DOTALL,
@@ -503,7 +524,8 @@ def parse_repetition(src):
         name, inner, rest = match.groups()
         transforms = _parse_transformations_from_string(inner)
         if transforms:
-            yield Repeat(name, transforms), rest.lstrip()
+            from sverchok.utils.modules.eisenscript.ast import VariableRef
+            yield Repeat(VariableRef(name), transforms), rest.lstrip()
 
 
 # ---------------------------------------------------------------------------
@@ -644,37 +666,40 @@ def parse_rule_body(src):
 def parse_rule_modifier(src):
     """
     Parse rule modifiers:
-        maxdepth <int> ['>' <id>]
-        md <int> ['>' <id>]
-        weight <float>
-        w <float>
+        maxdepth <int_or_var> ['>' <id>]
+        md <int_or_var> ['>' <id>]
+        weight <float_or_var>
+        w <float_or_var>
     Returns a dict of {name: value} or {name: (value, sub_rule)}.
     """
     src_stripped = src.lstrip()
 
-    # maxdepth / md <int> ['>' <id>]
+    # maxdepth / md <int_or_var> ['>' <id>]
     md_re = re.compile(
-        r"(?:maxdepth|md)\s+(-?\d+)\s*(?:>\s*([a-zA-Z_][a-zA-Z0-9_]*))?\s*(.*)",
+        r"(?:maxdepth|md)\s+(" + _num_or_id + r")\s*(?:>\s*([a-zA-Z_][a-zA-Z0-9_]*))?\s*(.*)",
         re.DOTALL,
     )
     match = md_re.match(src_stripped)
     if match:
-        depth, retirement_rule, rest = match.groups()
-        modifier = {"maxdepth": int(depth)}
+        depth_str, retirement_rule, rest = match.groups()
+        # Parse depth value (may be a variable reference)
+        depth_val = _to_num_or_var(depth_str)
+        modifier = {"maxdepth": depth_val}
         if retirement_rule:
             modifier["retirement_rule"] = retirement_rule
         yield modifier, rest.lstrip()
         return
 
-    # weight / w <float>
+    # weight / w <float_or_var>
     w_re = re.compile(
-        r"(?:weight|w)\s+([-+]?\d*\.?\d+(?:[eE][+-]?\d+)?)\s*(.*)",
+        r"(?:weight|w)\s+(" + _num_or_id + r")\s*(.*)",
         re.DOTALL,
     )
     match = w_re.match(src_stripped)
     if match:
-        weight, rest = match.groups()
-        yield {"weight": float(weight)}, rest.lstrip()
+        weight_str, rest = match.groups()
+        weight_val = _to_num_or_var(weight_str)
+        yield {"weight": weight_val}, rest.lstrip()
         return
 
 
@@ -728,6 +753,42 @@ def parse_rule_definition(src):
             )
             yield rule, rest.lstrip()
             return
+
+
+# ---------------------------------------------------------------------------
+# Define statement parser
+# ---------------------------------------------------------------------------
+
+def parse_define_statement(src):
+    """
+    Parse '#define <identifier> <value>' statements.
+
+    Returns a tuple of (name, value) and the remaining source.
+    """
+    src_stripped = src.lstrip()
+    if not src_stripped.startswith("#define"):
+        return
+
+    after_kw = src_stripped[len("#define"):].lstrip()
+
+    # Parse identifier
+    for name, after_name in parse_identifier(after_kw):
+        after_name = after_name.lstrip()
+
+        # Parse numeric value (float, int, or fraction)
+        for val, rest in _parse_numeric_value(after_name):
+            yield (name, val), rest.lstrip()
+            return
+
+
+def _parse_numeric_value(src):
+    """Parse a numeric value: integer, float, or fraction."""
+    num = r"-?(?:0|[1-9]\d*)"
+    frac = num + r"(?:\.\d+)?(?:[eE][+-]?\d+)?(?:\s*/\s*" + num + r"(?:\.\d+)?)?"
+    match = re.match(f"({frac})\s*(.*)", src.lstrip(), re.DOTALL)
+    if match:
+        yield _to_float(match.group(1)), match.group(2)
+        return
 
 
 # ---------------------------------------------------------------------------
@@ -821,8 +882,13 @@ def parse_implicit_rule(src):
 
 
 def parse_top_statement(src):
-    """Parse a top-level statement (set or rule definition)."""
-    # Try set statement first
+    """Parse a top-level statement (define, set or rule definition)."""
+    # Try #define first
+    for result, rest in parse_define_statement(src):
+        yield result, rest
+        return
+
+    # Try set statement
     for stmt, rest in parse_set_statement(src):
         yield stmt, rest
         return
@@ -911,15 +977,19 @@ def parse(source, check_full=True):
                 raise SyntaxError(f"Cannot parse: {current[:50]!r}")
             break
 
-    # Separate settings and rules
+    # Separate defines, settings and rules
+    defines = {}
     settings = []
     rules = []
     for stmt in statements:
-        if isinstance(stmt, SetStatement):
+        if isinstance(stmt, tuple) and len(stmt) == 2:
+            # Define statement: (name, value)
+            defines[stmt[0]] = stmt[1]
+        elif isinstance(stmt, SetStatement):
             settings.append(stmt)
         elif isinstance(stmt, Rule):
             rules.append(stmt)
         else:
             settings.append(stmt)
 
-    return Program(settings=settings, rules=rules)
+    return Program(defines=defines, settings=settings, rules=rules)
