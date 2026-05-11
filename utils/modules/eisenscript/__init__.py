@@ -33,3 +33,7 @@ from sverchok.utils.modules.eisenscript.to_xml import (
     eisenscript_to_xml,
     xml_to_string,
 )
+from sverchok.utils.modules.eisenscript.interpreter import (
+    Interpreter,
+    InterpreterResult,
+)
