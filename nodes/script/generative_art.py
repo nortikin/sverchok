@@ -627,6 +627,7 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
         default="",
         get=get_file_name,
         set=set_file_name,
+        update=updateNode,
     ) # update=updateNode_filename)
 
     menu_index: StringProperty()
