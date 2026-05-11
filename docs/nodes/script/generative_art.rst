@@ -110,38 +110,41 @@ There can be multiple definitions of the same rule in an xml file.
 For example
 
 Tree
+~~~~
+
 ::
 
 	<rules max_depth="100">
-	    <rule name="entry">
-		<call  rule="spiral"/>
-	    </rule>
-	    <rule name="spiral" weight="100">
-		<call transforms="tz 0.1 rx 1 sa 0.995" rule="spiral"/>
-		<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
-	    </rule>
-	    <rule name="spiral" weight="100">
-		<call transforms="tz 0.1 rx 1 ry 4 sa 0.995" rule="spiral"/>
-		<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
-	    </rule>
-	    <rule name="spiral" weight="100">
-		<call transforms="tz 0.1 rx 1 rz -4 sa 0.995" rule="spiral"/>
-		<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
-	    </rule>
-	    <rule name="spiral" weight="20">
-		<call transforms="rx 15" rule="spiral"/>
-		<call transforms="rz 180" rule="spiral"/>
-	    </rule>
+		<rule name="entry">
+			<call  rule="spiral"/>
+		</rule>
+		<rule name="spiral" weight="100">
+			<call transforms="tz 0.1 rx 1 sa 0.995" rule="spiral"/>
+			<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
+		</rule>
+		<rule name="spiral" weight="100">
+			<call transforms="tz 0.1 rx 1 ry 4 sa 0.995" rule="spiral"/>
+			<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
+		</rule>
+		<rule name="spiral" weight="100">
+			<call transforms="tz 0.1 rx 1 rz -4 sa 0.995" rule="spiral"/>
+			<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
+		</rule>
+		<rule name="spiral" weight="20">
+			<call transforms="rx 15" rule="spiral"/>
+			<call transforms="rz 180" rule="spiral"/>
+		</rule>
 	</rules>
 
-.. image:: https://cloud.githubusercontent.com/assets/7930130/7782285/25164a80-0162-11e5-9feb-32c4f3908f1e.png
-  :alt: tree structure image
+.. image:: https://github.com/user-attachments/assets/cd13f7e1-ae2e-498f-957b-28785ce42fcd
+  :target: https://github.com/user-attachments/assets/cd13f7e1-ae2e-498f-957b-28785ce42fcd
+     :alt: tree structure image
 
 In the above xml file there are four definitions of the ``spiral`` rule. Each rule version has a weight attribute. The processor will call each version of the ``spiral`` rule in a random manner. The weight attribute will determine the probability a particular rule version is called. 
 
 The first three definitions of the ``spiral`` rule all place an object instance and then call the ``spiral`` rule with the same translation along the ``z`` axis and rotation about the ``x`` axis but different amounts of rotation about the ``y`` and ``z`` axis. The fourth definition calls the ``spiral`` rule twice without placing an instance. This causes the branches in the tree structure. Changing the value of the weight attribute for this rule version will change how often the tree branches. For a larger weight value, the rule gets called more often and there are more branches.
 
-If the weight attribute is omitted each version will have equal weight. Changing the value of ``r seed`` in the node interface will change the generated structure for xml files with multiple rule definitions. This example had rseed = 1.
+If the weight attribute is omitted each version will have equal weight. Changing the value of ``r seed`` in the node interface will change the generated structure for xml files with multiple rule definitions. This example had rseed = 3.
 
 
 Successor Rule Example
@@ -152,27 +155,28 @@ Normally when the ``max_depth`` for a rule is reached that 'arm' of the structur
 Nouveau variation
 ::
 
-    <rules max_depth="1000">
-        <rule name="entry">
-            <call count="2" transforms="rz 60" rule="r"/>
-        </rule>
-        <rule name="r"><call rule="y180"/></rule>
-        <rule name="r"><call rule="z180"/></rule>
-        <rule name="y180" max_depth="90" successor="r">
-            <call rule="dbox"/>
-            <call transforms="ry -2 tx 0.1 sa 0.996" rule="y180"/>
-        </rule>
-        <rule name="z180" max_depth="90" successor="r">
-            <call rule="dbox"/>
-            <call transforms="rz 2 tx 0.1 sa 0.996" rule="z180"/>
-        </rule>
-        <rule name="dbox">
-            <instance transforms="s 0.55 2.0 1.25 ry 90 rz 45" shape="box"/>
-        </rule>
-    </rules>
+	<rules max_depth="1000">
+		<rule name="entry">
+			<call count="2" transforms="rz 180" rule="r"/>
+		</rule>
+		<rule name="r"><call rule="y180"/></rule>
+		<rule name="r"><call rule="z180"/></rule>
+		<rule name="y180" max_depth="90" successor="r">
+			<call rule="dbox"/>
+			<call transforms="ry -2 tx 0.1 sa 0.996" rule="y180"/>
+		</rule>
+		<rule name="z180" max_depth="90" successor="r">
+			<call rule="dbox"/>
+			<call transforms="rz 2 tx 0.1 sa 0.996" rule="z180"/>
+		</rule>
+		<rule name="dbox">
+			<instance transforms="s 0.55 2.0 1.25 ry 90 rz 45" shape="box"/>
+		</rule>
+	</rules>
 
-.. image:: https://cloud.githubusercontent.com/assets/7930130/7629793/cb2d4a30-fa83-11e4-8c75-2fa6488f65fe.png
-  :alt: nouveau variation structure
+.. image:: https://github.com/user-attachments/assets/8fcc57b2-118e-42f6-8919-f9c716380ab1
+  :target: https://github.com/user-attachments/assets/8fcc57b2-118e-42f6-8919-f9c716380ab1
+     :alt: nouveau variation structure
 
 This example needs "max matrices" set to 5000 to get the above result.
 
@@ -195,59 +199,64 @@ In other cases the mesh can be connected in the wrong order.
 
 For example the following two xml files will look the same when the matrix output is used to place objects, but have different output when they are used in mesh mode. Both sets of xml rules produce the same list of matrices just in a different order.
 
-Fern 1 
+Fern 1
+~~~~~~
 ::
 
 	<rules max_depth="2000">
-	    <rule name="entry">
-		<call  rule="curl" />      
-	    </rule>
-	    
-	    <rule name="curl" max_depth="80">
-		<call transforms="rx 12.5 tz 0.9 s 0.98 0.95 1.0" rule="curl"/>
-		<instance shape="box"/>       
-		<call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />  
-	    </rule>
-		
-	    <rule name="curlsmall" max_depth="80">
-		<call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
-		<instance shape="box"/>     
-	    </rule>
-	    
+		<rule name="entry">
+			<call  rule="curl" />
+		</rule>
+
+		<rule name="curl" max_depth="80">
+			<call     transforms="rx 12.5 tz 1.3 s 0.98 0.95 1.0" rule="curl"/>
+			<instance transforms="tx 0.1 ry 40 tz -0.5"           shape="box"/>
+			<call     transforms="tx 0.1 ty -0.45 ry 40 sa 0.25"  rule="curlsmall" />
+		</rule>
+
+		<rule name="curlsmall" max_depth="80">
+			<call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
+			<instance shape="box"/>
+		</rule>
+
 	</rules>
 
-.. image:: https://cloud.githubusercontent.com/assets/7930130/7629779/b6553802-fa83-11e4-8390-aa9ba2a0c44d.png
-  :alt: image fern wrong
+.. image:: https://github.com/user-attachments/assets/e481a8cf-d3e6-4d0e-8ca1-13a2d3f80b09
+  :target: https://github.com/user-attachments/assets/e481a8cf-d3e6-4d0e-8ca1-13a2d3f80b09
+     :alt: image fern wrong
 
 Fern 2
+~~~~~~
+
 ::
 
 	<rules max_depth="2000">
-	    <rule name="entry">
-		<call  rule="curl1" />  
-		<call  rule="curl2" />      
-	    </rule>
-	    
-	    <rule name="curl1" max_depth="80">
-		<call transforms="rx 12.5 tz 0.9 s 0.98 0.95 1.0" rule="curl1"/>
-		<instance shape="box"/>        
-	    </rule>
-	    
-	    <rule name="curl2" max_depth="80">
-		<call transforms="rx 12.5 tz 0.9 s 0.95 0.95 1.0" rule="curl2"/>
-		<call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />     
-	    </rule>    
-	    
-	    <rule name="curlsmall" max_depth="80">
-		<call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
-		<instance shape="box"/>     
-	    </rule>    
+		<rule name="entry">
+			<call  rule="curl2" />
+			<call  rule="curl1" />
+		</rule>
+
+		<rule name="curl1" max_depth="80">
+			<call transforms="rx 12.5 tz 0.9 s 0.98 0.95 1.0" rule="curl1"/>
+			<instance shape="box"/>
+		</rule>
+
+		<rule name="curl2" max_depth="80">
+			<call transforms="rx 12.5 tz 0.9 s 0.95 0.95 1.0" rule="curl2"/>
+			<call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />
+		</rule>
+
+		<rule name="curlsmall" max_depth="80">
+			<call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
+			<instance shape="box"/>
+		</rule>
 	</rules>
 
-.. image:: https://cloud.githubusercontent.com/assets/7930130/7629783/bbe99588-fa83-11e4-8d70-92cc2909675e.png
-  :alt: image fern right
+.. image:: https://github.com/user-attachments/assets/6a7c2212-53f6-44ed-9dad-c1e0a7de925d
+  :target: https://github.com/user-attachments/assets/6a7c2212-53f6-44ed-9dad-c1e0a7de925d
+     :alt: image fern right
 
-Again these were both done with max mats set to 5000.
+Again these were both done with max mats set to 6643.
 
 Constants and Variables Example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -274,6 +283,8 @@ If a field name in between curly brackets is not given a value in a *constants* 
 The example below uses a variable ({curl_angle}) to animate the amount of curl on the fern structure shown in the mesh mode example and two constants to fix the the value of the ``tz`` transform in the large curl and the scale ({sxy}) in all the curls.
 
 Fern 3
+~~~~~~
+
 ::
 
 	<rules max_depth="2000">
@@ -298,9 +309,17 @@ Fern 3
 			<instance shape="box"/>
 		</rule>
 	</rules>
-    
-.. image:: https://cloud.githubusercontent.com/assets/7930130/13376233/d7303744-de1b-11e5-8c91-1d56f412b27d.png
-  :alt: image fern animation
+
+.. image:: https://github.com/user-attachments/assets/bcd0da72-d619-444d-b203-c3a620a734e9
+  :target: https://github.com/user-attachments/assets/bcd0da72-d619-444d-b203-c3a620a734e9
+     :alt: image fern animation
+
+.. raw:: html
+
+    <video width="700" controls>
+        <source src="https://github.com/user-attachments/assets/764ad233-96ba-4946-847b-aef8e389b5ac" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>
 
 For this animation the index number of the current frame in the animation is translated from the range 1 to 250 to the range 16 to 6 via the "Map Range" node and wired into the ``curl_angle`` input of the "Generative Art" node. This cause the fern to unwind as the animation proceeds.
 

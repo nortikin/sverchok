@@ -1,6 +1,6 @@
 <rules max_depth="1000">
     <rule name="entry">
-        <call count="2" transforms="rz 60" rule="r"/>
+        <call count="2" transforms="rz 180" rule="r"/>
     </rule>
     <rule name="r"><call rule="y180"/></rule>
     <rule name="r"><call rule="z180"/></rule>

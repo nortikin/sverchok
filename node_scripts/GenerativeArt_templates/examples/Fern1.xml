@@ -4,9 +4,9 @@
     </rule>
 
     <rule name="curl" max_depth="80">
-        <call transforms="rx 12.5 tz 0.9 s 0.98 0.95 1.0" rule="curl"/>
-        <instance shape="box"/>
-        <call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />
+        <call     transforms="rx 12.5 tz 1.3 s 0.98 0.95 1.0" rule="curl"/>
+        <instance transforms="tx 0.1 ry 40 tz -0.5"           shape="box"/>
+        <call     transforms="tx 0.1 ty -0.45 ry 40 sa 0.25"  rule="curlsmall" />
     </rule>
 
     <rule name="curlsmall" max_depth="80">
