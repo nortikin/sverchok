@@ -109,14 +109,6 @@ _color_re = re.compile(
     re.DOTALL,
 )
 
-# Triangle vertex coordinates: x,y,z
-_coord_re = re.compile(
-    r"(-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?"
-    r"(?:,\s*-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?){0,2})\s*(.*)",
-    re.DOTALL,
-)
-
-
 def parse_int(src):
     """Parse an integer literal."""
     match = _int_re.match(src)
@@ -142,35 +134,6 @@ def parse_color_string(src):
         if color.startswith("'") and color.endswith("'"):
             color = color[1:-1]
         yield color, rest
-
-
-def parse_triangle_coords(src):
-    """
-    Parse a list of triangle vertices: 'x1,y1,z1;x2,y2,z2;...'.
-    Returns a list of (x, y, z) tuples.
-    """
-    match = _coord_re.match(src)
-    if match:
-        coords_str, rest = match.groups()
-        parts = coords_str.split(",")
-        x = float(parts[0])
-        y = float(parts[1]) if len(parts) > 1 else 0.0
-        z = float(parts[2]) if len(parts) > 2 else 0.0
-        yield [(x, y, z)], rest
-
-    # Handle semicolon-separated vertices
-    def parse_vertex_list(src):
-        for vertices, rest in parse_triangle_coords(src)(src):
-            # Try to continue with more vertices
-            rest_stripped = rest.lstrip()
-            if rest_stripped.startswith(";"):
-                after_semi = rest_stripped[1:].lstrip()
-                for more_vertices, more_rest in parse_vertex_list(after_semi):
-                    yield vertices + more_vertices, more_rest
-                return
-            yield vertices, rest
-
-    return parse_vertex_list
 
 
 # ---------------------------------------------------------------------------
@@ -522,9 +485,12 @@ def parse_repetition(src):
     match = rep_int_re.match(src.lstrip())
     if match:
         count_str, inner, rest = match.groups()
+        count = int(count_str)
+        if count < 0:
+            return
         transforms = _parse_transformations_from_string(inner)
         if transforms:
-            yield Repeat(int(count_str), transforms), rest.lstrip()
+            yield Repeat(count, transforms), rest.lstrip()
             return
 
     # Try: identifier * { ... }
@@ -797,11 +763,10 @@ def parse_set_statement(src):
             if after_name.startswith("random"):
                 yield SetStatement("color", "random"), after_name[len("random"):]
                 return
-            # 'set colorpool <scheme>'
-            if name == "color":
-                for color, rest in parse_color_string(after_name):
-                    yield SetStatement("color", color), rest.lstrip()
-                    return
+            # 'set color <color_value>' — absolute color as global setting
+            for color, rest in parse_color_string(after_name):
+                yield SetStatement("color", color), rest.lstrip()
+                return
 
         if name == "colorpool":
             # Parse colorpool scheme (may contain colons, commas)

@@ -153,7 +153,12 @@ def _trans_to_token(trans, support_colors=False):
         if isinstance(trans, BlendColor):
             return f"blend {trans.color} {trans.strength}"
 
-    # Unknown transformation — skip silently
+    # Unknown transformation — skip with warning
+    import logging
+    logging.getLogger(__name__).warning(
+        "Unknown transformation type %s — skipped in XML output",
+        type(trans).__name__,
+    )
     return ""
 
 
@@ -291,11 +296,6 @@ def _branch_to_xml(rules_elem, parent_rule_elem, branch, support_colors=False,
             inter_rule = ET.SubElement(rules_elem, "rule")
             inter_rule.set("name", inter_name)
             current_parent = inter_rule
-
-
-# ---------------------------------------------------------------------------
-# Rule -> <rule>
-# ---------------------------------------------------------------------------
 
 
 # ---------------------------------------------------------------------------
