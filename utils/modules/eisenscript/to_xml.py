@@ -54,6 +54,7 @@ Transformation token mapping:
 from xml.etree import ElementTree as ET
 from collections import Counter
 
+from sverchok.utils import sv_logging
 from sverchok.utils.modules.eisenscript.parser import parse as parse_eisenscript
 from sverchok.utils.modules.eisenscript.ast import (
     Program,
@@ -91,6 +92,8 @@ from sverchok.utils.modules.eisenscript.ast import (
     Point,
     Triangle,
 )
+
+_logger = sv_logging.sv_logger.getChild(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -203,8 +206,7 @@ def _trans_to_token(trans, support_colors=False, defines=None):
             return f"blend {trans.color} {_fmt(trans.strength, defines)}"
 
     # Unknown transformation — skip with warning
-    import logging
-    logging.getLogger(__name__).warning(
+    _logger.warning(
         "Unknown transformation type %s — skipped in XML output",
         type(trans).__name__,
     )
