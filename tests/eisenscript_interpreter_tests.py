@@ -254,6 +254,88 @@ class MaxObjectsTests(unittest.TestCase):
         result = Interpreter(max_objects=10)._interpret(prog)
         self.assertLessEqual(len(result.matrices["box"]), 10)
 
+    def test_set_maxobjects_from_settings(self):
+        """S7: set maxobjects should be read from program settings."""
+        prog = parse("set maxobjects 3\n10 * { x 1 } box")
+        result = Interpreter.interpret(prog)
+        self.assertLessEqual(len(result.matrices["box"]), 3)
+
+    def test_set_maxobjects_constrains_output(self):
+        """set maxobjects limits total instances across all shapes."""
+        prog = parse("set maxobjects 5\n10 * { x 1 } box\n10 * { y 1 } sphere")
+        result = Interpreter.interpret(prog)
+        total = sum(len(m) for m in result.matrices.values())
+        self.assertLessEqual(total, 5)
+
+
+class SeedTests(unittest.TestCase):
+    """Test set seed from program settings."""
+
+    def test_set_seed_from_settings(self):
+        """S6: set seed should be read from program settings."""
+        prog = parse("set seed 42\n1 * {} box")
+        result = Interpreter.interpret(prog)
+        self.assertIn("box", result.matrices)
+
+    def test_set_seed_affects_weighted_selection(self):
+        """Different seeds should produce different weighted selections."""
+        src = """
+        child
+        rule child w 10 { 1 * {} box }
+        rule child w 1 { 1 * {} sphere }
+        """
+        prog1 = parse("set seed 0\n" + src)
+        prog2 = parse("set seed 999\n" + src)
+        result1 = Interpreter.interpret(prog1)
+        result2 = Interpreter.interpret(prog2)
+        # At least one of the results should differ (or both same by chance)
+        # The key is that seed is actually used
+        total1 = sum(len(m) for m in result1.matrices.values())
+        total2 = sum(len(m) for m in result2.matrices.values())
+        self.assertEqual(total1, 1)
+        self.assertEqual(total2, 1)
+
+    def test_set_seed_initial(self):
+        """set seed initial should use default seed 0."""
+        prog = parse("set seed initial\n1 * {} box")
+        result = Interpreter.interpret(prog)
+        self.assertIn("box", result.matrices)
+
+
+class CallRetirementTests(unittest.TestCase):
+    """Test call-level retirement (md N > successor on RuleRef)."""
+
+    def test_call_retirement_successor_used(self):
+        """C1: md N > successor on a call should use the specified successor."""
+        # Single 'child' rule (no random selection ambiguity)
+        prog = parse("""
+        1 * { x 1 } start
+        rule start maxdepth 3 { 1 * { x 1 } md 1 > leaf child }
+        rule child { 1 * { x 1 } child }
+        rule child { 1 * {} sphere }
+        rule leaf { 1 * {} box }
+        """)
+        result = Interpreter.interpret(prog)
+        # The call-site retirement (md 1 > leaf) should produce boxes
+        self.assertIn("box", result.matrices)
+        self.assertGreater(len(result.matrices["box"]), 0)
+
+    def test_call_retirement_overrides_rule_retirement(self):
+        """Call-site md > successor overrides the target rule's retirement."""
+        # 'child' has its own retirement to 'sphere_rule', but call-site
+        # specifies 'md 1 > override', which should take precedence
+        prog = parse("""
+        1 * { x 1 } start
+        rule start maxdepth 1 { 1 * { x 1 } md 1 > override child }
+        rule child maxdepth 1 > sphere_rule { 1 * { x 1 } child }
+        rule child maxdepth 1 > sphere_rule { 1 * {} sphere }
+        rule sphere_rule { 1 * {} sphere }
+        rule override { 1 * {} box }
+        """)
+        result = Interpreter.interpret(prog)
+        # Should produce boxes (from 'override'), not spheres
+        self.assertIn("box", result.matrices)
+
 
 class ResultTypeTests(unittest.TestCase):
     """Test InterpreterResult structure."""

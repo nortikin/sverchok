@@ -116,15 +116,30 @@ class Interpreter:
     def interpret(program: Program) -> InterpreterResult:
         """Create an interpreter and run it on *program*.
 
-        Reads ``maxdepth`` from program settings if present.
+        Reads ``maxdepth``, ``seed`` and ``maxobjects`` from program
+        settings when present.
         """
         global_maxdepth: int = 1000
+        seed: int = 0
+        max_objects: Optional[int] = None
+
         for s in program.settings:
             if s.name == "maxdepth":
                 global_maxdepth = int(s.value)
-                break
+            elif s.name == "seed":
+                val = s.value
+                if isinstance(val, str) and val == "initial":
+                    seed = 0
+                else:
+                    seed = int(val)
+            elif s.name == "maxobjects":
+                max_objects = int(s.value)
 
-        interp = Interpreter(max_depth=global_maxdepth)
+        interp = Interpreter(
+            max_depth=global_maxdepth,
+            max_objects=max_objects,
+            seed=seed,
+        )
         return interp._interpret(program)
 
     def _interpret(self, program: Program) -> InterpreterResult:
@@ -415,11 +430,20 @@ def _make_retirement_wrapper(
     rule_map: Dict[str, List[Rule]],
 ) -> Rule:
     """
-    Return a Rule that acts as a retirement-aware wrapper.
-    In practice, retirement is handled in the main loop, so we just
-    return the target rule — the depth tracking is done by the caller.
+    Return a new Rule that wraps *target_rule* with call-site
+    retirement parameters (max_depth and successor).
+
+    When a RuleRef specifies ``md N > successor rule``, the wrapper
+    overrides the target rule's own maxdepth/retirement_rule so that
+    the call-site retirement takes effect.
     """
-    return target_rule
+    return Rule(
+        name=target_rule.name,
+        maxdepth=max_depth,
+        retirement_rule=successor,
+        weight=target_rule.weight,
+        body=target_rule.body,
+    )
 
 
 def _build_transform_matrix(
