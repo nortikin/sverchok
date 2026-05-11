@@ -443,9 +443,10 @@ class RepetitionTests(unittest.TestCase):
             self.fail("No repetition parsed")
 
     def test_negative_count_rejected(self):
-        """Negative repetition counts are not valid per spec."""
-        results = list(parse_repetition("-5 * { ry 10 } sphere"))
-        self.assertEqual(len(results), 0)
+        """Negative repetition counts raise SyntaxError (P4)."""
+        with self.assertRaises(SyntaxError) as ctx:
+            list(parse_repetition("-5 * { ry 10 } sphere"))
+        self.assertIn("-5", str(ctx.exception))
 
     def test_multiple_transformations_in_repeat(self):
         for rep, _ in parse_repetition("10 * { x 1 ry 36 } box"):

@@ -235,13 +235,10 @@ def _to_num_or_var(s):
     If the string is a valid number (int, float, fraction), returns the float.
     If the string is an identifier, returns a VariableRef.
     """
-    # Check if it's a number (try parsing it)
     try:
         return _to_float(s)
     except (ValueError, ZeroDivisionError):
         pass
-    # It's an identifier — return a VariableRef
-    from sverchok.utils.modules.eisenscript.ast import VariableRef
     return VariableRef(s)
 
 
@@ -470,37 +467,34 @@ def parse_rule_ref_with_retirement(src):
 # ---------------------------------------------------------------------------
 
 def _parse_transformations_from_string(inner_content):
-    """Parse a list of transformations from a string."""
-    _TRANSFORM_PARSERS = [
-        parse_RotateX, parse_RotateY, parse_RotateZ,
-        parse_Scale, parse_MatrixTransform,
-        parse_HueShift, parse_SaturationMul,
-        parse_BrightnessMul, parse_AlphaMul,
-        parse_SetColor, parse_BlendColor,
-        parse_TranslateX, parse_TranslateY, parse_TranslateZ,
-        parse_MirrorX, parse_MirrorY, parse_MirrorZ,
-    ]
+    """
+    Parse a list of transformations from a string.
+
+    Uses the shared ``parse_transformation`` combinator so that the
+    parser list is defined in exactly one place (see P1 fix).
+    """
     transforms = []
     current = inner_content.strip()
     while current:
-        found = False
-        for tf_parser in _TRANSFORM_PARSERS:
-            for tf, remainder in tf_parser(current):
-                transforms.append(tf)
-                current = remainder.lstrip() if remainder else ""
-                found = True
-                break
-            if found:
-                break
-        if not found:
+        result = list(parse_transformation(current))
+        if not result:
             break
+        tf, remainder = result[0]
+        transforms.append(tf)
+        current = remainder.lstrip() if remainder else ""
     return transforms
 
 
 def parse_repetition(src):
-    """Parse '<count> * { transformations... }'."""
-    # Use regex to match: <int_or_id> * { <content> }
-    # Use [^}]* to match content between { and } (non-nested)
+    """
+    Parse '<count> * { transformations... }'.
+
+    The content between { and } is matched with [^}]* (non-nested).
+    This is intentional: EisenScript repetitions never contain nested
+    braces — the inner block holds only a flat sequence of
+    transformations.  Rule bodies use _find_matching_brace for proper
+    nesting, but repetition blocks are always shallow (P3).
+    """
     rep_int_re = re.compile(
         r"(-?(?:0|[1-9]\d*))\s*\*\s*\{([^}]*)\}\s*(.*)",
         re.DOTALL,
@@ -510,7 +504,7 @@ def parse_repetition(src):
         count_str, inner, rest = match.groups()
         count = int(count_str)
         if count < 0:
-            return
+            raise SyntaxError(f"Negative repetition count: {count}")
         transforms = _parse_transformations_from_string(inner)
         yield Repeat(count, transforms), rest.lstrip()
         return
@@ -524,7 +518,6 @@ def parse_repetition(src):
     if match:
         name, inner, rest = match.groups()
         transforms = _parse_transformations_from_string(inner)
-        from sverchok.utils.modules.eisenscript.ast import VariableRef
         yield Repeat(VariableRef(name), transforms), rest.lstrip()
 
 
