@@ -61,6 +61,7 @@ def display_file_name(file_path):
     return dfn
 
 class SV_MT_GenerativeArtMenu(bpy.types.Menu):
+    '''Selection menu to load generative art templates'''
     bl_label = "Generative Art templates"
     bl_idname = "SV_MT_GenerativeArtMenu"
 
@@ -91,7 +92,7 @@ class SV_MT_GenerativeArtMenu(bpy.types.Menu):
         pass
 
 class SvGenerativeArtCallBack(bpy.types.Operator):
-
+    '''Reload xml file and update node'''
     bl_idname = "node.generative_art_callback"
     bl_label = "Generative Art callback"
     bl_options = {'INTERNAL'}
@@ -299,8 +300,8 @@ class LSystem:
                 count = int(statement.get("count", 1))
                 count_xform = mu.Matrix.Identity(4)
                 if count >= 1:
+                    matrix_prev = base_matrix
                     for n in range(count):
-                        matrix_prev = base_matrix @ count_xform
                         count_xform @= xform
                         matrix = base_matrix @ count_xform
 
@@ -317,6 +318,16 @@ class LSystem:
                                 else:
                                     sub_rule_depth = level.depth+1
                                 pass
+                            
+                            name = statement.get("shape")
+                            if name == "None" or name is None:
+                                #shapes.append(None)
+                                pass
+                            else:
+                                #shape = (name, matrix @ xform.inverted())
+                                shape = (name, cloned_matrix )
+                                shapes.append(shape)
+                                nobjects += 1
 
                             entry = LSystemLevel(rule=sub_rule, depth=sub_rule_depth, matrix=cloned_matrix, matrix_prev=matrix_prev.copy())
                             stack.append(entry)
@@ -333,6 +344,7 @@ class LSystem:
                         else:
                             raise ValueError("bad xml", statement.tag)
                         
+                        matrix_prev = base_matrix @ count_xform
                         pass
 
                     if count > 1:
@@ -557,8 +569,7 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
                     self.inputs.remove(socket)
 
                 # output sockets to match shape attribute values
-                shape_names = set([x.attrib.get('shape')
-                                    for x in xml_tree.iter('instance')])
+                shape_names = set([x.attrib.get('shape') for x in xml_tree.iter('instance')]) | set([elem for elem in set([x.attrib.get('shape') for x in xml_tree.iter('call')]) if elem])
                 if None in shape_names:
                     self.is_xml_valid = True
                     self.is_xml_error_text = "Some 'instance' tags in xml file are missing 'shape' attribute. Please fix xml file and try again."
@@ -607,6 +618,8 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
         default="",
     )
     file_name: StringProperty(
+        name="File Name",
+        description="File name of xml file to use for generative art. File must be in bpy.data.texts. You can use search menu to load xml file to bpy.data.texts and set file name at the same time.",
         default="",
         get=get_file_name,
         set=set_file_name,
@@ -739,8 +752,7 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
                 if shapes[-1]:
                     shapes.append(None)
                 # dictionary for matrix lists
-                shape_names = set([x.attrib.get('shape')
-                                for x in xml_tree.iter('instance')])
+                shape_names = set([x.attrib.get('shape') for x in xml_tree.iter('instance')]) | set([elem for elem in set([x.attrib.get('shape') for x in xml_tree.iter('call')]) if elem])
                 mat_dict = {s: [] for s in shape_names}
                 if self.inputs['Vertices'].is_linked:
                     verts = Vector_generate(self.inputs['Vertices'].sv_get())

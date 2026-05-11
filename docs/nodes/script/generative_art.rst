@@ -276,28 +276,28 @@ The example below uses a variable ({curl_angle}) to animate the amount of curl o
 Fern 3
 ::
 
-    <rules max_depth="2000">
-	<constants zd="1.5" sxy="0.9" />
-        <rule name="entry">
-           <call  rule="curl1" />  
-           <call  rule="curl2" />      
-        </rule>
-    
-        <rule name="curl1" max_depth="60">
-            <call transforms="rx {curl_angle} tz {zd} s {sxy} {sxy} 1.0" rule="curl1"/>
-            <instance shape="box"/>        
-        </rule>
-    
-        <rule name="curl2" max_depth="40">
-            <call transforms="rx {curl_angle} tz {zd} s {sxy} {sxy} 1.0" rule="curl2"/>
-            <call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />     
-        </rule>    
-    
-        <rule name="curlsmall" max_depth="40">
-            <call transforms="rx 2*{curl_angle} tz 2.7 s {sxy} {sxy} 1.0" rule="curlsmall"/>
-            <instance shape="box"/>     
-        </rule>    
-    </rules>
+	<rules max_depth="2000">
+		<constants zd="1.5" sxy="0.9" />
+		<rule name="entry">
+		<call  rule="curl2" />
+		<call  rule="curl1" />
+		</rule>
+
+		<rule name="curl1" max_depth="60">
+			<call transforms="rx {curl_angle} tz {zd} s {sxy} {sxy} 1.0" rule="curl1"/>
+			<instance shape="box"/>
+		</rule>
+
+		<rule name="curl2" max_depth="40">
+			<call transforms="rx {curl_angle} tz {zd} s {sxy} {sxy} 1.0" rule="curl2"/>
+			<call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />
+		</rule>
+
+		<rule name="curlsmall" max_depth="40">
+			<call transforms="rx 2*{curl_angle} tz 2.7 s {sxy} {sxy} 1.0" rule="curlsmall"/>
+			<instance shape="box"/>
+		</rule>
+	</rules>
     
 .. image:: https://cloud.githubusercontent.com/assets/7930130/13376233/d7303744-de1b-11e5-8c91-1d56f412b27d.png
   :alt: image fern animation

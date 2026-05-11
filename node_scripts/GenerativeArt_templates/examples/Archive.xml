@@ -1,0 +1,33 @@
+<rules max_depth="400">
+    <rule name="entry">
+        <call count="74" transforms="rz 5" rule="r"/>
+    </rule>
+    <rule name="r"><call rule="forward"/></rule>
+    <rule name="r"><call rule="turn"/></rule>
+    <rule name="r"><call rule="turn2"/></rule>
+    <rule name="r"><call rule="turn3"/></rule>
+    <rule name="r"><call rule="turn4"/></rule>
+    <rule name="forward" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="rz 2 tx 0.05 sa 0.99" rule="forward"/>
+    </rule>
+    <rule name="turn" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="rz 2 tx 0.05 sa 0.99" rule="turn"/>
+    </rule>
+    <rule name="turn2" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="rz -2 tx 0.05 sa 0.99" rule="turn2"/>
+    </rule>
+    <rule name="turn3" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="ry -2 tx 0.05 sa 0.99" rule="turn3"/>
+    </rule>
+    <rule name="turn4" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="ry -2 tx 0.05 sa 0.99" rule="turn4"/>
+    </rule>
+    <rule name="dbox">
+        <instance transforms="s 0.55 2.0 1.25" shape="curve"/>
+    </rule>
+</rules>
