@@ -96,6 +96,9 @@ class Interpreter:
         max_depth: Global recursion depth limit (from ``set maxdepth``).
         max_objects: Hard cap on the total number of primitive instances.
         seed: Random seed for weighted rule selection.
+        origin_as_center: If True, transformations use (0,0,0) as center
+            (legacy LSystem behavior). If False (default), use (0.5,0.5,0.5)
+            per the EisenScript specification.
     """
 
     def __init__(
@@ -103,18 +106,30 @@ class Interpreter:
         max_depth: int = 1000,
         max_objects: Optional[int] = None,
         seed: int = 0,
+        origin_as_center: bool = True,
     ) -> None:
         self.max_depth = max_depth
         self.max_objects = max_objects
         self.seed = seed
+        self.origin_as_center = origin_as_center
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
 
     @staticmethod
-    def interpret(program: Program) -> InterpreterResult:
+    def interpret(
+        program: Program,
+        origin_as_center: bool = True,
+    ) -> InterpreterResult:
         """Create an interpreter and run it on *program*.
+
+        Args:
+            program: The EisenScript program to interpret.
+            origin_as_center: If True, transformations use (0,0,0) as center
+                (legacy LSystem behavior, matches XML interpreter). If False,
+                use (0.5,0.5,0.5) per the EisenScript specification.
+                Default is True for compatibility with the legacy LSystem.
 
         Reads ``maxdepth``, ``seed`` and ``maxobjects`` from program
         settings when present.
@@ -139,6 +154,7 @@ class Interpreter:
             max_depth=global_maxdepth,
             max_objects=max_objects,
             seed=seed,
+            origin_as_center=origin_as_center,
         )
         return interp._interpret(program)
 
@@ -201,6 +217,7 @@ class Interpreter:
                     branch, rule_map, defines,
                     matrix, depth, stack, result,
                     total_objects, self.max_objects,
+                    self.origin_as_center,
                 )
                 # Update total_objects count after branch
                 for mats in result.matrices.values():
@@ -223,6 +240,7 @@ def _interpret_branch(
     result: InterpreterResult,
     total_objects: int,
     max_objects: Optional[int],
+    origin_as_center: bool,
 ) -> None:
     """
     Interpret a single Branch AST node.
@@ -244,7 +262,8 @@ def _interpret_branch(
     rep_info = []  # list of (count, transform_matrix)
     for rep in repetitions:
         count = round(_resolve(rep.count))
-        tmat = _build_transform_matrix(rep.transformations, defines, _resolve)
+        tmat = _build_transform_matrix(
+            rep.transformations, defines, _resolve, origin_as_center)
         rep_info.append((count, tmat))
 
     # Terminal dispatch
@@ -450,9 +469,24 @@ def _build_transform_matrix(
     transformations: list,
     defines: dict,
     resolve,
+    origin_as_center: bool = True,
 ) -> Matrix:
-    """Build a 4×4 Matrix from a list of Transformation AST nodes."""
+    """
+    Build a 4×4 Matrix from a list of Transformation AST nodes.
+
+    Args:
+        transformations: List of Transformation AST nodes.
+        defines: Dict of variable names to their values.
+        resolve: Function to resolve VariableRef values.
+        origin_as_center: If True, use (0,0,0) as transform center
+            (legacy LSystem behavior). If False, use (0.5,0.5,0.5)
+            per the EisenScript specification for scale, rotation,
+            and mirror transforms.
+    """
     matrix = Matrix.Identity(4)
+    center = mu.Vector((0.5, 0.5, 0.5))
+    t_center = Matrix.Translation(center)
+    t_neg_center = Matrix.Translation(-center)
 
     for trans in transformations:
         if isinstance(trans, TranslateX):
@@ -467,25 +501,41 @@ def _build_transform_matrix(
 
         elif isinstance(trans, RotateX):
             v = math.radians(resolve(trans.angle))
-            matrix @= Matrix.Rotation(v, 4, 'X')
+            rot = Matrix.Rotation(v, 4, 'X')
+            if not origin_as_center:
+                matrix @= t_center @ rot @ t_neg_center
+            else:
+                matrix @= rot
         elif isinstance(trans, RotateY):
             v = math.radians(resolve(trans.angle))
-            matrix @= Matrix.Rotation(v, 4, 'Y')
+            rot = Matrix.Rotation(v, 4, 'Y')
+            if not origin_as_center:
+                matrix @= t_center @ rot @ t_neg_center
+            else:
+                matrix @= rot
         elif isinstance(trans, RotateZ):
             v = math.radians(resolve(trans.angle))
-            matrix @= Matrix.Rotation(v, 4, 'Z')
+            rot = Matrix.Rotation(v, 4, 'Z')
+            if not origin_as_center:
+                matrix @= t_center @ rot @ t_neg_center
+            else:
+                matrix @= rot
 
         elif isinstance(trans, Scale):
             x = resolve(trans.x)
             if trans.is_uniform:
-                matrix @= Matrix.Scale(x, 4)
+                scale = Matrix.Scale(x, 4)
             else:
                 y = resolve(trans.y) if trans.y is not None else 1.0
                 z = resolve(trans.z) if trans.z is not None else 1.0
                 sx = Matrix.Scale(x, 4, (1.0, 0.0, 0.0))
                 sy = Matrix.Scale(y, 4, (0.0, 1.0, 0.0))
                 sz = Matrix.Scale(z, 4, (0.0, 0.0, 1.0))
-                matrix @= sx @ sy @ sz
+                scale = sx @ sy @ sz
+            if not origin_as_center:
+                matrix @= t_center @ scale @ t_neg_center
+            else:
+                matrix @= scale
 
         elif isinstance(trans, MatrixTransform):
             m = [resolve(v) for v in trans.matrix]
@@ -507,11 +557,23 @@ def _build_transform_matrix(
             matrix @= new_matrix
 
         elif isinstance(trans, MirrorX):
-            matrix @= Matrix.Scale(-1, 4, (1.0, 0.0, 0.0))
+            mirror = Matrix.Scale(-1, 4, (1.0, 0.0, 0.0))
+            if not origin_as_center:
+                matrix @= t_center @ mirror @ t_neg_center
+            else:
+                matrix @= mirror
         elif isinstance(trans, MirrorY):
-            matrix @= Matrix.Scale(-1, 4, (0.0, 1.0, 0.0))
+            mirror = Matrix.Scale(-1, 4, (0.0, 1.0, 0.0))
+            if not origin_as_center:
+                matrix @= t_center @ mirror @ t_neg_center
+            else:
+                matrix @= mirror
         elif isinstance(trans, MirrorZ):
-            matrix @= Matrix.Scale(-1, 4, (0.0, 0.0, 1.0))
+            mirror = Matrix.Scale(-1, 4, (0.0, 0.0, 1.0))
+            if not origin_as_center:
+                matrix @= t_center @ mirror @ t_neg_center
+            else:
+                matrix @= mirror
 
         # Color transformations are ignored by the interpreter
         # (HueShift, SaturationMul, BrightnessMul, AlphaMul, SetColor, BlendColor)

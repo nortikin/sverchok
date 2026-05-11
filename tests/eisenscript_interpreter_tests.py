@@ -173,6 +173,79 @@ class ScaleTests(unittest.TestCase):
         self.assertAlmostEqual(m[1][3], 3.0)
         self.assertAlmostEqual(m[2][3], 4.0)
 
+    def test_scale_with_origin(self):
+        """S1: Scale with origin_as_center=True uses (0,0,0) as center."""
+        prog = parse("1 * { s 2 x 1 } box")
+        result = Interpreter.interpret(prog, origin_as_center=True)
+        m = result.matrices["box"][0]
+        self.assertAlmostEqual(m[0][3], 2.0)
+
+    def test_scale_with_cube_center(self):
+        """S1: Scale with origin_as_center=False uses (0.5,0.5,0.5) as center."""
+        prog = parse("1 * { s 2 x 1 } box")
+        result = Interpreter.interpret(prog, origin_as_center=False)
+        m = result.matrices["box"][0]
+        # s 2 around (0.5,0.5,0.5): x 1 becomes x 1.5
+        # T(0.5) @ S(2) @ T(-0.5) @ T(1) = T(0.5) @ S(2) @ T(0.5)
+        # = T(0.5) @ T(1) = T(1.5)
+        self.assertAlmostEqual(m[0][3], 1.5)
+
+
+class OriginAsCenterTests(unittest.TestCase):
+    """Test origin_as_center parameter (S1, S2, S3)."""
+
+    def test_rotation_around_origin(self):
+        """S3: Rotation with origin_as_center=True rotates around origin."""
+        prog = parse("1 * { rz 90 x 1 } box")
+        result = Interpreter.interpret(prog, origin_as_center=True)
+        m = result.matrices["box"][0]
+        # rz 90 around origin, then x 1 → (0, 1, 0)
+        self.assertAlmostEqual(m[0][3], 0.0, places=5)
+        self.assertAlmostEqual(m[1][3], 1.0, places=5)
+
+    def test_rotation_around_cube_center(self):
+        """S3: Rotation with origin_as_center=False rotates around cube center."""
+        prog = parse("1 * { rz 90 x 1 } box")
+        result = Interpreter.interpret(prog, origin_as_center=False)
+        m = result.matrices["box"][0]
+        # rz 90 around (0.5, 0.5, 0.5), then x 1
+        # T(0.5,0.5) @ Rz90 @ T(-0.5,-0.5) @ T(1,0)
+        # = T(0.5,0.5) @ Rz90 @ T(0.5,-0.5)
+        # Rz90 @ T(0.5,-0.5) = T(0.5, 0.5)
+        # T(0.5,0.5) @ T(0.5, 0.5) = T(1.0, 1.0)
+        self.assertAlmostEqual(m[0][3], 1.0, places=5)
+        self.assertAlmostEqual(m[1][3], 1.0, places=5)
+
+    def test_mirror_around_origin(self):
+        """S2: Mirror with origin_as_center=True mirrors through origin."""
+        prog = parse("1 * { fx x 1 } box")
+        result = Interpreter.interpret(prog, origin_as_center=True)
+        m = result.matrices["box"][0]
+        # fx mirrors x through origin, then x 1 → (-1, 0, 0)
+        self.assertAlmostEqual(m[0][3], -1.0)
+
+    def test_mirror_around_cube_center(self):
+        """S2: Mirror with origin_as_center=False mirrors through cube center."""
+        prog = parse("1 * { fx x 1 } box")
+        result = Interpreter.interpret(prog, origin_as_center=False)
+        m = result.matrices["box"][0]
+        # fx through (0.5,0.5,0.5): T(0.5) @ Sx(-1) @ T(-0.5) @ T(1)
+        # = T(0.5) @ Sx(-1) @ T(0.5)
+        # Sx(-1) @ T(0.5) = T(-0.5)
+        # T(0.5) @ T(-0.5) = T(0)
+        self.assertAlmostEqual(m[0][3], 0.0)
+
+    def test_default_is_origin(self):
+        """Default origin_as_center=True for legacy compatibility."""
+        prog = parse("1 * { s 2 x 1 } box")
+        result_default = Interpreter.interpret(prog)
+        result_origin = Interpreter.interpret(prog, origin_as_center=True)
+        m1 = result_default.matrices["box"][0]
+        m2 = result_origin.matrices["box"][0]
+        for r in range(4):
+            for c in range(4):
+                self.assertAlmostEqual(m1[r][c], m2[r][c])
+
 
 class RepetitionTests(unittest.TestCase):
     """Test repetition (loop) semantics."""
