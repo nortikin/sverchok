@@ -174,6 +174,10 @@ class Interpreter:
         )
         return interp._interpret(program)
 
+    # ------------------------------------------------------------------
+    # Internal entry point
+    # ------------------------------------------------------------------
+
     def _interpret(self, program: Program) -> InterpreterResult:
         """Execute *program* and return an :class:`InterpreterResult`."""
         random.seed(self.seed)
@@ -196,7 +200,7 @@ class Interpreter:
                 return defines[val.name]
             return val
 
-        # Stack entries: (rule_name, depth, accumulated_matrix)
+        # Stack entries: (rule, depth, accumulated_matrix)
         entry_rule = _pick_rule(rule_map, IMPLICIT_START_RULE)
         stack: List[Tuple[Rule, int, Matrix]] = [
             (entry_rule, 0, Matrix.Identity(4))
@@ -229,12 +233,10 @@ class Interpreter:
 
             # Process each branch in the rule
             for branch in rule.body:
-                _interpret_branch(
+                self._interpret_branch(
                     branch, rule_map, defines,
                     matrix, depth, stack, result,
-                    total_objects, self.max_objects,
-                    self.origin_as_center,
-                    self.min_size, self.max_size,
+                    total_objects, _resolve,
                 )
                 # Update total_objects count after branch
                 for mats in result.matrices.values():
@@ -242,222 +244,332 @@ class Interpreter:
 
         return result
 
+    # ------------------------------------------------------------------
+    # Branch interpretation
+    # ------------------------------------------------------------------
 
-# ---------------------------------------------------------------------------
-# Branch interpretation
-# ---------------------------------------------------------------------------
+    def _interpret_branch(
+        self,
+        branch: Branch,
+        rule_map: Dict[str, List[Rule]],
+        defines: dict,
+        parent_matrix: Matrix,
+        depth: int,
+        stack: list,
+        result: InterpreterResult,
+        total_objects: int,
+        resolve,
+    ) -> None:
+        """
+        Interpret a single Branch AST node.
 
-def _interpret_branch(
-    branch: Branch,
-    rule_map: Dict[str, List[Rule]],
-    defines: dict,
-    parent_matrix: Matrix,
-    depth: int,
-    stack: list,
-    result: InterpreterResult,
-    total_objects: int,
-    max_objects: Optional[int],
-    origin_as_center: bool,
-    min_size: Optional[float],
-    max_size: Optional[float],
-) -> None:
-    """
-    Interpret a single Branch AST node.
+        Builds the accumulated transform from all repetitions, then
+        dispatches to the terminal (RuleRef or Primitive).
+        Terminates the branch if the current size is outside [min_size, max_size].
+        """
+        repetitions = branch.repetitions
+        terminal = branch.terminal
 
-    Builds the accumulated transform from all repetitions, then
-    dispatches to the terminal (RuleRef or Primitive).
-    Terminates the branch if the current size is outside [min_size, max_size].
-    """
-    repetitions = branch.repetitions
-    terminal = branch.terminal
+        # Build per-repetition transform matrices and counts
+        rep_info = []  # list of (count, transform_matrix)
+        for rep in repetitions:
+            count = round(resolve(rep.count))
+            tmat = self._build_transform_matrix(rep.transformations, defines, resolve)
+            rep_info.append((count, tmat))
 
-    def _resolve(val):
-        if isinstance(val, VariableRef):
-            if val.name not in defines:
-                raise ValueError(f"Undefined variable: {val.name}")
-            return defines[val.name]
-        return val
+        # Terminal dispatch
+        if isinstance(terminal, RuleRef):
+            self._dispatch_call(
+                terminal, rule_map, defines, resolve,
+                parent_matrix, depth, stack, rep_info,
+            )
+        else:
+            self._dispatch_instance(
+                terminal, result, parent_matrix, rep_info,
+                total_objects,
+            )
 
-    # Build per-repetition transform matrices and counts
-    rep_info = []  # list of (count, transform_matrix)
-    for rep in repetitions:
-        count = round(_resolve(rep.count))
-        tmat = _build_transform_matrix(
-            rep.transformations, defines, _resolve, origin_as_center)
-        rep_info.append((count, tmat))
+    # ------------------------------------------------------------------
+    # Rule call dispatch
+    # ------------------------------------------------------------------
 
-    # Terminal dispatch
-    if isinstance(terminal, RuleRef):
-        _dispatch_call(
-            terminal, rule_map, defines, _resolve,
-            parent_matrix, depth, stack, rep_info,
-            min_size, max_size,
-        )
-    else:
-        _dispatch_instance(
-            terminal, result, parent_matrix, rep_info,
-            total_objects, max_objects,
-            min_size, max_size,
-        )
+    def _dispatch_call(
+        self,
+        ref: RuleRef,
+        rule_map: Dict[str, List[Rule]],
+        defines: dict,
+        resolve,
+        parent_matrix: Matrix,
+        depth: int,
+        stack: list,
+        rep_info: list,
+    ) -> None:
+        """Handle a RuleRef terminal: push called rule(s) onto the stack."""
+        target_rule = _pick_rule(rule_map, ref.name)
 
+        # Retirement on the call itself
+        call_max_depth = None
+        if ref.retirement_depth is not None:
+            call_max_depth = ref.retirement_depth
+        call_successor = ref.retirement_rule
 
-def _dispatch_call(
-    ref: RuleRef,
-    rule_map: Dict[str, List[Rule]],
-    defines: dict,
-    resolve,
-    parent_matrix: Matrix,
-    depth: int,
-    stack: list,
-    rep_info: list,
-    min_size: Optional[float],
-    max_size: Optional[float],
-) -> None:
-    """Handle a RuleRef terminal: push called rule(s) onto the stack."""
-    target_rule = _pick_rule(rule_map, ref.name)
+        if not rep_info:
+            # No repetitions — direct call
+            cloned = parent_matrix.copy()
+            if self._size_in_bounds(cloned):
+                entry = (target_rule, depth + 1, cloned)
+                if call_max_depth is not None:
+                    # Wrap with a retirement rule
+                    entry = (_make_retirement_wrapper(target_rule, call_max_depth,
+                                                      call_successor, rule_map),
+                             depth + 1, cloned)
+                stack.append(entry)
+            return
 
-    # Retirement on the call itself
-    call_max_depth = None
-    if ref.retirement_depth is not None:
-        call_max_depth = ref.retirement_depth
-    call_successor = ref.retirement_rule
+        # Build cumulative transforms for each repetition level
+        base_matrix = parent_matrix.copy()
 
-    if not rep_info:
-        # No repetitions — direct call
-        cloned = parent_matrix.copy()
-        if _size_in_bounds(cloned, min_size, max_size):
-            entry = (target_rule, depth + 1, cloned)
-            if call_max_depth is not None:
-                # Wrap with a retirement rule
-                entry = (_make_retirement_wrapper(target_rule, call_max_depth,
-                                                  call_successor, rule_map),
-                         depth + 1, cloned)
-            stack.append(entry)
-        return
-
-    # Build cumulative transforms for each repetition level
-    base_matrix = parent_matrix.copy()
-
-    # For nested repetitions, we need to iterate through all combinations
-    _emit_calls_recursive(
-        rep_info, 0, base_matrix,
-        target_rule, depth, call_max_depth, call_successor,
-        rule_map, stack,
-        min_size, max_size,
-    )
-
-
-def _emit_calls_recursive(
-    rep_info: list,
-    level: int,
-    current_matrix: Matrix,
-    target_rule: Rule,
-    depth: int,
-    call_max_depth: Optional[int],
-    call_successor: Optional[str],
-    rule_map: Dict[str, List[Rule]],
-    stack: list,
-    min_size: Optional[float],
-    max_size: Optional[float],
-) -> None:
-    """Recursively emit stack entries for nested repetition levels."""
-    if level == len(rep_info):
-        # Base case: push the terminal call
-        if _size_in_bounds(current_matrix, min_size, max_size):
-            cloned = current_matrix.copy()
-            entry = (target_rule, depth + 1, cloned)
-            if call_max_depth is not None:
-                entry = (_make_retirement_wrapper(target_rule, call_max_depth,
-                                                  call_successor, rule_map),
-                         depth + 1, cloned)
-            stack.append(entry)
-        return
-
-    count, tmat = rep_info[level]
-    cumulative = Matrix.Identity(4)
-    for _ in range(count):
-        cumulative @= tmat
-        _emit_calls_recursive(
-            rep_info, level + 1,
-            current_matrix @ cumulative,
-            target_rule, depth,
-            call_max_depth, call_successor,
+        # For nested repetitions, we need to iterate through all combinations
+        self._emit_calls_recursive(
+            rep_info, 0, base_matrix,
+            target_rule, depth, call_max_depth, call_successor,
             rule_map, stack,
-            min_size, max_size,
         )
 
+    def _emit_calls_recursive(
+        self,
+        rep_info: list,
+        level: int,
+        current_matrix: Matrix,
+        target_rule: Rule,
+        depth: int,
+        call_max_depth: Optional[int],
+        call_successor: Optional[str],
+        rule_map: Dict[str, List[Rule]],
+        stack: list,
+    ) -> None:
+        """Recursively emit stack entries for nested repetition levels."""
+        if level == len(rep_info):
+            # Base case: push the terminal call
+            if self._size_in_bounds(current_matrix):
+                cloned = current_matrix.copy()
+                entry = (target_rule, depth + 1, cloned)
+                if call_max_depth is not None:
+                    entry = (_make_retirement_wrapper(target_rule, call_max_depth,
+                                                      call_successor, rule_map),
+                             depth + 1, cloned)
+                stack.append(entry)
+            return
 
-def _dispatch_instance(
-    terminal,
-    result: InterpreterResult,
-    parent_matrix: Matrix,
-    rep_info: list,
-    total_objects: int,
-    max_objects: Optional[int],
-    min_size: Optional[float],
-    max_size: Optional[float],
-) -> None:
-    """Handle a Primitive terminal: emit placement matrix(es)."""
-    shape_name = _primitive_name(terminal)
-    if shape_name is None:
-        return
+        count, tmat = rep_info[level]
+        cumulative = Matrix.Identity(4)
+        for _ in range(count):
+            cumulative @= tmat
+            self._emit_calls_recursive(
+                rep_info, level + 1,
+                current_matrix @ cumulative,
+                target_rule, depth,
+                call_max_depth, call_successor,
+                rule_map, stack,
+            )
 
-    if shape_name not in result.matrices:
-        result.matrices[shape_name] = []
+    # ------------------------------------------------------------------
+    # Primitive instance dispatch
+    # ------------------------------------------------------------------
 
-    if not rep_info:
-        # No repetitions — single instance
-        if _size_in_bounds(parent_matrix, min_size, max_size):
-            if max_objects is None or total_objects < max_objects:
-                result.matrices[shape_name].append(parent_matrix.copy())
-        return
+    def _dispatch_instance(
+        self,
+        terminal,
+        result: InterpreterResult,
+        parent_matrix: Matrix,
+        rep_info: list,
+        total_objects: int,
+    ) -> None:
+        """Handle a Primitive terminal: emit placement matrix(es)."""
+        shape_name = _primitive_name(terminal)
+        if shape_name is None:
+            return
 
-    # Build cumulative transforms for each repetition level
-    _emit_instances_recursive(
-        rep_info, 0, parent_matrix,
-        shape_name, result, total_objects, max_objects,
-        min_size, max_size,
-    )
+        if shape_name not in result.matrices:
+            result.matrices[shape_name] = []
 
+        if not rep_info:
+            # No repetitions — single instance
+            if self._size_in_bounds(parent_matrix):
+                if self.max_objects is None or total_objects < self.max_objects:
+                    result.matrices[shape_name].append(parent_matrix.copy())
+            return
 
-def _emit_instances_recursive(
-    rep_info: list,
-    level: int,
-    current_matrix: Matrix,
-    shape_name: str,
-    result: InterpreterResult,
-    total_objects: int,
-    max_objects: Optional[int],
-    min_size: Optional[float],
-    max_size: Optional[float],
-) -> None:
-    """Recursively emit instance matrices for nested repetition levels."""
-    if max_objects is not None and total_objects >= max_objects:
-        return
-
-    if level == len(rep_info):
-        # Base case: emit the instance if size is in bounds
-        if _size_in_bounds(current_matrix, min_size, max_size):
-            result.matrices[shape_name].append(current_matrix.copy())
-        return
-
-    count, tmat = rep_info[level]
-    cumulative = Matrix.Identity(4)
-    for _ in range(count):
-        cumulative @= tmat
-        new_total = 0
-        for mats in result.matrices.values():
-            new_total += len(mats)
-        _emit_instances_recursive(
-            rep_info, level + 1,
-            current_matrix @ cumulative,
-            shape_name, result, new_total, max_objects,
-            min_size, max_size,
+        # Build cumulative transforms for each repetition level
+        self._emit_instances_recursive(
+            rep_info, 0, parent_matrix,
+            shape_name, result, total_objects,
         )
+
+    def _emit_instances_recursive(
+        self,
+        rep_info: list,
+        level: int,
+        current_matrix: Matrix,
+        shape_name: str,
+        result: InterpreterResult,
+        total_objects: int,
+    ) -> None:
+        """Recursively emit instance matrices for nested repetition levels."""
+        if self.max_objects is not None and total_objects >= self.max_objects:
+            return
+
+        if level == len(rep_info):
+            # Base case: emit the instance if size is in bounds
+            if self._size_in_bounds(current_matrix):
+                result.matrices[shape_name].append(current_matrix.copy())
+            return
+
+        count, tmat = rep_info[level]
+        cumulative = Matrix.Identity(4)
+        for _ in range(count):
+            cumulative @= tmat
+            new_total = 0
+            for mats in result.matrices.values():
+                new_total += len(mats)
+            self._emit_instances_recursive(
+                rep_info, level + 1,
+                current_matrix @ cumulative,
+                shape_name, result, new_total,
+            )
+
+    # ------------------------------------------------------------------
+    # Transform / size helpers (instance methods)
+    # ------------------------------------------------------------------
+
+    def _build_transform_matrix(
+        self,
+        transformations: list,
+        defines: dict,
+        resolve,
+    ) -> Matrix:
+        """
+        Build a 4×4 Matrix from a list of Transformation AST nodes.
+
+        Uses ``self.origin_as_center`` to decide the transform center.
+        """
+        matrix = Matrix.Identity(4)
+        center = mu.Vector((0.5, 0.5, 0.5))
+        t_center = Matrix.Translation(center)
+        t_neg_center = Matrix.Translation(-center)
+
+        for trans in transformations:
+            if isinstance(trans, TranslateX):
+                v = resolve(trans.value)
+                matrix @= Matrix.Translation((v, 0, 0))
+            elif isinstance(trans, TranslateY):
+                v = resolve(trans.value)
+                matrix @= Matrix.Translation((0, v, 0))
+            elif isinstance(trans, TranslateZ):
+                v = resolve(trans.value)
+                matrix @= Matrix.Translation((0, 0, v))
+
+            elif isinstance(trans, RotateX):
+                v = math.radians(resolve(trans.angle))
+                rot = Matrix.Rotation(v, 4, 'X')
+                if not self.origin_as_center:
+                    matrix @= t_center @ rot @ t_neg_center
+                else:
+                    matrix @= rot
+            elif isinstance(trans, RotateY):
+                v = math.radians(resolve(trans.angle))
+                rot = Matrix.Rotation(v, 4, 'Y')
+                if not self.origin_as_center:
+                    matrix @= t_center @ rot @ t_neg_center
+                else:
+                    matrix @= rot
+            elif isinstance(trans, RotateZ):
+                v = math.radians(resolve(trans.angle))
+                rot = Matrix.Rotation(v, 4, 'Z')
+                if not self.origin_as_center:
+                    matrix @= t_center @ rot @ t_neg_center
+                else:
+                    matrix @= rot
+
+            elif isinstance(trans, Scale):
+                x = resolve(trans.x)
+                if trans.is_uniform:
+                    scale = Matrix.Scale(x, 4)
+                else:
+                    y = resolve(trans.y) if trans.y is not None else 1.0
+                    z = resolve(trans.z) if trans.z is not None else 1.0
+                    sx = Matrix.Scale(x, 4, (1.0, 0.0, 0.0))
+                    sy = Matrix.Scale(y, 4, (0.0, 1.0, 0.0))
+                    sz = Matrix.Scale(z, 4, (0.0, 0.0, 1.0))
+                    scale = sx @ sy @ sz
+                if not self.origin_as_center:
+                    matrix @= t_center @ scale @ t_neg_center
+                else:
+                    matrix @= scale
+
+            elif isinstance(trans, MatrixTransform):
+                m = [resolve(v) for v in trans.matrix]
+                # Build 4×4 from 9 values (3×3 + translation)
+                new_matrix = Matrix([
+                    [m[0], m[1], m[2], m[3]],
+                    [m[4], m[5], m[6], m[7]],
+                    [m[8], m[9], m[10], m[11]],
+                    [0, 0, 0, 1],
+                ]) if len(m) >= 12 else Matrix.Identity(4)
+                # If only 9 values, treat as 3×3 linear transform
+                if len(m) == 9:
+                    new_matrix = Matrix([
+                        [m[0], m[1], m[2], 0],
+                        [m[3], m[4], m[5], 0],
+                        [m[6], m[7], m[8], 0],
+                        [0, 0, 0, 1],
+                    ])
+                matrix @= new_matrix
+
+            elif isinstance(trans, MirrorX):
+                mirror = Matrix.Scale(-1, 4, (1.0, 0.0, 0.0))
+                if not self.origin_as_center:
+                    matrix @= t_center @ mirror @ t_neg_center
+                else:
+                    matrix @= mirror
+            elif isinstance(trans, MirrorY):
+                mirror = Matrix.Scale(-1, 4, (0.0, 1.0, 0.0))
+                if not self.origin_as_center:
+                    matrix @= t_center @ mirror @ t_neg_center
+                else:
+                    matrix @= mirror
+            elif isinstance(trans, MirrorZ):
+                mirror = Matrix.Scale(-1, 4, (0.0, 0.0, 1.0))
+                if not self.origin_as_center:
+                    matrix @= t_center @ mirror @ t_neg_center
+                else:
+                    matrix @= mirror
+
+            # Color transformations are ignored by the interpreter
+            # (HueShift, SaturationMul, BrightnessMul, AlphaMul, SetColor, BlendColor)
+
+        return matrix
+
+    def _size_in_bounds(self, matrix: Matrix) -> bool:
+        """
+        Return True if the current size is within [self.min_size, self.max_size].
+
+        If both are None, always returns True.
+        """
+        if self.min_size is None and self.max_size is None:
+            return True
+
+        size = _compute_size(matrix)
+
+        if self.min_size is not None and size < self.min_size:
+            return False
+        if self.max_size is not None and size > self.max_size:
+            return False
+        return True
 
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Module-level helpers (no interpreter state needed)
 # ---------------------------------------------------------------------------
 
 def _pick_rule(rule_map: Dict[str, List[Rule]], name: str) -> Rule:
@@ -503,13 +615,6 @@ def _make_retirement_wrapper(
     )
 
 
-# ---------------------------------------------------------------------------
-# Size helpers (S5: minsize / maxsize)
-# ---------------------------------------------------------------------------
-
-_diagonal_vector = mu.Vector((1.0, 1.0, 1.0))
-
-
 def _compute_size(matrix: Matrix) -> float:
     """
     Compute the "size" of the unit cube under *matrix*.
@@ -521,152 +626,12 @@ def _compute_size(matrix: Matrix) -> float:
     of a unit cube in the current local state."
     """
     # Transform the diagonal vector (1,1,1) by the linear part of the matrix
-    # We use the upper-left 3x3 submatrix
     diag = mu.Vector((
         matrix[0][0] + matrix[0][1] + matrix[0][2],
         matrix[1][0] + matrix[1][1] + matrix[1][2],
         matrix[2][0] + matrix[2][1] + matrix[2][2],
     ))
     return diag.length
-
-
-def _size_in_bounds(
-    matrix: Matrix,
-    min_size: Optional[float],
-    max_size: Optional[float],
-) -> bool:
-    """
-    Return True if the current size is within [min_size, max_size].
-
-    If min_size is None, no lower bound is enforced.
-    If max_size is None, no upper bound is enforced.
-    """
-    if min_size is None and max_size is None:
-        return True
-
-    size = _compute_size(matrix)
-
-    if min_size is not None and size < min_size:
-        return False
-    if max_size is not None and size > max_size:
-        return False
-    return True
-
-
-def _build_transform_matrix(
-    transformations: list,
-    defines: dict,
-    resolve,
-    origin_as_center: bool = True,
-) -> Matrix:
-    """
-    Build a 4×4 Matrix from a list of Transformation AST nodes.
-
-    Args:
-        transformations: List of Transformation AST nodes.
-        defines: Dict of variable names to their values.
-        resolve: Function to resolve VariableRef values.
-        origin_as_center: If True, use (0,0,0) as transform center
-            (legacy LSystem behavior). If False, use (0.5,0.5,0.5)
-            per the EisenScript specification for scale, rotation,
-            and mirror transforms.
-    """
-    matrix = Matrix.Identity(4)
-    center = mu.Vector((0.5, 0.5, 0.5))
-    t_center = Matrix.Translation(center)
-    t_neg_center = Matrix.Translation(-center)
-
-    for trans in transformations:
-        if isinstance(trans, TranslateX):
-            v = resolve(trans.value)
-            matrix @= Matrix.Translation((v, 0, 0))
-        elif isinstance(trans, TranslateY):
-            v = resolve(trans.value)
-            matrix @= Matrix.Translation((0, v, 0))
-        elif isinstance(trans, TranslateZ):
-            v = resolve(trans.value)
-            matrix @= Matrix.Translation((0, 0, v))
-
-        elif isinstance(trans, RotateX):
-            v = math.radians(resolve(trans.angle))
-            rot = Matrix.Rotation(v, 4, 'X')
-            if not origin_as_center:
-                matrix @= t_center @ rot @ t_neg_center
-            else:
-                matrix @= rot
-        elif isinstance(trans, RotateY):
-            v = math.radians(resolve(trans.angle))
-            rot = Matrix.Rotation(v, 4, 'Y')
-            if not origin_as_center:
-                matrix @= t_center @ rot @ t_neg_center
-            else:
-                matrix @= rot
-        elif isinstance(trans, RotateZ):
-            v = math.radians(resolve(trans.angle))
-            rot = Matrix.Rotation(v, 4, 'Z')
-            if not origin_as_center:
-                matrix @= t_center @ rot @ t_neg_center
-            else:
-                matrix @= rot
-
-        elif isinstance(trans, Scale):
-            x = resolve(trans.x)
-            if trans.is_uniform:
-                scale = Matrix.Scale(x, 4)
-            else:
-                y = resolve(trans.y) if trans.y is not None else 1.0
-                z = resolve(trans.z) if trans.z is not None else 1.0
-                sx = Matrix.Scale(x, 4, (1.0, 0.0, 0.0))
-                sy = Matrix.Scale(y, 4, (0.0, 1.0, 0.0))
-                sz = Matrix.Scale(z, 4, (0.0, 0.0, 1.0))
-                scale = sx @ sy @ sz
-            if not origin_as_center:
-                matrix @= t_center @ scale @ t_neg_center
-            else:
-                matrix @= scale
-
-        elif isinstance(trans, MatrixTransform):
-            m = [resolve(v) for v in trans.matrix]
-            # Build 4×4 from 9 values (3×3 + translation)
-            new_matrix = Matrix([
-                [m[0], m[1], m[2], m[3]],
-                [m[4], m[5], m[6], m[7]],
-                [m[8], m[9], m[10], m[11]],
-                [0, 0, 0, 1],
-            ]) if len(m) >= 12 else Matrix.Identity(4)
-            # If only 9 values, treat as 3×3 linear transform
-            if len(m) == 9:
-                new_matrix = Matrix([
-                    [m[0], m[1], m[2], 0],
-                    [m[3], m[4], m[5], 0],
-                    [m[6], m[7], m[8], 0],
-                    [0, 0, 0, 1],
-                ])
-            matrix @= new_matrix
-
-        elif isinstance(trans, MirrorX):
-            mirror = Matrix.Scale(-1, 4, (1.0, 0.0, 0.0))
-            if not origin_as_center:
-                matrix @= t_center @ mirror @ t_neg_center
-            else:
-                matrix @= mirror
-        elif isinstance(trans, MirrorY):
-            mirror = Matrix.Scale(-1, 4, (0.0, 1.0, 0.0))
-            if not origin_as_center:
-                matrix @= t_center @ mirror @ t_neg_center
-            else:
-                matrix @= mirror
-        elif isinstance(trans, MirrorZ):
-            mirror = Matrix.Scale(-1, 4, (0.0, 0.0, 1.0))
-            if not origin_as_center:
-                matrix @= t_center @ mirror @ t_neg_center
-            else:
-                matrix @= mirror
-
-        # Color transformations are ignored by the interpreter
-        # (HueShift, SaturationMul, BrightnessMul, AlphaMul, SetColor, BlendColor)
-
-    return matrix
 
 
 def _primitive_name(terminal) -> Optional[str]:
