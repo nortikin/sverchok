@@ -265,6 +265,10 @@ class LSystem:
                 shapes.append(None)
                 continue
 
+            # if len(shapes) > self.global_max_depth:
+            #     shapes.append(None)
+            #     continue
+
             if level.depth > local_max_depth:
                 if "successor" in level.rule.attrib:
                     successor = level.rule.get("successor")
