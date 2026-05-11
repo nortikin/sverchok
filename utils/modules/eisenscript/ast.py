@@ -66,6 +66,12 @@ class Primitive(AstNode):
     """Base class for drawing primitives (box, sphere, etc.)."""
 
 
+# Sentinel name for the implicit entry-point rule.
+# Chosen so it can never collide with a user-defined rule name
+# (rule names must be valid identifiers, this is not).
+IMPLICIT_START_RULE = "###START###"
+
+
 # ---------------------------------------------------------------------------
 # Program-level nodes
 # ---------------------------------------------------------------------------

@@ -64,6 +64,8 @@ from sverchok.utils.modules.eisenscript.ast import (
     Branch,
     Repeat,
     RuleRef,
+    VariableRef,
+    IMPLICIT_START_RULE,
     # Geometrical transformations
     TranslateX,
     TranslateY,
@@ -906,7 +908,7 @@ def parse_top_statement(src):
     # Try implicit start rule: a bare branch without a rule name.
     # This is shorthand for 'rule start { branch }'.
     for branch, rest in parse_branch(src):
-        rule = Rule(name="start", body=[branch])
+        rule = Rule(name=IMPLICIT_START_RULE, body=[branch])
         yield rule, rest.lstrip() if rest else ""
         return
 

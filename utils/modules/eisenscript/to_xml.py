@@ -63,6 +63,7 @@ from sverchok.utils.modules.eisenscript.ast import (
     Repeat,
     RuleRef,
     VariableRef,
+    IMPLICIT_START_RULE,
     # Geometrical transformations
     TranslateX,
     TranslateY,
@@ -379,7 +380,7 @@ def _rule_to_xml(rules_elem, rule, support_colors=False, name_counter=None,
 
     rule_elem = ET.SubElement(rules_elem, "rule")
     # In XML format, the start rule is always called 'entry'
-    xml_name = "entry" if rule.name == "start" else rule.name
+    xml_name = "entry" if rule.name == IMPLICIT_START_RULE else rule.name
     rule_elem.set("name", xml_name)
 
     if rule.maxdepth is not None:

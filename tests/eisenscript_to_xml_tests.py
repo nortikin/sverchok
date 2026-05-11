@@ -47,6 +47,7 @@ from sverchok.utils.modules.eisenscript.ast import (
     Branch,
     Repeat,
     RuleRef,
+    IMPLICIT_START_RULE,
     TranslateX, TranslateY, TranslateZ,
     RotateX, RotateY, RotateZ,
     Scale,
@@ -159,7 +160,7 @@ class AstToXmlBasicTests(unittest.TestCase):
 
     def test_simple_rule_with_box(self):
         prog = Program(rules=[
-            Rule(name="start", body=[
+            Rule(name=IMPLICIT_START_RULE, body=[
                 Branch(repetitions=[], terminal=Box()),
             ]),
         ])
@@ -173,7 +174,7 @@ class AstToXmlBasicTests(unittest.TestCase):
 
     def test_rule_with_call(self):
         prog = Program(rules=[
-            Rule(name="start", body=[
+            Rule(name=IMPLICIT_START_RULE, body=[
                 Branch(repetitions=[], terminal=RuleRef("child")),
             ]),
         ])
@@ -206,7 +207,7 @@ class AstToXmlBasicTests(unittest.TestCase):
     def test_start_renamed_to_entry(self):
         """Rule named 'start' in AST must become 'entry' in XML."""
         prog = Program(rules=[
-            Rule(name="start", body=[
+            Rule(name=IMPLICIT_START_RULE, body=[
                 Branch(repetitions=[], terminal=Box()),
             ]),
         ])
@@ -230,7 +231,7 @@ class AstToXmlBasicTests(unittest.TestCase):
 
     def test_branch_with_repetition(self):
         prog = Program(rules=[
-            Rule(name="start", body=[
+            Rule(name=IMPLICIT_START_RULE, body=[
                 Branch(
                     repetitions=[Repeat(10, [TranslateX(1)])],
                     terminal=RuleRef("child"),
@@ -244,7 +245,7 @@ class AstToXmlBasicTests(unittest.TestCase):
 
     def test_branch_with_transforms(self):
         prog = Program(rules=[
-            Rule(name="start", body=[
+            Rule(name=IMPLICIT_START_RULE, body=[
                 Branch(
                     repetitions=[Repeat(1, [RotateZ(90), Scale(0.5)])],
                     terminal=Box(),
@@ -261,7 +262,7 @@ class AstToXmlBasicTests(unittest.TestCase):
         """RuleRef with retirement_depth + retirement_rule -> call max_depth + successor."""
         ref = RuleRef("leaf", retirement_depth=5, retirement_rule="fallback")
         prog = Program(rules=[
-            Rule(name="start", body=[
+            Rule(name=IMPLICIT_START_RULE, body=[
                 Branch(repetitions=[], terminal=ref),
             ]),
         ])
@@ -287,7 +288,7 @@ class AstToXmlBasicTests(unittest.TestCase):
 
     def test_all_primitives(self):
         prog = Program(rules=[
-            Rule(name="start", body=[
+            Rule(name=IMPLICIT_START_RULE, body=[
                 Branch(repetitions=[], terminal=Box()),
                 Branch(repetitions=[], terminal=Grid()),
                 Branch(repetitions=[], terminal=Sphere()),
@@ -315,7 +316,7 @@ class EisenScriptToXmlTests(unittest.TestCase):
     """Test eisenscript_to_xml end-to-end (source string -> XML)."""
 
     def test_simple_rule(self):
-        src = "rule start { box }"
+        src = "1 * { x 1 } box"  # bare branch -> implicit start -> entry
         root = eisenscript_to_xml(src)
         self.assertEqual(root.tag, "rules")
         self.assertEqual(len(root.findall("rule")), 1)
@@ -597,7 +598,7 @@ class FullProgramXmlTests(unittest.TestCase):
         The last repetition's transforms+count are applied directly to the
         terminal call, so only N-1 intermediate rules are created for N reps.
         """
-        src = "rule start { 10 * { x 1 } 30 * { ry 10 } child }"
+        src = "10 * { x 1 } 30 * { ry 10 } child"  # bare branch -> implicit start -> entry
         root = eisenscript_to_xml(src)
         rules = root.findall("rule")
 
