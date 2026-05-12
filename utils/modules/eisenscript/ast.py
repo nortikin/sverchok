@@ -228,64 +228,60 @@ class RuleRef(AstNode):
 # Geometrical transformations
 # ---------------------------------------------------------------------------
 
-class TranslateX(Transformation):
-    """X-axis translation: 'x <float>'."""
+# Axis constants
+AXIS_X = 0
+AXIS_Y = 1
+AXIS_Z = 2
+AXIS_NAMES = {0: 'x', 1: 'y', 2: 'z'}
 
-    def __init__(self, value):
+
+class Translate(Transformation):
+    """
+    Translation along a single axis: 'x'|'y'|'z' <float>.
+
+    Attributes:
+        axis: 0=X, 1=Y, 2=Z.
+        value: Translation distance (float).
+    """
+
+    def __init__(self, axis, value):
+        self.axis = axis
         self.value = value
 
     def __repr__(self):
-        return f"TranslateX({self.value})"
+        return f"Translate({AXIS_NAMES[self.axis]}, {self.value})"
 
 
-class TranslateY(Transformation):
-    """Y-axis translation: 'y <float>'."""
+class Rotate(Transformation):
+    """
+    Rotation about a single axis in degrees: 'rx'|'ry'|'rz' <float>.
 
-    def __init__(self, value):
-        self.value = value
+    Attributes:
+        axis: 0=X, 1=Y, 2=Z.
+        angle: Rotation angle in degrees (float).
+    """
 
-    def __repr__(self):
-        return f"TranslateY({self.value})"
-
-
-class TranslateZ(Transformation):
-    """Z-axis translation: 'z <float>'."""
-
-    def __init__(self, value):
-        self.value = value
-
-    def __repr__(self):
-        return f"TranslateZ({self.value})"
-
-
-class RotateX(Transformation):
-    """Rotation about X axis in degrees: 'rx <float>'."""
-
-    def __init__(self, angle):
+    def __init__(self, axis, angle):
+        self.axis = axis
         self.angle = angle
 
     def __repr__(self):
-        return f"RotateX({self.angle})"
+        return f"Rotate({AXIS_NAMES[self.axis]}, {self.angle})"
 
 
-class RotateY(Transformation):
-    """Rotation about Y axis in degrees: 'ry <float>'."""
+class Mirror(Transformation):
+    """
+    Mirror about a single axis: 'fx'|'fy'|'fz'.
 
-    def __init__(self, angle):
-        self.angle = angle
+    Attributes:
+        axis: 0=X, 1=Y, 2=Z.
+    """
 
-    def __repr__(self):
-        return f"RotateY({self.angle})"
-
-
-class RotateZ(Transformation):
-    """Rotation about Z axis in degrees: 'rz <float>'."""
-
-    def __init__(self, angle):
-        self.angle = angle
+    def __init__(self, axis):
+        self.axis = axis
 
     def __repr__(self):
-        return f"RotateZ({self.angle})"
+        return f"Mirror({AXIS_NAMES[self.axis]})"
 
 
 class Scale(Transformation):
@@ -328,27 +324,6 @@ class MatrixTransform(Transformation):
 
     def __repr__(self):
         return f"Matrix({self.matrix})"
-
-
-class MirrorX(Transformation):
-    """Mirror about X axis: 'fx'."""
-
-    def __repr__(self):
-        return "MirrorX()"
-
-
-class MirrorY(Transformation):
-    """Mirror about Y axis: 'fy'."""
-
-    def __repr__(self):
-        return "MirrorY()"
-
-
-class MirrorZ(Transformation):
-    """Mirror about Z axis: 'fz'."""
-
-    def __repr__(self):
-        return "MirrorZ()"
 
 
 # ---------------------------------------------------------------------------

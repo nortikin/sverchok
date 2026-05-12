@@ -48,11 +48,12 @@ from sverchok.utils.modules.eisenscript.ast import (
     Repeat,
     RuleRef,
     IMPLICIT_START_RULE,
-    TranslateX, TranslateY, TranslateZ,
-    RotateX, RotateY, RotateZ,
+    AXIS_X, AXIS_Y, AXIS_Z,
+    Translate,
+    Rotate,
     Scale,
     MatrixTransform,
-    MirrorX, MirrorY, MirrorZ,
+    Mirror,
     HueShift, SaturationMul, BrightnessMul, AlphaMul,
     SetColor, BlendColor,
     Box, Grid, Sphere, Line, Point, Triangle,
@@ -63,22 +64,22 @@ class TransformTokenTests(unittest.TestCase):
     """Test individual transformation -> token conversion."""
 
     def test_translate_x(self):
-        self.assertEqual(_trans_to_token(TranslateX(5)), "tx 5")
+        self.assertEqual(_trans_to_token(Translate(AXIS_X, 5)), "tx 5")
 
     def test_translate_y_negative(self):
-        self.assertEqual(_trans_to_token(TranslateY(-2.5)), "ty -2.5")
+        self.assertEqual(_trans_to_token(Translate(AXIS_Y, -2.5)), "ty -2.5")
 
     def test_translate_z(self):
-        self.assertEqual(_trans_to_token(TranslateZ(3.14)), "tz 3.14")
+        self.assertEqual(_trans_to_token(Translate(AXIS_Z, 3.14)), "tz 3.14")
 
     def test_rotate_x(self):
-        self.assertEqual(_trans_to_token(RotateX(90)), "rx 90")
+        self.assertEqual(_trans_to_token(Rotate(AXIS_X, 90)), "rx 90")
 
     def test_rotate_y(self):
-        self.assertEqual(_trans_to_token(RotateY(45)), "ry 45")
+        self.assertEqual(_trans_to_token(Rotate(AXIS_Y, 45)), "ry 45")
 
     def test_rotate_z_negative(self):
-        self.assertEqual(_trans_to_token(RotateZ(-30)), "rz -30")
+        self.assertEqual(_trans_to_token(Rotate(AXIS_Z, -30)), "rz -30")
 
     def test_scale_uniform(self):
         self.assertEqual(_trans_to_token(Scale(2)), "sa 2")
@@ -91,13 +92,13 @@ class TransformTokenTests(unittest.TestCase):
         self.assertEqual(_trans_to_token(m), "m 1 0 0 0 1 0 0 0 1")
 
     def test_mirror_x(self):
-        self.assertEqual(_trans_to_token(MirrorX()), "fx")
+        self.assertEqual(_trans_to_token(Mirror(AXIS_X)), "fx")
 
     def test_mirror_y(self):
-        self.assertEqual(_trans_to_token(MirrorY()), "fy")
+        self.assertEqual(_trans_to_token(Mirror(AXIS_Y)), "fy")
 
     def test_mirror_z(self):
-        self.assertEqual(_trans_to_token(MirrorZ()), "fz")
+        self.assertEqual(_trans_to_token(Mirror(AXIS_Z)), "fz")
 
     def test_hue_short(self):
         self.assertEqual(_trans_to_token(HueShift(180), support_colors=True), "h 180")
@@ -126,19 +127,19 @@ class RepTransformsStrTests(unittest.TestCase):
         self.assertEqual(_rep_transforms_str(rep), "")
 
     def test_single_transform(self):
-        rep = Repeat(5, [TranslateX(1)])
+        rep = Repeat(5, [Translate(AXIS_X, 1)])
         self.assertEqual(_rep_transforms_str(rep), "tx 1")
 
     def test_multiple_transforms(self):
-        rep = Repeat(10, [TranslateX(1), RotateY(36)])
+        rep = Repeat(10, [Translate(AXIS_X, 1), Rotate(AXIS_Y, 36)])
         self.assertEqual(_rep_transforms_str(rep), "tx 1 ry 36")
 
     def test_color_ignored_default(self):
-        rep = Repeat(3, [TranslateX(1), HueShift(60), RotateZ(10)])
+        rep = Repeat(3, [Translate(AXIS_X, 1), HueShift(60), Rotate(AXIS_Z, 10)])
         self.assertEqual(_rep_transforms_str(rep), "tx 1 rz 10")
 
     def test_color_supported(self):
-        rep = Repeat(3, [TranslateX(1), HueShift(60), RotateZ(10)])
+        rep = Repeat(3, [Translate(AXIS_X, 1), HueShift(60), Rotate(AXIS_Z, 10)])
         self.assertEqual(_rep_transforms_str(rep, support_colors=True),
                          "tx 1 h 60 rz 10")
 
@@ -233,7 +234,7 @@ class AstToXmlBasicTests(unittest.TestCase):
         prog = Program(rules=[
             Rule(name=IMPLICIT_START_RULE, body=[
                 Branch(
-                    repetitions=[Repeat(10, [TranslateX(1)])],
+                    repetitions=[Repeat(10, [Translate(AXIS_X, 1)])],
                     terminal=RuleRef("child"),
                 ),
             ]),
@@ -247,7 +248,7 @@ class AstToXmlBasicTests(unittest.TestCase):
         prog = Program(rules=[
             Rule(name=IMPLICIT_START_RULE, body=[
                 Branch(
-                    repetitions=[Repeat(1, [RotateZ(90), Scale(0.5)])],
+                    repetitions=[Repeat(1, [Rotate(AXIS_Z, 90), Scale(0.5)])],
                     terminal=Box(),
                 ),
             ]),

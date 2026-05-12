@@ -46,12 +46,14 @@ from sverchok.utils.modules.eisenscript.ast import (
     RuleRef,
     VariableRef,
     IMPLICIT_START_RULE,
+    # Axis constants
+    AXIS_X, AXIS_Y, AXIS_Z,
     # Geometrical transformations
-    TranslateX, TranslateY, TranslateZ,
-    RotateX, RotateY, RotateZ,
+    Translate,
+    Rotate,
     Scale,
     MatrixTransform,
-    MirrorX, MirrorY, MirrorZ,
+    Mirror,
     # Color transformations (ignored by interpreter)
     HueShift, SaturationMul, BrightnessMul, AlphaMul,
     SetColor, BlendColor,
@@ -458,34 +460,19 @@ class Interpreter:
         t_center = Matrix.Translation(center)
         t_neg_center = Matrix.Translation(-center)
 
-        for trans in transformations:
-            if isinstance(trans, TranslateX):
-                v = resolve(trans.value)
-                matrix @= Matrix.Translation((v, 0, 0))
-            elif isinstance(trans, TranslateY):
-                v = resolve(trans.value)
-                matrix @= Matrix.Translation((0, v, 0))
-            elif isinstance(trans, TranslateZ):
-                v = resolve(trans.value)
-                matrix @= Matrix.Translation((0, 0, v))
+        _axis_vec = ((1, 0, 0), (0, 1, 0), (0, 0, 1))
+        _axis_letter = ('X', 'Y', 'Z')
 
-            elif isinstance(trans, RotateX):
+        for trans in transformations:
+            if isinstance(trans, Translate):
+                v = resolve(trans.value)
+                vec = list(_axis_vec[trans.axis])
+                vec[trans.axis] = v
+                matrix @= Matrix.Translation(tuple(vec))
+
+            elif isinstance(trans, Rotate):
                 v = math.radians(resolve(trans.angle))
-                rot = Matrix.Rotation(v, 4, 'X')
-                if not self.origin_as_center:
-                    matrix @= t_center @ rot @ t_neg_center
-                else:
-                    matrix @= rot
-            elif isinstance(trans, RotateY):
-                v = math.radians(resolve(trans.angle))
-                rot = Matrix.Rotation(v, 4, 'Y')
-                if not self.origin_as_center:
-                    matrix @= t_center @ rot @ t_neg_center
-                else:
-                    matrix @= rot
-            elif isinstance(trans, RotateZ):
-                v = math.radians(resolve(trans.angle))
-                rot = Matrix.Rotation(v, 4, 'Z')
+                rot = Matrix.Rotation(v, 4, _axis_letter[trans.axis])
                 if not self.origin_as_center:
                     matrix @= t_center @ rot @ t_neg_center
                 else:
@@ -526,20 +513,8 @@ class Interpreter:
                     ])
                 matrix @= new_matrix
 
-            elif isinstance(trans, MirrorX):
-                mirror = Matrix.Scale(-1, 4, (1.0, 0.0, 0.0))
-                if not self.origin_as_center:
-                    matrix @= t_center @ mirror @ t_neg_center
-                else:
-                    matrix @= mirror
-            elif isinstance(trans, MirrorY):
-                mirror = Matrix.Scale(-1, 4, (0.0, 1.0, 0.0))
-                if not self.origin_as_center:
-                    matrix @= t_center @ mirror @ t_neg_center
-                else:
-                    matrix @= mirror
-            elif isinstance(trans, MirrorZ):
-                mirror = Matrix.Scale(-1, 4, (0.0, 0.0, 1.0))
+            elif isinstance(trans, Mirror):
+                mirror = Matrix.Scale(-1, 4, _axis_vec[trans.axis])
                 if not self.origin_as_center:
                     matrix @= t_center @ mirror @ t_neg_center
                 else:

@@ -65,18 +65,14 @@ from sverchok.utils.modules.eisenscript.ast import (
     RuleRef,
     VariableRef,
     IMPLICIT_START_RULE,
+    # Axis constants
+    AXIS_X, AXIS_Y, AXIS_Z,
     # Geometrical transformations
-    TranslateX,
-    TranslateY,
-    TranslateZ,
-    RotateX,
-    RotateY,
-    RotateZ,
+    Translate,
+    Rotate,
     Scale,
     MatrixTransform,
-    MirrorX,
-    MirrorY,
-    MirrorZ,
+    Mirror,
     # Color transformations
     HueShift,
     SaturationMul,
@@ -160,19 +156,13 @@ def _trans_to_token(trans, support_colors=False, defines=None):
     if defines is None:
         defines = {}
 
-    if isinstance(trans, TranslateX):
-        return f"tx {_fmt(trans.value, defines)}"
-    if isinstance(trans, TranslateY):
-        return f"ty {_fmt(trans.value, defines)}"
-    if isinstance(trans, TranslateZ):
-        return f"tz {_fmt(trans.value, defines)}"
+    if isinstance(trans, Translate):
+        axis_char = "xyz"[trans.axis]
+        return f"t{axis_char} {_fmt(trans.value, defines)}"
 
-    if isinstance(trans, RotateX):
-        return f"rx {_fmt(trans.angle, defines)}"
-    if isinstance(trans, RotateY):
-        return f"ry {_fmt(trans.angle, defines)}"
-    if isinstance(trans, RotateZ):
-        return f"rz {_fmt(trans.angle, defines)}"
+    if isinstance(trans, Rotate):
+        axis_char = "xyz"[trans.axis]
+        return f"r{axis_char} {_fmt(trans.angle, defines)}"
 
     if isinstance(trans, Scale):
         if trans.is_uniform:
@@ -182,12 +172,9 @@ def _trans_to_token(trans, support_colors=False, defines=None):
     if isinstance(trans, MatrixTransform):
         return "m " + " ".join(_fmt(v, defines) for v in trans.matrix)
 
-    if isinstance(trans, MirrorX):
-        return "fx"
-    if isinstance(trans, MirrorY):
-        return "fy"
-    if isinstance(trans, MirrorZ):
-        return "fz"
+    if isinstance(trans, Mirror):
+        axis_char = "xyz"[trans.axis]
+        return f"f{axis_char}"
 
     # Color transformations — only when supported
     if support_colors:

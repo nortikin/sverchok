@@ -53,11 +53,12 @@ from sverchok.utils.modules.eisenscript.ast import (
     Repeat,
     RuleRef,
     VariableRef,
-    TranslateX, TranslateY, TranslateZ,
-    RotateX, RotateY, RotateZ,
+    AXIS_X, AXIS_Y, AXIS_Z,
+    Translate,
+    Rotate,
     Scale,
     MatrixTransform,
-    MirrorX, MirrorY, MirrorZ,
+    Mirror,
     HueShift, SaturationMul, BrightnessMul, AlphaMul,
     SetColor, BlendColor,
     Box, Grid, Sphere, Line, Point, Triangle,
@@ -204,7 +205,8 @@ class DefineStatementTests(unittest.TestCase):
     def test_variable_as_transform_value(self):
         prog = parse("#define angle 36\nrule start { 10 * { ry angle } box }")
         trans = prog.rules[0].body[0].repetitions[0].transformations[0]
-        self.assertIsInstance(trans, RotateY)
+        self.assertIsInstance(trans, Rotate)
+        self.assertEqual(trans.axis, AXIS_Y)
         self.assertIsInstance(trans.angle, VariableRef)
         self.assertEqual(trans.angle.name, "angle")
 
@@ -273,32 +275,38 @@ class GeometricTransformationTests(unittest.TestCase):
     def test_translate_x(self):
         transforms = self._parse_transforms("x 5")
         self.assertEqual(len(transforms), 1)
-        self.assertIsInstance(transforms[0], TranslateX)
+        self.assertIsInstance(transforms[0], Translate)
+        self.assertEqual(transforms[0].axis, AXIS_X)
         self.assertAlmostEqual(transforms[0].value, 5.0)
 
     def test_translate_y_negative(self):
         transforms = self._parse_transforms("y -2.5")
-        self.assertIsInstance(transforms[0], TranslateY)
+        self.assertIsInstance(transforms[0], Translate)
+        self.assertEqual(transforms[0].axis, AXIS_Y)
         self.assertAlmostEqual(transforms[0].value, -2.5)
 
     def test_translate_z(self):
         transforms = self._parse_transforms("z 3.14")
-        self.assertIsInstance(transforms[0], TranslateZ)
+        self.assertIsInstance(transforms[0], Translate)
+        self.assertEqual(transforms[0].axis, AXIS_Z)
         self.assertAlmostEqual(transforms[0].value, 3.14)
 
     def test_rotate_x(self):
         transforms = self._parse_transforms("rx 90")
-        self.assertIsInstance(transforms[0], RotateX)
+        self.assertIsInstance(transforms[0], Rotate)
+        self.assertEqual(transforms[0].axis, AXIS_X)
         self.assertAlmostEqual(transforms[0].angle, 90.0)
 
     def test_rotate_y(self):
         transforms = self._parse_transforms("ry 45")
-        self.assertIsInstance(transforms[0], RotateY)
+        self.assertIsInstance(transforms[0], Rotate)
+        self.assertEqual(transforms[0].axis, AXIS_Y)
         self.assertAlmostEqual(transforms[0].angle, 45.0)
 
     def test_rotate_z_negative(self):
         transforms = self._parse_transforms("rz -30")
-        self.assertIsInstance(transforms[0], RotateZ)
+        self.assertIsInstance(transforms[0], Rotate)
+        self.assertEqual(transforms[0].axis, AXIS_Z)
         self.assertAlmostEqual(transforms[0].angle, -30.0)
 
     def test_scale_uniform(self):
@@ -317,15 +325,18 @@ class GeometricTransformationTests(unittest.TestCase):
 
     def test_mirror_x(self):
         transforms = self._parse_transforms("fx")
-        self.assertIsInstance(transforms[0], MirrorX)
+        self.assertIsInstance(transforms[0], Mirror)
+        self.assertEqual(transforms[0].axis, AXIS_X)
 
     def test_mirror_y(self):
         transforms = self._parse_transforms("fy")
-        self.assertIsInstance(transforms[0], MirrorY)
+        self.assertIsInstance(transforms[0], Mirror)
+        self.assertEqual(transforms[0].axis, AXIS_Y)
 
     def test_mirror_z(self):
         transforms = self._parse_transforms("fz")
-        self.assertIsInstance(transforms[0], MirrorZ)
+        self.assertIsInstance(transforms[0], Mirror)
+        self.assertEqual(transforms[0].axis, AXIS_Z)
 
     def test_matrix_identity(self):
         transforms = self._parse_transforms("m 1 0 0 0 1 0 0 0 1")
@@ -338,9 +349,12 @@ class GeometricTransformationTests(unittest.TestCase):
     def test_multiple_transformations(self):
         transforms = self._parse_transforms("x 1 y 2 rz 90")
         self.assertEqual(len(transforms), 3)
-        self.assertIsInstance(transforms[0], TranslateX)
-        self.assertIsInstance(transforms[1], TranslateY)
-        self.assertIsInstance(transforms[2], RotateZ)
+        self.assertIsInstance(transforms[0], Translate)
+        self.assertEqual(transforms[0].axis, AXIS_X)
+        self.assertIsInstance(transforms[1], Translate)
+        self.assertEqual(transforms[1].axis, AXIS_Y)
+        self.assertIsInstance(transforms[2], Rotate)
+        self.assertEqual(transforms[2].axis, AXIS_Z)
 
 
 class FractionParsingTests(unittest.TestCase):
@@ -451,7 +465,8 @@ class RepetitionTests(unittest.TestCase):
             self.assertIsInstance(rep, Repeat)
             self.assertEqual(rep.count, 36)
             self.assertEqual(len(rep.transformations), 1)
-            self.assertIsInstance(rep.transformations[0], TranslateX)
+            self.assertIsInstance(rep.transformations[0], Translate)
+            self.assertEqual(rep.transformations[0].axis, AXIS_X)
             self.assertEqual(rest.strip(), "box")
             break
         else:
@@ -475,8 +490,10 @@ class RepetitionTests(unittest.TestCase):
     def test_multiple_transformations_in_repeat(self):
         for rep, _ in parse_repetition("10 * { x 1 ry 36 } box"):
             self.assertEqual(len(rep.transformations), 2)
-            self.assertIsInstance(rep.transformations[0], TranslateX)
-            self.assertIsInstance(rep.transformations[1], RotateY)
+            self.assertIsInstance(rep.transformations[0], Translate)
+            self.assertEqual(rep.transformations[0].axis, AXIS_X)
+            self.assertIsInstance(rep.transformations[1], Rotate)
+            self.assertEqual(rep.transformations[1].axis, AXIS_Y)
             break
         else:
             self.fail("No repetition parsed")

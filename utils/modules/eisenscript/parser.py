@@ -66,18 +66,14 @@ from sverchok.utils.modules.eisenscript.ast import (
     RuleRef,
     VariableRef,
     IMPLICIT_START_RULE,
+    # Axis constants
+    AXIS_X, AXIS_Y, AXIS_Z,
     # Geometrical transformations
-    TranslateX,
-    TranslateY,
-    TranslateZ,
-    RotateX,
-    RotateY,
-    RotateZ,
+    Translate,
+    Rotate,
     Scale,
     MatrixTransform,
-    MirrorX,
-    MirrorY,
-    MirrorZ,
+    Mirror,
     # Color transformations
     HueShift,
     SaturationMul,
@@ -252,37 +248,37 @@ def _try_regex_parse(regex, src, factory):
 
 def parse_TranslateX(src):
     def make(g):
-        return TranslateX(_to_num_or_var(g[0]))
+        return Translate(AXIS_X, _to_num_or_var(g[0]))
     yield from _try_regex_parse(_translate_x_re, src, make)
 
 
 def parse_TranslateY(src):
     def make(g):
-        return TranslateY(_to_num_or_var(g[0]))
+        return Translate(AXIS_Y, _to_num_or_var(g[0]))
     yield from _try_regex_parse(_translate_y_re, src, make)
 
 
 def parse_TranslateZ(src):
     def make(g):
-        return TranslateZ(_to_num_or_var(g[0]))
+        return Translate(AXIS_Z, _to_num_or_var(g[0]))
     yield from _try_regex_parse(_translate_z_re, src, make)
 
 
 def parse_RotateX(src):
     def make(g):
-        return RotateX(_to_num_or_var(g[0]))
+        return Rotate(AXIS_X, _to_num_or_var(g[0]))
     yield from _try_regex_parse(_rotate_x_re, src, make)
 
 
 def parse_RotateY(src):
     def make(g):
-        return RotateY(_to_num_or_var(g[0]))
+        return Rotate(AXIS_Y, _to_num_or_var(g[0]))
     yield from _try_regex_parse(_rotate_y_re, src, make)
 
 
 def parse_RotateZ(src):
     def make(g):
-        return RotateZ(_to_num_or_var(g[0]))
+        return Rotate(AXIS_Z, _to_num_or_var(g[0]))
     yield from _try_regex_parse(_rotate_z_re, src, make)
 
 
@@ -303,19 +299,19 @@ def parse_MatrixTransform(src):
 
 def parse_MirrorX(src):
     def make(g):
-        return MirrorX()
+        return Mirror(AXIS_X)
     yield from _try_regex_parse(_mirror_x_re, src, make)
 
 
 def parse_MirrorY(src):
     def make(g):
-        return MirrorY()
+        return Mirror(AXIS_Y)
     yield from _try_regex_parse(_mirror_y_re, src, make)
 
 
 def parse_MirrorZ(src):
     def make(g):
-        return MirrorZ()
+        return Mirror(AXIS_Z)
     yield from _try_regex_parse(_mirror_z_re, src, make)
 
 
