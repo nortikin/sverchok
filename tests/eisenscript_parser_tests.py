@@ -865,6 +865,18 @@ class ErrorTests(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             parse("@@@")
 
+    def test_unknown_transformation_token(self):
+        # Unknown transformation like 'tz' (XML syntax) should raise SyntaxError
+        with self.assertRaises(SyntaxError) as ctx:
+            parse("{rx 12.5 tz 1.3 s 0.98} box")
+        self.assertIn("tz", str(ctx.exception))
+
+    def test_unknown_transformation_in_repetition(self):
+        # Unknown transformation inside repetition should raise SyntaxError
+        with self.assertRaises(SyntaxError) as ctx:
+            parse("10 * { tx 1 rx 36 } box")
+        self.assertIn("tx", str(ctx.exception))
+
 
 class LowLevelParserTests(unittest.TestCase):
     """Test low-level parser functions."""

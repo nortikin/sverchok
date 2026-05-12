@@ -468,13 +468,17 @@ def _parse_transformations_from_string(inner_content):
 
     Uses the shared ``parse_transformation`` combinator so that the
     parser list is defined in exactly one place (see P1 fix).
+
+    Raises SyntaxError if any unrecognized token is encountered.
     """
     transforms = []
     current = inner_content.strip()
     while current:
         result = list(parse_transformation(current))
         if not result:
-            break
+            # Extract the offending token for a clear error message
+            token = current.split()[0] if current.split() else current.strip()
+            raise SyntaxError(f"Unknown transformation: '{token}'")
         tf, remainder = result[0]
         transforms.append(tf)
         current = remainder.lstrip() if remainder else ""
