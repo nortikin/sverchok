@@ -119,15 +119,8 @@ class SvEisenscriptNode(SverchCustomTreeNode, bpy.types.Node):
         if not any(out.is_linked for out in self.outputs):
             return
 
-        try:
-            source = bpy.data.texts[self.script_text].as_string()
-            program = parse(source)
-        except SyntaxError as e:
-            self.logger.error(f"EisenScript parse error: {e}")
-            return
-        except Exception as e:
-            self.logger.error(f"EisenScript error: {e}")
-            return
+        source = bpy.data.texts[self.script_text].as_string()
+        program = parse(source)
 
         # Build interpreter with user overrides.
         # Node properties take precedence over program settings.
