@@ -210,8 +210,9 @@ class SvGenerativeArtSearch(bpy.types.Operator, SvGenericNodeLocator):
 
 @dataclass
 class LSystemLevel:
-    rule: object
-    depth: int
+    rule: object            # rule params
+    depth: int              # current_depth
+    global_depth: int       # global depth current level is at in the tree structure
     matrix: mu.Matrix
     matrix_prev: mu.Matrix
 
@@ -227,9 +228,9 @@ class LSystem:
     """
     def __init__(self, xml_tree, maxObjects):
         self._tree = xml_tree
-        self.global_max_depth = int(self._tree.get("max_depth"))
+        self.global_max_depth = int(self._tree.get("max_depth", 1000))
         self._progressCount = 0
-        self._maxObjects = maxObjects
+        self.global_max_objects = maxObjects
 
     """
     Returns a list of "shapes".
@@ -238,7 +239,7 @@ class LSystem:
     def evaluate(self, seed=0):
         random.seed(seed)
         rule = _pickRule(self._tree, "entry")
-        entry = LSystemLevel(rule=rule, depth=0, matrix=mu.Matrix.Identity(4), matrix_prev=mu.Matrix.Identity(4))
+        entry = LSystemLevel(rule=rule, depth=0, global_depth=0, matrix=mu.Matrix.Identity(4), matrix_prev=mu.Matrix.Identity(4))
         shapes = self._evaluate(entry)
         return shapes
 
@@ -247,7 +248,7 @@ class LSystem:
         shapes = []
         nobjects = 0
         while len(stack) > 0:
-            if nobjects > self._maxObjects:
+            if nobjects > self.global_max_objects:
                 print('max objects reached')
                 break
 
@@ -269,6 +270,12 @@ class LSystem:
             #     shapes.append(None)
             #     continue
 
+            if level.global_depth > self.global_max_depth:
+                if shapes and shapes[-1] is not None:
+                    shapes.append(None)
+                print(f'max depth reached: {self.global_max_depth}')
+                continue
+
             if level.depth > local_max_depth:
                 if "successor" in level.rule.attrib:
                     successor = level.rule.get("successor")
@@ -283,11 +290,13 @@ class LSystem:
                         else:
                             sub_rule_depth = level.depth+1
                         pass
-                    stack.append(LSystemLevel(rule=sub_rule, depth=sub_rule_depth, matrix=level.matrix_prev.copy(), matrix_prev=level.matrix_prev.copy()))
+                    sub_rule_depth = level.depth+1
+                    stack.append(LSystemLevel(rule=sub_rule, depth=sub_rule_depth, global_depth=level.global_depth+1, matrix=level.matrix_prev.copy(), matrix_prev=level.matrix_prev.copy()))
                 shapes.append(None)
                 continue
 
             base_matrix = level.matrix.copy()
+            #_local_stack = []
             for statement in level.rule:
                 tstr = statement.get("transforms", "")
                 if not(tstr):
@@ -333,8 +342,9 @@ class LSystem:
                             #     shapes.append(shape)
                             #     nobjects += 1
 
-                            entry = LSystemLevel(rule=sub_rule, depth=sub_rule_depth, matrix=cloned_matrix, matrix_prev=matrix_prev.copy())
+                            entry = LSystemLevel(rule=sub_rule, depth=sub_rule_depth, global_depth=level.global_depth+1, matrix=cloned_matrix, matrix_prev=matrix_prev.copy())
                             stack.append(entry)
+                            #_local_stack.append(entry)
 
                         elif statement.tag == "instance":
                             name = statement.get("shape")
@@ -355,6 +365,8 @@ class LSystem:
                         shapes.append(None)
                 else:
                     pass
+                pass # for statement in level.rule
+            #stack.extend(_local_stack[::-1])
 
         return shapes
         # end of _evaluate
