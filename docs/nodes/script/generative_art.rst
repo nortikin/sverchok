@@ -139,6 +139,11 @@ Tree
 .. image:: https://github.com/user-attachments/assets/cd13f7e1-ae2e-498f-957b-28785ce42fcd
   :target: https://github.com/user-attachments/assets/cd13f7e1-ae2e-498f-957b-28785ce42fcd
 
+----
+
+.. image:: https://github.com/user-attachments/assets/1b97c676-7d80-45cf-a5bf-2084b94b4748
+  :target: https://github.com/user-attachments/assets/1b97c676-7d80-45cf-a5bf-2084b94b4748
+
 In the above xml file there are four definitions of the ``spiral`` rule. Each rule version has a weight attribute. The processor will call each version of the ``spiral`` rule in a random manner. The weight attribute will determine the probability a particular rule version is called. 
 
 The first three definitions of the ``spiral`` rule all place an object instance and then call the ``spiral`` rule with the same translation along the ``z`` axis and rotation about the ``x`` axis but different amounts of rotation about the ``y`` and ``z`` axis. The fourth definition calls the ``spiral`` rule twice without placing an instance. This causes the branches in the tree structure. Changing the value of the weight attribute for this rule version will change how often the tree branches. For a larger weight value, the rule gets called more often and there are more branches.
@@ -209,10 +214,11 @@ Fern 1
         <rule name="curl" max_depth="80">
             <instance transforms="ry 40 tx -0.125"           shape="box"/>
             <call     transforms="tx 0.1 ty -0.2 tz 0.3 ry 40 sa 0.25"  rule="curlsmall" />
+            <instance/>
             <call     transforms="rx 12.5 tz 1.3 s 0.98 0.95 1.0" rule="curl"/>
         </rule>
 
-        <rule name="curlsmall" max_depth="80">
+        <rule name="curlsmall" max_depth="30">
             <instance shape="box"/>
             <call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
         </rule>

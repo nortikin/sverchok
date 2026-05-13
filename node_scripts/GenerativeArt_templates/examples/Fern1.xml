@@ -6,10 +6,11 @@
     <rule name="curl" max_depth="80">
         <instance transforms="ry 40 tx -0.125"           shape="box"/>
         <call     transforms="tx 0.1 ty -0.2 tz 0.3 ry 40 sa 0.25"  rule="curlsmall" />
+        <instance/> <!-- clear using instance -->
         <call     transforms="rx 12.5 tz 1.3 s 0.98 0.95 1.0" rule="curl"/>
     </rule>
 
-    <rule name="curlsmall" max_depth="80">
+    <rule name="curlsmall" max_depth="30">
         <instance shape="box"/>
         <call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
     </rule>

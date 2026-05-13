@@ -26,7 +26,7 @@ from enum import Enum
 import math
 import string
 import random
-from xml.etree.cElementTree import fromstring
+from xml.etree.cElementTree import ParseError, fromstring
 from dataclasses import dataclass
 
 import bpy
@@ -226,6 +226,18 @@ class LSystemFrame:
     type: LSystemFrameType # 'call' or 'instance'
     obj : object           # params of calls or instances
 
+class LSystemShapeType(Enum):
+    START = 'start'
+    BODY = 'body'
+    TAIL = 'tail'
+
+
+@dataclass
+class LSystemShape:
+    type: LSystemShapeType      # 'start', 'body' or 'tail'
+    name: string                # shape name
+    matrix: mu.Matrix    # transform matrix for shape
+
 """
 ---------------------------------------------------
     LSystem
@@ -270,7 +282,9 @@ class LSystem:
                 if shapes and shapes[-1] is None and shape is None:
                     continue
                 shapes.append(shape)
-                if shape is not None:
+                # In the future it will be more convenient to allow the user to include or exclude TAIL matrices
+                # in the resulting matrices if the user wants to perform extrude on these matrices.
+                if shape is not None and shape.type!=LSystemShapeType.TAIL:
                     nobjects += 1
                 continue
             elif stack_frame.type == LSystemFrameType.CALL:
@@ -336,6 +350,7 @@ class LSystem:
                 base_matrix = level.matrix.copy()
                 _local_stack = []
                 last_instance_matrix = None
+                last_instance_shape_name = None
                 for statement in level.rule:
                     tstr = statement.get("transforms", "")
                     if not(tstr):
@@ -375,19 +390,24 @@ class LSystem:
                                 # Branching is when there are multiple calls to other rules within a rule (>1 call).
                                 if len([s for s in sub_rule if s.tag=='call'])>1:
                                     if last_instance_matrix:
-                                        shape = (name, cloned_matrix @ last_instance_matrix)
-                                        _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=shape))
+                                        # instance без имени означает отмену использования shape для следующего call.
+                                        # Иначе будет попытка привязать один shape к следующему call.
+                                        if last_instance_shape_name and last_instance_shape_name.lower() != "none":
+                                            shape = LSystemShape(type=LSystemShapeType.TAIL, name=last_instance_shape_name, matrix=cloned_matrix @ last_instance_matrix)
+                                            _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=shape))
                                         _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=None))
                                 
                                 entry = LSystemLevel(rule=sub_rule, depth=sub_rule_depth, global_depth=level.global_depth+1, matrix=cloned_matrix, matrix_prev=matrix_prev.copy())
                                 _local_stack.append(LSystemFrame(type=LSystemFrameType.CALL, obj=entry))
 
                             elif statement.tag == "instance":
-                                name = statement.get("shape")
-                                if name.lower() == "none" or name is None:
+                                last_instance_shape_name = statement.get("shape")
+                                if last_instance_shape_name is None or last_instance_shape_name.lower()=="none":
+                                    last_instance_shape_name = None
                                     _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=None))
                                 else:
-                                    shape = (name, matrix.copy())
+                                    #shape = (name, matrix.copy())
+                                    shape = LSystemShape(type=LSystemShapeType.BODY, name=last_instance_shape_name, matrix=matrix.copy() )
                                     last_instance_matrix = xform.copy()
                                     _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=shape))
 
@@ -457,189 +477,6 @@ class LSystem:
             f = list(range(vID, vID-nring, -1))
             faces_out.append(f)
         return verts_out, edges_out, faces_out
-
-class LSystemYeld:
-
-    """
-    Takes an XML tree.
-    """
-    def __init__(self, xml_tree, maxObjects):
-        self._tree = xml_tree
-        self.global_max_depth = int(self._tree.get("max_depth", 1000))
-        self._progressCount = 0
-        self.global_max_objects = maxObjects
-
-    """
-    Returns a list of "shapes".
-    Each shape is a 2-tuple: (shape name, transform matrix).
-    """
-    def evaluate(self, seed=0):
-        random.seed(seed)
-        self._object_count = 0
-
-        rule = _pickRule(self._tree, "entry")
-        entry = LSystemLevel(
-            rule=rule,
-            depth=0,
-            global_depth=0,
-            matrix=mu.Matrix.Identity(4),
-            matrix_prev=mu.Matrix.Identity(4),
-        )
-        res = list(self._evaluate_level(entry))
-        return res
-
-
-    def _evaluate(self, entry):
-        return list(self._evaluate_level(entry))
-
-
-    def _evaluate_level(self, level):
-        if self._object_count >= self.global_max_objects:
-            print('max objects reached')
-            return
-
-        if level.global_depth > self.global_max_depth:
-            print(f'max depth reached: {self.global_max_depth}')
-            yield None
-            return
-
-        rule = level.rule
-        rule_name = rule.get('name')
-        local_max_depth = int(rule.get("max_depth", self.global_max_depth))
-
-        if local_max_depth <= 0:
-            return
-
-        if level.depth > local_max_depth:
-            successor = rule.get("successor")
-            if successor:
-                sub_rule = _pickRule(self._tree, successor)
-                sub_level = LSystemLevel(
-                    rule=sub_rule,
-                    depth=0,
-                    global_depth=level.global_depth + 1,
-                    matrix=level.matrix.copy(),
-                    matrix_prev=level.matrix.copy(),
-                )
-                yield from self._evaluate_level(sub_level)
-
-            yield None
-            return
-
-        base_matrix = level.matrix.copy()
-
-        for statement in rule:
-            tstr = statement.get("transforms", "")
-            if not tstr:
-                tstr = ''
-                for t in ['tx', 'ty', 'tz', 'rx', 'ry', 'rz', 'sa', 'sx', 'sy', 'sz']:
-                    tvalue = statement.get(t)
-                    if tvalue:
-                        n = eval(tvalue)
-                        tstr += "{} {:f} ".format(t, n)
-                    pass
-                pass
-
-            xform = _parseXform(tstr)
-            count = int(statement.get("count", 1))
-            count_xform = mu.Matrix.Identity(4)
-            matrix_prev = base_matrix.copy()
-
-            for _ in range(count):
-                count_xform @= xform
-                matrix = base_matrix @ count_xform
-
-                if statement.tag == "call":
-                    sub_rule = _pickRule(self._tree, statement.get("rule"))
-                    sub_rule_name = sub_rule.get('name')
-
-                    if sub_rule_name == rule_name:
-                        sub_depth = level.depth + 1
-                    elif "max_depth" in sub_rule.attrib:
-                        sub_depth = 0
-                    else:
-                        sub_depth = level.depth + 1
-
-                    sub_level = LSystemLevel(
-                        rule=sub_rule,
-                        depth=sub_depth,
-                        global_depth=level.global_depth + 1,
-                        matrix=matrix.copy(),
-                        matrix_prev=matrix_prev.copy(),
-                    )
-                    yield from self._evaluate_level(sub_level)
-
-                elif statement.tag == "instance":
-                    name = statement.get("shape")
-                    if name == "None" or name is None:
-                        yield None
-                    else:
-                        yield (name, matrix.copy())
-                        self._object_count += 1
-                    pass
-                else:
-                    raise ValueError("bad xml", statement.tag)
-
-                if self._object_count >= self.global_max_objects:
-                    print('max objects reached')
-                    return
-
-                matrix_prev = matrix.copy()
-
-            if count > 1:
-                yield None
-            pass # for statement in level.rule
-        return
-
-    def make_tube(self, mats, verts):
-        """
-        takes a list of vertices and a list of matrices
-        the vertices are to be joined in a ring, copied and transformed
-        by the 1st matrix and this ring joined to the previous ring.
-
-        The ring doesn't have to be planar.
-        outputs lists of vertices, edges and faces
-        """
-
-        edges_out = []
-        verts_out = []
-        faces_out = []
-        vID = 0
-
-        if len(mats) > 1:
-            nring = len(verts[0])
-            # end face
-            faces_out.append(list(range(nring)))
-            for i, m in enumerate(mats):
-                for j, v in enumerate(verts[0]):
-                    vout = mu.Matrix(m) @ mu.Vector(v)
-                    verts_out.append(vout.to_tuple())
-                    vID = j + i*nring
-                    # rings
-                    if j != 0:
-                        edges_out.append([vID, vID - 1])
-                    else:
-                        edges_out.append([vID, vID + nring-1])
-                    # lines
-                    if i != 0:
-                        edges_out.append([vID, vID - nring])
-                        # faces
-                        if j != 0:
-                            faces_out.append([vID,
-                                              vID - nring,
-                                              vID - nring - 1,
-                                              vID-1])
-                        else:
-                            faces_out.append([vID,
-                                              vID - nring,
-                                              vID-1,
-                                              vID + nring-1])
-            # end face
-            # reversing list fixes face normal direction keeps mesh manifold
-            f = list(range(vID, vID-nring, -1))
-            faces_out.append(f)
-        return verts_out, edges_out, faces_out
-
 
 def _pickRule(tree, name):
 
@@ -762,6 +599,20 @@ def gather_items(context):
 def item_cb(self, context):
     return loop.get('results') or [("A","A", '', 0),]
 
+class SvGenerativeArtNodeAlertOperator(bpy.types.Operator):
+    '''Show alert sign'''
+    bl_idname = "node.sv_generative_art_node_alert_operator"
+    bl_label = "Generative Art Node Alert"
+    description_text: bpy.props.StringProperty(default='')
+
+    @classmethod
+    def description(cls, context, property):
+        s = property.description_text
+        return s
+
+    def invoke(self, context, event):
+        return {'FINISHED'}
+
 """
 ---------------------------------------------------
     SvGenerativeArtNode
@@ -777,6 +628,7 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
     
     def init_sockets(self, value):
         if value and (value in bpy.data.texts or self.xml_str):
+            xml_str = "undefined"
             try:
                 internal_file = bpy.data.texts[value].as_string() if value in bpy.data.texts else self.xml_str
                 xml_str = internal_file
@@ -806,11 +658,13 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
 
                 # output sockets to match shape attribute values
                 shape_names = set([x.attrib.get('shape') for x in xml_tree.iter('instance')]) | set([elem for elem in set([x.attrib.get('shape') for x in xml_tree.iter('call')]) if elem])
-                if None in shape_names:
-                    self.is_xml_valid = True
-                    self.is_xml_error_text = "Some 'instance' tags in xml file are missing 'shape' attribute. Please fix xml file and try again."
-                    raise Exception(self.is_xml_error_text)
-                # new output sockets
+                # TODO this operation execute in process. It would be better to do it once when loading XML and store the result, rather than repeating it on every process.
+                shape_names.discard(None)
+                shape_names.discard("none")
+                # if None in shape_names:
+                #     self.is_xml_valid = True
+                #     self.is_xml_error_text = "Some 'instance' tags in xml file are missing 'shape' attribute. Please fix xml file and try again."
+                #     raise Exception(self.is_xml_error_text)
                 for s_name in sorted(shape_names):
                     if s_name not in self.outputs:
                         self.outputs.new('SvMatrixSocket', s_name)
@@ -824,6 +678,15 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
 
                 self.xml_str = xml_str
                 self.is_xml_error_text = ''
+            except ParseError as _ex:
+                self.xml_str = ""
+                self.is_xml_valid = False
+                try:
+                    text = "\n".join([str(s[0:30]).replace("\n", "") for s in xml_str.split("\n") if s][0:20][0:3])
+                except:
+                    text = ""
+                self.is_xml_error_text = "Exception in xml:\n\n"+text+"\n\n"+str(_ex)
+                raise Exception(_ex)
             except Exception as _ex:
                 self.xml_str = ""
                 self.is_xml_valid = False
@@ -908,7 +771,8 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
         if self.is_xml_valid==False:
             col = row.column(align=True)
             col.alert = True
-            col.label(text='', icon='ERROR')
+            #col.label(text='', icon='ERROR')
+            col.operator(SvGenerativeArtNodeAlertOperator.bl_idname, text='', icon='ERROR').description_text = self.is_xml_error_text
         row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
         self.wrapper_tracked_ui_draw_op(row, SvGenerativeArtSearch.bl_idname, text="", icon="VIEWZOOM")
         menu = elem.menu(SV_MT_GenerativeArtMenu.bl_idname)
@@ -999,13 +863,20 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
                     shapes.append(None)
                 # dictionary for matrix lists
                 shape_names = set([x.attrib.get('shape') for x in xml_tree.iter('instance')]) | set([elem for elem in set([x.attrib.get('shape') for x in xml_tree.iter('call')]) if elem])
+                # TODO this operation was done during XML analysis. It would be better to do it once when loading XML and store the result, rather than repeating it on every process.
+                shape_names.discard(None)
+                shape_names.discard("none")
+
                 mat_dict = {s: [] for s in shape_names}
+                mat_out  = {s: [] for s in shape_names}
                 if self.inputs['Vertices'].is_linked:
                     verts = Vector_generate(self.inputs['Vertices'].sv_get())
                 for i, shape in enumerate(shapes):
                     if shape:
-                        mat_sublist.append(shape[1])
-                        mat_dict[shape[0]].append(shape[1])
+                        mat_sublist.append(shape.matrix)
+                        mat_dict[shape.name].append(shape.matrix)
+                        if shape.type!=LSystemShapeType.TAIL:
+                            mat_out[shape.name].append(shape.matrix)
                     else:
                         if len(mat_sublist) > 0:
                             if self.inputs['Vertices'].is_linked:
@@ -1030,7 +901,7 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
                 self.outputs['Edges'].sv_set(edges_out)
                 self.outputs['Faces'].sv_set(faces_out)
                 for shape in shape_names:  # isn't it plain wrong? i mean why not just shape_names[-1] if need to get last one?
-                    self.outputs[shape].sv_set(mat_dict[shape])
+                    self.outputs[shape].sv_set(mat_out[shape])
             else:
                 pass
         else:
@@ -1039,6 +910,7 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
         return
 
 classes = [
+    SvGenerativeArtNodeAlertOperator,
     SV_MT_GenerativeArtMenu,
     SvGenerativeArtTextImport,
     SvGenerativeArtSearch,
