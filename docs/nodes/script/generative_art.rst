@@ -3,8 +3,8 @@ Generative Art
 
 *destination after Beta: Generators*
 
-	.. image:: https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9
-	  :target: https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9
+    .. image:: https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9
+      :target: https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9
 
 Functionality
 -------------
@@ -41,8 +41,8 @@ Additionally
 
 If you import .json-file and the xml file specified in the node is not found in bpy.data.texts, the node will create a new text block with the name specified in the file_name parameter and fill it with the content of xml_str parameter (inner node string). This allows to import Sverchok Schema from .json-file without having to separately import .xml files.
 
-	.. image:: https://github.com/user-attachments/assets/5c61eaca-a1c3-48d0-bd03-6efd388b8663
-	  :target: https://github.com/user-attachments/assets/5c61eaca-a1c3-48d0-bd03-6efd388b8663
+    .. image:: https://github.com/user-attachments/assets/5c61eaca-a1c3-48d0-bd03-6efd388b8663
+      :target: https://github.com/user-attachments/assets/5c61eaca-a1c3-48d0-bd03-6efd388b8663
 
 Examples of usage
 ------------------
@@ -63,20 +63,20 @@ A simple example of an xml design file:
 6 Spirals
 ::
 
-	<rules max_depth="150">
-		<rule name="entry">
-		    <call count="3" transforms="rz 120" rule="R1"/>
-		    <call count="3" transforms="rz 120" rule="R2"/>
-		</rule>
-		<rule name="R1">
-		    <call transforms="tx 2.6 rx 3.14 rz 12 ry 6 sa 0.97" rule="R1"/>
-		    <instance  transforms="sa 2.6" shape="box"/>
-		</rule>
-		<rule name="R2">
-		    <call transforms="tx -2.6 rz 12 ry 6 sa 0.97" rule="R2"/>
-		    <instance transforms="sx 2.6" shape="box"/>
-		</rule>
-	</rules>
+    <rules max_depth="150">
+        <rule name="entry">
+            <call count="3" transforms="rz 120" rule="R1"/>
+            <call count="3" transforms="rz 120" rule="R2"/>
+        </rule>
+        <rule name="R1">
+            <call transforms="tx 2.6 rx 3.14 rz 12 ry 6 sa 0.97" rule="R1"/>
+            <instance  transforms="sa 2.6" shape="box"/>
+        </rule>
+        <rule name="R2">
+            <call transforms="tx -2.6 rz 12 ry 6 sa 0.97" rule="R2"/>
+            <instance transforms="sx 2.6" shape="box"/>
+        </rule>
+    </rules>
 
 This specifies the following design with 6 spirals.  
 
@@ -114,27 +114,27 @@ Tree
 
 ::
 
-	<rules max_depth="100">
-		<rule name="entry">
-			<call  rule="spiral"/>
-		</rule>
-		<rule name="spiral" weight="100">
-			<call transforms="tz 0.1 rx 1 sa 0.995" rule="spiral"/>
-			<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
-		</rule>
-		<rule name="spiral" weight="100">
-			<call transforms="tz 0.1 rx 1 ry 4 sa 0.995" rule="spiral"/>
-			<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
-		</rule>
-		<rule name="spiral" weight="100">
-			<call transforms="tz 0.1 rx 1 rz -4 sa 0.995" rule="spiral"/>
-			<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
-		</rule>
-		<rule name="spiral" weight="20">
-			<call transforms="rx 15" rule="spiral"/>
-			<call transforms="rz 180" rule="spiral"/>
-		</rule>
-	</rules>
+    <rules max_depth="100">
+        <rule name="entry">
+            <call  rule="spiral"/>
+        </rule>
+        <rule name="spiral" weight="100">
+            <call transforms="tz 0.1 rx 1 sa 0.995" rule="spiral"/>
+            <instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
+        </rule>
+        <rule name="spiral" weight="100">
+            <call transforms="tz 0.1 rx 1 ry 4 sa 0.995" rule="spiral"/>
+            <instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
+        </rule>
+        <rule name="spiral" weight="100">
+            <call transforms="tz 0.1 rx 1 rz -4 sa 0.995" rule="spiral"/>
+            <instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
+        </rule>
+        <rule name="spiral" weight="20">
+            <call transforms="rx 15" rule="spiral"/>
+            <call transforms="rz 180" rule="spiral"/>
+        </rule>
+    </rules>
 
 .. image:: https://github.com/user-attachments/assets/cd13f7e1-ae2e-498f-957b-28785ce42fcd
   :target: https://github.com/user-attachments/assets/cd13f7e1-ae2e-498f-957b-28785ce42fcd
@@ -154,24 +154,24 @@ Normally when the ``max_depth`` for a rule is reached that 'arm' of the structur
 Nouveau variation
 ::
 
-	<rules max_depth="1000">
-		<rule name="entry">
-			<call count="2" transforms="rz 180" rule="r"/>
-		</rule>
-		<rule name="r"><call rule="y180"/></rule>
-		<rule name="r"><call rule="z180"/></rule>
-		<rule name="y180" max_depth="90" successor="r">
-			<call rule="dbox"/>
-			<call transforms="ry -2 tx 0.1 sa 0.996" rule="y180"/>
-		</rule>
-		<rule name="z180" max_depth="90" successor="r">
-			<call rule="dbox"/>
-			<call transforms="rz 2 tx 0.1 sa 0.996" rule="z180"/>
-		</rule>
-		<rule name="dbox">
-			<instance transforms="s 0.55 2.0 1.25 ry 90 rz 45" shape="box"/>
-		</rule>
-	</rules>
+    <rules max_depth="1000">
+        <rule name="entry">
+            <call count="2" transforms="rz 180" rule="r"/>
+        </rule>
+        <rule name="r"><call rule="y180"/></rule>
+        <rule name="r"><call rule="z180"/></rule>
+        <rule name="y180" max_depth="90" successor="r">
+            <call rule="dbox"/>
+            <call transforms="ry -2 tx 0.1 sa 0.996" rule="y180"/>
+        </rule>
+        <rule name="z180" max_depth="90" successor="r">
+            <call rule="dbox"/>
+            <call transforms="rz 2 tx 0.1 sa 0.996" rule="z180"/>
+        </rule>
+        <rule name="dbox">
+            <instance transforms="s 0.55 2.0 1.25 ry 90 rz 45" shape="box"/>
+        </rule>
+    </rules>
 
 .. image:: https://github.com/user-attachments/assets/8fcc57b2-118e-42f6-8919-f9c716380ab1
   :target: https://github.com/user-attachments/assets/8fcc57b2-118e-42f6-8919-f9c716380ab1
@@ -201,23 +201,23 @@ Fern 1
 ~~~~~~
 ::
 
-	<rules max_depth="2000">
-		<rule name="entry">
-			<call  rule="curl" />
-		</rule>
+    <rules max_depth="1000">
+        <rule name="entry">
+            <call  rule="curl" />
+        </rule>
 
-		<rule name="curl" max_depth="80">
-			<call     transforms="rx 12.5 tz 1.3 s 0.98 0.95 1.0" rule="curl"/>
-			<instance transforms="tx 0.1 ry 40 tz -0.5"           shape="box"/>
-			<call     transforms="tx 0.1 ty -0.45 ry 40 sa 0.25"  rule="curlsmall" />
-		</rule>
+        <rule name="curl" max_depth="80">
+            <instance transforms="ry 40 tx -0.125"           shape="box"/>
+            <call     transforms="tx 0.1 ty -0.2 tz 0.3 ry 40 sa 0.25"  rule="curlsmall" />
+            <call     transforms="rx 12.5 tz 1.3 s 0.98 0.95 1.0" rule="curl"/>
+        </rule>
 
-		<rule name="curlsmall" max_depth="80">
-			<call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
-			<instance shape="box"/>
-		</rule>
+        <rule name="curlsmall" max_depth="80">
+            <instance shape="box"/>
+            <call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
+        </rule>
 
-	</rules>
+    </rules>
 
 .. image:: https://github.com/user-attachments/assets/e481a8cf-d3e6-4d0e-8ca1-13a2d3f80b09
   :target: https://github.com/user-attachments/assets/e481a8cf-d3e6-4d0e-8ca1-13a2d3f80b09
@@ -227,27 +227,27 @@ Fern 2
 
 ::
 
-	<rules max_depth="2000">
-		<rule name="entry">
-			<call  rule="curl2" />
-			<call  rule="curl1" />
-		</rule>
+    <rules max_depth="2000">
+        <rule name="entry">
+            <call  rule="curl1" />
+            <call  rule="curl2" />
+        </rule>
 
-		<rule name="curl1" max_depth="80">
-			<call transforms="rx 12.5 tz 0.9 s 0.98 0.95 1.0" rule="curl1"/>
-			<instance shape="box"/>
-		</rule>
+        <rule name="curl1" max_depth="80">
+            <instance shape="box"/>
+            <call transforms="rx 12.5 tz 0.9 s 0.98 0.95 1.0" rule="curl1"/>
+        </rule>
 
-		<rule name="curl2" max_depth="80">
-			<call transforms="rx 12.5 tz 0.9 s 0.95 0.95 1.0" rule="curl2"/>
-			<call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />
-		</rule>
+        <rule name="curl2" max_depth="80">
+            <call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />
+            <call transforms="rx 12.5 tz 0.9 s 0.95 0.95 1.0" rule="curl2"/>
+        </rule>
 
-		<rule name="curlsmall" max_depth="80">
-			<call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
-			<instance shape="box"/>
-		</rule>
-	</rules>
+        <rule name="curlsmall" max_depth="80">
+            <instance shape="box"/>
+            <call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
+        </rule>
+    </rules>
 
 .. image:: https://github.com/user-attachments/assets/6a7c2212-53f6-44ed-9dad-c1e0a7de925d
   :target: https://github.com/user-attachments/assets/6a7c2212-53f6-44ed-9dad-c1e0a7de925d
@@ -283,28 +283,28 @@ Fern 3
 
 ::
 
-	<rules max_depth="2000">
-		<constants zd="1.5" sxy="0.9" />
-		<rule name="entry">
-		<call  rule="curl2" />
-		<call  rule="curl1" />
-		</rule>
+    <rules max_depth="2000">
+        <constants zd="1.5" sxy="0.9" />
+        <rule name="entry">
+        <call  rule="curl1" />
+        <call  rule="curl2" />
+        </rule>
 
-		<rule name="curl1" max_depth="60">
-			<call transforms="rx {curl_angle} tz {zd} s {sxy} {sxy} 1.0" rule="curl1"/>
-			<instance shape="box"/>
-		</rule>
+        <rule name="curl1" max_depth="60">
+            <instance shape="box"/>
+            <call transforms="rx {curl_angle} tz {zd} s {sxy} {sxy} 1.0" rule="curl1"/>
+        </rule>
 
-		<rule name="curl2" max_depth="40">
-			<call transforms="rx {curl_angle} tz {zd} s {sxy} {sxy} 1.0" rule="curl2"/>
-			<call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />
-		</rule>
+        <rule name="curl2" max_depth="40">
+            <call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />
+            <call transforms="rx {curl_angle} tz {zd} s {sxy} {sxy} 1.0" rule="curl2"/>
+        </rule>
 
-		<rule name="curlsmall" max_depth="40">
-			<call transforms="rx 2*{curl_angle} tz 2.7 s {sxy} {sxy} 1.0" rule="curlsmall"/>
-			<instance shape="box"/>
-		</rule>
-	</rules>
+        <rule name="curlsmall" max_depth="40">
+            <instance shape="box"/>
+            <call transforms="rx 2*{curl_angle} tz 2.7 s {sxy} {sxy} 1.0" rule="curlsmall"/>
+        </rule>
+    </rules>
 
 .. image:: https://github.com/user-attachments/assets/bcd0da72-d619-444d-b203-c3a620a734e9
   :target: https://github.com/user-attachments/assets/bcd0da72-d619-444d-b203-c3a620a734e9

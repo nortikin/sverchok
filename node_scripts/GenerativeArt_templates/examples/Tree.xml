@@ -3,16 +3,16 @@
         <call  rule="spiral"/>
     </rule>
     <rule name="spiral" weight="100">
+        <instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
         <call transforms="tz 0.1 rx 1 sa 0.995" rule="spiral"/>
-        <instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
     </rule>
     <rule name="spiral" weight="100">
+        <instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
         <call transforms="tz 0.1 rx 1 ry 4 sa 0.995" rule="spiral"/>
-        <instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
     </rule>
     <rule name="spiral" weight="100">
-        <call transforms="tz 0.1 rx 1 rz -4 sa 0.995" rule="spiral"/>
         <instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
+        <call transforms="tz 0.1 rx 1 rz -4 sa 0.995" rule="spiral"/>
     </rule>
     <rule name="spiral" weight="20">
         <call transforms="rx 15" rule="spiral"/>

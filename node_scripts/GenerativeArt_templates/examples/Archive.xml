@@ -1,6 +1,6 @@
 <rules max_depth="400">
     <rule name="entry">
-        <call count="74" transforms="rz 5" rule="r"/>
+        <call count="9" transforms="rz 30" rule="r"/>
     </rule>
     <rule name="r"><call rule="forward"/></rule>
     <rule name="r"><call rule="turn"/></rule>

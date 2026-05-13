@@ -1,21 +1,21 @@
 <rules max_depth="2000">
     <rule name="entry">
-        <call  rule="curl2" />
         <call  rule="curl1" />
+        <call  rule="curl2" />
     </rule>
 
     <rule name="curl1" max_depth="80">
-        <call transforms="rx 12.5 tz 0.9 s 0.98 0.95 1.0" rule="curl1"/>
         <instance shape="box"/>
+        <call transforms="rx 12.5 tz 0.9 s 0.98 0.95 1.0" rule="curl1"/>
     </rule>
 
     <rule name="curl2" max_depth="80">
-        <call transforms="rx 12.5 tz 0.9 s 0.95 0.95 1.0" rule="curl2"/>
         <call transforms="tx 0.1 ty -0.45 ry 40 sa 0.25" rule="curlsmall" />
+        <call transforms="rx 12.5 tz 0.9 s 0.95 0.95 1.0" rule="curl2"/>
     </rule>
 
     <rule name="curlsmall" max_depth="80">
-        <call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
         <instance shape="box"/>
+        <call transforms="rx 25 tz 1.2 s 0.9 0.9 1.0" rule="curlsmall"/>
     </rule>
 </rules>

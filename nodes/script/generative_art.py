@@ -21,6 +21,7 @@
 
 import os
 import sys
+from enum import Enum
 
 import math
 import string
@@ -216,6 +217,15 @@ class LSystemLevel:
     matrix: mu.Matrix
     matrix_prev: mu.Matrix
 
+class LSystemFrameType(Enum):
+    CALL = 'call'
+    INSTANCE = 'instance'
+
+@dataclass
+class LSystemFrame:
+    type: LSystemFrameType # 'call' or 'instance'
+    obj : object           # params of calls or instances
+
 """
 ---------------------------------------------------
     LSystem
@@ -244,132 +254,342 @@ class LSystem:
         return shapes
 
     def _evaluate(self, entry):
-        stack = [entry]
+        stack = [LSystemFrame(type=LSystemFrameType.CALL, obj=entry)]
         shapes = []
         nobjects = 0
         while len(stack) > 0:
-            if nobjects > self.global_max_objects:
-                print('max objects reached')
+            if nobjects >= self.global_max_objects:
+                print( f'max objects reached {nobjects}>={self.global_max_objects}')
                 break
 
-            level = stack.pop()
-            
-            rule_name = level.rule.get('name')
-            local_max_depth = self.global_max_depth-len(stack)
-            if "max_depth" in level.rule.attrib:
-                local_max_depth = int(level.rule.get("max_depth"))
-                if local_max_depth<=0:
+            stack_frame = stack.pop()
+
+            if stack_frame.type == LSystemFrameType.INSTANCE:
+                shape = stack_frame.obj
+                # do not add None shapes to list if previous shape is also None, to avoid long lists of Nones.
+                if shapes and shapes[-1] is None and shape is None:
                     continue
-                pass
-
-            if len(stack) > self.global_max_depth:
-                shapes.append(None)
+                shapes.append(shape)
+                if shape is not None:
+                    nobjects += 1
                 continue
+            elif stack_frame.type == LSystemFrameType.CALL:
 
-            # if len(shapes) > self.global_max_depth:
-            #     shapes.append(None)
-            #     continue
+                level = stack_frame.obj
+                
+                rule_name = level.rule.get('name')
+                # some magic to calculate local max depth based on number of calls in stack.
+                # The depth of the stack is not equal to the number of elements in the stack, as there are also
+                # levels in the stack that are not taken into account because they do not increase the depth of the recursion.
+                set_of_call = set([frame.obj.global_depth for frame in stack if frame.type==LSystemFrameType.CALL])
+                # The remaining set can specify depths that have already been reached at the current level of recursion,
+                # but they should not be included in calculating the depth for the current level because they do not
+                # increase the recursion depth. Therefore, we remove them from the set. Example:
+                #     <rule name="spiral" weight="20">
+                #        <call transforms="rx 15" rule="spiral"/>  # level 93 /1
+                #        <call transforms="rz 180" rule="spiral"/> # level 93 /2 (!!! levels are the same)
+                #    </rule>
+                # and stack has frames: {34, 71, 73, 45, 23, 93}, then /1 and /2 are at the same level of recursion,
+                # so we remove one of them from the set and calculate depth based on the remaining unique levels in the stack.
+                set_of_call.discard(level.global_depth)
+                stack_depth = len(set_of_call)
+                local_max_depth = self.global_max_depth-stack_depth
+                if "max_depth" in level.rule.attrib:
+                    local_max_depth = int(level.rule.get("max_depth"))
+                    if local_max_depth<=0:
+                        continue
+                    pass
 
-            if level.global_depth > self.global_max_depth:
-                if shapes and shapes[-1] is not None:
+                if stack_depth > self.global_max_depth:
                     shapes.append(None)
-                print(f'max depth reached: {self.global_max_depth}')
-                continue
+                    continue
 
-            if level.depth > local_max_depth:
-                if "successor" in level.rule.attrib:
-                    successor = level.rule.get("successor")
-                    sub_rule = _pickRule(self._tree, successor)
-                    sub_rule_name   = sub_rule.get('name')
-                    sub_rule_depth = 0
-                    if (sub_rule_name==rule_name):
-                        sub_rule_depth = level.depth+1
-                    else:
-                        if ("max_depth" in sub_rule.attrib):
-                            sub_rule_depth = 0
-                        else:
-                            sub_rule_depth = level.depth+1
-                        pass
-                    sub_rule_depth = level.depth+1
-                    stack.append(LSystemLevel(rule=sub_rule, depth=sub_rule_depth, global_depth=level.global_depth+1, matrix=level.matrix_prev.copy(), matrix_prev=level.matrix_prev.copy()))
-                shapes.append(None)
-                continue
+                # if len(shapes) > self.global_max_depth:
+                #     shapes.append(None)
+                #     continue
 
-            base_matrix = level.matrix.copy()
-            #_local_stack = []
-            for statement in level.rule:
-                tstr = statement.get("transforms", "")
-                if not(tstr):
-                    tstr = ''
-                    for t in ['tx', 'ty', 'tz', 'rx', 'ry', 'rz',
-                              'sa', 'sx', 'sy', 'sz']:
-                        tvalue = statement.get(t)
-                        if tvalue:
-                            n = eval(tvalue)
-                            tstr += "{} {:f} ".format(t, n)
-                        pass
-                    pass
-                xform = _parseXform(tstr)
-                count = int(statement.get("count", 1))
-                count_xform = mu.Matrix.Identity(4)
-                if count >= 1:
-                    matrix_prev = base_matrix
-                    for n in range(count):
-                        count_xform @= xform
-                        matrix = base_matrix @ count_xform
-
-                        if statement.tag == "call":
-                            sub_rule = _pickRule(self._tree, statement.get("rule"))
-                            cloned_matrix = matrix.copy()
-                            sub_rule_name   = sub_rule.get('name')
-                            sub_rule_depth = 0
-                            if (sub_rule_name==rule_name):
-                                sub_rule_depth = level.depth+1
-                            elif (sub_rule_name!=rule_name):
-                                if ("max_depth" in sub_rule.attrib):
-                                    sub_rule_depth = 0
-                                else:
-                                    sub_rule_depth = level.depth+1
-                                pass
-                            
-                            # name = statement.get("shape")
-                            # if name == "None" or name is None:
-                            #     #shapes.append(None)
-                            #     pass
-                            # else:
-                            #     #shape = (name, matrix @ xform.inverted())
-                            #     shape = (name, cloned_matrix )
-                            #     shapes.append(shape)
-                            #     nobjects += 1
-
-                            entry = LSystemLevel(rule=sub_rule, depth=sub_rule_depth, global_depth=level.global_depth+1, matrix=cloned_matrix, matrix_prev=matrix_prev.copy())
-                            stack.append(entry)
-                            #_local_stack.append(entry)
-
-                        elif statement.tag == "instance":
-                            name = statement.get("shape")
-                            if name == "None" or name is None:
-                                shapes.append(None)
-                            else:
-                                shape = (name, matrix.copy())
-                                shapes.append(shape)
-                                nobjects += 1
-
-                        else:
-                            raise ValueError("bad xml", statement.tag)
-                        
-                        matrix_prev = base_matrix @ count_xform
-                        pass
-
-                    if count > 1:
+                if level.global_depth > self.global_max_depth:
+                    if shapes and shapes[-1] is not None:
                         shapes.append(None)
-                else:
-                    pass
-                pass # for statement in level.rule
-            #stack.extend(_local_stack[::-1])
+                    print(f'max recursion depth reached: {self.global_max_depth}')
+                    continue
+
+                if level.depth > local_max_depth:
+                    if "successor" in level.rule.attrib:
+                        successor = level.rule.get("successor")
+                        sub_rule = _pickRule(self._tree, successor)
+                        sub_rule_name   = sub_rule.get('name')
+                        sub_rule_depth = 0
+                        if (sub_rule_name==rule_name):
+                            sub_rule_depth = level.depth+1
+                        else:
+                            if ("max_depth" in sub_rule.attrib):
+                                sub_rule_depth = 0
+                            else:
+                                sub_rule_depth = level.depth+1
+                            pass
+                        sub_rule_depth = level.depth+1
+                        stack.append( LSystemFrame(type=LSystemFrameType.CALL, obj=LSystemLevel(rule=sub_rule, depth=sub_rule_depth, global_depth=level.global_depth+1, matrix=level.matrix_prev.copy(), matrix_prev=level.matrix_prev.copy())))
+                    stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=None))
+                    continue
+
+                base_matrix = level.matrix.copy()
+                _local_stack = []
+                last_instance_matrix = None
+                for statement in level.rule:
+                    tstr = statement.get("transforms", "")
+                    if not(tstr):
+                        tstr = ''
+                        for t in ['tx', 'ty', 'tz', 'rx', 'ry', 'rz',
+                                'sa', 'sx', 'sy', 'sz']:
+                            tvalue = statement.get(t)
+                            if tvalue:
+                                n = eval(tvalue)
+                                tstr += "{} {:f} ".format(t, n)
+                            pass
+                        pass
+                    xform = _parseXform(tstr)
+                    count = int(statement.get("count", 1))
+                    count_xform = mu.Matrix.Identity(4)
+                    if count >= 1:
+                        matrix_prev = base_matrix
+                        for n in range(count):
+                            count_xform @= xform
+                            matrix = base_matrix @ count_xform
+
+                            if statement.tag == "call":
+                                sub_rule = _pickRule(self._tree, statement.get("rule"))
+                                cloned_matrix = matrix.copy()
+                                sub_rule_name   = sub_rule.get('name')
+                                sub_rule_depth = 0
+                                if (sub_rule_name==rule_name):
+                                    sub_rule_depth = level.depth+1
+                                elif (sub_rule_name!=rule_name):
+                                    if ("max_depth" in sub_rule.attrib):
+                                        sub_rule_depth = 0
+                                    else:
+                                        sub_rule_depth = level.depth+1
+                                    pass
+
+                                # If a branch occurs in the next step, then stop the current branch from developing. The branches themselves must remain stems and not be divided.
+                                # Branching is when there are multiple calls to other rules within a rule (>1 call).
+                                if len([s for s in sub_rule if s.tag=='call'])>1:
+                                    if last_instance_matrix:
+                                        shape = (name, cloned_matrix @ last_instance_matrix)
+                                        _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=shape))
+                                        _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=None))
+                                
+                                entry = LSystemLevel(rule=sub_rule, depth=sub_rule_depth, global_depth=level.global_depth+1, matrix=cloned_matrix, matrix_prev=matrix_prev.copy())
+                                _local_stack.append(LSystemFrame(type=LSystemFrameType.CALL, obj=entry))
+
+                            elif statement.tag == "instance":
+                                name = statement.get("shape")
+                                if name.lower() == "none" or name is None:
+                                    _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=None))
+                                else:
+                                    shape = (name, matrix.copy())
+                                    last_instance_matrix = xform.copy()
+                                    _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=shape))
+
+                            else:
+                                raise ValueError("bad xml", statement.tag)
+                            
+                            matrix_prev = base_matrix @ count_xform
+                            pass
+
+                        if count > 1:
+                            _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=None))
+                    else:
+                        pass
+                    pass # for statement in level.rule
+                stack.extend(_local_stack[::-1])
+            else:
+                raise ValueError("bad stack frame type", stack_frame.type)
 
         return shapes
         # end of _evaluate
+
+    def make_tube(self, mats, verts):
+        """
+        takes a list of vertices and a list of matrices
+        the vertices are to be joined in a ring, copied and transformed
+        by the 1st matrix and this ring joined to the previous ring.
+
+        The ring doesn't have to be planar.
+        outputs lists of vertices, edges and faces
+        """
+
+        edges_out = []
+        verts_out = []
+        faces_out = []
+        vID = 0
+
+        if len(mats) >= 1:
+            nring = len(verts[0])
+            # end face
+            faces_out.append(list(range(nring)))
+            for i, m in enumerate(mats):
+                for j, v in enumerate(verts[0]):
+                    vout = mu.Matrix(m) @ mu.Vector(v)
+                    verts_out.append(vout.to_tuple())
+                    vID = j + i*nring
+                    # rings
+                    if j != 0:
+                        edges_out.append([vID, vID - 1])
+                    else:
+                        edges_out.append([vID, vID + nring-1])
+                    # lines
+                    if i != 0:
+                        edges_out.append([vID, vID - nring])
+                        # faces
+                        if j != 0:
+                            faces_out.append([vID,
+                                              vID - nring,
+                                              vID - nring - 1,
+                                              vID-1])
+                        else:
+                            faces_out.append([vID,
+                                              vID - nring,
+                                              vID-1,
+                                              vID + nring-1])
+            # end face
+            # reversing list fixes face normal direction keeps mesh manifold
+            f = list(range(vID, vID-nring, -1))
+            faces_out.append(f)
+        return verts_out, edges_out, faces_out
+
+class LSystemYeld:
+
+    """
+    Takes an XML tree.
+    """
+    def __init__(self, xml_tree, maxObjects):
+        self._tree = xml_tree
+        self.global_max_depth = int(self._tree.get("max_depth", 1000))
+        self._progressCount = 0
+        self.global_max_objects = maxObjects
+
+    """
+    Returns a list of "shapes".
+    Each shape is a 2-tuple: (shape name, transform matrix).
+    """
+    def evaluate(self, seed=0):
+        random.seed(seed)
+        self._object_count = 0
+
+        rule = _pickRule(self._tree, "entry")
+        entry = LSystemLevel(
+            rule=rule,
+            depth=0,
+            global_depth=0,
+            matrix=mu.Matrix.Identity(4),
+            matrix_prev=mu.Matrix.Identity(4),
+        )
+        res = list(self._evaluate_level(entry))
+        return res
+
+
+    def _evaluate(self, entry):
+        return list(self._evaluate_level(entry))
+
+
+    def _evaluate_level(self, level):
+        if self._object_count >= self.global_max_objects:
+            print('max objects reached')
+            return
+
+        if level.global_depth > self.global_max_depth:
+            print(f'max depth reached: {self.global_max_depth}')
+            yield None
+            return
+
+        rule = level.rule
+        rule_name = rule.get('name')
+        local_max_depth = int(rule.get("max_depth", self.global_max_depth))
+
+        if local_max_depth <= 0:
+            return
+
+        if level.depth > local_max_depth:
+            successor = rule.get("successor")
+            if successor:
+                sub_rule = _pickRule(self._tree, successor)
+                sub_level = LSystemLevel(
+                    rule=sub_rule,
+                    depth=0,
+                    global_depth=level.global_depth + 1,
+                    matrix=level.matrix.copy(),
+                    matrix_prev=level.matrix.copy(),
+                )
+                yield from self._evaluate_level(sub_level)
+
+            yield None
+            return
+
+        base_matrix = level.matrix.copy()
+
+        for statement in rule:
+            tstr = statement.get("transforms", "")
+            if not tstr:
+                tstr = ''
+                for t in ['tx', 'ty', 'tz', 'rx', 'ry', 'rz', 'sa', 'sx', 'sy', 'sz']:
+                    tvalue = statement.get(t)
+                    if tvalue:
+                        n = eval(tvalue)
+                        tstr += "{} {:f} ".format(t, n)
+                    pass
+                pass
+
+            xform = _parseXform(tstr)
+            count = int(statement.get("count", 1))
+            count_xform = mu.Matrix.Identity(4)
+            matrix_prev = base_matrix.copy()
+
+            for _ in range(count):
+                count_xform @= xform
+                matrix = base_matrix @ count_xform
+
+                if statement.tag == "call":
+                    sub_rule = _pickRule(self._tree, statement.get("rule"))
+                    sub_rule_name = sub_rule.get('name')
+
+                    if sub_rule_name == rule_name:
+                        sub_depth = level.depth + 1
+                    elif "max_depth" in sub_rule.attrib:
+                        sub_depth = 0
+                    else:
+                        sub_depth = level.depth + 1
+
+                    sub_level = LSystemLevel(
+                        rule=sub_rule,
+                        depth=sub_depth,
+                        global_depth=level.global_depth + 1,
+                        matrix=matrix.copy(),
+                        matrix_prev=matrix_prev.copy(),
+                    )
+                    yield from self._evaluate_level(sub_level)
+
+                elif statement.tag == "instance":
+                    name = statement.get("shape")
+                    if name == "None" or name is None:
+                        yield None
+                    else:
+                        yield (name, matrix.copy())
+                        self._object_count += 1
+                    pass
+                else:
+                    raise ValueError("bad xml", statement.tag)
+
+                if self._object_count >= self.global_max_objects:
+                    print('max objects reached')
+                    return
+
+                matrix_prev = matrix.copy()
+
+            if count > 1:
+                yield None
+            pass # for statement in level.rule
+        return
 
     def make_tube(self, mats, verts):
         """
@@ -561,7 +781,7 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
                 internal_file = bpy.data.texts[value].as_string() if value in bpy.data.texts else self.xml_str
                 xml_str = internal_file
                 xml_tree = fromstring(xml_str)
-                
+
                 d_constants = {}
 
                 for elem in xml_tree.findall("constants"):
@@ -755,9 +975,18 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
         if self.xml_str:
             xml_tree = self.xml_text_format(self.xml_str)
             if xml_tree:
+                for I, x in enumerate(xml_tree.iter('rule')):
+                    x.set("id", str(I))
 
                 lsys = LSystem(xml_tree, self.maxmats)
                 shapes = lsys.evaluate(seed=self.rseed)
+
+                # lsys1 = LSystemYeld(xml_tree, self.maxmats)
+                # shapes1 = lsys1.evaluate(seed=self.rseed)
+                # shapes = shapes1
+
+
+                
                 mat_sublist = []
 
                 edges_out = []

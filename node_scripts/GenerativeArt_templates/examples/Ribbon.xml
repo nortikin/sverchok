@@ -1,7 +1,7 @@
 <!-- https://github.com/prideout/lsystem/tree/master/Python -->
-<rules max_depth="2200">
+<rules max_depth="1000">
     <rule name="entry">
-        <call count="72" transforms="rz 10" rule="hbox"/>
+        <call count="2" transforms="rz 180" rule="hbox"/>
     </rule>
     <rule name="hbox"><call rule="r"/></rule>
     <rule name="r"><call rule="forward"/></rule>
