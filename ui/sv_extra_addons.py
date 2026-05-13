@@ -64,7 +64,7 @@ EXTRA_ADDONS = {
     'self_instalable': True
     },
 'Sverchok ladybug': {
-    'name': 'sverchok_ifc',
+    'name': 'sverchok_ladybug',
     'description': 'Sverchok ladybug is a Sverchok plugin that allows you to calculate insolation and make wind research for your Sverchok geometry.',
     'archive_link':'https://github.com/nortikin/sverchok_ladybug/archive/',
     'branch': 'main',
