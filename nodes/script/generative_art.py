@@ -39,14 +39,9 @@ from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate
 
-FAIL_COLOR = (0.8, 0.1, 0.1)
-READY_COLOR = (0, 0.6, 0.8)
-
 sv_path = os.path.dirname(sv_get_local_path()[0])
 generative_art_template_path = os.path.join(sv_path, 'node_scripts', 'GenerativeArt_templates')
 template_categories = ['examples']
-
-class GENERATIVEART_EXCEPTION(Exception): pass
 
 menu_file_part = 0
 menu_file_index = 0
@@ -390,8 +385,8 @@ class LSystem:
                                 # Branching is when there are multiple calls to other rules within a rule (>1 call).
                                 if len([s for s in sub_rule if s.tag=='call'])>1:
                                     if last_instance_matrix:
-                                        # instance без имени означает отмену использования shape для следующего call.
-                                        # Иначе будет попытка привязать один shape к следующему call.
+                                        # an instance with no name means cancel using the shape for the next call.
+                                        # Otherwise there will be an attempt to attach the same shape to the next call.
                                         if last_instance_shape_name and last_instance_shape_name.lower() != "none":
                                             shape = LSystemShape(type=LSystemShapeType.TAIL, name=last_instance_shape_name, matrix=cloned_matrix @ last_instance_matrix)
                                             _local_stack.append(LSystemFrame(type=LSystemFrameType.INSTANCE, obj=shape))
@@ -422,7 +417,7 @@ class LSystem:
                     else:
                         pass
                     pass # for statement in level.rule
-                stack.extend(_local_stack[::-1])
+                stack.extend(_local_stack[::-1]) # Before saving local elements to the main stack, reverse the local list to preserve the execution order of instructions inside the rule.
             else:
                 raise ValueError("bad stack frame type", stack_frame.type)
 
