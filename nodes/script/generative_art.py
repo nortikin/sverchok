@@ -61,7 +61,7 @@ def display_file_name(file_path):
     dfn = f'{menu_file_part}.{menu_file_index}. {dfn}'
     return dfn
 
-class SV_MT_GenerativeArtMenu(bpy.types.Menu):
+class SV_MT_GenerativeArtMenuMK2(bpy.types.Menu):
     '''Selection menu to load generative art templates'''
     bl_label = "Generative Art templates"
     bl_idname = "SV_MT_GenerativeArtMenu"
@@ -78,7 +78,7 @@ class SV_MT_GenerativeArtMenu(bpy.types.Menu):
             node = context.active_node
 
         if node:
-            args = dict(operator=SvGenerativeArtTextImport.bl_idname, display_name=display_file_name,)
+            args = dict(operator=SvGenerativeArtTextImportMK2.bl_idname, display_name=display_file_name,)
 
             menu_file_part=0
             dict_file_name_to_index = dict()
@@ -92,7 +92,7 @@ class SV_MT_GenerativeArtMenu(bpy.types.Menu):
 
         pass
 
-class SvGenerativeArtCallBack(bpy.types.Operator):
+class SvGenerativeArtCallBackMK2(bpy.types.Operator):
     '''Reload xml file and update node'''
     bl_idname = "node.generative_art_callback"
     bl_label = "Generative Art callback"
@@ -105,7 +105,7 @@ class SvGenerativeArtCallBack(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvGenerativeArtCustomCallBack(bpy.types.Operator):
+class SvGenerativeArtCustomCallBackMK2(bpy.types.Operator):
 
     bl_idname = "node.generative_art_custom_callback"
     bl_label = "custom Generative Art callback"
@@ -116,7 +116,7 @@ class SvGenerativeArtCustomCallBack(bpy.types.Operator):
         context.node.custom_callback(context, self)
         return {'FINISHED'}
 
-class SvGenerativeArtTextImport(bpy.types.Operator):
+class SvGenerativeArtTextImportMK2(bpy.types.Operator):
 
     bl_idname = "node.generative_art_import"
     bl_label = "Generative Art load"
@@ -172,7 +172,7 @@ def gather_items(context):
 def item_cb(self, context):
     return loop.get('results') or [("A","A", '', 0),]
 
-class SvGenerativeArtSearch(bpy.types.Operator, SvGenericNodeLocator):
+class SvGenerativeArtSearchMK2(bpy.types.Operator, SvGenericNodeLocator):
     """ SNLite Search Script Library """
     bl_idname = "node.sv_generative_art_search"
     bl_label = "Generative Art Search"
@@ -599,9 +599,9 @@ def gather_items(context):
 def item_cb(self, context):
     return loop.get('results') or [("A","A", '', 0),]
 
-class SvGenerativeArtNodeAlertOperator(bpy.types.Operator):
+class SvGenerativeArtNodeAlertOperatorMK2(bpy.types.Operator):
     '''Show alert sign'''
-    bl_idname = "node.sv_generative_art_node_alert_operator"
+    bl_idname = "node.sv_generative_art_node_alert_operator_mk2"
     bl_label = "Generative Art Node Alert"
     description_text: bpy.props.StringProperty(default='')
 
@@ -618,9 +618,9 @@ class SvGenerativeArtNodeAlertOperator(bpy.types.Operator):
     SvGenerativeArtNode
 ---------------------------------------------------
 """
-class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
+class SvGenerativeArtNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' Generative Art or LSystem node'''
-    bl_idname = 'SvGenerativeArtNode'
+    bl_idname = 'SvGenerativeArtNodeMK2'
     bl_label = 'Generative Art'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_GENERATIVE_ART'
@@ -754,13 +754,13 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_label(self):
         if self.xml_str:
-            return f"{SvGenerativeArtNode.bl_label}: {self.menu_index}{self.file_name}"
+            return f"{SvGenerativeArtNodeMK2.bl_label}: {self.menu_index}{self.file_name}"
         else:
             return self.bl_label
         
     def draw_buttons(self, context, layout):
-        sn_callback = SvGenerativeArtCallBack.bl_idname
-        sn_custom_callback = SvGenerativeArtCustomCallBack.bl_idname
+        sn_callback = SvGenerativeArtCallBackMK2.bl_idname
+        sn_custom_callback = SvGenerativeArtCustomCallBackMK2.bl_idname
 
         elem = layout.box()
         row = elem.row()
@@ -772,10 +772,10 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
             col = row.column(align=True)
             col.alert = True
             #col.label(text='', icon='ERROR')
-            col.operator(SvGenerativeArtNodeAlertOperator.bl_idname, text='', icon='ERROR').description_text = self.is_xml_error_text
+            col.operator(SvGenerativeArtNodeAlertOperatorMK2.bl_idname, text='', icon='ERROR').description_text = self.is_xml_error_text
         row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
-        self.wrapper_tracked_ui_draw_op(row, SvGenerativeArtSearch.bl_idname, text="", icon="VIEWZOOM")
-        menu = elem.menu(SV_MT_GenerativeArtMenu.bl_idname)
+        self.wrapper_tracked_ui_draw_op(row, SvGenerativeArtSearchMK2.bl_idname, text="", icon="VIEWZOOM")
+        menu = elem.menu(SV_MT_GenerativeArtMenuMK2.bl_idname)
         
         col = elem.column()
         col.use_property_decorate = False
@@ -910,12 +910,12 @@ class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
         return
 
 classes = [
-    SvGenerativeArtNodeAlertOperator,
-    SV_MT_GenerativeArtMenu,
-    SvGenerativeArtTextImport,
-    SvGenerativeArtSearch,
-    SvGenerativeArtCallBack,
-    SvGenerativeArtNode,
+    SvGenerativeArtNodeAlertOperatorMK2,
+    SV_MT_GenerativeArtMenuMK2,
+    SvGenerativeArtTextImportMK2,
+    SvGenerativeArtSearchMK2,
+    SvGenerativeArtCallBackMK2,
+    SvGenerativeArtNodeMK2,
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)
