@@ -76,6 +76,7 @@ from sverchok.utils.modules.eisenscript.ast import (
     Branch,
     Repeat,
     RuleRef,
+    IMPLICIT_START_RULE,
     # Geometrical transformations
     Translate,
     Rotate,
@@ -350,6 +351,9 @@ def xml_to_ast(xml_root) -> Program:
 def _parse_rule(elem, defines: dict) -> Rule:
     """Parse a single <rule> element into a Rule AST node."""
     name = elem.get("name", "unnamed")
+    # In XML format, the implicit start rule is always called 'entry'
+    if name == "entry":
+        name = IMPLICIT_START_RULE
     weight = None
     maxdepth = None
     retirement_rule = None

@@ -34,6 +34,7 @@ from sverchok.utils.modules.eisenscript.to_xml import (
     xml_to_string,
 )
 from sverchok.utils.modules.eisenscript.from_xml import xml_to_ast
+from sverchok.utils.modules.eisenscript.serializer import ast_to_string
 from sverchok.utils.modules.eisenscript.interpreter import (
     Interpreter,
     InterpreterResult,

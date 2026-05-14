@@ -283,7 +283,7 @@ class XmlToAstBasicTests(unittest.TestCase):
         '''
         prog = self._parse(xml)
         self.assertEqual(len(prog.rules), 2)
-        self.assertEqual(prog.rules[0].name, "entry")
+        self.assertEqual(prog.rules[0].name, IMPLICIT_START_RULE)
         self.assertEqual(prog.rules[1].name, "child")
 
     def test_rule_with_weight(self):
@@ -464,6 +464,34 @@ class XmlToAstBasicTests(unittest.TestCase):
         '''
         prog = self._parse(xml)
         self.assertEqual(len(prog.rules[0].body), 3)
+
+    def test_entry_rule_maps_to_implicit_start(self):
+        """XML rule named 'entry' is the implicit start rule."""
+        xml = '''
+        <rules>
+            <rule name="entry">
+                <instance shape="box"/>
+            </rule>
+        </rules>
+        '''
+        prog = self._parse(xml)
+        self.assertEqual(prog.rules[0].name, IMPLICIT_START_RULE)
+
+    def test_non_entry_rule_preserved(self):
+        """Rule names other than 'entry' are preserved as-is."""
+        xml = '''
+        <rules>
+            <rule name="start">
+                <instance shape="box"/>
+            </rule>
+            <rule name="child">
+                <instance shape="sphere"/>
+            </rule>
+        </rules>
+        '''
+        prog = self._parse(xml)
+        self.assertEqual(prog.rules[0].name, "start")
+        self.assertEqual(prog.rules[1].name, "child")
 
     def test_ambiguous_rules(self):
         xml = '''
