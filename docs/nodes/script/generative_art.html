@@ -352,11 +352,16 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additionally">Additionally</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-rule-definition-example">Multiple Rule Definition Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tree">Tree</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#successor-rule-example">Successor Rule Example</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mesh-mode-example">Mesh Mode Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fern-1">Fern 1</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fern-2">Fern 2</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constants-and-variables-example">Constants and Variables Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fern-3">Fern 3</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
@@ -374,6 +379,10 @@
   <section id="generative-art">
 <h1>Generative Art<a class="headerlink" href="#generative-art" title="Link to this heading">#</a></h1>
 <p><em>destination after Beta: Generators</em></p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9"><img alt="https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9" src="https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9" />
+</a>
+</div></blockquote>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
 <p>This node can be used to produce recursive three dimensional structures following a design specified in a separate xml file. These structures are similar to fractals or lsystems.</p>
@@ -400,6 +409,14 @@
 <li><p><strong>Shapes Matrices</strong> - For each <em>shape</em> attribute defined in the xml file a named output will be generated. This output is a list  list of matrices that define the structure.</p></li>
 </ul>
 </section>
+<section id="additionally">
+<h2>Additionally<a class="headerlink" href="#additionally" title="Link to this heading">#</a></h2>
+<p>If you import .json-file and the xml file specified in the node is not found in bpy.data.texts, the node will create a new text block with the name specified in the file_name parameter and fill it with the content of xml_str parameter (inner node string). This allows to import Sverchok Schema from .json-file without having to separately import .xml files.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/5c61eaca-a1c3-48d0-bd03-6efd388b8663"><img alt="https://github.com/user-attachments/assets/5c61eaca-a1c3-48d0-bd03-6efd388b8663" src="https://github.com/user-attachments/assets/5c61eaca-a1c3-48d0-bd03-6efd388b8663" />
+</a>
+</div></blockquote>
+</section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
 <p>A simplified description of the algorithm for the evaluation of a design.</p>
@@ -410,18 +427,18 @@
 <p>A simple example of an xml design file:</p>
 <p>6 Spirals</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">rules</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;150&quot;</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;entry&quot;</span><span class="o">&gt;</span>
-            <span class="o">&lt;</span><span class="n">call</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;3&quot;</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rz 120&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;R1&quot;</span><span class="o">/&gt;</span>
-            <span class="o">&lt;</span><span class="n">call</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;3&quot;</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rz 120&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;R2&quot;</span><span class="o">/&gt;</span>
-        <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;R1&quot;</span><span class="o">&gt;</span>
-            <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;tx 2.6 rx 3.14 rz 12 ry 6 sa 0.97&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;R1&quot;</span><span class="o">/&gt;</span>
-            <span class="o">&lt;</span><span class="n">instance</span>  <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;sa 2.6&quot;</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
-        <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;R2&quot;</span><span class="o">&gt;</span>
-            <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;tx -2.6 rz 12 ry 6 sa 0.97&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;R2&quot;</span><span class="o">/&gt;</span>
-            <span class="o">&lt;</span><span class="n">instance</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;sx 2.6&quot;</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
-        <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;entry&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;3&quot;</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rz 120&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;R1&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;3&quot;</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rz 120&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;R2&quot;</span><span class="o">/&gt;</span>
+    <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;R1&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;tx 2.6 rx 3.14 rz 12 ry 6 sa 0.97&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;R1&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">instance</span>  <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;sa 2.6&quot;</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
+    <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;R2&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;tx -2.6 rz 12 ry 6 sa 0.97&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;R2&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">instance</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;sx 2.6&quot;</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
+    <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -441,7 +458,9 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <h3>Multiple Rule Definition Example<a class="headerlink" href="#multiple-rule-definition-example" title="Link to this heading">#</a></h3>
 <p>There can be multiple definitions of the same rule in an xml file.</p>
 <p>For example</p>
-<p>Tree</p>
+</section>
+<section id="tree">
+<h3>Tree<a class="headerlink" href="#tree" title="Link to this heading">#</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">rules</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;100&quot;</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;entry&quot;</span><span class="o">&gt;</span>
         <span class="o">&lt;</span><span class="n">call</span>  <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;spiral&quot;</span><span class="o">/&gt;</span>
@@ -465,10 +484,14 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="tree structure image" src="https://cloud.githubusercontent.com/assets/7930130/7782285/25164a80-0162-11e5-9feb-32c4f3908f1e.png" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/cd13f7e1-ae2e-498f-957b-28785ce42fcd"><img alt="https://github.com/user-attachments/assets/cd13f7e1-ae2e-498f-957b-28785ce42fcd" src="https://github.com/user-attachments/assets/cd13f7e1-ae2e-498f-957b-28785ce42fcd" />
+</a>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/1b97c676-7d80-45cf-a5bf-2084b94b4748"><img alt="https://github.com/user-attachments/assets/1b97c676-7d80-45cf-a5bf-2084b94b4748" src="https://github.com/user-attachments/assets/1b97c676-7d80-45cf-a5bf-2084b94b4748" />
+</a>
 <p>In the above xml file there are four definitions of the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule. Each rule version has a weight attribute. The processor will call each version of the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule in a random manner. The weight attribute will determine the probability a particular rule version is called.</p>
 <p>The first three definitions of the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule all place an object instance and then call the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule with the same translation along the <code class="docutils literal notranslate"><span class="pre">z</span></code> axis and rotation about the <code class="docutils literal notranslate"><span class="pre">x</span></code> axis but different amounts of rotation about the <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> axis. The fourth definition calls the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule twice without placing an instance. This causes the branches in the tree structure. Changing the value of the weight attribute for this rule version will change how often the tree branches. For a larger weight value, the rule gets called more often and there are more branches.</p>
-<p>If the weight attribute is omitted each version will have equal weight. Changing the value of <code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">seed</span></code> in the node interface will change the generated structure for xml files with multiple rule definitions. This example had rseed = 1.</p>
+<p>If the weight attribute is omitted each version will have equal weight. Changing the value of <code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">seed</span></code> in the node interface will change the generated structure for xml files with multiple rule definitions. This example had rseed = 3.</p>
 </section>
 <section id="successor-rule-example">
 <h3>Successor Rule Example<a class="headerlink" href="#successor-rule-example" title="Link to this heading">#</a></h3>
@@ -476,7 +499,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <p>Nouveau variation</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">rules</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;1000&quot;</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;entry&quot;</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">call</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;2&quot;</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rz 60&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;2&quot;</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rz 180&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="o">&gt;&lt;</span><span class="n">call</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;y180&quot;</span><span class="o">/&gt;&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="o">&gt;&lt;</span><span class="n">call</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;z180&quot;</span><span class="o">/&gt;&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
@@ -494,40 +517,48 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="nouveau variation structure" src="https://cloud.githubusercontent.com/assets/7930130/7629793/cb2d4a30-fa83-11e4-8c75-2fa6488f65fe.png" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/8fcc57b2-118e-42f6-8919-f9c716380ab1"><img alt="https://github.com/user-attachments/assets/8fcc57b2-118e-42f6-8919-f9c716380ab1" src="https://github.com/user-attachments/assets/8fcc57b2-118e-42f6-8919-f9c716380ab1" />
+</a>
 <p>This example needs “max matrices” set to 5000 to get the above result.</p>
 </section>
 <section id="mesh-mode-example">
 <h3>Mesh Mode Example<a class="headerlink" href="#mesh-mode-example" title="Link to this heading">#</a></h3>
 <p>Using the matrices output allows a separate object to be placed at each location. The vertices input and the mesh (vertices, edges, faces) output “skins” the mesh into a much smaller number of objects. The vertices input should be a list of vertices such as that generated by the “Circle” node or “NGon” node. It could also be a circle type object taking from the scene using the “Objects In” node. The list of vertices should be in order so they can be made into a ring with the last vertex joined to the first. That ring doesn’t have to be planar.</p>
-<img alt="node and result picture for 6 spiral in mesh mode" src="https://cloud.githubusercontent.com/assets/7930130/13376232/d20249ce-de1b-11e5-968d-727f0038305e.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/7930130/13376232/d20249ce-de1b-11e5-968d-727f0038305e.png"><img alt="https://cloud.githubusercontent.com/assets/7930130/13376232/d20249ce-de1b-11e5-968d-727f0038305e.png" src="https://cloud.githubusercontent.com/assets/7930130/13376232/d20249ce-de1b-11e5-968d-727f0038305e.png" />
+</a>
 <p>The output will not always be one mesh. If the rule set ends one ‘arm’ and goes back to start another ‘arm’ these two sub-parts will be separate meshes. Sometimes the mesh does not turn out how you would like. This can often be fixed by changing the rule set.</p>
 <p>Often a mesh tube will turn out flat rather than being tube like. This can usually be fixed by either rotating the vertex ring in the scene or by adding a rotation transform to the “instance” commands in the rule set.</p>
 <p>For example change <code class="docutils literal notranslate"><span class="pre">&lt;instance</span> <span class="pre">shape=&quot;s1&quot;/&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">&lt;instance</span> <span class="pre">transforms=&quot;ry</span> <span class="pre">90&quot;</span> <span class="pre">shape=&quot;s1&quot;/&gt;</span></code></p>
 <p>In other cases the mesh can be connected in the wrong order.</p>
 <p>For example the following two xml files will look the same when the matrix output is used to place objects, but have different output when they are used in mesh mode. Both sets of xml rules produce the same list of matrices just in a different order.</p>
-<p>Fern 1</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">rules</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;2000&quot;</span><span class="o">&gt;</span>
+</section>
+<section id="fern-1">
+<h3>Fern 1<a class="headerlink" href="#fern-1" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">rules</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;1000&quot;</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;entry&quot;</span><span class="o">&gt;</span>
         <span class="o">&lt;</span><span class="n">call</span>  <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl&quot;</span> <span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;curl&quot;</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;80&quot;</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 12.5 tz 0.9 s 0.98 0.95 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl&quot;</span><span class="o">/&gt;</span>
-        <span class="o">&lt;</span><span class="n">instance</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
-        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;tx 0.1 ty -0.45 ry 40 sa 0.25&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">instance</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;ry 40 tx -0.125&quot;</span>           <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span>     <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;tx 0.1 ty -0.2 tz 0.3 ry 40 sa 0.25&quot;</span>  <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">instance</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span>     <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 12.5 tz 1.3 s 0.98 0.95 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl&quot;</span><span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 
-    <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;80&quot;</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 25 tz 1.2 s 0.9 0.9 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span><span class="o">/&gt;</span>
+    <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;30&quot;</span><span class="o">&gt;</span>
         <span class="o">&lt;</span><span class="n">instance</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 25 tz 1.2 s 0.9 0.9 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span><span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="image fern wrong" src="https://cloud.githubusercontent.com/assets/7930130/7629779/b6553802-fa83-11e4-8390-aa9ba2a0c44d.png" />
-<p>Fern 2</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/e481a8cf-d3e6-4d0e-8ca1-13a2d3f80b09"><img alt="https://github.com/user-attachments/assets/e481a8cf-d3e6-4d0e-8ca1-13a2d3f80b09" src="https://github.com/user-attachments/assets/e481a8cf-d3e6-4d0e-8ca1-13a2d3f80b09" />
+</a>
+</section>
+<section id="fern-2">
+<h3>Fern 2<a class="headerlink" href="#fern-2" title="Link to this heading">#</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">rules</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;2000&quot;</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;entry&quot;</span><span class="o">&gt;</span>
         <span class="o">&lt;</span><span class="n">call</span>  <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl1&quot;</span> <span class="o">/&gt;</span>
@@ -535,24 +566,25 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;curl1&quot;</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;80&quot;</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 12.5 tz 0.9 s 0.98 0.95 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl1&quot;</span><span class="o">/&gt;</span>
         <span class="o">&lt;</span><span class="n">instance</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 12.5 tz 0.9 s 0.98 0.95 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl1&quot;</span><span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;curl2&quot;</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;80&quot;</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 12.5 tz 0.9 s 0.95 0.95 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl2&quot;</span><span class="o">/&gt;</span>
         <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;tx 0.1 ty -0.45 ry 40 sa 0.25&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 12.5 tz 0.9 s 0.95 0.95 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl2&quot;</span><span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;80&quot;</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 25 tz 1.2 s 0.9 0.9 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span><span class="o">/&gt;</span>
         <span class="o">&lt;</span><span class="n">instance</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 25 tz 1.2 s 0.9 0.9 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span><span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="image fern right" src="https://cloud.githubusercontent.com/assets/7930130/7629783/bbe99588-fa83-11e4-8d70-92cc2909675e.png" />
-<p>Again these were both done with max mats set to 5000.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/6a7c2212-53f6-44ed-9dad-c1e0a7de925d"><img alt="https://github.com/user-attachments/assets/6a7c2212-53f6-44ed-9dad-c1e0a7de925d" src="https://github.com/user-attachments/assets/6a7c2212-53f6-44ed-9dad-c1e0a7de925d" />
+</a>
+<p>Again these were both done with max mats set to 6643.</p>
 </section>
 <section id="constants-and-variables-example">
 <h3>Constants and Variables Example<a class="headerlink" href="#constants-and-variables-example" title="Link to this heading">#</a></h3>
@@ -571,33 +603,39 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <p>Multiple constants can be defined within one element and several <em>constants</em> elements can be used as required in the xml file.</p>
 <p>If a field name in between curly brackets is not given a value in a <em>constants</em> element then a named input socket will be added to the node. A <em>Float</em>, <em>Integer</em> or similar node input can be wired up to this input variable.</p>
 <p>The example below uses a variable ({curl_angle}) to animate the amount of curl on the fern structure shown in the mesh mode example and two constants to fix the the value of the <code class="docutils literal notranslate"><span class="pre">tz</span></code> transform in the large curl and the scale ({sxy}) in all the curls.</p>
-<p>Fern 3</p>
+</section>
+<section id="fern-3">
+<h3>Fern 3<a class="headerlink" href="#fern-3" title="Link to this heading">#</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">rules</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;2000&quot;</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="n">constants</span> <span class="n">zd</span><span class="o">=</span><span class="s2">&quot;1.5&quot;</span> <span class="n">sxy</span><span class="o">=</span><span class="s2">&quot;0.9&quot;</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;entry&quot;</span><span class="o">&gt;</span>
-       <span class="o">&lt;</span><span class="n">call</span>  <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl1&quot;</span> <span class="o">/&gt;</span>
-       <span class="o">&lt;</span><span class="n">call</span>  <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl2&quot;</span> <span class="o">/&gt;</span>
+    <span class="o">&lt;</span><span class="n">call</span>  <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl1&quot;</span> <span class="o">/&gt;</span>
+    <span class="o">&lt;</span><span class="n">call</span>  <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl2&quot;</span> <span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;curl1&quot;</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;60&quot;</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx </span><span class="si">{curl_angle}</span><span class="s2"> tz </span><span class="si">{zd}</span><span class="s2"> s </span><span class="si">{sxy}</span><span class="s2"> </span><span class="si">{sxy}</span><span class="s2"> 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl1&quot;</span><span class="o">/&gt;</span>
         <span class="o">&lt;</span><span class="n">instance</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx </span><span class="si">{curl_angle}</span><span class="s2"> tz </span><span class="si">{zd}</span><span class="s2"> s </span><span class="si">{sxy}</span><span class="s2"> </span><span class="si">{sxy}</span><span class="s2"> 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl1&quot;</span><span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;curl2&quot;</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;40&quot;</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx </span><span class="si">{curl_angle}</span><span class="s2"> tz </span><span class="si">{zd}</span><span class="s2"> s </span><span class="si">{sxy}</span><span class="s2"> </span><span class="si">{sxy}</span><span class="s2"> 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl2&quot;</span><span class="o">/&gt;</span>
         <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;tx 0.1 ty -0.45 ry 40 sa 0.25&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx </span><span class="si">{curl_angle}</span><span class="s2"> tz </span><span class="si">{zd}</span><span class="s2"> s </span><span class="si">{sxy}</span><span class="s2"> </span><span class="si">{sxy}</span><span class="s2"> 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curl2&quot;</span><span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;40&quot;</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 2*</span><span class="si">{curl_angle}</span><span class="s2"> tz 2.7 s </span><span class="si">{sxy}</span><span class="s2"> </span><span class="si">{sxy}</span><span class="s2"> 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span><span class="o">/&gt;</span>
         <span class="o">&lt;</span><span class="n">instance</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;rx 2*</span><span class="si">{curl_angle}</span><span class="s2"> tz 2.7 s </span><span class="si">{sxy}</span><span class="s2"> </span><span class="si">{sxy}</span><span class="s2"> 1.0&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;curlsmall&quot;</span><span class="o">/&gt;</span>
     <span class="o">&lt;/</span><span class="n">rule</span><span class="o">&gt;</span>
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="image fern animation" src="https://cloud.githubusercontent.com/assets/7930130/13376233/d7303744-de1b-11e5-8c91-1d56f412b27d.png" />
-<p>For this animation the index number of the current frame in the animation is translated from the range 1 to 250 to the range 16 to 6 via the “Map Range” node and wired into the <code class="docutils literal notranslate"><span class="pre">curl_angle</span></code> input of the “Generative Art” node. This cause the fern to unwind as the animation proceeds.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/bcd0da72-d619-444d-b203-c3a620a734e9"><img alt="https://github.com/user-attachments/assets/bcd0da72-d619-444d-b203-c3a620a734e9" src="https://github.com/user-attachments/assets/bcd0da72-d619-444d-b203-c3a620a734e9" />
+</a>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/764ad233-96ba-4946-847b-aef8e389b5ac" type="video/mp4">
+Your browser does not support the video tag.
+</video><p>For this animation the index number of the current frame in the animation is translated from the range 1 to 250 to the range 16 to 6 via the “Map Range” node and wired into the <code class="docutils literal notranslate"><span class="pre">curl_angle</span></code> input of the “Generative Art” node. This cause the fern to unwind as the animation proceeds.</p>
 <p>Simple maths can also be use in the transforms definition. This has been used above in the <code class="docutils literal notranslate"><span class="pre">curlsmall</span></code> rule. The <code class="docutils literal notranslate"><span class="pre">rx</span></code> rotation of the transform will always be twice that of the <code class="docutils literal notranslate"><span class="pre">rx</span></code> rotation in the <code class="docutils literal notranslate"><span class="pre">curl1</span></code> and <code class="docutils literal notranslate"><span class="pre">curl2</span></code> rules. There cannot be any spaces in any maths expressions for the rotation, translation or scale parameters when using a single transforms attribute string. To allow for more complicated expressions each transform can be separated out into its own attribute.</p>
 <p>transforms as single attribute (no spaces allowed in maths expression)</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">call</span> <span class="n">transforms</span><span class="o">=</span><span class="s2">&quot;tx 1 rz -1*</span><span class="si">{v1}</span><span class="s2"> ry </span><span class="si">{v2}</span><span class="s2">&quot;</span> <span class="n">rule</span><span class="o">=</span><span class="s2">&quot;R1&quot;</span><span class="o">/&gt;</span>
@@ -675,11 +713,16 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additionally">Additionally</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-rule-definition-example">Multiple Rule Definition Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tree">Tree</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#successor-rule-example">Successor Rule Example</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mesh-mode-example">Mesh Mode Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fern-1">Fern 1</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fern-2">Fern 2</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constants-and-variables-example">Constants and Variables Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fern-3">Fern 3</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
