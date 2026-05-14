@@ -1,0 +1,43 @@
+<!-- https://github.com/prideout/lsystem/tree/master/Python -->
+<rules max_depth="1000">
+    <rule name="entry">
+        <call count="2" transforms="rz 180" rule="hbox"/>
+    </rule>
+    <rule name="hbox"><call rule="r"/></rule>
+    <rule name="r"><call rule="forward"/></rule>
+    <rule name="r"><call rule="turn"/></rule>
+    <rule name="r"><call rule="turn2"/></rule>
+    <rule name="r"><call rule="turn4"/></rule>
+    <rule name="r"><call rule="turn3"/></rule>
+    <rule name="forward" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="rz 2 tx 0.1 sa 0.996" rule="forward"/>
+    </rule>
+    <rule name="turn" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="rz 2 tx 0.1 sa 0.996" rule="turn"/>
+    </rule>
+    <rule name="turn2" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="rz -2 tx 0.1 sa 0.996" rule="turn2"/>
+    </rule>
+    <rule name="turn3" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="ry -2 tx 0.1 sa 0.996" rule="turn3"/>
+    </rule>
+    <rule name="turn4" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="ry -2 tx 0.1 sa 0.996" rule="turn4"/>
+    </rule>
+    <rule name="turn5" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="rx -2 tx 0.1 sa 0.996" rule="turn5"/>
+    </rule>
+    <rule name="turn6" max_depth="90" successor="r">
+        <call rule="dbox"/>
+        <call transforms="rx -2 tx 0.1 sa 0.996" rule="turn6"/>
+    </rule>
+    <rule name="dbox">
+        <instance transforms="s 0.55 2.0 1.25" shape="curve"/>
+    </rule>
+</rules>

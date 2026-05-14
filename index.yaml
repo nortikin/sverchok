@@ -819,7 +819,7 @@
     - SvProfileNodeMK3
     - SvMeshEvalNode
     - SvSNFunctorB
-    - SvGenerativeArtNode
+    - SvGenerativeArtNodeMK2
     - SvTopologySimple
     - ---
     - SvScriptNodeLite

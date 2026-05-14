@@ -1,0 +1,17 @@
+<rules max_depth="100">
+    <rule name="entry">
+        <call rule="R1"/>
+        <call rule="R2"/>
+    </rule>
+    
+    <rule name="R1" max_depth="{max_depth}">
+        <instance  transforms="sz 0.1" shape="box"/>
+        <call transforms="tx 0.5 ty 0.5 sx 0.5 sy 0.5 rz 90" rule="R1"/>
+        <call transforms="tx -0.5 ty -0.5 sx 0.5 sy 0.5 rz -90" rule="R1"/>
+        <call transforms="tx 0.5 ty -0.5 sx 0.5 sy 0.5" rule="R1"/>        
+    </rule>
+    
+    <rule name="R2" max_depth="4">
+        <call transforms="tx -0.5 ty 0.5 sx 0.5 sy 0.5 rz 180" rule="R1"/>
+    </rule>
+</rules>
