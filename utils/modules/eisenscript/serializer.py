@@ -60,6 +60,7 @@ from sverchok.utils.modules.eisenscript.ast import (
     Repeat,
     RuleRef,
     VariableRef,
+    Expr,
     IMPLICIT_START_RULE,
     # Geometrical transformations
     Translate,
@@ -90,11 +91,14 @@ from sverchok.utils.modules.eisenscript.ast import (
 
 def _fmt_num(value) -> str:
     """
-    Format a numeric value (float or VariableRef) for EisenScript output.
+    Format a numeric value (float, VariableRef, or Expr) for EisenScript output.
 
     Integers are rendered without decimal point (``3`` not ``3.0``).
     VariableRefs are rendered as their name.
+    Expr nodes are rendered as ``(source)``.
     """
+    if isinstance(value, Expr):
+        return f"({value.source})"
     if isinstance(value, VariableRef):
         return value.name
     v = float(value)

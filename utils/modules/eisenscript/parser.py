@@ -25,30 +25,33 @@ Grammar (EBNF):
     set_statement     -> 'set' setting_name value*
     rule_definition   -> 'rule'? identifier rule_modifier* '{' rule_body '}'
     implicit_start    -> branch  // bare branch → rule 'start' { branch }
-    rule_modifier     -> ('maxdepth' | 'md') int ['>' identifier]
-                      | ('weight' | 'w') float
+    rule_modifier     -> ('maxdepth' | 'md') value ['>' identifier]
+                      | ('weight' | 'w') value
     rule_body         -> branch*
     branch            -> (repetition | transform_block)* (rule_ref | primitive)
     repetition        -> count '*' '{' transformation+ '}'
     transform_block   -> '{' transformation+ '}'
-    count             -> int | identifier
-    rule_ref          -> identifier | 'md' int ['>' identifier] identifier
+    count             -> int | identifier | expr
+    rule_ref          -> identifier | 'md' value ['>' identifier] identifier
     primitive         -> 'box' | 'grid' | 'sphere' | 'line' | 'point'
                       | 'Triangle' '[' coord {';' coord} ']'
     coord             -> float {',' float}
-    transformation    -> ('x' | 'y' | 'z') float
-                      | ('rx' | 'ry' | 'rz') float
-                      | 's' (float | float float float)
-                      | 'm' float{9}
+    transformation    -> ('x' | 'y' | 'z') value
+                      | ('rx' | 'ry' | 'rz') value
+                      | 's' (value | value value value)
+                      | 'm' value{9}
                       | 'fx' | 'fy' | 'fz'
-                      | ('h' | 'hue') float
-                      | 'sat' float
-                      | ('b' | 'brightness') float
-                      | ('a' | 'alpha') float
+                      | ('h' | 'hue') value
+                      | 'sat' value
+                      | ('b' | 'brightness') value
+                      | ('a' | 'alpha') value
                       | 'color' color_string
-                      | 'blend' color_string float
+                      | 'blend' color_string value
+    value             -> float | identifier | expr
+    expr              -> '(' python_expression ')'
 """
 
+import ast
 import re
 
 from sverchok.utils.parsec import (
@@ -65,6 +68,7 @@ from sverchok.utils.modules.eisenscript.ast import (
     Repeat,
     RuleRef,
     VariableRef,
+    Expr,
     IMPLICIT_START_RULE,
     # Axis constants
     AXIS_X, AXIS_Y, AXIS_Z,
@@ -132,6 +136,59 @@ def parse_color_string(src):
         if color.startswith("'") and color.endswith("'"):
             color = color[1:-1]
         yield color, rest
+
+
+# ---------------------------------------------------------------------------
+# Expression parser
+# ---------------------------------------------------------------------------
+
+def _find_matching_paren(src, start):
+    """
+    Find the index of the closing ')' that matches '(' at position *start*.
+
+    Handles nested parentheses correctly.  Returns the index of the
+    matching ')' or ``-1`` if no match is found.
+    """
+    if start >= len(src) or src[start] != '(':
+        return -1
+    depth = 1
+    i = start + 1
+    while i < len(src) and depth > 0:
+        if src[i] == '(':
+            depth += 1
+        elif src[i] == ')':
+            depth -= 1
+        i += 1
+    if depth == 0:
+        return i - 1
+    return -1
+
+
+def parse_expression(src):
+    """
+    Parse a parenthesized Python expression: ``( <python_expr> )``.
+
+    Yields ``(Expr, rest)`` on success.  Raises ``SyntaxError`` if the
+    inner content is not valid Python.
+    """
+    stripped = src.lstrip()
+    if not stripped.startswith('('):
+        return
+
+    close = _find_matching_paren(stripped, 0)
+    if close == -1:
+        return  # unbalanced parens — not an expression
+
+    inner = stripped[1:close]
+    rest = stripped[close + 1:]
+
+    # Validate the inner content as a Python expression
+    try:
+        ast_node = ast.parse(inner, mode='eval')
+    except SyntaxError as e:
+        raise SyntaxError(f"Invalid expression: {inner!r}") from e
+
+    yield Expr(inner, ast_node), rest.lstrip()
 
 
 # ---------------------------------------------------------------------------
@@ -238,123 +295,246 @@ def _to_num_or_var(s):
     return VariableRef(s)
 
 
-def _try_regex_parse(regex, src, factory):
-    """Helper: try to match regex on src, yield factory(result), rest."""
-    match = regex.match(src.lstrip())
+# ---------------------------------------------------------------------------
+# Unified value parser: tries expression first, then number/variable
+# ---------------------------------------------------------------------------
+
+def _parse_value(src):
+    """
+    Parse a value token from *src*: expression, number, or variable.
+
+    Returns ``(value, rest)`` where *value* is one of:
+    - ``Expr``       — parenthesized Python expression
+    - ``float``      — numeric literal (int, float, fraction)
+    - ``VariableRef`` — identifier (variable reference)
+
+    Raises ``SyntaxError`` on invalid expression syntax.
+    """
+    stripped = src.lstrip()
+
+    # 1. Try parenthesized expression
+    if stripped.startswith('('):
+        for expr, rest in parse_expression(stripped):
+            return expr, rest
+
+    # 2. Try number or identifier
+    match = re.match(r"(" + _num_or_id + r")\s*(.*)", stripped, re.DOTALL)
     if match:
-        groups = match.groups()
-        yield factory(groups), groups[-1]  # last group is always rest
+        token, rest = match.groups()
+        return _to_num_or_var(token), rest.lstrip()
+
+    return None, src  # no match
+
+
+# ---------------------------------------------------------------------------
+# Keyword-matching helpers
+# ---------------------------------------------------------------------------
+
+def _starts_with_kw(src, *keywords):
+    """Check if *src* (stripped) starts with one of the given keywords.
+
+    Returns ``(keyword, remainder)`` or ``(None, stripped_src)``.
+    """
+    s = src.lstrip()
+    for kw in keywords:
+        if s.startswith(kw):
+            after = s[len(kw):]
+            if not after or after[0].isspace() or after[0] == '(':
+                return kw, after
+    return None, s
+
+
+# ---------------------------------------------------------------------------
+# Transformation parsers (keyword-first, value via _parse_value)
+# ---------------------------------------------------------------------------
 
 
 def parse_TranslateX(src):
-    def make(g):
-        return Translate(AXIS_X, _to_num_or_var(g[0]))
-    yield from _try_regex_parse(_translate_x_re, src, make)
+    kw, after = _starts_with_kw(src, 'x')
+    if kw is None:
+        return
+    val, rest = _parse_value(after)
+    if val is None:
+        return
+    yield Translate(AXIS_X, val), rest
 
 
 def parse_TranslateY(src):
-    def make(g):
-        return Translate(AXIS_Y, _to_num_or_var(g[0]))
-    yield from _try_regex_parse(_translate_y_re, src, make)
+    kw, after = _starts_with_kw(src, 'y')
+    if kw is None:
+        return
+    val, rest = _parse_value(after)
+    if val is None:
+        return
+    yield Translate(AXIS_Y, val), rest
 
 
 def parse_TranslateZ(src):
-    def make(g):
-        return Translate(AXIS_Z, _to_num_or_var(g[0]))
-    yield from _try_regex_parse(_translate_z_re, src, make)
+    kw, after = _starts_with_kw(src, 'z')
+    if kw is None:
+        return
+    val, rest = _parse_value(after)
+    if val is None:
+        return
+    yield Translate(AXIS_Z, val), rest
 
 
 def parse_RotateX(src):
-    def make(g):
-        return Rotate(AXIS_X, _to_num_or_var(g[0]))
-    yield from _try_regex_parse(_rotate_x_re, src, make)
+    kw, after = _starts_with_kw(src, 'rx')
+    if kw is None:
+        return
+    val, rest = _parse_value(after)
+    if val is None:
+        return
+    yield Rotate(AXIS_X, val), rest
 
 
 def parse_RotateY(src):
-    def make(g):
-        return Rotate(AXIS_Y, _to_num_or_var(g[0]))
-    yield from _try_regex_parse(_rotate_y_re, src, make)
+    kw, after = _starts_with_kw(src, 'ry')
+    if kw is None:
+        return
+    val, rest = _parse_value(after)
+    if val is None:
+        return
+    yield Rotate(AXIS_Y, val), rest
 
 
 def parse_RotateZ(src):
-    def make(g):
-        return Rotate(AXIS_Z, _to_num_or_var(g[0]))
-    yield from _try_regex_parse(_rotate_z_re, src, make)
+    kw, after = _starts_with_kw(src, 'rz')
+    if kw is None:
+        return
+    val, rest = _parse_value(after)
+    if val is None:
+        return
+    yield Rotate(AXIS_Z, val), rest
 
 
 def parse_Scale(src):
-    def make(g):
-        x = _to_num_or_var(g[0])
-        y = _to_num_or_var(g[1]) if g[1] else None
-        z = _to_num_or_var(g[2]) if g[2] else None
-        return Scale(x, y, z)
-    yield from _try_regex_parse(_scale_re, src, make)
+    """Parse 's <v>' or 's <v1> <v2> <v3>'."""
+    s = src.lstrip()
+    if not s.startswith('s'):
+        return
+    after = s[1:]
+    # Make sure 's' is a standalone keyword (not 'sat', 'scale', etc.)
+    if after and not (after[0].isspace() or after[0] == '('):
+        return
+    val1, rest = _parse_value(after)
+    if val1 is None:
+        return
+    # Try to parse second value
+    val2, rest2 = _parse_value(rest)
+    if val2 is not None:
+        # Try to parse third value
+        val3, rest3 = _parse_value(rest2)
+        if val3 is not None:
+            yield Scale(val1, val2, val3), rest3.lstrip()
+            return
+        yield Scale(val1, val2), rest2.lstrip()
+        return
+    yield Scale(val1), rest.lstrip()
 
 
 def parse_MatrixTransform(src):
-    def make(g):
-        return MatrixTransform([_to_num_or_var(g[i]) for i in range(9)])
-    yield from _try_regex_parse(_matrix_re, src, make)
+    s = src.lstrip()
+    if not s.startswith('m'):
+        return
+    after = s[1:]
+    # Make sure 'm' is standalone (not 'md', 'maxdepth', etc.)
+    if after and not (after[0].isspace() or after[0] == '('):
+        return
+    values = []
+    current = after
+    for _ in range(9):
+        val, current = _parse_value(current)
+        if val is None:
+            return
+        values.append(val)
+    yield MatrixTransform(values), current.lstrip()
 
 
 def parse_MirrorX(src):
-    def make(g):
-        return Mirror(AXIS_X)
-    yield from _try_regex_parse(_mirror_x_re, src, make)
+    s = src.lstrip()
+    if s.startswith('fx'):
+        after = s[2:]
+        if not after or after[0].isspace():
+            yield Mirror(AXIS_X), after.lstrip()
 
 
 def parse_MirrorY(src):
-    def make(g):
-        return Mirror(AXIS_Y)
-    yield from _try_regex_parse(_mirror_y_re, src, make)
+    s = src.lstrip()
+    if s.startswith('fy'):
+        after = s[2:]
+        if not after or after[0].isspace():
+            yield Mirror(AXIS_Y), after.lstrip()
 
 
 def parse_MirrorZ(src):
-    def make(g):
-        return Mirror(AXIS_Z)
-    yield from _try_regex_parse(_mirror_z_re, src, make)
+    s = src.lstrip()
+    if s.startswith('fz'):
+        after = s[2:]
+        if not after or after[0].isspace():
+            yield Mirror(AXIS_Z), after.lstrip()
 
 
 def parse_HueShift(src):
-    def make(g):
-        return HueShift(_to_num_or_var(g[0]))
-    yield from _try_regex_parse(_hue_re, src, make)
+    kw, after = _starts_with_kw(src, 'hue', 'h')
+    if kw is None:
+        return
+    val, rest = _parse_value(after)
+    if val is None:
+        return
+    yield HueShift(val), rest
 
 
 def parse_SaturationMul(src):
-    def make(g):
-        return SaturationMul(_to_num_or_var(g[0]))
-    yield from _try_regex_parse(_sat_re, src, make)
+    kw, after = _starts_with_kw(src, 'sat')
+    if kw is None:
+        return
+    val, rest = _parse_value(after)
+    if val is None:
+        return
+    yield SaturationMul(val), rest
 
 
 def parse_BrightnessMul(src):
-    def make(g):
-        return BrightnessMul(_to_num_or_var(g[0]))
-    yield from _try_regex_parse(_bright_re, src, make)
+    kw, after = _starts_with_kw(src, 'brightness', 'b')
+    if kw is None:
+        return
+    val, rest = _parse_value(after)
+    if val is None:
+        return
+    yield BrightnessMul(val), rest
 
 
 def parse_AlphaMul(src):
-    def make(g):
-        return AlphaMul(_to_num_or_var(g[0]))
-    yield from _try_regex_parse(_alpha_re, src, make)
+    kw, after = _starts_with_kw(src, 'alpha', 'a')
+    if kw is None:
+        return
+    val, rest = _parse_value(after)
+    if val is None:
+        return
+    yield AlphaMul(val), rest
 
 
 def parse_SetColor(src):
-    def make(g):
-        color = g[0]
-        if color.startswith("'") and color.endswith("'"):
-            color = color[1:-1]
-        return SetColor(color)
-    yield from _try_regex_parse(_setcolor_re, src, make)
+    s = src.lstrip()
+    if not s.startswith('color'):
+        return
+    after = s[5:].lstrip()
+    for color, rest in parse_color_string(after):
+        yield SetColor(color), rest
 
 
 def parse_BlendColor(src):
-    def make(g):
-        color = g[0]
-        if color.startswith("'") and color.endswith("'"):
-            color = color[1:-1]
-        return BlendColor(color, _to_num_or_var(g[1]))
-    yield from _try_regex_parse(_blend_re, src, make)
+    s = src.lstrip()
+    if not s.startswith('blend'):
+        return
+    after = s[5:].lstrip()
+    for color, rest in parse_color_string(after):
+        val, rest2 = _parse_value(rest)
+        if val is None:
+            return
+        yield BlendColor(color, val), rest2
 
 
 # ---------------------------------------------------------------------------
@@ -435,21 +615,32 @@ parse_primitive = one_of(
 
 def parse_rule_ref_with_retirement(src):
     """
-    Parse rule reference that may include 'md <int> ['> <id>']' prefix.
+    Parse rule reference that may include 'md <value> ['> <id>']' prefix.
     Returns (RuleRef, rest).
     """
     src_stripped = src.lstrip()
 
-    # Try 'md <int> ['> <id>'] <rulename>'
-    md_re = re.compile(
-        r"md\s+(-?\d+)\s*(?:>\s*([a-zA-Z_][a-zA-Z0-9_]*))?\s+"
-        r"([a-zA-Z_][a-zA-Z0-9_]*)\s*(.*)",
-        re.DOTALL,
-    )
-    match = md_re.match(src_stripped)
-    if match:
-        depth, retirement_rule, name, rest = match.groups()
-        yield RuleRef(name, int(depth), retirement_rule), rest.lstrip()
+    # Try 'md <value> ['> <id>'] <rulename>'
+    if src_stripped.startswith('md'):
+        after = src_stripped[2:]
+        val, rest = _parse_value(after)
+        if val is not None:
+            retirement_rule = None
+            rest_stripped = rest.lstrip()
+            if rest_stripped.startswith('>'):
+                rest_stripped = rest_stripped[1:].lstrip()
+                for name2, rest2 in parse_identifier(rest_stripped):
+                    retirement_rule = name2
+                    rest_stripped = rest2
+            # Now parse the rule name
+            for name, rest3 in parse_identifier(rest_stripped):
+                retirement_depth = None
+                if isinstance(val, float) and val == int(val):
+                    retirement_depth = int(val)
+                else:
+                    retirement_depth = val
+                yield RuleRef(name, retirement_depth, retirement_rule), rest3.lstrip()
+                return
         return
 
     # Plain identifier as rule reference
@@ -485,6 +676,22 @@ def _parse_transformations_from_string(inner_content):
     return transforms
 
 
+def _extract_brace_block(src):
+    """
+    Extract content between '{' and '}' from *src*.
+
+    Returns ``(inner_content, rest_after_brace)`` or ``(None, None)``.
+    Uses [^}]* (non-nested) since repetition blocks are always shallow.
+    """
+    s = src.lstrip()
+    if not s.startswith('{'):
+        return None, None
+    close = s.find('}')
+    if close == -1:
+        return None, None
+    return s[1:close], s[close + 1:]
+
+
 def parse_repetition(src):
     """
     Parse '<count> * { transformations... }'.
@@ -495,11 +702,27 @@ def parse_repetition(src):
     transformations.  Rule bodies use _find_matching_brace for proper
     nesting, but repetition blocks are always shallow (P3).
     """
+    s = src.lstrip()
+
+    # Try: expression * { ... }
+    if s.startswith('('):
+        for count, after_expr in parse_expression(s):
+            after_star = after_expr.lstrip()
+            if after_star.startswith('*'):
+                after_star = after_star[1:].lstrip()
+                inner, rest = _extract_brace_block(after_star)
+                if inner is not None:
+                    transforms = _parse_transformations_from_string(inner)
+                    yield Repeat(count, transforms), rest.lstrip()
+                    return
+        return
+
+    # Try: integer * { ... }
     rep_int_re = re.compile(
         r"(-?(?:0|[1-9]\d*))\s*\*\s*\{([^}]*)\}\s*(.*)",
         re.DOTALL,
     )
-    match = rep_int_re.match(src.lstrip())
+    match = rep_int_re.match(s)
     if match:
         count_str, inner, rest = match.groups()
         count = int(count_str)
@@ -514,7 +737,7 @@ def parse_repetition(src):
         r"([a-zA-Z_][a-zA-Z0-9_]*)\s*\*\s*\{([^}]*)\}\s*(.*)",
         re.DOTALL,
     )
-    match = rep_id_re.match(src.lstrip())
+    match = rep_id_re.match(s)
     if match:
         name, inner, rest = match.groups()
         transforms = _parse_transformations_from_string(inner)
@@ -659,40 +882,44 @@ def parse_rule_body(src):
 def parse_rule_modifier(src):
     """
     Parse rule modifiers:
-        maxdepth <int_or_var> ['>' <id>]
-        md <int_or_var> ['>' <id>]
-        weight <float_or_var>
-        w <float_or_var>
+        maxdepth <value> ['>' <id>]
+        md <value> ['>' <id>]
+        weight <value>
+        w <value>
+
+    <value> can be a number, variable, or parenthesized expression.
+
     Returns a dict of {name: value} or {name: (value, sub_rule)}.
     """
     src_stripped = src.lstrip()
 
-    # maxdepth / md <int_or_var> ['>' <id>]
-    md_re = re.compile(
-        r"(?:maxdepth|md)\s+(" + _num_or_id + r")\s*(?:>\s*([a-zA-Z_][a-zA-Z0-9_]*))?\s*(.*)",
-        re.DOTALL,
-    )
-    match = md_re.match(src_stripped)
-    if match:
-        depth_str, retirement_rule, rest = match.groups()
-        # Parse depth value (may be a variable reference)
-        depth_val = _to_num_or_var(depth_str)
-        modifier = {"maxdepth": depth_val}
+    # maxdepth / md <value> ['>' <id>]
+    kw, after = _starts_with_kw(src_stripped, 'maxdepth', 'md')
+    if kw is not None:
+        val, rest = _parse_value(after)
+        if val is None:
+            return
+        # Check for optional '> <id>'
+        retirement_rule = None
+        rest_stripped = rest.lstrip()
+        if rest_stripped.startswith('>'):
+            rest_stripped = rest_stripped[1:].lstrip()
+            for name, rest2 in parse_identifier(rest_stripped):
+                retirement_rule = name
+                rest = rest2
+        modifier = {"maxdepth": val}
         if retirement_rule:
             modifier["retirement_rule"] = retirement_rule
         yield modifier, rest.lstrip()
         return
 
-    # weight / w <float_or_var>
-    w_re = re.compile(
-        r"(?:weight|w)\s+(" + _num_or_id + r")\s*(.*)",
-        re.DOTALL,
-    )
-    match = w_re.match(src_stripped)
-    if match:
-        weight_str, rest = match.groups()
-        weight_val = _to_num_or_var(weight_str)
-        yield {"weight": weight_val}, rest.lstrip()
+    # weight / w <value>
+    kw, after = _starts_with_kw(src_stripped, 'weight', 'w')
+    if kw is not None:
+        val, rest = _parse_value(after)
+        if val is None:
+            return
+        yield {"weight": val}, rest.lstrip()
         return
 
 
@@ -778,7 +1005,7 @@ def _parse_numeric_value(src):
     """Parse a numeric value: integer, float, or fraction."""
     num = r"-?(?:0|[1-9]\d*)"
     frac = num + r"(?:\.\d+)?(?:[eE][+-]?\d+)?(?:\s*/\s*" + num + r"(?:\.\d+)?)?"
-    match = re.match(f"({frac})\s*(.*)", src.lstrip(), re.DOTALL)
+    match = re.match(rf"({frac})\s*(.*)", src.lstrip(), re.DOTALL)
     if match:
         yield _to_float(match.group(1)), match.group(2)
         return

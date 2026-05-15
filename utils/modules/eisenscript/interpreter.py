@@ -45,6 +45,7 @@ from sverchok.utils.modules.eisenscript.ast import (
     Repeat,
     RuleRef,
     VariableRef,
+    Expr,
     IMPLICIT_START_RULE,
     # Axis constants
     AXIS_X, AXIS_Y, AXIS_Z,
@@ -60,6 +61,41 @@ from sverchok.utils.modules.eisenscript.ast import (
     # Primitives
     Box, Grid, Sphere, Line, Point, Triangle,
 )
+
+
+# ---------------------------------------------------------------------------
+# Safe evaluation namespace for Python expressions
+# ---------------------------------------------------------------------------
+
+def _make_safe_names():
+    """Build the safe namespace for ``eval()`` of EisenScript expressions.
+
+    Includes all functions from the ``math`` module, plus a handful of
+    built-in functions and constants.
+    """
+    safe = {}
+    # All callable names from the math module
+    import math as _math
+    for _name in dir(_math):
+        if not _name.startswith('_'):
+            _obj = getattr(_math, _name)
+            if callable(_obj):
+                safe[_name] = _obj
+    # Math constants
+    safe['e'] = math.e
+    safe['pi'] = math.pi
+    # Useful built-ins
+    safe['abs'] = abs
+    safe['round'] = round
+    safe['min'] = min
+    safe['max'] = max
+    safe['pow'] = pow
+    safe['tuple'] = tuple
+    safe['list'] = list
+    return safe
+
+
+SAFE_NAMES = _make_safe_names()
 
 
 # ---------------------------------------------------------------------------
@@ -200,6 +236,12 @@ class Interpreter:
                 if val.name not in defines:
                     raise ValueError(f"Undefined variable: {val.name}")
                 return defines[val.name]
+            if isinstance(val, Expr):
+                # Build evaluation namespace: safe_names + defines
+                env = dict(SAFE_NAMES)
+                env.update(defines)
+                env["__builtins__"] = {}
+                return eval(compile(val.ast_node, "<eisenscript>", "eval"), env)
             return val
 
         # Stack entries: (rule, depth, accumulated_matrix)

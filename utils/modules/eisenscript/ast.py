@@ -32,18 +32,21 @@ Grammar overview:
     repetition    -> count '*' '{' transformation+ '}'
     rule_ref      -> rule_name | 'md' count '>' rule_name
     primitive     -> 'box' | 'grid' | 'sphere' | 'line' | 'point' | 'triangle'
-    transformation -> 'x'|'y'|'z' float
-                   | 'rx'|'ry'|'rz' float
-                   | 's' (float | float float float)
-                   | 'm' float{9}
+    transformation -> 'x'|'y'|'z' (float | expr)
+                   | 'rx'|'ry'|'rz' (float | expr)
+                   | 's' (float | expr) { (float | expr) (float | expr) }
+                   | 'm' (float | expr){9}
                    | 'fx'|'fy'|'fz'
-                   | 'h'|'hue' float
-                   | 'sat' float
-                   | 'b'|'brightness' float
-                   | 'a'|'alpha' float
+                   | 'h'|'hue' (float | expr)
+                   | 'sat' (float | expr)
+                   | 'b'|'brightness' (float | expr)
+                   | 'a'|'alpha' (float | expr)
                    | 'color' color
-                   | 'blend' color float
+                   | 'blend' color (float | expr)
+    expr          -> '(' python_expression ')'
 """
+
+import ast
 
 
 # ---------------------------------------------------------------------------
@@ -126,6 +129,38 @@ class VariableRef(AstNode):
 
     def __repr__(self):
         return f"Var({self.name!r})"
+
+
+class Expr(AstNode):
+    """
+    A Python expression enclosed in parentheses, e.g. ``(x * 2 + sin(t))``.
+
+    The expression string is validated at parse time via ``ast.parse(mode='eval')``.
+    At interpretation time it is evaluated with ``eval()`` using a safe namespace
+    (math functions, constants, and #define variables).
+
+    Attributes:
+        source: The raw expression string (without surrounding parens).
+        ast_node: The parsed ``ast.Expression`` from ``ast.parse(source, mode='eval')``.
+    """
+
+    def __init__(self, source: str, ast_node):
+        self.source = source
+        self.ast_node = ast_node
+
+    def __repr__(self):
+        return f"Expr({self.source!r})"
+
+    def __eq__(self, other):
+        return isinstance(other, Expr) and self.source == other.source
+
+    def get_variables(self):
+        """Return the set of variable names referenced in this expression."""
+        return {
+            node.id
+            for node in ast.walk(self.ast_node)
+            if isinstance(node, ast.Name)
+        }
 
 
 # ---------------------------------------------------------------------------
