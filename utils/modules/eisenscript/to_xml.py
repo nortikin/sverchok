@@ -450,6 +450,15 @@ def ast_to_xml(program, support_colors=False):
     if not isinstance(program, Program):
         raise TypeError(f"Expected Program, got {type(program).__name__}")
 
+    # Check for expression values in #define
+    for name, val in program.defines.items():
+        if isinstance(val, Expr):
+            raise ExpressionInXmlError(
+                f"#define {name} has expression ({val.source!r}) which cannot "
+                f"be converted to XML. XML format does not support Python "
+                f"expressions in #define. Pre-compute the value."
+            )
+
     rules_elem = ET.Element("rules")
 
     # Global max_depth from settings

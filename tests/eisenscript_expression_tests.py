@@ -330,7 +330,7 @@ class ExpressionInRuleRefTests(unittest.TestCase):
 # ---------------------------------------------------------------------------
 
 class DefineNoExpressionTests(unittest.TestCase):
-    """Test that #define values are numbers only."""
+    """Test that #define accepts both numbers and expressions."""
 
     def test_define_with_number(self):
         prog = parse("#define n 10")
@@ -343,6 +343,210 @@ class DefineNoExpressionTests(unittest.TestCase):
     def test_define_with_float(self):
         prog = parse("#define scale 0.75")
         self.assertEqual(prog.defines["scale"], 0.75)
+
+    def test_define_with_expression(self):
+        prog = parse("#define n (a * 2 + 1)")
+        self.assertIsInstance(prog.defines["n"], Expr)
+        self.assertEqual(prog.defines["n"].source, "a * 2 + 1")
+
+    def test_define_expression_with_math(self):
+        prog = parse("#define r (sqrt(2))")
+        self.assertIsInstance(prog.defines["r"], Expr)
+        self.assertEqual(prog.defines["r"].source, "sqrt(2)")
+
+    def test_define_mixed_numbers_and_expressions(self):
+        prog = parse("#define a 5\n#define b (a + 1)\n#define c 10")
+        self.assertEqual(prog.defines["a"], 5.0)
+        self.assertIsInstance(prog.defines["b"], Expr)
+        self.assertEqual(prog.defines["b"].source, "a + 1")
+        self.assertEqual(prog.defines["c"], 10.0)
+
+
+class DefineExpressionInterpreterTests(unittest.TestCase):
+    """Test lazy evaluation of #define expressions in the interpreter."""
+
+    def setUp(self):
+        # Mock mathutils for standalone testing
+        import types
+        if 'mathutils' not in sys.modules:
+            mathutils = types.ModuleType('mathutils')
+
+            class MockVector(list):
+                def __init__(self, v=None):
+                    if v is None:
+                        super().__init__([0, 0, 0])
+                    elif isinstance(v, (list, tuple)):
+                        super().__init__(list(v))
+                    else:
+                        super().__init__([v, v, v])
+                @property
+                def length(self):
+                    return sum(x*x for x in self)**0.5
+                def __neg__(self):
+                    return MockVector([-x for x in self])
+                def __sub__(self, other):
+                    return MockVector([a-b for a,b in zip(self, other)])
+                def __add__(self, other):
+                    return MockVector([a+b for a,b in zip(self, other)])
+
+            class MockMatrix:
+                def __init__(self, data=None):
+                    if data is None:
+                        self.data = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]
+                    elif isinstance(data, int):
+                        n = data
+                        self.data = [[1 if i==j else 0 for j in range(n)] for i in range(n)]
+                    elif isinstance(data, list):
+                        self.data = [list(row) for row in data]
+                    else:
+                        self.data = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]
+
+                @staticmethod
+                def Identity(n=4):
+                    return MockMatrix(n)
+
+                @staticmethod
+                def Translation(v):
+                    m = MockMatrix(4)
+                    for i in range(3):
+                        m.data[i][3] = v[i]
+                    return m
+
+                @staticmethod
+                def Rotation(angle, size, axis):
+                    import math
+                    c, s = math.cos(angle), math.sin(angle)
+                    m = MockMatrix(size)
+                    if axis == 'X':
+                        m.data[1][1], m.data[1][2] = c, s
+                        m.data[2][1], m.data[2][2] = -s, c
+                    elif axis == 'Y':
+                        m.data[0][0], m.data[0][2] = c, -s
+                        m.data[2][0], m.data[2][2] = s, c
+                    elif axis == 'Z':
+                        m.data[0][0], m.data[0][1] = c, s
+                        m.data[1][0], m.data[1][1] = -s, c
+                    return m
+
+                @staticmethod
+                def Scale(s, size, axis=None):
+                    m = MockMatrix(size)
+                    if axis is None:
+                        m.data[0][0] = s
+                        m.data[1][1] = s
+                        m.data[2][2] = s
+                    else:
+                        for i in range(3):
+                            m.data[i][i] = 1
+                        if axis == (1.0, 0.0, 0.0):
+                            m.data[0][0] = s
+                        elif axis == (0.0, 1.0, 0.0):
+                            m.data[1][1] = s
+                        elif axis == (0.0, 0.0, 1.0):
+                            m.data[2][2] = s
+                        else:
+                            m.data[0][0] = s
+                    return m
+
+                def copy(self):
+                    return MockMatrix([row[:] for row in self.data])
+
+                def __matmul__(self, other):
+                    n = len(self.data)
+                    result = [[0]*n for _ in range(n)]
+                    for i in range(n):
+                        for j in range(n):
+                            for k in range(n):
+                                result[i][j] += self.data[i][k] * other.data[k][j]
+                    return MockMatrix(result)
+
+                def __getitem__(self, key):
+                    return self.data[key]
+
+                def __repr__(self):
+                    return f'Matrix({self.data})'
+
+            mathutils.Matrix = MockMatrix
+            mathutils.Vector = MockVector
+            sys.modules['mathutils'] = mathutils
+
+        from sverchok.utils.modules.eisenscript.interpreter import Interpreter
+        self.Interpreter = Interpreter
+
+    def test_define_expression_simple(self):
+        """Simple expression referencing a plain #define."""
+        prog = parse("#define a 5\n#define b (a + 1)\n1 * { x b } box")
+        result = self.Interpreter.interpret(prog)
+        m = result.matrices['box'][0]
+        self.assertAlmostEqual(m[0][3], 6.0)
+
+    def test_define_expression_forward_ref(self):
+        """Expression references a variable defined below it."""
+        prog = parse("#define b (a + 1)\n#define a 5\n1 * { x b } box")
+        result = self.Interpreter.interpret(prog)
+        m = result.matrices['box'][0]
+        self.assertAlmostEqual(m[0][3], 6.0)
+
+    def test_define_expression_chain(self):
+        """Chain of expressions: c depends on b, b depends on a."""
+        prog = parse("#define a 2\n#define b (a * 3)\n#define c (b + 1)\n1 * { x c } box")
+        result = self.Interpreter.interpret(prog)
+        m = result.matrices['box'][0]
+        self.assertAlmostEqual(m[0][3], 7.0)  # a=2, b=6, c=7
+
+    def test_define_expression_chain_forward(self):
+        """Chain with forward references."""
+        prog = parse("#define c (b + 1)\n#define a 2\n#define b (a * 3)\n1 * { x c } box")
+        result = self.Interpreter.interpret(prog)
+        m = result.matrices['box'][0]
+        self.assertAlmostEqual(m[0][3], 7.0)
+
+    def test_define_expression_with_math(self):
+        """Expression using math functions."""
+        prog = parse("#define a 3\n#define b 4\n#define c (sqrt(a*a + b*b))\n1 * { x c } box")
+        result = self.Interpreter.interpret(prog)
+        m = result.matrices['box'][0]
+        self.assertAlmostEqual(m[0][3], 5.0)
+
+    def test_define_expression_reused(self):
+        """Expression is cached and reused across multiple uses."""
+        prog = parse("#define a 2\n#define b (a * 3)\n1 * { x b y b } box")
+        result = self.Interpreter.interpret(prog)
+        m = result.matrices['box'][0]
+        self.assertAlmostEqual(m[0][3], 6.0)  # x translation
+        self.assertAlmostEqual(m[1][3], 6.0)  # y translation
+
+    def test_define_expression_undefined_var(self):
+        """Undefined variable in expression raises ValueError."""
+        prog = parse("#define b (undefined_var + 1)\n1 * { x b } box")
+        with self.assertRaises(ValueError) as ctx:
+            self.Interpreter.interpret(prog)
+        self.assertIn("undefined_var", str(ctx.exception))
+
+    def test_define_expression_in_repetition(self):
+        """Expression used in repetition count."""
+        prog = parse("#define n 3\n#define count (n * 2)\n(count) * { x 1 } box")
+        result = self.Interpreter.interpret(prog)
+        self.assertEqual(len(result.matrices['box']), 6)
+
+    def test_define_expression_in_maxdepth(self):
+        """Expression used in maxdepth."""
+        prog = parse("""
+        #define base 2
+        #define depth (base + 1)
+        1 * { x 1 } start
+        rule start maxdepth (depth) { 1 * { x 1 } start }
+        rule start maxdepth (depth) { 1 * {} box }
+        """)
+        result = self.Interpreter.interpret(prog)
+        self.assertGreater(len(result.matrices['box']), 0)
+
+    def test_define_plain_still_works(self):
+        """Plain numeric #define still works."""
+        prog = parse("#define n 10\n1 * { x n } box")
+        result = self.Interpreter.interpret(prog)
+        m = result.matrices['box'][0]
+        self.assertAlmostEqual(m[0][3], 10.0)
 
 
 # ---------------------------------------------------------------------------
@@ -522,6 +726,14 @@ class ExpressionToXmlTests(unittest.TestCase):
         with self.assertRaises(self.ExpressionInXmlError) as ctx:
             self.ast_to_xml(prog)
         self.assertIn("#define", str(ctx.exception))
+
+    def test_define_expression_raises(self):
+        """#define with expression value cannot be converted to XML."""
+        prog = parse("#define n (a * 2)\n1 * { x n } box")
+        with self.assertRaises(self.ExpressionInXmlError) as ctx:
+            self.ast_to_xml(prog)
+        self.assertIn("n", str(ctx.exception))
+        self.assertIn("a * 2", str(ctx.exception))
 
 
 if __name__ == "__main__":

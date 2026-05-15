@@ -99,6 +99,143 @@ SAFE_NAMES = _make_safe_names()
 
 
 # ---------------------------------------------------------------------------
+# Lazy #define resolver with topological sort and caching
+# ---------------------------------------------------------------------------
+
+class DefineResolver:
+    """
+    Lazy evaluator for ``#define`` values with caching and topological sort.
+
+    Supports:
+    - Plain numeric values (``#define n 10``)
+    - Expression values (``#define n (a * 2 + 1)``)
+    - Forward references (expressions can reference variables defined later)
+    - Caching (each expression is evaluated at most once)
+    - Topological ordering (dependencies are resolved before dependents)
+
+    Raises ``ValueError`` on undefined variables or circular dependencies.
+    """
+
+    def __init__(self, raw_defines: Dict[str, object]):
+        """
+        Args:
+            raw_defines: Dict mapping variable names to either ``float``
+                or :class:`Expr` nodes.
+        """
+        self._raw = dict(raw_defines)
+        self._cache: Dict[str, float] = {}
+        self._topo_order: Optional[List[str]] = None
+
+    # ---- public API ----------------------------------------------------
+
+    def resolve(self, name: str) -> float:
+        """
+        Resolve a variable name to its numeric value.
+
+        Returns:
+            The computed float value.
+
+        Raises:
+            ValueError: If the variable is undefined or a circular
+                dependency is detected.
+        """
+        if name in self._cache:
+            return self._cache[name]
+
+        if name not in self._raw:
+            raise ValueError(f"Undefined variable: {name}")
+
+        # First access — build topo order and evaluate all expressions
+        if self._topo_order is None:
+            self._build_and_evaluate()
+
+        if name in self._cache:
+            return self._cache[name]
+
+        # Plain numeric value (not an Expr) — store and return
+        val = self._raw[name]
+        if not isinstance(val, Expr):
+            self._cache[name] = float(val)
+            return self._cache[name]
+
+        raise ValueError(f"Undefined variable: {name}")
+
+    def get_all(self) -> Dict[str, float]:
+        """
+        Force evaluation of all defines and return the complete mapping.
+        """
+        for name in self._raw:
+            self.resolve(name)
+        return dict(self._cache)
+
+    # ---- internal ------------------------------------------------------
+
+    def _build_and_evaluate(self):
+        """Build dependency graph, topo-sort, and evaluate in order."""
+        from sverchok.utils.topo import stable_topo_sort
+
+        # Separate plain values from expressions
+        expr_names = [
+            name for name, val in self._raw.items() if isinstance(val, Expr)
+        ]
+        plain_names = [
+            name for name, val in self._raw.items() if not isinstance(val, Expr)
+        ]
+
+        # Cache plain values immediately
+        for name in plain_names:
+            self._cache[name] = float(self._raw[name])
+
+        if not expr_names:
+            self._topo_order = []
+            return
+
+        # Build dependency graph for expressions
+        # Each expression depends on the variables it references
+        name_to_idx = {name: i for i, name in enumerate(expr_names)}
+
+        edges = []
+        # Names that are NOT variables (math functions, constants, built-ins)
+        _safe_names = set(SAFE_NAMES.keys())
+
+        for i, name in enumerate(expr_names):
+            expr = self._raw[name]
+            for dep in expr.get_variables():
+                if dep in _safe_names:
+                    # Math function or constant — not a variable dependency
+                    continue
+                if dep in self._cache:
+                    # Plain value — already available, no edge needed
+                    continue
+                if dep in name_to_idx:
+                    j = name_to_idx[dep]
+                    if i != j:
+                        edges.append((j, i))  # j must come before i (i depends on j)
+                elif dep not in self._raw:
+                    raise ValueError(f"Undefined variable: {dep}")
+                # else: dep is a plain value, already cached
+
+        # Topological sort
+        sorted_names = stable_topo_sort(expr_names, edges)
+        self._topo_order = sorted_names
+
+        # Evaluate in topo order
+        for name in sorted_names:
+            expr = self._raw[name]
+            env = dict(SAFE_NAMES)
+            # Add all currently cached values
+            env.update(self._cache)
+            env["__builtins__"] = {}
+            try:
+                result = eval(
+                    compile(expr.ast_node, "<eisenscript>", "eval"), env
+                )
+            except NameError as e:
+                raise ValueError(f"Undefined variable in expression: {e}")
+            self._cache[name] = float(result)
+
+
+# ---------------------------------------------------------------------------
 # Result
 # ---------------------------------------------------------------------------
 
@@ -228,18 +365,18 @@ class Interpreter:
         # Result collector
         result = InterpreterResult()
 
-        # Resolve defines helper
-        defines = program.defines
+        # Lazy define resolver with topo sort and caching
+        resolver = DefineResolver(program.defines)
 
         def _resolve(val):
             if isinstance(val, VariableRef):
-                if val.name not in defines:
-                    raise ValueError(f"Undefined variable: {val.name}")
-                return defines[val.name]
+                return resolver.resolve(val.name)
             if isinstance(val, Expr):
-                # Build evaluation namespace: safe_names + defines
+                # Ensure all #define expressions are evaluated first
+                resolver.get_all()
+                # Build evaluation namespace: safe_names + resolved defines
                 env = dict(SAFE_NAMES)
-                env.update(defines)
+                env.update(resolver._cache)
                 env["__builtins__"] = {}
                 return eval(compile(val.ast_node, "<eisenscript>", "eval"), env)
             return val
@@ -278,7 +415,7 @@ class Interpreter:
             # Process each branch in the rule
             for branch in rule.body:
                 self._interpret_branch(
-                    branch, rule_map, defines,
+                    branch, rule_map, resolver,
                     matrix, depth, stack, result,
                     total_objects, _resolve,
                 )
@@ -296,7 +433,7 @@ class Interpreter:
         self,
         branch: Branch,
         rule_map: Dict[str, List[Rule]],
-        defines: dict,
+        resolver: DefineResolver,
         parent_matrix: Matrix,
         depth: int,
         stack: list,
@@ -318,13 +455,13 @@ class Interpreter:
         rep_info = []  # list of (count, transform_matrix)
         for rep in repetitions:
             count = round(resolve(rep.count))
-            tmat = self._build_transform_matrix(rep.transformations, defines, resolve)
+            tmat = self._build_transform_matrix(rep.transformations, resolver, resolve)
             rep_info.append((count, tmat))
 
         # Terminal dispatch
         if isinstance(terminal, RuleRef):
             self._dispatch_call(
-                terminal, rule_map, defines, resolve,
+                terminal, rule_map, resolver, resolve,
                 parent_matrix, depth, stack, rep_info,
             )
         else:
@@ -341,7 +478,7 @@ class Interpreter:
         self,
         ref: RuleRef,
         rule_map: Dict[str, List[Rule]],
-        defines: dict,
+        resolver: DefineResolver,
         resolve,
         parent_matrix: Matrix,
         depth: int,
@@ -489,7 +626,7 @@ class Interpreter:
     def _build_transform_matrix(
         self,
         transformations: list,
-        defines: dict,
+        resolver: DefineResolver,
         resolve,
     ) -> Matrix:
         """

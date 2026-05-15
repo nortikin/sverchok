@@ -1019,7 +1019,11 @@ def parse_define_statement(src):
     """
     Parse '#define <identifier> <value>' statements.
 
+    *value* can be a numeric literal (int, float, fraction) or a
+    parenthesized Python expression.
+
     Returns a tuple of (name, value) and the remaining source.
+    *value* is either a ``float`` or an :class:`Expr` node.
     """
     src_stripped = src.lstrip()
     if not src_stripped.startswith("#define"):
@@ -1031,7 +1035,13 @@ def parse_define_statement(src):
     for name, after_name in parse_identifier(after_kw):
         after_name = after_name.lstrip()
 
-        # Parse numeric value (float, int, or fraction)
+        # Try expression first
+        if after_name.startswith('('):
+            for val, rest in parse_expression(after_name):
+                yield (name, val), rest.lstrip()
+                return
+
+        # Fall back to numeric value
         for val, rest in _parse_numeric_value(after_name):
             yield (name, val), rest.lstrip()
             return

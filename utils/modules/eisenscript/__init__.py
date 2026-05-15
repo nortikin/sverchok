@@ -39,4 +39,5 @@ from sverchok.utils.modules.eisenscript.serializer import ast_to_string
 from sverchok.utils.modules.eisenscript.interpreter import (
     Interpreter,
     InterpreterResult,
+    DefineResolver,
 )
