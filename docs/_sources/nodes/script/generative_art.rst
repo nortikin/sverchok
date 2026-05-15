@@ -351,6 +351,77 @@ or:
 
 Only the transforms that take a single number that is ``tx, ty, tz, rx, ry, rz, sx, sy, sz`` and ``sa`` have been implemented using individual attributes. The ones that use triplets to specify all three translations or scales at once (``t`` and ``s``) can only be used in a transform string.
 
+Examples
+--------
+
+Goffer
+~~~~~~
+
+Example of creating a corrugated structure using Generative Art node. This example demonstrates the use of
+intermediate steps to create a complex structure.
+
+::
+
+    <rules max_depth="350">
+            <rule name="entry">
+                <call transforms="rz 120 ry {entry_ry}" rule="R1"/>
+                <call transforms="rz 240 ry {entry_ry}" rule="R1"/>
+                <call transforms="rz 360 ry {entry_ry}" rule="R1"/>
+            </rule>
+            <rule name="R1">
+                <!-- 1 -->    <instance  transforms="sa {R1_sa2}" shape="box"/>
+                <!-- 2 -->    <instance  transforms="sa {R1_sa2}+0.5" shape="box"/>
+                <!-- 3 -->    <instance  transforms="tx {R1_tx}/2 sa {R1_sa2}+0.5" shape="box"/>
+                <!-- 4 -->    <instance  transforms="tx {R1_tx}/2 sa {R1_sa2}" shape="box"/>
+                <call transforms="ry 0 tx {R1_tx} rx {R1_rx} rz {R1_rz} sa {R1_sa}" rule="R1"/>
+            </rule>
+    </rules>
+
+.. image:: https://github.com/user-attachments/assets/f16a5986-1381-4604-9267-5bc5c0d9d9c4
+  :target: https://github.com/user-attachments/assets/f16a5986-1381-4604-9267-5bc5c0d9d9c4
+
+----
+
+.. image:: https://github.com/user-attachments/assets/8d92a99c-2de8-4dcf-b467-6872850674d4
+  :target: https://github.com/user-attachments/assets/8d92a99c-2de8-4dcf-b467-6872850674d4
+
+----
+
+.. image:: https://github.com/user-attachments/assets/7040c7ad-169e-4bf3-b440-efaa9ce553b3
+  :target: https://github.com/user-attachments/assets/7040c7ad-169e-4bf3-b440-efaa9ce553b3
+
+Parametric goffer
+~~~~~~~~~~~~~~~~~
+
+Гофр можно параметризовать дополнительным параметров. Для примера добавим параметр диаметра гофра. Назовём параметр R1_diam.
+
+::
+
+    <rules max_depth="350">
+            <rule name="entry">
+                <call transforms="rz 120 ry {entry_ry}" rule="R1"/>
+                <call transforms="rz 240 ry {entry_ry}" rule="R1"/>
+                <call transforms="rz 360 ry {entry_ry}" rule="R1"/>
+            </rule>
+            <rule name="R1">
+                <!-- 1 -->    <instance  transforms="sa {R1_sa2}" shape="box"/>
+                <!-- 2 -->    <instance  transforms="sa {R1_sa2}+{R1_delta}" shape="box"/>
+                <!-- 3 -->    <instance  transforms="tx {R1_tx}/2 sa {R1_sa2}+{R1_delta}" shape="box"/>
+                <!-- 4 -->    <instance  transforms="tx {R1_tx}/2 sa {R1_sa2}" shape="box"/>
+                <call transforms="ry 0 tx {R1_tx} rx {R1_rx} rz {R1_rz} sa {R1_sa}" rule="R1"/>
+            </rule>
+    </rules>
+
+.. image:: https://github.com/user-attachments/assets/8c1f5816-7d42-4d2e-9bac-5624cfb3d7cb
+  :target: https://github.com/user-attachments/assets/8c1f5816-7d42-4d2e-9bac-5624cfb3d7cb
+
+.. raw:: html
+
+    <video width="700" controls>
+        <source src="https://github.com/user-attachments/assets/fd8965a6-1600-4fc8-bda6-90da8825d897" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>
+
 
 References
 ----------
@@ -361,7 +432,3 @@ This node is closely based on `Structure Synth`_ but the xml design format and m
 .. _Structure Synth: http://structuresynth.sourceforge.net/
 .. _lsystem: https://github.com/prideout/lsystem
 .. _Philip Rideout's: http://prideout.net/
-
-
-
-

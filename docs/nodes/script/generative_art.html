@@ -364,6 +364,11 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fern-3">Fern 3</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#goffer">Goffer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parametric-goffer">Parametric goffer</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
             </nav>
@@ -657,6 +662,63 @@ Your browser does not support the video tag.
 <p>Only the transforms that take a single number that is <code class="docutils literal notranslate"><span class="pre">tx,</span> <span class="pre">ty,</span> <span class="pre">tz,</span> <span class="pre">rx,</span> <span class="pre">ry,</span> <span class="pre">rz,</span> <span class="pre">sx,</span> <span class="pre">sy,</span> <span class="pre">sz</span></code> and <code class="docutils literal notranslate"><span class="pre">sa</span></code> have been implemented using individual attributes. The ones that use triplets to specify all three translations or scales at once (<code class="docutils literal notranslate"><span class="pre">t</span></code> and <code class="docutils literal notranslate"><span class="pre">s</span></code>) can only be used in a transform string.</p>
 </section>
 </section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<section id="goffer">
+<h3>Goffer<a class="headerlink" href="#goffer" title="Link to this heading">#</a></h3>
+<p>Example of creating a corrugated structure using Generative Art node. This example demonstrates the use of
+intermediate steps to create a complex structure.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;rules max_depth=&quot;350&quot;&gt;
+        &lt;rule name=&quot;entry&quot;&gt;
+            &lt;call transforms=&quot;rz 120 ry {entry_ry}&quot; rule=&quot;R1&quot;/&gt;
+            &lt;call transforms=&quot;rz 240 ry {entry_ry}&quot; rule=&quot;R1&quot;/&gt;
+            &lt;call transforms=&quot;rz 360 ry {entry_ry}&quot; rule=&quot;R1&quot;/&gt;
+        &lt;/rule&gt;
+        &lt;rule name=&quot;R1&quot;&gt;
+            &lt;!-- 1 --&gt;    &lt;instance  transforms=&quot;sa {R1_sa2}&quot; shape=&quot;box&quot;/&gt;
+            &lt;!-- 2 --&gt;    &lt;instance  transforms=&quot;sa {R1_sa2}+0.5&quot; shape=&quot;box&quot;/&gt;
+            &lt;!-- 3 --&gt;    &lt;instance  transforms=&quot;tx {R1_tx}/2 sa {R1_sa2}+0.5&quot; shape=&quot;box&quot;/&gt;
+            &lt;!-- 4 --&gt;    &lt;instance  transforms=&quot;tx {R1_tx}/2 sa {R1_sa2}&quot; shape=&quot;box&quot;/&gt;
+            &lt;call transforms=&quot;ry 0 tx {R1_tx} rx {R1_rx} rz {R1_rz} sa {R1_sa}&quot; rule=&quot;R1&quot;/&gt;
+        &lt;/rule&gt;
+&lt;/rules&gt;
+</pre></div>
+</div>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f16a5986-1381-4604-9267-5bc5c0d9d9c4"><img alt="https://github.com/user-attachments/assets/f16a5986-1381-4604-9267-5bc5c0d9d9c4" src="https://github.com/user-attachments/assets/f16a5986-1381-4604-9267-5bc5c0d9d9c4" />
+</a>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/8d92a99c-2de8-4dcf-b467-6872850674d4"><img alt="https://github.com/user-attachments/assets/8d92a99c-2de8-4dcf-b467-6872850674d4" src="https://github.com/user-attachments/assets/8d92a99c-2de8-4dcf-b467-6872850674d4" />
+</a>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7040c7ad-169e-4bf3-b440-efaa9ce553b3"><img alt="https://github.com/user-attachments/assets/7040c7ad-169e-4bf3-b440-efaa9ce553b3" src="https://github.com/user-attachments/assets/7040c7ad-169e-4bf3-b440-efaa9ce553b3" />
+</a>
+</section>
+<section id="parametric-goffer">
+<h3>Parametric goffer<a class="headerlink" href="#parametric-goffer" title="Link to this heading">#</a></h3>
+<p>Гофр можно параметризовать дополнительным параметров. Для примера добавим параметр диаметра гофра. Назовём параметр R1_diam.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;rules max_depth=&quot;350&quot;&gt;
+        &lt;rule name=&quot;entry&quot;&gt;
+            &lt;call transforms=&quot;rz 120 ry {entry_ry}&quot; rule=&quot;R1&quot;/&gt;
+            &lt;call transforms=&quot;rz 240 ry {entry_ry}&quot; rule=&quot;R1&quot;/&gt;
+            &lt;call transforms=&quot;rz 360 ry {entry_ry}&quot; rule=&quot;R1&quot;/&gt;
+        &lt;/rule&gt;
+        &lt;rule name=&quot;R1&quot;&gt;
+            &lt;!-- 1 --&gt;    &lt;instance  transforms=&quot;sa {R1_sa2}&quot; shape=&quot;box&quot;/&gt;
+            &lt;!-- 2 --&gt;    &lt;instance  transforms=&quot;sa {R1_sa2}+{R1_delta}&quot; shape=&quot;box&quot;/&gt;
+            &lt;!-- 3 --&gt;    &lt;instance  transforms=&quot;tx {R1_tx}/2 sa {R1_sa2}+{R1_delta}&quot; shape=&quot;box&quot;/&gt;
+            &lt;!-- 4 --&gt;    &lt;instance  transforms=&quot;tx {R1_tx}/2 sa {R1_sa2}&quot; shape=&quot;box&quot;/&gt;
+            &lt;call transforms=&quot;ry 0 tx {R1_tx} rx {R1_rx} rz {R1_rz} sa {R1_sa}&quot; rule=&quot;R1&quot;/&gt;
+        &lt;/rule&gt;
+&lt;/rules&gt;
+</pre></div>
+</div>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/8c1f5816-7d42-4d2e-9bac-5624cfb3d7cb"><img alt="https://github.com/user-attachments/assets/8c1f5816-7d42-4d2e-9bac-5624cfb3d7cb" src="https://github.com/user-attachments/assets/8c1f5816-7d42-4d2e-9bac-5624cfb3d7cb" />
+</a>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/fd8965a6-1600-4fc8-bda6-90da8825d897" type="video/mp4">
+Your browser does not support the video tag.
+</video></section>
+</section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <p>This node is closely based on <a class="reference external" href="http://structuresynth.sourceforge.net/">Structure Synth</a> but the xml design format and most of the code comes from <a class="reference external" href="http://prideout.net/">Philip Rideout’s</a> <a class="reference external" href="https://github.com/prideout/lsystem">lsystem</a> repository on github.</p>
@@ -723,6 +785,11 @@ Your browser does not support the video tag.
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fern-2">Fern 2</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constants-and-variables-example">Constants and Variables Example</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fern-3">Fern 3</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#goffer">Goffer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parametric-goffer">Parametric goffer</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
