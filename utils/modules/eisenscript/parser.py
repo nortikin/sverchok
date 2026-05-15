@@ -309,6 +309,12 @@ def _parse_value(src):
     - ``VariableRef`` — identifier (variable reference)
 
     Raises ``SyntaxError`` on invalid expression syntax.
+
+    Note: identifiers that match transformation keywords (x, y, z, rx, ry,
+    rz, s, m, fx, fy, fz, hue, h, sat, brightness, b, alpha, a, color,
+    blend) are NOT accepted as variable references — they are reserved
+    for transformation keywords.  Use an expression ``(a)`` instead if
+    you need a variable with such a name.
     """
     stripped = src.lstrip()
 
@@ -317,8 +323,38 @@ def _parse_value(src):
         for expr, rest in parse_expression(stripped):
             return expr, rest
 
-    # 2. Try number or identifier
+    # 2. Try number or identifier (exclude transformation keywords)
     match = re.match(r"(" + _num_or_id + r")\s*(.*)", stripped, re.DOTALL)
+    if match:
+        token, rest = match.groups()
+        return _to_num_or_var(token), rest.lstrip()
+
+    return None, src  # no match
+
+
+def _parse_value_any(src):
+    """
+    Parse a value token from *src* accepting ANY identifier (including
+    transformation keywords like 'a', 'b', 'x').
+
+    Used AFTER a transformation keyword has been consumed, where the
+    next token is unambiguously a value (e.g. after 'x' in 'x a').
+
+    Returns ``(value, rest)`` or ``(None, src)``.
+    """
+    stripped = src.lstrip()
+
+    # 1. Try parenthesized expression
+    if stripped.startswith('('):
+        for expr, rest in parse_expression(stripped):
+            return expr, rest
+
+    # 2. Try number or plain identifier (no keyword exclusion)
+    match = re.match(
+        r"(" + _float_tok + r"|[a-zA-Z_][a-zA-Z0-9_]*)\s*(.*)",
+        stripped,
+        re.DOTALL,
+    )
     if match:
         token, rest = match.groups()
         return _to_num_or_var(token), rest.lstrip()
@@ -353,7 +389,7 @@ def parse_TranslateX(src):
     kw, after = _starts_with_kw(src, 'x')
     if kw is None:
         return
-    val, rest = _parse_value(after)
+    val, rest = _parse_value_any(after)
     if val is None:
         return
     yield Translate(AXIS_X, val), rest
@@ -363,7 +399,7 @@ def parse_TranslateY(src):
     kw, after = _starts_with_kw(src, 'y')
     if kw is None:
         return
-    val, rest = _parse_value(after)
+    val, rest = _parse_value_any(after)
     if val is None:
         return
     yield Translate(AXIS_Y, val), rest
@@ -373,7 +409,7 @@ def parse_TranslateZ(src):
     kw, after = _starts_with_kw(src, 'z')
     if kw is None:
         return
-    val, rest = _parse_value(after)
+    val, rest = _parse_value_any(after)
     if val is None:
         return
     yield Translate(AXIS_Z, val), rest
@@ -383,7 +419,7 @@ def parse_RotateX(src):
     kw, after = _starts_with_kw(src, 'rx')
     if kw is None:
         return
-    val, rest = _parse_value(after)
+    val, rest = _parse_value_any(after)
     if val is None:
         return
     yield Rotate(AXIS_X, val), rest
@@ -393,7 +429,7 @@ def parse_RotateY(src):
     kw, after = _starts_with_kw(src, 'ry')
     if kw is None:
         return
-    val, rest = _parse_value(after)
+    val, rest = _parse_value_any(after)
     if val is None:
         return
     yield Rotate(AXIS_Y, val), rest
@@ -403,7 +439,7 @@ def parse_RotateZ(src):
     kw, after = _starts_with_kw(src, 'rz')
     if kw is None:
         return
-    val, rest = _parse_value(after)
+    val, rest = _parse_value_any(after)
     if val is None:
         return
     yield Rotate(AXIS_Z, val), rest
@@ -480,7 +516,7 @@ def parse_HueShift(src):
     kw, after = _starts_with_kw(src, 'hue', 'h')
     if kw is None:
         return
-    val, rest = _parse_value(after)
+    val, rest = _parse_value_any(after)
     if val is None:
         return
     yield HueShift(val), rest
@@ -490,7 +526,7 @@ def parse_SaturationMul(src):
     kw, after = _starts_with_kw(src, 'sat')
     if kw is None:
         return
-    val, rest = _parse_value(after)
+    val, rest = _parse_value_any(after)
     if val is None:
         return
     yield SaturationMul(val), rest
@@ -500,7 +536,7 @@ def parse_BrightnessMul(src):
     kw, after = _starts_with_kw(src, 'brightness', 'b')
     if kw is None:
         return
-    val, rest = _parse_value(after)
+    val, rest = _parse_value_any(after)
     if val is None:
         return
     yield BrightnessMul(val), rest
@@ -510,7 +546,7 @@ def parse_AlphaMul(src):
     kw, after = _starts_with_kw(src, 'alpha', 'a')
     if kw is None:
         return
-    val, rest = _parse_value(after)
+    val, rest = _parse_value_any(after)
     if val is None:
         return
     yield AlphaMul(val), rest
@@ -531,7 +567,7 @@ def parse_BlendColor(src):
         return
     after = s[5:].lstrip()
     for color, rest in parse_color_string(after):
-        val, rest2 = _parse_value(rest)
+        val, rest2 = _parse_value_any(rest)
         if val is None:
             return
         yield BlendColor(color, val), rest2

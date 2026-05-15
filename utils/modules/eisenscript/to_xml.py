@@ -64,6 +64,7 @@ from sverchok.utils.modules.eisenscript.ast import (
     Repeat,
     RuleRef,
     VariableRef,
+    Expr,
     IMPLICIT_START_RULE,
     # Axis constants
     AXIS_X, AXIS_Y, AXIS_Z,
@@ -93,6 +94,34 @@ _logger = sv_logging.sv_logger.getChild(__name__)
 
 
 # ---------------------------------------------------------------------------
+# Custom exception
+# ---------------------------------------------------------------------------
+
+class ExpressionInXmlError(ValueError):
+    """
+    Raised when an EisenScript AST containing :class:`Expr` nodes is
+    converted to XML.
+
+    XML format (Generative Art) does not support Python expressions —
+    all values must be concrete numbers or resolvable :class:`VariableRef`
+    (via ``#define``).
+
+    Example:
+        ::
+
+            1 * { x (a + 1) } box
+
+        ``a + 1`` is an expression and cannot be represented in XML.
+        Pre-compute the value and use a ``#define`` instead:
+        ::
+
+            #define offset 2
+            1 * { x offset } box
+    """
+    pass
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
@@ -114,8 +143,15 @@ def _resolve_var(value, defines):
         The resolved float value.
 
     Raises:
+        ExpressionInXmlError: If the value is an :class:`Expr` node.
         ValueError: If the variable is not defined.
     """
+    if isinstance(value, Expr):
+        raise ExpressionInXmlError(
+            f"Expression ({value.source!r}) cannot be converted to XML. "
+            f"XML format does not support Python expressions. "
+            f"Pre-compute the value and use a #define instead."
+        )
     if isinstance(value, VariableRef):
         if value.name not in defines:
             raise ValueError(f"Undefined variable: {value.name}")
@@ -230,6 +266,13 @@ def _make_terminal_elem(parent, terminal, transforms_str=None, count=None, defin
         elem = ET.SubElement(parent, "call")
         elem.set("rule", terminal.name)
         if terminal.retirement_depth is not None:
+            if isinstance(terminal.retirement_depth, Expr):
+                raise ExpressionInXmlError(
+                    f"Expression ({terminal.retirement_depth.source!r}) in "
+                    f"rule reference retirement depth cannot be converted to XML. "
+                    f"XML format does not support Python expressions. "
+                    f"Pre-compute the value and use a #define instead."
+                )
             elem.set("max_depth", str(terminal.retirement_depth))
         if terminal.retirement_rule is not None:
             elem.set("successor", terminal.retirement_rule)
