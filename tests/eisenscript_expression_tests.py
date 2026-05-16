@@ -248,13 +248,29 @@ class ExpressionInTransformsTests(unittest.TestCase):
         self.assertEqual(transforms[0].value.name, "a")
 
     def test_scale_stops_at_keyword(self):
-        """Scale 's 0.9' stops at keyword 'x', leaving 'x 1' for next transform."""
+        """Scale 's 0.9' stops at keyword 'x', leaving 'x 1' for next transform.
+
+        Variable names matching transformation keywords (x, y, z, rx, ry, rz,
+        s, h, b, a, etc.) are not allowed in value positions to avoid
+        ambiguity.  Use an expression ``(x)`` instead if needed.
+        """
         transforms = _parse_transforms("s 0.9 x 1")
         self.assertIsInstance(transforms[0], Scale)
         self.assertAlmostEqual(transforms[0].x, 0.9)
         self.assertIsInstance(transforms[1], Translate)
         self.assertEqual(transforms[1].axis, AXIS_X)
         self.assertAlmostEqual(transforms[1].value, 1.0)
+
+    def test_scale_with_expression_for_keyword_name(self):
+        """Use expression (x) to pass a keyword-named variable to scale."""
+        transforms = _parse_transforms("s (x) (y) 1")
+        self.assertEqual(len(transforms), 1)
+        self.assertIsInstance(transforms[0], Scale)
+        self.assertIsInstance(transforms[0].x, Expr)
+        self.assertEqual(transforms[0].x.source, "x")
+        self.assertIsInstance(transforms[0].y, Expr)
+        self.assertEqual(transforms[0].y.source, "y")
+        self.assertAlmostEqual(transforms[0].z, 1.0)
 
     def test_hue_with_variable_named_b(self):
         """Variable 'b' (also brightness keyword) works as value after 'h' keyword."""

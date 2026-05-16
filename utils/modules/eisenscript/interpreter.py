@@ -362,29 +362,48 @@ class Interpreter:
         for rule in program.rules:
             rule_map.setdefault(rule.name, []).append(rule)
 
+        # Validate parameter count consistency across rule definitions
+        for rule_name, rules in rule_map.items():
+            if len(rules) > 1:
+                param_counts = [len(r.params) for r in rules]
+                if len(set(param_counts)) > 1:
+                    raise ValueError(
+                        f"Rule '{rule_name}' has inconsistent parameter counts "
+                        f"across definitions: {param_counts}. "
+                        f"All definitions of the same rule must have the same "
+                        f"number of parameters."
+                    )
+
         # Result collector
         result = InterpreterResult()
 
         # Lazy define resolver with topo sort and caching
         resolver = DefineResolver(program.defines)
 
-        def _resolve(val):
+        def _resolve_scoped(val, params_scope):
+            """Resolve a value with parameter scoping.
+
+            VariableRef: check params_scope first, then #define.
+            Expr: evaluate with params_scope + #define in namespace.
+            """
             if isinstance(val, VariableRef):
+                if val.name in params_scope:
+                    return params_scope[val.name]
                 return resolver.resolve(val.name)
             if isinstance(val, Expr):
-                # Ensure all #define expressions are evaluated first
                 resolver.get_all()
-                # Build evaluation namespace: safe_names + resolved defines
                 env = dict(SAFE_NAMES)
                 env.update(resolver._cache)
+                # Parameters shadow #define variables
+                env.update(params_scope)
                 env["__builtins__"] = {}
                 return eval(compile(val.ast_node, "<eisenscript>", "eval"), env)
             return val
 
-        # Stack entries: (rule, depth, accumulated_matrix)
+        # Stack entries: (rule, depth, accumulated_matrix, params_scope)
         entry_rule = _pick_rule(rule_map, IMPLICIT_START_RULE)
-        stack: List[Tuple[Rule, int, Matrix]] = [
-            (entry_rule, 0, Matrix.Identity(4))
+        stack: List[Tuple[Rule, int, Matrix, Dict[str, float]]] = [
+            (entry_rule, 0, Matrix.Identity(4), {})
         ]
 
         total_objects = 0
@@ -393,12 +412,12 @@ class Interpreter:
             if self.max_objects is not None and total_objects > self.max_objects:
                 break
 
-            rule, depth, matrix = stack.pop()
+            rule, depth, matrix, params_scope = stack.pop()
 
             # Per-rule max_depth
             local_max_depth = self.max_depth
             if rule.maxdepth is not None:
-                resolved_md = _resolve(rule.maxdepth)
+                resolved_md = _resolve_scoped(rule.maxdepth, params_scope)
                 local_max_depth = round(resolved_md)
 
             # Stack depth guard
@@ -409,7 +428,7 @@ class Interpreter:
             if depth > local_max_depth:
                 if rule.retirement_rule:
                     succ_rule = _pick_rule(rule_map, rule.retirement_rule)
-                    stack.append((succ_rule, 0, matrix.copy()))
+                    stack.append((succ_rule, 0, matrix.copy(), params_scope))
                 continue
 
             # Process each branch in the rule
@@ -417,7 +436,7 @@ class Interpreter:
                 self._interpret_branch(
                     branch, rule_map, resolver,
                     matrix, depth, stack, result,
-                    total_objects, _resolve,
+                    total_objects, params_scope, _resolve_scoped,
                 )
                 # Update total_objects count after branch
                 for mats in result.matrices.values():
@@ -439,6 +458,7 @@ class Interpreter:
         stack: list,
         result: InterpreterResult,
         total_objects: int,
+        params_scope: dict,
         resolve,
     ) -> None:
         """
@@ -454,8 +474,8 @@ class Interpreter:
         # Build per-repetition transform matrices and counts
         rep_info = []  # list of (count, transform_matrix)
         for rep in repetitions:
-            count = round(resolve(rep.count))
-            tmat = self._build_transform_matrix(rep.transformations, resolver, resolve)
+            count = round(resolve(rep.count, params_scope))
+            tmat = self._build_transform_matrix(rep.transformations, resolver, params_scope, resolve)
             rep_info.append((count, tmat))
 
         # Terminal dispatch
@@ -463,6 +483,7 @@ class Interpreter:
             self._dispatch_call(
                 terminal, rule_map, resolver, resolve,
                 parent_matrix, depth, stack, rep_info,
+                params_scope,
             )
         else:
             self._dispatch_instance(
@@ -484,26 +505,49 @@ class Interpreter:
         depth: int,
         stack: list,
         rep_info: list,
+        params_scope: dict,
     ) -> None:
         """Handle a RuleRef terminal: push called rule(s) onto the stack."""
         target_rule = _pick_rule(rule_map, ref.name)
 
+        # Validate and resolve arguments
+        new_params_scope = dict(params_scope)
+        if ref.args:
+            # Check that the rule has parameters
+            if not target_rule.params:
+                raise ValueError(
+                    f"Rule '{ref.name}' is called with {len(ref.args)} argument(s) "
+                    f"but has no parameters. Use '{ref.name}' without parentheses."
+                )
+            if len(ref.args) != len(target_rule.params):
+                raise ValueError(
+                    f"Rule '{ref.name}' expects {len(target_rule.params)} parameter(s) "
+                    f"but got {len(ref.args)}. "
+                    f"Expected: ({', '.join(target_rule.params)}), "
+                    f"got {len(ref.args)} argument(s)."
+                )
+            # Resolve arguments and bind to parameters
+            for param_name, arg_val in zip(target_rule.params, ref.args):
+                new_params_scope[param_name] = resolve(arg_val, params_scope)
+
         # Retirement on the call itself
         call_max_depth = None
         if ref.retirement_depth is not None:
-            call_max_depth = ref.retirement_depth
+            call_max_depth = resolve(ref.retirement_depth, params_scope)
+            if isinstance(call_max_depth, float) and call_max_depth == int(call_max_depth):
+                call_max_depth = int(call_max_depth)
         call_successor = ref.retirement_rule
 
         if not rep_info:
             # No repetitions — direct call
             cloned = parent_matrix.copy()
             if self._size_in_bounds(cloned):
-                entry = (target_rule, depth + 1, cloned)
+                entry = (target_rule, depth + 1, cloned, new_params_scope)
                 if call_max_depth is not None:
                     # Wrap with a retirement rule
                     entry = (_make_retirement_wrapper(target_rule, call_max_depth,
                                                       call_successor, rule_map),
-                             depth + 1, cloned)
+                             depth + 1, cloned, new_params_scope)
                 stack.append(entry)
             return
 
@@ -514,7 +558,7 @@ class Interpreter:
         self._emit_calls_recursive(
             rep_info, 0, base_matrix,
             target_rule, depth, call_max_depth, call_successor,
-            rule_map, stack,
+            rule_map, stack, new_params_scope,
         )
 
     def _emit_calls_recursive(
@@ -528,17 +572,18 @@ class Interpreter:
         call_successor: Optional[str],
         rule_map: Dict[str, List[Rule]],
         stack: list,
+        params_scope: dict,
     ) -> None:
         """Recursively emit stack entries for nested repetition levels."""
         if level == len(rep_info):
             # Base case: push the terminal call
             if self._size_in_bounds(current_matrix):
                 cloned = current_matrix.copy()
-                entry = (target_rule, depth + 1, cloned)
+                entry = (target_rule, depth + 1, cloned, params_scope)
                 if call_max_depth is not None:
                     entry = (_make_retirement_wrapper(target_rule, call_max_depth,
                                                       call_successor, rule_map),
-                             depth + 1, cloned)
+                             depth + 1, cloned, params_scope)
                 stack.append(entry)
             return
 
@@ -551,7 +596,7 @@ class Interpreter:
                 current_matrix @ cumulative,
                 target_rule, depth,
                 call_max_depth, call_successor,
-                rule_map, stack,
+                rule_map, stack, params_scope,
             )
 
     # ------------------------------------------------------------------
@@ -627,6 +672,7 @@ class Interpreter:
         self,
         transformations: list,
         resolver: DefineResolver,
+        params_scope: dict,
         resolve,
     ) -> Matrix:
         """
@@ -644,13 +690,13 @@ class Interpreter:
 
         for trans in transformations:
             if isinstance(trans, Translate):
-                v = resolve(trans.value)
+                v = resolve(trans.value, params_scope)
                 vec = list(_axis_vec[trans.axis])
                 vec[trans.axis] = v
                 matrix @= Matrix.Translation(tuple(vec))
 
             elif isinstance(trans, Rotate):
-                v = math.radians(resolve(trans.angle))
+                v = math.radians(resolve(trans.angle, params_scope))
                 rot = Matrix.Rotation(v, 4, _axis_letter[trans.axis])
                 if not self.origin_as_center:
                     matrix @= t_center @ rot @ t_neg_center
@@ -658,12 +704,12 @@ class Interpreter:
                     matrix @= rot
 
             elif isinstance(trans, Scale):
-                x = resolve(trans.x)
+                x = resolve(trans.x, params_scope)
                 if trans.is_uniform:
                     scale = Matrix.Scale(x, 4)
                 else:
-                    y = resolve(trans.y) if trans.y is not None else 1.0
-                    z = resolve(trans.z) if trans.z is not None else 1.0
+                    y = resolve(trans.y, params_scope) if trans.y is not None else 1.0
+                    z = resolve(trans.z, params_scope) if trans.z is not None else 1.0
                     sx = Matrix.Scale(x, 4, (1.0, 0.0, 0.0))
                     sy = Matrix.Scale(y, 4, (0.0, 1.0, 0.0))
                     sz = Matrix.Scale(z, 4, (0.0, 0.0, 1.0))
@@ -674,7 +720,7 @@ class Interpreter:
                     matrix @= scale
 
             elif isinstance(trans, MatrixTransform):
-                m = [resolve(v) for v in trans.matrix]
+                m = [resolve(v, params_scope) for v in trans.matrix]
                 # Build 4×4 from 9 values (3×3 + translation)
                 new_matrix = Matrix([
                     [m[0], m[1], m[2], m[3]],

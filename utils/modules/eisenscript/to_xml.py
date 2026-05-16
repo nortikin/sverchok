@@ -446,6 +446,10 @@ def ast_to_xml(program, support_colors=False):
 
     Returns:
         xml.etree.ElementTree.Element -- the root ``<rules>`` element.
+
+    Raises:
+        ExpressionInXmlError: If the program contains Expr nodes or
+            parameterized rules.
     """
     if not isinstance(program, Program):
         raise TypeError(f"Expected Program, got {type(program).__name__}")
@@ -458,6 +462,28 @@ def ast_to_xml(program, support_colors=False):
                 f"be converted to XML. XML format does not support Python "
                 f"expressions in #define. Pre-compute the value."
             )
+
+    # Check for parameterized rules
+    for rule in program.rules:
+        if rule.params:
+            raise ExpressionInXmlError(
+                f"Rule '{rule.name}' has parameters ({', '.join(rule.params)}) "
+                f"which cannot be converted to XML. XML format does not support "
+                f"parameterized rules. Expand the rule manually."
+            )
+
+    # Check for rule calls with arguments
+    for rule in program.rules:
+        for branch in rule.body:
+            if isinstance(branch.terminal, RuleRef) and branch.terminal.args:
+                raise ExpressionInXmlError(
+                    f"Rule call '{branch.terminal.name}' has arguments which "
+                    f"cannot be converted to XML. XML format does not support "
+                    f"parameterized rule calls. Expand the rule manually."
+                )
+            # Check repetitions for RuleRef terminals
+            for rep in branch.repetitions:
+                pass  # Repetitions don't have RuleRef terminals directly
 
     rules_elem = ET.Element("rules")
 

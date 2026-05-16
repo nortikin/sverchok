@@ -94,16 +94,13 @@ class SimplePrimitiveTests(unittest.TestCase):
         1 * {} box
         1 * {} sphere
         """)
-        # Parser creates two implicit start rules with same name;
-        # interpreter picks one via weighted random selection.
-        # Both outcomes are valid — just check that exactly one
-        # primitive is emitted (T9).
+        # Parser merges bare branches into a single implicit start rule;
+        # interpreter emits all branches. Both box and sphere are emitted.
         result = Interpreter.interpret(prog)
         total = sum(len(m) for m in result.matrices.values())
-        self.assertEqual(total, 1)
-        # Verify the emitted primitive is one of the expected ones
-        shapes = set(result.matrices.keys())
-        self.assertTrue(shapes <= {"box", "sphere"})
+        self.assertEqual(total, 2)
+        self.assertIn("box", result.matrices)
+        self.assertIn("sphere", result.matrices)
 
 
 class TranslationTests(unittest.TestCase):

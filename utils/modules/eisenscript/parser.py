@@ -446,7 +446,13 @@ def parse_RotateZ(src):
 
 
 def parse_Scale(src):
-    """Parse 's <v>' or 's <v1> <v2> <v3>'."""
+    """Parse 's <v>' or 's <v1> <v2> <v3>'.
+
+    Uses _parse_value which excludes transformation keywords (x, y, z, rx, ry,
+    rz, s, h, b, a, etc.) to avoid ambiguity.  If you need a variable whose
+    name matches a keyword as a scale value, wrap it in an expression:
+    ``s (x) (y) 1`` instead of ``s x y 1``.
+    """
     s = src.lstrip()
     if not s.startswith('s'):
         return
@@ -649,9 +655,101 @@ parse_primitive = one_of(
 # Rule reference parser
 # ---------------------------------------------------------------------------
 
+def _parse_arg_list(src):
+    """
+    Parse a parenthesized, comma-separated argument list: ``(arg1, arg2, ...)``.
+
+    Each argument is a value: expression, number, or variable.
+    Handles nested parentheses inside expressions correctly.
+
+    Returns a list of argument values (Expr, float, or VariableRef),
+    or None if the source doesn't start with '('.
+    """
+    s = src.lstrip()
+    if not s.startswith('('):
+        return None
+
+    close = _find_matching_paren(s, 0)
+    if close == -1:
+        return None
+
+    inner = s[1:close].strip()
+    rest = s[close + 1:].lstrip()
+
+    # Empty parens () — no arguments
+    if not inner:
+        return []
+
+    # Split by commas (respecting nested parens)
+    args = []
+    depth = 0
+    current = []
+    for ch in inner:
+        if ch == '(':
+            depth += 1
+            current.append(ch)
+        elif ch == ')':
+            depth -= 1
+            current.append(ch)
+        elif ch == ',' and depth == 0:
+            token = ''.join(current).strip()
+            if token:
+                val, _ = _parse_value_any(token)
+                if val is not None:
+                    args.append(val)
+            current = []
+        else:
+            current.append(ch)
+    # Last token
+    token = ''.join(current).strip()
+    if token:
+        val, _ = _parse_value_any(token)
+        if val is not None:
+            args.append(val)
+
+    return args
+
+
+def _parse_param_list(src):
+    """
+    Parse a parenthesized, comma-separated parameter list:
+    ``(p1, p2, ...)`` where each element is an identifier.
+
+    Returns a list of parameter name strings, or None if not a param list.
+    """
+    s = src.lstrip()
+    if not s.startswith('('):
+        return None
+
+    close = _find_matching_paren(s, 0)
+    if close == -1:
+        return None
+
+    inner = s[1:close].strip()
+    rest = s[close + 1:].lstrip()
+
+    # Empty parens () — no parameters
+    if not inner:
+        return []
+
+    params = []
+    for token_str in inner.split(','):
+        token_str = token_str.strip()
+        if not token_str:
+            continue
+        for name, _ in parse_identifier(token_str):
+            params.append(name)
+            break
+        else:
+            return None  # Not a valid identifier
+
+    return params
+
+
 def parse_rule_ref_with_retirement(src):
     """
-    Parse rule reference that may include 'md <value> ['> <id>']' prefix.
+    Parse rule reference that may include 'md <value> ['> <id>']' prefix
+    and optional argument list '(arg1, arg2, ...)'.
     Returns (RuleRef, rest).
     """
     src_stripped = src.lstrip()
@@ -675,14 +773,32 @@ def parse_rule_ref_with_retirement(src):
                     retirement_depth = int(val)
                 else:
                     retirement_depth = val
-                yield RuleRef(name, retirement_depth, retirement_rule), rest3.lstrip()
+                yield RuleRef(name, retirement_depth=retirement_depth,
+                              retirement_rule=retirement_rule), rest3.lstrip()
                 return
         return
 
-    # Plain identifier as rule reference
+    # Plain identifier as rule reference, optionally followed by (args)
     for name, rest in parse_identifier(src_stripped):
-        if name not in ("rule", "set", "md", "maxdepth", "weight", "w"):
-            yield RuleRef(name), rest.lstrip()
+        if name in ("rule", "set", "md", "maxdepth", "weight", "w"):
+            continue
+
+        rest_stripped = rest.lstrip()
+        args = []
+
+        # Check for argument list (args) after the identifier
+        if rest_stripped.startswith('('):
+            parsed_args = _parse_arg_list(rest_stripped)
+            if parsed_args is not None:
+                args = parsed_args
+                # Find the rest after the closing paren
+                close = _find_matching_paren(rest_stripped, 0)
+                if close != -1:
+                    rest = rest_stripped[close + 1:]
+                else:
+                    rest = rest_stripped
+
+        yield RuleRef(name, args=args), rest.lstrip()
 
 
 # ---------------------------------------------------------------------------
@@ -966,19 +1082,32 @@ def parse_rule_modifier(src):
 def parse_rule_definition(src):
     """
     Parse a rule definition:
-        'rule'? identifier modifier* '{' rule_body '}'
+        'rule' identifier ['(' param {',' param} ')'] modifier* '{' rule_body '}'
+
+    Requires the 'rule' keyword to distinguish from implicit rule definitions
+    (identifier(params)\nbranch) and bare branches (identifier(args)).
     """
     src_stripped = src.lstrip()
 
-    # Optional 'rule' keyword
-    has_rule_kw = src_stripped.startswith("rule")
-    if has_rule_kw:
-        src_stripped = src_stripped[4:].lstrip()
-    original_offset = len(src) - len(src.lstrip())
+    # Require 'rule' keyword
+    if not src_stripped.startswith("rule"):
+        return
+    src_stripped = src_stripped[4:].lstrip()
 
     # Rule name
     for name, after_name in parse_identifier(src_stripped):
         src_after = after_name.lstrip()
+
+        # Optional parameter list (p1, p2, ...)
+        params = []
+        if src_after.startswith('('):
+            parsed_params = _parse_param_list(src_after)
+            if parsed_params is None:
+                return  # Invalid param list — not a rule definition
+            params = parsed_params
+            close = _find_matching_paren(src_after, 0)
+            if close != -1:
+                src_after = src_after[close + 1:].lstrip()
 
         # Parse modifiers
         maxdepth = None
@@ -1002,6 +1131,7 @@ def parse_rule_definition(src):
         for branches, rest in parse_rule_body(current):
             rule = Rule(
                 name=name,
+                params=params,
                 maxdepth=maxdepth,
                 retirement_rule=retirement_rule,
                 weight=weight,
@@ -1125,24 +1255,54 @@ def parse_set_statement(src):
 def parse_implicit_rule(src):
     """
     Parse an implicit rule definition:
-        identifier
+        identifier ['(' param {',' param} ')']
         branch
 
-    This is shorthand for 'rule identifier { branch }'.
+    This is shorthand for 'rule identifier(params) { branch }'.
     The identifier and branch may be separated by newlines.
+
+    If the identifier is followed by '(' that doesn't contain valid
+    parameter names (identifiers), the '(' is NOT consumed — the
+    branch parser will handle 'identifier(args)' as a rule call.
+
+    IMPORTANT: if the branch starts with the same identifier (e.g.
+    'foo' followed by 'foo(1)'), this is NOT an implicit rule —
+    it's a bare branch.  The implicit rule 'foo' would be recursive
+    (foo → foo), which is almost certainly not intended.
     """
     src_stripped = src.lstrip()
 
     # Get identifier
     for name, after_name in parse_identifier(src_stripped):
-        after_name = after_name.lstrip()
+        src_after = after_name.lstrip()
+
+        # Optional parameter list (p1, p2, ...)
+        # Only consume if it's actually a valid param list (all identifiers)
+        params = []
+        if src_after.startswith('('):
+            parsed_params = _parse_param_list(src_after)
+            if parsed_params is not None:
+                params = parsed_params
+                close = _find_matching_paren(src_after, 0)
+                if close != -1:
+                    src_after = src_after[close + 1:].lstrip()
+            # else: not a param list — leave src_after as-is
+            # The branch parser will handle 'name(args)' as a rule call
 
         # Skip any blank lines between identifier and branch
-        branch_src = after_name.lstrip()
+        branch_src = src_after.lstrip()
+
+        # Guard: if the branch starts with the same identifier, this is
+        # NOT an implicit rule definition (would be recursive: foo → foo).
+        # Let the caller handle it as a bare branch instead.
+        if branch_src.startswith(name):
+            after_name_check = branch_src[len(name):]
+            if not after_name_check or after_name_check[0] in (' ', '\t', '\n', '\r', '(', '*'):
+                return  # Not an implicit rule — looks like 'name name(...)' or 'name\nname'
 
         # Try to parse a branch
         for branch, rest in parse_branch(branch_src):
-            rule = Rule(name=name, body=[branch])
+            rule = Rule(name=name, params=params, body=[branch])
             yield rule, rest.lstrip() if rest else ""
             return
 
@@ -1257,5 +1417,24 @@ def parse(source, check_full=True):
             rules.append(stmt)
         else:
             settings.append(stmt)
+
+    # Merge multiple IMPLICIT_START_RULE rules into one.
+    # Each bare branch creates a separate Rule(IMPLICIT_START_RULE),
+    # but they should all be branches of a single start rule.
+    start_rule = None
+    other_rules = []
+    for rule in rules:
+        if rule.name == IMPLICIT_START_RULE:
+            if start_rule is None:
+                start_rule = rule
+            else:
+                start_rule.body.extend(rule.body)
+        else:
+            other_rules.append(rule)
+
+    if start_rule is not None:
+        rules = [start_rule] + other_rules
+    else:
+        rules = other_rules
 
     return Program(defines=defines, settings=settings, rules=rules)

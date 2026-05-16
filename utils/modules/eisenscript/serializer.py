@@ -228,7 +228,11 @@ def _branch_to_str(branch: Branch) -> str:
             else:
                 parts.append(f"md {md} {ref.name}")
         else:
-            parts.append(ref.name)
+            call_str = ref.name
+            if ref.args:
+                args_str = ", ".join(_fmt_num(a) for a in ref.args)
+                call_str += f"({args_str})"
+            parts.append(call_str)
     else:
         parts.append(_primitive_to_str(branch.terminal))
 
@@ -243,8 +247,11 @@ def _rule_to_str(rule: Rule, indent_level: int = 1) -> str:
     """Convert a Rule to EisenScript text block."""
     lines = []
 
-    # Rule header: rule <name> [maxdepth N [> successor]] [weight W]
-    header_parts = ["rule", rule.name]
+    # Rule header: rule <name>[(params)] [maxdepth N [> successor]] [weight W]
+    name_part = rule.name
+    if rule.params:
+        name_part += f"({', '.join(rule.params)})"
+    header_parts = ["rule", name_part]
     if rule.maxdepth is not None:
         header_parts.append(f"maxdepth {_fmt_num(rule.maxdepth)}")
         if rule.retirement_rule:

@@ -173,6 +173,8 @@ class Rule(AstNode):
 
     Attributes:
         name: Rule identifier (string).
+        params: List of parameter name strings (empty list if none).
+            Written as 'rule name(p1, p2) { ... }'.
         maxdepth: Optional maximum recursion depth for this rule (int or None).
         retirement_rule: Optional rule to substitute when maxdepth is reached
             (string or None).  Written as 'maxdepth N > retirement_rule'.
@@ -181,9 +183,10 @@ class Rule(AstNode):
         body: List of Branch nodes forming the rule body.
     """
 
-    def __init__(self, name, maxdepth=None, retirement_rule=None,
+    def __init__(self, name, params=None, maxdepth=None, retirement_rule=None,
                  weight=None, body=None):
         self.name = name
+        self.params = params or []
         self.maxdepth = maxdepth
         self.retirement_rule = retirement_rule
         self.weight = weight if weight is not None else 1.0
@@ -240,23 +243,30 @@ class RuleRef(AstNode):
 
     Attributes:
         name: Referenced rule name (string).
+        args: List of argument values (VariableRef, Expr, or float),
+              or None/empty for a plain call without arguments.
         retirement_depth: Optional maxdepth for rule retirement (int or None).
         retirement_rule: Optional rule to substitute when retirement_depth
                          is reached (string or None).
     """
 
-    def __init__(self, name, retirement_depth=None, retirement_rule=None):
+    def __init__(self, name, args=None, retirement_depth=None, retirement_rule=None):
         self.name = name
+        self.args = args if args is not None else []
         self.retirement_depth = retirement_depth
         self.retirement_rule = retirement_rule
 
     def __repr__(self):
+        parts = [repr(self.name)]
+        if self.args:
+            parts.append(f"args={len(self.args)}")
         if self.retirement_depth is not None:
             ret = f"md={self.retirement_depth}"
             if self.retirement_rule:
                 ret += f">{self.retirement_rule}"
-            return f"RuleRef({self.name!r}, {ret})"
-        return f"RuleRef({self.name!r})"
+            parts.append(ret)
+        inner = ", ".join(parts)
+        return f"RuleRef({inner})"
 
 
 # ---------------------------------------------------------------------------
