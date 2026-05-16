@@ -323,6 +323,9 @@ class Interpreter:
     @staticmethod
     def interpret(
         program: Program,
+        max_depth : int = 1000,
+        max_objects : Optional[int] = None,
+        seed : int = 0,
         origin_as_center: bool = True,
         input_values: Optional[Dict[str, float]] = None,
     ) -> InterpreterResult:
@@ -342,9 +345,7 @@ class Interpreter:
         Reads ``maxdepth``, ``seed``, ``maxobjects``, ``minsize`` and
         ``maxsize`` from program settings when present.
         """
-        global_maxdepth: int = 1000
-        seed: int = 0
-        max_objects: Optional[int] = None
+        global_maxdepth: int = max_depth
         min_size: Optional[float] = None
         max_size: Optional[float] = None
 
