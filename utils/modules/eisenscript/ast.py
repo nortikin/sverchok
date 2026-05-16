@@ -79,23 +79,48 @@ IMPLICIT_START_RULE = "###START###"
 # Program-level nodes
 # ---------------------------------------------------------------------------
 
+class InputDef(AstNode):
+    """
+    An #input directive: a program parameter that can be supplied at runtime.
+
+    Syntax: #input <name> [number] [default_value]
+
+    Attributes:
+        name: Parameter name (string).
+        default_value: Default numeric value (float), or None if not specified.
+    """
+
+    def __init__(self, name, default_value=None):
+        self.name = name
+        self.default_value = default_value
+
+    def __repr__(self):
+        if self.default_value is not None:
+            return f"InputDef({self.name!r}, {self.default_value})"
+        return f"InputDef({self.name!r})"
+
+
 class Program(AstNode):
     """
     Top-level AST node representing a complete EisenScript program.
 
     Attributes:
+        inputs: Dict mapping parameter names to InputDef objects.
+            These are #input directives — runtime-configurable values.
         defines: Dict mapping variable names to their numeric values (float).
         settings: List of SetStatement nodes (global settings).
         rules: List of Rule nodes (rule definitions).
     """
 
-    def __init__(self, defines=None, settings=None, rules=None):
+    def __init__(self, inputs=None, defines=None, settings=None, rules=None):
+        self.inputs = inputs or {}
         self.defines = defines or {}
         self.settings = settings or []
         self.rules = rules or []
 
     def __repr__(self):
-        return f"Program(defines={len(self.defines)}, settings={len(self.settings)}, rules={len(self.rules)})"
+        return (f"Program(inputs={len(self.inputs)}, defines={len(self.defines)}, "
+                f"settings={len(self.settings)}, rules={len(self.rules)})")
 
 
 class SetStatement(AstNode):

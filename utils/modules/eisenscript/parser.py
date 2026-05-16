@@ -21,9 +21,13 @@ Parser for the EisenScript language using the combinator parser framework
 from sverchok.utils.parsec.
 
 Grammar (EBNF):
-    program           -> (set_statement | rule_definition | implicit_start)*
+    program           -> (input_stmt | define_stmt | set_statement
+                         | rule_definition | implicit_start)*
+    input_stmt        -> '#input' identifier ['number'] [number]
+    define_stmt       -> '#define' identifier (number | expr)
     set_statement     -> 'set' setting_name value*
-    rule_definition   -> 'rule'? identifier rule_modifier* '{' rule_body '}'
+    rule_definition   -> 'rule' identifier param_list? modifier* '{' rule_body '}'
+    param_list        -> '(' identifier {',' identifier} ')'
     implicit_start    -> branch  // bare branch → rule 'start' { branch }
     rule_modifier     -> ('maxdepth' | 'md') value ['>' identifier]
                       | ('weight' | 'w') value
@@ -32,7 +36,8 @@ Grammar (EBNF):
     repetition        -> count '*' '{' transformation+ '}'
     transform_block   -> '{' transformation+ '}'
     count             -> int | identifier | expr
-    rule_ref          -> identifier | 'md' value ['>' identifier] identifier
+    rule_ref          -> identifier arg_list? | 'md' value ['>' identifier] identifier
+    arg_list          -> '(' value {',' value} ')'
     primitive         -> 'box' | 'grid' | 'sphere' | 'line' | 'point'
                       | 'Triangle' '[' coord {';' coord} ']'
     coord             -> float {',' float}
@@ -1145,6 +1150,49 @@ def parse_rule_definition(src):
 # Define statement parser
 # ---------------------------------------------------------------------------
 
+def parse_input_statement(src):
+    """
+    Parse '#input <name> [number] [default_value]' statements.
+
+    *name* is an identifier.
+    *number* is an optional type keyword (currently the only supported type).
+    *default_value* is an optional numeric literal (int, float, fraction).
+
+    Returns an :class:`InputDef` and the remaining source.
+    """
+    from sverchok.utils.modules.eisenscript.ast import InputDef
+
+    src_stripped = src.lstrip()
+    if not src_stripped.startswith("#input"):
+        return
+
+    after_kw = src_stripped[len("#input"):].lstrip()
+
+    # Parse identifier
+    for name, after_name in parse_identifier(after_kw):
+        after_name = after_name.lstrip()
+
+        # Optional type keyword 'number'
+        if after_name.startswith("number"):
+            after_type = after_name[len("number"):]
+            if not after_type or after_type[0].isspace():
+                after_name = after_type.lstrip()
+            else:
+                return  # 'number' not a standalone keyword here
+
+        # Optional default value (numeric only, no expressions/variables)
+        default_value = None
+        if after_name:
+            for val, rest in _parse_numeric_value(after_name):
+                default_value = val
+                yield InputDef(name, default_value), rest.lstrip()
+                return
+
+        # No default value provided
+        yield InputDef(name, None), after_name
+        return
+
+
 def parse_define_statement(src):
     """
     Parse '#define <identifier> <value>' statements.
@@ -1308,8 +1356,13 @@ def parse_implicit_rule(src):
 
 
 def parse_top_statement(src):
-    """Parse a top-level statement (define, set or rule definition)."""
-    # Try #define first
+    """Parse a top-level statement (input, define, set or rule definition)."""
+    # Try #input first
+    for result, rest in parse_input_statement(src):
+        yield result, rest
+        return
+
+    # Try #define
     for result, rest in parse_define_statement(src):
         yield result, rest
         return
@@ -1403,12 +1456,17 @@ def parse(source, check_full=True):
                 raise SyntaxError(f"Cannot parse: {current[:50]!r}")
             break
 
-    # Separate defines, settings and rules
+    # Separate inputs, defines, settings and rules
+    from sverchok.utils.modules.eisenscript.ast import InputDef
+
+    inputs = {}
     defines = {}
     settings = []
     rules = []
     for stmt in statements:
-        if isinstance(stmt, tuple) and len(stmt) == 2:
+        if isinstance(stmt, InputDef):
+            inputs[stmt.name] = stmt
+        elif isinstance(stmt, tuple) and len(stmt) == 2:
             # Define statement: (name, value)
             defines[stmt[0]] = stmt[1]
         elif isinstance(stmt, SetStatement):
@@ -1417,6 +1475,14 @@ def parse(source, check_full=True):
             rules.append(stmt)
         else:
             settings.append(stmt)
+
+    # Check for name conflicts between #input and #define
+    conflicts = set(inputs.keys()) & set(defines.keys())
+    if conflicts:
+        raise SyntaxError(
+            f"Name conflict between #input and #define: {', '.join(sorted(conflicts))}. "
+            f"A name can be declared in either #input or #define, but not both."
+        )
 
     # Merge multiple IMPLICIT_START_RULE rules into one.
     # Each bare branch creates a separate Rule(IMPLICIT_START_RULE),
@@ -1437,4 +1503,4 @@ def parse(source, check_full=True):
     else:
         rules = other_rules
 
-    return Program(defines=defines, settings=settings, rules=rules)
+    return Program(inputs=inputs, defines=defines, settings=settings, rules=rules)

@@ -12,6 +12,7 @@ into complex structures (fractals, trees, architectural forms, etc.).
 2. [EBNF Grammar](#ebnf-grammar)
 3. [Language Elements](#language-elements)
    - [Program Structure](#program-structure)
+   - [Input Directives](#input-directives)
    - [Define Directives](#define-directives)
    - [Set Statements](#set-statements)
    - [Rule Definitions](#rule-definitions)
@@ -48,7 +49,13 @@ Case sensitivity: keywords and identifiers are case-sensitive.
 
 ```ebnf
 (* ── Program ───────────────────────────────────────────── *)
-program       ::= (define_stmt | set_stmt | rule_def | bare_branch)*
+program       ::= (input_stmt | define_stmt | set_stmt | rule_def | bare_branch)*
+
+(* ── Input directive ───────────────────────────────────── *)
+input_stmt    ::= '#input' IDENTIFIER type_kw? number?
+type_kw       ::= 'number'
+(* 'number' is the only supported type; it is the default.
+   The third token must be a plain number (not expression/variable). *)
 
 (* ── Define ────────────────────────────────────────────── *)
 define_stmt   ::= '#define' IDENTIFIER (number | expression)
@@ -137,6 +144,7 @@ coord         ::= FLOAT {',' FLOAT}
 A program is a sequence of top-level statements:
 
 ```
+#input width 10
 #define a 3.14
 set maxdepth 100
 rule r1 { {x 1} box }
@@ -145,6 +153,49 @@ r1
 
 Statements are processed in order.  Multiple bare branches at the top
 level are merged into a single implicit start rule (`###START###`).
+
+`#input` and `#define` share the same namespace — a name can be declared
+in one or the other, but not both.
+
+### Input Directives
+
+`#input` declares a runtime-configurable program parameter:
+
+```
+#input width                    (* no default — must be provided at runtime *)
+#input height 17                (* default value 17 *)
+#input depth number 5           (* explicit type keyword, default 5 *)
+```
+
+**Syntax**: `#input <name> [number] [default_value]`
+
+| Component | Required | Description |
+|-----------|----------|-------------|
+| `<name>` | Yes | Parameter name (identifier) |
+| `number` | No | Type keyword (only type supported; default) |
+| `<default_value>` | No | Plain number (int, float, fraction) |
+
+**Constraints**:
+- Default value must be a **plain number** — not an expression or variable.
+- `#input` and `#define` share the same namespace — a name cannot appear
+  in both.  Raises `SyntaxError` on conflict.
+- `#input` variables do **not** participate in `#define` topological sort.
+  They are treated as always-available external constants.
+
+**Resolution at runtime**:
+
+```python
+result = Interpreter.interpret(program, input_values={"width": 10, "height": 20})
+```
+
+- If a key is provided in `input_values`, that value is used.
+- If not provided but a default exists, the default is used.
+- If not provided and no default → `ValueError`.
+- Extra keys in `input_values` that don't match any `#input` are silently ignored.
+
+**Scoping**: `#input` variables are global and available in `#define`
+expressions, rule bodies, and transformation expressions.  They can be
+shadowed by rule parameters (see [Scoping Rules](#scoping-rules)).
 
 ### Define Directives
 
@@ -430,13 +481,14 @@ with a keyword name: `s (x) (y) 1`.
 Variable resolution follows this priority (highest to lowest):
 
 1. **Rule parameters** — parameters of the current rule definition
-2. **Define variables** — `#define` directives at program level
+2. **Input parameters** — `#input` directives (resolved at runtime)
+3. **Define variables** — `#define` directives at program level
 
 When a rule is called with arguments, the arguments are bound to the
 parameter names, creating a local scope:
 
 ```
-#define val 100
+#input val 100
 rule r(val) {
     {s val 1 1} box    (* val = argument, not 100 *)
 }
@@ -455,6 +507,10 @@ rule outer(sx) {
 }
 outer(5)               (* produces box scaled by 99 *)
 ```
+
+`#input` variables are available to `#define` expressions as external
+constants.  They do not participate in the topological sort of `#define`
+dependencies — they are always available at evaluation time.
 
 ---
 
@@ -477,6 +533,21 @@ trunk
 #define n 12
 #define angle_step (360 / n)
 n * {rz angle_step x 2} box
+```
+
+### Runtime-configurable tree
+
+```
+#input trunk_height 5
+#input branch_count 8
+#define angle_step (360 / branch_count)
+
+branch_count * {rz angle_step y trunk_height} box
+```
+
+Interpreted with custom values:
+```python
+result = Interpreter.interpret(prog, input_values={"trunk_height": 10, "branch_count": 12})
 ```
 
 ### Parameterized rule
@@ -522,10 +593,11 @@ rule r1 {}
 ## XML Conversion Notes
 
 The XML format (legacy) does **not** support:
+- Input directives (`#input`)
 - Parameterized rules (`rule name(p) { ... }`)
 - Rule calls with arguments (`name(1, 2)`)
 - Python expressions (`(a + b)`)
 
 Attempting to convert a program with these features to XML raises
-`ExpressionInXmlError`.  Expand rules manually or use the native
+`ExpressionInXmlError`.  Replace `#input` with `#define` or use the native
 EisenScript format.

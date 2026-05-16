@@ -485,6 +485,15 @@ def ast_to_xml(program, support_colors=False):
             for rep in branch.repetitions:
                 pass  # Repetitions don't have RuleRef terminals directly
 
+    # Check for #input directives
+    if program.inputs:
+        input_names = ", ".join(sorted(program.inputs.keys()))
+        raise ExpressionInXmlError(
+            f"#input parameters ({input_names}) cannot be converted to XML. "
+            f"XML format does not support #input directives. "
+            f"Replace with #define or remove the directive."
+        )
+
     rules_elem = ET.Element("rules")
 
     # Global max_depth from settings

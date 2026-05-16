@@ -112,17 +112,28 @@ class DefineResolver:
     - Forward references (expressions can reference variables defined later)
     - Caching (each expression is evaluated at most once)
     - Topological ordering (dependencies are resolved before dependents)
+    - External variables (``#input`` params) available to expressions
 
     Raises ``ValueError`` on undefined variables or circular dependencies.
     """
 
-    def __init__(self, raw_defines: Dict[str, object]):
+    def __init__(
+        self,
+        raw_defines: Dict[str, object],
+        external_vars: Optional[Dict[str, float]] = None,
+    ):
         """
         Args:
             raw_defines: Dict mapping variable names to either ``float``
                 or :class:`Expr` nodes.
+            external_vars: Dict of externally-provided variable values
+                (e.g. resolved #input parameters).  These are available to
+                #define expressions but do NOT participate in the
+                topological sort — they are treated as always-available
+                constants.
         """
         self._raw = dict(raw_defines)
+        self._external = dict(external_vars or {})
         self._cache: Dict[str, float] = {}
         self._topo_order: Optional[List[str]] = None
 
@@ -141,6 +152,10 @@ class DefineResolver:
         """
         if name in self._cache:
             return self._cache[name]
+
+        # External variables (e.g. #input) are always available
+        if name in self._external:
+            return self._external[name]
 
         if name not in self._raw:
             raise ValueError(f"Undefined variable: {name}")
@@ -207,6 +222,9 @@ class DefineResolver:
                 if dep in self._cache:
                     # Plain value — already available, no edge needed
                     continue
+                if dep in self._external:
+                    # External variable (e.g. #input) — always available
+                    continue
                 if dep in name_to_idx:
                     j = name_to_idx[dep]
                     if i != j:
@@ -223,6 +241,8 @@ class DefineResolver:
         for name in sorted_names:
             expr = self._raw[name]
             env = dict(SAFE_NAMES)
+            # Add external variables (e.g. #input) — always available
+            env.update(self._external)
             # Add all currently cached values
             env.update(self._cache)
             env["__builtins__"] = {}
@@ -304,6 +324,7 @@ class Interpreter:
     def interpret(
         program: Program,
         origin_as_center: bool = True,
+        input_values: Optional[Dict[str, float]] = None,
     ) -> InterpreterResult:
         """Create an interpreter and run it on *program*.
 
@@ -313,6 +334,10 @@ class Interpreter:
                 (legacy LSystem behavior, matches XML interpreter). If False,
                 use (0.5,0.5,0.5) per the EisenScript specification.
                 Default is True for compatibility with the legacy LSystem.
+            input_values: Optional dict mapping #input parameter names to
+                their runtime values.  Missing keys fall back to the default
+                value from the #input directive (if any).  If a parameter has
+                no default and is not provided, a ValueError is raised.
 
         Reads ``maxdepth``, ``seed``, ``maxobjects``, ``minsize`` and
         ``maxsize`` from program settings when present.
@@ -347,15 +372,30 @@ class Interpreter:
             min_size=min_size,
             max_size=max_size,
         )
-        return interp._interpret(program)
+        return interp._interpret(program, input_values=input_values)
 
     # ------------------------------------------------------------------
     # Internal entry point
     # ------------------------------------------------------------------
 
-    def _interpret(self, program: Program) -> InterpreterResult:
-        """Execute *program* and return an :class:`InterpreterResult`."""
+    def _interpret(
+        self, program: Program, input_values: Optional[Dict[str, float]] = None
+    ) -> InterpreterResult:
+        """Execute *program* and return an :class:`InterpreterResult"."""
         random.seed(self.seed)
+
+        # Resolve #input values: runtime values override defaults
+        resolved_inputs: Dict[str, float] = {}
+        for name, inp_def in program.inputs.items():
+            if name in (input_values or {}):
+                resolved_inputs[name] = input_values[name]
+            elif inp_def.default_value is not None:
+                resolved_inputs[name] = inp_def.default_value
+            else:
+                raise ValueError(
+                    f"#input parameter '{name}' has no default value "
+                    f"and was not provided in input_values."
+                )
 
         # Build rule lookup: name -> list of Rule (for weighted selection)
         rule_map: Dict[str, List[Rule]] = {}
@@ -378,23 +418,29 @@ class Interpreter:
         result = InterpreterResult()
 
         # Lazy define resolver with topo sort and caching
-        resolver = DefineResolver(program.defines)
+        # Pass resolved inputs as external variables so #define expressions
+        # can reference them without participating in the topo sort.
+        resolver = DefineResolver(program.defines, external_vars=resolved_inputs)
 
         def _resolve_scoped(val, params_scope):
             """Resolve a value with parameter scoping.
 
-            VariableRef: check params_scope first, then #define.
-            Expr: evaluate with params_scope + #define in namespace.
+            Priority: params_scope > #input > #define.
+            Expr: evaluate with params_scope + #input + #define in namespace.
             """
             if isinstance(val, VariableRef):
                 if val.name in params_scope:
                     return params_scope[val.name]
+                if val.name in resolved_inputs:
+                    return resolved_inputs[val.name]
                 return resolver.resolve(val.name)
             if isinstance(val, Expr):
                 resolver.get_all()
                 env = dict(SAFE_NAMES)
                 env.update(resolver._cache)
-                # Parameters shadow #define variables
+                # #input variables are available
+                env.update(resolved_inputs)
+                # Parameters shadow #input and #define variables
                 env.update(params_scope)
                 env["__builtins__"] = {}
                 return eval(compile(val.ast_node, "<eisenscript>", "eval"), env)

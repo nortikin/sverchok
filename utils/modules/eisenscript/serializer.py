@@ -61,6 +61,7 @@ from sverchok.utils.modules.eisenscript.ast import (
     RuleRef,
     VariableRef,
     Expr,
+    InputDef,
     IMPLICIT_START_RULE,
     # Geometrical transformations
     Translate,
@@ -310,6 +311,13 @@ def _set_to_str(stmt: SetStatement) -> str:
     return f"set {name} {_fmt_num(value)}"
 
 
+def _input_to_str(inp_def: InputDef) -> str:
+    """Convert an InputDef to EisenScript text."""
+    if inp_def.default_value is not None:
+        return f"#input {inp_def.name} {_fmt_num(inp_def.default_value)}"
+    return f"#input {inp_def.name}"
+
+
 # ---------------------------------------------------------------------------
 # Main serialization function
 # ---------------------------------------------------------------------------
@@ -330,6 +338,10 @@ def ast_to_string(program: Program) -> str:
         EisenScript source code string.
     """
     blocks: List[str] = []
+
+    # #input directives
+    for name, inp_def in program.inputs.items():
+        blocks.append(_input_to_str(inp_def))
 
     # #define directives
     for name, value in program.defines.items():
@@ -358,7 +370,7 @@ def ast_to_string(program: Program) -> str:
             current_section.clear()
 
     for block in blocks:
-        if block.startswith("#define") or block.startswith("set "):
+        if block.startswith("#input") or block.startswith("#define") or block.startswith("set "):
             current_section.append(block)
         else:
             flush()
