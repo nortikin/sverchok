@@ -47,6 +47,9 @@ Grammar overview:
 """
 
 import ast
+import math
+import mathutils
+from mathutils import Matrix
 
 
 # ---------------------------------------------------------------------------
@@ -62,7 +65,28 @@ class AstNode:
 
 
 class Transformation(AstNode):
-    """Base class for all transformation actions inside a rule body."""
+    """Base class for all transformation actions inside a rule body.
+
+    Subclasses implement ``apply_to_matrix`` to contribute their
+    4×4 transform to an accumulated matrix (modified in-place).
+    Color transformations are no-ops — they do not affect geometry.
+    """
+
+    def apply_to_matrix(
+        self, matrix, resolve, params_scope,
+        origin_as_center, t_center, t_neg_center,
+    ):
+        """Apply this transformation to *matrix* in-place.
+
+        Args:
+            matrix: 4×4 mathutils.Matrix (modified in-place).
+            resolve: callable(value, params_scope) → float.
+            params_scope: dict of rule parameters.
+            origin_as_center: if False, rotate/scale/mirror around (0.5,0.5,0.5).
+            t_center, t_neg_center: pre-built translation matrices for centering.
+        """
+        # Default: no-op (color transformations)
+        pass
 
 
 class Primitive(AstNode):
@@ -304,6 +328,10 @@ AXIS_Y = 1
 AXIS_Z = 2
 AXIS_NAMES = {0: 'x', 1: 'y', 2: 'z'}
 
+# Axis helpers for matrix construction
+_AXIS_VEC = ((1, 0, 0), (0, 1, 0), (0, 0, 1))
+_AXIS_LETTER = ('X', 'Y', 'Z')
+
 
 class Translate(Transformation):
     """
@@ -320,6 +348,18 @@ class Translate(Transformation):
 
     def __repr__(self):
         return f"Translate({AXIS_NAMES[self.axis]}, {self.value})"
+
+    def apply_to_matrix(
+        self, matrix, resolve, params_scope,
+        origin_as_center, t_center, t_neg_center,
+    ):
+        v = resolve(self.value, params_scope)
+        if self.axis == AXIS_X:
+            matrix @= Matrix.Translation((v, 0.0, 0.0))
+        elif self.axis == AXIS_Y:
+            matrix @= Matrix.Translation((0.0, v, 0.0))
+        else:
+            matrix @= Matrix.Translation((0.0, 0.0, v))
 
 
 class Rotate(Transformation):
@@ -338,6 +378,17 @@ class Rotate(Transformation):
     def __repr__(self):
         return f"Rotate({AXIS_NAMES[self.axis]}, {self.angle})"
 
+    def apply_to_matrix(
+        self, matrix, resolve, params_scope,
+        origin_as_center, t_center, t_neg_center,
+    ):
+        angle = math.radians(resolve(self.angle, params_scope))
+        rot = Matrix.Rotation(angle, 4, _AXIS_LETTER[self.axis])
+        if origin_as_center:
+            matrix @= rot
+        else:
+            matrix @= t_center @ rot @ t_neg_center
+
 
 class Mirror(Transformation):
     """
@@ -352,6 +403,16 @@ class Mirror(Transformation):
 
     def __repr__(self):
         return f"Mirror({AXIS_NAMES[self.axis]})"
+
+    def apply_to_matrix(
+        self, matrix, resolve, params_scope,
+        origin_as_center, t_center, t_neg_center,
+    ):
+        mirror = Matrix.Scale(-1, 4, _AXIS_VEC[self.axis])
+        if origin_as_center:
+            matrix @= mirror
+        else:
+            matrix @= t_center @ mirror @ t_neg_center
 
 
 class Scale(Transformation):
@@ -370,15 +431,33 @@ class Scale(Transformation):
         self.x = x
         self.y = y
         self.z = z
-
-    @property
-    def is_uniform(self):
-        return self.y is None and self.z is None
+        self.is_uniform = y is None and z is None
 
     def __repr__(self):
         if self.is_uniform:
             return f"Scale({self.x})"
         return f"Scale({self.x}, {self.y}, {self.z})"
+
+    def apply_to_matrix(
+        self, matrix, resolve, params_scope,
+        origin_as_center, t_center, t_neg_center,
+    ):
+        x = resolve(self.x, params_scope)
+        if self.is_uniform:
+            scale = Matrix.Scale(x, 4)
+        else:
+            y = resolve(self.y, params_scope) if self.y is not None else 1.0
+            z = resolve(self.z, params_scope) if self.z is not None else 1.0
+            scale = Matrix((
+                (x, 0, 0, 0),
+                (0, y, 0, 0),
+                (0, 0, z, 0),
+                (0, 0, 0, 1),
+            ))
+        if origin_as_center:
+            matrix @= scale
+        else:
+            matrix @= t_center @ scale @ t_neg_center
 
 
 class MatrixTransform(Transformation):
@@ -394,6 +473,19 @@ class MatrixTransform(Transformation):
 
     def __repr__(self):
         return f"Matrix({self.matrix})"
+
+    def apply_to_matrix(
+        self, matrix, resolve, params_scope,
+        origin_as_center, t_center, t_neg_center,
+    ):
+        m = [resolve(v, params_scope) for v in self.matrix]
+        new_matrix = Matrix((
+            (m[0], m[1], m[2], 0),
+            (m[3], m[4], m[5], 0),
+            (m[6], m[7], m[8], 0),
+            (0, 0, 0, 1),
+        ))
+        matrix @= new_matrix
 
 
 # ---------------------------------------------------------------------------

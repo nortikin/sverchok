@@ -300,6 +300,10 @@ class Interpreter:
             a branch. None means no upper bound.
     """
 
+    # Pre-built center-offset translation matrices (cached once per class)
+    _T_CENTER = Matrix.Translation(mu.Vector((0.5, 0.5, 0.5)))
+    _T_NEG_CENTER = Matrix.Translation(mu.Vector((-0.5, -0.5, -0.5)))
+
     def __init__(
         self,
         max_depth: int = 1000,
@@ -351,7 +355,7 @@ class Interpreter:
 
         for s in program.settings:
             if s.name == "maxdepth":
-                global_maxdepth = int(s.value)
+                global_maxdepth = min(int(s.value), global_maxdepth)
             elif s.name == "seed":
                 val = s.value
                 if isinstance(val, str) and val == "initial":
@@ -725,75 +729,19 @@ class Interpreter:
         """
         Build a 4×4 Matrix from a list of Transformation AST nodes.
 
+        Dispatches to each node's ``apply_to_matrix`` method (polymorphic).
         Uses ``self.origin_as_center`` to decide the transform center.
         """
         matrix = Matrix.Identity(4)
-        center = mu.Vector((0.5, 0.5, 0.5))
-        t_center = Matrix.Translation(center)
-        t_neg_center = Matrix.Translation(-center)
-
-        _axis_vec = ((1, 0, 0), (0, 1, 0), (0, 0, 1))
-        _axis_letter = ('X', 'Y', 'Z')
+        origin = self.origin_as_center
+        t_center = self._T_CENTER
+        t_neg_center = self._T_NEG_CENTER
 
         for trans in transformations:
-            if isinstance(trans, Translate):
-                v = resolve(trans.value, params_scope)
-                vec = list(_axis_vec[trans.axis])
-                vec[trans.axis] = v
-                matrix @= Matrix.Translation(tuple(vec))
-
-            elif isinstance(trans, Rotate):
-                v = math.radians(resolve(trans.angle, params_scope))
-                rot = Matrix.Rotation(v, 4, _axis_letter[trans.axis])
-                if not self.origin_as_center:
-                    matrix @= t_center @ rot @ t_neg_center
-                else:
-                    matrix @= rot
-
-            elif isinstance(trans, Scale):
-                x = resolve(trans.x, params_scope)
-                if trans.is_uniform:
-                    scale = Matrix.Scale(x, 4)
-                else:
-                    y = resolve(trans.y, params_scope) if trans.y is not None else 1.0
-                    z = resolve(trans.z, params_scope) if trans.z is not None else 1.0
-                    sx = Matrix.Scale(x, 4, (1.0, 0.0, 0.0))
-                    sy = Matrix.Scale(y, 4, (0.0, 1.0, 0.0))
-                    sz = Matrix.Scale(z, 4, (0.0, 0.0, 1.0))
-                    scale = sx @ sy @ sz
-                if not self.origin_as_center:
-                    matrix @= t_center @ scale @ t_neg_center
-                else:
-                    matrix @= scale
-
-            elif isinstance(trans, MatrixTransform):
-                m = [resolve(v, params_scope) for v in trans.matrix]
-                # Build 4×4 from 9 values (3×3 + translation)
-                new_matrix = Matrix([
-                    [m[0], m[1], m[2], m[3]],
-                    [m[4], m[5], m[6], m[7]],
-                    [m[8], m[9], m[10], m[11]],
-                    [0, 0, 0, 1],
-                ]) if len(m) >= 12 else Matrix.Identity(4)
-                # If only 9 values, treat as 3×3 linear transform
-                if len(m) == 9:
-                    new_matrix = Matrix([
-                        [m[0], m[1], m[2], 0],
-                        [m[3], m[4], m[5], 0],
-                        [m[6], m[7], m[8], 0],
-                        [0, 0, 0, 1],
-                    ])
-                matrix @= new_matrix
-
-            elif isinstance(trans, Mirror):
-                mirror = Matrix.Scale(-1, 4, _axis_vec[trans.axis])
-                if not self.origin_as_center:
-                    matrix @= t_center @ mirror @ t_neg_center
-                else:
-                    matrix @= mirror
-
-            # Color transformations are ignored by the interpreter
-            # (HueShift, SaturationMul, BrightnessMul, AlphaMul, SetColor, BlendColor)
+            trans.apply_to_matrix(
+                matrix, resolve, params_scope,
+                origin, t_center, t_neg_center,
+            )
 
         return matrix
 
