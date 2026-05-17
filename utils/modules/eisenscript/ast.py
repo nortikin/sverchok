@@ -331,6 +331,7 @@ AXIS_NAMES = {0: 'x', 1: 'y', 2: 'z'}
 # Axis helpers for matrix construction
 _AXIS_VEC = ((1, 0, 0), (0, 1, 0), (0, 0, 1))
 _AXIS_LETTER = ('X', 'Y', 'Z')
+_RAD_PER_DEG = math.pi / 180.0
 
 
 class Translate(Transformation):
@@ -353,7 +354,7 @@ class Translate(Transformation):
         self, matrix, resolve, params_scope,
         origin_as_center, t_center, t_neg_center,
     ):
-        v = resolve(self.value, params_scope)
+        v = self.value if isinstance(self.value, float) else resolve(self.value, params_scope)
         if self.axis == AXIS_X:
             matrix @= Matrix.Translation((v, 0.0, 0.0))
         elif self.axis == AXIS_Y:
@@ -382,8 +383,8 @@ class Rotate(Transformation):
         self, matrix, resolve, params_scope,
         origin_as_center, t_center, t_neg_center,
     ):
-        angle = math.radians(resolve(self.angle, params_scope))
-        rot = Matrix.Rotation(angle, 4, _AXIS_LETTER[self.axis])
+        a = self.angle if isinstance(self.angle, float) else resolve(self.angle, params_scope)
+        rot = Matrix.Rotation(a * _RAD_PER_DEG, 4, _AXIS_LETTER[self.axis])
         if origin_as_center:
             matrix @= rot
         else:
@@ -442,12 +443,15 @@ class Scale(Transformation):
         self, matrix, resolve, params_scope,
         origin_as_center, t_center, t_neg_center,
     ):
-        x = resolve(self.x, params_scope)
+        def _rv(val):
+            return val if isinstance(val, float) else resolve(val, params_scope)
+
+        x = _rv(self.x)
         if self.is_uniform:
             scale = Matrix.Scale(x, 4)
         else:
-            y = resolve(self.y, params_scope) if self.y is not None else 1.0
-            z = resolve(self.z, params_scope) if self.z is not None else 1.0
+            y = _rv(self.y) if self.y is not None else 1.0
+            z = _rv(self.z) if self.z is not None else 1.0
             scale = Matrix((
                 (x, 0, 0, 0),
                 (0, y, 0, 0),
@@ -478,14 +482,16 @@ class MatrixTransform(Transformation):
         self, matrix, resolve, params_scope,
         origin_as_center, t_center, t_neg_center,
     ):
-        m = [resolve(v, params_scope) for v in self.matrix]
-        new_matrix = Matrix((
+        def _rv(val):
+            return val if isinstance(val, float) else resolve(val, params_scope)
+
+        m = [_rv(v) for v in self.matrix]
+        matrix @= Matrix((
             (m[0], m[1], m[2], 0),
             (m[3], m[4], m[5], 0),
             (m[6], m[7], m[8], 0),
             (0, 0, 0, 1),
         ))
-        matrix @= new_matrix
 
 
 # ---------------------------------------------------------------------------
