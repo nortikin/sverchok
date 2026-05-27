@@ -111,7 +111,7 @@ def draw_indices_2D_wbg(context, args):
     draw_bg             = settings['draw_bg']
     draw_bface          = settings['draw_bface']
 
-    font_id             = 0
+    font_id             = settings['font_id']
     text_height         = int(13.0 * scale)
     text_height_05      = int(text_height*0.5)
     if(text_height_05<2):
