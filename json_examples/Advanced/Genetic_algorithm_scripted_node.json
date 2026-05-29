@@ -1134,19 +1134,35 @@
           }
         },
         "inputs": {
-          "Vers": {
+          "vertices": {
             "bl_idname": "SvVerticesSocket",
-            "name": "Vers"
+            "name": "Vertices"
           },
-          "Pols": {
+          "polygons": {
             "bl_idname": "SvStringsSocket",
-            "name": "Pols"
+            "name": "Polygons"
+          },
+          "groups_id": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Group By"
           }
         },
         "outputs": {
-          "Volume": {
+          "volumes": {
             "bl_idname": "SvStringsSocket",
-            "name": "Volume"
+            "name": "Volumes"
+          },
+          "groups_id": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Group By"
+          },
+          "grouped_volumes": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Grouped Volumes"
+          },
+          "grouped_id": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Grouped Id"
           }
         },
         "bl_idname": "SvVolumeNodeMK3"
@@ -1155,7 +1171,7 @@
         "attributes": {
           "location": [
             386.22869873046875,
-            638.8378410339355
+            538.8378410339355
           ],
           "label": "\u043e\u0431\u044a\u0451\u043c \u0441\u0442\u0430\u043b",
           "parent": {
@@ -1164,19 +1180,35 @@
           }
         },
         "inputs": {
-          "Vers": {
+          "vertices": {
             "bl_idname": "SvVerticesSocket",
-            "name": "Vers"
+            "name": "Vertices"
           },
-          "Pols": {
+          "polygons": {
             "bl_idname": "SvStringsSocket",
-            "name": "Pols"
+            "name": "Polygons"
+          },
+          "groups_id": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Group By"
           }
         },
         "outputs": {
-          "Volume": {
+          "volumes": {
             "bl_idname": "SvStringsSocket",
-            "name": "Volume"
+            "name": "Volumes"
+          },
+          "groups_id": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Group By"
+          },
+          "grouped_volumes": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Grouped Volumes"
+          },
+          "grouped_id": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Grouped Id"
           }
         },
         "bl_idname": "SvVolumeNodeMK3"
@@ -1293,13 +1325,13 @@
       },
       {
         "from_node": "Volume.002",
-        "from_socket": "Volume",
+        "from_socket": "volumes",
         "to_node": "List Join",
         "to_socket": "data"
       },
       {
         "from_node": "Volume",
-        "from_socket": "Volume",
+        "from_socket": "volumes",
         "to_node": "List Join",
         "to_socket": "data 1"
       },
@@ -1427,25 +1459,25 @@
         "from_node": "Move.001",
         "from_socket": "Vertices",
         "to_node": "Volume.002",
-        "to_socket": "Vers"
+        "to_socket": "vertices"
       },
       {
         "from_node": "IcoSphere",
         "from_socket": "Faces",
         "to_node": "Volume.002",
-        "to_socket": "Pols"
+        "to_socket": "polygons"
       },
       {
         "from_node": "Convex Hull",
         "from_socket": "Vertices",
         "to_node": "Volume",
-        "to_socket": "Vers"
+        "to_socket": "vertices"
       },
       {
         "from_node": "Convex Hull",
         "from_socket": "Polygons",
         "to_node": "Volume",
-        "to_socket": "Pols"
+        "to_socket": "polygons"
       },
       {
         "from_node": "Move",

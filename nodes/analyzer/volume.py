@@ -39,7 +39,7 @@ class SvVolumeNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'volumes'   ).label = 'Volumes'
         self.outputs.new('SvStringsSocket', 'groups_id').label = 'Group By'
         self.outputs.new('SvStringsSocket', 'grouped_volumes'   ).label = 'Grouped Volumes'
-        self.outputs.new('SvStringsSocket', 'grouped_id').label = 'Grouped id'
+        self.outputs.new('SvStringsSocket', 'grouped_id').label = 'Grouped Id'
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
