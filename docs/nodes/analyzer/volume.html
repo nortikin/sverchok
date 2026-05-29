@@ -202,6 +202,7 @@
 <li class="toctree-l3"><a class="reference internal" href="sphere_approx.html">Sphere Fit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="steiner_ellipse.html">Steiner Ellipse</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Volume</a></li>
+
 <li class="toctree-l3"><a class="reference internal" href="wave_paint.html">Wave Painter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="weighted_vector_sum.html">Center of Mass (Mesh) (Alpha)</a></li>
 </ul>
@@ -381,11 +382,16 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Volume</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#grouped-volumes">Grouped volumes</a></li>
+</ul>
+
             </nav>
         </div>
     </div>
@@ -398,7 +404,7 @@
                   
   <section id="volume">
 <h1>Volume<a class="headerlink" href="#volume" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195313181-acb49525-c168-4cbc-9863-e44496db41cd.png"><img alt="https://user-images.githubusercontent.com/14288520/195313181-acb49525-c168-4cbc-9863-e44496db41cd.png" src="https://user-images.githubusercontent.com/14288520/195313181-acb49525-c168-4cbc-9863-e44496db41cd.png" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/cca9273d-ca11-4dfe-acd0-908c3c94a82f"><img alt="https://github.com/user-attachments/assets/cca9273d-ca11-4dfe-acd0-908c3c94a82f" src="https://github.com/user-attachments/assets/cca9273d-ca11-4dfe-acd0-908c3c94a82f" />
 </a>
 <p><em>Alias: Volume</em></p>
 <section id="functionality">
@@ -407,9 +413,13 @@
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
-<ul class="simple">
+<ul>
 <li><p>Vers vertices of object(s)</p></li>
 <li><p>Pols polygons of object(s)</p></li>
+<li><p>Group Id (per object). If an object has more than one group, the first element is taken.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/8bbbfaaf-b1d6-4c06-9618-066a8fa72c85"><img alt="https://github.com/user-attachments/assets/8bbbfaaf-b1d6-4c06-9618-066a8fa72c85" src="https://github.com/user-attachments/assets/8bbbfaaf-b1d6-4c06-9618-066a8fa72c85" />
+</a>
+</li>
 </ul>
 </section>
 <section id="outputs">
@@ -433,6 +443,11 @@
 <li><p>Text-&gt; <a class="reference internal" href="../text/string_tools.html"><span class="doc">String Tools</span></a></p></li>
 </ul>
 </section>
+</section>
+<section id="grouped-volumes">
+<h1>Grouped volumes<a class="headerlink" href="#grouped-volumes" title="Link to this heading">#</a></h1>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5816d0f7-7d60-4a40-aa59-8a11c28d563f"><img alt="https://github.com/user-attachments/assets/5816d0f7-7d60-4a40-aa59-8a11c28d563f" src="https://github.com/user-attachments/assets/5816d0f7-7d60-4a40-aa59-8a11c28d563f" />
+</a>
 </section>
 
 
@@ -482,11 +497,16 @@
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Volume</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#grouped-volumes">Grouped volumes</a></li>
+</ul>
+
   </nav></div>
 
 </div></div>
