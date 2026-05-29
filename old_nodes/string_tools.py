@@ -24,7 +24,6 @@ from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, levels_of_list_or_np
 from sverchok.utils.sv_itertools import recurse_f_level_control
-import re
 # pylint: disable=C0326
 
 # Rules for modification:
@@ -70,7 +69,6 @@ def number_to_string(data, precision):
     precision = max(0, precision)  # can't have negative, and abs() might be confusing
     return f"{float(data):.{precision}f}"
 
-
 func_dict = {
     "---------------OPS" : "#---------------------------------------------------#",
     "to_string":  (0,   str,                                 ('t t'),    "To String"),
@@ -88,12 +86,8 @@ func_dict = {
     "find_l_sli": (23,  lambda x, c, s, e: x.rfind(c, s, e), ('tcsn s'), "Find Last Slice",  ('Character', 'Start', 'End')),
     "find_all":   (24,  find_all,                            ('tc s'),   "Find All",         ('Character', 'Start', 'End')),
     "find_all_sl":(25,  find_all_slice,                      ('tcsn s'), "Find All Slice",   ('Character', 'Start', 'End')),
-    "contains"   :(26,  lambda x, c: (c in x),               ('tc s'),   "Contain",          ('Character', 'Start', 'End')),
-    "contains_re":(27,  lambda x, c: bool(re.search(c,x)),   ('tc s'),   "Contain (re)",     ('Character', 'Start', 'End')),
     "count":      (30,  lambda x, c: x.count(c),             ('tt s'),   "Count"),
-    "count_re":   (31,  lambda x, c: len(re.findall(c, x)),  ('tt s'),   "Count (re)"),
-    "replace":    (40,  lambda x, c, c2, n: x.replace(c, c2, n),('tcds t'), "Replace",          ('Find', 'Replace', 'Count')),
-    "replace_regex":(41,  lambda x, c, c2: re.sub(c, c2, x),('tcd t'),  "Replace (regex)",          ('Find (re)', 'Replace', )),
+    "replace":    (40,  lambda x, c, c2, n: x.replace(c, c2, n),('tcds t'),  "Replace",          ('Find', 'Replace', 'Count')),
 
     "lower":      (50,  lambda x: x.lower(),                 ('t t'),    "Lower"),
     "upper":      (51,  lambda x: x.upper(),                 ('t t'),    "Upper"),
@@ -122,6 +116,7 @@ func_dict = {
 
 }
 
+
 def func_from_mode(mode):
     return func_dict[mode][1]
 
@@ -144,13 +139,13 @@ def string_tools(params, constant, matching_f):
 
     return result
 
-class SvStringsToolsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
+class SvStringsToolsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Text modifier
     Tooltip: Strings operations as split, to uppecase, find characters...
     """
 
-    bl_idname = 'SvStringsToolsNodeMK2'
+    bl_idname = 'SvStringsToolsNode'
     bl_label = 'Strings Tools'
     sv_icon = 'SV_SCALAR_MATH'
 
@@ -306,5 +301,5 @@ class SvStringsToolsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
             self.outputs[0].sv_set(result)
 
-classes = [SvStringsToolsNodeMK2]
+classes = [SvStringsToolsNode]
 register, unregister = bpy.utils.register_classes_factory(classes)

@@ -865,7 +865,7 @@
     - SvGTextNode
     - ---
     - SvDatetimeStrings
-    - SvStringsToolsNode
+    - SvStringsToolsNodeMK2
     - SvSimpleTextNodeMK2
 
 ################################################################################
