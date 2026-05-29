@@ -24,7 +24,6 @@ from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, levels_of_list_or_np
 from sverchok.utils.sv_itertools import recurse_f_level_control
-import re
 # pylint: disable=C0326
 
 # Rules for modification:
@@ -70,57 +69,53 @@ def number_to_string(data, precision):
     precision = max(0, precision)  # can't have negative, and abs() might be confusing
     return f"{float(data):.{precision}f}"
 
-
 func_dict = {
     "---------------OPS" : "#---------------------------------------------------#",
-    "to_string"     : (0,   str,                                     ('t t'),    "To String"),
-    "to_number"     : (1,   eval,                                    ('t s'),    "To Number"),
-    "num_to_str"    : (3,   number_to_string ,                       ('ss t'),   "Number To String", ('Precision',)),
-    "join"          : (5,   lambda x, y: ''.join([x,y]),             ('tt t'),   "Join"),
-    "join_all"      : (6,   join,                                    ('tb t'),   "Join All",         ('Add Break Lines',)),
-    "split"         : (10,  split,                                   ('tcs t'),  "Split",            ('Spliter', 'Max Split')),
-    "splitlines"    : (11,  lambda x,b: x.splitlines(b),             ('tb t'),   "Splitlines"),
-    "partition"     : (12,  lambda x, c: x.partition(c),             ('tc t'),   "Left Partition"),
-    "rpartition"    : (13,  lambda x, c: x.rpartition(c),            ('tc t'),   "Right Partition"),
-    "find_f_all"    : (20,  lambda x, c: x.find(c),                  ('tc s'),   "Find First",       ('Character', 'Start', 'End')),
-    "find_f_sli"    : (21,  lambda x, c, s, e: x.find(c, s, e),      ('tcsn s'), "Find First Slice", ('Character', 'Start', 'End')),
-    "find_l_all"    : (22,  lambda x, c: x.rfind(c),                 ('tc s'),   "Find Last",        ('Character', 'Start', 'End')),
-    "find_l_sli"    : (23,  lambda x, c, s, e: x.rfind(c, s, e),     ('tcsn s'), "Find Last Slice",  ('Character', 'Start', 'End')),
-    "find_all"      : (24,  find_all,                                ('tc s'),   "Find All",         ('Character', 'Start', 'End')),
-    "find_all_sl"   : (25,  find_all_slice,                          ('tcsn s'), "Find All Slice",   ('Character', 'Start', 'End')),
-    "contains"      : (26,  lambda x, c: (c in x),                   ('tc s'),   "Contain",          ('Character', 'Start', 'End')),
-    "contains_re"   : (27,  lambda x, c: bool(re.search(c,x)),       ('tc s'),   "Contain (re)",     ('Character', 'Start', 'End')),
-    "count"         : (30,  lambda x, c: x.count(c),                 ('tt s'),   "Count"),
-    "count_re"      : (31,  lambda x, c: len(re.findall(c, x))     , ('tt s'),   "Count (re)"),
-    "replace"       : (40,  lambda x, c, c2, n: x.replace(c, c2, n), ('tcds t'), "Replace",          ('Find', 'Replace', 'Count')),
-    "replace_regex" : (41,  lambda x, c, c2: re.sub(c, c2, x)      , ('tcd t'),  "Replace (re)",         ('Find (re)', 'Replace', )),
+    "to_string":  (0,   str,                                 ('t t'),    "To String"),
+    "to_number":  (1,   eval,                                ('t s'),    "To Number"),
+    "num_to_str": (3,   number_to_string ,                   ('ss t'),   "Number To String", ('Precision',)),
+    "join":       (5,   lambda x, y: ''.join([x,y]),         ('tt t'),   "Join"),
+    "join_all":   (6,   join,                                ('tb t'),   "Join All",         ('Add Break Lines',)),
+    "split":      (10,  split,                               ('tcs t'),  "Split",            ('Spliter', 'Max Split')),
+    "splitlines": (11,  lambda x,b: x.splitlines(b),         ('tb t'),   "Splitlines"),
+    "partition":  (12,  lambda x, c: x.partition(c),         ('tc t'),   "Left Partition"),
+    "rpartition": (13,  lambda x, c: x.rpartition(c),        ('tc t'),   "Right Partition"),
+    "find_f_all": (20,  lambda x, c: x.find(c),              ('tc s'),   "Find First",       ('Character', 'Start', 'End')),
+    "find_f_sli": (21,  lambda x, c, s, e: x.find(c, s, e),  ('tcsn s'), "Find First Slice", ('Character', 'Start', 'End')),
+    "find_l_all": (22,  lambda x, c: x.rfind(c),             ('tc s'),   "Find Last",        ('Character', 'Start', 'End')),
+    "find_l_sli": (23,  lambda x, c, s, e: x.rfind(c, s, e), ('tcsn s'), "Find Last Slice",  ('Character', 'Start', 'End')),
+    "find_all":   (24,  find_all,                            ('tc s'),   "Find All",         ('Character', 'Start', 'End')),
+    "find_all_sl":(25,  find_all_slice,                      ('tcsn s'), "Find All Slice",   ('Character', 'Start', 'End')),
+    "count":      (30,  lambda x, c: x.count(c),             ('tt s'),   "Count"),
+    "replace":    (40,  lambda x, c, c2, n: x.replace(c, c2, n),('tcds t'),  "Replace",          ('Find', 'Replace', 'Count')),
 
-    "lower"         : (50,  lambda x: x.lower(),                 ('t t'),    "Lower"),
-    "upper"         : (51,  lambda x: x.upper(),                 ('t t'),    "Upper"),
-    "capitalize"    : (52,  lambda x : x.capitalize(),           ('t t'),    "Capitalize"),
-    "title"         : (53,  lambda x: x.title(),                 ('t t'),    "Title"),
-    "casefold"      : (54,  lambda x : x.casefold(),             ('t t'),    "Casefold"),
-    "swapcase"      : (55,  lambda x: x.swapcase(),              ('t t'),    "Swapcase"),
+    "lower":      (50,  lambda x: x.lower(),                 ('t t'),    "Lower"),
+    "upper":      (51,  lambda x: x.upper(),                 ('t t'),    "Upper"),
+    "capitalize": (52,  lambda x : x.capitalize(),           ('t t'),    "Capitalize"),
+    "title":      (53,  lambda x: x.title(),                 ('t t'),    "Title"),
+    "casefold":   (54,  lambda x : x.casefold(),             ('t t'),    "Casefold"),
+    "swapcase":   (55,  lambda x: x.swapcase(),              ('t t'),    "Swapcase"),
 
-    "strip"         : (60,  lambda x, c: x.strip(c),             ('tc t'),   "Strip"),
-    "lstrip"        : (61,  lambda x, c: x.lstrip(c),            ('tc t'),   "Left Strip"),
-    "rstrip"        : (62,  lambda x, c: x.rstrip(c),            ('tc t'),   "Right Strip"),
-    "ljust"         : (63,  lambda x, l, c: x.ljust(l, c),       ('tsc t'),  "Left Justify"),
-    "center"        : (64,  lambda x,l,c: x.center(l, c),        ('tst t'),  "Center",          ('Length', 'Character')),
-    "rjust"         : (65,  lambda x, l, c: x.rjust(l, c),       ('tsc t'),  "Right Justify"),
-    "zfill"         : (66,  lambda x,l: x.zfill(l),              ('ts t'),   "Zeros Fill"),
+    "strip":      (60,  lambda x, c: x.strip(c),             ('tc t'),   "Strip"),
+    "lstrip":     (61,  lambda x, c: x.lstrip(c),            ('tc t'),   "Left Strip"),
+    "rstrip":     (62,  lambda x, c: x.rstrip(c),            ('tc t'),   "Right Strip"),
+    "ljust":      (63,  lambda x, l, c: x.ljust(l, c),       ('tsc t'),  "Left Justify"),
+    "center":     (64,  lambda x,l,c: x.center(l, c),        ('tst t'),  "Center",          ('Length', 'Character')),
+    "rjust":      (65,  lambda x, l, c: x.rjust(l, c),       ('tsc t'),  "Right Justify"),
+    "zfill":      (66,  lambda x,l: x.zfill(l),              ('ts t'),   "Zeros Fill"),
 
-    "startswith"    : (70,  lambda x, c: x.startswith(c),        ('tc s'),   "Starts With"),
-    "endswith"      : (71,  lambda x, c: x.endswith(c),          ('tc s'),   "Ends With"),
-    "isalnum"       : (72,  lambda x: x.isalnum(),               ('t s'),    "Is Alphanumeric"),
-    "isalpha"       : (73,  lambda x: x.isalpha(),               ('t s'),    "Is Alphabetic"),
-    "isdigit"       : (74,  lambda x: x.isdigit(),               ('t s'),    "Is Digit"),
-    "islower"       : (75,  lambda x: x.islower(),               ('t s'),    "Is Lower"),
-    "isspace"       : (76,  lambda x: x.isspace(),               ('t s'),    "Is Space"),
-    "istitle"       : (77,  lambda x: x.istitle(),               ('t s'),    "Is Title"),
-    "isupper"       : (78,  lambda x: x.isupper(),               ('t s'),    "Is Upper"),
+    "startswith": (70,  lambda x, c: x.startswith(c),        ('tc s'),   "Starts With"),
+    "endswith":   (71,  lambda x, c: x.endswith(c),          ('tc s'),   "Ends With"),
+    "isalnum":    (72,  lambda x: x.isalnum(),               ('t s'),    "Is Alphanumeric"),
+    "isalpha":    (73,  lambda x: x.isalpha(),               ('t s'),    "Is Alphabetic"),
+    "isdigit":    (74,  lambda x: x.isdigit(),               ('t s'),    "Is Digit"),
+    "islower":    (75,  lambda x: x.islower(),               ('t s'),    "Is Lower"),
+    "isspace":    (76,  lambda x: x.isspace(),               ('t s'),    "Is Space"),
+    "istitle":    (77,  lambda x: x.istitle(),               ('t s'),    "Is Title"),
+    "isupper":    (78,  lambda x: x.isupper(),               ('t s'),    "Is Upper"),
 
 }
+
 
 def func_from_mode(mode):
     return func_dict[mode][1]
@@ -144,13 +139,13 @@ def string_tools(params, constant, matching_f):
 
     return result
 
-class SvStringsToolsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
+class SvStringsToolsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Text modifier
     Tooltip: Strings operations as split, to uppecase, find characters...
     """
 
-    bl_idname = 'SvStringsToolsNodeMK2'
+    bl_idname = 'SvStringsToolsNode'
     bl_label = 'Strings Tools'
     sv_icon = 'SV_SCALAR_MATH'
 
@@ -306,5 +301,5 @@ class SvStringsToolsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
             self.outputs[0].sv_set(result)
 
-classes = [SvStringsToolsNodeMK2]
+classes = [SvStringsToolsNode]
 register, unregister = bpy.utils.register_classes_factory(classes)

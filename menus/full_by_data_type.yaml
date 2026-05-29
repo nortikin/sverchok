@@ -768,7 +768,7 @@
     - NoteNode
     - SvGTextNode
     - ---
-    - SvStringsToolsNode
+    - SvStringsToolsNodeMK2
     - SvSimpleTextNodeMK2
 
 - Scene:
