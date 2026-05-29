@@ -436,7 +436,7 @@
         - SvAlignedBBoxNode
         - SvComponentAnalyzerNode
         - SvDiameterNode
-        - SvVolumeNodeMK2
+        - SvVolumeNodeMK3
         - SvAreaNodeMK2
         - DistancePPNode
         - SvWeightedVectorSumNode
