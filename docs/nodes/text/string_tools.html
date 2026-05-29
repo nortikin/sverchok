@@ -353,6 +353,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reqular-expressions-examples">Reqular Expressions examples</a></li>
 </ul>
             </nav>
         </div>
@@ -366,6 +367,8 @@
                   
   <section id="strings-tools">
 <h1>Strings Tools<a class="headerlink" href="#strings-tools" title="Link to this heading">#</a></h1>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/193754b3-02e2-4326-b9b0-e38f5cb74de8"><img alt="https://github.com/user-attachments/assets/193754b3-02e2-4326-b9b0-e38f5cb74de8" src="https://github.com/user-attachments/assets/193754b3-02e2-4326-b9b0-e38f5cb74de8" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
 <p>This node allows operating with strings with many common methods.</p>
@@ -468,17 +471,37 @@ returns all the positions of where it was found</p></td>
 ‘End’: Slice End</p></td>
 <td><p>Number</p></td>
 </tr>
+<tr class="row-even"><td><p><strong>Contain</strong></p></td>
+<td><p>Whether the text contains a substring</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Contain (re)</strong></p></td>
+<td><p>Whether the text contains a substring with regular expression</p></td>
+<td></td>
+<td></td>
+</tr>
 <tr class="row-even"><td><p><strong>Count</strong></p></td>
 <td><p>Returns the number of times a specified value occurs in a
 string</p></td>
 <td></td>
 <td><p>Number</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Replace</strong></p></td>
+<tr class="row-odd"><td><p><strong>Count (re)</strong></p></td>
+<td><p>value is regular expression</p></td>
+<td></td>
+<td><p>Number</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Replace</strong></p></td>
 <td><p>Returns a string where a specified value is replaced with a
 specified value</p></td>
 <td><p>‘Find’, ‘Replace’
 ‘Count’: -1 = all</p></td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Replace (ex)</strong></p></td>
+<td><p>Replace substring with regular expression</p></td>
+<td><p>‘Find’, ‘Replace’</p></td>
 <td><p>String</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Lower</strong></p></td>
@@ -599,6 +622,13 @@ the beginning</p></td>
 <p>Splitting Text:</p>
 <img alt="https://user-images.githubusercontent.com/10011941/104808922-98f32480-57e9-11eb-9b43-672a60c5a898.png" src="https://user-images.githubusercontent.com/10011941/104808922-98f32480-57e9-11eb-9b43-672a60c5a898.png" />
 </section>
+<hr class="docutils" />
+<section id="reqular-expressions-examples">
+<h2>Reqular Expressions examples<a class="headerlink" href="#reqular-expressions-examples" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/2d584c8d-7cb1-4d8a-b061-0c5d6834e36f"><img alt="https://github.com/user-attachments/assets/2d584c8d-7cb1-4d8a-b061-0c5d6834e36f" src="https://github.com/user-attachments/assets/2d584c8d-7cb1-4d8a-b061-0c5d6834e36f" />
+</a>
+<p>See Python regular expression syntax: <a class="reference external" href="https://docs.python.org/3/library/re.html">https://docs.python.org/3/library/re.html</a></p>
+</section>
 </section>
 
 
@@ -652,6 +682,7 @@ the beginning</p></td>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reqular-expressions-examples">Reqular Expressions examples</a></li>
 </ul>
   </nav></div>
 
