@@ -30,6 +30,8 @@ class SvVolumeNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Volume'
     bl_icon = 'SNAP_VOLUME'
 
+    replacement_nodes = [('SvVolumeNodeMK3', None, None)]
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vers')
         self.inputs.new('SvStringsSocket', "Pols")

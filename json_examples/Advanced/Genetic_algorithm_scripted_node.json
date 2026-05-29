@@ -1149,7 +1149,7 @@
             "name": "Volume"
           }
         },
-        "bl_idname": "SvVolumeNodeMK2"
+        "bl_idname": "SvVolumeNodeMK3"
       },
       "Volume": {
         "attributes": {
@@ -1179,7 +1179,7 @@
             "name": "Volume"
           }
         },
-        "bl_idname": "SvVolumeNodeMK2"
+        "bl_idname": "SvVolumeNodeMK3"
       },
       "Random Vector": {
         "attributes": {
