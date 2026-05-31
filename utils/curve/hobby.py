@@ -113,13 +113,18 @@ def _compute_angles_and_distances(points):
 
 def _solve_hobby_open(d, psi, n, m, tension=1.0, curl_start=1.0, curl_end=1.0):
     """
-    Solve the open curve system using numpy.linalg.solve.
+    Solve the open curve system with tension-aware coefficients.
 
     For open curves with uniform tension τ, the system at interior knot k is:
-        d_{k,k+1} · θ_{k-1} + 2·(d_{k,k+1} + d_{k-1,k}) · θ_k + d_{k-1,k} · θ_{k+1}
-            = -2·d_{k,k+1} · ψ_k - d_{k-1,k} · ψ_{k+1}
+        d[k] · θ_{k-1} + (3τ-1)·(d[k]+d[k-1]) · θ_k + d[k-1] · θ_{k+1}
+            = -(3τ-1)·d[k] · ψ_k - d[k-1] · ψ_{k+1}
 
-    Boundary conditions (curl):
+    This is derived from the general Hobby equation:
+        A_k · θ_{k-1} + (B_k + C_k) · θ_k + D_k · θ_{k+1} = -B_k · ψ_k - D_k · ψ_{k+1}
+    where A_k = τ/d[k-1], B_k = (3τ-1)·τ/d[k-1],
+          C_k = (3τ-1)·τ/d[k], D_k = τ/d[k]
+
+    Boundary conditions (curl, MetaPost mp.w):
         θ[0]   = -(γ₀+½)/(γ₀+2) · psi[1]
         θ[n-1] = +(γₙ+½)/(γₙ+2) · psi[m-2]
 
@@ -135,10 +140,6 @@ def _solve_hobby_open(d, psi, n, m, tension=1.0, curl_start=1.0, curl_end=1.0):
     Returns:
         theta: array of shape (m,) - Hobby angles θ_k for each knot
     """
-    # Build the full m x m system matrix
-    A = np.zeros((m, m))
-    rhs = np.zeros(m)
-
     # Curl boundary conditions (MetaPost mp.w, verified against MetaPost 2.11).
     c0 = (curl_start + 0.5) / (curl_start + 2.0)
     ce = (curl_end + 0.5) / (curl_end + 2.0)
@@ -146,19 +147,30 @@ def _solve_hobby_open(d, psi, n, m, tension=1.0, curl_start=1.0, curl_end=1.0):
     theta_0 = -c0 * psi[1]
     theta_n1 = +ce * psi[m - 2]
 
+    # Tension factor: (3τ - 1), equals 2 when τ = 1
+    # For τ = 3/4 (minimum), factor = 0.5
+    # For τ = 1, factor = 2
+    # For τ → ∞, factor → ∞ (curve approaches polyline)
+    tau = max(tension, 0.75)  # minimum tension is 3/4 per Hobby
+    factor = 3.0 * tau - 1.0
+
+    # Build the full m x m system matrix
+    A = np.zeros((m, m))
+    rhs = np.zeros(m)
+
     # First row: Dirichlet BC for θ[0]
     A[0, 0] = 1.0
     rhs[0] = theta_0
 
-    # Interior rows: mock curvature continuity
+    # Interior rows: mock curvature continuity with tension
     for k in range(1, m - 1):  # interior knots 1..m-2
         dk = d[k]       # d_{k,k+1}
         dk1 = d[k - 1]  # d_{k-1,k}
 
         A[k, k - 1] = dk1
-        A[k, k] = 2.0 * (dk + dk1)
+        A[k, k] = factor * (dk + dk1)
         A[k, k + 1] = dk
-        rhs[k] = -2.0 * dk * psi[k] - dk1 * psi[k + 1]
+        rhs[k] = -factor * dk * psi[k] - dk1 * psi[k + 1]
 
     # Last row: Dirichlet BC for θ[n-1]
     A[m - 1, m - 1] = 1.0
@@ -178,22 +190,26 @@ def _solve_hobby_open(d, psi, n, m, tension=1.0, curl_start=1.0, curl_end=1.0):
 
 def _solve_hobby_cyclic(d, psi, m, tension=1.0):
     """
-    Solve the cyclic (closed) curve system.
+    Solve the cyclic (closed) curve system with tension.
 
     For cyclic curves with m knots (indices 0..m-1), we have m equations:
-        d[k] * θ_{k-1} + 2*(d[k] + d[k-1]) * θ_k + d[k-1] * θ_{k+1}
-            = -2*d[k]*ψ[k] - d[k-1]*ψ[k+1]
+        d[k] * θ_{k-1} + (3τ-1)*(d[k] + d[k-1]) * θ_k + d[k-1] * θ_{k+1}
+            = -(3τ-1)*d[k]*ψ[k] - d[k-1]*ψ[k+1]
     where all indices are taken modulo m.
 
     Parameters:
         d: array of shape (m,) - segment lengths (including wrap-around)
         psi: array of shape (m,) - turning angles at each knot
         m: number of knots (= number of segments)
-        tension: tension parameter (default 1.0, currently unused for cyclic)
+        tension: tension parameter (default 1.0)
 
     Returns:
         theta: array of shape (m,) - Hobby angles θ_k for each knot
     """
+    # Tension factor: (3τ - 1), equals 2 when τ = 1
+    tau = max(tension, 0.75)
+    factor = 3.0 * tau - 1.0
+
     # Build the full m x m system matrix
     A = np.zeros((m, m))
     rhs = np.zeros(m)
@@ -205,9 +221,9 @@ def _solve_hobby_cyclic(d, psi, m, tension=1.0):
         dk1 = d[prev_k]
 
         A[k, prev_k] = dk1
-        A[k, k] = 2.0 * (dk + dk1)
+        A[k, k] = factor * (dk + dk1)
         A[k, next_k] = dk
-        rhs[k] = -2.0 * dk * psi[k] - dk1 * psi[next_k]
+        rhs[k] = -factor * dk * psi[k] - dk1 * psi[next_k]
 
     # Solve the full system
     try:
