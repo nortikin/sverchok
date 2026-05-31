@@ -285,13 +285,13 @@ def _compute_bezier_segments_full(points_2d, theta, psi, n_segments=None,
 
         # Right control point: P_k⁺
         # P_k⁺ = P_k + (dx·cos(θ_k) - dy·sin(θ_k), dy·cos(θ_k) + dx·sin(θ_k)) · ρ_k / 3
-        p1x = pk[0] + (dx * ct - dy * st) * rho / 3.0
-        p1y = pk[1] + (dy * ct + dx * st) * rho / 3.0
+        p1x = pk[0] + (dx * ct - dy * st) * rho# / 3.0
+        p1y = pk[1] + (dy * ct + dx * st) * rho# / 3.0
 
         # Left control point: P_{k+1}⁻
         # P_{k+1}⁻ = P_{k+1} - (dx·cos(φ_k) + dy·sin(φ_k), dy·cos(φ_k) - dx·sin(φ_k)) · σ_{k+1} / 3
-        p2x = pk1[0] - (dx * cf + dy * sf) * sigma / 3.0
-        p2y = pk1[1] - (dy * cf - dx * sf) * sigma / 3.0
+        p2x = pk1[0] - (dx * cf + dy * sf) * sigma# / 3.0
+        p2y = pk1[1] - (dy * cf - dx * sf) * sigma# / 3.0
 
         segments.append((pk, np.array([p1x, p1y]), np.array([p2x, p2y]), pk1))
 
