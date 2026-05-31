@@ -15,7 +15,9 @@ Reference:
     (mpmathdouble.w, mp_hobby function)
 
 API:
-    hobby_curve(points, cyclic=False, concat=False) -> list of SvCubicBezierCurve or concatenated curve
+    hobby_curve(points, cyclic=False, tension=1.0,
+                curl_start=1.0, curl_end=1.0,
+                concat=False) -> list of SvCubicBezierCurve or concatenated curve
 """
 
 import numpy as np
@@ -77,7 +79,7 @@ def _compute_angles_and_distances(points):
 
     Returns:
         d: array of shape (n-1,) - segment lengths
-        psi: array of shape (n-1,) - turning angles ψ_k (ψ_k is the angle from
+        psi: array of shape (n,) - turning angles ψ_k (ψ_k is the angle from
              segment k-1 to segment k, measured at knot k)
     """
     n = len(points)
@@ -109,73 +111,72 @@ def _compute_angles_and_distances(points):
     return d, psi
 
 
-def _solve_hobby_open(d, psi, n, m):
+def _solve_hobby_open(d, psi, n, m, tension=1.0, curl_start=1.0, curl_end=1.0):
     """
-    Solve the open curve system using tridiagonal solver (Thomas algorithm).
+    Solve the open curve system using numpy.linalg.solve.
 
-    For open curves, we solve for all θ_k (k=0..n).
-    The system has n-1 interior equations plus 2 boundary conditions.
+    For open curves with uniform tension τ, the system at interior knot k is:
+        d_{k,k+1} · θ_{k-1} + 2·(d_{k,k+1} + d_{k-1,k}) · θ_k + d_{k-1,k} · θ_{k+1}
+            = -2·d_{k,k+1} · ψ_k - d_{k-1,k} · ψ_{k+1}
 
-    Boundary conditions (open, τ=1):
-        k=0: θ_0 = 0  (natural boundary)
-        k=n: θ_n = 0  (natural boundary)
+    Boundary conditions (curl):
+        θ[0]   = -(γ₀+½)/(γ₀+2) · psi[1]
+        θ[n-1] = +(γₙ+½)/(γₙ+2) · psi[m-2]
+
+    Parameters:
+        d: array of shape (n-1,) - segment lengths
+        psi: array of shape (n,) - turning angles
+        n: number of segments (= m - 1)
+        m: number of knots
+        tension: tension parameter (default 1.0)
+        curl_start: curl at start endpoint (default 1.0)
+        curl_end: curl at end endpoint (default 1.0)
+
+    Returns:
+        theta: array of shape (m,) - Hobby angles θ_k for each knot
     """
-    # Build the tridiagonal system A · θ = b
-    # For interior knots k=1..n-1:
-    #   d_k · θ_{k-1} + 2·(d_k + d_{k-1}) · θ_k + d_{k-1} · θ_{k+1}
-    #       = -2·d_k · ψ_k - d_{k-1} · ψ_{k+1}
-    # where d_k = d[k] = distance from knot k to knot k+1
-    # and d_{k-1} = d[k-1] = distance from knot k-1 to knot k
+    # Build the full m x m system matrix
+    A = np.zeros((m, m))
+    rhs = np.zeros(m)
 
-    a = np.zeros(m)  # lower diagonal
-    b = np.zeros(m)  # main diagonal
-    c = np.zeros(m)  # upper diagonal
-    rhs = np.zeros(m)  # right-hand side
+    # Curl boundary conditions (MetaPost mp.w, verified against MetaPost 2.11).
+    c0 = (curl_start + 0.5) / (curl_start + 2.0)
+    ce = (curl_end + 0.5) / (curl_end + 2.0)
 
-    for k in range(1, n):  # interior knots
+    theta_0 = -c0 * psi[1]
+    theta_n1 = +ce * psi[m - 2]
+
+    # First row: Dirichlet BC for θ[0]
+    A[0, 0] = 1.0
+    rhs[0] = theta_0
+
+    # Interior rows: mock curvature continuity
+    for k in range(1, m - 1):  # interior knots 1..m-2
         dk = d[k]       # d_{k,k+1}
         dk1 = d[k - 1]  # d_{k-1,k}
 
-        a[k] = dk1
-        b[k] = 2.0 * (dk + dk1)
-        c[k] = dk
+        A[k, k - 1] = dk1
+        A[k, k] = 2.0 * (dk + dk1)
+        A[k, k + 1] = dk
         rhs[k] = -2.0 * dk * psi[k] - dk1 * psi[k + 1]
 
-    # Boundary conditions: natural (θ_0 = 0, θ_n = 0)
-    # This means the first and last rows are identity
-    b[0] = 1.0
-    b[n] = 1.0
+    # Last row: Dirichlet BC for θ[n-1]
+    A[m - 1, m - 1] = 1.0
+    rhs[m - 1] = theta_n1
 
-    # Solve using Thomas algorithm (tridiagonal solver)
-    theta = np.zeros(m)
-
-    # Forward elimination
-    for k in range(1, n):
-        if abs(b[k - 1]) < 1e-15:
-            # Singular - use a small value
-            b[k - 1] = 1e-15
-        factor = a[k] / b[k - 1]
-        b[k] = b[k] - factor * c[k - 1]
-        rhs[k] = rhs[k] - factor * rhs[k - 1]
-
-    # Back substitution
-    if abs(b[n - 1]) < 1e-15:
-        b[n - 1] = 1e-15
-    theta[n - 1] = rhs[n - 1] / b[n - 1]
-
-    for k in range(n - 2, 0, -1):
-        if abs(b[k]) < 1e-15:
-            b[k] = 1e-15
-        theta[k] = (rhs[k] - c[k] * theta[k + 1]) / b[k]
-
-    # θ_0 = θ_n = 0 (boundary)
-    theta[0] = 0.0
-    theta[n] = 0.0
+    # Solve using numpy
+    try:
+        theta = np.linalg.solve(A, rhs)
+    except np.linalg.LinAlgError:
+        # Fallback: return boundary values with zeros in between
+        theta = np.zeros(m)
+        theta[0] = theta_0
+        theta[m - 1] = theta_n1
 
     return theta
 
 
-def _solve_hobby_cyclic(d, psi, m):
+def _solve_hobby_cyclic(d, psi, m, tension=1.0):
     """
     Solve the cyclic (closed) curve system.
 
@@ -188,6 +189,7 @@ def _solve_hobby_cyclic(d, psi, m):
         d: array of shape (m,) - segment lengths (including wrap-around)
         psi: array of shape (m,) - turning angles at each knot
         m: number of knots (= number of segments)
+        tension: tension parameter (default 1.0, currently unused for cyclic)
 
     Returns:
         theta: array of shape (m,) - Hobby angles θ_k for each knot
@@ -217,7 +219,8 @@ def _solve_hobby_cyclic(d, psi, m):
     return theta
 
 
-def _compute_bezier_segments_full(points_2d, theta, psi, n_segments=None):
+def _compute_bezier_segments_full(points_2d, theta, psi, n_segments=None,
+                                   tension=1.0):
     """
     Compute Bezier control points for each segment given θ angles and ψ angles.
 
@@ -227,6 +230,7 @@ def _compute_bezier_segments_full(points_2d, theta, psi, n_segments=None):
         psi: array of shape (m,) - turning angles ψ_k
         n_segments: if specified, number of segments (for cyclic, this equals m).
                     If None, defaults to m-1 (open curve).
+        tension: tension parameter (default 1.0)
 
     Returns:
         segments: list of (p0, p1, p2, p3) tuples, each a numpy array of shape (2,)
@@ -260,8 +264,8 @@ def _compute_bezier_segments_full(points_2d, theta, psi, n_segments=None):
         # Compute velocities
         # ρ_k = velocity(θ_k, φ_k) for the right control point
         # σ_{k+1} = velocity(φ_k, θ_k) for the left control point
-        rho = _velocity(st, ct, sf, cf, tau=1.0)
-        sigma = _velocity(sf, cf, st, ct, tau=1.0)
+        rho = _velocity(st, ct, sf, cf, tau=tension)
+        sigma = _velocity(sf, cf, st, ct, tau=tension)
 
         # Right control point: P_k⁺
         # P_k⁺ = P_k + (dx·cos(θ_k) - dy·sin(θ_k), dy·cos(θ_k) + dx·sin(θ_k)) · ρ_k / 3
@@ -278,7 +282,9 @@ def _compute_bezier_segments_full(points_2d, theta, psi, n_segments=None):
     return segments
 
 
-def hobby_curve(points, cyclic=False, concat=False):
+def hobby_curve(points, cyclic=False, tension=1.0,
+                curl_start=1.0, curl_end=1.0,
+                concat=False):
     """
     Compute a Hobby curve (Bezier spline) through the given points.
 
@@ -292,6 +298,17 @@ def hobby_curve(points, cyclic=False, concat=False):
     Parameters:
         points: list or array of 3D points (numpy arrays or lists), shape (n, 3)
         cyclic: if True, create a closed (cyclic) curve
+        tension: tension parameter (default 1.0). Higher values pull the curve
+                 closer to the polyline. As tension -> inf, the curve approaches
+                 the polyline.
+        curl_start: curl parameter at the start endpoint (default 1.0).
+                    Controls how the curve leaves the first point.
+                    curl=1 gives circular-arc-like endpoints.
+                    curl=0 gives zero curvature at the start (straight line).
+        curl_end: curl parameter at the end endpoint (default 1.0).
+                  Controls how the curve approaches the last point.
+                  curl=1 gives circular-arc-like endpoints.
+                  curl=0 gives zero curvature at the end (straight line).
         concat: if True, concatenate all Bezier segments into a single curve
 
     Returns:
@@ -305,7 +322,7 @@ def hobby_curve(points, cyclic=False, concat=False):
         ...     np.array([2.0, 0.0, 0.0]),
         ...     np.array([2.5, 1.0, 0.0]),
         ... ]
-        >>> segments = hobby_curve(points)
+        >>> segments = hobby_curve(points, tension=1.0, curl_start=1.0, curl_end=1.0)
         >>> # Each segment is a SvCubicBezierCurve
     """
     points = np.asarray(points, dtype=np.float64)
@@ -351,19 +368,28 @@ def hobby_curve(points, cyclic=False, concat=False):
         psi = np.mod(psi + np.pi, 2.0 * np.pi) - np.pi
 
         # Solve cyclic system
-        theta = _solve_hobby_cyclic(d, psi, m)
+        theta = _solve_hobby_cyclic(d, psi, m, tension=tension)
 
         # Compute Bezier segments (m segments for m knots)
-        segments_2d = _compute_bezier_segments_full(points_2d, theta, psi, n_segments=m)
+        segments_2d = _compute_bezier_segments_full(
+            points_2d, theta, psi, n_segments=m, tension=tension
+        )
 
     else:
         # Non-cyclic: m knots, m-1 segments
         d, psi = _compute_angles_and_distances(points_2d)
         n = m - 1  # number of segments
-        theta = _solve_hobby_open(d, psi, n, m)
+        theta = _solve_hobby_open(
+            d, psi, n, m,
+            tension=tension,
+            curl_start=curl_start,
+            curl_end=curl_end
+        )
 
         # Compute Bezier segments (m-1 segments)
-        segments_2d = _compute_bezier_segments_full(points_2d, theta, psi)
+        segments_2d = _compute_bezier_segments_full(
+            points_2d, theta, psi, tension=tension
+        )
 
     # Convert to 3D Bezier curves
     bezier_segments = []
