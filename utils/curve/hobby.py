@@ -37,13 +37,18 @@ def _velocity(sin_theta, cos_theta, sin_phi, cos_phi, tau=1.0):
     """
     Compute the velocity (speed ratio) for a Bezier segment.
 
-    Implements the standard MetaPost velocity function.
-    The original MetaPost uses fixed-point arithmetic (take_fraction)
-    for precision control in C; here we use native float64.
+    Implements the MetaPost velocity function (mpmathdouble.w).
+    Original uses fixed-point arithmetic (take_fraction with multiplier 4096);
+    here we use native float64 with equivalent formula.
 
-        f(θ, φ) = min( (2 + ((sinθ - sinφ/16) * (sinφ - sinθ/16) * (cosθ - cosφ) * √2))
-                        / (3 + cosθ * 3·golden + cosφ * 3·golden_inv),
-                      4 )
+        acc = (sinθ - sinφ/16) * (sinφ - sinθ/16) * (cosθ - cosφ)
+        num = 2 + acc * √2
+        denom = 3 + cosθ * 3·golden + cosφ * 3·golden_inv
+        velocity = min(num / denom, 4)
+
+    The velocity scales the Bezier control point distance:
+        P_k⁺ = P_k + (dx·cosθ - dy·sinθ, dy·cosθ + dx·sinθ) * ρ
+        P_{k+1}⁻ = P_{k+1} - (dx·cosφ + dy·sinφ, dy·cosφ - dx·sinφ) * σ
 
     Parameters:
         sin_theta, cos_theta: sin and cos of θ (turning angle at start)
@@ -284,14 +289,14 @@ def _compute_bezier_segments_full(points_2d, theta, psi, n_segments=None,
         sigma = _velocity(sf, cf, st, ct, tau=tension)
 
         # Right control point: P_k⁺
-        # P_k⁺ = P_k + (dx·cos(θ_k) - dy·sin(θ_k), dy·cos(θ_k) + dx·sin(θ_k)) · ρ_k / 3
-        p1x = pk[0] + (dx * ct - dy * st) * rho# / 3.0
-        p1y = pk[1] + (dy * ct + dx * st) * rho# / 3.0
+        # P_k⁺ = P_k + (dx·cos(θ_k) - dy·sin(θ_k), dy·cos(θ_k) + dx·sin(θ_k)) · ρ_k
+        p1x = pk[0] + (dx * ct - dy * st) * rho
+        p1y = pk[1] + (dy * ct + dx * st) * rho
 
         # Left control point: P_{k+1}⁻
-        # P_{k+1}⁻ = P_{k+1} - (dx·cos(φ_k) + dy·sin(φ_k), dy·cos(φ_k) - dx·sin(φ_k)) · σ_{k+1} / 3
-        p2x = pk1[0] - (dx * cf + dy * sf) * sigma# / 3.0
-        p2y = pk1[1] - (dy * cf - dx * sf) * sigma# / 3.0
+        # P_{k+1}⁻ = P_{k+1} - (dx·cos(φ_k) + dy·sin(φ_k), dy·cos(φ_k) - dx·sin(φ_k)) · σ_{k+1}
+        p2x = pk1[0] - (dx * cf + dy * sf) * sigma
+        p2y = pk1[1] - (dy * cf - dx * sf) * sigma
 
         segments.append((pk, np.array([p1x, p1y]), np.array([p2x, p2y]), pk1))
 
