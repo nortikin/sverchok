@@ -220,6 +220,340 @@ class HobbyCyclicTests(SverchokTestCase):
             )
 
 
+class HobbyMetaPostReferenceTests(SverchokTestCase):
+    """
+    Verify exact control point coordinates against MetaPost 2.11 output.
+    All values from mpost-generated SVG with 6 decimal places.
+    """
+
+    def test_1b_four_points(self):
+        """Test 1b: 4 points, standard params.
+
+        Input: [(0,0), (1,1), (2,0), (3,1)]
+        Expected: 3 Bezier segments with exact control points.
+        """
+        points = np.array([
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [2.0, 0.0, 0.0],
+            [3.0, 1.0, 0.0],
+        ])
+        segments = hobby_curve(points, cyclic=False, concat=False)
+        self.assertEqual(len(segments), 3)
+
+        # Seg0: P0=(0,0), P1=(-0.260941, 0.629960), P2=(0.370040, 1.260941), P3=(1,1)
+        s0 = segments[0]
+        self.assert_numpy_arrays_equal(
+            s0.p0[:2], np.array([0.0, 0.0]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-0.260941, 0.629960]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p2[:2], np.array([0.370040, 1.260941]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p3[:2], np.array([1.0, 1.0]), precision=5, fail_fast=True
+        )
+
+        # Seg1: P0=(0,0), P1=(1.452758, 0.812470), P2=(1.547242, 0.187530), P3=(2,0)
+        s1 = segments[1]
+        self.assert_numpy_arrays_equal(
+            s1.p1[:2], np.array([1.452758, 0.812470]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s1.p2[:2], np.array([1.547242, 0.187530]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s1.p3[:2], np.array([2.0, 0.0]), precision=5, fail_fast=True
+        )
+
+        # Seg2: P0=(0,0), P1=(2.629960, -0.260941), P2=(3.260941, 0.370040), P3=(3,1)
+        s2 = segments[2]
+        self.assert_numpy_arrays_equal(
+            s2.p1[:2], np.array([2.629960, -0.260941]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s2.p2[:2], np.array([3.260941, 0.370040]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s2.p3[:2], np.array([3.0, 1.0]), precision=5, fail_fast=True
+        )
+
+    def test_2a_cyclic_four_points(self):
+        """Test 2a: cyclic 4 points (diamond).
+
+        Input: [(-1,0), (0,1), (1,0), (0,-1)]
+        Expected: 4 Bezier segments.
+        """
+        points = np.array([
+            [-1.0, 0.0, 0.0],
+            [ 0.0, 1.0, 0.0],
+            [ 1.0, 0.0, 0.0],
+            [ 0.0,-1.0, 0.0],
+        ])
+        segments = hobby_curve(points, cyclic=True, concat=False)
+        self.assertEqual(len(segments), 4)
+
+        # Seg0: P0=(-1,0), P1=(-1, 0.552292), P2=(-0.552292, 1), P3=(0,1)
+        s0 = segments[0]
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-1.0, 0.552292]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p2[:2], np.array([-0.552292, 1.0]), precision=5, fail_fast=True
+        )
+
+        # Seg2: P0=(-1,0), P1=(1, -0.552292), P2=(0.552292, -1), P3=(0,-1)
+        s2 = segments[2]
+        self.assert_numpy_arrays_equal(
+            s2.p1[:2], np.array([1.0, -0.552292]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s2.p2[:2], np.array([0.552292, -1.0]), precision=5, fail_fast=True
+        )
+
+    def test_2b_square_cyclic(self):
+        """Test 2b: square cyclic [ (1,0), (0,1), (-1,0), (0,-1) ].
+
+        Expected: 4 segments, first starts at (1,0).
+        """
+        points = np.array([
+            [ 1.0, 0.0, 0.0],
+            [ 0.0, 1.0, 0.0],
+            [-1.0, 0.0, 0.0],
+            [ 0.0,-1.0, 0.0],
+        ])
+        segments = hobby_curve(points, cyclic=True, concat=False)
+        self.assertEqual(len(segments), 4)
+
+        # First segment starts at (1,0)
+        s0 = segments[0]
+        self.assert_numpy_arrays_equal(
+            s0.p0[:2], np.array([1.0, 0.0]), precision=5, fail_fast=True
+        )
+        # P1=(1, 0.552292), P2=(0.552292, 1), P3=(0,1)
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([1.0, 0.552292]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p2[:2], np.array([0.552292, 1.0]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p3[:2], np.array([0.0, 1.0]), precision=5, fail_fast=True
+        )
+
+    def test_9a_metapost_exact_reference(self):
+        """Test 9a: exact MetaPost reference for 3 symmetric points.
+
+        Input: [(-1,0), (0,1), (1,0)]
+        Expected: control points match MetaPost SVG to 5 decimal places.
+        """
+        points = np.array([
+            [-1.0, 0.0, 0.0],
+            [ 0.0, 1.0, 0.0],
+            [ 1.0, 0.0, 0.0],
+        ])
+        segments = hobby_curve(points, cyclic=False, concat=False)
+        self.assertEqual(len(segments), 2)
+
+        s0, s1 = segments[0], segments[1]
+
+        # Seg0: P0=(-1,0), P1=(-1, 0.552292), P2=(-0.552292, 1), P3=(0,1)
+        self.assert_numpy_arrays_equal(
+            s0.p0[:2], np.array([-1.0, 0.0]), precision=6, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-1.0, 0.552292]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p2[:2], np.array([-0.552292, 1.0]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p3[:2], np.array([0.0, 1.0]), precision=6, fail_fast=True
+        )
+
+        # Seg1: P0=(-1,0) in segment coords = (0,1) in global
+        # P1=(0.552292, 1), P2=(1, 0.552292), P3=(1,0)
+        self.assert_numpy_arrays_equal(
+            s1.p0[:2], np.array([0.0, 1.0]), precision=6, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s1.p1[:2], np.array([0.552292, 1.0]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s1.p2[:2], np.array([1.0, 0.552292]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s1.p3[:2], np.array([1.0, 0.0]), precision=6, fail_fast=True
+        )
+
+
+class HobbyTensionTests(SverchokTestCase):
+    """
+    Test tension parameter effects. Higher tension = straighter curve.
+    All values from MetaPost 2.11.
+    """
+
+    def _get_segments(self, tension):
+        points = np.array([
+            [-1.0, 0.0, 0.0],
+            [ 0.0, 1.0, 0.0],
+            [ 1.0, 0.0, 0.0],
+        ])
+        return hobby_curve(points, cyclic=False, concat=False, tension=tension)
+
+    def test_6a_tension_075(self):
+        """Test 6a: tension=0.75 (max softness)."""
+        segs = self._get_segments(0.75)
+        self.assertEqual(len(segs), 2)
+        s0 = segs[0]
+        # P1=(-1, 0.736374), P2=(-0.736374, 1)
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-1.0, 0.736374]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p2[:2], np.array([-0.736374, 1.0]), precision=5, fail_fast=True
+        )
+
+    def test_6c_tension_2(self):
+        """Test 6c: tension=2.0 (stiffer)."""
+        segs = self._get_segments(2.0)
+        self.assertEqual(len(segs), 2)
+        s0 = segs[0]
+        # P1=(-1, 0.276138), P2=(-0.276138, 1)
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-1.0, 0.276138]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p2[:2], np.array([-0.276138, 1.0]), precision=5, fail_fast=True
+        )
+
+    def test_6d_tension_5(self):
+        """Test 6d: tension=5.0 (very stiff)."""
+        segs = self._get_segments(5.0)
+        self.assertEqual(len(segs), 2)
+        s0 = segs[0]
+        # P1=(-1, 0.110458), P2=(-0.110458, 1)
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-1.0, 0.110458]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p2[:2], np.array([-0.110458, 1.0]), precision=5, fail_fast=True
+        )
+
+    def test_6e_tension_10(self):
+        """Test 6e: tension=10.0 (nearly polyline)."""
+        segs = self._get_segments(10.0)
+        self.assertEqual(len(segs), 2)
+        s0 = segs[0]
+        # P1=(-1, 0.055222), P2=(-0.055222, 1)
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-1.0, 0.055222]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p2[:2], np.array([-0.055222, 1.0]), precision=5, fail_fast=True
+        )
+
+    def test_tension_monotonic(self):
+        """Control point distance decreases monotonically with tension."""
+        tensions = [0.75, 1.0, 2.0, 5.0, 10.0]
+        distances = []
+        for t in tensions:
+            segs = self._get_segments(t)
+            # Distance of P1 from P0 (vertical, since P0=(-1,0), P1=(-1, y))
+            dist = abs(segs[0].p1[1] - segs[0].p0[1])
+            distances.append(dist)
+
+        # Each successive tension should give smaller distance
+        for i in range(len(distances) - 1):
+            self.assertGreater(
+                distances[i], distances[i + 1],
+                msg=f"Tension {tensions[i]} dist={distances[i]:.6f} "
+                    f"should be > tension {tensions[i+1]} dist={distances[i+1]:.6f}"
+            )
+
+
+class HobbyCurlTests(SverchokTestCase):
+    """
+    Test curl parameter effects. curl=0 → tangent along polyline.
+    All values from MetaPost 2.11.
+    """
+
+    def _get_segments(self, curl_start=1.0, curl_end=1.0):
+        points = np.array([
+            [-1.0, 0.0, 0.0],
+            [ 0.0, 1.0, 0.0],
+            [ 1.0, 0.0, 0.0],
+        ])
+        return hobby_curve(points, cyclic=False, concat=False,
+                           curl_start=curl_start, curl_end=curl_end)
+
+    def test_7a_curl_start_zero(self):
+        """Test 7a: curl_start=0 (horizontal tangent at start)."""
+        segs = self._get_segments(curl_start=0.0, curl_end=1.0)
+        self.assertEqual(len(segs), 2)
+        s0 = segs[0]
+        # P1=(-0.770844, 0.449753)
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-0.770844, 0.449753]), precision=5, fail_fast=True
+        )
+        # P2=(-0.492004, 0.922074)
+        self.assert_numpy_arrays_equal(
+            s0.p2[:2], np.array([-0.492004, 0.922074]), precision=5, fail_fast=True
+        )
+
+    def test_7b_curl_end_zero(self):
+        """Test 7b: curl_end=0 (horizontal tangent at end)."""
+        segs = self._get_segments(curl_start=1.0, curl_end=0.0)
+        self.assertEqual(len(segs), 2)
+        s1 = segs[1]
+        # P1=(0.492004, 0.922074), P2=(0.770843, 0.449753)
+        self.assert_numpy_arrays_equal(
+            s1.p1[:2], np.array([0.492004, 0.922074]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s1.p2[:2], np.array([0.770843, 0.449753]), precision=5, fail_fast=True
+        )
+
+    def test_7c_both_curls_zero(self):
+        """Test 7c: both curls=0."""
+        segs = self._get_segments(curl_start=0.0, curl_end=0.0)
+        self.assertEqual(len(segs), 2)
+        s0 = segs[0]
+        # P1=(-0.797089, 0.489883), P2=(-0.508072, 1)
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-0.797089, 0.489883]), precision=5, fail_fast=True
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p2[:2], np.array([-0.508072, 1.0]), precision=5, fail_fast=True
+        )
+
+    def test_7d_large_curl(self):
+        """Test 7d: curl=10 (large curl, control points outside polyline)."""
+        segs = self._get_segments(curl_start=10.0, curl_end=10.0)
+        self.assertEqual(len(segs), 2)
+        s0 = segs[0]
+        # P1=(-1.294174, 0.440262) — x < -1, outside the segment
+        self.assertLess(
+            s0.p1[0], -1.0,
+            msg=f"P1.x={s0.p1[0]:.6f} should be < -1 for large curl"
+        )
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-1.294174, 0.440262]), precision=5, fail_fast=True
+        )
+
+    def test_7e_small_curl(self):
+        """Test 7e: curl=0.1 (very small curl, nearly straight)."""
+        segs = self._get_segments(curl_start=0.1, curl_end=0.1)
+        self.assertEqual(len(segs), 2)
+        s0 = segs[0]
+        # P1=(-0.823364, 0.504807)
+        self.assert_numpy_arrays_equal(
+            s0.p1[:2], np.array([-0.823364, 0.504807]), precision=5, fail_fast=True
+        )
+
+
 class HobbyEdgeCasesTests(SverchokTestCase):
     """
     Test edge cases and error handling.
