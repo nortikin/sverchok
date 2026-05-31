@@ -116,26 +116,56 @@ def _compute_angles_and_distances(points):
     return d, psi
 
 
+def _mp_curl_ratio(gamma, a_tension, b_tension):
+    """
+    Compute the curl ratio following MetaPost mp_curl_ratio (mp.w:8633).
+
+    Formula (from mp.w comment):
+        (3 - α)·α²·γ + β³
+    ---------------------------
+        α³·γ + (3 - β)·β²
+
+    where α = 1/a_tension, β = 1/b_tension.
+    Result is clamped to [0, 4].
+
+    For a_tension == b_tension == 1 this simplifies to (2γ+1)/(γ+2).
+    """
+    alpha = 1.0 / a_tension
+    beta = 1.0 / b_tension
+    g = float(gamma)
+
+    if alpha <= beta:
+        ff = (alpha / beta) ** 2
+        g = g * ff
+        denom = g / alpha + 3.0
+    else:
+        ff = (beta / alpha) ** 2
+        g = g * beta * ff
+        denom = g / alpha + beta * ff - beta + 3.0
+
+    denom = denom - beta
+    num = g * (3.0 - alpha) + beta
+
+    if num >= 4.0 * denom:
+        return 4.0
+    return num / denom
+
+
 def _solve_hobby_open(d, psi, n, m, tension=1.0, curl_start=1.0, curl_end=1.0):
     """
-    Solve the open curve system with tension-aware coefficients.
+    Solve the open-curve Hobby system using the Thomas algorithm,
+    matching MetaPost's mp.w implementation exactly.
 
-    For open curves with uniform tension τ, the system at interior knot k is:
-        d[k] · θ_{k-1} + (3τ-1)·(d[k]+d[k-1]) · θ_k + d[k-1] · θ_{k+1}
-            = -(3τ-1)·d[k] · ψ_k - d[k-1] · ψ_{k+1}
+    The system is transformed into θ[k] = vv[k] - uu[k]·θ[k+1] via
+    forward elimination, then back-substituted.
 
-    This is derived from the general Hobby equation:
-        A_k · θ_{k-1} + (B_k + C_k) · θ_k + D_k · θ_{k+1} = -B_k · ψ_k - D_k · ψ_{k+1}
-    where A_k = τ/d[k-1], B_k = (3τ-1)·τ/d[k-1],
-          C_k = (3τ-1)·τ/d[k], D_k = τ/d[k]
-
-    Boundary conditions (curl, MetaPost mp.w):
-        θ[0]   = -(γ₀+½)/(γ₀+2) · psi[1]
-        θ[n-1] = +(γₙ+½)/(γₙ+2) · psi[m-2]
+    Boundary conditions (curl) are Robin-type, not Dirichlet:
+        θ[0] = vv[0] - uu[0]·θ[1]   where vv[0] = -uu[0]·ψ[1]
+        θ[n] = -(vv[n-1]·ff_end) / (1 - ff_end·uu[n-1])
 
     Parameters:
-        d: array of shape (n-1,) - segment lengths
-        psi: array of shape (n,) - turning angles
+        d: array of shape (n,) - segment lengths (n = m - 1)
+        psi: array of shape (m,) - turning angles (psi[0] = psi[m-1] = 0)
         n: number of segments (= m - 1)
         m: number of knots
         tension: tension parameter (default 1.0)
@@ -145,50 +175,72 @@ def _solve_hobby_open(d, psi, n, m, tension=1.0, curl_start=1.0, curl_end=1.0):
     Returns:
         theta: array of shape (m,) - Hobby angles θ_k for each knot
     """
-    # Curl boundary conditions (MetaPost mp.w, verified against MetaPost 2.11).
-    c0 = (curl_start + 0.5) / (curl_start + 2.0)
-    ce = (curl_end + 0.5) / (curl_end + 2.0)
+    tau = max(tension, 0.75)
 
-    theta_0 = -c0 * psi[1]
-    theta_n1 = +ce * psi[m - 2]
+    # Precompute aa, bb for uniform tension
+    if abs(tau - 1.0) < 1e-15:
+        aa = 0.5
+    else:
+        aa = 1.0 / (3.0 * tau - 1.0)
+    bb = aa
 
-    # Tension factor: (3τ - 1), equals 2 when τ = 1
-    # For τ = 3/4 (minimum), factor = 0.5
-    # For τ = 1, factor = 2
-    # For τ → ∞, factor → ∞ (curve approaches polyline)
-    tau = max(tension, 0.75)  # minimum tension is 3/4 per Hobby
-    factor = 3.0 * tau - 1.0
+    # Curl ratios (MetaPost mp.w:8550 and mp_curl_ratio)
+    uu0 = _mp_curl_ratio(curl_start, tau, tau)
+    ff_end = _mp_curl_ratio(curl_end, tau, tau)
 
-    # Build the full m x m system matrix
-    A = np.zeros((m, m))
-    rhs = np.zeros(m)
+    # Arrays for Thomas algorithm
+    uu = np.zeros(m)   # uu[0..n-1] used
+    vv = np.zeros(m)   # vv[0..n-1] used
 
-    # First row: Dirichlet BC for θ[0]
-    A[0, 0] = 1.0
-    rhs[0] = theta_0
+    # ── Start boundary condition (mp.w:8561) ──
+    uu[0] = uu0
+    vv[0] = -psi[1] * uu0
 
-    # Interior rows: mock curvature continuity with tension
-    for k in range(1, m - 1):  # interior knots 1..m-2
-        dk = d[k]       # d_{k,k+1}
-        dk1 = d[k - 1]  # d_{k-1,k}
+    # ── Forward elimination (mp.w:8290–8440) ──
+    for k in range(1, n):  # k = 1 .. n-1 (interior knots)
+        # Compute dd, ee
+        if abs(tau - 1.0) < 1e-15:
+            dd = 2.0 * d[k]
+            ee = 2.0 * d[k - 1]
+        else:
+            inv_tau = 1.0 / tau
+            dd = d[k] * (3.0 - inv_tau)
+            ee = d[k - 1] * (3.0 - inv_tau)
 
-        A[k, k - 1] = dk1
-        A[k, k] = factor * (dk + dk1)
-        A[k, k + 1] = dk
-        rhs[k] = -factor * dk * psi[k] - dk1 * psi[k + 1]
+        # cc = 1 - uu[k-1] * aa  (mp.w:8340)
+        cc_val = 1.0 - uu[k - 1] * aa
 
-    # Last row: Dirichlet BC for θ[n-1]
-    A[m - 1, m - 1] = 1.0
-    rhs[m - 1] = theta_n1
+        # ff = ee / (dd * cc + ee)  (mp.w:8350–8400)
+        ff = ee / (dd * cc_val + ee)
 
-    # Solve using numpy
-    try:
-        theta = np.linalg.solve(A, rhs)
-    except np.linalg.LinAlgError:
-        # Fallback: return boundary values with zeros in between
-        theta = np.zeros(m)
-        theta[0] = theta_0
-        theta[m - 1] = theta_n1
+        # uu[k] = ff * bb
+        uu[k] = ff * bb
+
+        # vv[k] computation (mp.w:8400–8440)
+        #   acc = -psi[k+1] * uu[k]
+        #   ff_new = (1 - ff) / cc
+        #   acc -= psi[k] * ff_new
+        #   ff_new2 = ff_new * aa   (take_fraction, not division!)
+        #   vv[k] = acc - vv[k-1] * ff_new2
+        acc = -psi[k + 1] * uu[k]
+        ff_new = (1.0 - ff) / cc_val
+        acc -= psi[k] * ff_new
+        ff_new2 = ff_new * aa
+        vv[k] = acc - vv[k - 1] * ff_new2
+
+    # ── End boundary condition (mp.w:8596) ──
+    # theta[n] = -(vv[n-1] * ff_end) / (1 - ff_end * uu[n-1])
+    denom_end = 1.0 - ff_end * uu[n - 1]
+    if abs(denom_end) < 1e-15:
+        theta_n = 0.0
+    else:
+        theta_n = -(vv[n - 1] * ff_end) / denom_end
+
+    # ── Back-substitution (mp.w:8688) ──
+    theta = np.zeros(m)
+    theta[m - 1] = theta_n
+    for k in range(m - 2, -1, -1):
+        theta[k] = vv[k] - theta[k + 1] * uu[k]
 
     return theta
 
