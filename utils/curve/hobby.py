@@ -25,28 +25,22 @@ from sverchok.utils.curve.nurbs_algorithms import concatenate_nurbs_curves
 
 # ─── Constants ───────────────────────────────────────────────────────────────
 
-_FRACTION_MULTIPLIER = 4096.0
 _SQRT2 = np.sqrt(2.0)
 _SQRT5 = np.sqrt(5.0)
 _GOLDEN = (_SQRT5 - 1.0) / 2.0        # ≈ 0.618034
 _GOLDEN_INV = (3.0 - _SQRT5) / 2.0    # ≈ 0.381966
 
 
-def _take_fraction(a, b):
-    """
-    Fraction arithmetic: take_fraction(a, b) = (a * b) / fraction_multiplier.
-    This is MetaPost's fixed-point style multiplication.
-    """
-    return (a * b) / _FRACTION_MULTIPLIER
-
-
 def _velocity(sin_theta, cos_theta, sin_phi, cos_phi, tau=1.0):
     """
     Compute the velocity (speed ratio) for a Bezier segment.
 
-    Implements the standard MetaPost velocity function:
-        f(θ, φ) = min( (2 + take_fraction((sinθ - sinφ/16) * (sinφ - sinθ/16) * (cosθ - cosφ), √2))
-                        / (3 + take_fraction(cosθ, 3·golden) + take_fraction(cosφ, 3·golden_inv)),
+    Implements the standard MetaPost velocity function.
+    The original MetaPost uses fixed-point arithmetic (take_fraction)
+    for precision control in C; here we use native float64.
+
+        f(θ, φ) = min( (2 + ((sinθ - sinφ/16) * (sinφ - sinθ/16) * (cosθ - cosφ) * √2))
+                        / (3 + cosθ * 3·golden + cosφ * 3·golden_inv),
                       4 )
 
     Parameters:
@@ -58,12 +52,12 @@ def _velocity(sin_theta, cos_theta, sin_phi, cos_phi, tau=1.0):
         velocity ratio ρ or σ (bounded by [0, 4])
     """
     # Numerator
-    acc = _take_fraction(sin_theta - sin_phi / 16.0, sin_phi - sin_theta / 16.0)
-    acc = _take_fraction(acc, cos_theta - cos_phi)
-    num = 2.0 + _take_fraction(acc, _SQRT2)
+    acc = (sin_theta - sin_phi / 16.0) * (sin_phi - sin_theta / 16.0)
+    acc = acc * (cos_theta - cos_phi) * _SQRT2
+    num = 2.0 + acc
 
     # Denominator
-    denom = 3.0 + _take_fraction(cos_theta, 3.0 * _GOLDEN) + _take_fraction(cos_phi, 3.0 * _GOLDEN_INV)
+    denom = 3.0 + cos_theta * (3.0 * _GOLDEN) + cos_phi * (3.0 * _GOLDEN_INV)
 
     # Apply tension
     if abs(tau - 1.0) > 1e-15:
