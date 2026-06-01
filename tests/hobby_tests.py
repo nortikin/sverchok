@@ -577,21 +577,28 @@ class HobbyEdgeCasesTests(SverchokTestCase):
             hobby_curve(points, cyclic=True)
 
     def test_z_ignored(self):
-        """Z coordinate is ignored; only X and Y matter."""
+        """Planar curves with constant Z offset produce identical XY results.
+
+        In the 3D implementation, each triple of points defines a local plane.
+        For planar curves (all points in the same plane), the local planes
+        are identical regardless of the Z offset, so XY control points match.
+        Non-planar curves (varying Z) produce different results.
+        """
         points_xy = [
             np.array([0.0, 0.0, 0.0]),
             np.array([1.0, 0.5, 0.0]),
             np.array([2.0, 0.0, 0.0]),
         ]
+        # Same XY shape, constant Z offset (still planar)
         points_z = [
             np.array([0.0, 0.0, 5.0]),
-            np.array([1.0, 0.5, 10.0]),
-            np.array([2.0, 0.0, 15.0]),
+            np.array([1.0, 0.5, 5.0]),
+            np.array([2.0, 0.0, 5.0]),
         ]
         segs_xy = hobby_curve(points_xy, cyclic=False, concat=False)
         segs_z = hobby_curve(points_z, cyclic=False, concat=False)
 
-        # XY control points should be identical
+        # XY control points should be identical for planar curves
         for i in range(len(segs_xy)):
             self.assert_numpy_arrays_equal(
                 segs_xy[i].get_control_points()[:, :2],
