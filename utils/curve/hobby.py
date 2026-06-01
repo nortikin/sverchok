@@ -118,33 +118,51 @@ def _compute_angles_and_distances(points):
 
 def _mp_curl_ratio(gamma, a_tension, b_tension):
     """
-    Compute the curl ratio following MetaPost mp_curl_ratio (mp.w:8633).
+    Compute the curl ratio following MetaPost mp_curl_ratio (mp.w:8668).
 
-    Formula (from mp.w comment):
-        (3 - α)·α²·γ + β³
-    ---------------------------
-        α³·γ + (3 - β)·β²
+    This exactly replicates the MetaPost C code step-by-step.
+    take_fraction(r, a, b) in MetaPost computes r = a*b/4096 in fixed-point,
+    which in floating-point is just r = a * b.
 
     where α = 1/a_tension, β = 1/b_tension.
     Result is clamped to [0, 4].
-
-    For a_tension == b_tension == 1 this simplifies to (2γ+1)/(γ+2).
     """
     alpha = 1.0 / a_tension
     beta = 1.0 / b_tension
     g = float(gamma)
 
     if alpha <= beta:
+        # ff = alpha/beta, then ff = ff^2
         ff = (alpha / beta) ** 2
+        # gamma = gamma * ff
         g = g * ff
-        denom = g / alpha + 3.0
+        # beta is converted to scaled (no-op in float)
+        # denom = gamma * alpha
+        denom = g * alpha
+        # denom += 3
+        denom = denom + 3.0
     else:
+        # ff = beta/alpha, then ff = ff^2
         ff = (beta / alpha) ** 2
-        g = g * beta * ff
-        denom = g / alpha + beta * ff - beta + 3.0
+        # arg1 = beta * ff
+        arg1 = beta * ff
+        # beta = arg1 (converted to scaled)
+        beta = arg1
+        # denom = gamma * alpha
+        denom = g * alpha
+        # arg1 = ff / 3
+        arg1 = ff / 3.0
+        # denom += arg1
+        denom = denom + arg1
 
+    # denom -= beta
     denom = denom - beta
-    num = g * (3.0 - alpha) + beta
+    # arg1 = 3 - alpha
+    arg1 = 3.0 - alpha
+    # num = gamma * arg1
+    num = g * arg1
+    # num += beta
+    num = num + beta
 
     if num >= 4.0 * denom:
         return 4.0
