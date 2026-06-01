@@ -167,6 +167,7 @@ def _fill_fallback_normals(normals, has_normal, m, cyclic):
 
 # ─── Curl ratio (MetaPost mp_curl_ratio) ─────────────────────────────────────
 
+# Generic implementation from MetaPost
 def _mp_curl_ratio(gamma, a_tension, b_tension):
     alpha = 1.0 / a_tension
     beta = 1.0 / b_tension
@@ -185,6 +186,14 @@ def _mp_curl_ratio(gamma, a_tension, b_tension):
     denom -= beta
     num = g * (3.0 - alpha) + beta
 
+    if num >= 4.0 * denom:
+        return 4.0
+    return num / denom
+
+# Simplified implementation for constant tension
+def _mp_curl_ratio_simple(gamma, tension):
+    num = (3 * tension - 1) * gamma + 1
+    denom = 3 * tension + gamma - 1
     if num >= 4.0 * denom:
         return 4.0
     return num / denom
