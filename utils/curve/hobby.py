@@ -116,16 +116,18 @@ def _compute_angles_distances_normals(points, cyclic=False):
     # Mask out degenerate segments (coincident points or endpoints)
     valid = (n_in > 1e-15) & (n_out > 1e-15)
 
-    # Cross products (normals) and dot products (cos psi)
-    n = np.cross(v_in, v_out)
-    n_mag = np.linalg.norm(n, axis=1)
-    cos_psi = np.sum(v_in * v_out, axis=1) / (n_in * n_out)
+    # Cross products (normals) and dot products (cos psi) — only for valid knots
+    n = np.cross(v_in[valid], v_out[valid])
+    n_mag_valid = np.linalg.norm(n, axis=1)
+    cos_psi_valid = np.sum(v_in[valid] * v_out[valid], axis=1) / (n_in[valid] * n_out[valid])
 
-    # Store results only for valid knots
-    psi[valid] = np.arccos(np.clip(cos_psi[valid], -1.0, 1.0))
+    # Store results
+    psi[valid] = np.arccos(np.clip(cos_psi_valid, -1.0, 1.0))
 
-    non_collinear = valid & (n_mag > _EPS)
-    normals[non_collinear] = n[non_collinear]
+    non_collinear_valid = n_mag_valid > _EPS
+    non_collinear = np.zeros(m, dtype=bool)
+    non_collinear[valid] = non_collinear_valid
+    normals[non_collinear] = n[non_collinear_valid]
     has_normal[non_collinear] = True
 
     # consistent orientation -> signed psi
