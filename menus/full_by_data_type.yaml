@@ -260,6 +260,7 @@
         - SvExCubicSplineNode
         - SvCatmullRomSplineNode
         - SvHobbySplineNode
+        - SvOptimalBezierSplineNode
         - SvTangentsCurveNode
         - SvExRbfCurveNode
         - SvExCirclifyNode
