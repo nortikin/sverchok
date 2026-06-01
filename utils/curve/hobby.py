@@ -85,39 +85,48 @@ def _compute_angles_distances_normals(points, cyclic=False):
     m = len(points)
     points = np.asarray(points, dtype=np.float64)
 
-    # segment lengths
+    # ── Segment lengths ──
     if cyclic:
-        d = np.array([np.linalg.norm(points[(k + 1) % m] - points[k])
-                       for k in range(m)])
+        segs = np.roll(points, -1, axis=0) - points
+        d = np.linalg.norm(segs, axis=1)
     else:
-        d = np.array([np.linalg.norm(points[k + 1] - points[k])
-                       for k in range(m - 1)])
+        segs = points[1:] - points[:-1]
+        d = np.linalg.norm(segs, axis=1)
 
     normals = np.zeros((m, 3))
     psi = np.zeros(m)
     has_normal = np.zeros(m, dtype=bool)
 
-    for k in range(m):
-        if not cyclic and (k == 0 or k == m - 1):
-            continue
+    # ── Incoming / outgoing segment vectors at each knot ──
+    # For cyclic: all knots have neighbors.
+    # For open: endpoints have no local plane; use dummy vectors (zeros).
+    if cyclic:
+        v_in = points - np.roll(points, 1, axis=0)
+        v_out = np.roll(points, -1, axis=0) - points
+    else:
+        v_in = np.zeros((m, 3))
+        v_out = np.zeros((m, 3))
+        v_in[1:-1] = points[1:-1] - points[:-2]
+        v_out[1:-1] = points[2:] - points[1:-1]
 
-        v_in = points[k] - points[(k - 1) % m]
-        v_out = points[(k + 1) % m] - points[k]
+    # ── Vectorized: norms, cross products, dot products ──
+    n_in = np.linalg.norm(v_in, axis=1)
+    n_out = np.linalg.norm(v_out, axis=1)
 
-        n_in = np.linalg.norm(v_in)
-        n_out = np.linalg.norm(v_out)
-        if n_in < 1e-15 or n_out < 1e-15:
-            continue
+    # Mask out degenerate segments (coincident points or endpoints)
+    valid = (n_in > 1e-15) & (n_out > 1e-15)
 
-        n = np.cross(v_in, v_out)
-        n_mag = np.linalg.norm(n)
+    # Cross products (normals) and dot products (cos psi)
+    n = np.cross(v_in, v_out)
+    n_mag = np.linalg.norm(n, axis=1)
+    cos_psi = np.sum(v_in * v_out, axis=1) / (n_in * n_out)
 
-        cos_psi = np.dot(v_in, v_out) / (n_in * n_out)
-        psi[k] = np.arccos(np.clip(cos_psi, -1.0, 1.0))
+    # Store results only for valid knots
+    psi[valid] = np.arccos(np.clip(cos_psi[valid], -1.0, 1.0))
 
-        if n_mag > _EPS:
-            normals[k] = n
-            has_normal[k] = True
+    non_collinear = valid & (n_mag > _EPS)
+    normals[non_collinear] = n[non_collinear]
+    has_normal[non_collinear] = True
 
     # consistent orientation -> signed psi
     _make_normals_consistent(normals, psi, has_normal, m, cyclic)
