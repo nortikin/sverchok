@@ -73,6 +73,23 @@ def _velocity(sin_theta, cos_theta, sin_phi, cos_phi, tau=1.0):
     return min(max(num / denom, 0.0), 4.0)
 
 
+def _velocity_batch(sin_theta, cos_theta, sin_phi, cos_phi, tau=1.0):
+    """
+    Vectorized version of _velocity: computes velocity ratios for
+    an entire array of segments at once.
+
+    Parameters are arrays of the same shape (or scalars).
+    Returns an array of velocity ratios, each clamped to [0, 4].
+    """
+    acc = (sin_theta - sin_phi / 16.0) * (sin_phi - sin_theta / 16.0)
+    acc *= (cos_theta - cos_phi) * _SQRT2
+    num = 2.0 + acc
+    denom = 3.0 + cos_theta * (3.0 * _GOLDEN) + cos_phi * (3.0 * _GOLDEN_INV)
+    if abs(tau - 1.0) > 1e-15:
+        num /= tau
+    return np.clip(num / denom, 0.0, 4.0)
+
+
 # ─── Geometry: angles, distances, normals ────────────────────────────────────
 
 def _compute_angles_distances_normals(points, cyclic=False):
@@ -481,59 +498,51 @@ def _compute_bezier_segments_full(points, theta, psi, normals, n_segments=None,
     if n_segments is None:
         n_segments = m - 1
 
-    segments = []
-    for k in range(n_segments):
-        ki = k % m
-        ki1 = (k + 1) % m
+    # ── Knot indices for each segment ──
+    ki = np.arange(n_segments) % m
+    ki1 = (ki + 1) % m
 
-        pk = points[ki]
-        pk1 = points[ki1]
-        seg = pk1 - pk
+    # ── Segment vectors and angles (all batched) ──
+    pk = points[ki]
+    pk1 = points[ki1]
+    seg = pk1 - pk
 
-        # θ_k: tangent angle at the start of segment k (at knot k)
-        # φ_k: tangent angle at the end of segment k (at knot k+1)
-        # The relation φ_k = -θ_{k+1} - ψ_{k+1} ensures G1 continuity.
-        theta_k = theta[ki]
-        phi_k = -theta[ki1] - psi[ki1]
+    theta_k = theta[ki]
+    phi_k = -theta[ki1] - psi[ki1]
 
-        st = np.sin(theta_k)
-        ct = np.cos(theta_k)
-        sf = np.sin(phi_k)
-        cf = np.cos(phi_k)
+    st = np.sin(theta_k)
+    ct = np.cos(theta_k)
+    sf = np.sin(phi_k)
+    cf = np.cos(phi_k)
 
-        # Velocity ratios: determine how far control points lie from knots.
-        # ρ controls the start, σ controls the end.
-        rho = _velocity(st, ct, sf, cf, tau=tension)
-        sigma = _velocity(sf, cf, st, ct, tau=tension)
+    # Velocity ratios (batched)
+    rho = _velocity_batch(st, ct, sf, cf, tau=tension)
+    sigma = _velocity_batch(sf, cf, st, ct, tau=tension)
 
-        # ── Right control point (near p[k]) ──
-        # Rotate the segment vector by θ[k] around the local plane normal.
-        # By the right-hand rule, positive θ rotates counterclockwise.
-        n_k = normals[ki]
-        n_k_mag = np.linalg.norm(n_k)
-        if n_k_mag > _EPS:
-            n_k_hat = n_k / n_k_mag
-            tangent_start = seg * ct + np.cross(n_k_hat, seg) * st
-        else:
-            # Degenerate normal: no rotation, tangent = segment direction
-            tangent_start = seg.copy()
-        p1 = pk + tangent_start * rho
+    # ── Normalized normals at start and end knots ──
+    # Degenerate normals (magnitude < _EPS) are zeroed out after normalization.
+    n_start = normals[ki]
+    n_end = normals[ki1]
 
-        # ── Left control point (near p[k+1]) ──
-        # Rotate the segment vector by φ[k] in the opposite direction
-        # (clockwise around the local plane normal at knot k+1).
-        n_k1 = normals[ki1]
-        n_k1_mag = np.linalg.norm(n_k1)
-        if n_k1_mag > _EPS:
-            n_k1_hat = n_k1 / n_k1_mag
-            tangent_end = seg * cf - np.cross(n_k1_hat, seg) * sf
-        else:
-            tangent_end = seg.copy()
-        p2 = pk1 - tangent_end * sigma
+    n_start_mag = np.linalg.norm(n_start, axis=1, keepdims=True)
+    n_end_mag = np.linalg.norm(n_end, axis=1, keepdims=True)
 
-        segments.append((pk.copy(), p1, p2, pk1.copy()))
+    # Safe division: replace zeros with 1 to avoid NaN, then mask later
+    n_start_hat = np.where(n_start_mag > _EPS, n_start / n_start_mag, 0.0)
+    n_end_hat = np.where(n_end_mag > _EPS, n_end / n_end_mag, 0.0)
 
-    return segments
+    # ── Rodrigues rotation (batched) ──
+    # tangent_start = seg·cos(θ) + (n̂_start × seg)·sin(θ)
+    # tangent_end   = seg·cos(φ) - (n̂_end × seg)·sin(φ)
+    tangent_start = seg * ct[:, np.newaxis] + np.cross(n_start_hat, seg) * st[:, np.newaxis]
+    tangent_end = seg * cf[:, np.newaxis] - np.cross(n_end_hat, seg) * sf[:, np.newaxis]
+
+    # ── Control points ──
+    p1 = pk + tangent_start * rho[:, np.newaxis]
+    p2 = pk1 - tangent_end * sigma[:, np.newaxis]
+
+    # Return copies to match the original API contract
+    return list(zip(pk.copy(), p1, p2, pk1.copy()))
 
 
 # ─── Public API ──────────────────────────────────────────────────────────────
