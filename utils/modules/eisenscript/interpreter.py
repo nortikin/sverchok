@@ -38,26 +38,15 @@ from typing import Dict, List, Optional, Tuple
 import mathutils as mu
 from mathutils import Matrix
 
+from sverchok.core.sv_custom_exceptions import InvalidStateError
 from sverchok.utils.modules.eisenscript.ast import (
     Program,
     Rule,
     Branch,
-    Repeat,
     RuleRef,
     VariableRef,
     Expr,
     IMPLICIT_START_RULE,
-    # Axis constants
-    AXIS_X, AXIS_Y, AXIS_Z,
-    # Geometrical transformations
-    Translate,
-    Rotate,
-    Scale,
-    MatrixTransform,
-    Mirror,
-    # Color transformations (ignored by interpreter)
-    HueShift, SaturationMul, BrightnessMul, AlphaMul,
-    SetColor, BlendColor,
     # Primitives
     Box, Grid, Sphere, Line, Point, Triangle,
 )
@@ -174,6 +163,30 @@ class DefineResolver:
             return self._cache[name]
 
         raise ValueError(f"Undefined variable: {name}")
+
+    def resolve_scoped(self, val, params_scope : Dict[str, float]) -> float:
+        """Resolve a value with parameter scoping.
+
+        Priority: params_scope > #input > #define.
+        Expr: evaluate with params_scope + #input + #define in namespace.
+        """
+        if isinstance(val, VariableRef):
+            if val.name in params_scope:
+                return params_scope[val.name]
+            if val.name in self._external:
+                return self._external[val.name]
+            return self.resolve(val.name)
+        if isinstance(val, Expr):
+            self.get_all()
+            env = dict(SAFE_NAMES)
+            env.update(self._cache)
+            # #input variables are available
+            env.update(self._external)
+            # Parameters shadow #input and #define variables
+            env.update(params_scope)
+            env["__builtins__"] = {}
+            return eval(compile(val.ast_node, "<eisenscript>", "eval"), env)
+        return val
 
     def get_all(self) -> Dict[str, float]:
         """
@@ -319,6 +332,7 @@ class Interpreter:
         self.origin_as_center = origin_as_center
         self.min_size = min_size
         self.max_size = max_size
+        self._interpret_done = False
 
     # ------------------------------------------------------------------
     # Public API
@@ -387,6 +401,10 @@ class Interpreter:
         self, program: Program, input_values: Optional[Dict[str, float]] = None
     ) -> InterpreterResult:
         """Execute *program* and return an :class:`InterpreterResult"."""
+        if self._interpret_done:
+            raise InvalidStateError("_interpret() method can only be called once on one Interpreter instance")
+        self._interpret_done = True
+
         random.seed(self.seed)
 
         # Resolve #input values: runtime values override defaults
@@ -425,31 +443,7 @@ class Interpreter:
         # Lazy define resolver with topo sort and caching
         # Pass resolved inputs as external variables so #define expressions
         # can reference them without participating in the topo sort.
-        resolver = DefineResolver(program.defines, external_vars=resolved_inputs)
-
-        def _resolve_scoped(val, params_scope):
-            """Resolve a value with parameter scoping.
-
-            Priority: params_scope > #input > #define.
-            Expr: evaluate with params_scope + #input + #define in namespace.
-            """
-            if isinstance(val, VariableRef):
-                if val.name in params_scope:
-                    return params_scope[val.name]
-                if val.name in resolved_inputs:
-                    return resolved_inputs[val.name]
-                return resolver.resolve(val.name)
-            if isinstance(val, Expr):
-                resolver.get_all()
-                env = dict(SAFE_NAMES)
-                env.update(resolver._cache)
-                # #input variables are available
-                env.update(resolved_inputs)
-                # Parameters shadow #input and #define variables
-                env.update(params_scope)
-                env["__builtins__"] = {}
-                return eval(compile(val.ast_node, "<eisenscript>", "eval"), env)
-            return val
+        self.resolver = DefineResolver(program.defines, external_vars=resolved_inputs)
 
         # Stack entries: (rule, depth, accumulated_matrix, params_scope)
         entry_rule = _pick_rule(rule_map, IMPLICIT_START_RULE)
@@ -468,7 +462,7 @@ class Interpreter:
             # Per-rule max_depth
             local_max_depth = self.max_depth
             if rule.maxdepth is not None:
-                resolved_md = _resolve_scoped(rule.maxdepth, params_scope)
+                resolved_md = self.resolver.resolve_scoped(rule.maxdepth, params_scope)
                 local_max_depth = round(resolved_md)
 
             # Stack depth guard
@@ -485,9 +479,9 @@ class Interpreter:
             # Process each branch in the rule
             for branch in rule.body:
                 self._interpret_branch(
-                    branch, rule_map, resolver,
+                    branch, rule_map,
                     matrix, depth, stack, result,
-                    total_objects, params_scope, _resolve_scoped,
+                    total_objects, params_scope,
                 )
                 # Update total_objects count after branch
                 for mats in result.matrices.values():
@@ -503,14 +497,12 @@ class Interpreter:
         self,
         branch: Branch,
         rule_map: Dict[str, List[Rule]],
-        resolver: DefineResolver,
         parent_matrix: Matrix,
         depth: int,
         stack: list,
         result: InterpreterResult,
         total_objects: int,
-        params_scope: dict,
-        resolve,
+        params_scope: dict
     ) -> None:
         """
         Interpret a single Branch AST node.
@@ -525,14 +517,14 @@ class Interpreter:
         # Build per-repetition transform matrices and counts
         rep_info = []  # list of (count, transform_matrix)
         for rep in repetitions:
-            count = round(resolve(rep.count, params_scope))
-            tmat = self._build_transform_matrix(rep.transformations, resolver, params_scope, resolve)
+            count = round(self.resolver.resolve_scoped(rep.count, params_scope))
+            tmat = self._build_transform_matrix(rep.transformations, params_scope)
             rep_info.append((count, tmat))
 
         # Terminal dispatch
         if isinstance(terminal, RuleRef):
             self._dispatch_call(
-                terminal, rule_map, resolver, resolve,
+                terminal, rule_map,
                 parent_matrix, depth, stack, rep_info,
                 params_scope,
             )
@@ -550,8 +542,6 @@ class Interpreter:
         self,
         ref: RuleRef,
         rule_map: Dict[str, List[Rule]],
-        resolver: DefineResolver,
-        resolve,
         parent_matrix: Matrix,
         depth: int,
         stack: list,
@@ -579,12 +569,12 @@ class Interpreter:
                 )
             # Resolve arguments and bind to parameters
             for param_name, arg_val in zip(target_rule.params, ref.args):
-                new_params_scope[param_name] = resolve(arg_val, params_scope)
+                new_params_scope[param_name] = self.resolver.resolve_scoped(arg_val, params_scope)
 
         # Retirement on the call itself
         call_max_depth = None
         if ref.retirement_depth is not None:
-            call_max_depth = resolve(ref.retirement_depth, params_scope)
+            call_max_depth = self.resolver.resolve_scoped(ref.retirement_depth, params_scope)
             if isinstance(call_max_depth, float) and call_max_depth == int(call_max_depth):
                 call_max_depth = int(call_max_depth)
         call_successor = ref.retirement_rule
@@ -722,9 +712,7 @@ class Interpreter:
     def _build_transform_matrix(
         self,
         transformations: list,
-        resolver: DefineResolver,
         params_scope: dict,
-        resolve,
     ) -> Matrix:
         """
         Build a 4×4 Matrix from a list of Transformation AST nodes.
@@ -739,7 +727,7 @@ class Interpreter:
 
         for trans in transformations:
             trans.apply_to_matrix(
-                matrix, resolve, params_scope,
+                matrix, self.resolver.resolve_scoped, params_scope,
                 origin, t_center, t_neg_center,
             )
 
