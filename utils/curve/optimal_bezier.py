@@ -9,7 +9,7 @@
 Optimal Bezier spline construction.
 
 Implements the algorithm from V.V. Borisenko,
-"Построение оптимального сплайна Безье" (Construction of Optimal Bezier Spline), 2017.
+"Construction of Optimal Bezier Spline" ("Построение оптимального сплайна Безье"), 2017.
 
 Given interpolation nodes Q_0, ..., Q_{n-1}, the algorithm builds a C2-continuous
 cubic Bezier spline. A single public entry point is provided:
@@ -25,6 +25,16 @@ Topology (cyclic):
     False — open spline (clamped boundary conditions)
     True  — closed spline (continuity at all nodes, last segment wraps to Q_0)
 """
+
+# ---------------------------------------------------------------------------
+# Constants
+# ---------------------------------------------------------------------------
+
+# Guard against division by zero when computing alphas from segment times.
+_ALPHA_MIN = 1e-15
+
+# Minimum segment length in chord-length parameterization.
+_LENGTH_MIN = 1e-10
 
 import numpy as np
 
@@ -140,11 +150,43 @@ def _open_control_points(points, alphas):
     return segments
 
 
-def _open_bending_energy(points, alphas):
+def _bending_energy_from_segments(segments, alphas):
     """
-    Compute ∫|B''(t)|² dt for an open C2 spline (analytical formula, eq. 21).
+    Compute ∫|B''(t)|² dt from pre-computed Bezier segments (eq. 21).
+
+    For each cubic Bezier segment [Q, A, B, Q'] with segment time t_i
+    (alpha_i = 1 / t_i), the contribution to the bending energy is
+    12 · α³ · (|Q|² + 3(|A|² + |B|²) + |Q'|² + Q·Q' - 3(Q·A + A·B + B·Q')).
 
     Generalized from the paper's 2D formula to 3D using dot products.
+
+    Args:
+        segments: np.array (m, 4, 3) — each row [Q_i, A_i, B_i, Q_{i+1}].
+        alphas: np.array (m,) — α_i = 1 / t_i.
+
+    Returns:
+        float — total bending energy.
+    """
+    total = 0.0
+    for i in range(len(alphas)):
+        a = alphas[i]
+        Qi = segments[i, 0]
+        Ai = segments[i, 1]
+        Bi = segments[i, 2]
+        Qip1 = segments[i, 3]
+        total += 12.0 * (a ** 3) * (
+            np.dot(Qi, Qi)
+            + 3.0 * (np.dot(Ai, Ai) + np.dot(Bi, Bi))
+            + np.dot(Qip1, Qip1)
+            + np.dot(Qi, Qip1)
+            - 3.0 * (np.dot(Qi, Ai) + np.dot(Ai, Bi) + np.dot(Bi, Qip1))
+        )
+    return total
+
+
+def _open_bending_energy(points, alphas):
+    """
+    Compute ∫|B''(t)|² dt for an open C2 spline.
 
     Args:
         points: np.array (n, 3).
@@ -153,25 +195,8 @@ def _open_bending_energy(points, alphas):
     Returns:
         float — total bending energy.
     """
-    m = len(alphas)
     segments = _open_control_points(points, alphas)
-
-    total = 0.0
-    for i in range(m):
-        alpha = alphas[i]
-        Qi = points[i]
-        Qip1 = points[i + 1]
-        Ai = segments[i, 1]
-        Bi = segments[i, 2]
-
-        total += 12.0 * (alpha ** 3) * (
-            np.dot(Qi, Qi)
-            + 3.0 * (np.dot(Ai, Ai) + np.dot(Bi, Bi))
-            + np.dot(Qip1, Qip1)
-            + np.dot(Qi, Qip1)
-            - 3.0 * (np.dot(Qi, Ai) + np.dot(Ai, Bi) + np.dot(Bi, Qip1))
-        )
-    return total
+    return _bending_energy_from_segments(segments, alphas)
 
 
 # ---------------------------------------------------------------------------
@@ -264,20 +289,44 @@ def _closed_bending_energy(points, alphas, m):
     Returns:
         float — total bending energy.
     """
-    segs = _closed_control_points(points, alphas, m)
-    total = 0.0
-    for i in range(m):
-        a = alphas[i]
-        Qi = points[i]
-        Qip1 = points[(i + 1) % m]
-        Ai = segs[i, 1]
-        Bi = segs[i, 2]
-        total += 12.0 * (a ** 3) * (
-            np.dot(Qi, Qi) + 3.0 * (np.dot(Ai, Ai) + np.dot(Bi, Bi))
-            + np.dot(Qip1, Qip1) + np.dot(Qi, Qip1)
-            - 3.0 * (np.dot(Qi, Ai) + np.dot(Ai, Bi) + np.dot(Bi, Qip1))
-        )
-    return total
+    segments = _closed_control_points(points, alphas, m)
+    return _bending_energy_from_segments(segments, alphas)
+
+
+# ---------------------------------------------------------------------------
+# Shared helpers
+# ---------------------------------------------------------------------------
+
+def _segment_diffs(points, cyclic):
+    """
+    Compute vectors from each node to the next.
+
+    Args:
+        points: np.array (n, 3).
+        cyclic: if True, the last vector wraps from points[-1] to points[0].
+
+    Returns:
+        np.array (m, 3) where m = n if cyclic else n - 1.
+    """
+    if cyclic:
+        return np.diff(points, axis=0, append=points[:1])
+    return points[1:] - points[:-1]
+
+
+def _chord_lengths(points, cyclic):
+    """
+    Compute segment lengths for chord-length parameterization.
+
+    Args:
+        points: np.array (n, 3).
+        cyclic: if True, include the wrap-around segment.
+
+    Returns:
+        np.array (m,) — segment lengths, floored at _LENGTH_MIN.
+    """
+    diffs = _segment_diffs(points, cyclic)
+    lengths = np.linalg.norm(diffs, axis=1)
+    return np.maximum(lengths, _LENGTH_MIN)
 
 
 # ---------------------------------------------------------------------------
@@ -304,15 +353,10 @@ def _compute_optimal_times(points, m, energy_fn, epsilon,
     Returns:
         np.array (m,) — optimal times t_i.
     """
+    cyclic = m == len(points)
+
     # Initial: chord-length proportional
-    if m == len(points):
-        # closed spline
-        diffs = np.diff(points, axis=0, append=points[:1])
-    else:
-        # open spline
-        diffs = points[1:] - points[:-1]
-    lengths = np.linalg.norm(diffs, axis=1)
-    lengths = np.maximum(lengths, 1e-10)
+    lengths = _chord_lengths(points, cyclic)
     t = lengths / lengths.sum()
 
     # Search directions in the hyperplane Σ t_i = 1
@@ -323,7 +367,7 @@ def _compute_optimal_times(points, m, energy_fn, epsilon,
     step_sizes = np.full(m, delta / m)
     Acc = acceleration
 
-    alphas = 1.0 / np.maximum(t, 1e-15)
+    alphas = 1.0 / np.maximum(t, _ALPHA_MIN)
     current_energy = energy_fn(points, alphas, m)
 
     for _ in range(max_iterations):
@@ -341,7 +385,7 @@ def _compute_optimal_times(points, m, energy_fn, epsilon,
                 candidate = t + a * step_sizes[i] * delta_v[i]
                 if (candidate <= 0).any():
                     continue
-                candidate_alphas = 1.0 / np.maximum(candidate, 1e-15)
+                candidate_alphas = 1.0 / np.maximum(candidate, _ALPHA_MIN)
                 energy = energy_fn(points, candidate_alphas, m)
                 if energy < best_energy:
                     best_energy = energy
@@ -426,9 +470,10 @@ def optimal_bezier_spline(
             (e.g., all points collinear or duplicate).
 
     Note:
-        Complexity is O(n²) — the number of hill-descent iterations is
-        roughly independent of n, and each iteration solves a linear
-        system in O(n).
+        Complexity is O(K · n³) where K is the number of hill-descent
+        iterations (roughly independent of n). Each iteration evaluates
+        up to 4n candidate alphas, and each evaluation solves a linear
+        system in O(n³). In practice K is small (typically < 50).
     """
     points = np.asarray(points, dtype=np.float64)
     if points.ndim == 1:
@@ -452,12 +497,7 @@ def optimal_bezier_spline(
 
     elif metric == 'DISTANCE':
         # Chord-length parameterization
-        if cyclic:
-            diffs = np.diff(points, axis=0, append=points[:1])
-        else:
-            diffs = points[1:] - points[:-1]
-        lengths = np.linalg.norm(diffs, axis=1)
-        lengths = np.maximum(lengths, 1e-10)
+        lengths = _chord_lengths(points, cyclic)
         alphas = 1.0 / lengths
 
     elif metric == 'OPTIMAL':
@@ -465,7 +505,7 @@ def optimal_bezier_spline(
         energy_fn = _closed_energy_wrapper if cyclic else _open_energy_wrapper
         t = _compute_optimal_times(
             points, m, energy_fn, epsilon, max_iterations, delta, acceleration)
-        alphas = 1.0 / np.maximum(t, 1e-15)
+        alphas = 1.0 / np.maximum(t, _ALPHA_MIN)
 
     else:
         raise ValueError(
