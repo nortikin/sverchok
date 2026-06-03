@@ -23,6 +23,10 @@ place actual geometry.
 .. image:: https://github.com/user-attachments/assets/e1a247ee-9704-4b59-960d-b0ed8e8e8805
   :target: https://github.com/user-attachments/assets/e1a247ee-9704-4b59-960d-b0ed8e8e8805
 
+(inspired by "Spikey script" from BrowserSynth_ examples).
+
+.. _BrowserSynth: https://github.com/kronpano/BrowserSynth
+
 Overview
 --------
 
