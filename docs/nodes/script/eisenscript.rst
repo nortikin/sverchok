@@ -5,14 +5,23 @@ EisenScript
 It defines rules that recursively transform and branch geometric primitives
 into complex structures — fractals, trees, architectural forms, and more.
 
+EisenScript was originally implemented in StructureSynth; nowadays it has several implementations.
+
+This node implements an extended version of EisenScript language. Additions are:
+
+* `#input` definitions for externally controllable variables
+* Possibility to do calculations; anywhere where in original EisenScript you
+  could put a numeric literal, you can place an expression, like `(sin(x))`.
+* Parametrized rules.
+
 The node reads an EisenScript program from a Blender text block and outputs
 placement matrices for each primitive type (box, sphere, grid, line, point,
 triangle). Each output socket carries a list of 4×4 transformation matrices
 that can be used with the **Matrix Transform** or **Objects In** nodes to
 place actual geometry.
 
-.. image:: https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9
-  :target: https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9
+.. image:: https://github.com/user-attachments/assets/e1a247ee-9704-4b59-960d-b0ed8e8e8805
+  :target: https://github.com/user-attachments/assets/e1a247ee-9704-4b59-960d-b0ed8e8e8805
 
 Overview
 --------
@@ -260,6 +269,10 @@ affect geometry.
 Colors are specified as HTML hex strings (``#FF0000``), SVG keywords
 (``red``, ``lightgoldenrodyellow``), or quoted strings (``'darkgreen'``).
 
+**NB**: At the moment, color transformations are parsed, but are not processed
+and do not affect output of the node. Colors support will be added in later
+versions of the node.
+
 Values
 ------
 
@@ -388,9 +401,9 @@ Inputs
 ------
 
 The set of inputs for this node depends on ``#input`` directives declared in
-the EisenScript program. Each ``#input`` parameter becomes one input socket
-of type ``SvStringsSocket``. If a parameter has a default value, the input
-is optional; otherwise it must be connected.
+the EisenScript program. Each ``#input`` parameter becomes one input socket.
+If a parameter has a default value, the input is optional; otherwise it must be
+connected.
 
 Parameters
 ----------
