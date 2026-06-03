@@ -1,0 +1,1149 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>EisenScript &#8212; Sverchok 1, 4, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=c14129a0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/script/eisenscript';</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Formula Interpolate" href="formula_interpolate.html" />
+    <link rel="prev" title="Script" href="script_index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 4, 0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 4, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 4, 0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="script_index.html">Script</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">EisenScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_interpolate.html">Formula Interpolate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_mk5.html">Formula Node Mk4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generative_art.html">Generative Art</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_eval.html">Mesh Expression Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multi_exec.html">Exec Node Mod</a></li>
+
+<li class="toctree-l3"><a class="reference internal" href="numexpr_node.html">Num Expression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profile_mk3.html">Profile Parametric Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="script1_lite.html">Script Node Lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sn_functor_b.html">SN Functor B</a></li>
+<li class="toctree-l3"><a class="reference internal" href="topology_simple.html">Topology Simple</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dxf/dxf_index.html">DXF</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/script/eisenscript.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>EisenScript</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#program-structure">Program Structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#input-directives">Input Directives</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#define-directives">Define Directives</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-statements">Set Statements</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rule-definitions">Rule Definitions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#branches">Branches</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#repetitions">Repetitions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformations">Transformations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometrical-transformations">Geometrical Transformations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#color-transformations">Color Transformations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#values">Values</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expressions">Expressions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rule-references">Rule References</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#primitives">Primitives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scoping-rules">Scoping Rules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#termination-criteria">Termination Criteria</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-tree">Simple Tree</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#radial-pattern-with-expressions">Radial Pattern with Expressions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-configurable-tree">Runtime-Configurable Tree</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameterized-rule">Parameterized Rule</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#octopus-from-original-eisenscript-spec">Octopus (from original EisenScript spec)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#koch-snowflake">Koch Snowflake</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gotchas">Gotchas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#keyboard-shortcut-to-refresh">Keyboard Shortcut to Refresh</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="eisenscript">
+<h1>EisenScript<a class="headerlink" href="#eisenscript" title="Link to this heading">#</a></h1>
+<p><strong>EisenScript</strong> is a procedural geometry scripting language based on L-systems.
+It defines rules that recursively transform and branch geometric primitives
+into complex structures — fractals, trees, architectural forms, and more.</p>
+<p>EisenScript was originally implemented in StructureSynth; nowadays it has several implementations.</p>
+<p>This node implements an extended version of EisenScript language. Additions are:</p>
+<ul class="simple">
+<li><p><cite>#input</cite> definitions for externally controllable variables</p></li>
+<li><p>Possibility to do calculations; anywhere where in original EisenScript you
+could put a numeric literal, you can place an expression, like <cite>(sin(x))</cite>.</p></li>
+<li><p>Parametrized rules.</p></li>
+</ul>
+<p>The node reads an EisenScript program from a Blender text block and outputs
+placement matrices for each primitive type (box, sphere, grid, line, point,
+triangle). Each output socket carries a list of 4×4 transformation matrices
+that can be used with the <strong>Matrix Transform</strong> or <strong>Objects In</strong> nodes to
+place actual geometry.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/e1a247ee-9704-4b59-960d-b0ed8e8e8805"><img alt="https://github.com/user-attachments/assets/e1a247ee-9704-4b59-960d-b0ed8e8e8805" src="https://github.com/user-attachments/assets/e1a247ee-9704-4b59-960d-b0ed8e8e8805" />
+</a>
+<p>(inspired by “Spikey script” from <a class="reference external" href="https://github.com/kronpano/BrowserSynth">BrowserSynth</a> examples).</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>An EisenScript program consists of <strong>rules</strong>, <strong>transformations</strong>, <strong>repetitions</strong>,
+and <strong>primitives</strong>. Rules define recursive patterns; transformations modify the
+current coordinate frame; repetitions apply transformations multiple times; and
+primitives emit geometric objects.</p>
+<p>A simple program might look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">maxdepth</span> <span class="mi">100</span>
+<span class="n">rule</span> <span class="n">trunk</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">y</span> <span class="mi">2</span><span class="p">}</span> <span class="n">trunk</span>
+    <span class="p">{</span><span class="n">y</span> <span class="mi">1</span> <span class="n">s</span> <span class="mf">0.8</span><span class="p">}</span> <span class="n">box</span>
+<span class="p">}</span>
+<span class="n">trunk</span>
+</pre></div>
+</div>
+<p>This defines a recursive “trunk” rule: each call translates up by 2 units and
+recalls itself, and also spawns a scaled box. The result is a column of
+successively smaller boxes.</p>
+</section>
+<section id="program-structure">
+<h2>Program Structure<a class="headerlink" href="#program-structure" title="Link to this heading">#</a></h2>
+<p>A program is a sequence of top-level statements processed in order:</p>
+<ul class="simple">
+<li><p><strong>Input directives</strong> — <code class="docutils literal notranslate"><span class="pre">#input</span></code> declares runtime-configurable parameters.</p></li>
+<li><p><strong>Define directives</strong> — <code class="docutils literal notranslate"><span class="pre">#define</span></code> declares named constants (numbers or
+Python expressions).</p></li>
+<li><p><strong>Set statements</strong> — <code class="docutils literal notranslate"><span class="pre">set</span></code> configures global interpreter behavior.</p></li>
+<li><p><strong>Rule definitions</strong> — <code class="docutils literal notranslate"><span class="pre">rule</span> <span class="pre">name</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">}</span></code> defines a named rule.</p></li>
+<li><p><strong>Bare branches</strong> — a branch without a preceding rule name is treated as
+the implicit start rule.</p></li>
+</ul>
+<p>Statements may be separated by newlines or whitespace.</p>
+<section id="input-directives">
+<h3>Input Directives<a class="headerlink" href="#input-directives" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">#input</span></code> declares a runtime-configurable program parameter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#input width                    # no default — must be provided at runtime</span>
+<span class="c1">#input height 17                # default value 17</span>
+<span class="c1">#input depth number 5           # explicit type keyword, default 5</span>
+</pre></div>
+</div>
+<p>Syntax: <code class="docutils literal notranslate"><span class="pre">#input</span> <span class="pre">&lt;name&gt;</span> <span class="pre">[number]</span> <span class="pre">[default_value]</span></code></p>
+<p>The default value must be a plain number (int, float, or fraction like <code class="docutils literal notranslate"><span class="pre">1/3</span></code>).
+<code class="docutils literal notranslate"><span class="pre">#input</span></code> and <code class="docutils literal notranslate"><span class="pre">#define</span></code> share the same namespace — a name cannot appear in both.</p>
+</section>
+<section id="define-directives">
+<h3>Define Directives<a class="headerlink" href="#define-directives" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">#define</span></code> declares a named constant available throughout the program:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define radius 5</span>
+<span class="c1">#define angle (360 / n)</span>
+</pre></div>
+</div>
+<p>Values may be plain numbers or parenthesized Python expressions. Expressions
+support forward references — if variable <code class="docutils literal notranslate"><span class="pre">a</span></code> depends on <code class="docutils literal notranslate"><span class="pre">b</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> on
+<code class="docutils literal notranslate"><span class="pre">c</span></code>, dependencies are resolved in topological order.</p>
+</section>
+<section id="set-statements">
+<h3>Set Statements<a class="headerlink" href="#set-statements" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">set</span></code> configures global interpreter behavior:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Statement</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">maxdepth</span> <span class="pre">N</span></code></p></td>
+<td><p>Global recursion depth limit.</p></td>
+</tr>
+<tr class="row-odd"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">maxobjects</span> <span class="pre">N</span></code> | Hard cap on total primitive instances.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">minsize</span> <span class="pre">F</span></code></p></td>
+<td><p>Terminate branches smaller than diagonal <em>F</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">maxsize</span> <span class="pre">F</span></code></p></td>
+<td><p>Terminate branches larger than diagonal <em>F</em>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">seed</span> <span class="pre">N</span></code></p></td>
+<td><p>Random seed for weighted rule selection.</p></td>
+</tr>
+<tr class="row-odd"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">background</span> <span class="pre">C</span></code> | Set background color (e.g. <code class="docutils literal notranslate"><span class="pre">#FF0000</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">color</span> <span class="pre">random</span></code> | Choose random colors from colorpool.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="rule-definitions">
+<h3>Rule Definitions<a class="headerlink" href="#rule-definitions" title="Link to this heading">#</a></h3>
+<p>A rule maps a name to one or more branches:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rule</span> <span class="n">r1</span> <span class="n">maxdepth</span> <span class="mi">10</span> <span class="n">weight</span> <span class="mi">2</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">x</span> <span class="mi">1</span><span class="p">}</span> <span class="n">r1</span>
+    <span class="p">{</span><span class="n">s</span> <span class="mf">0.5</span><span class="p">}</span> <span class="n">box</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Components:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Component</p></th>
+<th class="head"><p>Syntax</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Name</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IDENTIFIER</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameters</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(p1,</span> <span class="pre">p2,</span> <span class="pre">...)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Maxdepth</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">maxdepth</span> <span class="pre">N</span></code> or <code class="docutils literal notranslate"><span class="pre">md</span> <span class="pre">N</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Retirement</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">successor</span></code> (rule to substitute)</p></td>
+</tr>
+<tr class="row-even"><td><p>Weight</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">weight</span> <span class="pre">W</span></code> or <code class="docutils literal notranslate"><span class="pre">w</span> <span class="pre">W</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Body</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">branch*</span> <span class="pre">}</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Parameterized rules</strong> allow dynamic behavior:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rule</span> <span class="n">branch</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">rz</span> <span class="n">angle</span> <span class="n">s</span> <span class="n">length</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">}</span> <span class="n">box</span>
+<span class="p">}</span>
+<span class="n">branch</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Implicit rules</strong> (shorthand without <code class="docutils literal notranslate"><span class="pre">rule</span></code> keyword):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my_rule</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+<span class="p">{</span><span class="n">s</span> <span class="n">w</span> <span class="n">h</span> <span class="mi">1</span><span class="p">}</span> <span class="n">box</span>
+</pre></div>
+</div>
+<p>is equivalent to: <code class="docutils literal notranslate"><span class="pre">rule</span> <span class="pre">my_rule(w,</span> <span class="pre">h)</span> <span class="pre">{</span> <span class="pre">{s</span> <span class="pre">w</span> <span class="pre">h</span> <span class="pre">1}</span> <span class="pre">box</span> <span class="pre">}</span></code></p>
+</section>
+<section id="branches">
+<h3>Branches<a class="headerlink" href="#branches" title="Link to this heading">#</a></h3>
+<p>A branch is a sequence of repetitions and transformation blocks followed by
+a terminal (rule reference or primitive):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">3</span> <span class="o">*</span> <span class="p">{</span><span class="n">rz</span> <span class="mi">120</span><span class="p">}</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">{</span><span class="n">x</span> <span class="mi">1</span><span class="p">}</span> <span class="n">box</span>
+<span class="p">{</span><span class="n">rz</span> <span class="mi">90</span> <span class="n">s</span> <span class="mf">0.8</span><span class="p">}</span> <span class="n">r1</span>
+<span class="n">box</span>
+</pre></div>
+</div>
+<p>Structure: <code class="docutils literal notranslate"><span class="pre">(repetition</span> <span class="pre">|</span> <span class="pre">transform_block)*</span> <span class="pre">terminal</span></code></p>
+<ul class="simple">
+<li><p><strong>Repetition</strong> — <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">*</span> <span class="pre">{</span> <span class="pre">transforms</span> <span class="pre">}</span></code> applies transforms <em>N</em> times,
+accumulating the matrix.</p></li>
+<li><p><strong>Transform block</strong> — <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">transforms</span> <span class="pre">}</span></code> applies transforms once (count = 1).</p></li>
+<li><p><strong>Terminal</strong> — a <code class="docutils literal notranslate"><span class="pre">rule_ref</span></code> or a <code class="docutils literal notranslate"><span class="pre">primitive</span></code>.</p></li>
+</ul>
+<p>Transformations within a branch are applied right-to-left (like function
+composition). In repetitions, each iteration accumulates the transformation matrix.</p>
+</section>
+<section id="repetitions">
+<h3>Repetitions<a class="headerlink" href="#repetitions" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">*</span> <span class="pre">{</span> <span class="pre">transformations...</span> <span class="pre">}</span></code> applies the transformations <em>N</em> times,
+accumulating the matrix:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">5</span> <span class="o">*</span> <span class="p">{</span><span class="n">x</span> <span class="mi">1</span> <span class="n">rz</span> <span class="mi">72</span><span class="p">}</span> <span class="n">box</span>
+</pre></div>
+</div>
+<p>Produces 5 copies, each translated by 1 unit and rotated by 72° more than
+the previous. The count can be:</p>
+<ul class="simple">
+<li><p><strong>Integer</strong>: <code class="docutils literal notranslate"><span class="pre">5</span> <span class="pre">*</span> <span class="pre">{x</span> <span class="pre">1}</span> <span class="pre">box</span></code></p></li>
+<li><p><strong>Variable</strong>: <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">{x</span> <span class="pre">1}</span> <span class="pre">box</span></code> (resolved from <code class="docutils literal notranslate"><span class="pre">#define</span></code>)</p></li>
+<li><p><strong>Expression</strong>: <code class="docutils literal notranslate"><span class="pre">(n</span> <span class="pre">*</span> <span class="pre">2)</span> <span class="pre">*</span> <span class="pre">{x</span> <span class="pre">1}</span> <span class="pre">box</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="transformations">
+<h2>Transformations<a class="headerlink" href="#transformations" title="Link to this heading">#</a></h2>
+<p>Transformations modify the current transformation matrix. They are applied
+inside <code class="docutils literal notranslate"><span class="pre">{...}</span></code> blocks.</p>
+<section id="geometrical-transformations">
+<h3>Geometrical Transformations<a class="headerlink" href="#geometrical-transformations" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Effect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">v</span></code></p></td>
+<td><p>Translate along X by <em>v</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">v</span></code></p></td>
+<td><p>Translate along Y by <em>v</em></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">z</span> <span class="pre">v</span></code></p></td>
+<td><p>Translate along Z by <em>v</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rx</span> <span class="pre">v</span></code></p></td>
+<td><p>Rotate about X axis by <em>v</em> degrees</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ry</span> <span class="pre">v</span></code></p></td>
+<td><p>Rotate about Y axis by <em>v</em> degrees</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rz</span> <span class="pre">v</span></code></p></td>
+<td><p>Rotate about Z axis by <em>v</em> degrees</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">v</span></code></p></td>
+<td><p>Uniform scale by <em>v</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">v1</span> <span class="pre">v2</span></code></p></td>
+<td><p>Scale X by <em>v1</em>, Y by <em>v2</em>, Z by <em>v1</em></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">v1</span> <span class="pre">v2</span> <span class="pre">v3</span></code></p></td>
+<td><p>Scale X, Y, Z by <em>v1</em>, <em>v2</em>, <em>v3</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">f1</span> <span class="pre">...</span> <span class="pre">f9</span></code></p></td>
+<td><p>Apply 3×3 matrix (row-major, 9 values)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fx</span></code></p></td>
+<td><p>Mirror about X axis</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fy</span></code></p></td>
+<td><p>Mirror about Y axis</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fz</span></code></p></td>
+<td><p>Mirror about Z axis</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Rotation and scale centers: by default (legacy LSystem mode) transformations
+are centered at <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>. With <strong>Origin center</strong> unchecked, they are
+centered at <code class="docutils literal notranslate"><span class="pre">(0.5,</span> <span class="pre">0.5,</span> <span class="pre">0.5)</span></code> — the center of the unit cube.</p>
+</section>
+<section id="color-transformations">
+<h3>Color Transformations<a class="headerlink" href="#color-transformations" title="Link to this heading">#</a></h3>
+<p>Color transformations affect the color of emitted primitives but do not
+affect geometry.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Effect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">v</span></code> / <code class="docutils literal notranslate"><span class="pre">hue</span> <span class="pre">v</span></code></p></td>
+<td><p>Shift hue by <em>v</em> degrees (wraps 0–360)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sat</span> <span class="pre">v</span></code></p></td>
+<td><p>Multiply saturation by <em>v</em> (clamped to [0, 1])</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">v</span></code> / <code class="docutils literal notranslate"><span class="pre">brightness</span> <span class="pre">v</span></code></p></td>
+<td><p>Multiply brightness by <em>v</em> (clamped to [0, 1])</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">v</span></code> / <code class="docutils literal notranslate"><span class="pre">alpha</span> <span class="pre">v</span></code></p></td>
+<td><p>Multiply alpha by <em>v</em> (clamped to [0, 1])</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">color</span> <span class="pre">C</span></code></p></td>
+<td><p>Set absolute color to <em>C</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">blend</span> <span class="pre">C</span> <span class="pre">s</span></code></p></td>
+<td><p>Blend with color <em>C</em> at strength <em>s</em></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Colors are specified as HTML hex strings (<code class="docutils literal notranslate"><span class="pre">#FF0000</span></code>), SVG keywords
+(<code class="docutils literal notranslate"><span class="pre">red</span></code>, <code class="docutils literal notranslate"><span class="pre">lightgoldenrodyellow</span></code>), or quoted strings (<code class="docutils literal notranslate"><span class="pre">'darkgreen'</span></code>).</p>
+<p><strong>NB</strong>: At the moment, color transformations are parsed, but are not processed
+and do not affect output of the node. Colors support will be added in later
+versions of the node.</p>
+</section>
+</section>
+<section id="values">
+<h2>Values<a class="headerlink" href="#values" title="Link to this heading">#</a></h2>
+<p>A <strong>value</strong> is one of:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Syntax</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Number</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3</span></code>, <code class="docutils literal notranslate"><span class="pre">3.14</span></code>, <code class="docutils literal notranslate"><span class="pre">1/3</span></code>, <code class="docutils literal notranslate"><span class="pre">-1.5e2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">radius</span></code>, <code class="docutils literal notranslate"><span class="pre">my_var</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Expression</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(a</span> <span class="pre">+</span> <span class="pre">b)</span></code>, <code class="docutils literal notranslate"><span class="pre">(sin(theta))</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Keyword restriction</strong>: identifiers that match transformation keywords
+(<code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code>, <code class="docutils literal notranslate"><span class="pre">rx</span></code>, <code class="docutils literal notranslate"><span class="pre">ry</span></code>, <code class="docutils literal notranslate"><span class="pre">rz</span></code>, <code class="docutils literal notranslate"><span class="pre">s</span></code>, <code class="docutils literal notranslate"><span class="pre">m</span></code>, <code class="docutils literal notranslate"><span class="pre">fx</span></code>, <code class="docutils literal notranslate"><span class="pre">fy</span></code>,
+<code class="docutils literal notranslate"><span class="pre">fz</span></code>, <code class="docutils literal notranslate"><span class="pre">h</span></code>, <code class="docutils literal notranslate"><span class="pre">hue</span></code>, <code class="docutils literal notranslate"><span class="pre">sat</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">brightness</span></code>, <code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code>,
+<code class="docutils literal notranslate"><span class="pre">color</span></code>, <code class="docutils literal notranslate"><span class="pre">blend</span></code>) are <strong>not</strong> accepted as variable references inside
+<code class="docutils literal notranslate"><span class="pre">{...}</span></code> blocks. To use a variable with such a name, wrap it in an expression:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="mi">1</span>    <span class="c1"># Scale by variables x and y</span>
+</pre></div>
+</div>
+</section>
+<section id="expressions">
+<h2>Expressions<a class="headerlink" href="#expressions" title="Link to this heading">#</a></h2>
+<p>Parenthesized Python expressions provide computed values:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="n">x</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)}</span> <span class="n">box</span>
+<span class="c1">#define scale (base * 0.9)</span>
+<span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">{</span><span class="n">rz</span> <span class="p">(</span><span class="mi">360</span> <span class="o">/</span> <span class="n">n</span><span class="p">)}</span> <span class="n">box</span>
+</pre></div>
+</div>
+<p>The expression is evaluated with <code class="docutils literal notranslate"><span class="pre">eval()</span></code> using a safe namespace containing:</p>
+<ul class="simple">
+<li><p>All functions from the <code class="docutils literal notranslate"><span class="pre">math</span></code> module: <code class="docutils literal notranslate"><span class="pre">sin</span></code>, <code class="docutils literal notranslate"><span class="pre">cos</span></code>, <code class="docutils literal notranslate"><span class="pre">tan</span></code>, <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>,
+<code class="docutils literal notranslate"><span class="pre">pow</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">floor</span></code>, <code class="docutils literal notranslate"><span class="pre">ceil</span></code>, <code class="docutils literal notranslate"><span class="pre">fabs</span></code>, <code class="docutils literal notranslate"><span class="pre">asin</span></code>, <code class="docutils literal notranslate"><span class="pre">acos</span></code>,
+<code class="docutils literal notranslate"><span class="pre">atan</span></code>, <code class="docutils literal notranslate"><span class="pre">atan2</span></code>, <code class="docutils literal notranslate"><span class="pre">radians</span></code>, <code class="docutils literal notranslate"><span class="pre">degrees</span></code>, <code class="docutils literal notranslate"><span class="pre">hypot</span></code>, <code class="docutils literal notranslate"><span class="pre">erf</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma</span></code>,
+and more.</p></li>
+<li><p>Constants: <code class="docutils literal notranslate"><span class="pre">pi</span></code>, <code class="docutils literal notranslate"><span class="pre">e</span></code></p></li>
+<li><p>Built-ins: <code class="docutils literal notranslate"><span class="pre">abs</span></code>, <code class="docutils literal notranslate"><span class="pre">round</span></code>, <code class="docutils literal notranslate"><span class="pre">min</span></code>, <code class="docutils literal notranslate"><span class="pre">max</span></code>, <code class="docutils literal notranslate"><span class="pre">pow</span></code>, <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code></p></li>
+<li><p>All <code class="docutils literal notranslate"><span class="pre">#define</span></code> variables</p></li>
+</ul>
+</section>
+<section id="rule-references">
+<h2>Rule References<a class="headerlink" href="#rule-references" title="Link to this heading">#</a></h2>
+<p>A rule reference invokes another rule:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">r1</span>                              <span class="c1"># plain call</span>
+<span class="n">r1</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>                        <span class="c1"># with arguments</span>
+<span class="n">r1</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>                  <span class="c1"># mixed arguments</span>
+<span class="n">md</span> <span class="mi">10</span> <span class="n">r1</span>                        <span class="c1"># with retirement depth</span>
+<span class="n">md</span> <span class="mi">10</span> <span class="o">&gt;</span> <span class="n">leaf</span> <span class="n">r1</span>                 <span class="c1"># with retirement and successor</span>
+</pre></div>
+</div>
+<p><strong>Ambiguity</strong>: if a rule has multiple definitions (same name), one is chosen
+at random weighted by the <code class="docutils literal notranslate"><span class="pre">weight</span></code> modifier. All definitions must have the
+same parameter count.</p>
+</section>
+<section id="primitives">
+<h2>Primitives<a class="headerlink" href="#primitives" title="Link to this heading">#</a></h2>
+<p>Primitives are the geometric shapes emitted by the interpreter:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Primitive</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">box</span></code></p></td>
+<td><p>Solid cube centered at origin</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">grid</span></code></p></td>
+<td><p>Wireframe cube (edges only)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sphere</span></code></p></td>
+<td><p>Sphere centered at origin</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">line</span></code></p></td>
+<td><p>Line segment along X axis, centered in YZ plane</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">point</span></code></p></td>
+<td><p>Single point at origin</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Triangle[v1;v2;v3]</span></code></p></td>
+<td><p>Custom triangle with explicit vertices</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Triangle syntax</strong>: <code class="docutils literal notranslate"><span class="pre">Triangle[0,0,0;</span> <span class="pre">1,0,0;</span> <span class="pre">0.5,1,0]</span></code>. Vertices are
+<code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">z)</span></code> triples separated by <code class="docutils literal notranslate"><span class="pre">;</span></code>. Missing Y or Z defaults to <code class="docutils literal notranslate"><span class="pre">0.0</span></code>.</p>
+</section>
+<section id="scoping-rules">
+<h2>Scoping Rules<a class="headerlink" href="#scoping-rules" title="Link to this heading">#</a></h2>
+<p>Variable resolution follows this priority (highest to lowest):</p>
+<ol class="arabic simple">
+<li><p><strong>Rule parameters</strong> — parameters of the current rule definition</p></li>
+<li><p><strong>Input parameters</strong> — <code class="docutils literal notranslate"><span class="pre">#input</span></code> directives (resolved at runtime)</p></li>
+<li><p><strong>Define variables</strong> — <code class="docutils literal notranslate"><span class="pre">#define</span></code> directives at program level</p></li>
+</ol>
+<p>When a rule is called with arguments, the arguments are bound to the parameter
+names, creating a local scope:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#input val 100</span>
+<span class="n">rule</span> <span class="n">r</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">s</span> <span class="n">val</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">}</span> <span class="n">box</span>    <span class="c1"># val = argument, not 100</span>
+<span class="p">}</span>
+<span class="n">r</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>                   <span class="c1"># produces box scaled by 5</span>
+</pre></div>
+</div>
+<p>Nested rule calls create nested scopes. Inner parameters shadow outer
+parameters with the same name.</p>
+</section>
+<section id="termination-criteria">
+<h2>Termination Criteria<a class="headerlink" href="#termination-criteria" title="Link to this heading">#</a></h2>
+<p>EisenScript provides several mechanisms to control the extent of generation:</p>
+<ul class="simple">
+<li><p><strong>``set maxdepth N``</strong> — global recursion depth limit.</p></li>
+<li><p><strong>``set maxobjects N``</strong> — hard cap on total primitive instances.</p></li>
+<li><p><strong>``set minsize F``</strong> — terminate branches where the diagonal of the unit
+cube is smaller than <em>F</em>.</p></li>
+<li><p><strong>``set maxsize F``</strong> — terminate branches where the diagonal exceeds <em>F</em>.</p></li>
+<li><p><strong>``md N``</strong> — per-rule max recursion depth.</p></li>
+<li><p><strong>``md N &gt; successor``</strong> — when max depth is reached, call <em>successor</em> rule
+instead of terminating.</p></li>
+</ul>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<p>The set of inputs for this node depends on <code class="docutils literal notranslate"><span class="pre">#input</span></code> directives declared in
+the EisenScript program. Each <code class="docutils literal notranslate"><span class="pre">#input</span></code> parameter becomes one input socket.
+If a parameter has a default value, the input is optional; otherwise it must be
+connected.</p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<p>This node has the following parameters:</p>
+<ul class="simple">
+<li><p><strong>Script</strong>. Name of Blender text buffer containing the EisenScript program.
+Select from the list of available text blocks in the node header.</p></li>
+<li><p><strong>Seed</strong>. Integer seed for weighted rule selection. Default is 0. Changing
+the seed produces different random choices when ambiguous rules are defined.</p></li>
+<li><p><strong>Max depth</strong>. Global recursion depth limit. Overrides any <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">maxdepth</span></code>
+in the program. Default is 8.</p></li>
+<li><p><strong>Max objects</strong>. Hard cap on total primitive instances (0 = unlimited).
+Default is 1000. This prevents runaway generation.</p></li>
+<li><p><strong>Origin center</strong>. If checked, transformations use <code class="docutils literal notranslate"><span class="pre">(0,0,0)</span></code> as center
+(legacy LSystem behavior). If unchecked, use <code class="docutils literal notranslate"><span class="pre">(0.5,0.5,0.5)</span></code> per the
+EisenScript specification. Default is checked (True).</p></li>
+</ul>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<p>This node has the following outputs:</p>
+<ul class="simple">
+<li><p><strong>Box</strong>. List of 4×4 placement matrices for all <code class="docutils literal notranslate"><span class="pre">box</span></code> primitives.</p></li>
+<li><p><strong>Grid</strong>. List of 4×4 placement matrices for all <code class="docutils literal notranslate"><span class="pre">grid</span></code> primitives.</p></li>
+<li><p><strong>Sphere</strong>. List of 4×4 placement matrices for all <code class="docutils literal notranslate"><span class="pre">sphere</span></code> primitives.</p></li>
+<li><p><strong>Line</strong>. List of 4×4 placement matrices for all <code class="docutils literal notranslate"><span class="pre">line</span></code> primitives.</p></li>
+<li><p><strong>Point</strong>. List of 4×4 placement matrices for all <code class="docutils literal notranslate"><span class="pre">point</span></code> primitives.</p></li>
+<li><p><strong>Triangle</strong>. List of 4×4 placement matrices for all <code class="docutils literal notranslate"><span class="pre">triangle</span></code> primitives.</p></li>
+</ul>
+<p>Each output is a list of <code class="docutils literal notranslate"><span class="pre">mathutils.Matrix</span></code> objects (4×4). These matrices
+can be used with the <strong>Matrix Transform</strong> node to place objects, or with the
+<strong>Objects In</strong> node to instance geometry at each location.</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<section id="simple-tree">
+<h3>Simple Tree<a class="headerlink" href="#simple-tree" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">maxdepth</span> <span class="mi">100</span>
+
+<span class="n">rule</span> <span class="n">trunk</span> <span class="n">weight</span> <span class="mi">7</span> <span class="n">maxdepth</span> <span class="mi">10</span> <span class="o">&gt;</span> <span class="n">leaf</span> <span class="p">{</span>
+    <span class="n">bar</span>
+    <span class="p">{</span><span class="n">rz</span> <span class="o">-</span><span class="mi">15</span> <span class="n">rx</span> <span class="mi">2</span> <span class="n">y</span> <span class="mf">1.2</span> <span class="n">s</span> <span class="mf">0.8</span><span class="p">}</span> <span class="n">trunk</span>
+    <span class="p">{</span><span class="n">rz</span> <span class="mi">17</span> <span class="n">rx</span> <span class="o">-</span><span class="mi">3</span> <span class="n">y</span> <span class="mf">1.5</span> <span class="n">s</span> <span class="mf">0.9</span><span class="p">}</span> <span class="n">trunk</span>
+<span class="p">}</span>
+
+<span class="n">rule</span> <span class="n">trunk</span> <span class="n">weight</span> <span class="mi">2</span> <span class="n">maxdepth</span> <span class="mi">3</span> <span class="o">&gt;</span> <span class="n">leaf</span> <span class="p">{</span>
+    <span class="n">bar</span>
+    <span class="p">{</span><span class="n">rz</span> <span class="o">-</span><span class="mi">25</span> <span class="n">rx</span> <span class="mi">10</span> <span class="n">y</span> <span class="mf">1.2</span><span class="p">}</span> <span class="n">trunk</span>
+    <span class="p">{</span><span class="n">rz</span> <span class="mi">35</span> <span class="n">rx</span> <span class="o">-</span><span class="mi">5</span> <span class="n">y</span> <span class="mf">1.5</span> <span class="n">s</span> <span class="mf">0.9</span><span class="p">}</span> <span class="n">trunk</span>
+<span class="p">}</span>
+
+<span class="n">rule</span> <span class="n">trunk</span> <span class="n">weight</span> <span class="mi">1</span> <span class="p">{</span>
+    <span class="n">leaf</span>
+<span class="p">}</span>
+
+<span class="n">rule</span> <span class="n">leaf</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">y</span> <span class="o">-</span><span class="mi">1</span> <span class="n">s</span> <span class="mf">0.2</span> <span class="mf">0.6</span> <span class="mf">0.1</span> <span class="n">rz</span> <span class="mi">45</span> <span class="p">}</span> <span class="n">box</span>
+<span class="p">}</span>
+
+<span class="n">rule</span> <span class="n">bar</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">y</span> <span class="o">-</span><span class="mf">0.5</span> <span class="n">s</span> <span class="mf">0.1</span> <span class="mi">2</span> <span class="mf">0.1</span><span class="p">}</span> <span class="n">box</span>
+<span class="p">}</span>
+
+<span class="n">trunk</span>
+</pre></div>
+</div>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/00673c88-7eb3-4149-be0e-f0436ed72d37"><img alt="https://github.com/user-attachments/assets/00673c88-7eb3-4149-be0e-f0436ed72d37" src="https://github.com/user-attachments/assets/00673c88-7eb3-4149-be0e-f0436ed72d37" />
+</a>
+</section>
+<section id="radial-pattern-with-expressions">
+<h3>Radial Pattern with Expressions<a class="headerlink" href="#radial-pattern-with-expressions" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define n 12</span>
+<span class="c1">#define angle_step (360 / n)</span>
+<span class="n">n</span> <span class="o">*</span> <span class="p">{</span><span class="n">rz</span> <span class="n">angle_step</span> <span class="n">x</span> <span class="mi">2</span><span class="p">}</span> <span class="n">box</span>
+</pre></div>
+</div>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/8fb9d07c-62f6-4925-832b-3f051cd21517"><img alt="https://github.com/user-attachments/assets/8fb9d07c-62f6-4925-832b-3f051cd21517" src="https://github.com/user-attachments/assets/8fb9d07c-62f6-4925-832b-3f051cd21517" />
+</a>
+</section>
+<section id="runtime-configurable-tree">
+<h3>Runtime-Configurable Tree<a class="headerlink" href="#runtime-configurable-tree" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#input trunk_height 5</span>
+<span class="c1">#input branch_count 8</span>
+<span class="c1">#define angle_step (360 / branch_count)</span>
+
+<span class="n">branch_count</span> <span class="o">*</span> <span class="p">{</span><span class="n">rz</span> <span class="n">angle_step</span> <span class="n">y</span> <span class="n">trunk_height</span><span class="p">}</span> <span class="n">box</span>
+</pre></div>
+</div>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/fcf449c2-b054-4493-91d1-05e9335cec6a"><img alt="https://github.com/user-attachments/assets/fcf449c2-b054-4493-91d1-05e9335cec6a" src="https://github.com/user-attachments/assets/fcf449c2-b054-4493-91d1-05e9335cec6a" />
+</a>
+</section>
+<section id="parameterized-rule">
+<h3>Parameterized Rule<a class="headerlink" href="#parameterized-rule" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rule</span> <span class="n">bar</span><span class="p">(</span><span class="n">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">x</span> <span class="p">(</span><span class="n">length</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="n">s</span> <span class="n">length</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">}</span> <span class="n">box</span>
+<span class="p">}</span>
+
+<span class="n">rule</span> <span class="n">root</span> <span class="p">{</span>
+    <span class="n">branch</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">rule</span> <span class="n">leaf</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">s</span> <span class="mf">0.2</span> <span class="mf">0.2</span> <span class="mi">3</span><span class="p">}</span> <span class="n">box</span>
+<span class="p">}</span>
+
+<span class="n">rule</span> <span class="n">branch</span><span class="p">(</span><span class="n">length</span><span class="p">)</span> <span class="n">maxdepth</span> <span class="mi">10</span> <span class="o">&gt;</span> <span class="n">leaf</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">rz</span> <span class="mi">15</span><span class="p">}</span> <span class="n">branch</span><span class="p">((</span><span class="n">length</span> <span class="o">+</span> <span class="mf">0.7</span><span class="p">))</span>
+    <span class="n">bar</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">root</span>
+</pre></div>
+</div>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/6c77ee1e-ac87-47ea-bb7a-1483c2d5d1a0"><img alt="https://github.com/user-attachments/assets/6c77ee1e-ac87-47ea-bb7a-1483c2d5d1a0" src="https://github.com/user-attachments/assets/6c77ee1e-ac87-47ea-bb7a-1483c2d5d1a0" />
+</a>
+</section>
+<section id="octopus-from-original-eisenscript-spec">
+<h3>Octopus (from original EisenScript spec)<a class="headerlink" href="#octopus-from-original-eisenscript-spec" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">maxdepth</span> <span class="mi">100</span>
+<span class="mi">10</span> <span class="o">*</span> <span class="p">{</span><span class="n">ry</span> <span class="mi">36</span> <span class="n">sat</span> <span class="mf">0.9</span><span class="p">}</span> <span class="mi">30</span> <span class="o">*</span> <span class="p">{</span><span class="n">ry</span> <span class="mi">10</span><span class="p">}</span> <span class="mi">1</span> <span class="o">*</span> <span class="p">{</span><span class="n">h</span> <span class="mi">30</span> <span class="n">b</span> <span class="mf">0.8</span> <span class="n">sat</span> <span class="mf">0.8</span> <span class="n">a</span> <span class="mf">0.3</span><span class="p">}</span> <span class="n">r1</span>
+
+<span class="n">rule</span> <span class="n">r1</span> <span class="n">w</span> <span class="mi">20</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">s</span> <span class="mf">0.9</span> <span class="n">rz</span> <span class="mi">5</span> <span class="n">h</span> <span class="mi">5</span> <span class="n">rx</span> <span class="mi">5</span> <span class="n">x</span> <span class="mi">1</span><span class="p">}</span> <span class="n">r1</span>
+    <span class="p">{</span><span class="n">s</span> <span class="mi">1</span> <span class="mf">0.2</span> <span class="mf">0.5</span><span class="p">}</span> <span class="n">box</span>
+<span class="p">}</span>
+
+<span class="n">rule</span> <span class="n">r1</span> <span class="n">w</span> <span class="mi">20</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">s</span> <span class="mf">0.99</span> <span class="n">rz</span> <span class="o">-</span><span class="mi">5</span> <span class="n">h</span> <span class="mi">5</span> <span class="n">rx</span> <span class="o">-</span><span class="mi">5</span> <span class="n">x</span> <span class="mi">1</span><span class="p">}</span> <span class="n">r1</span>
+    <span class="p">{</span><span class="n">s</span> <span class="mi">1</span> <span class="mf">0.2</span> <span class="mf">0.5</span><span class="p">}</span> <span class="n">box</span>
+<span class="p">}</span>
+
+<span class="n">rule</span> <span class="n">r1</span> <span class="p">{}</span>
+</pre></div>
+</div>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/a28eb0d7-16c3-4748-aafa-9261de9b53ff"><img alt="https://github.com/user-attachments/assets/a28eb0d7-16c3-4748-aafa-9261de9b53ff" src="https://github.com/user-attachments/assets/a28eb0d7-16c3-4748-aafa-9261de9b53ff" />
+</a>
+</section>
+<section id="koch-snowflake">
+<h3>Koch Snowflake<a class="headerlink" href="#koch-snowflake" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#input depth 4</span>
+
+<span class="c1">#define main_radius (sqrt(3)/2)</span>
+<span class="c1">#define scale_step (1.0/3.0)</span>
+<span class="c1">#define dx 0.25</span>
+<span class="c1">#define dy (0.1 + scale_step)</span>
+
+<span class="p">{</span><span class="n">y</span> <span class="n">main_radius</span><span class="p">}</span> <span class="n">R1</span>
+<span class="p">{</span><span class="n">rz</span> <span class="mi">120</span> <span class="n">y</span> <span class="n">main_radius</span><span class="p">}</span> <span class="n">R1</span>
+<span class="p">{</span><span class="n">rz</span> <span class="mi">240</span> <span class="n">y</span> <span class="n">main_radius</span><span class="p">}</span> <span class="n">R1</span>
+
+<span class="n">rule</span> <span class="n">R1</span> <span class="n">md</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="n">unit</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">x</span> <span class="o">-</span><span class="mi">1</span> <span class="n">s</span> <span class="n">scale_step</span><span class="p">}</span> <span class="n">R1</span>
+    <span class="p">{</span><span class="n">x</span> <span class="p">(</span><span class="o">-</span><span class="n">dx</span><span class="p">)</span> <span class="n">y</span> <span class="n">dy</span> <span class="n">rz</span> <span class="mi">60</span> <span class="n">s</span> <span class="n">scale_step</span><span class="p">}</span> <span class="n">R1</span>
+    <span class="p">{</span><span class="n">x</span> <span class="n">dx</span> <span class="n">y</span> <span class="n">dy</span> <span class="n">rz</span> <span class="o">-</span><span class="mi">60</span> <span class="n">s</span> <span class="n">scale_step</span><span class="p">}</span> <span class="n">R1</span>
+    <span class="p">{</span><span class="n">x</span> <span class="mi">1</span> <span class="n">s</span> <span class="n">scale_step</span><span class="p">}</span> <span class="n">R1</span>
+<span class="p">}</span>
+
+<span class="n">rule</span> <span class="n">unit</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">s</span> <span class="mi">3</span><span class="p">}</span> <span class="n">line</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<img alt="https://github.com/user-attachments/assets/fb2ef5b7-199c-473e-ba77-a15197cd4c96" src="https://github.com/user-attachments/assets/fb2ef5b7-199c-473e-ba77-a15197cd4c96" />
+</section>
+</section>
+<section id="gotchas">
+<h2>Gotchas<a class="headerlink" href="#gotchas" title="Link to this heading">#</a></h2>
+<p>The update mechanism doesn’t process inputs or anything until the following
+conditions are satisfied:</p>
+<ul class="simple">
+<li><p>The <strong>Script</strong> field must point to an existing Blender Text block.</p></li>
+<li><p>All required <code class="docutils literal notranslate"><span class="pre">#input</span></code> parameters (those without defaults) must be
+connected.</p></li>
+</ul>
+</section>
+<section id="keyboard-shortcut-to-refresh">
+<h2>Keyboard Shortcut to Refresh<a class="headerlink" href="#keyboard-shortcut-to-refresh" title="Link to this heading">#</a></h2>
+<p>Changes made to the EisenScript text file are not propagated automatically.
+To refresh the node, change a value on one of the incoming nodes, or click
+one of the input or output sockets.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="script_index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Script</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="formula_interpolate.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Formula Interpolate</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#program-structure">Program Structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#input-directives">Input Directives</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#define-directives">Define Directives</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-statements">Set Statements</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rule-definitions">Rule Definitions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#branches">Branches</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#repetitions">Repetitions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformations">Transformations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometrical-transformations">Geometrical Transformations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#color-transformations">Color Transformations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#values">Values</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expressions">Expressions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rule-references">Rule References</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#primitives">Primitives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scoping-rules">Scoping Rules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#termination-criteria">Termination Criteria</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-tree">Simple Tree</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#radial-pattern-with-expressions">Radial Pattern with Expressions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-configurable-tree">Runtime-Configurable Tree</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameterized-rule">Parameterized Rule</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#octopus-from-original-eisenscript-spec">Octopus (from original EisenScript spec)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#koch-snowflake">Koch Snowflake</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gotchas">Gotchas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#keyboard-shortcut-to-refresh">Keyboard Shortcut to Refresh</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2026, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
