@@ -451,14 +451,35 @@ Simple Tree
 ::
 
     set maxdepth 100
-    rule trunk {
-        {y 2} trunk
-        {y 1 s 0.8} box
+
+    rule trunk weight 7 maxdepth 10 > leaf {
+        bar
+        {rz -15 rx 2 y 1.2 s 0.8} trunk
+        {rz 17 rx -3 y 1.5 s 0.9} trunk
     }
+
+    rule trunk weight 2 maxdepth 3 > leaf {
+        bar
+        {rz -25 rx 10 y 1.2} trunk
+        {rz 35 rx -5 y 1.5 s 0.9} trunk
+    }
+
+    rule trunk weight 1 {
+        leaf
+    }
+
+    rule leaf {
+        {y -1 s 0.2 0.6 0.1 rz 45 } box
+    }
+
+    rule bar {
+        {y -0.5 s 0.1 2 0.1} box
+    }
+
     trunk
 
-.. image:: https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9
-  :target: https://github.com/user-attachments/assets/47d94243-a8d0-4706-8b24-6750c0d810f9
+.. image:: https://github.com/user-attachments/assets/00673c88-7eb3-4149-be0e-f0436ed72d37
+  :target: https://github.com/user-attachments/assets/00673c88-7eb3-4149-be0e-f0436ed72d37
 
 Radial Pattern with Expressions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
