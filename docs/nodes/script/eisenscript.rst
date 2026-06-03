@@ -465,6 +465,9 @@ Radial Pattern with Expressions
     #define angle_step (360 / n)
     n * {rz angle_step x 2} box
 
+.. image:: https://github.com/user-attachments/assets/8fb9d07c-62f6-4925-832b-3f051cd21517
+  :target: https://github.com/user-attachments/assets/8fb9d07c-62f6-4925-832b-3f051cd21517
+
 Runtime-Configurable Tree
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -476,25 +479,36 @@ Runtime-Configurable Tree
 
     branch_count * {rz angle_step y trunk_height} box
 
-Interpreted with custom values:
-
-::
-
-    result = Interpreter.interpret(prog, input_values={
-        "trunk_height": 10,
-        "branch_count": 12
-    })
+.. image:: https://github.com/user-attachments/assets/fcf449c2-b054-4493-91d1-05e9335cec6a
+  :target: https://github.com/user-attachments/assets/fcf449c2-b054-4493-91d1-05e9335cec6a
 
 Parameterized Rule
 ~~~~~~~~~~~~~~~~~~
 
 ::
 
-    rule branch(angle, length) {
-        {rz angle s length 1 1} box
+    rule bar(length) {
+        {x (length/2 + 0.5) s length 1 1} box
     }
-    branch(30, 5)
-    branch(60, 3)
+
+    rule root {
+        branch(10)
+    }
+
+    rule leaf {
+        {s 0.2 0.2 3} box
+    }
+
+    rule branch(length) maxdepth 10 > leaf {
+        {rz 15} branch((length + 0.7))
+        bar(length)
+    }
+
+    root
+
+.. image:: https://github.com/user-attachments/assets/6c77ee1e-ac87-47ea-bb7a-1483c2d5d1a0
+  :target: https://github.com/user-attachments/assets/6c77ee1e-ac87-47ea-bb7a-1483c2d5d1a0
+
 
 Octopus (from original EisenScript spec)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -516,26 +530,37 @@ Octopus (from original EisenScript spec)
 
     rule r1 {}
 
+.. image:: https://github.com/user-attachments/assets/a28eb0d7-16c3-4748-aafa-9261de9b53ff
+  :target: https://github.com/user-attachments/assets/a28eb0d7-16c3-4748-aafa-9261de9b53ff
+
 Koch Snowflake
 ~~~~~~~~~~~~~~
 
 ::
 
-    set maxdepth 100
-    {y 0.866} R1
-    {rz 120 y 0.866} R1
-    {rz 240 y 0.866} R1
+    #input depth 4
 
-    rule R1 md 4 > unit {
-        {x -1 s 0.333} R1
-        {x -0.25 y 0.433 rz 60 s 0.333} R1
-        {x 0.25 y 0.433 rz -60 s 0.333} R1
-        {x 1 s 0.333} R1
+    #define main_radius (sqrt(3)/2)
+    #define scale_step (1.0/3.0)
+    #define dx 0.25
+    #define dy (0.1 + scale_step)
+
+    {y main_radius} R1
+    {rz 120 y main_radius} R1
+    {rz 240 y main_radius} R1
+
+    rule R1 md depth > unit {
+        {x -1 s scale_step} R1
+        {x (-dx) y dy rz 60 s scale_step} R1
+        {x dx y dy rz -60 s scale_step} R1
+        {x 1 s scale_step} R1
     }
 
     rule unit {
         {s 3} line
     }
+
+.. image:: https://github.com/user-attachments/assets/fb2ef5b7-199c-473e-ba77-a15197cd4c96
 
 Gotchas
 -------
