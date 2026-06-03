@@ -546,7 +546,7 @@ class XmlToAstBasicTests(unittest.TestCase):
         self.assertIsInstance(rep.transformations[1], Rotate)
 
 
-unittest.skip("These example files are not in Sverchok repo")
+@unittest.skip("These example files are not in Sverchok repo")
 class FullProgramXmlTests(unittest.TestCase):
     """Test conversion of complete XML programs from examples."""
 
