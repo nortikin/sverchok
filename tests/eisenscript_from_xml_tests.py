@@ -40,11 +40,6 @@ from sverchok.utils.modules.eisenscript.from_xml import (
 )
 from sverchok.utils.modules.eisenscript.ast import (
     Program,
-    SetStatement,
-    Rule,
-    Branch,
-    Repeat,
-    RuleRef,
     AXIS_X, AXIS_Y, AXIS_Z,
     Translate,
     Rotate,
@@ -551,6 +546,7 @@ class XmlToAstBasicTests(unittest.TestCase):
         self.assertIsInstance(rep.transformations[1], Rotate)
 
 
+unittest.skip("These example files are not in Sverchok repo")
 class FullProgramXmlTests(unittest.TestCase):
     """Test conversion of complete XML programs from examples."""
 
