@@ -71,7 +71,7 @@ jobs:
             cd ..
         fi
 
-        #mkdir -p ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
+        mkdir -p ${PWD}/installation/blender/${MAJOR_BLENDER_VERSION}/${SVERCHOK_DIR}
         ln -s ${PWD} ${PWD}/installation/blender/${MAJOR_BLENDER_VERSION}/${SVERCHOK_DIR}
         mkdir -p ~/.config/blender/${MAJOR_BLENDER_VERSION}/config/
         ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${MAJOR_BLENDER_VERSION}/config/
