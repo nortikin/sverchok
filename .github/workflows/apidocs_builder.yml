@@ -40,7 +40,8 @@ jobs:
         BLENDER_VERSION=${{env.blender_version}}
         MAJOR_BLENDER_VERSION=${{env.major_blender_version}}
         BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender4.5/blender-4.5.10-linux-x64.tar.xz
-        SVERCHOK_DIR=scripts/addons/sverchok
+        ADDONS_DIR=scripts/addons_core
+        SVERCHOK_DIR=$ADDONS_DIR/sverchok
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
         RELEASE=blender4510_LTS
@@ -71,11 +72,11 @@ jobs:
             cd ..
         fi
 
-        mkdir -p ${PWD}/installation/blender/${MAJOR_BLENDER_VERSION}/scripts/addons
+        mkdir -p ${PWD}/installation/blender/${MAJOR_BLENDER_VERSION}/${ADDONS_DIR}
         ln -s ${PWD} ${PWD}/installation/blender/${MAJOR_BLENDER_VERSION}/${SVERCHOK_DIR}
         mkdir -p ~/.config/blender/${MAJOR_BLENDER_VERSION}/config/
         ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${MAJOR_BLENDER_VERSION}/config/
-        
+
     - name: Checkout master
       uses: actions/checkout@master
       with:
