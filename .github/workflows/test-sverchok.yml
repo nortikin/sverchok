@@ -28,6 +28,11 @@ jobs:
       with:
         path: ./installation
         key: blender-${{ env.blender_version }}-${{ hashFiles('.github/workflows/test-sverchok.yml') }}
+    - name: Install and Cache APT Packages
+      uses: awalsh128/cache-apt-pkgs-action@v1
+      with:
+        packages: libxfixes3
+        version: 1.0
     - name: Install Blender
       run: |
         # echo "starting run"
@@ -64,7 +69,7 @@ jobs:
             cd ..
         fi
 
-        mkdir -p ${PWD}/installation/blender/${MAJOR_BLENDER_VERSION}/${SVERCHOK_DIR}
+        mkdir -p ${PWD}/installation/blender/${MAJOR_BLENDER_VERSION}/scripts/addons
         ln -s ${PWD} ${PWD}/installation/blender/${MAJOR_BLENDER_VERSION}/${SVERCHOK_DIR}
         mkdir -p ~/.config/blender/${MAJOR_BLENDER_VERSION}/config/
         ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${MAJOR_BLENDER_VERSION}/config/
