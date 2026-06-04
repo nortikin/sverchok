@@ -13,9 +13,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      blender_version: "3.6.16"
-      major_blender_version: "3.6"
-      python_version: "3.10"
+      blender_version: "4.5.10"
+      major_blender_version: "4.5"
+      python_version: "3.11"
 
     steps:
     - uses: actions/checkout@v4
@@ -33,11 +33,11 @@ jobs:
         # echo "starting run"
         BLENDER_VERSION=${{env.blender_version}}
         MAJOR_BLENDER_VERSION=${{env.major_blender_version}}
-        BLENDER_URL=https://mirrors.de.sahilister.net/blender/release/Blender3.6/blender-3.6.16-linux-x64.tar.xz
+        BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender4.5/blender-4.5.10-linux-x64.tar.xz
         SVERCHOK_DIR=scripts/addons/sverchok
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
-        RELEASE=blender3616_LTS
+        RELEASE=blender4510_LTS
 
         if [ ! -f installation/blender/blender ]
         then
