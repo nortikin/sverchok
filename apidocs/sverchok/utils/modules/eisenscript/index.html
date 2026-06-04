@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.6">
-<title>sverchok.core.event_system API documentation</title>
-<meta name="description" content="">
+<title>sverchok.utils.modules.eisenscript API documentation</title>
+<meta name="description" content="EisenScript language support for Sverchok …">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
@@ -33,56 +33,48 @@ el.replaceWith(d);
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>sverchok.core.event_system</code></h1>
+<h1 class="title">Module <code>sverchok.utils.modules.eisenscript</code></h1>
 </header>
 <section id="section-intro">
+<p>EisenScript language support for Sverchok.</p>
+<p>EisenScript is a procedural geometry scripting language based on L-systems.
+It defines rules with transformations and primitives that generate
+parametric 3D geometry through recursive rule expansion.</p>
+<p>See: <a href="https://github.com/massivetrees/eisen">https://github.com/massivetrees/eisen</a></p>
 </section>
 <section>
-</section>
-<section>
-</section>
-<section>
-<h2 class="section-title" id="header-functions">Functions</h2>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt id="sverchok.core.event_system.handle_event"><code class="name flex">
-<span>def <span class="ident">handle_event</span></span>(<span>event)</span>
-</code></dt>
+<dt><code class="name"><a title="sverchok.utils.modules.eisenscript.ast" href="ast.html">sverchok.utils.modules.eisenscript.ast</a></code></dt>
 <dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def handle_event(event):
-    &#34;&#34;&#34;Main control center
-    1. preprocess the event
-    2. Pass the event to update system(s)&#34;&#34;&#34;
-    # print(f&#34;{event=}&#34;)
-
-    # something changed in scene
-    if type(event) is ev.SceneEvent:
-        # this event was caused by update system itself and should be ignored
-        if &#39;SKIP_UPDATE&#39; in event.tree:
-            del event.tree[&#39;SKIP_UPDATE&#39;]
-            return
-
-    was_handled = dict()
-    for handler in update_systems:
-        res = handler(event)
-        was_handled[handler] = res
-
-    if (results := sum(was_handled.values())) &gt; 1:
-        duplicates = [f.__module__ for f, r in was_handled if r == 1]
-        raise RuntimeError(f&#34;{event=} was executed more than one time, {duplicates=}&#34;)
-    elif results == 0:
-        raise RuntimeError(f&#34;{event} was not handled&#34;)
-    else:
-        pass</code></pre>
-</details>
-<div class="desc"><p>Main control center
-1. preprocess the event
-2. Pass the event to update system(s)</p></div>
+<div class="desc"><p>AST nodes for the EisenScript language …</p></div>
+</dd>
+<dt><code class="name"><a title="sverchok.utils.modules.eisenscript.from_xml" href="from_xml.html">sverchok.utils.modules.eisenscript.from_xml</a></code></dt>
+<dd>
+<div class="desc"><p>Convert Generative Art XML (eisenxml) to EisenScript AST …</p></div>
+</dd>
+<dt><code class="name"><a title="sverchok.utils.modules.eisenscript.interpreter" href="interpreter.html">sverchok.utils.modules.eisenscript.interpreter</a></code></dt>
+<dd>
+<div class="desc"><p>Interpreter for EisenScript AST …</p></div>
+</dd>
+<dt><code class="name"><a title="sverchok.utils.modules.eisenscript.parser" href="parser.html">sverchok.utils.modules.eisenscript.parser</a></code></dt>
+<dd>
+<div class="desc"><p>Parser for the EisenScript language using the combinator parser framework
+from sverchok.utils.parsec …</p></div>
+</dd>
+<dt><code class="name"><a title="sverchok.utils.modules.eisenscript.serializer" href="serializer.html">sverchok.utils.modules.eisenscript.serializer</a></code></dt>
+<dd>
+<div class="desc"><p>Serialize EisenScript AST back to EisenScript source text …</p></div>
+</dd>
+<dt><code class="name"><a title="sverchok.utils.modules.eisenscript.to_xml" href="to_xml.html">sverchok.utils.modules.eisenscript.to_xml</a></code></dt>
+<dd>
+<div class="desc"><p>Convert EisenScript AST to Generative Art XML (eisenxml) …</p></div>
 </dd>
 </dl>
+</section>
+<section>
+</section>
+<section>
 </section>
 <section>
 </section>
@@ -94,12 +86,17 @@ el.replaceWith(d);
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="sverchok.core" href="index.html">sverchok.core</a></code></li>
+<li><code><a title="sverchok.utils.modules" href="../index.html">sverchok.utils.modules</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
-<li><code><a title="sverchok.core.event_system.handle_event" href="#sverchok.core.event_system.handle_event">handle_event</a></code></li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="sverchok.utils.modules.eisenscript.ast" href="ast.html">sverchok.utils.modules.eisenscript.ast</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.from_xml" href="from_xml.html">sverchok.utils.modules.eisenscript.from_xml</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.interpreter" href="interpreter.html">sverchok.utils.modules.eisenscript.interpreter</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser" href="parser.html">sverchok.utils.modules.eisenscript.parser</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.serializer" href="serializer.html">sverchok.utils.modules.eisenscript.serializer</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.to_xml" href="to_xml.html">sverchok.utils.modules.eisenscript.to_xml</a></code></li>
 </ul>
 </li>
 </ul>

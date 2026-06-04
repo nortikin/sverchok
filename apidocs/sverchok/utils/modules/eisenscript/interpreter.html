@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.modules.eisenscript.interpreter API documentation</title>
+<meta name="description" content="Interpreter for EisenScript AST …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.modules.eisenscript.interpreter</code></h1>
+</header>
+<section id="section-intro">
+<p>Interpreter for EisenScript AST.</p>
+<p>Executes an EisenScript :class:<code>Program</code> and produces a mapping of
+primitive names to lists of 4×4 transformation matrices
+(:class:<code>mathutils.Matrix</code>).</p>
+<p>Usage::</p>
+<pre><code>from sverchok.utils.modules.eisenscript.interpreter import Interpreter
+result = Interpreter.interpret(program)
+# result.matrices['box']  -&gt; list of Matrix
+# result.matrices['sphere'] -&gt; list of Matrix
+</code></pre>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.modules.eisenscript.interpreter.DefineResolver"><code class="flex name class">
+<span>class <span class="ident">DefineResolver</span></span>
+<span>(</span><span>raw_defines: Dict[str, object], external_vars: Dict[str, float] | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DefineResolver:
+    &#34;&#34;&#34;
+    Lazy evaluator for ``#define`` values with caching and topological sort.
+
+    Supports:
+    - Plain numeric values (``#define n 10``)
+    - Expression values (``#define n (a * 2 + 1)``)
+    - Forward references (expressions can reference variables defined later)
+    - Caching (each expression is evaluated at most once)
+    - Topological ordering (dependencies are resolved before dependents)
+    - External variables (``#input`` params) available to expressions
+
+    Raises ``ValueError`` on undefined variables or circular dependencies.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        raw_defines: Dict[str, object],
+        external_vars: Optional[Dict[str, float]] = None,
+    ):
+        &#34;&#34;&#34;
+        Args:
+            raw_defines: Dict mapping variable names to either ``float``
+                or :class:`Expr` nodes.
+            external_vars: Dict of externally-provided variable values
+                (e.g. resolved #input parameters).  These are available to
+                #define expressions but do NOT participate in the
+                topological sort — they are treated as always-available
+                constants.
+        &#34;&#34;&#34;
+        self._raw = dict(raw_defines)
+        self._external = dict(external_vars or {})
+        self._cache: Dict[str, float] = {}
+        self._topo_order: Optional[List[str]] = None
+
+    # ---- public API ----------------------------------------------------
+
+    def resolve(self, name: str) -&gt; float:
+        &#34;&#34;&#34;
+        Resolve a variable name to its numeric value.
+
+        Returns:
+            The computed float value.
+
+        Raises:
+            ValueError: If the variable is undefined or a circular
+                dependency is detected.
+        &#34;&#34;&#34;
+        if name in self._cache:
+            return self._cache[name]
+
+        # External variables (e.g. #input) are always available
+        if name in self._external:
+            return self._external[name]
+
+        if name not in self._raw:
+            raise ValueError(f&#34;Undefined variable: {name}&#34;)
+
+        # First access — build topo order and evaluate all expressions
+        if self._topo_order is None:
+            self._build_and_evaluate()
+
+        if name in self._cache:
+            return self._cache[name]
+
+        # Plain numeric value (not an Expr) — store and return
+        val = self._raw[name]
+        if not isinstance(val, Expr):
+            self._cache[name] = float(val)
+            return self._cache[name]
+
+        raise ValueError(f&#34;Undefined variable: {name}&#34;)
+
+    def resolve_scoped(self, val, params_scope : Dict[str, float]) -&gt; float:
+        &#34;&#34;&#34;Resolve a value with parameter scoping.
+
+        Priority: params_scope &gt; #input &gt; #define.
+        Expr: evaluate with params_scope + #input + #define in namespace.
+        &#34;&#34;&#34;
+        if isinstance(val, VariableRef):
+            if val.name in params_scope:
+                return params_scope[val.name]
+            if val.name in self._external:
+                return self._external[val.name]
+            return self.resolve(val.name)
+        if isinstance(val, Expr):
+            self.get_all()
+            env = dict(SAFE_NAMES)
+            env.update(self._cache)
+            # #input variables are available
+            env.update(self._external)
+            # Parameters shadow #input and #define variables
+            env.update(params_scope)
+            env[&#34;__builtins__&#34;] = {}
+            return eval(compile(val.ast_node, &#34;&lt;eisenscript&gt;&#34;, &#34;eval&#34;), env)
+        return val
+
+    def get_all(self) -&gt; Dict[str, float]:
+        &#34;&#34;&#34;
+        Force evaluation of all defines and return the complete mapping.
+        &#34;&#34;&#34;
+        for name in self._raw:
+            self.resolve(name)
+        return dict(self._cache)
+
+    # ---- internal ------------------------------------------------------
+
+    def _build_and_evaluate(self):
+        &#34;&#34;&#34;Build dependency graph, topo-sort, and evaluate in order.&#34;&#34;&#34;
+        from sverchok.utils.topo import stable_topo_sort
+
+        # Separate plain values from expressions
+        expr_names = [
+            name for name, val in self._raw.items() if isinstance(val, Expr)
+        ]
+        plain_names = [
+            name for name, val in self._raw.items() if not isinstance(val, Expr)
+        ]
+
+        # Cache plain values immediately
+        for name in plain_names:
+            self._cache[name] = float(self._raw[name])
+
+        if not expr_names:
+            self._topo_order = []
+            return
+
+        # Build dependency graph for expressions
+        # Each expression depends on the variables it references
+        name_to_idx = {name: i for i, name in enumerate(expr_names)}
+
+        edges = []
+        # Names that are NOT variables (math functions, constants, built-ins)
+        _safe_names = set(SAFE_NAMES.keys())
+
+        for i, name in enumerate(expr_names):
+            expr = self._raw[name]
+            for dep in expr.get_variables():
+                if dep in _safe_names:
+                    # Math function or constant — not a variable dependency
+                    continue
+                if dep in self._cache:
+                    # Plain value — already available, no edge needed
+                    continue
+                if dep in self._external:
+                    # External variable (e.g. #input) — always available
+                    continue
+                if dep in name_to_idx:
+                    j = name_to_idx[dep]
+                    if i != j:
+                        edges.append((j, i))  # j must come before i (i depends on j)
+                elif dep not in self._raw:
+                    raise ValueError(f&#34;Undefined variable: {dep}&#34;)
+                # else: dep is a plain value, already cached
+
+        # Topological sort
+        sorted_names = stable_topo_sort(expr_names, edges)
+        self._topo_order = sorted_names
+
+        # Evaluate in topo order
+        for name in sorted_names:
+            expr = self._raw[name]
+            env = dict(SAFE_NAMES)
+            # Add external variables (e.g. #input) — always available
+            env.update(self._external)
+            # Add all currently cached values
+            env.update(self._cache)
+            env[&#34;__builtins__&#34;] = {}
+            try:
+                result = eval(
+                    compile(expr.ast_node, &#34;&lt;eisenscript&gt;&#34;, &#34;eval&#34;), env
+                )
+            except NameError as e:
+                raise ValueError(f&#34;Undefined variable in expression: {e}&#34;)
+            self._cache[name] = float(result)</code></pre>
+</details>
+<div class="desc"><p>Lazy evaluator for <code>#define</code> values with caching and topological sort.</p>
+<p>Supports:
+- Plain numeric values (<code>#define n 10</code>)
+- Expression values (<code>#define n (a * 2 + 1)</code>)
+- Forward references (expressions can reference variables defined later)
+- Caching (each expression is evaluated at most once)
+- Topological ordering (dependencies are resolved before dependents)
+- External variables (<code>#input</code> params) available to expressions</p>
+<p>Raises <code>ValueError</code> on undefined variables or circular dependencies.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>raw_defines</code></strong></dt>
+<dd>Dict mapping variable names to either <code>float</code>
+or :class:<code>Expr</code> nodes.</dd>
+<dt><strong><code>external_vars</code></strong></dt>
+<dd>Dict of externally-provided variable values
+(e.g. resolved #input parameters).
+These are available to<h1 id="define-expressions-but-do-not-participate-in-the">define expressions but do NOT participate in the</h1>
+topological sort — they are treated as always-available
+constants.</dd>
+</dl></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.modules.eisenscript.interpreter.DefineResolver.get_all"><code class="name flex">
+<span>def <span class="ident">get_all</span></span>(<span>self) ‑> Dict[str, float]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all(self) -&gt; Dict[str, float]:
+    &#34;&#34;&#34;
+    Force evaluation of all defines and return the complete mapping.
+    &#34;&#34;&#34;
+    for name in self._raw:
+        self.resolve(name)
+    return dict(self._cache)</code></pre>
+</details>
+<div class="desc"><p>Force evaluation of all defines and return the complete mapping.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.interpreter.DefineResolver.resolve"><code class="name flex">
+<span>def <span class="ident">resolve</span></span>(<span>self, name: str) ‑> float</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resolve(self, name: str) -&gt; float:
+    &#34;&#34;&#34;
+    Resolve a variable name to its numeric value.
+
+    Returns:
+        The computed float value.
+
+    Raises:
+        ValueError: If the variable is undefined or a circular
+            dependency is detected.
+    &#34;&#34;&#34;
+    if name in self._cache:
+        return self._cache[name]
+
+    # External variables (e.g. #input) are always available
+    if name in self._external:
+        return self._external[name]
+
+    if name not in self._raw:
+        raise ValueError(f&#34;Undefined variable: {name}&#34;)
+
+    # First access — build topo order and evaluate all expressions
+    if self._topo_order is None:
+        self._build_and_evaluate()
+
+    if name in self._cache:
+        return self._cache[name]
+
+    # Plain numeric value (not an Expr) — store and return
+    val = self._raw[name]
+    if not isinstance(val, Expr):
+        self._cache[name] = float(val)
+        return self._cache[name]
+
+    raise ValueError(f&#34;Undefined variable: {name}&#34;)</code></pre>
+</details>
+<div class="desc"><p>Resolve a variable name to its numeric value.</p>
+<h2 id="returns">Returns</h2>
+<p>The computed float value.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>If the variable is undefined or a circular
+dependency is detected.</dd>
+</dl></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.interpreter.DefineResolver.resolve_scoped"><code class="name flex">
+<span>def <span class="ident">resolve_scoped</span></span>(<span>self, val, params_scope: Dict[str, float]) ‑> float</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resolve_scoped(self, val, params_scope : Dict[str, float]) -&gt; float:
+    &#34;&#34;&#34;Resolve a value with parameter scoping.
+
+    Priority: params_scope &gt; #input &gt; #define.
+    Expr: evaluate with params_scope + #input + #define in namespace.
+    &#34;&#34;&#34;
+    if isinstance(val, VariableRef):
+        if val.name in params_scope:
+            return params_scope[val.name]
+        if val.name in self._external:
+            return self._external[val.name]
+        return self.resolve(val.name)
+    if isinstance(val, Expr):
+        self.get_all()
+        env = dict(SAFE_NAMES)
+        env.update(self._cache)
+        # #input variables are available
+        env.update(self._external)
+        # Parameters shadow #input and #define variables
+        env.update(params_scope)
+        env[&#34;__builtins__&#34;] = {}
+        return eval(compile(val.ast_node, &#34;&lt;eisenscript&gt;&#34;, &#34;eval&#34;), env)
+    return val</code></pre>
+</details>
+<div class="desc"><p>Resolve a value with parameter scoping.</p>
+<p>Priority: params_scope &gt; #input &gt; #define.
+Expr: evaluate with params_scope + #input + #define in namespace.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.interpreter.Interpreter"><code class="flex name class">
+<span>class <span class="ident">Interpreter</span></span>
+<span>(</span><span>max_depth: int = 1000,<br>max_objects: int | None = None,<br>seed: int = 0,<br>origin_as_center: bool = True,<br>min_size: float | None = None,<br>max_size: float | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Interpreter:
+    &#34;&#34;&#34;
+    Stack-based interpreter for EisenScript AST.
+
+    Walks the rule graph starting from the implicit entry-point
+    (``IMPLICIT_START_RULE``) and accumulates primitive placements.
+
+    Attributes:
+        max_depth: Global recursion depth limit (from ``set maxdepth``).
+        max_objects: Hard cap on the total number of primitive instances.
+        seed: Random seed for weighted rule selection.
+        origin_as_center: If True, transformations use (0,0,0) as center
+            (legacy LSystem behavior). If False (default), use (0.5,0.5,0.5)
+            per the EisenScript specification.
+        min_size: Minimum diagonal length of the unit cube before terminating
+            a branch. None means no lower bound.
+        max_size: Maximum diagonal length of the unit cube before terminating
+            a branch. None means no upper bound.
+    &#34;&#34;&#34;
+
+    # Pre-built center-offset translation matrices (cached once per class)
+    _T_CENTER = Matrix.Translation(mu.Vector((0.5, 0.5, 0.5)))
+    _T_NEG_CENTER = Matrix.Translation(mu.Vector((-0.5, -0.5, -0.5)))
+
+    def __init__(
+        self,
+        max_depth: int = 1000,
+        max_objects: Optional[int] = None,
+        seed: int = 0,
+        origin_as_center: bool = True,
+        min_size: Optional[float] = None,
+        max_size: Optional[float] = None,
+    ) -&gt; None:
+        self.max_depth = max_depth
+        self.max_objects = max_objects
+        self.seed = seed
+        self.origin_as_center = origin_as_center
+        self.min_size = min_size
+        self.max_size = max_size
+        self._interpret_done = False
+
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def interpret(
+        program: Program,
+        max_depth : int = 1000,
+        max_objects : Optional[int] = None,
+        seed : int = 0,
+        origin_as_center: bool = True,
+        input_values: Optional[Dict[str, float]] = None,
+    ) -&gt; InterpreterResult:
+        &#34;&#34;&#34;Create an interpreter and run it on *program*.
+
+        Args:
+            program: The EisenScript program to interpret.
+            origin_as_center: If True, transformations use (0,0,0) as center
+                (legacy LSystem behavior, matches XML interpreter). If False,
+                use (0.5,0.5,0.5) per the EisenScript specification.
+                Default is True for compatibility with the legacy LSystem.
+            input_values: Optional dict mapping #input parameter names to
+                their runtime values.  Missing keys fall back to the default
+                value from the #input directive (if any).  If a parameter has
+                no default and is not provided, a ValueError is raised.
+
+        Reads ``maxdepth``, ``seed``, ``maxobjects``, ``minsize`` and
+        ``maxsize`` from program settings when present.
+        &#34;&#34;&#34;
+        global_maxdepth: int = max_depth
+        min_size: Optional[float] = None
+        max_size: Optional[float] = None
+
+        for s in program.settings:
+            if s.name == &#34;maxdepth&#34;:
+                global_maxdepth = min(int(s.value), global_maxdepth)
+            elif s.name == &#34;seed&#34;:
+                val = s.value
+                if isinstance(val, str) and val == &#34;initial&#34;:
+                    seed = 0
+                else:
+                    seed = int(val)
+            elif s.name == &#34;maxobjects&#34;:
+                max_objects = int(s.value)
+            elif s.name == &#34;minsize&#34;:
+                min_size = float(s.value)
+            elif s.name == &#34;maxsize&#34;:
+                max_size = float(s.value)
+
+        interp = Interpreter(
+            max_depth=global_maxdepth,
+            max_objects=max_objects,
+            seed=seed,
+            origin_as_center=origin_as_center,
+            min_size=min_size,
+            max_size=max_size,
+        )
+        return interp._interpret(program, input_values=input_values)
+
+    # ------------------------------------------------------------------
+    # Internal entry point
+    # ------------------------------------------------------------------
+
+    def _interpret(
+        self, program: Program, input_values: Optional[Dict[str, float]] = None
+    ) -&gt; InterpreterResult:
+        &#34;&#34;&#34;Execute *program* and return an :class:`InterpreterResult&#34;.&#34;&#34;&#34;
+        if self._interpret_done:
+            raise InvalidStateError(&#34;_interpret() method can only be called once on one Interpreter instance&#34;)
+        self._interpret_done = True
+
+        random.seed(self.seed)
+
+        # Resolve #input values: runtime values override defaults
+        resolved_inputs: Dict[str, float] = {}
+        for name, inp_def in program.inputs.items():
+            if name in (input_values or {}):
+                resolved_inputs[name] = input_values[name]
+            elif inp_def.default_value is not None:
+                resolved_inputs[name] = inp_def.default_value
+            else:
+                raise ValueError(
+                    f&#34;#input parameter &#39;{name}&#39; has no default value &#34;
+                    f&#34;and was not provided in input_values.&#34;
+                )
+
+        # Build rule lookup: name -&gt; list of Rule (for weighted selection)
+        rule_map: Dict[str, List[Rule]] = {}
+        for rule in program.rules:
+            rule_map.setdefault(rule.name, []).append(rule)
+
+        # Validate parameter count consistency across rule definitions
+        for rule_name, rules in rule_map.items():
+            if len(rules) &gt; 1:
+                param_counts = [len(r.params) for r in rules]
+                if len(set(param_counts)) &gt; 1:
+                    raise ValueError(
+                        f&#34;Rule &#39;{rule_name}&#39; has inconsistent parameter counts &#34;
+                        f&#34;across definitions: {param_counts}. &#34;
+                        f&#34;All definitions of the same rule must have the same &#34;
+                        f&#34;number of parameters.&#34;
+                    )
+
+        # Result collector
+        result = InterpreterResult()
+
+        # Lazy define resolver with topo sort and caching
+        # Pass resolved inputs as external variables so #define expressions
+        # can reference them without participating in the topo sort.
+        self.resolver = DefineResolver(program.defines, external_vars=resolved_inputs)
+
+        # Stack entries: (rule, depth, accumulated_matrix, params_scope)
+        entry_rule = _pick_rule(rule_map, IMPLICIT_START_RULE)
+        stack: List[Tuple[Rule, int, Matrix, Dict[str, float]]] = [
+            (entry_rule, 0, Matrix.Identity(4), {})
+        ]
+
+        total_objects = 0
+
+        while stack:
+            if self.max_objects is not None and total_objects &gt; self.max_objects:
+                break
+
+            rule, depth, matrix, params_scope = stack.pop()
+
+            # Per-rule max_depth
+            local_max_depth = self.max_depth
+            if rule.maxdepth is not None:
+                resolved_md = self.resolver.resolve_scoped(rule.maxdepth, params_scope)
+                local_max_depth = round(resolved_md)
+
+            # Stack depth guard
+            if len(stack) &gt; self.max_depth:
+                continue
+
+            # Retirement check
+            if depth &gt; local_max_depth:
+                if rule.retirement_rule:
+                    succ_rule = _pick_rule(rule_map, rule.retirement_rule)
+                    stack.append((succ_rule, 0, matrix.copy(), params_scope))
+                continue
+
+            # Process each branch in the rule
+            for branch in rule.body:
+                self._interpret_branch(
+                    branch, rule_map,
+                    matrix, depth, stack, result,
+                    total_objects, params_scope,
+                )
+                # Update total_objects count after branch
+                for mats in result.matrices.values():
+                    total_objects = len(mats)
+
+        return result
+
+    # ------------------------------------------------------------------
+    # Branch interpretation
+    # ------------------------------------------------------------------
+
+    def _interpret_branch(
+        self,
+        branch: Branch,
+        rule_map: Dict[str, List[Rule]],
+        parent_matrix: Matrix,
+        depth: int,
+        stack: list,
+        result: InterpreterResult,
+        total_objects: int,
+        params_scope: dict
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Interpret a single Branch AST node.
+
+        Builds the accumulated transform from all repetitions, then
+        dispatches to the terminal (RuleRef or Primitive).
+        Terminates the branch if the current size is outside [min_size, max_size].
+        &#34;&#34;&#34;
+        repetitions = branch.repetitions
+        terminal = branch.terminal
+
+        # Build per-repetition transform matrices and counts
+        rep_info = []  # list of (count, transform_matrix)
+        for rep in repetitions:
+            count = round(self.resolver.resolve_scoped(rep.count, params_scope))
+            tmat = self._build_transform_matrix(rep.transformations, params_scope)
+            rep_info.append((count, tmat))
+
+        # Terminal dispatch
+        if isinstance(terminal, RuleRef):
+            self._dispatch_call(
+                terminal, rule_map,
+                parent_matrix, depth, stack, rep_info,
+                params_scope,
+            )
+        else:
+            self._dispatch_instance(
+                terminal, result, parent_matrix, rep_info,
+                total_objects,
+            )
+
+    # ------------------------------------------------------------------
+    # Rule call dispatch
+    # ------------------------------------------------------------------
+
+    def _dispatch_call(
+        self,
+        ref: RuleRef,
+        rule_map: Dict[str, List[Rule]],
+        parent_matrix: Matrix,
+        depth: int,
+        stack: list,
+        rep_info: list,
+        params_scope: dict,
+    ) -&gt; None:
+        &#34;&#34;&#34;Handle a RuleRef terminal: push called rule(s) onto the stack.&#34;&#34;&#34;
+        target_rule = _pick_rule(rule_map, ref.name)
+
+        # Validate and resolve arguments
+        new_params_scope = dict(params_scope)
+        if ref.args:
+            # Check that the rule has parameters
+            if not target_rule.params:
+                raise ValueError(
+                    f&#34;Rule &#39;{ref.name}&#39; is called with {len(ref.args)} argument(s) &#34;
+                    f&#34;but has no parameters. Use &#39;{ref.name}&#39; without parentheses.&#34;
+                )
+            if len(ref.args) != len(target_rule.params):
+                raise ValueError(
+                    f&#34;Rule &#39;{ref.name}&#39; expects {len(target_rule.params)} parameter(s) &#34;
+                    f&#34;but got {len(ref.args)}. &#34;
+                    f&#34;Expected: ({&#39;, &#39;.join(target_rule.params)}), &#34;
+                    f&#34;got {len(ref.args)} argument(s).&#34;
+                )
+            # Resolve arguments and bind to parameters
+            for param_name, arg_val in zip(target_rule.params, ref.args):
+                new_params_scope[param_name] = self.resolver.resolve_scoped(arg_val, params_scope)
+
+        # Retirement on the call itself
+        call_max_depth = None
+        if ref.retirement_depth is not None:
+            call_max_depth = self.resolver.resolve_scoped(ref.retirement_depth, params_scope)
+            if isinstance(call_max_depth, float) and call_max_depth == int(call_max_depth):
+                call_max_depth = int(call_max_depth)
+        call_successor = ref.retirement_rule
+
+        if not rep_info:
+            # No repetitions — direct call
+            cloned = parent_matrix.copy()
+            if self._size_in_bounds(cloned):
+                entry = (target_rule, depth + 1, cloned, new_params_scope)
+                if call_max_depth is not None:
+                    # Wrap with a retirement rule
+                    entry = (_make_retirement_wrapper(target_rule, call_max_depth,
+                                                      call_successor, rule_map),
+                             depth + 1, cloned, new_params_scope)
+                stack.append(entry)
+            return
+
+        # Build cumulative transforms for each repetition level
+        base_matrix = parent_matrix.copy()
+
+        # For nested repetitions, we need to iterate through all combinations
+        self._emit_calls_recursive(
+            rep_info, 0, base_matrix,
+            target_rule, depth, call_max_depth, call_successor,
+            rule_map, stack, new_params_scope,
+        )
+
+    def _emit_calls_recursive(
+        self,
+        rep_info: list,
+        level: int,
+        current_matrix: Matrix,
+        target_rule: Rule,
+        depth: int,
+        call_max_depth: Optional[int],
+        call_successor: Optional[str],
+        rule_map: Dict[str, List[Rule]],
+        stack: list,
+        params_scope: dict,
+    ) -&gt; None:
+        &#34;&#34;&#34;Recursively emit stack entries for nested repetition levels.&#34;&#34;&#34;
+        if level == len(rep_info):
+            # Base case: push the terminal call
+            if self._size_in_bounds(current_matrix):
+                cloned = current_matrix.copy()
+                entry = (target_rule, depth + 1, cloned, params_scope)
+                if call_max_depth is not None:
+                    entry = (_make_retirement_wrapper(target_rule, call_max_depth,
+                                                      call_successor, rule_map),
+                             depth + 1, cloned, params_scope)
+                stack.append(entry)
+            return
+
+        count, tmat = rep_info[level]
+        cumulative = Matrix.Identity(4)
+        for _ in range(count):
+            cumulative @= tmat
+            self._emit_calls_recursive(
+                rep_info, level + 1,
+                current_matrix @ cumulative,
+                target_rule, depth,
+                call_max_depth, call_successor,
+                rule_map, stack, params_scope,
+            )
+
+    # ------------------------------------------------------------------
+    # Primitive instance dispatch
+    # ------------------------------------------------------------------
+
+    def _dispatch_instance(
+        self,
+        terminal,
+        result: InterpreterResult,
+        parent_matrix: Matrix,
+        rep_info: list,
+        total_objects: int,
+    ) -&gt; None:
+        &#34;&#34;&#34;Handle a Primitive terminal: emit placement matrix(es).&#34;&#34;&#34;
+        shape_name = _primitive_name(terminal)
+        if shape_name is None:
+            return
+
+        if shape_name not in result.matrices:
+            result.matrices[shape_name] = []
+
+        if not rep_info:
+            # No repetitions — single instance
+            if self._size_in_bounds(parent_matrix):
+                if self.max_objects is None or total_objects &lt; self.max_objects:
+                    result.matrices[shape_name].append(parent_matrix.copy())
+            return
+
+        # Build cumulative transforms for each repetition level
+        self._emit_instances_recursive(
+            rep_info, 0, parent_matrix,
+            shape_name, result, total_objects,
+        )
+
+    def _emit_instances_recursive(
+        self,
+        rep_info: list,
+        level: int,
+        current_matrix: Matrix,
+        shape_name: str,
+        result: InterpreterResult,
+        total_objects: int,
+    ) -&gt; None:
+        &#34;&#34;&#34;Recursively emit instance matrices for nested repetition levels.&#34;&#34;&#34;
+        if self.max_objects is not None and total_objects &gt;= self.max_objects:
+            return
+
+        if level == len(rep_info):
+            # Base case: emit the instance if size is in bounds
+            if self._size_in_bounds(current_matrix):
+                result.matrices[shape_name].append(current_matrix.copy())
+            return
+
+        count, tmat = rep_info[level]
+        cumulative = Matrix.Identity(4)
+        for _ in range(count):
+            cumulative @= tmat
+            new_total = 0
+            for mats in result.matrices.values():
+                new_total += len(mats)
+            self._emit_instances_recursive(
+                rep_info, level + 1,
+                current_matrix @ cumulative,
+                shape_name, result, new_total,
+            )
+
+    # ------------------------------------------------------------------
+    # Transform / size helpers (instance methods)
+    # ------------------------------------------------------------------
+
+    def _build_transform_matrix(
+        self,
+        transformations: list,
+        params_scope: dict,
+    ) -&gt; Matrix:
+        &#34;&#34;&#34;
+        Build a 4×4 Matrix from a list of Transformation AST nodes.
+
+        Dispatches to each node&#39;s ``apply_to_matrix`` method (polymorphic).
+        Uses ``self.origin_as_center`` to decide the transform center.
+        &#34;&#34;&#34;
+        matrix = Matrix.Identity(4)
+        origin = self.origin_as_center
+        t_center = self._T_CENTER
+        t_neg_center = self._T_NEG_CENTER
+
+        for trans in transformations:
+            trans.apply_to_matrix(
+                matrix, self.resolver.resolve_scoped, params_scope,
+                origin, t_center, t_neg_center,
+            )
+
+        return matrix
+
+    def _size_in_bounds(self, matrix: Matrix) -&gt; bool:
+        &#34;&#34;&#34;
+        Return True if the current size is within [self.min_size, self.max_size].
+
+        If both are None, always returns True.
+        &#34;&#34;&#34;
+        if self.min_size is None and self.max_size is None:
+            return True
+
+        size = _compute_size(matrix)
+
+        if self.min_size is not None and size &lt; self.min_size:
+            return False
+        if self.max_size is not None and size &gt; self.max_size:
+            return False
+        return True</code></pre>
+</details>
+<div class="desc"><p>Stack-based interpreter for EisenScript AST.</p>
+<p>Walks the rule graph starting from the implicit entry-point
+(<code>IMPLICIT_START_RULE</code>) and accumulates primitive placements.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>max_depth</code></strong></dt>
+<dd>Global recursion depth limit (from <code>set maxdepth</code>).</dd>
+<dt><strong><code>max_objects</code></strong></dt>
+<dd>Hard cap on the total number of primitive instances.</dd>
+<dt><strong><code>seed</code></strong></dt>
+<dd>Random seed for weighted rule selection.</dd>
+<dt><strong><code>origin_as_center</code></strong></dt>
+<dd>If True, transformations use (0,0,0) as center
+(legacy LSystem behavior). If False (default), use (0.5,0.5,0.5)
+per the EisenScript specification.</dd>
+<dt><strong><code>min_size</code></strong></dt>
+<dd>Minimum diagonal length of the unit cube before terminating
+a branch. None means no lower bound.</dd>
+<dt><strong><code>max_size</code></strong></dt>
+<dd>Maximum diagonal length of the unit cube before terminating
+a branch. None means no upper bound.</dd>
+</dl></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.modules.eisenscript.interpreter.Interpreter.interpret"><code class="name flex">
+<span>def <span class="ident">interpret</span></span>(<span>program: <a title="sverchok.utils.modules.eisenscript.ast.Program" href="ast.html#sverchok.utils.modules.eisenscript.ast.Program">Program</a>,<br>max_depth: int = 1000,<br>max_objects: int | None = None,<br>seed: int = 0,<br>origin_as_center: bool = True,<br>input_values: Dict[str, float] | None = None) ‑> <a title="sverchok.utils.modules.eisenscript.interpreter.InterpreterResult" href="#sverchok.utils.modules.eisenscript.interpreter.InterpreterResult">InterpreterResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def interpret(
+    program: Program,
+    max_depth : int = 1000,
+    max_objects : Optional[int] = None,
+    seed : int = 0,
+    origin_as_center: bool = True,
+    input_values: Optional[Dict[str, float]] = None,
+) -&gt; InterpreterResult:
+    &#34;&#34;&#34;Create an interpreter and run it on *program*.
+
+    Args:
+        program: The EisenScript program to interpret.
+        origin_as_center: If True, transformations use (0,0,0) as center
+            (legacy LSystem behavior, matches XML interpreter). If False,
+            use (0.5,0.5,0.5) per the EisenScript specification.
+            Default is True for compatibility with the legacy LSystem.
+        input_values: Optional dict mapping #input parameter names to
+            their runtime values.  Missing keys fall back to the default
+            value from the #input directive (if any).  If a parameter has
+            no default and is not provided, a ValueError is raised.
+
+    Reads ``maxdepth``, ``seed``, ``maxobjects``, ``minsize`` and
+    ``maxsize`` from program settings when present.
+    &#34;&#34;&#34;
+    global_maxdepth: int = max_depth
+    min_size: Optional[float] = None
+    max_size: Optional[float] = None
+
+    for s in program.settings:
+        if s.name == &#34;maxdepth&#34;:
+            global_maxdepth = min(int(s.value), global_maxdepth)
+        elif s.name == &#34;seed&#34;:
+            val = s.value
+            if isinstance(val, str) and val == &#34;initial&#34;:
+                seed = 0
+            else:
+                seed = int(val)
+        elif s.name == &#34;maxobjects&#34;:
+            max_objects = int(s.value)
+        elif s.name == &#34;minsize&#34;:
+            min_size = float(s.value)
+        elif s.name == &#34;maxsize&#34;:
+            max_size = float(s.value)
+
+    interp = Interpreter(
+        max_depth=global_maxdepth,
+        max_objects=max_objects,
+        seed=seed,
+        origin_as_center=origin_as_center,
+        min_size=min_size,
+        max_size=max_size,
+    )
+    return interp._interpret(program, input_values=input_values)</code></pre>
+</details>
+<div class="desc"><p>Create an interpreter and run it on <em>program</em>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>program</code></strong></dt>
+<dd>The EisenScript program to interpret.</dd>
+<dt><strong><code>origin_as_center</code></strong></dt>
+<dd>If True, transformations use (0,0,0) as center
+(legacy LSystem behavior, matches XML interpreter). If False,
+use (0.5,0.5,0.5) per the EisenScript specification.
+Default is True for compatibility with the legacy LSystem.</dd>
+<dt><strong><code>input_values</code></strong></dt>
+<dd>Optional dict mapping #input parameter names to
+their runtime values.
+Missing keys fall back to the default
+value from the #input directive (if any).
+If a parameter has
+no default and is not provided, a ValueError is raised.</dd>
+</dl>
+<p>Reads <code>maxdepth</code>, <code>seed</code>, <code>maxobjects</code>, <code>minsize</code> and
+<code>maxsize</code> from program settings when present.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.interpreter.InterpreterResult"><code class="flex name class">
+<span>class <span class="ident">InterpreterResult</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InterpreterResult:
+    &#34;&#34;&#34;
+    Holds the output of an EisenScript interpretation.
+
+    Attributes:
+        matrices: Dict mapping primitive name (str) to a list of
+            :class:`mathutils.Matrix` (4×4) transforms.
+            E.g. ``result.matrices[&#39;sphere&#39;]`` gives the list of
+            placement matrices for all sphere instances.
+    &#34;&#34;&#34;
+
+    __slots__ = (&#39;matrices&#39;,)
+
+    def __init__(self) -&gt; None:
+        self.matrices: Dict[str, List[Matrix]] = {}</code></pre>
+</details>
+<div class="desc"><p>Holds the output of an EisenScript interpretation.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>matrices</code></strong></dt>
+<dd>Dict mapping primitive name (str) to a list of
+:class:<code>mathutils.Matrix</code> (4×4) transforms.
+E.g. <code>result.matrices['sphere']</code> gives the list of
+placement matrices for all sphere instances.</dd>
+</dl></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.modules.eisenscript.interpreter.InterpreterResult.matrices"><code class="name">var <span class="ident">matrices</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InterpreterResult:
+    &#34;&#34;&#34;
+    Holds the output of an EisenScript interpretation.
+
+    Attributes:
+        matrices: Dict mapping primitive name (str) to a list of
+            :class:`mathutils.Matrix` (4×4) transforms.
+            E.g. ``result.matrices[&#39;sphere&#39;]`` gives the list of
+            placement matrices for all sphere instances.
+    &#34;&#34;&#34;
+
+    __slots__ = (&#39;matrices&#39;,)
+
+    def __init__(self) -&gt; None:
+        self.matrices: Dict[str, List[Matrix]] = {}</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.modules.eisenscript" href="index.html">sverchok.utils.modules.eisenscript</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.modules.eisenscript.interpreter.DefineResolver" href="#sverchok.utils.modules.eisenscript.interpreter.DefineResolver">DefineResolver</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.modules.eisenscript.interpreter.DefineResolver.get_all" href="#sverchok.utils.modules.eisenscript.interpreter.DefineResolver.get_all">get_all</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.interpreter.DefineResolver.resolve" href="#sverchok.utils.modules.eisenscript.interpreter.DefineResolver.resolve">resolve</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.interpreter.DefineResolver.resolve_scoped" href="#sverchok.utils.modules.eisenscript.interpreter.DefineResolver.resolve_scoped">resolve_scoped</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.modules.eisenscript.interpreter.Interpreter" href="#sverchok.utils.modules.eisenscript.interpreter.Interpreter">Interpreter</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.modules.eisenscript.interpreter.Interpreter.interpret" href="#sverchok.utils.modules.eisenscript.interpreter.Interpreter.interpret">interpret</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.modules.eisenscript.interpreter.InterpreterResult" href="#sverchok.utils.modules.eisenscript.interpreter.InterpreterResult">InterpreterResult</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.modules.eisenscript.interpreter.InterpreterResult.matrices" href="#sverchok.utils.modules.eisenscript.interpreter.InterpreterResult.matrices">matrices</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -234,7 +234,7 @@ If block does not exist new one will be created</p></div>
 <dl>
 <dt id="sverchok.utils.handle_blender_data.BPYPointers"><code class="flex name class">
 <span>class <span class="ident">BPYPointers</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -846,7 +846,7 @@ in this example the collection has two items, each item has 3 properties</p></di
 </dd>
 <dt id="sverchok.utils.handle_blender_data.BlDomains"><code class="flex name class">
 <span>class <span class="ident">BlDomains</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -865,7 +865,41 @@ in this example the collection has two items, each item has 3 properties</p></di
     # CURVE = &#39;Spline&#39;
     # INSTANCE = &#39;Instance&#39;</code></pre>
 </details>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>enum.Enum</li>
@@ -935,7 +969,7 @@ in this example the collection has two items, each item has 3 properties</p></di
             data = data[:1]
         if len(data) == 1:
             value = data[0]
-            self._mod[f&#34;{name}_use_attribute&#34;] = 0
+            self._mod[f&#34;{name}_use_attribute&#34;] = False # False - as value, True - as attribute
             if isinstance(value, (list, tuple)):  # list of single vertex
                 # for some reason node modifier can&#39;t apply python sequences directly
                 for i, v in enumerate(value):
@@ -952,7 +986,7 @@ in this example the collection has two items, each item has 3 properties</p></di
 
         # transfer field
         else:
-            self._mod[f&#34;{name}_use_attribute&#34;] = 1
+            self._mod[f&#34;{name}_use_attribute&#34;] = True
             self._mod[f&#34;{name}_attribute_name&#34;] = name
             obj = BlObject(self._mod.id_data)
             sock = self.gn_tree.inputs[name]
@@ -1104,7 +1138,7 @@ def type(self) -&gt; str:
         data = data[:1]
     if len(data) == 1:
         value = data[0]
-        self._mod[f&#34;{name}_use_attribute&#34;] = 0
+        self._mod[f&#34;{name}_use_attribute&#34;] = False # False - as value, True - as attribute
         if isinstance(value, (list, tuple)):  # list of single vertex
             # for some reason node modifier can&#39;t apply python sequences directly
             for i, v in enumerate(value):
@@ -1121,7 +1155,7 @@ def type(self) -&gt; str:
 
     # transfer field
     else:
-        self._mod[f&#34;{name}_use_attribute&#34;] = 1
+        self._mod[f&#34;{name}_use_attribute&#34;] = True
         self._mod[f&#34;{name}_attribute_name&#34;] = name
         obj = BlObject(self._mod.id_data)
         sock = self.gn_tree.inputs[name]
@@ -1368,30 +1402,37 @@ def properties(self) -&gt; List[BPYProperty]:
     }
 
     _sv_types = {
-        &#39;VECTOR&#39;: &#39;SvVerticesSocket&#39;,
-        &#39;VALUE&#39;: &#39;SvStringsSocket&#39;,
-        &#39;RGBA&#39;: &#39;SvColorSocket&#39;,
-        &#39;INT&#39;: &#39;SvStringsSocket&#39;,
-        &#39;STRING&#39;: &#39;SvTextSocket&#39;,
-        &#39;BOOLEAN&#39;: &#39;SvStringsSocket&#39;,
-        &#39;OBJECT&#39;: &#39;SvObjectSocket&#39;,
-        &#39;COLLECTION&#39;: &#39;SvCollectionSocket&#39;,
-        &#39;MATERIAL&#39;: &#39;SvMaterialSocket&#39;,
-        &#39;TEXTURE&#39;: &#39;SvTextureSocket&#39;,
-        &#39;IMAGE&#39;: &#39;SvImageSocket&#39;,
+        &#39;VECTOR&#39;                : &#39;SvVerticesSocket&#39;,
+        &#39;VALUE&#39;                 : &#39;SvStringsSocket&#39;,
+        &#39;RGBA&#39;                  : &#39;SvColorSocket&#39;,
+        &#39;INT&#39;                   : &#39;SvStringsSocket&#39;,
+        &#39;STRING&#39;                : &#39;SvTextSocket&#39;,
+        &#39;BOOLEAN&#39;               : &#39;SvStringsSocket&#39;,
+        &#39;OBJECT&#39;                : &#39;SvObjectSocket&#39;,
+        &#39;COLLECTION&#39;            : &#39;SvCollectionSocket&#39;,
+        &#39;MATERIAL&#39;              : &#39;SvMaterialSocket&#39;,
+        &#39;TEXTURE&#39;               : &#39;SvTextureSocket&#39;,
+        &#39;IMAGE&#39;                 : &#39;SvImageSocket&#39;,
 
         # replaced in Blender 4.x:
-        &#39;NodeSocketVector&#39;: &#39;SvVerticesSocket&#39;,
-        &#39;NodeSocketValue&#39;: &#39;SvStringsSocket&#39;,
-        &#39;NodeSocketRgba&#39;: &#39;SvColorSocket&#39;,
-        &#39;NodeSocketInt&#39;: &#39;SvStringsSocket&#39;,
-        &#39;NodeSocketString&#39;: &#39;SvTextSocket&#39;,
-        &#39;NodeSocketBoolean&#39;: &#39;SvStringsSocket&#39;,
-        &#39;NodeSocketObject&#39;: &#39;SvObjectSocket&#39;,
-        &#39;NodeSocketCollection&#39;: &#39;SvCollectionSocket&#39;,
-        &#39;NodeSocketMaterial&#39;: &#39;SvMaterialSocket&#39;,
-        &#39;NodeSocketTexture&#39;: &#39;SvTextureSocket&#39;,
-        &#39;NodeSocketImage&#39;: &#39;SvImageSocket&#39;,
+        &#39;NodeSocketVector&#39;      : &#39;SvVerticesSocket&#39;,
+        &#39;NodeSocketValue&#39;       : &#39;SvStringsSocket&#39;,
+        &#39;NodeSocketRgba&#39;        : &#39;SvColorSocket&#39;,
+        &#39;NodeSocketInt&#39;         : &#39;SvStringsSocket&#39;,
+        &#39;NodeSocketString&#39;      : &#39;SvTextSocket&#39;,
+        &#39;NodeSocketBoolean&#39;     : &#39;SvStringsSocket&#39;,
+        &#39;NodeSocketObject&#39;      : &#39;SvObjectSocket&#39;,
+        &#39;NodeSocketCollection&#39;  : &#39;SvCollectionSocket&#39;,
+        &#39;NodeSocketMaterial&#39;    : &#39;SvMaterialSocket&#39;,
+        &#39;NodeSocketTexture&#39;     : &#39;SvTextureSocket&#39;,
+        &#39;NodeSocketImage&#39;       : &#39;SvImageSocket&#39;,
+
+        # replaced in Blender 5.x:
+        &#39;NodeSocketFloat&#39;       : &#39;SvStringsSocket&#39;,
+        &#39;NodeSocketBool&#39;        : &#39;SvStringsSocket&#39;,
+        &#39;NodeSocketColor&#39;       : &#39;SvColorSocket&#39;,
+        &#39;NodeSocketRotation&#39;    : &#39;SvVerticesSocket&#39;,
+        # &#39;NodeSocketMatrix&#39;      : &#39;SvMatrixSocket&#39;, cannot be used outside geonodes
     }
 
     def __init__(self, socket):
@@ -1402,9 +1443,9 @@ def properties(self) -&gt; List[BPYProperty]:
 
         if sv_sock.bl_idname == &#39;SvStringsSocket&#39;:
             attr_type_name = &#34;type&#34; if hasattr(self._sock, &#34;type&#34;) else &#34;socket_type&#34; # &#34;type&#34; for Blender &lt;4.x, &#34;socket_type&#34; for Blender &gt;= 4.x
-            if getattr(self._sock, attr_type_name) in {&#39;VALUE&#39;, &#39;NodeSocketValue&#39;}: # {&#39;VALUE&#39;,} - Blender &lt; 4.x, {&#39;NodeSocketValue&#39;} - Blender &gt;=4.x
+            if getattr(self._sock, attr_type_name) in {&#39;VALUE&#39;, &#39;NodeSocketValue&#39;, &#39;NodeSocketFloat&#39;}: # {&#39;VALUE&#39;,} - Blender &lt; 4.x, {&#39;NodeSocketValue&#39;} - Blender &gt;=4.x, {&#39;NodeSocketFloat&#39;} - Blender &gt; 5.x
                 sv_sock.default_property_type = &#39;float&#39;
-            elif getattr(self._sock, attr_type_name) in {&#39;INT&#39;, &#39;BOOLEAN&#39;, &#39;NodeSocketInt&#39;, &#39;NodeSocketBoolean&#39;}: # {&#39;INT&#39;, &#39;BOOLEAN&#39;} - Blender &lt; 4.x, {&#39;NodeSocketInt&#39;, &#39;NodeSocketBoolean&#39;} - Blender &gt;=4.x
+            elif getattr(self._sock, attr_type_name) in {&#39;INT&#39;, &#39;BOOLEAN&#39;, &#39;NodeSocketInt&#39;, &#39;NodeSocketBoolean&#39;, &#39;NodeSocketBool&#39;,}: # {&#39;INT&#39;, &#39;BOOLEAN&#39;} - Blender &lt; 4.x, {&#39;NodeSocketInt&#39;, &#39;NodeSocketBoolean&#39;} - Blender &gt;=4.x
                 sv_sock.default_property_type = &#39;int&#39;
             else:
                 return  # There is no default property for such type
@@ -1524,9 +1565,9 @@ def sverchok_type(self):
 
     if sv_sock.bl_idname == &#39;SvStringsSocket&#39;:
         attr_type_name = &#34;type&#34; if hasattr(self._sock, &#34;type&#34;) else &#34;socket_type&#34; # &#34;type&#34; for Blender &lt;4.x, &#34;socket_type&#34; for Blender &gt;= 4.x
-        if getattr(self._sock, attr_type_name) in {&#39;VALUE&#39;, &#39;NodeSocketValue&#39;}: # {&#39;VALUE&#39;,} - Blender &lt; 4.x, {&#39;NodeSocketValue&#39;} - Blender &gt;=4.x
+        if getattr(self._sock, attr_type_name) in {&#39;VALUE&#39;, &#39;NodeSocketValue&#39;, &#39;NodeSocketFloat&#39;}: # {&#39;VALUE&#39;,} - Blender &lt; 4.x, {&#39;NodeSocketValue&#39;} - Blender &gt;=4.x, {&#39;NodeSocketFloat&#39;} - Blender &gt; 5.x
             sv_sock.default_property_type = &#39;float&#39;
-        elif getattr(self._sock, attr_type_name) in {&#39;INT&#39;, &#39;BOOLEAN&#39;, &#39;NodeSocketInt&#39;, &#39;NodeSocketBoolean&#39;}: # {&#39;INT&#39;, &#39;BOOLEAN&#39;} - Blender &lt; 4.x, {&#39;NodeSocketInt&#39;, &#39;NodeSocketBoolean&#39;} - Blender &gt;=4.x
+        elif getattr(self._sock, attr_type_name) in {&#39;INT&#39;, &#39;BOOLEAN&#39;, &#39;NodeSocketInt&#39;, &#39;NodeSocketBoolean&#39;, &#39;NodeSocketBool&#39;,}: # {&#39;INT&#39;, &#39;BOOLEAN&#39;} - Blender &lt; 4.x, {&#39;NodeSocketInt&#39;, &#39;NodeSocketBoolean&#39;} - Blender &gt;=4.x
             sv_sock.default_property_type = &#39;int&#39;
         else:
             return  # There is no default property for such type

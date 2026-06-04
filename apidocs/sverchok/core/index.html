@@ -112,6 +112,36 @@ context</p></div>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.core.draw_node_manual"><code class="name flex">
+<span>def <span class="ident">draw_node_manual</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_node_manual(self, context):
+    layout = self.layout
+    node = context.active_node
+
+    if node:
+        node_name = node.bl_idname
+        node_name_lower = node_name.lower()
+        elem = [nm for nm in sverchok_nodes_map if nm[0].endswith(&#34;.&#34;+node_name_lower)]
+        if elem:
+            help_url = sverchok_help_prefix + elem[0][1]
+            layout.separator()
+            layout.operator(
+                &#34;wm.url_open&#34;,
+                text=&#34;Online Manual (SV)&#34;,
+                icon=&#39;HELP&#39;
+            ).url = help_url
+            #layout.operator(&#34;wm.doc_view_manual&#34;, text=&#34;Online Manual&#34; ) # do not work as expected in Blender &lt;3.6
+        pass
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.core.enable_logging"><code class="name flex">
 <span>def <span class="ident">enable_logging</span></span>(<span>)</span>
 </code></dt>
@@ -181,7 +211,19 @@ Adds additional handlers according the add-on settings and set logging level</p>
 </summary>
 <pre><code class="python">def import_all_modules(imported_modules, mods_bases):
     for mods, base in mods_bases:
-        import_modules(mods, base, imported_modules)</code></pre>
+        import_modules(mods, base, imported_modules)
+    # register context help
+    _sverchok_nodes = [m for m in imported_modules if m.__name__ == &#39;sverchok.nodes&#39;]
+    if _sverchok_nodes:
+        sverchok_nodes = _sverchok_nodes[0]
+        nodes_dict = sverchok_nodes.nodes_dict
+        for category_name in nodes_dict:
+            category = sverchok_nodes.nodes_dict[category_name]
+            for node_name in category:
+                node_help_map = ((f&#39;bpy.types.{node_name}&#39;, f&#39;{category_name}/{node_name}.html&#39;))
+                pass
+
+    pass</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -330,6 +372,31 @@ List of core modules is used for calling their register function.</p></div>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.core.iter_modules"><code class="name flex">
+<span>def <span class="ident">iter_modules</span></span>(<span>module, visited=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def iter_modules(module, visited=None):
+    if visited is None:
+        visited = set()
+
+    if module in visited:
+        return
+    visited.add(module)
+
+    yield module
+
+    for obj in module.__dict__.values():
+        if isinstance(obj, types.ModuleType)  and obj.__name__.startswith(&#34;sverchok.nodes&#34;):
+            yield from iter_modules(obj, visited)
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.core.sv_register_modules"><code class="name flex">
 <span>def <span class="ident">sv_register_modules</span></span>(<span>modules)</span>
 </code></dt>
@@ -339,10 +406,51 @@ List of core modules is used for calling their register function.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def sv_register_modules(modules):
+    global sverchok_help_prefix, sverchok_nodes_map, sverchok_help_nodes_map_was_registered
     for m in modules:
         if hasattr(m, &#34;register&#34;):
             # print(&#34;Registering module: {}&#34;.format(m.__name__))
-            m.register()</code></pre>
+            m.register()
+    _sverchok_nodes = [m for m in modules if m.__name__ == &#39;sverchok.nodes&#39;]
+    if _sverchok_nodes:
+        sverchok_nodes = _sverchok_nodes[0]
+        result = []
+        for mod in iter_modules(sverchok_nodes):
+            for _, cls in inspect.getmembers(mod, inspect.isclass):
+                if not cls.__module__.startswith(mod.__name__):
+                    continue
+
+                try:
+                    if issubclass(cls, bpy.types.Node):
+                        if hasattr(cls, &#39;bl_idname&#39;):
+                            p = Path(mod.__file__)
+                            mod_filename = p.stem
+                            mod_parentdir_name = p.parent.name
+                            d = dict(c=cls, filename = mod_filename, parentdir = mod_parentdir_name)
+                            help_mapping = (f&#39;bpy.types.{cls.bl_idname}&#39;.lower(), f&#39;{mod_parentdir_name}/{mod_filename}.html&#39;,)
+                            result.append(help_mapping)
+                        pass
+                    pass
+                except TypeError:
+                    pass
+                pass
+            pass
+        
+        if result:
+            try:
+                if bpy.app.version &lt; (3, 6):
+                    # in the old versions of sverchok add/remove menu manually
+                    bpy.types.NODE_MT_context_menu.append(draw_node_manual)
+
+                sverchok_nodes_map = tuple(result)
+                bpy.utils.register_manual_map(sverchok_help_nodes_map)
+                sverchok_help_nodes_map_was_registered = True
+            except RuntimeError as e:
+                print(&#34;Error registering bpy.utils.register_manual_map&#34;)
+                pass
+            pass
+
+    pass</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -355,13 +463,37 @@ List of core modules is used for calling their register function.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def sv_unregister_modules(modules):
+    global sverchok_help_prefix, sverchok_nodes_map, sverchok_help_nodes_map_was_registered
     for m in reversed(modules):
         if hasattr(m, &#34;unregister&#34;):
             try:
                 m.unregister()
             except RuntimeError as e:
                 print(&#34;Error unregistering module: {}&#34;.format(m.__name__))
-                print(str(e))</code></pre>
+                print(str(e))
+    try:
+        if sverchok_help_nodes_map_was_registered==True:
+            if bpy.app.version &lt; (3, 6):
+                # in the old versions of sverchok add/remove menu manually
+                bpy.types.NODE_MT_context_menu.remove(draw_node_manual)
+            bpy.utils.unregister_manual_map(sverchok_help_nodes_map)
+        sverchok_help_nodes_map_was_registered = False
+    except RuntimeError as e:
+        print(&#34;Error unregistering bpy.utils.unregister_manual_map&#34;)
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.core.sverchok_help_nodes_map"><code class="name flex">
+<span>def <span class="ident">sverchok_help_nodes_map</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sverchok_help_nodes_map():
+    return sverchok_help_prefix, sverchok_nodes_map</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -394,6 +526,7 @@ List of core modules is used for calling their register function.</p></div>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="sverchok.core.disable_logging" href="#sverchok.core.disable_logging">disable_logging</a></code></li>
+<li><code><a title="sverchok.core.draw_node_manual" href="#sverchok.core.draw_node_manual">draw_node_manual</a></code></li>
 <li><code><a title="sverchok.core.enable_logging" href="#sverchok.core.enable_logging">enable_logging</a></code></li>
 <li><code><a title="sverchok.core.handle_reload_event" href="#sverchok.core.handle_reload_event">handle_reload_event</a></code></li>
 <li><code><a title="sverchok.core.import_all_modules" href="#sverchok.core.import_all_modules">import_all_modules</a></code></li>
@@ -404,8 +537,10 @@ List of core modules is used for calling their register function.</p></div>
 <li><code><a title="sverchok.core.imported_utils_modules" href="#sverchok.core.imported_utils_modules">imported_utils_modules</a></code></li>
 <li><code><a title="sverchok.core.init_architecture" href="#sverchok.core.init_architecture">init_architecture</a></code></li>
 <li><code><a title="sverchok.core.interupted_activation_detected" href="#sverchok.core.interupted_activation_detected">interupted_activation_detected</a></code></li>
+<li><code><a title="sverchok.core.iter_modules" href="#sverchok.core.iter_modules">iter_modules</a></code></li>
 <li><code><a title="sverchok.core.sv_register_modules" href="#sverchok.core.sv_register_modules">sv_register_modules</a></code></li>
 <li><code><a title="sverchok.core.sv_unregister_modules" href="#sverchok.core.sv_unregister_modules">sv_unregister_modules</a></code></li>
+<li><code><a title="sverchok.core.sverchok_help_nodes_map" href="#sverchok.core.sverchok_help_nodes_map">sverchok_help_nodes_map</a></code></li>
 </ul>
 </li>
 </ul>

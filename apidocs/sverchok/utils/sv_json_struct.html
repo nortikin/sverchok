@@ -550,7 +550,7 @@ If a Blender file does not posses the collection the empty collection will be ge
         _set_optional(self._struct[&#34;attributes&#34;], &#39;hide_value&#39;, socket.hide_value)
         _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
 
-        for prop_name in socket.keys():
+        for prop_name in _iter_idprop_names(socket):
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -644,7 +644,7 @@ If a Blender file does not posses the collection the empty collection will be ge
     _set_optional(self._struct[&#34;attributes&#34;], &#39;hide_value&#39;, socket.hide_value)
     _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
 
-    for prop_name in socket.keys():
+    for prop_name in _iter_idprop_names(socket):
         prop = BPYProperty(socket, prop_name)
         if prop.is_valid and prop.is_to_save:
             raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -1691,7 +1691,7 @@ Structure of the class can be just a value or usual dictionary (in case of a poi
         _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
 
 
-        for prop_name in socket.keys():
+        for prop_name in _iter_idprop_names(socket):
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -1804,7 +1804,7 @@ Structure of the class can be just a value or usual dictionary (in case of a poi
     _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
 
 
-    for prop_name in socket.keys():
+    for prop_name in _iter_idprop_names(socket):
         prop = BPYProperty(socket, prop_name)
         if prop.is_valid and prop.is_to_save:
             raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -1829,7 +1829,7 @@ Structure of the class can be just a value or usual dictionary (in case of a poi
 </dd>
 <dt id="sverchok.utils.sv_json_struct.StrTypes"><code class="flex name class">
 <span>class <span class="ident">StrTypes</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -2241,7 +2241,7 @@ then a tree structure can use the node structure that we chose</p></div>
 </dd>
 <dt id="sverchok.utils.sv_json_struct.SvNodeTreeInterface"><code class="flex name class">
 <span>class <span class="ident">SvNodeTreeInterface</span></span>
-<span>(</span><span>*args, **kwargs)</span>
+<span>(</span><span>interface, in_out, sockets)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -2304,6 +2304,22 @@ The argument must be an iterable if specified.</p></div>
 <span>def <span class="ident">get_outputs</span></span>(<span>tree)</span>
 </code></dt>
 <dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.SvNodeTreeInterface.new"><code class="name flex">
+<span>def <span class="ident">new</span></span>(<span>self, socket_type, name)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def new(self, socket_type, name):
+    return self.interface.new_socket(name=name, in_out=self.in_out, socket_type=socket_type)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -2755,6 +2771,7 @@ The argument must be an iterable if specified.</p></div>
 <ul class="">
 <li><code><a title="sverchok.utils.sv_json_struct.SvNodeTreeInterface.get_inputs" href="#sverchok.utils.sv_json_struct.SvNodeTreeInterface.get_inputs">get_inputs</a></code></li>
 <li><code><a title="sverchok.utils.sv_json_struct.SvNodeTreeInterface.get_outputs" href="#sverchok.utils.sv_json_struct.SvNodeTreeInterface.get_outputs">get_outputs</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.SvNodeTreeInterface.new" href="#sverchok.utils.sv_json_struct.SvNodeTreeInterface.new">new</a></code></li>
 </ul>
 </li>
 <li>

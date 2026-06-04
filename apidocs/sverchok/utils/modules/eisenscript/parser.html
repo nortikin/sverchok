@@ -1,0 +1,1437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.modules.eisenscript.parser API documentation</title>
+<meta name="description" content="Parser for the EisenScript language using the combinator parser framework
+from sverchok.utils.parsec …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.modules.eisenscript.parser</code></h1>
+</header>
+<section id="section-intro">
+<p>Parser for the EisenScript language using the combinator parser framework
+from sverchok.utils.parsec.</p>
+<p>Grammar (EBNF):
+program
+-&gt; (input_stmt | define_stmt | set_statement
+| rule_definition | implicit_start)<em>
+input_stmt
+-&gt; '#input' identifier ['number'] [number]
+define_stmt
+-&gt; '#define' identifier (number | expr)
+set_statement
+-&gt; 'set' setting_name value</em>
+rule_definition
+-&gt; 'rule' identifier param_list? modifier<em> '{' rule_body '}'
+param_list
+-&gt; '(' identifier {',' identifier} ')'
+implicit_start
+-&gt; branch
+// bare branch → rule 'start' { branch }
+rule_modifier
+-&gt; ('maxdepth' | 'md') value ['&gt;' identifier]
+| ('weight' | 'w') value
+rule_body
+-&gt; branch</em>
+branch
+-&gt; (repetition | transform_block)<em> (rule_ref | primitive)
+repetition
+-&gt; count '</em>' '{' transformation+ '}'
+transform_block
+-&gt; '{' transformation+ '}'
+count
+-&gt; int | identifier | expr
+rule_ref
+-&gt; identifier arg_list? | 'md' value ['&gt;' identifier] identifier
+arg_list
+-&gt; '(' value {',' value} ')'
+primitive
+-&gt; 'box' | 'grid' | 'sphere' | 'line' | 'point'
+| 'Triangle' '[' coord {';' coord} ']'
+coord
+-&gt; float {',' float}
+transformation
+-&gt; ('x' | 'y' | 'z') value
+| ('rx' | 'ry' | 'rz') value
+| 's' (value | value value value)
+| 'm' value{9}
+| 'fx' | 'fy' | 'fz'
+| ('h' | 'hue') value
+| 'sat' value
+| ('b' | 'brightness') value
+| ('a' | 'alpha') value
+| 'color' color_string
+| 'blend' color_string value
+value
+-&gt; float | identifier | expr
+expr
+-&gt; '(' python_expression ')'</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>source, check_full=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(source, check_full=True):
+    &#34;&#34;&#34;
+    Parse an EisenScript source string into a Program AST.
+
+    Args:
+        source: EisenScript source code string.
+        check_full: If True, raise an error if not all input is consumed.
+
+    Returns:
+        Program AST node.
+
+    Raises:
+        SyntaxError: If the source cannot be parsed.
+    &#34;&#34;&#34;
+    # Strip comments
+    cleaned = _strip_comments(source)
+
+    # Parse all top-level statements
+    statements = []
+    current = cleaned.strip()
+
+    while current:
+        for stmt, rest in parse_top_statement(current):
+            statements.append(stmt)
+            current = rest.strip() if rest else &#34;&#34;
+            break
+        else:
+            if current.strip():
+                raise SyntaxError(f&#34;Cannot parse: {current[:50]!r}&#34;)
+            break
+
+    # Separate inputs, defines, settings and rules
+    from sverchok.utils.modules.eisenscript.ast import InputDef
+
+    inputs = {}
+    defines = {}
+    settings = []
+    rules = []
+    for stmt in statements:
+        if isinstance(stmt, InputDef):
+            inputs[stmt.name] = stmt
+        elif isinstance(stmt, tuple) and len(stmt) == 2:
+            # Define statement: (name, value)
+            defines[stmt[0]] = stmt[1]
+        elif isinstance(stmt, SetStatement):
+            settings.append(stmt)
+        elif isinstance(stmt, Rule):
+            rules.append(stmt)
+        else:
+            settings.append(stmt)
+
+    # Check for name conflicts between #input and #define
+    conflicts = set(inputs.keys()) &amp; set(defines.keys())
+    if conflicts:
+        raise SyntaxError(
+            f&#34;Name conflict between #input and #define: {&#39;, &#39;.join(sorted(conflicts))}. &#34;
+            f&#34;A name can be declared in either #input or #define, but not both.&#34;
+        )
+
+    # Merge multiple IMPLICIT_START_RULE rules into one.
+    # Each bare branch creates a separate Rule(IMPLICIT_START_RULE),
+    # but they should all be branches of a single start rule.
+    start_rule = None
+    other_rules = []
+    for rule in rules:
+        if rule.name == IMPLICIT_START_RULE:
+            if start_rule is None:
+                start_rule = rule
+            else:
+                start_rule.body.extend(rule.body)
+        else:
+            other_rules.append(rule)
+
+    if start_rule is not None:
+        rules = [start_rule] + other_rules
+    else:
+        rules = other_rules
+
+    return Program(inputs=inputs, defines=defines, settings=settings, rules=rules)</code></pre>
+</details>
+<div class="desc"><p>Parse an EisenScript source string into a Program AST.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>source</code></strong></dt>
+<dd>EisenScript source code string.</dd>
+<dt><strong><code>check_full</code></strong></dt>
+<dd>If True, raise an error if not all input is consumed.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Program AST node.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>SyntaxError</code></dt>
+<dd>If the source cannot be parsed.</dd>
+</dl></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_AlphaMul"><code class="name flex">
+<span>def <span class="ident">parse_AlphaMul</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_AlphaMul(src):
+    kw, after = _starts_with_kw(src, &#39;alpha&#39;, &#39;a&#39;)
+    if kw is None:
+        return
+    val, rest = _parse_value_any(after)
+    if val is None:
+        return
+    yield AlphaMul(val), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_BlendColor"><code class="name flex">
+<span>def <span class="ident">parse_BlendColor</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_BlendColor(src):
+    s = src.lstrip()
+    if not s.startswith(&#39;blend&#39;):
+        return
+    after = s[5:].lstrip()
+    for color, rest in parse_color_string(after):
+        val, rest2 = _parse_value_any(rest)
+        if val is None:
+            return
+        yield BlendColor(color, val), rest2</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_BrightnessMul"><code class="name flex">
+<span>def <span class="ident">parse_BrightnessMul</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_BrightnessMul(src):
+    kw, after = _starts_with_kw(src, &#39;brightness&#39;, &#39;b&#39;)
+    if kw is None:
+        return
+    val, rest = _parse_value_any(after)
+    if val is None:
+        return
+    yield BrightnessMul(val), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_HueShift"><code class="name flex">
+<span>def <span class="ident">parse_HueShift</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_HueShift(src):
+    kw, after = _starts_with_kw(src, &#39;hue&#39;, &#39;h&#39;)
+    if kw is None:
+        return
+    val, rest = _parse_value_any(after)
+    if val is None:
+        return
+    yield HueShift(val), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_MatrixTransform"><code class="name flex">
+<span>def <span class="ident">parse_MatrixTransform</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_MatrixTransform(src):
+    s = src.lstrip()
+    if not s.startswith(&#39;m&#39;):
+        return
+    after = s[1:]
+    # Make sure &#39;m&#39; is standalone (not &#39;md&#39;, &#39;maxdepth&#39;, etc.)
+    if after and not (after[0].isspace() or after[0] == &#39;(&#39;):
+        return
+    values = []
+    current = after
+    for _ in range(9):
+        val, current = _parse_value(current)
+        if val is None:
+            return
+        values.append(val)
+    yield MatrixTransform(values), current.lstrip()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_MirrorX"><code class="name flex">
+<span>def <span class="ident">parse_MirrorX</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_MirrorX(src):
+    s = src.lstrip()
+    if s.startswith(&#39;fx&#39;):
+        after = s[2:]
+        if not after or after[0].isspace():
+            yield Mirror(AXIS_X), after.lstrip()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_MirrorY"><code class="name flex">
+<span>def <span class="ident">parse_MirrorY</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_MirrorY(src):
+    s = src.lstrip()
+    if s.startswith(&#39;fy&#39;):
+        after = s[2:]
+        if not after or after[0].isspace():
+            yield Mirror(AXIS_Y), after.lstrip()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_MirrorZ"><code class="name flex">
+<span>def <span class="ident">parse_MirrorZ</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_MirrorZ(src):
+    s = src.lstrip()
+    if s.startswith(&#39;fz&#39;):
+        after = s[2:]
+        if not after or after[0].isspace():
+            yield Mirror(AXIS_Z), after.lstrip()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_RotateX"><code class="name flex">
+<span>def <span class="ident">parse_RotateX</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_RotateX(src):
+    kw, after = _starts_with_kw(src, &#39;rx&#39;)
+    if kw is None:
+        return
+    val, rest = _parse_value_any(after)
+    if val is None:
+        return
+    yield Rotate(AXIS_X, val), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_RotateY"><code class="name flex">
+<span>def <span class="ident">parse_RotateY</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_RotateY(src):
+    kw, after = _starts_with_kw(src, &#39;ry&#39;)
+    if kw is None:
+        return
+    val, rest = _parse_value_any(after)
+    if val is None:
+        return
+    yield Rotate(AXIS_Y, val), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_RotateZ"><code class="name flex">
+<span>def <span class="ident">parse_RotateZ</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_RotateZ(src):
+    kw, after = _starts_with_kw(src, &#39;rz&#39;)
+    if kw is None:
+        return
+    val, rest = _parse_value_any(after)
+    if val is None:
+        return
+    yield Rotate(AXIS_Z, val), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_SaturationMul"><code class="name flex">
+<span>def <span class="ident">parse_SaturationMul</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_SaturationMul(src):
+    kw, after = _starts_with_kw(src, &#39;sat&#39;)
+    if kw is None:
+        return
+    val, rest = _parse_value_any(after)
+    if val is None:
+        return
+    yield SaturationMul(val), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_Scale"><code class="name flex">
+<span>def <span class="ident">parse_Scale</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_Scale(src):
+    &#34;&#34;&#34;Parse &#39;s &lt;v&gt;&#39; or &#39;s &lt;v1&gt; &lt;v2&gt; &lt;v3&gt;&#39;.
+
+    Uses _parse_value which excludes transformation keywords (x, y, z, rx, ry,
+    rz, s, h, b, a, etc.) to avoid ambiguity.  If you need a variable whose
+    name matches a keyword as a scale value, wrap it in an expression:
+    ``s (x) (y) 1`` instead of ``s x y 1``.
+    &#34;&#34;&#34;
+    s = src.lstrip()
+    if not s.startswith(&#39;s&#39;):
+        return
+    after = s[1:]
+    # Make sure &#39;s&#39; is a standalone keyword (not &#39;sat&#39;, &#39;scale&#39;, etc.)
+    if after and not (after[0].isspace() or after[0] == &#39;(&#39;):
+        return
+    val1, rest = _parse_value(after)
+    if val1 is None:
+        return
+    # Try to parse second value
+    val2, rest2 = _parse_value(rest)
+    if val2 is not None:
+        # Try to parse third value
+        val3, rest3 = _parse_value(rest2)
+        if val3 is not None:
+            yield Scale(val1, val2, val3), rest3.lstrip()
+            return
+        yield Scale(val1, val2), rest2.lstrip()
+        return
+    yield Scale(val1), rest.lstrip()</code></pre>
+</details>
+<div class="desc"><p>Parse 's <v>' or 's <v1> <v2> <v3>'.</p>
+<p>Uses _parse_value which excludes transformation keywords (x, y, z, rx, ry,
+rz, s, h, b, a, etc.) to avoid ambiguity.
+If you need a variable whose
+name matches a keyword as a scale value, wrap it in an expression:
+<code>s (x) (y) 1</code> instead of <code>s x y 1</code>.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_SetColor"><code class="name flex">
+<span>def <span class="ident">parse_SetColor</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_SetColor(src):
+    s = src.lstrip()
+    if not s.startswith(&#39;color&#39;):
+        return
+    after = s[5:].lstrip()
+    for color, rest in parse_color_string(after):
+        yield SetColor(color), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_TranslateX"><code class="name flex">
+<span>def <span class="ident">parse_TranslateX</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_TranslateX(src):
+    kw, after = _starts_with_kw(src, &#39;x&#39;)
+    if kw is None:
+        return
+    val, rest = _parse_value_any(after)
+    if val is None:
+        return
+    yield Translate(AXIS_X, val), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_TranslateY"><code class="name flex">
+<span>def <span class="ident">parse_TranslateY</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_TranslateY(src):
+    kw, after = _starts_with_kw(src, &#39;y&#39;)
+    if kw is None:
+        return
+    val, rest = _parse_value_any(after)
+    if val is None:
+        return
+    yield Translate(AXIS_Y, val), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_TranslateZ"><code class="name flex">
+<span>def <span class="ident">parse_TranslateZ</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_TranslateZ(src):
+    kw, after = _starts_with_kw(src, &#39;z&#39;)
+    if kw is None:
+        return
+    val, rest = _parse_value_any(after)
+    if val is None:
+        return
+    yield Translate(AXIS_Z, val), rest</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_Triangle"><code class="name flex">
+<span>def <span class="ident">parse_Triangle</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_Triangle(src):
+    &#34;&#34;&#34;Parse &#39;Triangle[x1,y1,z1;x2,y2,z2;x3,y3,z3]&#39;.&#34;&#34;&#34;
+    if not src.lstrip().startswith(&#34;Triangle[&#34;):
+        return
+    start = src.lstrip()
+    offset = len(src) - len(start)
+    inner_start = offset + len(&#34;Triangle[&#34;)
+    bracket_end = start.find(&#34;]&#34;)
+    if bracket_end == -1:
+        return
+    coords_str = start[len(&#34;Triangle[&#34;):bracket_end]
+    rest = src[inner_start + bracket_end + 1:]
+
+    vertices = []
+    for vertex_str in coords_str.split(&#34;;&#34;):
+        vertex_str = vertex_str.strip()
+        if not vertex_str:
+            continue
+        parts = vertex_str.split(&#34;,&#34;)
+        x = float(parts[0].strip())
+        y = float(parts[1].strip()) if len(parts) &gt; 1 else 0.0
+        z = float(parts[2].strip()) if len(parts) &gt; 2 else 0.0
+        vertices.append((x, y, z))
+
+    if vertices:
+        yield Triangle(vertices), rest.lstrip()</code></pre>
+</details>
+<div class="desc"><p>Parse 'Triangle[x1,y1,z1;x2,y2,z2;x3,y3,z3]'.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_branch"><code class="name flex">
+<span>def <span class="ident">parse_branch</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_branch(src):
+    &#34;&#34;&#34;
+    Parse a branch: (repetition | transform_block)* (rule_ref | primitive)
+
+    A branch can contain:
+    - Repetitions: &#39;N * { transforms }&#39;
+    - Transformation blocks: &#39;{ transforms }&#39; (without count)
+    - Terminal: rule_ref or primitive
+    &#34;&#34;&#34;
+    src_stripped = src.lstrip()
+
+    # Collect repetitions and transformation blocks
+    repetitions = []
+    current = src_stripped
+    while current:
+        # Try repetition first (N * { ... })
+        found = False
+        for rep, remainder in parse_repetition(current):
+            repetitions.append(rep)
+            current = remainder.lstrip() if remainder else &#34;&#34;
+            found = True
+            break
+
+        # Try transformation block ({ ... } without count)
+        if not found:
+            for transforms, remainder in parse_transformation_block(current):
+                # Convert to a Repeat with count=1 for consistency
+                repetitions.append(Repeat(1, transforms))
+                current = remainder.lstrip() if remainder else &#34;&#34;
+                found = True
+
+        if not found:
+            break
+
+    if not current.strip():
+        return
+
+    # Parse terminal: rule_ref or primitive
+    # Try primitives first (they are keywords)
+    for prim, remainder in parse_primitive(current):
+        yield Branch(repetitions, prim), remainder.lstrip() if remainder else &#34;&#34;
+        return
+
+    # Try rule reference
+    for ref, remainder in parse_rule_ref_with_retirement(current):
+        yield Branch(repetitions, ref), remainder.lstrip() if remainder else &#34;&#34;
+        return</code></pre>
+</details>
+<div class="desc"><p>Parse a branch: (repetition | transform_block)* (rule_ref | primitive)</p>
+<p>A branch can contain:
+- Repetitions: 'N * { transforms }'
+- Transformation blocks: '{ transforms }' (without count)
+- Terminal: rule_ref or primitive</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_color_string"><code class="name flex">
+<span>def <span class="ident">parse_color_string</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_color_string(src):
+    &#34;&#34;&#34;Parse a color string (hex, SVG keyword, or quoted).&#34;&#34;&#34;
+    match = _color_re.match(src)
+    if match:
+        color, rest = match.groups()
+        # Strip quotes if present
+        if color.startswith(&#34;&#39;&#34;) and color.endswith(&#34;&#39;&#34;):
+            color = color[1:-1]
+        yield color, rest</code></pre>
+</details>
+<div class="desc"><p>Parse a color string (hex, SVG keyword, or quoted).</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_define_statement"><code class="name flex">
+<span>def <span class="ident">parse_define_statement</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_define_statement(src):
+    &#34;&#34;&#34;
+    Parse &#39;#define &lt;identifier&gt; &lt;value&gt;&#39; statements.
+
+    *value* can be a numeric literal (int, float, fraction) or a
+    parenthesized Python expression.
+
+    Returns a tuple of (name, value) and the remaining source.
+    *value* is either a ``float`` or an :class:`Expr` node.
+    &#34;&#34;&#34;
+    src_stripped = src.lstrip()
+    if not src_stripped.startswith(&#34;#define&#34;):
+        return
+
+    after_kw = src_stripped[len(&#34;#define&#34;):].lstrip()
+
+    # Parse identifier
+    for name, after_name in parse_identifier(after_kw):
+        after_name = after_name.lstrip()
+
+        # Try expression first
+        if after_name.startswith(&#39;(&#39;):
+            for val, rest in parse_expression(after_name):
+                yield (name, val), rest.lstrip()
+                return
+
+        # Fall back to numeric value
+        for val, rest in _parse_numeric_value(after_name):
+            yield (name, val), rest.lstrip()
+            return</code></pre>
+</details>
+<div class="desc"><p>Parse '#define <identifier> <value>' statements.</p>
+<p><em>value</em> can be a numeric literal (int, float, fraction) or a
+parenthesized Python expression.</p>
+<p>Returns a tuple of (name, value) and the remaining source.
+<em>value</em> is either a <code>float</code> or an :class:<code>Expr</code> node.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_expression"><code class="name flex">
+<span>def <span class="ident">parse_expression</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_expression(src):
+    &#34;&#34;&#34;
+    Parse a parenthesized Python expression: ``( &lt;python_expr&gt; )``.
+
+    Yields ``(Expr, rest)`` on success.  Raises ``SyntaxError`` if the
+    inner content is not valid Python.
+    &#34;&#34;&#34;
+    stripped = src.lstrip()
+    if not stripped.startswith(&#39;(&#39;):
+        return
+
+    close = _find_matching_paren(stripped, 0)
+    if close == -1:
+        return  # unbalanced parens — not an expression
+
+    inner = stripped[1:close]
+    rest = stripped[close + 1:]
+
+    # Validate the inner content as a Python expression
+    try:
+        ast_node = ast.parse(inner, mode=&#39;eval&#39;)
+    except SyntaxError as e:
+        raise SyntaxError(f&#34;Invalid expression: {inner!r}&#34;) from e
+
+    yield Expr(inner, ast_node), rest.lstrip()</code></pre>
+</details>
+<div class="desc"><p>Parse a parenthesized Python expression: <code>( &lt;python_expr&gt; )</code>.</p>
+<p>Yields <code>(Expr, rest)</code> on success.
+Raises <code>SyntaxError</code> if the
+inner content is not valid Python.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_identifier"><code class="name flex">
+<span>def <span class="ident">parse_identifier</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_identifier(src):
+    &#34;&#34;&#34;Parse an identifier.&#34;&#34;&#34;
+    match = _identifier_re.match(src)
+    if match:
+        name, rest = match.groups()
+        yield name, rest</code></pre>
+</details>
+<div class="desc"><p>Parse an identifier.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_implicit_rule"><code class="name flex">
+<span>def <span class="ident">parse_implicit_rule</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_implicit_rule(src):
+    &#34;&#34;&#34;
+    Parse an implicit rule definition:
+        identifier [&#39;(&#39; param {&#39;,&#39; param} &#39;)&#39;]
+        branch
+
+    This is shorthand for &#39;rule identifier(params) { branch }&#39;.
+    The identifier and branch may be separated by newlines.
+
+    If the identifier is followed by &#39;(&#39; that doesn&#39;t contain valid
+    parameter names (identifiers), the &#39;(&#39; is NOT consumed — the
+    branch parser will handle &#39;identifier(args)&#39; as a rule call.
+
+    IMPORTANT: if the branch starts with the same identifier (e.g.
+    &#39;foo&#39; followed by &#39;foo(1)&#39;), this is NOT an implicit rule —
+    it&#39;s a bare branch.  The implicit rule &#39;foo&#39; would be recursive
+    (foo → foo), which is almost certainly not intended.
+    &#34;&#34;&#34;
+    src_stripped = src.lstrip()
+
+    # Get identifier
+    for name, after_name in parse_identifier(src_stripped):
+        src_after = after_name.lstrip()
+
+        # Optional parameter list (p1, p2, ...)
+        # Only consume if it&#39;s actually a valid param list (all identifiers)
+        params = []
+        if src_after.startswith(&#39;(&#39;):
+            parsed_params = _parse_param_list(src_after)
+            if parsed_params is not None:
+                params = parsed_params
+                close = _find_matching_paren(src_after, 0)
+                if close != -1:
+                    src_after = src_after[close + 1:].lstrip()
+            # else: not a param list — leave src_after as-is
+            # The branch parser will handle &#39;name(args)&#39; as a rule call
+
+        # Skip any blank lines between identifier and branch
+        branch_src = src_after.lstrip()
+
+        # Guard: if the branch starts with the same identifier, this is
+        # NOT an implicit rule definition (would be recursive: foo → foo).
+        # Let the caller handle it as a bare branch instead.
+        if branch_src.startswith(name):
+            after_name_check = branch_src[len(name):]
+            if not after_name_check or after_name_check[0] in (&#39; &#39;, &#39;\t&#39;, &#39;\n&#39;, &#39;\r&#39;, &#39;(&#39;, &#39;*&#39;):
+                return  # Not an implicit rule — looks like &#39;name name(...)&#39; or &#39;name\nname&#39;
+
+        # Try to parse a branch
+        for branch, rest in parse_branch(branch_src):
+            rule = Rule(name=name, params=params, body=[branch])
+            yield rule, rest.lstrip() if rest else &#34;&#34;
+            return</code></pre>
+</details>
+<div class="desc"><p>Parse an implicit rule definition:
+identifier ['(' param {',' param} ')']
+branch</p>
+<p>This is shorthand for 'rule identifier(params) { branch }'.
+The identifier and branch may be separated by newlines.</p>
+<p>If the identifier is followed by '(' that doesn't contain valid
+parameter names (identifiers), the '(' is NOT consumed — the
+branch parser will handle 'identifier(args)' as a rule call.</p>
+<p>IMPORTANT: if the branch starts with the same identifier (e.g.
+'foo' followed by 'foo(1)'), this is NOT an implicit rule —
+it's a bare branch.
+The implicit rule 'foo' would be recursive
+(foo → foo), which is almost certainly not intended.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_input_statement"><code class="name flex">
+<span>def <span class="ident">parse_input_statement</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_input_statement(src):
+    &#34;&#34;&#34;
+    Parse &#39;#input &lt;name&gt; [number] [default_value]&#39; statements.
+
+    *name* is an identifier.
+    *number* is an optional type keyword (currently the only supported type).
+    *default_value* is an optional numeric literal (int, float, fraction).
+
+    Returns an :class:`InputDef` and the remaining source.
+    &#34;&#34;&#34;
+    from sverchok.utils.modules.eisenscript.ast import InputDef
+
+    src_stripped = src.lstrip()
+    if not src_stripped.startswith(&#34;#input&#34;):
+        return
+
+    after_kw = src_stripped[len(&#34;#input&#34;):].lstrip()
+
+    # Parse identifier
+    for name, after_name in parse_identifier(after_kw):
+        after_name = after_name.lstrip()
+
+        # Optional type keyword &#39;number&#39;
+        if after_name.startswith(&#34;number&#34;):
+            after_type = after_name[len(&#34;number&#34;):]
+            if not after_type or after_type[0].isspace():
+                after_name = after_type.lstrip()
+            else:
+                return  # &#39;number&#39; not a standalone keyword here
+
+        # Optional default value (numeric only, no expressions/variables)
+        default_value = None
+        if after_name:
+            for val, rest in _parse_numeric_value(after_name):
+                default_value = val
+                yield InputDef(name, default_value), rest.lstrip()
+                return
+
+        # No default value provided
+        yield InputDef(name, None), after_name
+        return</code></pre>
+</details>
+<div class="desc"><p>Parse '#input <name> [number] [default_value]' statements.</p>
+<p><em>name</em> is an identifier.
+<em>number</em> is an optional type keyword (currently the only supported type).
+<em>default_value</em> is an optional numeric literal (int, float, fraction).</p>
+<p>Returns an :class:<code>InputDef</code> and the remaining source.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_int"><code class="name flex">
+<span>def <span class="ident">parse_int</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_int(src):
+    &#34;&#34;&#34;Parse an integer literal.&#34;&#34;&#34;
+    match = _int_re.match(src)
+    if match:
+        value, rest = match.groups()
+        yield int(value), rest</code></pre>
+</details>
+<div class="desc"><p>Parse an integer literal.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_repetition"><code class="name flex">
+<span>def <span class="ident">parse_repetition</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_repetition(src):
+    &#34;&#34;&#34;
+    Parse &#39;&lt;count&gt; * { transformations... }&#39;.
+
+    The content between { and } is matched with [^}]* (non-nested).
+    This is intentional: EisenScript repetitions never contain nested
+    braces — the inner block holds only a flat sequence of
+    transformations.  Rule bodies use _find_matching_brace for proper
+    nesting, but repetition blocks are always shallow (P3).
+    &#34;&#34;&#34;
+    s = src.lstrip()
+
+    # Try: expression * { ... }
+    if s.startswith(&#39;(&#39;):
+        for count, after_expr in parse_expression(s):
+            after_star = after_expr.lstrip()
+            if after_star.startswith(&#39;*&#39;):
+                after_star = after_star[1:].lstrip()
+                inner, rest = _extract_brace_block(after_star)
+                if inner is not None:
+                    transforms = _parse_transformations_from_string(inner)
+                    yield Repeat(count, transforms), rest.lstrip()
+                    return
+        return
+
+    # Try: integer * { ... }
+    rep_int_re = re.compile(
+        r&#34;(-?(?:0|[1-9]\d*))\s*\*\s*\{([^}]*)\}\s*(.*)&#34;,
+        re.DOTALL,
+    )
+    match = rep_int_re.match(s)
+    if match:
+        count_str, inner, rest = match.groups()
+        count = int(count_str)
+        if count &lt; 0:
+            raise SyntaxError(f&#34;Negative repetition count: {count}&#34;)
+        transforms = _parse_transformations_from_string(inner)
+        yield Repeat(count, transforms), rest.lstrip()
+        return
+
+    # Try: identifier * { ... } (variable reference as count)
+    rep_id_re = re.compile(
+        r&#34;([a-zA-Z_][a-zA-Z0-9_]*)\s*\*\s*\{([^}]*)\}\s*(.*)&#34;,
+        re.DOTALL,
+    )
+    match = rep_id_re.match(s)
+    if match:
+        name, inner, rest = match.groups()
+        transforms = _parse_transformations_from_string(inner)
+        yield Repeat(VariableRef(name), transforms), rest.lstrip()</code></pre>
+</details>
+<div class="desc"><p>Parse '<count> * { transformations&hellip; }'.</p>
+<p>The content between { and } is matched with [^}]* (non-nested).
+This is intentional: EisenScript repetitions never contain nested
+braces — the inner block holds only a flat sequence of
+transformations.
+Rule bodies use _find_matching_brace for proper
+nesting, but repetition blocks are always shallow (P3).</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_rule_body"><code class="name flex">
+<span>def <span class="ident">parse_rule_body</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_rule_body(src):
+    &#34;&#34;&#34;Parse the content inside &#39;{&#39; ... &#39;}&#39; of a rule definition.&#34;&#34;&#34;
+    src_stripped = src.lstrip()
+    if not src_stripped.startswith(&#34;{&#34;):
+        return
+    offset = len(src) - len(src_stripped)
+
+    # Find matching closing brace with proper nesting
+    close_pos = _find_matching_brace(src_stripped, 0)
+    if close_pos == -1:
+        return
+
+    inner_content = src_stripped[1:close_pos]
+    rest = src[offset + close_pos + 1:]
+
+    # Parse branches from inner content
+    branches = []
+    current = inner_content.strip()
+    while current:
+        for branch, remainder in parse_branch(current):
+            branches.append(branch)
+            current = remainder.lstrip() if remainder else &#34;&#34;
+            break
+        else:
+            # No more branches can be parsed
+            break
+
+    yield branches, rest.lstrip()</code></pre>
+</details>
+<div class="desc"><p>Parse the content inside '{' &hellip; '}' of a rule definition.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_rule_definition"><code class="name flex">
+<span>def <span class="ident">parse_rule_definition</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_rule_definition(src):
+    &#34;&#34;&#34;
+    Parse a rule definition:
+        &#39;rule&#39; identifier [&#39;(&#39; param {&#39;,&#39; param} &#39;)&#39;] modifier* &#39;{&#39; rule_body &#39;}&#39;
+
+    Requires the &#39;rule&#39; keyword to distinguish from implicit rule definitions
+    (identifier(params)\nbranch) and bare branches (identifier(args)).
+    &#34;&#34;&#34;
+    src_stripped = src.lstrip()
+
+    # Require &#39;rule&#39; keyword
+    if not src_stripped.startswith(&#34;rule&#34;):
+        return
+    src_stripped = src_stripped[4:].lstrip()
+
+    # Rule name
+    for name, after_name in parse_identifier(src_stripped):
+        src_after = after_name.lstrip()
+
+        # Optional parameter list (p1, p2, ...)
+        params = []
+        if src_after.startswith(&#39;(&#39;):
+            parsed_params = _parse_param_list(src_after)
+            if parsed_params is None:
+                return  # Invalid param list — not a rule definition
+            params = parsed_params
+            close = _find_matching_paren(src_after, 0)
+            if close != -1:
+                src_after = src_after[close + 1:].lstrip()
+
+        # Parse modifiers
+        maxdepth = None
+        weight = None
+        retirement_rule = None
+        current = src_after
+        while current:
+            for mod, remainder in parse_rule_modifier(current):
+                if &#34;maxdepth&#34; in mod:
+                    maxdepth = mod[&#34;maxdepth&#34;]
+                if &#34;retirement_rule&#34; in mod:
+                    retirement_rule = mod[&#34;retirement_rule&#34;]
+                if &#34;weight&#34; in mod:
+                    weight = mod[&#34;weight&#34;]
+                current = remainder.lstrip()
+                break
+            else:
+                break
+
+        # Parse rule body
+        for branches, rest in parse_rule_body(current):
+            rule = Rule(
+                name=name,
+                params=params,
+                maxdepth=maxdepth,
+                retirement_rule=retirement_rule,
+                weight=weight,
+                body=branches,
+            )
+            yield rule, rest.lstrip()
+            return</code></pre>
+</details>
+<div class="desc"><p>Parse a rule definition:
+'rule' identifier ['(' param {',' param} ')'] modifier* '{' rule_body '}'</p>
+<pre><code>Requires the 'rule' keyword to distinguish from implicit rule definitions
+(identifier(params)
+</code></pre>
+<p>branch) and bare branches (identifier(args)).</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_rule_modifier"><code class="name flex">
+<span>def <span class="ident">parse_rule_modifier</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_rule_modifier(src):
+    &#34;&#34;&#34;
+    Parse rule modifiers:
+        maxdepth &lt;value&gt; [&#39;&gt;&#39; &lt;id&gt;]
+        md &lt;value&gt; [&#39;&gt;&#39; &lt;id&gt;]
+        weight &lt;value&gt;
+        w &lt;value&gt;
+
+    &lt;value&gt; can be a number, variable, or parenthesized expression.
+
+    Returns a dict of {name: value} or {name: (value, sub_rule)}.
+    &#34;&#34;&#34;
+    src_stripped = src.lstrip()
+
+    # maxdepth / md &lt;value&gt; [&#39;&gt;&#39; &lt;id&gt;]
+    kw, after = _starts_with_kw(src_stripped, &#39;maxdepth&#39;, &#39;md&#39;)
+    if kw is not None:
+        val, rest = _parse_value(after)
+        if val is None:
+            return
+        # Check for optional &#39;&gt; &lt;id&gt;&#39;
+        retirement_rule = None
+        rest_stripped = rest.lstrip()
+        if rest_stripped.startswith(&#39;&gt;&#39;):
+            rest_stripped = rest_stripped[1:].lstrip()
+            for name, rest2 in parse_identifier(rest_stripped):
+                retirement_rule = name
+                rest = rest2
+        modifier = {&#34;maxdepth&#34;: val}
+        if retirement_rule:
+            modifier[&#34;retirement_rule&#34;] = retirement_rule
+        yield modifier, rest.lstrip()
+        return
+
+    # weight / w &lt;value&gt;
+    kw, after = _starts_with_kw(src_stripped, &#39;weight&#39;, &#39;w&#39;)
+    if kw is not None:
+        val, rest = _parse_value(after)
+        if val is None:
+            return
+        yield {&#34;weight&#34;: val}, rest.lstrip()
+        return</code></pre>
+</details>
+<div class="desc"><p>Parse rule modifiers:
+maxdepth <value> ['&gt;' <id>]
+md <value> ['&gt;' <id>]
+weight <value>
+w <value></p>
+<p><value> can be a number, variable, or parenthesized expression.</p>
+<p>Returns a dict of {name: value} or {name: (value, sub_rule)}.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_rule_ref_with_retirement"><code class="name flex">
+<span>def <span class="ident">parse_rule_ref_with_retirement</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_rule_ref_with_retirement(src):
+    &#34;&#34;&#34;
+    Parse rule reference that may include &#39;md &lt;value&gt; [&#39;&gt; &lt;id&gt;&#39;]&#39; prefix
+    and optional argument list &#39;(arg1, arg2, ...)&#39;.
+    Returns (RuleRef, rest).
+    &#34;&#34;&#34;
+    src_stripped = src.lstrip()
+
+    # Try &#39;md &lt;value&gt; [&#39;&gt; &lt;id&gt;&#39;] &lt;rulename&gt;&#39;
+    if src_stripped.startswith(&#39;md&#39;):
+        after = src_stripped[2:]
+        val, rest = _parse_value(after)
+        if val is not None:
+            retirement_rule = None
+            rest_stripped = rest.lstrip()
+            if rest_stripped.startswith(&#39;&gt;&#39;):
+                rest_stripped = rest_stripped[1:].lstrip()
+                for name2, rest2 in parse_identifier(rest_stripped):
+                    retirement_rule = name2
+                    rest_stripped = rest2
+            # Now parse the rule name
+            for name, rest3 in parse_identifier(rest_stripped):
+                retirement_depth = None
+                if isinstance(val, float) and val == int(val):
+                    retirement_depth = int(val)
+                else:
+                    retirement_depth = val
+                yield RuleRef(name, retirement_depth=retirement_depth,
+                              retirement_rule=retirement_rule), rest3.lstrip()
+                return
+        return
+
+    # Plain identifier as rule reference, optionally followed by (args)
+    for name, rest in parse_identifier(src_stripped):
+        if name in (&#34;rule&#34;, &#34;set&#34;, &#34;md&#34;, &#34;maxdepth&#34;, &#34;weight&#34;, &#34;w&#34;):
+            continue
+
+        rest_stripped = rest.lstrip()
+        args = []
+
+        # Check for argument list (args) after the identifier
+        if rest_stripped.startswith(&#39;(&#39;):
+            parsed_args = _parse_arg_list(rest_stripped)
+            if parsed_args is not None:
+                args = parsed_args
+                # Find the rest after the closing paren
+                close = _find_matching_paren(rest_stripped, 0)
+                if close != -1:
+                    rest = rest_stripped[close + 1:]
+                else:
+                    rest = rest_stripped
+
+        yield RuleRef(name, args=args), rest.lstrip()</code></pre>
+</details>
+<div class="desc"><p>Parse rule reference that may include 'md <value> ['&gt; <id>']' prefix
+and optional argument list '(arg1, arg2, &hellip;)'.
+Returns (RuleRef, rest).</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_set_statement"><code class="name flex">
+<span>def <span class="ident">parse_set_statement</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_set_statement(src):
+    &#34;&#34;&#34;
+    Parse &#39;set &lt;name&gt; &lt;value&gt;&#39; statements.
+    &#34;&#34;&#34;
+    src_stripped = src.lstrip()
+    if not src_stripped.startswith(&#34;set&#34;):
+        return
+
+    after_set = src_stripped[3:].lstrip()
+
+    # Parse setting name
+    for name, after_name in parse_identifier(after_set):
+        after_name = after_name.lstrip()
+
+        # Special multi-word settings
+        if name == &#34;seed&#34; and after_name.startswith(&#34;initial&#34;):
+            yield SetStatement(&#34;seed&#34;, &#34;initial&#34;), after_name[len(&#34;initial&#34;):]
+            return
+
+        if name == &#34;background&#34;:
+            for color, rest in parse_color_string(after_name):
+                yield SetStatement(&#34;background&#34;, color), rest.lstrip()
+                return
+
+        if name == &#34;color&#34;:
+            # &#39;set color random&#39;
+            if after_name.startswith(&#34;random&#34;):
+                yield SetStatement(&#34;color&#34;, &#34;random&#34;), after_name[len(&#34;random&#34;):]
+                return
+            # &#39;set color &lt;color_value&gt;&#39; — absolute color as global setting
+            for color, rest in parse_color_string(after_name):
+                yield SetStatement(&#34;color&#34;, color), rest.lstrip()
+                return
+
+        if name == &#34;colorpool&#34;:
+            # Parse colorpool scheme (may contain colons, commas)
+            match = re.match(
+                r&#34;([a-zA-Z][a-zA-Z0-9_:.,/=\[\]]*(?:\s*,\s*[a-zA-Z][a-zA-Z0-9_:.,/=\[\]]*)*)\s*(.*)&#34;,
+                after_name,
+                re.DOTALL,
+            )
+            if match:
+                scheme, rest = match.groups()
+                yield SetStatement(&#34;colorpool&#34;, scheme), rest.lstrip()
+                return
+
+        # Numeric settings
+        for value, rest in parse_number(after_name):
+            yield SetStatement(name, value), rest.lstrip()
+            return
+
+        # String settings
+        for value, rest in parse_color_string(after_name):
+            yield SetStatement(name, value), rest.lstrip()
+            return</code></pre>
+</details>
+<div class="desc"><p>Parse 'set <name> <value>' statements.</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_top_statement"><code class="name flex">
+<span>def <span class="ident">parse_top_statement</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_top_statement(src):
+    &#34;&#34;&#34;Parse a top-level statement (input, define, set or rule definition).&#34;&#34;&#34;
+    # Try #input first
+    for result, rest in parse_input_statement(src):
+        yield result, rest
+        return
+
+    # Try #define
+    for result, rest in parse_define_statement(src):
+        yield result, rest
+        return
+
+    # Try set statement
+    for stmt, rest in parse_set_statement(src):
+        yield stmt, rest
+        return
+
+    # Try explicit rule definition (with &#39;rule&#39; keyword or modifiers)
+    for rule, rest in parse_rule_definition(src):
+        yield rule, rest
+        return
+
+    # Try implicit rule definition: identifier followed by branch
+    for rule, rest in parse_implicit_rule(src):
+        yield rule, rest
+        return
+
+    # Try implicit start rule: a bare branch without a rule name.
+    # This is shorthand for &#39;rule start { branch }&#39;.
+    for branch, rest in parse_branch(src):
+        rule = Rule(name=IMPLICIT_START_RULE, body=[branch])
+        yield rule, rest.lstrip() if rest else &#34;&#34;
+        return</code></pre>
+</details>
+<div class="desc"><p>Parse a top-level statement (input, define, set or rule definition).</p></div>
+</dd>
+<dt id="sverchok.utils.modules.eisenscript.parser.parse_transformation_block"><code class="name flex">
+<span>def <span class="ident">parse_transformation_block</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_transformation_block(src):
+    &#34;&#34;&#34;
+    Parse a standalone transformation block: &#39;{ transformations... }&#39;
+    This is used for branches like &#39;{ y 1 h 12 a 0.9 rx 36 } r1&#39;.
+    &#34;&#34;&#34;
+    src_stripped = src.lstrip()
+    if not src_stripped.startswith(&#34;{&#34;):
+        return
+
+    # Find matching } (non-nested, use [^}]* pattern)
+    block_re = re.compile(r&#34;\{([^}]*)\}\s*(.*)&#34;, re.DOTALL)
+    match = block_re.match(src_stripped)
+    if match:
+        inner, rest = match.groups()
+        transforms = _parse_transformations_from_string(inner)
+        if transforms:
+            yield transforms, rest.lstrip()</code></pre>
+</details>
+<div class="desc"><p>Parse a standalone transformation block: '{ transformations&hellip; }'
+This is used for branches like '{ y 1 h 12 a 0.9 rx 36 } r1'.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.modules.eisenscript" href="index.html">sverchok.utils.modules.eisenscript</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse" href="#sverchok.utils.modules.eisenscript.parser.parse">parse</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_AlphaMul" href="#sverchok.utils.modules.eisenscript.parser.parse_AlphaMul">parse_AlphaMul</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_BlendColor" href="#sverchok.utils.modules.eisenscript.parser.parse_BlendColor">parse_BlendColor</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_BrightnessMul" href="#sverchok.utils.modules.eisenscript.parser.parse_BrightnessMul">parse_BrightnessMul</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_HueShift" href="#sverchok.utils.modules.eisenscript.parser.parse_HueShift">parse_HueShift</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_MatrixTransform" href="#sverchok.utils.modules.eisenscript.parser.parse_MatrixTransform">parse_MatrixTransform</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_MirrorX" href="#sverchok.utils.modules.eisenscript.parser.parse_MirrorX">parse_MirrorX</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_MirrorY" href="#sverchok.utils.modules.eisenscript.parser.parse_MirrorY">parse_MirrorY</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_MirrorZ" href="#sverchok.utils.modules.eisenscript.parser.parse_MirrorZ">parse_MirrorZ</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_RotateX" href="#sverchok.utils.modules.eisenscript.parser.parse_RotateX">parse_RotateX</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_RotateY" href="#sverchok.utils.modules.eisenscript.parser.parse_RotateY">parse_RotateY</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_RotateZ" href="#sverchok.utils.modules.eisenscript.parser.parse_RotateZ">parse_RotateZ</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_SaturationMul" href="#sverchok.utils.modules.eisenscript.parser.parse_SaturationMul">parse_SaturationMul</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_Scale" href="#sverchok.utils.modules.eisenscript.parser.parse_Scale">parse_Scale</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_SetColor" href="#sverchok.utils.modules.eisenscript.parser.parse_SetColor">parse_SetColor</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_TranslateX" href="#sverchok.utils.modules.eisenscript.parser.parse_TranslateX">parse_TranslateX</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_TranslateY" href="#sverchok.utils.modules.eisenscript.parser.parse_TranslateY">parse_TranslateY</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_TranslateZ" href="#sverchok.utils.modules.eisenscript.parser.parse_TranslateZ">parse_TranslateZ</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_Triangle" href="#sverchok.utils.modules.eisenscript.parser.parse_Triangle">parse_Triangle</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_branch" href="#sverchok.utils.modules.eisenscript.parser.parse_branch">parse_branch</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_color_string" href="#sverchok.utils.modules.eisenscript.parser.parse_color_string">parse_color_string</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_define_statement" href="#sverchok.utils.modules.eisenscript.parser.parse_define_statement">parse_define_statement</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_expression" href="#sverchok.utils.modules.eisenscript.parser.parse_expression">parse_expression</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_identifier" href="#sverchok.utils.modules.eisenscript.parser.parse_identifier">parse_identifier</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_implicit_rule" href="#sverchok.utils.modules.eisenscript.parser.parse_implicit_rule">parse_implicit_rule</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_input_statement" href="#sverchok.utils.modules.eisenscript.parser.parse_input_statement">parse_input_statement</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_int" href="#sverchok.utils.modules.eisenscript.parser.parse_int">parse_int</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_repetition" href="#sverchok.utils.modules.eisenscript.parser.parse_repetition">parse_repetition</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_rule_body" href="#sverchok.utils.modules.eisenscript.parser.parse_rule_body">parse_rule_body</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_rule_definition" href="#sverchok.utils.modules.eisenscript.parser.parse_rule_definition">parse_rule_definition</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_rule_modifier" href="#sverchok.utils.modules.eisenscript.parser.parse_rule_modifier">parse_rule_modifier</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_rule_ref_with_retirement" href="#sverchok.utils.modules.eisenscript.parser.parse_rule_ref_with_retirement">parse_rule_ref_with_retirement</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_set_statement" href="#sverchok.utils.modules.eisenscript.parser.parse_set_statement">parse_set_statement</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_top_statement" href="#sverchok.utils.modules.eisenscript.parser.parse_top_statement">parse_top_statement</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript.parser.parse_transformation_block" href="#sverchok.utils.modules.eisenscript.parser.parse_transformation_block">parse_transformation_block</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

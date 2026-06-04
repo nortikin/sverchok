@@ -393,7 +393,7 @@ of the tree
         return self._group_nodes[gr_tree]
 
     def walk(self, gr_tree: &#39;GrTree&#39;) -&gt; Iterator[&#39;GrNode&#39;]:
-        &#34;&#34;&#34;It expects a grop tree which was changed and returns iterator of
+        &#34;&#34;&#34;It expects a group tree which was changed and returns iterator of
         all group nodes which should be updated&#34;&#34;&#34;
         if not self.is_updated:
             self._update()
@@ -470,7 +470,7 @@ tree should be called to update a group tree</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def walk(self, gr_tree: &#39;GrTree&#39;) -&gt; Iterator[&#39;GrNode&#39;]:
-    &#34;&#34;&#34;It expects a grop tree which was changed and returns iterator of
+    &#34;&#34;&#34;It expects a group tree which was changed and returns iterator of
     all group nodes which should be updated&#34;&#34;&#34;
     if not self.is_updated:
         self._update()
@@ -491,7 +491,7 @@ tree should be called to update a group tree</p></div>
     else:
         sv_logger.debug(&#39;Infinite walk detected&#39;)</code></pre>
 </details>
-<div class="desc"><p>It expects a grop tree which was changed and returns iterator of
+<div class="desc"><p>It expects a group tree which was changed and returns iterator of
 all group nodes which should be updated</p></div>
 </dd>
 </dl>

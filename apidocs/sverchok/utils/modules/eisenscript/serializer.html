@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.6">
-<title>sverchok.utils.sv_3dview_tools API documentation</title>
-<meta name="description" content="">
+<title>sverchok.utils.modules.eisenscript.serializer API documentation</title>
+<meta name="description" content="Serialize EisenScript AST back to EisenScript source text …">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
@@ -33,9 +33,53 @@ el.replaceWith(d);
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>sverchok.utils.sv_3dview_tools</code></h1>
+<h1 class="title">Module <code>sverchok.utils.modules.eisenscript.serializer</code></h1>
 </header>
 <section id="section-intro">
+<p>Serialize EisenScript AST back to EisenScript source text.</p>
+<p>Reverse of <code>parser.parse</code>: takes a
+:class:<code>~sverchok.utils.modules.eisenscript.ast.Program</code> and produces
+a human-readable EisenScript string that the parser can round-trip.</p>
+<p>Mapping overview (AST → text):
+Program
+→ #define / set / rule blocks
+SetStatement
+→ <code>set &lt;name&gt; &lt;value&gt;</code>
+Rule
+→ <code>rule &lt;name&gt; &lt;modifiers&gt; { ... }</code>
+Branch
+→ <code>&lt;repetitions&gt; &lt;terminal&gt;</code>
+Repeat
+→ <code>&lt;count&gt; * { &lt;transformations&gt; }</code>
+RuleRef
+→ <code>&lt;name&gt;</code> or <code>md &lt;depth&gt; [&lt;succ&gt;] &lt;name&gt;</code>
+VariableRef
+→ <code>&lt;name&gt;</code>
+Translate
+→ <code>x|y|z &lt;value&gt;</code>
+Rotate
+→ <code>rx|ry|rz &lt;angle&gt;</code>
+Mirror
+→ <code>fx|fy|fz</code>
+Scale
+→ <code>s &lt;x&gt;</code> or <code>s &lt;x&gt; &lt;y&gt; &lt;z&gt;</code>
+MatrixTransform
+→ <code>m &lt;f1&gt; ... &lt;f9&gt;</code>
+HueShift
+→ <code>hue &lt;value&gt;</code>
+SaturationMul
+→ <code>sat &lt;value&gt;</code>
+BrightnessMul
+→ <code>brightness &lt;value&gt;</code>
+AlphaMul
+→ <code>alpha &lt;value&gt;</code>
+SetColor
+→ <code>color &lt;color&gt;</code>
+BlendColor
+→ <code>blend &lt;color&gt; &lt;strength&gt;</code>
+Box/Grid/Sphere/Line/Point → keyword
+Triangle
+→ <code>Triangle[x,y,z;x,y;z;x,y,z]</code></p>
 </section>
 <section>
 </section>
@@ -44,154 +88,87 @@ el.replaceWith(d);
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="sverchok.utils.sv_3dview_tools.get_center"><code class="name flex">
-<span>def <span class="ident">get_center</span></span>(<span>self, context, node)</span>
+<dt id="sverchok.utils.modules.eisenscript.serializer.ast_to_string"><code class="name flex">
+<span>def <span class="ident">ast_to_string</span></span>(<span>program: <a title="sverchok.utils.modules.eisenscript.ast.Program" href="ast.html#sverchok.utils.modules.eisenscript.ast.Program">Program</a>) ‑> str</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_center(self, context, node):
+<pre><code class="python">def ast_to_string(program: Program) -&gt; str:
+    &#34;&#34;&#34;
+    Convert an EisenScript AST to source text.
 
-    location = (0, 0, 0)
-    matrix = None
-    print(&#39;node:&#39;, node.name)
+    Produces human-readable EisenScript that the parser can round-trip.
+    The implicit start rule (``IMPLICIT_START_RULE``) is emitted as bare
+    branches without a ``rule`` keyword.
 
-    try:
-        inputs = node.inputs
+    Args:
+        program: The :class:`~sverchok.utils.modules.eisenscript.ast.Program`
+            to serialize.
 
-        if node.bl_idname in {&#39;SvViewerDrawMk4&#39;}:
-            matrix_socket = inputs[&#39;Matrix&#39;]
-            vertex_socket = inputs[&#39;Vertices&#39;]
+    Returns:
+        EisenScript source code string.
+    &#34;&#34;&#34;
+    blocks: List[str] = []
 
-            # from this point the function is generic.
-            vertex_links = vertex_socket.is_linked
-            matrix_links = matrix_socket.is_linked
+    # #input directives
+    for name, inp_def in program.inputs.items():
+        blocks.append(_input_to_str(inp_def))
 
-            if matrix_links:
-                matrix = get_matrix(matrix_socket)
+    # #define directives
+    for name, value in program.defines.items():
+        blocks.append(f&#34;#define {name} {_fmt_num(value)}&#34;)
 
-            if vertex_links:
-                vertex_in_data = vertex_socket.sv_get()
-                verts = vertex_in_data[0]
-                location = geom_utils.mean([verts[idx] for idx in range(0, len(verts), 3)])
+    # set statements
+    for stmt in program.settings:
+        blocks.append(_set_to_str(stmt))
 
-            if matrix:
-                if not vertex_links:
-                    location = Matrix(matrix).to_translation()[:]
-                else:
-                    location = (Matrix(matrix) @ Vector(location))[:]
-
+    # rule definitions
+    for rule in program.rules:
+        if rule.name == IMPLICIT_START_RULE:
+            # Implicit start rule: emit bare branches
+            for branch in rule.body:
+                blocks.append(_branch_to_str(branch))
         else:
-            self.report({&#39;INFO&#39;}, &#39;viewer has no get_center function, or node not found&#39;)
+            blocks.append(_rule_to_str(rule))
 
-    except Exception as err:
-        self.report({&#39;INFO&#39;}, &#39;no active node found&#39;)
+    # Join blocks with blank lines between logical sections
+    result_parts = []
+    current_section: List[str] = []
 
-        sys.stderr.write(&#39;ERROR: %s\n&#39; % str(err))
-        print(sys.exc_info()[-1].tb_frame.f_code)
-        print(&#39;Error on line {}&#39;.format(sys.exc_info()[-1].tb_lineno))
+    def flush():
+        if current_section:
+            result_parts.append(&#34;\n&#34;.join(current_section))
+            current_section.clear()
 
-    return location</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.sv_3dview_tools.get_matrix"><code class="name flex">
-<span>def <span class="ident">get_matrix</span></span>(<span>socket)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_matrix(socket):
-    matrix_in_data = socket.sv_get()
-    try:
-        matrix = matrix_in_data[0]
-        if isinstance(matrix, Matrix):
-            return matrix
+    for block in blocks:
+        if block.startswith(&#34;#input&#34;) or block.startswith(&#34;#define&#34;) or block.startswith(&#34;set &#34;):
+            current_section.append(block)
         else:
-            return matrix[0]
+            flush()
+            current_section.append(block)
+    flush()
 
-    except Exception as err:
-        print(repr(err))</code></pre>
+    return &#34;\n\n&#34;.join(result_parts) + &#34;\n&#34; if result_parts else &#34;&#34;</code></pre>
 </details>
-<div class="desc"></div>
+<div class="desc"><p>Convert an EisenScript AST to source text.</p>
+<p>Produces human-readable EisenScript that the parser can round-trip.
+The implicit start rule (<code>IMPLICIT_START_RULE</code>) is emitted as bare
+branches without a <code>rule</code> keyword.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>program</code></strong></dt>
+<dd>The :class:<code>~sverchok.utils.modules.eisenscript.ast.Program</code>
+to serialize.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>EisenScript source code string.</p></div>
 </dd>
 </dl>
 </section>
 <section>
-<h2 class="section-title" id="header-classes">Classes</h2>
-<dl>
-<dt id="sverchok.utils.sv_3dview_tools.Sv3DviewAlign"><code class="flex name class">
-<span>class <span class="ident">Sv3DviewAlign</span></span>
-<span>(</span><span>*args, **kwargs)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Sv3DviewAlign(bpy.types.Operator, SvGenericNodeLocator):
-    &#34;&#34;&#34; Zoom to viewer output &#34;&#34;&#34;
-    bl_idname = &#34;node.view3d_align_from&#34;
-    bl_label = &#34;Align 3dview to Viewer&#34;
-
-    fn_name: bpy.props.StringProperty(default=&#39;&#39;)
-
-    def sv_execute(self, context, node):
-
-        vector_3d = get_center(self, context, node)
-        if not vector_3d:
-            print(vector_3d)
-            return {&#39;CANCELLED&#39;}
-
-        print(vector_3d)
-        context.scene.cursor.location = vector_3d[:]
-
-        for area in bpy.context.screen.areas:
-            if area.type == &#39;VIEW_3D&#39;:
-                with context.temp_override(area = area , region = area.regions[-1]):
-                    bpy.ops.view3d.view_center_cursor()</code></pre>
-</details>
-<div class="desc"><p>Zoom to viewer output</p></div>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>bpy_types.Operator</li>
-<li>builtins.bpy_struct</li>
-<li><a title="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator" href="sv_operator_mixins.html#sverchok.utils.sv_operator_mixins.SvGenericNodeLocator">SvGenericNodeLocator</a></li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="sverchok.utils.sv_3dview_tools.Sv3DviewAlign.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.sv_3dview_tools.Sv3DviewAlign.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.sv_3dview_tools.Sv3DviewAlign.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.sv_3dview_tools.Sv3DviewAlign.fn_name"><code class="name">var <span class="ident">fn_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': '', 'attr': 'fn_name'}></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator" href="sv_operator_mixins.html#sverchok.utils.sv_operator_mixins.SvGenericNodeLocator">SvGenericNodeLocator</a></b></code>:
-<ul class="hlist">
-<li><code><a title="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.get_node" href="sv_operator_mixins.html#sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.get_node">get_node</a></code></li>
-<li><code><a title="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.sv_execute" href="sv_operator_mixins.html#sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.sv_execute">sv_execute</a></code></li>
-</ul>
-</li>
-</ul>
-</dd>
-</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -201,26 +178,12 @@ el.replaceWith(d);
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+<li><code><a title="sverchok.utils.modules.eisenscript" href="index.html">sverchok.utils.modules.eisenscript</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="sverchok.utils.sv_3dview_tools.get_center" href="#sverchok.utils.sv_3dview_tools.get_center">get_center</a></code></li>
-<li><code><a title="sverchok.utils.sv_3dview_tools.get_matrix" href="#sverchok.utils.sv_3dview_tools.get_matrix">get_matrix</a></code></li>
-</ul>
-</li>
-<li><h3><a href="#header-classes">Classes</a></h3>
-<ul>
-<li>
-<h4><code><a title="sverchok.utils.sv_3dview_tools.Sv3DviewAlign" href="#sverchok.utils.sv_3dview_tools.Sv3DviewAlign">Sv3DviewAlign</a></code></h4>
-<ul class="">
-<li><code><a title="sverchok.utils.sv_3dview_tools.Sv3DviewAlign.bl_idname" href="#sverchok.utils.sv_3dview_tools.Sv3DviewAlign.bl_idname">bl_idname</a></code></li>
-<li><code><a title="sverchok.utils.sv_3dview_tools.Sv3DviewAlign.bl_label" href="#sverchok.utils.sv_3dview_tools.Sv3DviewAlign.bl_label">bl_label</a></code></li>
-<li><code><a title="sverchok.utils.sv_3dview_tools.Sv3DviewAlign.bl_rna" href="#sverchok.utils.sv_3dview_tools.Sv3DviewAlign.bl_rna">bl_rna</a></code></li>
-<li><code><a title="sverchok.utils.sv_3dview_tools.Sv3DviewAlign.fn_name" href="#sverchok.utils.sv_3dview_tools.Sv3DviewAlign.fn_name">fn_name</a></code></li>
-</ul>
-</li>
+<li><code><a title="sverchok.utils.modules.eisenscript.serializer.ast_to_string" href="#sverchok.utils.modules.eisenscript.serializer.ast_to_string">ast_to_string</a></code></li>
 </ul>
 </li>
 </ul>

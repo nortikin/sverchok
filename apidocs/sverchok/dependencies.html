@@ -156,7 +156,7 @@ whether the dependency is available or not.</p></div>
 <dl>
 <dt id="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator"><code class="flex name class">
 <span>class <span class="ident">DI_OT_install_or_update_dependencies_operator</span></span>
-<span>(</span><span>...)</span>
+<span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -173,10 +173,22 @@ whether the dependency is available or not.</p></div>
 
     def execute(self, context):
         items = self.serialized_items.split(&#39;;&#39;)
+        print(items)
         for item in items:
             try:
-                dependency = sv_dependencies[item]
-                if dependency.module is None and dependency.pip_installable and pip is not None and item != &#39;pyOpenSubdiv&#39;:
+                if item in sv_dependencies and item == &#39;mcubes&#39;:
+                    dependency = sv_dependencies[item]
+                    sv_dependencies[item].pip_installable = True
+                elif item in sv_dependencies:
+                    dependency = sv_dependencies[item]
+                    print(dependency,dependency.module)
+                else:
+                    sv_dependencies[item] = SvDependency(item,&#34;None&#34;)
+                    sv_dependencies[item].pip_installable = True
+                    sv_dependencies[item].module = None
+                    dependency = sv_dependencies[item]
+                    print(sv_dependencies[item],sv_dependencies[item].pip_installable,sv_dependencies[item].module, pip)
+                if dependency.module is None and dependency.pip_installable and pip is not None: # and item != &#39;pyOpenSubdiv&#39;:
                     print(f&#34;===&gt;&gt; Install Dependency: {item}&#34;)
                     res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
                     #res = bpy.ops.node.sv_ex_pip_install(&#39;INVOKE_DEFAULT&#39;, package = dependency.package)
@@ -234,10 +246,22 @@ whether the dependency is available or not.</p></div>
 </summary>
 <pre><code class="python">def execute(self, context):
     items = self.serialized_items.split(&#39;;&#39;)
+    print(items)
     for item in items:
         try:
-            dependency = sv_dependencies[item]
-            if dependency.module is None and dependency.pip_installable and pip is not None and item != &#39;pyOpenSubdiv&#39;:
+            if item in sv_dependencies and item == &#39;mcubes&#39;:
+                dependency = sv_dependencies[item]
+                sv_dependencies[item].pip_installable = True
+            elif item in sv_dependencies:
+                dependency = sv_dependencies[item]
+                print(dependency,dependency.module)
+            else:
+                sv_dependencies[item] = SvDependency(item,&#34;None&#34;)
+                sv_dependencies[item].pip_installable = True
+                sv_dependencies[item].module = None
+                dependency = sv_dependencies[item]
+                print(sv_dependencies[item],sv_dependencies[item].pip_installable,sv_dependencies[item].module, pip)
+            if dependency.module is None and dependency.pip_installable and pip is not None: # and item != &#39;pyOpenSubdiv&#39;:
                 print(f&#34;===&gt;&gt; Install Dependency: {item}&#34;)
                 res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
                 #res = bpy.ops.node.sv_ex_pip_install(&#39;INVOKE_DEFAULT&#39;, package = dependency.package)

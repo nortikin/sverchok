@@ -657,21 +657,21 @@ el.replaceWith(d);
     #mleaderstyle.set_mtext_style(&#34;OpenSans&#34;)
     #mleaderstyle.dxf.char_height = t_scal*scal  # set the default char height of MTEXT
     # Create new table entries (layers, linetypes, text styles, ...).
-    ltext = &#34;SVERCHOK_TEXT&#34;
-    lvers = &#34;SVERCHOK_VERS&#34;
-    ledgs = &#34;SVERCHOK_EDGES&#34;
-    lpols = &#34;SVERCHOK_POLYGONS&#34;
-    ldims = &#34;SVERCHOK_DIMENTIONS&#34;
-    llidr = &#34;SVERCHOK_LEADERS&#34;
-    lhatc = &#34;SVERCHOK_HATCHES&#34;
+    #ltext = &#34;SVERCHOK_TEXT&#34;
+    #lvers = &#34;SVERCHOK_VERS&#34;
+    #ledgs = &#34;SVERCHOK_EDGES&#34;
+    #lpols = &#34;SVERCHOK_POLYGONS&#34;
+    #ldims = &#34;SVERCHOK_DIMENTIONS&#34;
+    #llidr = &#34;SVERCHOK_LEADERS&#34;
+    #lhatc = &#34;SVERCHOK_HATCHES&#34;
 
-    doc.layers.add(ltext, color=colors.MAGENTA)
-    doc.layers.add(lvers, color=colors.CYAN)
-    doc.layers.add(ledgs, color=colors.YELLOW)
-    doc.layers.add(lpols, color=colors.WHITE)
-    doc.layers.add(ldims, color=colors.GREEN)
-    doc.layers.add(llidr, color=colors.CYAN)
-    doc.layers.add(lhatc, color=colors.WHITE)
+    #doc.layers.add(ltext, color=colors.MAGENTA)
+    #doc.layers.add(lvers, color=colors.CYAN)
+    #doc.layers.add(ledgs, color=colors.YELLOW)
+    #doc.layers.add(lpols, color=colors.WHITE)
+    #doc.layers.add(ldims, color=colors.GREEN)
+    #doc.layers.add(llidr, color=colors.CYAN)
+    #doc.layers.add(lhatc, color=colors.WHITE)
 
     # DXF entities (LINE, TEXT, ...) reside in a layout (modelspace,
     # paperspace layout or block definition).
@@ -686,29 +686,33 @@ el.replaceWith(d);
     doc.header[&#34;$LWDISPLAY&#34;] = 1
     # Add entities to a layout by factory methods: layout.add_...()
 
+    num = 0
     if do_block == False:
         for data in dxf:
+            layer = &#39;Sverchok_&#39;+data[0].__repr__()[5:-2]+&#39;_&#39;+str(num)
+            doc.layers.add(layer, color=data[0].color_int)
             #print(data)
             #print(&#34;Тип данных DXF&#34;,data[0].__repr__())
             if data[0].__repr__() == &#39;&lt;DXF Pols&gt;&#39;:
                 #print(&#39;getting pols&#39;,data)
-                polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
+                polygons_draw(data,scal,layer,msp) #(p,v,d1,d2,scal,lpols,msp)
             if data[0].__repr__() == &#39;&lt;DXF Lines&gt;&#39;:
-                edges_draw(data,scal,ledgs,msp)
+                edges_draw(data,scal,layer,msp)
             if data[0].__repr__() == &#39;&lt;DXF Hatch&gt;&#39;:
-                hatches_draw(data,scal,lhatc,msp)
+                hatches_draw(data,scal,layer,msp)
             if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
-                dimensions_draw(data,scal,ldims,msp)
+                dimensions_draw(data,scal,layer,msp)
             if data[0].__repr__() == &#39;&lt;DXF Circles&gt;&#39;:
-                circles_draw(data,scal,ledgs,msp)
+                circles_draw(data,scal,layer,msp)
             if data[0].__repr__() == &#39;&lt;DXF Texts&gt;&#39;:
                 #print(&#39;getting text&#39;,data)
-                text_draw(data,scal,ltext,msp) # tv,tt,scal,ltext,msp,t_scal
+                text_draw(data,scal,layer,msp) # tv,tt,scal,ltext,msp,t_scal
+            num += 1
     else:
         lib = BlockLibrary(doc)
         
         # Создаем блок
-        lib.make_block(do_block, dxf, scal, [lpols,ledgs,lhatc,ldims])
+        lib.make_block(do_block, dxf, scal)
         doc = lib.return_block()
         # Вставляем блок
         #lib.place_block(&#39;BOLT_M10&#39;, insert=(0, 0))
@@ -764,13 +768,14 @@ el.replaceWith(d);
     for points_ in points:
         vers,col,patt,sc = points_.vers, points_.color,points_.pattern,points_.scale
         color_int = points_.color_int
-        if color_int &lt; 1:
-            col = tuple([int(i*255) for i in col[:3]])
-            col = ezdxf.colors.rgb2int(col)
-        else:
-            col = color_int
+        #lw,lt = points_.lineweight, points_.linetype
+        #if color_int &lt; 1:
+        #    col = tuple([int(i*255) for i in col[:3]])
+        #    col = ezdxf.colors.rgb2int(col)
+        #else:
+        #    col = color_int
 
-        ht = msp.add_hatch(color=col, dxfattribs={&#34;layer&#34;: lhatch})
+        ht = msp.add_hatch(color=color_int, dxfattribs={&#34;layer&#34;: lhatch})
         ht.set_pattern_fill(patt, scale=sc)
         ht.transparency = 0.5
         path = ht.paths.add_polyline_path(
@@ -952,10 +957,10 @@ todo 2026 polymesh</p></div>
     for data in t:
         tv,tt = data.vers
         t_scal = data.text_scale
-        print(&#39;TEXT!!&#39;,tv,tt)
+        #print(&#39;TEXT!!&#39;,tv,tt)
         tv = [i*scal for i in tv]
         metadata = data.metadata
-        print(&#39;text unit&#39;,tt)
+        #print(&#39;text unit&#39;,tt)
         textout = msp.add_text(
         tt, height=t_scal,#0.05,
         dxfattribs={
@@ -1006,17 +1011,18 @@ todo 2026 polymesh</p></div>
         self.doc = doc
         self.block = []
 
-    def make_block(self, name=&#39;Sverchok_block&#39;, dxf=[], scal=[], layers=[]):
+    def make_block(self, name=&#39;Sverchok_block&#39;, dxf=[], scal=[]):
         &#34;&#34;&#34;Создает блок&#34;&#34;&#34;
         if not dxf:
             return
-        lpols,ledgs,lhatc,ldims = layers
         block = self.doc.blocks.new(name=name)
+        num = 0
         for data in dxf:
+            layer = &#39;Sverchok_&#39;+data[0].__repr__()[5:-2]+&#39;_&#39;+str(num)
             if data[0].__repr__() == &#39;&lt;DXF Pols&gt;&#39;:
-                self.pols(block,data,scal,lpols) #(p,v,d1,d2,scal,lpols,msp)
+                self.pols(block,data,scal,layer) #(p,v,d1,d2,scal,lpols,msp)
             if data[0].__repr__() == &#39;&lt;DXF Lines&gt;&#39;:
-                self.edgs(block,data,scal,ledgs)
+                self.edgs(block,data,scal,layer)
             if data[0].__repr__() == &#39;&lt;DXF Hatch&gt;&#39;:
                 pass
                 #self.hatc(block,data,scal,lhatc)
@@ -1024,7 +1030,8 @@ todo 2026 polymesh</p></div>
                 #self.dims(block,data,scal,ldims)
                 pass
             if data[0].__repr__() == &#39;&lt;DXF Circles&gt;&#39;:
-                self.crcl(block,data,scal,ledgs)
+                self.crcl(block,data,scal,layer)
+            num += 1
         self.block = [block]
 
     def pols(self,block,data,scal,lpols):
@@ -1096,24 +1103,25 @@ todo 2026 polymesh</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.dxf.BlockLibrary.make_block"><code class="name flex">
-<span>def <span class="ident">make_block</span></span>(<span>self, name='Sverchok_block', dxf=[], scal=[], layers=[])</span>
+<span>def <span class="ident">make_block</span></span>(<span>self, name='Sverchok_block', dxf=[], scal=[])</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def make_block(self, name=&#39;Sverchok_block&#39;, dxf=[], scal=[], layers=[]):
+<pre><code class="python">def make_block(self, name=&#39;Sverchok_block&#39;, dxf=[], scal=[]):
     &#34;&#34;&#34;Создает блок&#34;&#34;&#34;
     if not dxf:
         return
-    lpols,ledgs,lhatc,ldims = layers
     block = self.doc.blocks.new(name=name)
+    num = 0
     for data in dxf:
+        layer = &#39;Sverchok_&#39;+data[0].__repr__()[5:-2]+&#39;_&#39;+str(num)
         if data[0].__repr__() == &#39;&lt;DXF Pols&gt;&#39;:
-            self.pols(block,data,scal,lpols) #(p,v,d1,d2,scal,lpols,msp)
+            self.pols(block,data,scal,layer) #(p,v,d1,d2,scal,lpols,msp)
         if data[0].__repr__() == &#39;&lt;DXF Lines&gt;&#39;:
-            self.edgs(block,data,scal,ledgs)
+            self.edgs(block,data,scal,layer)
         if data[0].__repr__() == &#39;&lt;DXF Hatch&gt;&#39;:
             pass
             #self.hatc(block,data,scal,lhatc)
@@ -1121,7 +1129,8 @@ todo 2026 polymesh</p></div>
             #self.dims(block,data,scal,ldims)
             pass
         if data[0].__repr__() == &#39;&lt;DXF Circles&gt;&#39;:
-            self.crcl(block,data,scal,ledgs)
+            self.crcl(block,data,scal,layer)
+        num += 1
     self.block = [block]</code></pre>
 </details>
 <div class="desc"><p>Создает блок</p></div>
