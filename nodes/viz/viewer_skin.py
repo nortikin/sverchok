@@ -504,6 +504,10 @@ class SvSkinViewerNodeV28(SverchCustomTreeNode, SvViewerNode, bpy.types.Node, Sv
         self.remove_non_updated_objects(catch_idx)
         self.set_corresponding_materials()
 
+        objs = self.get_children()
+        self.outputs['Objects'].sv_set(objs)
+        return
+
 
     def unit_generator(self, idx, geometry):
         verts, _, _, radiix, radiiy = geometry
