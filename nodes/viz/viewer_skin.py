@@ -134,7 +134,7 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
     data_layers = None
     if node.distance_doubles > 0.0:
         bm = bmesh_from_pydata(verts, edges, [])
-        verts, edges, _, *data_layers = shrink_geometry(bm, node.distance_doubles, layers)
+        verts, edges, *data_layers = shrink_geometry(bm, node.distance_doubles, layers)
 
     force_pydata(obj.data, verts, edges)
     obj.update_tag(refresh={'OBJECT', 'DATA'})
@@ -328,7 +328,32 @@ class SvSkinViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
         if self.use_root:
             # set all to root
             all_yes = list(itertools.repeat(True, ntimes))
+            all_False = list(itertools.repeat(False, ntimes))
             obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
+            obj.data.skin_vertices[0].data.foreach_set('use_loose', all_False)
+            # Автоматически находим сложные развилки и маркируем их как Loose
+            
+            skin_verts = obj.data.skin_vertices[0].data
+            # 1. Vertices counter
+            edge_counts = {v.index: 0 for v in obj.data.vertices}
+
+            # 2. Fill edges counter for every vertices
+            for edge in obj.data.edges:
+                edge_counts[edge.vertices[0]] += 1
+                edge_counts[edge.vertices[1]] += 1
+
+            for vert in obj.data.vertices:
+                skin_verts[vert.index].use_root = False
+                skin_verts[vert.index].use_loose = False
+                # find vertices with 3 or more edges then mark it as root
+                edges_count = edge_counts[vert.index]
+                
+                if edges_count >= 3:
+                    skin_verts[vert.index].use_root = True
+
+            obj.data.update()
+            #obj.update_tag()
+
         elif self.use_slow_root:
             process_mesh_into_features(obj.data.skin_vertices[0].data, obj.data.edge_keys)
 
