@@ -534,61 +534,16 @@ class SvSkinViewerNodeV29(SverchCustomTreeNode, SvViewerNode, bpy.types.Node, Sv
             obj.data.skin_vertices[0].data.foreach_set('radius', f_r)
 
         if self.use_root:
-            # set all to root
-            #all_yes = list(itertools.repeat(True, ntimes))
-            all_False = list(itertools.repeat(False, ntimes))
-            #obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
-            #obj.data.skin_vertices[0].data.foreach_set('use_loose', all_False)
-            
-            # # Автоматически находим сложные развилки и маркируем их как Loose
-            # skin_verts = obj.data.skin_vertices[0].data
-            # # 1. Vertices counter
-            # edge_counts = {v.index: 0 for v in obj.data.vertices}
-
-            # # 2. Fill edges counter for every vertices
-            # for edge in obj.data.edges:
-            #     edge_counts[edge.vertices[0]] += 1
-            #     edge_counts[edge.vertices[1]] += 1
-
-            # for vert in obj.data.vertices:
-            #     skin_verts[vert.index].use_root = False
-            #     skin_verts[vert.index].use_loose = False
-            
-            # is_edges_count_3 = False
-            # for vert in obj.data.vertices:
-            #     # find vertices with 3 or more edges then mark it as root
-            #     edges_count = edge_counts[vert.index]
-                
-            #     if edges_count >= 3 or edges_count==1:
-            #         skin_verts[vert.index].use_root = True
-            #         is_edges_count_3 = True
-            #     pass
-            # if is_edges_count_3==False and len(obj.data.vertices)>0:
-            #     skin_verts[0].use_root = True
-
-            # obj.data.update()
-            # #obj.update_tag()
-
-            # Запускаем комплексный анализ
             islands, neighbors_count, junctions = analyze_mesh_islands_and_topology(obj)
-
             skin_verts = obj.data.skin_vertices[0].data
 
-            # Шаг 1: Сброс
+            # Init
             for sv in skin_verts:
                 sv.use_root = False
                 sv.use_loose = False
 
-            # Шаг 2: Маркируем ВСЕ развилки как Loose (для сглаживания формы) 
-            # и одновременно как Root (для выравнивания петель и сетки)
-            # for j_idx in junctions:
-            #     skin_verts[j_idx].use_root = True  # Возвращаем корни на развилки!
-
-            # Шаг 3: Проверяем острова. 
-            # Если на каком-то острове вообще нет развилок (например, это просто одиночное кольцо или линия),
-            # ему всё равно жизненно необходим хотя бы один Root, иначе он пропадет.
             for edge_indices in islands:
-                # Проверяем, есть ли уже корень внутри этого острова
+                # Is island has root?
                 has_root = False
                 for e_idx in edge_indices:
                     u, v = obj.data.edges[e_idx].vertices
@@ -597,12 +552,8 @@ class SvSkinViewerNodeV29(SverchCustomTreeNode, SvViewerNode, bpy.types.Node, Sv
                         break
                     pass
                         
-                # Если на острове нет корней, то найти один junction и установить его:
                 if not has_root:
-                    # first_edge = obj.data.edges[edge_indices[0]]
-                    # fallback_root = first_edge.vertices[0]
-                    # skin_verts[fallback_root].use_root = True
-                    # Найти junction и добавить один корень:
+                    # If islan has no root then find junction and set it as root.
                     has_root = False
                     for e_idx in edge_indices:
                         u, v = obj.data.edges[e_idx].vertices
@@ -618,13 +569,11 @@ class SvSkinViewerNodeV29(SverchCustomTreeNode, SvViewerNode, bpy.types.Node, Sv
                     pass
 
                 if not has_root:
-                    # Назначить вершине в первом индексе:
                     first_edge = obj.data.edges[edge_indices[0]]
                     fallback_root = first_edge.vertices[0]
                     skin_verts[fallback_root].use_root = True
                     pass
 
-            # Финальное обновление меша в Blender
             obj.data.update()
 
         elif self.use_slow_root:
