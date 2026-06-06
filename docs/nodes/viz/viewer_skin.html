@@ -369,8 +369,10 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#category">Category</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#caution">Caution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modifiers-before-and-after-skin-viewer-modifiers">Modifiers before and after Skin Viewer modifiers</a></li>
 </ul>
             </nav>
         </div>
@@ -384,7 +386,7 @@
                   
   <section id="skin-mesher">
 <h1>Skin Mesher<a class="headerlink" href="#skin-mesher" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/a178dc63-a16f-4737-9be1-439b6f1ef1dc"><img alt="https://github.com/user-attachments/assets/a178dc63-a16f-4737-9be1-439b6f1ef1dc" src="https://github.com/user-attachments/assets/a178dc63-a16f-4737-9be1-439b6f1ef1dc" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/32d50e61-141c-44ce-b46f-a8ceb04929b9"><img alt="https://github.com/user-attachments/assets/32d50e61-141c-44ce-b46f-a8ceb04929b9" src="https://github.com/user-attachments/assets/32d50e61-141c-44ce-b46f-a8ceb04929b9" />
 </a>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190581380-acb569e2-d9c0-498e-8ba9-666642008309.png"><img alt="https://user-images.githubusercontent.com/14288520/190581380-acb569e2-d9c0-498e-8ba9-666642008309.png" src="https://user-images.githubusercontent.com/14288520/190581380-acb569e2-d9c0-498e-8ba9-666642008309.png" />
 </a>
@@ -396,9 +398,16 @@
 <p>This node is an interpretation of the current features of the Skin Modifier. During manual editing you would use
 alt+s to scale up the size of individual vertices, this node offers the ability to scale vertices by accepting two
 lists of scalar values, one for x scale and one for y scale.</p>
-<p>settings roots: Depending on how complicated and disjoint your mesh is you may find the result of the modifier can be made more natural by adjusting the way the node sets the roots. This option is placed in the N Panel.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/619340/127733402-9a806e90-ded3-43d0-988f-96ee9df626d2.png"><img alt="https://user-images.githubusercontent.com/619340/127733402-9a806e90-ded3-43d0-988f-96ee9df626d2.png" src="https://user-images.githubusercontent.com/619340/127733402-9a806e90-ded3-43d0-988f-96ee9df626d2.png" />
+<p>settings roots: Depending on how complicated and disjoint your mesh is you may find the result of the modifier can be made more natural by adjusting the way the node sets the roots.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/be22fc14-7cf1-41f6-a2df-57a2d6e0a4e9"><img alt="https://github.com/user-attachments/assets/be22fc14-7cf1-41f6-a2df-57a2d6e0a4e9" src="https://github.com/user-attachments/assets/be22fc14-7cf1-41f6-a2df-57a2d6e0a4e9" />
 </a>
+</div></blockquote>
+<p>Additionally you can move skin and subdiv modifier over Modifier Stack:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/99b00aea-f144-4e38-9356-34abe9a9e920"><img alt="https://github.com/user-attachments/assets/99b00aea-f144-4e38-9356-34abe9a9e920" src="https://github.com/user-attachments/assets/99b00aea-f144-4e38-9356-34abe9a9e920" />
+</a>
+</div></blockquote>
 </section>
 <section id="category">
 <h2>Category<a class="headerlink" href="#category" title="Link to this heading">#</a></h2>
@@ -413,34 +422,65 @@ Additionally it accepts <code class="docutils literal notranslate"><span class="
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
 <p>Outputs a mesh with a SkinModifier added to it, directly into the scene.</p>
 </section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/5b8dcdc0-c2cb-4484-9f60-d8250ef9a588"><img alt="https://github.com/user-attachments/assets/5b8dcdc0-c2cb-4484-9f60-d8250ef9a588" src="https://github.com/user-attachments/assets/5b8dcdc0-c2cb-4484-9f60-d8250ef9a588" />
+</a>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Doubles distance</strong> - Removes coinciding verts, also aims to remove double radii data</p></li>
+</ul>
+</section>
 <section id="caution">
 <h2>Caution<a class="headerlink" href="#caution" title="Link to this heading">#</a></h2>
-<p>You do not want to manually edit the product of this node, that would break the procedural nature of the node. Manual editing after creation can result in undefined behaviour and is likely overwritten as soon as you update the Sverchok node tree again by moving upstream sliders etc.</p>
+<p>You do not want to manually edit the product of this node, that would break the procedural nature of the node. Manual
+editing after creation can result in undefined behaviour and is likely overwritten as soon as you update the Sverchok
+node tree again by moving upstream sliders etc.</p>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/619340/127733080-a0e2c470-9a72-4c72-88c6-41a814c45d17.png"><img alt="https://user-images.githubusercontent.com/619340/127733080-a0e2c470-9a72-4c72-88c6-41a814c45d17.png" src="https://user-images.githubusercontent.com/619340/127733080-a0e2c470-9a72-4c72-88c6-41a814c45d17.png" />
+<blockquote>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/619340/127733080-a0e2c470-9a72-4c72-88c6-41a814c45d17.png"><img alt="https://user-images.githubusercontent.com/619340/127733080-a0e2c470-9a72-4c72-88c6-41a814c45d17.png" src="https://user-images.githubusercontent.com/619340/127733080-a0e2c470-9a72-4c72-88c6-41a814c45d17.png" />
 </a>
+</div></blockquote>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/619340/127733292-c7019c45-492d-4c85-b713-931063bac9b4.png"><img alt="https://user-images.githubusercontent.com/619340/127733292-c7019c45-492d-4c85-b713-931063bac9b4.png" src="https://user-images.githubusercontent.com/619340/127733292-c7019c45-492d-4c85-b713-931063bac9b4.png" />
+<blockquote>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/619340/127733292-c7019c45-492d-4c85-b713-931063bac9b4.png"><img alt="https://user-images.githubusercontent.com/619340/127733292-c7019c45-492d-4c85-b713-931063bac9b4.png" src="https://user-images.githubusercontent.com/619340/127733292-c7019c45-492d-4c85-b713-931063bac9b4.png" />
 </a>
+</div></blockquote>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
 <li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190387407-495a6f72-bd39-4138-a758-fb58c550a2ae.png"><img alt="https://user-images.githubusercontent.com/14288520/190387407-495a6f72-bd39-4138-a758-fb58c550a2ae.png" src="https://user-images.githubusercontent.com/14288520/190387407-495a6f72-bd39-4138-a758-fb58c550a2ae.png" />
+<blockquote>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190387407-495a6f72-bd39-4138-a758-fb58c550a2ae.png"><img alt="https://user-images.githubusercontent.com/14288520/190387407-495a6f72-bd39-4138-a758-fb58c550a2ae.png" src="https://user-images.githubusercontent.com/14288520/190387407-495a6f72-bd39-4138-a758-fb58c550a2ae.png" />
 </a>
+</div></blockquote>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
 <li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
 <li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 </ul>
+<hr class="docutils" />
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/eba02be2-c03a-42b0-9e1e-5a725f4e436e"><img alt="https://github.com/user-attachments/assets/eba02be2-c03a-42b0-9e1e-5a725f4e436e" src="https://github.com/user-attachments/assets/eba02be2-c03a-42b0-9e1e-5a725f4e436e" />
+</a>
+</div></blockquote>
+</section>
+<section id="modifiers-before-and-after-skin-viewer-modifiers">
+<h2>Modifiers before and after Skin Viewer modifiers<a class="headerlink" href="#modifiers-before-and-after-skin-viewer-modifiers" title="Link to this heading">#</a></h2>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/767cee5e-d6f3-4f21-adc0-0f5312a0c9aa" type="video/mp4">
+Your browser does not support the video tag.
+</video><a class="reference external image-reference" href="https://github.com/user-attachments/assets/50f4bf60-ddce-4297-b6c2-60b3b13d8cc1"><img alt="https://github.com/user-attachments/assets/50f4bf60-ddce-4297-b6c2-60b3b13d8cc1" src="https://github.com/user-attachments/assets/50f4bf60-ddce-4297-b6c2-60b3b13d8cc1" />
+</a>
 </section>
 </section>
 
@@ -495,8 +535,10 @@ Additionally it accepts <code class="docutils literal notranslate"><span class="
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#category">Category</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#caution">Caution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modifiers-before-and-after-skin-viewer-modifiers">Modifiers before and after Skin Viewer modifiers</a></li>
 </ul>
   </nav></div>
 
