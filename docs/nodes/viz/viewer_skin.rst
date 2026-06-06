@@ -1,8 +1,8 @@
 Skin Mesher
 ===========
 
-.. image:: https://github.com/user-attachments/assets/a178dc63-a16f-4737-9be1-439b6f1ef1dc
-  :target: https://github.com/user-attachments/assets/a178dc63-a16f-4737-9be1-439b6f1ef1dc
+.. image:: https://github.com/user-attachments/assets/32d50e61-141c-44ce-b46f-a8ceb04929b9
+  :target: https://github.com/user-attachments/assets/32d50e61-141c-44ce-b46f-a8ceb04929b9
 
 .. image:: https://user-images.githubusercontent.com/14288520/190581380-acb569e2-d9c0-498e-8ba9-666642008309.png
   :target: https://user-images.githubusercontent.com/14288520/190581380-acb569e2-d9c0-498e-8ba9-666642008309.png
@@ -16,11 +16,15 @@ This node is an interpretation of the current features of the Skin Modifier. Dur
 alt+s to scale up the size of individual vertices, this node offers the ability to scale vertices by accepting two 
 lists of scalar values, one for x scale and one for y scale.
 
-settings roots: Depending on how complicated and disjoint your mesh is you may find the result of the modifier can be made more natural by adjusting the way the node sets the roots. This option is placed in the N Panel. 
+settings roots: Depending on how complicated and disjoint your mesh is you may find the result of the modifier can be made more natural by adjusting the way the node sets the roots.
 
+  .. image:: https://github.com/user-attachments/assets/be22fc14-7cf1-41f6-a2df-57a2d6e0a4e9
+    :target: https://github.com/user-attachments/assets/be22fc14-7cf1-41f6-a2df-57a2d6e0a4e9
 
-.. image:: https://user-images.githubusercontent.com/619340/127733402-9a806e90-ded3-43d0-988f-96ee9df626d2.png
-    :target: https://user-images.githubusercontent.com/619340/127733402-9a806e90-ded3-43d0-988f-96ee9df626d2.png
+Additionally you can move skin and subdiv modifier over Modifier Stack:
+
+  .. image:: https://github.com/user-attachments/assets/99b00aea-f144-4e38-9356-34abe9a9e920
+    :target: https://github.com/user-attachments/assets/99b00aea-f144-4e38-9356-34abe9a9e920
 
 Category
 --------
@@ -38,10 +42,20 @@ Outputs
 
 Outputs a mesh with a SkinModifier added to it, directly into the scene.
 
+Parameters
+----------
+
+  .. image:: https://github.com/user-attachments/assets/5b8dcdc0-c2cb-4484-9f60-d8250ef9a588
+    :target: https://github.com/user-attachments/assets/5b8dcdc0-c2cb-4484-9f60-d8250ef9a588
+
+- **Doubles distance** - Removes coinciding verts, also aims to remove double radii data
+
 Caution
 -------
 
-You do not want to manually edit the product of this node, that would break the procedural nature of the node. Manual editing after creation can result in undefined behaviour and is likely overwritten as soon as you update the Sverchok node tree again by moving upstream sliders etc.
+You do not want to manually edit the product of this node, that would break the procedural nature of the node. Manual
+editing after creation can result in undefined behaviour and is likely overwritten as soon as you update the Sverchok
+node tree again by moving upstream sliders etc.
 
 Examples
 --------
@@ -75,3 +89,16 @@ Examples
 
   .. image:: https://github.com/user-attachments/assets/eba02be2-c03a-42b0-9e1e-5a725f4e436e
     :target: https://github.com/user-attachments/assets/eba02be2-c03a-42b0-9e1e-5a725f4e436e
+
+Modifiers before and after Skin Viewer modifiers
+------------------------------------------------
+
+.. raw:: html
+
+    <video width="700" controls>
+        <source src="https://github.com/user-attachments/assets/767cee5e-d6f3-4f21-adc0-0f5312a0c9aa" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>
+
+.. image:: https://github.com/user-attachments/assets/50f4bf60-ddce-4297-b6c2-60b3b13d8cc1
+  :target: https://github.com/user-attachments/assets/50f4bf60-ddce-4297-b6c2-60b3b13d8cc1

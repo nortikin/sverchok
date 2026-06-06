@@ -359,7 +359,7 @@ class SvSkinViewerNodeV28(SverchCustomTreeNode, SvViewerNode, bpy.types.Node, Sv
     distance_doubles: FloatProperty(
         default=0.0, min=0.0,
         name='Doubles distance',
-        description="removes coinciding verts, also aims to remove double radii data",
+        description="Removes coinciding verts, also aims to remove double radii data",
         update=updateNode)
 
     use_root: BoolProperty(
@@ -409,6 +409,7 @@ class SvSkinViewerNodeV28(SverchCustomTreeNode, SvViewerNode, bpy.types.Node, Sv
 
 
     def sv_init(self, context):
+        self.width = 250
         self.init_viewer()
         self.sv_init_helper_basedata_name()
 
