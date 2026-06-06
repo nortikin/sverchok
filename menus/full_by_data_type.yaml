@@ -732,7 +732,7 @@
     - SvCurveViewerNodeV28
     - SvPolylineViewerNode
     - SvTypeViewerNodeV28
-    - SvSkinViewerNodeV28
+    - SvSkinViewerNodeV29
     - SvMetaballOutNode
     - SvBezierCurveOutNode
     - SvNurbsCurveOutNode

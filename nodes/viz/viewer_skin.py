@@ -244,13 +244,13 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
 
     return obj, data_layers
 
-class SvSkinViewerNodeV28(SverchCustomTreeNode, SvViewerNode, bpy.types.Node, SvObjHelper):
+class SvSkinViewerNodeV29(SverchCustomTreeNode, SvViewerNode, bpy.types.Node, SvObjHelper):
     """
     Triggers: Output Skin Mesh
     Tooltip: Outputs Blender Edges + Skin Modifier + Subdivision Surface.\n\tIn: vertices, edges, matrix, radius x/y\n\tParams: base name, subdiv view/render, merge distance
 
     """
-    bl_idname = 'SvSkinViewerNodeV28'
+    bl_idname = 'SvSkinViewerNodeV29'
     bl_label = 'Skin Mesher'
     bl_icon = 'MOD_SKIN'
     sv_icon = 'SV_SKIN_MESHER'
@@ -635,10 +635,6 @@ class SvSkinViewerNodeV28(SverchCustomTreeNode, SvViewerNode, bpy.types.Node, Sv
         pass
 
     def draw_label(self):
-        return f"{SvSkinViewerNodeV28.bl_label} ({self.basedata_name})"
+        return f"{SvSkinViewerNodeV29.bl_label} ({self.basedata_name})"
 
-def register():
-    bpy.utils.register_class(SvSkinViewerNodeV28)
-
-def unregister():
-    bpy.utils.unregister_class(SvSkinViewerNodeV28)
+register, unregister = bpy.utils.register_classes_factory([SvSkinViewerNodeV29])
