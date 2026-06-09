@@ -8,6 +8,7 @@
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level, repeat_last_for_length
 from sverchok.utils.math import supported_metrics, xyz_metrics
@@ -99,7 +100,7 @@ class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
                 elif len(vertices)==1:
                     new_curves.append(SvPointCurve(vertices[0]))
                 else:
-                    raise TypeError(f"Cannot create curve of zero points")
+                    raise SvInvalidInputException("Cannot create curve of zero points")
 
             if nested_out:
                 curve_out.append(new_curves)
