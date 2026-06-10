@@ -610,7 +610,7 @@ class NodeCategoryMenu(SverchokContext, bpy.types.Menu):
             cats = defaultdict(list)
             # todo replace with `bpy.types.Node.bl_rna_get_subclass_py` after dummy nodes refactoring
             for cls in iter_classes_from_module(sverchok.nodes, [bpy.types.Node]):
-                print("F", cls)
+                #print("F", cls)
                 if name := getattr(cls, 'sv_category', None):
                     cats[name].append(AddNode(cls.bl_idname))
             self._categories = cats
