@@ -88,13 +88,6 @@ These parameters are especially useful when:
 For cyclic (closed) curves, the curl parameters are ignored — the curve is
 automatically closed with smooth G1 continuity at the join.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/90d6160e-18f2-4d97-a2d5-be0b0f8e0ee5
-  :target: https://github.com/nortikin/sverchok/assets/14288520/90d6160e-18f2-4d97-a2d5-be0b0f8e0ee5
-
-    * Generator-> :doc:`Generators Extended </nodes/generators_extended/generators_extended>`
-    * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
-    * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
-
 Inputs
 ------
 
