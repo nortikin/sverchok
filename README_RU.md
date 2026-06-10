@@ -16,7 +16,7 @@
 ## По-русски
 
 [EN](https://github.com/nortikin/sverchok/blob/master/README.md)   
-**Дополнение к**: [Blender](http://blender.org)  версия *2.80* и выше. Для версии *2.79*, см. [специальную инструкцию по установке](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation). 
+**Дополнение к**: [Blender](http://blender.org)  версия 5.1, 4.5, 3.6, 2.8. Для версии *2.79*, см. [специальную инструкцию по установке](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation). 
 
 **Текущая версия**: Смотри настройки Сверчка или панель   
 **Лицензия**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
