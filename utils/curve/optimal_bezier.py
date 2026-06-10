@@ -154,11 +154,8 @@ def _bending_energy_from_segments(segments, alphas):
     """
     Compute ∫|B''(t)|² dt from pre-computed Bezier segments (eq. 21).
 
-    For each cubic Bezier segment [Q, A, B, Q'] with segment time t_i
-    (alpha_i = 1 / t_i), the contribution to the bending energy is
-    12 · α³ · (|Q|² + 3(|A|² + |B|²) + |Q'|² + Q·Q' - 3(Q·A + A·B + B·Q')).
-
-    Generalized from the paper's 2D formula to 3D using dot products.
+    Vectorized implementation: dot products computed across all segments
+    simultaneously using element-wise multiplication and axis reduction.
 
     Args:
         segments: np.array (m, 4, 3) — each row [Q_i, A_i, B_i, Q_{i+1}].
@@ -167,21 +164,19 @@ def _bending_energy_from_segments(segments, alphas):
     Returns:
         float — total bending energy.
     """
-    total = 0.0
-    for i in range(len(alphas)):
-        a = alphas[i]
-        Qi = segments[i, 0]
-        Ai = segments[i, 1]
-        Bi = segments[i, 2]
-        Qip1 = segments[i, 3]
-        total += 12.0 * (a ** 3) * (
-            np.dot(Qi, Qi)
-            + 3.0 * (np.dot(Ai, Ai) + np.dot(Bi, Bi))
-            + np.dot(Qip1, Qip1)
-            + np.dot(Qi, Qip1)
-            - 3.0 * (np.dot(Qi, Ai) + np.dot(Ai, Bi) + np.dot(Bi, Qip1))
-        )
-    return total
+    Q0 = segments[:, 0]
+    A_pts = segments[:, 1]
+    B_pts = segments[:, 2]
+    Q1 = segments[:, 3]
+    d = lambda x, y: np.sum(x * y, axis=1)
+    bracket = (
+        d(Q0, Q0)
+        + 3.0 * (d(A_pts, A_pts) + d(B_pts, B_pts))
+        + d(Q1, Q1)
+        + d(Q0, Q1)
+        - 3.0 * (d(Q0, A_pts) + d(A_pts, B_pts) + d(B_pts, Q1))
+    )
+    return float(np.sum(12.0 * (alphas ** 3) * bracket))
 
 
 def _open_bending_energy(points, alphas):
@@ -330,30 +325,173 @@ def _chord_lengths(points, cyclic):
 
 
 # ---------------------------------------------------------------------------
+# Optimized energy evaluators (combined solve + vectorized energy)
+# ---------------------------------------------------------------------------
+
+def _make_open_energy_eval(points):
+    """
+    Build a closure that evaluates bending energy for an open spline.
+
+    Pre-allocates the linear system matrix and RHS. On each call, only
+    the alpha-dependent entries are updated in-place, then the system is
+    solved and energy computed with vectorized dot products.
+
+    Args:
+        points: np.array (n, 3) — interpolation nodes (n = m + 1).
+
+    Returns:
+        callable(alphas) -> float
+    """
+    n = len(points)
+    m = n - 1  # segments = nodes - 1 for open spline
+    sz = 2 * m
+    A = np.zeros((sz, sz))
+    b = np.zeros((sz, 3))
+
+    # Build fixed structure once (boundary rows never change)
+    A[0, 0] = 2.0
+    A[0, 1] = -1.0
+    b[0] = points[0]
+    ia_last = 2 * (m - 1)
+    ib_last = ia_last + 1
+    A[2 * m - 1, ia_last] = -1.0
+    A[2 * m - 1, ib_last] = 2.0
+    b[2 * m - 1] = points[n - 1]
+
+    # Pre-compute constant parts of energy bracket
+    Q0 = points[:-1]
+    Q1 = points[1:]
+    dQQ0 = np.sum(Q0 * Q0, axis=1)
+    dQQ1 = np.sum(Q1 * Q1, axis=1)
+    dQ0Q1 = np.sum(Q0 * Q1, axis=1)
+    base_bracket = dQQ0 + dQQ1 + dQ0Q1
+
+    def eval_energy(alphas):
+        # Update alpha-dependent rows in-place
+        row = 1
+        for i in range(1, m):
+            ap = alphas[i - 1]
+            ac = alphas[i]
+            ap2 = ap * ap
+            ac2 = ac * ac
+            ia_p = 2 * (i - 1)
+            ib_p = ia_p + 1
+            ia_c = 2 * i
+            ib_c = ia_c + 1
+            # Clear old values in these rows
+            A[row, ia_p] = ap2
+            A[row, ib_p] = -2.0 * ap2
+            A[row, ia_c] = 2.0 * ac2
+            A[row, ib_c] = -ac2
+            b[row] = (ac2 - ap2) * points[i]
+            row += 1
+            A[row, ib_p] = ap
+            A[row, ia_c] = ac
+            b[row] = (ap + ac) * points[i]
+            row += 1
+
+        sol = np.linalg.solve(A, b)
+        A_pts = sol[0::2]
+        B_pts = sol[1::2]
+        dAA = np.sum(A_pts * A_pts, axis=1)
+        dBB = np.sum(B_pts * B_pts, axis=1)
+        dAB = np.sum(A_pts * B_pts, axis=1)
+        dQA = np.sum(Q0 * A_pts, axis=1)
+        dQB = np.sum(B_pts * Q1, axis=1)
+        bracket = base_bracket + 3.0 * (dAA + dBB) - 3.0 * (dQA + dAB + dQB)
+        return float(np.sum(12.0 * (alphas ** 3) * bracket))
+
+    return eval_energy
+
+
+def _make_closed_energy_eval(points, m):
+    """
+    Build a closure that evaluates bending energy for a closed spline.
+
+    Pre-allocates the linear system matrix and RHS. On each call, only
+    the alpha-dependent entries are updated in-place.
+
+    Returns:
+        callable(alphas) -> float
+    """
+    sz = 2 * m
+    A = np.zeros((sz, sz))
+    b = np.zeros((sz, 3))
+
+    # Pre-compute constant parts of energy bracket
+    Q0 = points
+    Q1 = np.roll(points, -1, axis=0)
+    dQQ0 = np.sum(Q0 * Q0, axis=1)
+    dQQ1 = np.sum(Q1 * Q1, axis=1)
+    dQ0Q1 = np.sum(Q0 * Q1, axis=1)
+    base_bracket = dQQ0 + dQQ1 + dQ0Q1
+
+    def eval_energy(alphas):
+        row = 0
+        for i in range(m):
+            ip = (i - 1) % m
+            ap = alphas[ip]
+            ac = alphas[i]
+            ap2 = ap * ap
+            ac2 = ac * ac
+            ia_p = 2 * ip
+            ib_p = ia_p + 1
+            ia_c = 2 * i
+            ib_c = ia_c + 1
+            A[row, ia_p] = ap2
+            A[row, ib_p] = -2.0 * ap2
+            A[row, ia_c] = 2.0 * ac2
+            A[row, ib_c] = -ac2
+            b[row] = (ac2 - ap2) * points[i]
+            row += 1
+            A[row, ib_p] = ap
+            A[row, ia_c] = ac
+            b[row] = (ap + ac) * points[i]
+            row += 1
+
+        sol = np.linalg.solve(A, b)
+        A_pts = sol[0::2]
+        B_pts = sol[1::2]
+        dAA = np.sum(A_pts * A_pts, axis=1)
+        dBB = np.sum(B_pts * B_pts, axis=1)
+        dAB = np.sum(A_pts * B_pts, axis=1)
+        dQA = np.sum(Q0 * A_pts, axis=1)
+        dQB = np.sum(B_pts * Q1, axis=1)
+        bracket = base_bracket + 3.0 * (dAA + dBB) - 3.0 * (dQA + dAB + dQB)
+        return float(np.sum(12.0 * (alphas ** 3) * bracket))
+
+    return eval_energy
+
+
+# ---------------------------------------------------------------------------
 # Shared hill-descent optimizer
 # ---------------------------------------------------------------------------
 
-def _compute_optimal_times(points, m, energy_fn, epsilon,
-                           max_iterations, delta, acceleration):
+def _compute_optimal_times(points, m, epsilon, max_iterations,
+                            delta, acceleration, cyclic):
     """
     Compute optimal segment times via hill-descent.
 
-    This is the concrete implementation that inlines the optimization loop
-    for performance (avoids closure overhead on energy_fn calls).
+    Uses pre-built energy evaluator closures that combine matrix update,
+    linear solve, and vectorized energy computation in a single call.
 
     Args:
         points: np.array (n, 3).
         m: number of segments.
-        energy_fn: callable(points, alphas, m) -> float.
         epsilon: convergence tolerance.
         max_iterations: maximum iterations.
         delta: initial step parameter.
         acceleration: step size acceleration factor.
+        cyclic: True for closed spline, False for open.
 
     Returns:
         np.array (m,) — optimal times t_i.
     """
-    cyclic = m == len(points)
+    # Build optimized energy evaluator
+    if cyclic:
+        energy_eval = _make_closed_energy_eval(points, m)
+    else:
+        energy_eval = _make_open_energy_eval(points)
 
     # Initial: chord-length proportional
     lengths = _chord_lengths(points, cyclic)
@@ -368,7 +506,7 @@ def _compute_optimal_times(points, m, energy_fn, epsilon,
     Acc = acceleration
 
     alphas = 1.0 / np.maximum(t, _ALPHA_MIN)
-    current_energy = energy_fn(points, alphas, m)
+    current_energy = energy_eval(alphas)
 
     for _ in range(max_iterations):
         moved = False
@@ -386,7 +524,7 @@ def _compute_optimal_times(points, m, energy_fn, epsilon,
                 if (candidate <= 0).any():
                     continue
                 candidate_alphas = 1.0 / np.maximum(candidate, _ALPHA_MIN)
-                energy = energy_fn(points, candidate_alphas, m)
+                energy = energy_eval(candidate_alphas)
                 if energy < best_energy:
                     best_energy = energy
                     best_k = k
@@ -405,18 +543,6 @@ def _compute_optimal_times(points, m, energy_fn, epsilon,
             break
 
     return t
-
-
-# ---------------------------------------------------------------------------
-# Internal: energy wrappers that match the unified signature (pts, alphas, m)
-# ---------------------------------------------------------------------------
-
-def _open_energy_wrapper(pts, alphas, m):
-    return _open_bending_energy(pts, alphas)
-
-
-def _closed_energy_wrapper(pts, alphas, m):
-    return _closed_bending_energy(pts, alphas, m)
 
 
 # ---------------------------------------------------------------------------
@@ -502,9 +628,8 @@ def optimal_bezier_spline(
 
     elif metric == 'OPTIMAL':
         # Hill-descent optimization
-        energy_fn = _closed_energy_wrapper if cyclic else _open_energy_wrapper
         t = _compute_optimal_times(
-            points, m, energy_fn, epsilon, max_iterations, delta, acceleration)
+            points, m, epsilon, max_iterations, delta, acceleration, cyclic)
         alphas = 1.0 / np.maximum(t, _ALPHA_MIN)
 
     else:
