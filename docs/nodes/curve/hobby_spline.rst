@@ -1,8 +1,8 @@
 Hobby Spline
 ============
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/90d6160e-18f2-4d97-a2d5-be0b0f8e0ee5
-  :target: https://github.com/nortikin/sverchok/assets/14288520/90d6160e-18f2-4d97-a2d5-be0b0f8e0ee5
+.. image:: https://github.com/user-attachments/assets/250895c9-0c0e-443c-9241-ae03804fbd3b
+  :target: https://github.com/user-attachments/assets/250895c9-0c0e-443c-9241-ae03804fbd3b
 
 Functionality
 -------------
@@ -133,51 +133,26 @@ This node has the following output:
 Examples of Usage
 -----------------
 
-Simple hobby spline through five points:
+Compare several spline types:
 
-.. image:: https://user-images.githubusercontent.com/284644/210108720-cb3ef5df-1745-4c19-8625-73f74a445c3d.png
-  :target: https://user-images.githubusercontent.com/284644/210108720-cb3ef5df-1745-4c19-8625-73f74a445c3d.png
+.. image:: https://github.com/user-attachments/assets/318d88c0-7c03-4455-98be-8588ca585c80
+  :target: https://github.com/user-attachments/assets/318d88c0-7c03-4455-98be-8588ca585c80
 
-* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Green line - Cubic spline
+* Brown line - Catmull-Rom spline
+* Blue line - interpolated NURBS curve
+* Violet line - Hobby spline.
 
-Hobby spline with different tension values (from left to right: 0.75, 1.0, 2.0, 5.0):
+A couple of other examples:
 
-.. image:: https://user-images.githubusercontent.com/284644/210087921-a8cebbca-2235-4d82-9e11-f08794d8227c.png
-  :target: https://user-images.githubusercontent.com/284644/210087921-a8cebbca-2235-4d82-9e11-f08794d8227c.png
+.. image:: https://github.com/user-attachments/assets/04984148-19bc-4325-82c9-599fc8055567
+  :target: https://github.com/user-attachments/assets/04984148-19bc-4325-82c9-599fc8055567
 
-* Number-> :doc:`Number Range </nodes/number/number_range>`
-* Number-> :doc:`Map Range </nodes/number/range_map>`
-* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
-* List->List Struct-> :doc:`List Levels </nodes/list_struct/levels>`
-* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
-* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+.. image:: https://github.com/user-attachments/assets/5accd098-428a-4610-8000-6405d23976d2
+  :target: https://github.com/user-attachments/assets/5accd098-428a-4610-8000-6405d23976d2
 
-Cyclic hobby spline through four points (diamond shape):
+3D Spiral example:
 
-.. image:: https://user-images.githubusercontent.com/284644/210095223-04cb8658-522e-4458-8668-280a810d5b56.png
-  :target: https://user-images.githubusercontent.com/284644/210095223-04cb8658-522e-4458-8668-280a810d5b56.png
+.. image:: https://github.com/user-attachments/assets/e0f56ff5-fd85-4f8b-8949-0b04b088247f
+  :target: https://github.com/user-attachments/assets/e0f56ff5-fd85-4f8b-8949-0b04b088247f
 
-* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
-* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
-
-3D hobby spline through points on a helix:
-
-.. image:: https://user-images.githubusercontent.com/284644/210095289-11843fed-a915-4030-8391-b81735f1375b.png
-  :target: https://user-images.githubusercontent.com/284644/210095289-11843fed-a915-4030-8391-b81735f1375b.png
-
-* Generator-> :doc:`Generators Extended </nodes/generators_extended/generators_extended>`
-* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
-
-Hobby spline with curl_start = 0 (zero curvature at start) vs curl_start = 1
-(rounded start):
-
-.. image:: https://user-images.githubusercontent.com/284644/210087923-fc329968-375a-440e-b661-ee107a85e326.png
-  :target: https://user-images.githubusercontent.com/284644/210087923-fc329968-375a-440e-b661-ee107a85e326.png
-
-* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
-* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
