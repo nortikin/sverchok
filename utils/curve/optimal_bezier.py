@@ -69,55 +69,58 @@ def _open_linear_system(points, alphas):
         alphas: np.array (m,)  — α_i = 1 / t_i.
 
     Returns:
-        (A, b) — coefficient matrix (2m, 2m) and RHS (2m, 3).
+        (matrix, rhs) — coefficient matrix (2m, 2m) and RHS (2m, 3).
     """
-    n = len(points)
-    m = n - 1
-    size = 2 * m
+    num_nodes = len(points)
+    num_segs = num_nodes - 1
+    matrix_size = 2 * num_segs
 
-    A = np.zeros((size, size))
-    b = np.zeros((size, 3))
+    matrix = np.zeros((matrix_size, matrix_size))
+    rhs = np.zeros((matrix_size, 3))
 
-    # Left boundary: 2·A₀ − B₀ = Q₀
-    A[0, 0] = 2.0
-    A[0, 1] = -1.0
-    b[0] = points[0]
+    # Left boundary condition: 2·A₀ − B₀ = Q₀
+    matrix[0, 0] = 2.0
+    matrix[0, 1] = -1.0
+    rhs[0] = points[0]
 
-    # Interior nodes
+    # Interior nodes: C1 and C2 continuity between adjacent segments
     row = 1
-    for i in range(1, m):
-        ap = alphas[i - 1]
-        ac = alphas[i]
-        ap2 = ap * ap
-        ac2 = ac * ac
+    for seg in range(1, num_segs):
+        alpha_prev = alphas[seg - 1]
+        alpha_curr = alphas[seg]
+        alpha_prev_sq = alpha_prev * alpha_prev
+        alpha_curr_sq = alpha_curr * alpha_curr
 
-        ia_p = 2 * (i - 1)
-        ib_p = ia_p + 1
-        ia_c = 2 * i
-        ib_c = ia_c + 1
+        # Column indices for the four unknown control points involved:
+        #   A_{seg-1}, B_{seg-1} from the previous segment
+        #   A_{seg},   B_{seg}   from the current segment
+        col_A_prev = 2 * (seg - 1)
+        col_B_prev = col_A_prev + 1
+        col_A_curr = 2 * seg
+        col_B_curr = col_A_curr + 1
 
-        # C₂ continuity (second derivative match)
-        A[row, ia_p] = ap2
-        A[row, ib_p] = -2.0 * ap2
-        A[row, ia_c] = 2.0 * ac2
-        A[row, ib_c] = -ac2
-        b[row] = (ac2 - ap2) * points[i]
+        # C₂ continuity: second derivatives match at the shared node
+        matrix[row, col_A_prev] = alpha_prev_sq
+        matrix[row, col_B_prev] = -2.0 * alpha_prev_sq
+        matrix[row, col_A_curr] = 2.0 * alpha_curr_sq
+        matrix[row, col_B_curr] = -alpha_curr_sq
+        rhs[row] = (alpha_curr_sq - alpha_prev_sq) * points[seg]
         row += 1
 
-        # C₁ continuity (first derivative match)
-        A[row, ib_p] = ap
-        A[row, ia_c] = ac
-        b[row] = (ap + ac) * points[i]
+        # C₁ continuity: first derivatives match at the shared node
+        matrix[row, col_B_prev] = alpha_prev
+        matrix[row, col_A_curr] = alpha_curr
+        rhs[row] = (alpha_prev + alpha_curr) * points[seg]
         row += 1
 
-    # Right boundary: −A_{m-1} + 2·B_{m-1} = Q_{n-1}
-    ia_last = 2 * (m - 1)
-    ib_last = ia_last + 1
-    A[row, ia_last] = -1.0
-    A[row, ib_last] = 2.0
-    b[row] = points[n - 1]
+    # Right boundary condition: −A_{last} + 2·B_{last} = Q_{n-1}
+    col_A_last = 2 * (num_segs - 1)
+    col_B_last = col_A_last + 1
+    matrix[row, col_A_last] = -1.0
+    matrix[row, col_B_last] = 2.0
+    rhs[row] = points[num_nodes - 1]
 
-    return A, b
+    return matrix, rhs
 
 
 def _open_control_points(points, alphas):
@@ -131,22 +134,23 @@ def _open_control_points(points, alphas):
     Returns:
         np.array (m, 4, 3) — each row [Q_i, A_i, B_i, Q_{i+1}].
     """
-    m = len(alphas)
-    A, b = _open_linear_system(points, alphas)
+    num_segs = len(alphas)
+    matrix, rhs = _open_linear_system(points, alphas)
     try:
-        solution = np.linalg.solve(A, b)
+        solution = np.linalg.solve(matrix, rhs)
     except np.linalg.LinAlgError:
         raise SvInvalidInputException(
             "Cannot compute spline: interpolation nodes produce a singular "
             "linear system (e.g., collinear or duplicate points)"
         )
 
-    segments = np.empty((m, 4, 3))
-    for i in range(m):
-        segments[i, 0] = points[i]
-        segments[i, 1] = solution[2 * i]
-        segments[i, 2] = solution[2 * i + 1]
-        segments[i, 3] = points[i + 1]
+    # Pack solution into Bezier segment format: [Q_start, A, B, Q_end]
+    segments = np.empty((num_segs, 4, 3))
+    for seg in range(num_segs):
+        segments[seg, 0] = points[seg]
+        segments[seg, 1] = solution[2 * seg]       # A control point
+        segments[seg, 2] = solution[2 * seg + 1]   # B control point
+        segments[seg, 3] = points[seg + 1]
     return segments
 
 
@@ -154,42 +158,38 @@ def _bending_energy_from_segments(segments, alphas):
     """
     Compute ∫|B''(t)|² dt from pre-computed Bezier segments (eq. 21).
 
-    Vectorized implementation: dot products computed across all segments
-    simultaneously using element-wise multiplication and axis reduction.
+    For each cubic Bezier segment [Q_start, A, B, Q_end] with parameter
+    alpha = 1 / segment_time, the energy contribution is:
 
-    Args:
-        segments: np.array (m, 4, 3) — each row [Q_i, A_i, B_i, Q_{i+1}].
-        alphas: np.array (m,) — α_i = 1 / t_i.
+        12 · α³ · (|Q_start|² + 3(|A|² + |B|²) + |Q_end|²
+                   + Q_start·Q_end
+                   - 3(Q_start·A + A·B + B·Q_end))
 
-    Returns:
-        float — total bending energy.
+    Vectorized: all dot products computed across segments simultaneously.
     """
-    Q0 = segments[:, 0]
-    A_pts = segments[:, 1]
-    B_pts = segments[:, 2]
-    Q1 = segments[:, 3]
-    d = lambda x, y: np.sum(x * y, axis=1)
+    q_start = segments[:, 0]
+    inner_a = segments[:, 1]
+    inner_b = segments[:, 2]
+    q_end = segments[:, 3]
+
+    dot = lambda x, y: np.sum(x * y, axis=1)
+
+    # The bracketed expression from eq. (21), evaluated per-segment
     bracket = (
-        d(Q0, Q0)
-        + 3.0 * (d(A_pts, A_pts) + d(B_pts, B_pts))
-        + d(Q1, Q1)
-        + d(Q0, Q1)
-        - 3.0 * (d(Q0, A_pts) + d(A_pts, B_pts) + d(B_pts, Q1))
+        dot(q_start, q_start)
+        + 3.0 * (dot(inner_a, inner_a) + dot(inner_b, inner_b))
+        + dot(q_end, q_end)
+        + dot(q_start, q_end)
+        - 3.0 * (dot(q_start, inner_a) + dot(inner_a, inner_b)
+                 + dot(inner_b, q_end))
     )
+
+    # Scale by α³ and sum across all segments
     return float(np.sum(12.0 * (alphas ** 3) * bracket))
 
 
 def _open_bending_energy(points, alphas):
-    """
-    Compute ∫|B''(t)|² dt for an open C2 spline.
-
-    Args:
-        points: np.array (n, 3).
-        alphas: np.array (m,).
-
-    Returns:
-        float — total bending energy.
-    """
+    """Compute ∫|B''(t)|² dt for an open C2 spline."""
     segments = _open_control_points(points, alphas)
     return _bending_energy_from_segments(segments, alphas)
 
@@ -198,93 +198,84 @@ def _open_bending_energy(points, alphas):
 # Closed spline helpers
 # ---------------------------------------------------------------------------
 
-def _closed_linear_system(points, alphas, m):
+def _closed_linear_system(points, alphas, num_segs):
     """
     Build the linear system for a closed C2 Bezier spline.
 
-    For n interpolation nodes Q_0, ..., Q_{n-1} there are m = n segments
-    (last segment wraps from Q_{n-1} to Q_0). No boundary conditions —
-    continuity equations apply at every node.
+    Unlike the open spline, there are no boundary conditions — continuity
+    equations apply at every node, including the wrap-around from last
+    segment back to the first.
 
     Args:
         points: np.array (n, 3).
         alphas: np.array (m,).
-        m: number of segments (= n for closed spline).
+        num_segs: number of segments (= n for closed spline).
 
     Returns:
-        (A, b) — coefficient matrix (2m, 2m) and RHS (2m, 3).
+        (matrix, rhs) — coefficient matrix (2m, 2m) and RHS (2m, 3).
     """
-    sz = 2 * m
-    A = np.zeros((sz, sz))
-    b = np.zeros((sz, 3))
+    matrix_size = 2 * num_segs
+    matrix = np.zeros((matrix_size, matrix_size))
+    rhs = np.zeros((matrix_size, 3))
     row = 0
-    for i in range(m):
-        ip = (i - 1) % m
-        ap = alphas[ip]
-        ac = alphas[i]
-        ap2 = ap * ap
-        ac2 = ac * ac
-        ia_p = 2 * ip
-        ib_p = ia_p + 1
-        ia_c = 2 * i
-        ib_c = ia_c + 1
-        # C₂
-        A[row, ia_p] = ap2
-        A[row, ib_p] = -2.0 * ap2
-        A[row, ia_c] = 2.0 * ac2
-        A[row, ib_c] = -ac2
-        b[row] = (ac2 - ap2) * points[i]
+
+    for seg in range(num_segs):
+        prev_seg = (seg - 1) % num_segs  # wraps: segment before 0 is the last
+        alpha_prev = alphas[prev_seg]
+        alpha_curr = alphas[seg]
+        alpha_prev_sq = alpha_prev * alpha_prev
+        alpha_curr_sq = alpha_curr * alpha_curr
+
+        col_A_prev = 2 * prev_seg
+        col_B_prev = col_A_prev + 1
+        col_A_curr = 2 * seg
+        col_B_curr = col_A_curr + 1
+
+        # C₂ continuity at node Q_{seg}
+        matrix[row, col_A_prev] = alpha_prev_sq
+        matrix[row, col_B_prev] = -2.0 * alpha_prev_sq
+        matrix[row, col_A_curr] = 2.0 * alpha_curr_sq
+        matrix[row, col_B_curr] = -alpha_curr_sq
+        rhs[row] = (alpha_curr_sq - alpha_prev_sq) * points[seg]
         row += 1
-        # C₁
-        A[row, ib_p] = ap
-        A[row, ia_c] = ac
-        b[row] = (ap + ac) * points[i]
+
+        # C₁ continuity at node Q_{seg}
+        matrix[row, col_B_prev] = alpha_prev
+        matrix[row, col_A_curr] = alpha_curr
+        rhs[row] = (alpha_prev + alpha_curr) * points[seg]
         row += 1
-    return A, b
+
+    return matrix, rhs
 
 
-def _closed_control_points(points, alphas, m):
+def _closed_control_points(points, alphas, num_segs):
     """
     Solve for Bezier control points of a closed spline.
-
-    Args:
-        points: np.array (n, 3).
-        alphas: np.array (m,).
-        m: number of segments (= n for closed spline).
 
     Returns:
         np.array (m, 4, 3) — each row [Q_i, A_i, B_i, Q_{(i+1)%n}].
     """
-    A, b = _closed_linear_system(points, alphas, m)
+    matrix, rhs = _closed_linear_system(points, alphas, num_segs)
     try:
-        sol = np.linalg.solve(A, b)
+        solution = np.linalg.solve(matrix, rhs)
     except np.linalg.LinAlgError:
         raise SvInvalidInputException(
             "Cannot compute closed spline: interpolation nodes produce a "
             "singular linear system (e.g., collinear or duplicate points)"
         )
-    segs = np.empty((m, 4, 3))
-    for i in range(m):
-        segs[i, 0] = points[i]
-        segs[i, 1] = sol[2 * i]
-        segs[i, 2] = sol[2 * i + 1]
-        segs[i, 3] = points[(i + 1) % m]
-    return segs
+
+    segments = np.empty((num_segs, 4, 3))
+    for seg in range(num_segs):
+        segments[seg, 0] = points[seg]
+        segments[seg, 1] = solution[2 * seg]
+        segments[seg, 2] = solution[2 * seg + 1]
+        segments[seg, 3] = points[(seg + 1) % num_segs]
+    return segments
 
 
-def _closed_bending_energy(points, alphas, m):
-    """
-    Compute ∫|B''(t)|² dt for a closed C2 spline.
-
-    Args:
-        points: np.array (n, 3).
-        alphas: np.array (m,).
-        m: number of segments (= n for closed spline).
-
-    Returns:
-        float — total bending energy.
-    """
-    segments = _closed_control_points(points, alphas, m)
+def _closed_bending_energy(points, alphas, num_segs):
+    """Compute ∫|B''(t)|² dt for a closed C2 spline."""
+    segments = _closed_control_points(points, alphas, num_segs)
     return _bending_energy_from_segments(segments, alphas)
 
 
@@ -296,12 +287,7 @@ def _segment_diffs(points, cyclic):
     """
     Compute vectors from each node to the next.
 
-    Args:
-        points: np.array (n, 3).
-        cyclic: if True, the last vector wraps from points[-1] to points[0].
-
-    Returns:
-        np.array (m, 3) where m = n if cyclic else n - 1.
+    For cyclic splines, the last vector wraps from points[-1] to points[0].
     """
     if cyclic:
         return np.diff(points, axis=0, append=points[:1])
@@ -312,12 +298,7 @@ def _chord_lengths(points, cyclic):
     """
     Compute segment lengths for chord-length parameterization.
 
-    Args:
-        points: np.array (n, 3).
-        cyclic: if True, include the wrap-around segment.
-
-    Returns:
-        np.array (m,) — segment lengths, floored at _LENGTH_MIN.
+    Lengths are floored at _LENGTH_MIN to avoid degenerate zero-length segments.
     """
     diffs = _segment_diffs(points, cyclic)
     lengths = np.linalg.norm(diffs, axis=1)
@@ -325,224 +306,277 @@ def _chord_lengths(points, cyclic):
 
 
 # ---------------------------------------------------------------------------
-# Optimized energy evaluators (combined solve + vectorized energy)
+# Optimized energy evaluators
+#
+# These closures combine three steps into one call:
+#   1. Update the linear system matrix (in-place, reusing pre-allocated arrays)
+#   2. Solve for control points
+#   3. Compute bending energy (vectorized)
+#
+# This avoids creating intermediate segment arrays and eliminates repeated
+# memory allocation. The matrix has a fixed sparsity pattern — only the
+# alpha-dependent coefficients change between calls.
 # ---------------------------------------------------------------------------
 
 def _make_open_energy_eval(points):
     """
     Build a closure that evaluates bending energy for an open spline.
 
-    Pre-allocates the linear system matrix and RHS. On each call, only
-    the alpha-dependent entries are updated in-place, then the system is
-    solved and energy computed with vectorized dot products.
+    The closure pre-allocates the system matrix and RHS, setting the fixed
+    boundary rows once. Each call only updates the interior rows that depend
+    on the current alpha values, then solves and computes energy.
 
     Args:
-        points: np.array (n, 3) — interpolation nodes (n = m + 1).
+        points: np.array (n, 3) — interpolation nodes.
 
     Returns:
-        callable(alphas) -> float
+        Callable: eval_energy(alphas) -> float
     """
-    n = len(points)
-    m = n - 1  # segments = nodes - 1 for open spline
-    sz = 2 * m
-    A = np.zeros((sz, sz))
-    b = np.zeros((sz, 3))
+    num_nodes = len(points)
+    num_segs = num_nodes - 1
+    matrix_size = 2 * num_segs
 
-    # Build fixed structure once (boundary rows never change)
-    A[0, 0] = 2.0
-    A[0, 1] = -1.0
-    b[0] = points[0]
-    ia_last = 2 * (m - 1)
-    ib_last = ia_last + 1
-    A[2 * m - 1, ia_last] = -1.0
-    A[2 * m - 1, ib_last] = 2.0
-    b[2 * m - 1] = points[n - 1]
+    # Pre-allocate system matrix and RHS
+    matrix = np.zeros((matrix_size, matrix_size))
+    rhs = np.zeros((matrix_size, 3))
 
-    # Pre-compute constant parts of energy bracket
-    Q0 = points[:-1]
-    Q1 = points[1:]
-    dQQ0 = np.sum(Q0 * Q0, axis=1)
-    dQQ1 = np.sum(Q1 * Q1, axis=1)
-    dQ0Q1 = np.sum(Q0 * Q1, axis=1)
-    base_bracket = dQQ0 + dQQ1 + dQ0Q1
+    # Fixed boundary rows — set once, never change during optimization
+    # Left:  2·A₀ − B₀ = Q₀
+    matrix[0, 0] = 2.0
+    matrix[0, 1] = -1.0
+    rhs[0] = points[0]
+    # Right: −A_{last} + 2·B_{last} = Q_{n-1}
+    col_A_last = 2 * (num_segs - 1)
+    col_B_last = col_A_last + 1
+    last_row = 2 * num_segs - 1
+    matrix[last_row, col_A_last] = -1.0
+    matrix[last_row, col_B_last] = 2.0
+    rhs[last_row] = points[num_nodes - 1]
+
+    # Pre-compute the part of the energy bracket that depends only on
+    # interpolation nodes (constant across all optimization iterations)
+    q_start = points[:-1]
+    q_end = points[1:]
+    energy_base = (
+        np.sum(q_start * q_start, axis=1)
+        + np.sum(q_end * q_end, axis=1)
+        + np.sum(q_start * q_end, axis=1)
+    )
 
     def eval_energy(alphas):
-        # Update alpha-dependent rows in-place
+        # Update only the interior rows (alpha-dependent continuity equations)
         row = 1
-        for i in range(1, m):
-            ap = alphas[i - 1]
-            ac = alphas[i]
-            ap2 = ap * ap
-            ac2 = ac * ac
-            ia_p = 2 * (i - 1)
-            ib_p = ia_p + 1
-            ia_c = 2 * i
-            ib_c = ia_c + 1
-            # Clear old values in these rows
-            A[row, ia_p] = ap2
-            A[row, ib_p] = -2.0 * ap2
-            A[row, ia_c] = 2.0 * ac2
-            A[row, ib_c] = -ac2
-            b[row] = (ac2 - ap2) * points[i]
+        for seg in range(1, num_segs):
+            alpha_prev = alphas[seg - 1]
+            alpha_curr = alphas[seg]
+            alpha_prev_sq = alpha_prev * alpha_prev
+            alpha_curr_sq = alpha_curr * alpha_curr
+
+            col_A_prev = 2 * (seg - 1)
+            col_B_prev = col_A_prev + 1
+            col_A_curr = 2 * seg
+            col_B_curr = col_A_curr + 1
+
+            # C₂ row
+            matrix[row, col_A_prev] = alpha_prev_sq
+            matrix[row, col_B_prev] = -2.0 * alpha_prev_sq
+            matrix[row, col_A_curr] = 2.0 * alpha_curr_sq
+            matrix[row, col_B_curr] = -alpha_curr_sq
+            rhs[row] = (alpha_curr_sq - alpha_prev_sq) * points[seg]
             row += 1
-            A[row, ib_p] = ap
-            A[row, ia_c] = ac
-            b[row] = (ap + ac) * points[i]
+            # C₁ row
+            matrix[row, col_B_prev] = alpha_prev
+            matrix[row, col_A_curr] = alpha_curr
+            rhs[row] = (alpha_prev + alpha_curr) * points[seg]
             row += 1
 
-        sol = np.linalg.solve(A, b)
-        A_pts = sol[0::2]
-        B_pts = sol[1::2]
-        dAA = np.sum(A_pts * A_pts, axis=1)
-        dBB = np.sum(B_pts * B_pts, axis=1)
-        dAB = np.sum(A_pts * B_pts, axis=1)
-        dQA = np.sum(Q0 * A_pts, axis=1)
-        dQB = np.sum(B_pts * Q1, axis=1)
-        bracket = base_bracket + 3.0 * (dAA + dBB) - 3.0 * (dQA + dAB + dQB)
+        # Solve and extract inner control points
+        solution = np.linalg.solve(matrix, rhs)
+        inner_a = solution[0::2]  # A_0, A_1, ..., A_{m-1}
+        inner_b = solution[1::2]  # B_0, B_1, ..., B_{m-1}
+
+        # Vectorized energy: add alpha-dependent terms to the pre-computed base
+        bracket = (
+            energy_base
+            + 3.0 * (np.sum(inner_a * inner_a, axis=1)
+                     + np.sum(inner_b * inner_b, axis=1))
+            - 3.0 * (np.sum(q_start * inner_a, axis=1)
+                     + np.sum(inner_a * inner_b, axis=1)
+                     + np.sum(inner_b * q_end, axis=1))
+        )
         return float(np.sum(12.0 * (alphas ** 3) * bracket))
 
     return eval_energy
 
 
-def _make_closed_energy_eval(points, m):
+def _make_closed_energy_eval(points, num_segs):
     """
     Build a closure that evaluates bending energy for a closed spline.
 
-    Pre-allocates the linear system matrix and RHS. On each call, only
-    the alpha-dependent entries are updated in-place.
+    Same idea as the open version, but all rows are alpha-dependent
+    (no fixed boundary conditions).
+
+    Args:
+        points: np.array (n, 3).
+        num_segs: number of segments (= n for closed spline).
 
     Returns:
-        callable(alphas) -> float
+        Callable: eval_energy(alphas) -> float
     """
-    sz = 2 * m
-    A = np.zeros((sz, sz))
-    b = np.zeros((sz, 3))
+    matrix_size = 2 * num_segs
+    matrix = np.zeros((matrix_size, matrix_size))
+    rhs = np.zeros((matrix_size, 3))
 
-    # Pre-compute constant parts of energy bracket
-    Q0 = points
-    Q1 = np.roll(points, -1, axis=0)
-    dQQ0 = np.sum(Q0 * Q0, axis=1)
-    dQQ1 = np.sum(Q1 * Q1, axis=1)
-    dQ0Q1 = np.sum(Q0 * Q1, axis=1)
-    base_bracket = dQQ0 + dQQ1 + dQ0Q1
+    # Pre-compute constant part of energy bracket
+    q_start = points
+    q_end = np.roll(points, -1, axis=0)  # Q_{i+1} with wrap-around
+    energy_base = (
+        np.sum(q_start * q_start, axis=1)
+        + np.sum(q_end * q_end, axis=1)
+        + np.sum(q_start * q_end, axis=1)
+    )
 
     def eval_energy(alphas):
         row = 0
-        for i in range(m):
-            ip = (i - 1) % m
-            ap = alphas[ip]
-            ac = alphas[i]
-            ap2 = ap * ap
-            ac2 = ac * ac
-            ia_p = 2 * ip
-            ib_p = ia_p + 1
-            ia_c = 2 * i
-            ib_c = ia_c + 1
-            A[row, ia_p] = ap2
-            A[row, ib_p] = -2.0 * ap2
-            A[row, ia_c] = 2.0 * ac2
-            A[row, ib_c] = -ac2
-            b[row] = (ac2 - ap2) * points[i]
+        for seg in range(num_segs):
+            prev_seg = (seg - 1) % num_segs
+            alpha_prev = alphas[prev_seg]
+            alpha_curr = alphas[seg]
+            alpha_prev_sq = alpha_prev * alpha_prev
+            alpha_curr_sq = alpha_curr * alpha_curr
+
+            col_A_prev = 2 * prev_seg
+            col_B_prev = col_A_prev + 1
+            col_A_curr = 2 * seg
+            col_B_curr = col_A_curr + 1
+
+            # C₂ continuity row
+            matrix[row, col_A_prev] = alpha_prev_sq
+            matrix[row, col_B_prev] = -2.0 * alpha_prev_sq
+            matrix[row, col_A_curr] = 2.0 * alpha_curr_sq
+            matrix[row, col_B_curr] = -alpha_curr_sq
+            rhs[row] = (alpha_curr_sq - alpha_prev_sq) * points[seg]
             row += 1
-            A[row, ib_p] = ap
-            A[row, ia_c] = ac
-            b[row] = (ap + ac) * points[i]
+            # C₁ continuity row
+            matrix[row, col_B_prev] = alpha_prev
+            matrix[row, col_A_curr] = alpha_curr
+            rhs[row] = (alpha_prev + alpha_curr) * points[seg]
             row += 1
 
-        sol = np.linalg.solve(A, b)
-        A_pts = sol[0::2]
-        B_pts = sol[1::2]
-        dAA = np.sum(A_pts * A_pts, axis=1)
-        dBB = np.sum(B_pts * B_pts, axis=1)
-        dAB = np.sum(A_pts * B_pts, axis=1)
-        dQA = np.sum(Q0 * A_pts, axis=1)
-        dQB = np.sum(B_pts * Q1, axis=1)
-        bracket = base_bracket + 3.0 * (dAA + dBB) - 3.0 * (dQA + dAB + dQB)
+        # Solve and compute energy
+        solution = np.linalg.solve(matrix, rhs)
+        inner_a = solution[0::2]
+        inner_b = solution[1::2]
+
+        bracket = (
+            energy_base
+            + 3.0 * (np.sum(inner_a * inner_a, axis=1)
+                     + np.sum(inner_b * inner_b, axis=1))
+            - 3.0 * (np.sum(q_start * inner_a, axis=1)
+                     + np.sum(inner_a * inner_b, axis=1)
+                     + np.sum(inner_b * q_end, axis=1))
+        )
         return float(np.sum(12.0 * (alphas ** 3) * bracket))
 
     return eval_energy
 
 
 # ---------------------------------------------------------------------------
-# Shared hill-descent optimizer
+# Hill-descent optimizer
+#
+# Minimizes bending energy by adjusting segment times t_i subject to
+# the constraint Σ t_i = 1, t_i > 0.
+#
+# The search space is an (m-1)-dimensional simplex. For each time t_i,
+# we try four candidate moves (two directions × two step sizes) and
+# accept the one that reduces energy the most. Step sizes grow when
+# progress is made and shrink when stuck, enabling both exploration
+# and fine convergence.
 # ---------------------------------------------------------------------------
 
-def _compute_optimal_times(points, m, epsilon, max_iterations,
+def _compute_optimal_times(points, num_segs, epsilon, max_iterations,
                             delta, acceleration, cyclic):
     """
-    Compute optimal segment times via hill-descent.
-
-    Uses pre-built energy evaluator closures that combine matrix update,
-    linear solve, and vectorized energy computation in a single call.
+    Find segment times that minimize the spline's bending energy.
 
     Args:
         points: np.array (n, 3).
-        m: number of segments.
-        epsilon: convergence tolerance.
-        max_iterations: maximum iterations.
-        delta: initial step parameter.
-        acceleration: step size acceleration factor.
-        cyclic: True for closed spline, False for open.
+        num_segs: number of spline segments.
+        epsilon: step-size threshold for convergence.
+        max_iterations: upper bound on outer loop iterations.
+        delta: initial total step budget (divided evenly among segments).
+        acceleration: factor for growing/shrinking individual step sizes.
+        cyclic: True for closed spline topology.
 
     Returns:
-        np.array (m,) — optimal times t_i.
+        np.array (m,) — optimal normalized segment times (sum to 1).
     """
-    # Build optimized energy evaluator
+    # Build the optimized energy evaluator (pre-allocates matrices)
     if cyclic:
-        energy_eval = _make_closed_energy_eval(points, m)
+        energy_eval = _make_closed_energy_eval(points, num_segs)
     else:
         energy_eval = _make_open_energy_eval(points)
 
-    # Initial: chord-length proportional
+    # Start from chord-length parameterization — a good initial guess
     lengths = _chord_lengths(points, cyclic)
-    t = lengths / lengths.sum()
+    segment_times = lengths / lengths.sum()
 
-    # Search directions in the hyperplane Σ t_i = 1
-    h = 1.0 / (m - 1) if m > 1 else 0.0
-    delta_v = -h * np.ones((m, m))
-    np.fill_diagonal(delta_v, 1.0)
+    # Search directions: moving along direction i increases t_i while
+    # decreasing all other t_j proportionally, keeping Σ t = 1.
+    # Each row of direction_matrix is a valid displacement on the simplex.
+    share = 1.0 / (num_segs - 1) if num_segs > 1 else 0.0
+    direction_matrix = -share * np.ones((num_segs, num_segs))
+    np.fill_diagonal(direction_matrix, 1.0)
 
-    step_sizes = np.full(m, delta / m)
-    Acc = acceleration
+    # Per-dimension adaptive step sizes
+    step_sizes = np.full(num_segs, delta / num_segs)
 
-    alphas = 1.0 / np.maximum(t, _ALPHA_MIN)
-    current_energy = energy_eval(alphas)
+    # Evaluate initial energy
+    current_alphas = 1.0 / np.maximum(segment_times, _ALPHA_MIN)
+    best_energy = energy_eval(current_alphas)
 
     for _ in range(max_iterations):
-        moved = False
+        made_progress = False
 
-        for i in range(m):
-            a0 = Acc
-            a1 = 1.0 / Acc
-            coeffs = [a0, a1, -a0, -a1]
+        for dim in range(num_segs):
+            # Try four candidates: ±acceleration × current_step
+            # Larger steps explore, smaller steps refine
+            scale_up = acceleration
+            scale_down = 1.0 / acceleration
+            candidate_scales = [scale_up, scale_down, -scale_up, -scale_down]
 
-            best_energy = current_energy
-            best_k = -1
+            local_best_energy = best_energy
+            local_best_idx = -1
 
-            for k, a in enumerate(coeffs):
-                candidate = t + a * step_sizes[i] * delta_v[i]
-                if (candidate <= 0).any():
+            for idx, scale in enumerate(candidate_scales):
+                trial_times = (segment_times
+                               + scale * step_sizes[dim] * direction_matrix[dim])
+                # Reject if any time becomes non-positive
+                if (trial_times <= 0).any():
                     continue
-                candidate_alphas = 1.0 / np.maximum(candidate, _ALPHA_MIN)
-                energy = energy_eval(candidate_alphas)
-                if energy < best_energy:
-                    best_energy = energy
-                    best_k = k
+                trial_alphas = 1.0 / np.maximum(trial_times, _ALPHA_MIN)
+                trial_energy = energy_eval(trial_alphas)
+                if trial_energy < local_best_energy:
+                    local_best_energy = trial_energy
+                    local_best_idx = idx
 
-            if best_k >= 0 and best_energy < current_energy:
-                t = t + coeffs[best_k] * step_sizes[i] * delta_v[i]
-                current_energy = best_energy
-                step_sizes[i] *= abs(coeffs[best_k])
-                moved = True
+            # Accept the best move if it improves energy
+            if local_best_idx >= 0 and local_best_energy < best_energy:
+                scale = candidate_scales[local_best_idx]
+                segment_times += scale * step_sizes[dim] * direction_matrix[dim]
+                best_energy = local_best_energy
+                step_sizes[dim] *= abs(scale)  # grow step — momentum works
+                made_progress = True
             else:
-                step_sizes[i] /= Acc
+                step_sizes[dim] /= acceleration  # shrink — refine locally
 
-        if not moved and np.all(step_sizes <= epsilon):
+        # Convergence: all step sizes fell below tolerance
+        if not made_progress and np.all(step_sizes <= epsilon):
             break
-        if moved and step_sizes.max() <= epsilon:
+        if made_progress and step_sizes.max() <= epsilon:
             break
 
-    return t
+    return segment_times
 
 
 # ---------------------------------------------------------------------------
@@ -604,48 +638,46 @@ def optimal_bezier_spline(
     points = np.asarray(points, dtype=np.float64)
     if points.ndim == 1:
         points = points.reshape(1, 3)
-    n = len(points)
+    num_nodes = len(points)
 
     # --- Validate point count ---
     if cyclic:
-        if n < 3:
+        if num_nodes < 3:
             raise ValueError("At least 3 points are required for a closed spline")
-        m = n
+        num_segs = num_nodes
     else:
-        if n < 2:
+        if num_nodes < 2:
             raise ValueError("At least two points are required")
-        m = n - 1
+        num_segs = num_nodes - 1
 
-    # --- Compute alphas based on metric ---
+    # --- Compute alphas (inverse segment times) based on metric ---
     if metric == 'POINTS':
-        # Uniform parameterization: all segments equal time → alphas all 1
-        alphas = np.ones(m)
+        # Uniform: every segment gets equal time → all alphas equal 1
+        alphas = np.ones(num_segs)
 
     elif metric == 'DISTANCE':
-        # Chord-length parameterization
+        # Chord-length: longer segments get more time
         lengths = _chord_lengths(points, cyclic)
         alphas = 1.0 / lengths
 
     elif metric == 'OPTIMAL':
-        # Hill-descent optimization
-        t = _compute_optimal_times(
-            points, m, epsilon, max_iterations, delta, acceleration, cyclic)
-        alphas = 1.0 / np.maximum(t, _ALPHA_MIN)
+        # Hill-descent: find times that minimize bending energy
+        segment_times = _compute_optimal_times(
+            points, num_segs, epsilon, max_iterations,
+            delta, acceleration, cyclic)
+        alphas = 1.0 / np.maximum(segment_times, _ALPHA_MIN)
 
     else:
         raise ValueError(
             f"Unknown metric '{metric}'. "
             "Expected one of: 'POINTS', 'DISTANCE', 'OPTIMAL'")
 
-    # --- Solve for control points ---
+    # --- Solve for control points (final, non-optimized path) ---
     if cyclic:
-        segments = _closed_control_points(points, alphas, m)
+        segments = _closed_control_points(points, alphas, num_segs)
     else:
         segments = _open_control_points(points, alphas)
 
-    # --- Build curves ---
+    # --- Build curve objects ---
     curves = [SvCubicBezierCurve(*seg) for seg in segments]
     return concatenate_curves(curves) if concat else curves
-
-
-
