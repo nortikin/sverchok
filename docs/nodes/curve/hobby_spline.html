@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Intersect Curve with Plane &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Hobby Spline &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -44,12 +44,12 @@
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/curve/intersect_curve_plane';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/curve/hobby_spline';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Intersect Curve with Sphere" href="intersect_curve_sphere.html" />
-    <link rel="prev" title="Interpolate NURBS Curve" href="interpolate_nurbs_curve.html" />
+    <link rel="next" title="Insert Knot (NURBS Curve)" href="insert_knot.html" />
+    <link rel="prev" title="Generate Knotvector" href="generate_knotvector.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="1, 4, 0" />
@@ -195,11 +195,11 @@
 <li class="toctree-l3"><a class="reference internal" href="flip_curve.html">Flip Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="freecad_helix.html">Helix (FreeCAD)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="generate_knotvector.html">Generate Knotvector</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hobby_spline.html">Hobby Spline</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Hobby Spline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="insert_knot.html">Insert Knot (NURBS Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="interpolate_frame.html">Interpolate Curve Frame</a></li>
 <li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_curve.html">Interpolate NURBS Curve</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Intersect Curve with Plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_curve_plane.html">Intersect Curve with Plane</a></li>
 <li class="toctree-l3"><a class="reference internal" href="intersect_curve_sphere.html">Intersect Curve with Sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="intersect_curves.html">Intersect NURBS Curves</a></li>
 <li class="toctree-l3"><a class="reference internal" href="iso_uv_curve.html">Iso U/V Curve</a></li>
@@ -335,7 +335,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/curve/intersect_curve_plane.rst" target="_blank"
+      <li><a href="../../_sources/nodes/curve/hobby_spline.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -411,7 +411,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Intersect Curve with Plane</h1>
+    <h1>Hobby Spline</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -421,12 +421,15 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tension">Tension</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#curl-start-curl-end">Curl Start / Curl End</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
             </nav>
         </div>
@@ -438,78 +441,141 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="intersect-curve-with-plane">
-<h1>Intersect Curve with Plane<a class="headerlink" href="#intersect-curve-with-plane" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cd2a24f5-52d5-450a-bcc4-a90f8ff98125"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cd2a24f5-52d5-450a-bcc4-a90f8ff98125" src="https://github.com/nortikin/sverchok/assets/14288520/cd2a24f5-52d5-450a-bcc4-a90f8ff98125" />
+  <section id="hobby-spline">
+<h1>Hobby Spline<a class="headerlink" href="#hobby-spline" title="Link to this heading">#</a></h1>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/250895c9-0c0e-443c-9241-ae03804fbd3b"><img alt="https://github.com/user-attachments/assets/250895c9-0c0e-443c-9241-ae03804fbd3b" src="https://github.com/user-attachments/assets/250895c9-0c0e-443c-9241-ae03804fbd3b" />
 </a>
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
-<p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
-</section>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node tries to find all intersections of the specified Curve with a
-specified (infinite) plane. The plane is specified by providing a normal vector
-and a point on the plane.</p>
-<p>To find all intersections, the node splits the curve into several segments and
-then searches for single intersection in each segment.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b231613e-fd3a-46c4-9fd3-cdd0b586f092"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b231613e-fd3a-46c4-9fd3-cdd0b586f092" src="https://github.com/nortikin/sverchok/assets/14288520/b231613e-fd3a-46c4-9fd3-cdd0b586f092" />
-</a>
+<p>This node generates a smooth curve defined as a <strong>Hobby spline</strong> through the
+specified set of points. Hobby splines are based on John Hobby’s algorithm
+from <a class="reference external" href="https://www.tug.org/metapost/">MetaPost</a> — a system for drawing high-quality technical illustrations
+and vector graphics.</p>
+<p>Hobby splines are <strong>cubic Bezier curves</strong> that interpolate through all given
+points with <strong>G1 (tangent) continuity</strong> at every knot. This means:</p>
 <ul class="simple">
-<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
-<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_normal.html"><span class="doc">Matrix Normal</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
-<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+<li><p>The curve passes exactly through all input points</p></li>
+<li><p>The tangent direction is continuous at every point — there are no sharp
+corners or discontinuities</p></li>
+<li><p>The curvature changes smoothly, giving a natural, flowing appearance</p></li>
 </ul>
+<p>This is different from Catmull-Rom splines, which have C1 continuity (both
+first and second derivatives are continuous). Hobby splines use a concept
+called <strong>mock curvature</strong> — a heuristic that produces visually smooth curves
+without requiring full C2 continuity. The result is a curve that looks natural
+even with sharp turns between control points.</p>
+<p>Hobby splines have the following advantages:</p>
+<ul class="simple">
+<li><p>They are widely used in technical illustration and vector graphics (MetaPost,
+TikZ, Asymptote)</p></li>
+<li><p>They produce visually smooth curves with natural-looking curvature</p></li>
+<li><p>They work correctly in 3D space — each triple of consecutive points defines
+a local plane, and the curve follows the 3D shape</p></li>
+<li><p>They can be easily converted to Bezier segments or NURBS curves</p></li>
+<li><p>They support tension and curl parameters for fine control over the shape</p></li>
+</ul>
+<p>The Hobby algorithm works by computing the tangent angles at each point
+(Hobby angles θ) that satisfy a tridiagonal system of equations. The solution
+is found using the Thomas algorithm (for open curves) or direct linear
+algebra (for cyclic curves).</p>
+<section id="tension">
+<h3>Tension<a class="headerlink" href="#tension" title="Link to this heading">#</a></h3>
+<p>The <strong>Tension</strong> parameter controls how closely the curve follows the polyline
+formed by the input points. It is analogous to the tension parameter in uniform
+Catmull-Rom splines.</p>
+<ul class="simple">
+<li><p><strong>Tension = 1.0</strong> (default): natural curvature, balanced between the polyline
+and a smooth curve</p></li>
+<li><p><strong>Tension → 0.75</strong> (minimum): the curve becomes more “relaxed”, bulging
+further away from the polyline between points</p></li>
+<li><p><strong>Tension → ∞</strong>: the curve approaches the polyline itself — the control
+points move closer to the line segments, and the curve becomes more
+“tight” around the input points</p></li>
+</ul>
+<p>Higher tension values make the curve stay closer to the straight lines between
+points, while lower values make it more “floppy”. The minimum supported value
+is 0.75, which corresponds to the softest possible curve.</p>
+</section>
+<section id="curl-start-curl-end">
+<h3>Curl Start / Curl End<a class="headerlink" href="#curl-start-curl-end" title="Link to this heading">#</a></h3>
+<p>The <strong>Curl Start</strong> and <strong>Curl End</strong> parameters control the behavior of the
+curve at its endpoints. They determine the curvature at the start and end of
+the spline.</p>
+<ul class="simple">
+<li><p><strong>Curl = 1.0</strong> (default): the endpoint has a circular-arc-like curvature,
+meaning the curve departs from (or arrives at) the endpoint with a smooth,
+rounded turn</p></li>
+<li><p><strong>Curl = 0.0</strong>: the endpoint has zero curvature — the curve departs from
+(or arrives at) the endpoint in a straight line, with no initial turn</p></li>
+<li><p><strong>Curl &gt; 1.0</strong>: the endpoint curves more sharply, creating a “hook” or
+“curl” effect at the endpoint</p></li>
+</ul>
+<p>These parameters are especially useful when:</p>
+<ul class="simple">
+<li><p>You want the curve to start or end horizontally/vertically (set curl to
+achieve the desired direction)</p></li>
+<li><p>You are creating a closed shape and want smooth transitions at the join
+(use curl = 1.0 for both ends)</p></li>
+<li><p>You want the curve to approach a tangent line at the endpoint (use curl = 0.0)</p></li>
+</ul>
+<p>For cyclic (closed) curves, the curl parameters are ignored — the curve is
+automatically closed with smooth G1 continuity at the join.</p>
+</section>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Curve</strong>. The curve to find intersections with. This input is mandatory.</p></li>
-<li><p><strong>Point</strong>. The point on the plane. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p></li>
-<li><p><strong>Normal</strong>. The normal vector of the plane. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span>
-<span class="pre">1)</span></code>. Thus, by default the plane is XOY coordinate plane.</p></li>
+<li><p><strong>Vertices</strong>. The points through which the curve should go. This input is
+mandatory. At least two points are required to build an open spline, and at
+least three points for a cyclic (closed) spline.</p></li>
+<li><p><strong>Tension</strong>. Specifies the tension value of the spline. The default value is
+1.0. Values below 0.75 are not supported. It is possible to provide a
+separate tension value for each curve.</p></li>
+<li><p><strong>Curl Start</strong>. Specifies the curl at the start endpoint. The default value
+is 1.0. Values range from 0.0 (zero curvature) to any positive value.</p></li>
+<li><p><strong>Curl End</strong>. Specifies the curl at the end endpoint. The default value is
+1.0. Values range from 0.0 (zero curvature) to any positive value.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
-<li><p><strong>NURBS</strong>. If checked, the node will apply NURBS-specific algorithm for NURBS
-and NURBS-like curves. This algorithm can be about 50% faster comparing to
-generic algorithm. Unchecked by default.</p></li>
-<li><p><strong>Init resolution</strong>. Number of segments to subdivide the curve in. This
-defines the maximum number of intersection this node can potentially find.
-For example, if you set this to 1, but actually the curve intersects the
-plane in two places, then the node will actually find only one of
-intersections. The default value is 10.</p></li>
-<li><p><strong>Accuracy</strong>. This parameter is available in the N panel only. This defines
-the accuracy level - number of exact digits after decimal point. The default
-value is 4.</p></li>
+<li><p><strong>Cyclic</strong>. Defines whether the curve should be cyclic (closed). When
+enabled, the last point connects back to the first, forming a closed loop.
+Unchecked by default.</p></li>
+<li><p><strong>Concatenate</strong>. If enabled (default), the output is a single concatenated
+NURBS curve. If disabled, the output is a list of individual Bezier segments
+(one per curve segment between consecutive points).</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
-<p>This node has the following outputs:</p>
+<p>This node has the following output:</p>
 <ul class="simple">
-<li><p><strong>Point</strong>. Intersection points.</p></li>
-<li><p><strong>T</strong>. Curve’s T parameter values corresponding to the intersection points.</p></li>
+<li><p><strong>Curve</strong>. The generated curve object.</p></li>
 </ul>
 </section>
-<section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">#</a></h2>
-<p>Find intersections of some NURBS curve with XOY plane:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png"><img alt="https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png" src="https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png" />
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
+<p>Compare several spline types:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/318d88c0-7c03-4455-98be-8588ca585c80"><img alt="https://github.com/user-attachments/assets/318d88c0-7c03-4455-98be-8588ca585c80" src="https://github.com/user-attachments/assets/318d88c0-7c03-4455-98be-8588ca585c80" />
 </a>
 <ul class="simple">
-<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
-<li><p>Curves-&gt; <a class="reference internal" href="interpolate_nurbs_curve.html"><span class="doc">Interpolate NURBS Curve</span></a></p></li>
-<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+<li><p>Green line - Cubic spline</p></li>
+<li><p>Brown line - Catmull-Rom spline</p></li>
+<li><p>Blue line - interpolated NURBS curve</p></li>
+<li><p>Violet line - Hobby spline.</p></li>
 </ul>
+<p>A couple of other examples:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/04984148-19bc-4325-82c9-599fc8055567"><img alt="https://github.com/user-attachments/assets/04984148-19bc-4325-82c9-599fc8055567" src="https://github.com/user-attachments/assets/04984148-19bc-4325-82c9-599fc8055567" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5accd098-428a-4610-8000-6405d23976d2"><img alt="https://github.com/user-attachments/assets/5accd098-428a-4610-8000-6405d23976d2" src="https://github.com/user-attachments/assets/5accd098-428a-4610-8000-6405d23976d2" />
+</a>
+<p>3D Spiral example:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/e0f56ff5-fd85-4f8b-8949-0b04b088247f"><img alt="https://github.com/user-attachments/assets/e0f56ff5-fd85-4f8b-8949-0b04b088247f" src="https://github.com/user-attachments/assets/e0f56ff5-fd85-4f8b-8949-0b04b088247f" />
+</a>
 </section>
 </section>
 
@@ -525,20 +591,20 @@ value is 4.</p></li>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="interpolate_nurbs_curve.html"
+       href="generate_knotvector.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Interpolate NURBS Curve</p>
+        <p class="prev-next-title">Generate Knotvector</p>
       </div>
     </a>
     <a class="right-next"
-       href="intersect_curve_sphere.html"
+       href="insert_knot.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Intersect Curve with Sphere</p>
+        <p class="prev-next-title">Insert Knot (NURBS Curve)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -560,12 +626,15 @@ value is 4.</p></li>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tension">Tension</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#curl-start-curl-end">Curl Start / Curl End</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
   </nav></div>
 
