@@ -82,7 +82,6 @@ def recursive_unpack(data, levels_info=None):
 
     level = 0
     LIST_TYPES = (list, tuple,) # раньше ещё был ndarray, но в sv_get(deep_copy==True) его нет, так что уберу
-    LIST_TYPES_EXACT = frozenset(LIST_TYPES) # На больших списках даже на 3 элемента даёт маленький прирост, его видно, если убрать frozenset
     len_levels_info = len(levels_info)-1
     force_reload_config = False
     max_level_reached = False
@@ -110,19 +109,19 @@ def recursive_unpack(data, levels_info=None):
 
         if flatten_wrap==0: # flatten==False and wrap==False
             for elem in data:
-                if type(elem) in LIST_TYPES_EXACT:
+                if isinstance(elem, LIST_TYPES):
                     elem = _recursive_unpack(elem, next_level)
                 res_append(elem)
             pass
         elif flatten_wrap==1: # flatten==False and wrap==True
             for elem in data:
-                if type(elem) in LIST_TYPES_EXACT:
+                if isinstance(elem, LIST_TYPES):
                     elem = _recursive_unpack(elem, next_level)
                 res_append([elem])
             pass
         elif flatten_wrap==2: # flatten==True and wrap==False
             for elem in data:
-                if type(elem) in LIST_TYPES_EXACT:
+                if isinstance(elem, LIST_TYPES):
                     val = _recursive_unpack(elem, next_level)
                     res_extend(val)
                 else:
@@ -130,7 +129,7 @@ def recursive_unpack(data, levels_info=None):
             pass
         elif flatten_wrap==3: # flatten==True and wrap==True
             for elem in data:
-                if type(elem) in LIST_TYPES_EXACT:
+                if isinstance(elem, LIST_TYPES):
                     val = _recursive_unpack(elem, next_level)
                     res_extend(val)
                 else:
@@ -143,8 +142,7 @@ def recursive_unpack(data, levels_info=None):
 
         return res
     
-    type_elem = type(data)
-    if type_elem in LIST_TYPES_EXACT:
+    if isinstance(data, LIST_TYPES):
         res = _recursive_unpack(data, level)
         # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
         if levels_info[0] in (1,3):
@@ -167,7 +165,7 @@ def data_levels_info(data, levels_info=None, level_root=0):
     if levels_info is None or level_root==0:
         levels_info = [dict(), dict()]
 
-    def data_levels_info(data, levels_info, level_root):
+    def _data_levels_info(data, levels_info, level_root):
         # TODO: разобраться, когда среди вложенных данных только list
         if not data:
             return
@@ -182,7 +180,7 @@ def data_levels_info(data, levels_info=None, level_root=0):
             
             if type_elem in LIST_TYPES_EXACT:
                 levels_info_level_root[type_elem].SUB = True
-                data_levels_info(elem, levels_info, level_root + 1)
+                _data_levels_info(elem, levels_info, level_root + 1)
                 pass
             else:
                 break
@@ -196,7 +194,7 @@ def data_levels_info(data, levels_info=None, level_root=0):
         levels_info_level_root.setdefault(type(data), LevelInfo(TYPE=type(data), COUNT=1, ALERT=False))
     else:
         levels_info[0][type(data)] = LevelInfo(TYPE=type(data), COUNT=1, ALERT=False)
-        data_levels_info(data, levels_info, level_root)
+        _data_levels_info(data, levels_info, level_root)
     return levels_info
 
 class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
