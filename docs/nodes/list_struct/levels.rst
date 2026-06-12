@@ -1,8 +1,8 @@
 List Levels
 ===========
 
-.. image:: https://user-images.githubusercontent.com/14288520/188002611-0f681313-5bf5-4f83-a5c3-4221af3d83ae.png
-  :target: https://user-images.githubusercontent.com/14288520/188002611-0f681313-5bf5-4f83-a5c3-4221af3d83ae.png
+.. image:: https://github.com/user-attachments/assets/dfad9bc3-325a-4a1b-a4c5-8986a4cc3745
+  :target: https://github.com/user-attachments/assets/dfad9bc3-325a-4a1b-a4c5-8986a4cc3745
 
 Functionality
 -------------
