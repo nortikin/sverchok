@@ -45,7 +45,7 @@ class LevelInfo:
     TYPE: str = None
     COUNT: int = 0
     ALERT: bool = False
-    SUB: bool = False # leaf or list (можно ли просканировать в глубину)
+    SUB: bool = False # leaf or list (can be deep-scanned)
     pass
 
 class SvNestingLevelEntryMK3(bpy.types.PropertyGroup):
@@ -74,20 +74,18 @@ class SvNestingLevelEntryMK3(bpy.types.PropertyGroup):
                 )
 
 def recursive_unpack(data, levels_info=None):
-    # res = []
     if levels_info is None:
         raise Exception("levels_info should be provided for recursive_unpack")
     if len(levels_info)==0:
         raise Exception("levels_info should contain at least one level for recursive_unpack")
 
     level = 0
-    LIST_TYPES = (list, tuple,) # раньше ещё был ndarray, но в sv_get(deep_copy==True) его нет, так что уберу
+    LIST_TYPES = (list, tuple,) # used to have ndarray, but it’s not in sv_get(deep_copy==True), so I’ll remove
     len_levels_info = len(levels_info)-1
     force_reload_config = False
     max_level_reached = False
 
-    # Вызов только при погружении в уровень, так как при первом вызове функции data может быть простым числом,
-    # и тогда не будет смысла проверять галочки flatten/wrap, так как они относятся к спискам, а не к элементарным типам.
+    # Call only when diving into a level, as the data function may be a simple number at first call and then it makes no sense to check flatten/wrap checkboxes since they are lists rather than elementary types.
     def _recursive_unpack(data, level, res=None):
         nonlocal force_reload_config, max_level_reached
         #if res is None:
@@ -96,13 +94,12 @@ def recursive_unpack(data, levels_info=None):
         res_extend = res.extend
         next_level = level+1
         if len_levels_info<next_level:
-            # Выставить признак принудительной перезагрузка конфигурации данных после завершения
-            # работы функции
+            # Flag data configuration as forced reload after function completes
             force_reload_config = True
-            # Продолжение копирования, без изменения данных после обнаружения превышения количества настроенных уровней.
+            # Continue to copy, without changing the data after finding that you have exceeded the number of levels you’ve set.
             flatten_wrap = 0
         else:
-            # Если уровень дошёл до нижнего уровня конфигурации
+            # If the level has reached a lower configuration level, set a flag (if this flag is not displayed, then the data configuration does not match the original configuration)
             if len_levels_info==next_level:
                 max_level_reached = True
             flatten_wrap = levels_info[next_level]
@@ -135,7 +132,7 @@ def recursive_unpack(data, levels_info=None):
                 else:
                     res_append(elem)
             pass
-            # Обернуть результат flatten текущего уровня:
+            # wrap the current level flatten result:
             res = [res]
         else:
             raise Exception(f"Unsupported flatten/wrap mode: {flatten_wrap}")
@@ -144,7 +141,7 @@ def recursive_unpack(data, levels_info=None):
     
     if isinstance(data, LIST_TYPES):
         res = _recursive_unpack(data, level)
-        # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
+        # The top level flatten doesn’t run because there’s no parent level to unpack. Therefore, you can only run wrap:
         if levels_info[0] in (1,3):
             res = [res]
         pass
@@ -152,14 +149,12 @@ def recursive_unpack(data, levels_info=None):
         res = data
     
     if max_level_reached==False:
-        # Перегрузить конфигурацию, если не достинут максимальный уровень:
-        # (пользователь может сделать flatten и тогда функция не достигнет
-        # низа. Тоже нужно пересчитать)
+        # Overload the configuration if you don’t reach the maximum level (user can make flatten and then the function will not reach the bottom). Also need to be counted.
         force_reload_config = True
 
     return (res, force_reload_config)
 
-# Загрузить описание уровней данных. 
+# Load data configuration
 def data_levels_info(data, levels_info=None, level_root=0):
     LIST_TYPES_EXACT = frozenset((list, tuple,))
     if levels_info is None or level_root==0:
@@ -190,7 +185,7 @@ def data_levels_info(data, levels_info=None, level_root=0):
 
     levels_info_level_root = levels_info[level_root+1]
     if isinstance(data, ALL_TYPES):
-        # Срабатывает, если вызов сразу происходит для простого числа
+        # Occurs if the call is made immediately for a simple number
         levels_info_level_root.setdefault(type(data), LevelInfo(TYPE=type(data), COUNT=1, ALERT=False))
     else:
         levels_info[0][type(data)] = LevelInfo(TYPE=type(data), COUNT=1, ALERT=False)
@@ -200,7 +195,7 @@ def data_levels_info(data, levels_info=None, level_root=0):
 class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: List Levels
-    Tooltip: List nesting levels manipulation\n\t[[0,1,2,3,4]] (Flatten) => [0,1,2,3,4]\n\t[[0,1,2,3,4]] (Wrap) => [[[0,1,2,3,4]]]
+    Tooltip: List nesting levels manipulation\n\t[[0,1,2],[3,4]] (Flatten) => [0,1,2,3,4]\n\t[[0,1,2],[3,4]] (Wrap) => [[[0,1,2],[3,4]]]\n\t[[0,1,2],[3,4]] (flatten,Wrap) => [[[0,1,2,3,4]]]
     '''
     bl_idname = 'SvListLevelsNodeMK3'
     bl_label = 'List Levels'
@@ -316,10 +311,7 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         pass
 
         if self.levels_config:
-            # Первый и последний элемент flatten надо очищать, чтобы он не сохранялся, чтобы в случае восстановления уровня неожиданно не восстанавливался как включённый.
-            # Я тут не полчаса завис, когда при переподключении списков UI увеличился на одну позицию и галочка оказалась включённой, но это не обращало на себя
-            # внимание, т.к. я не работал с этим нодом и не видел изменений в его UI. А ситуация может быть ещё критичнее, когда нод вообще находится 
-            # за пределами области видимости.
+            # The first and last flatten element must be cleaned so that it is not retained, so that in case of a level recovery it does not suddenly revert as activated.
             if self.levels_config[0].flatten != False:
                 self.levels_config[0].flatten = False
             if self.levels_config[-1].flatten != False:
@@ -333,12 +325,12 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         force_reload_config = False
         datas = []
         for I, socket in enumerate(self.inputs):
-            if socket.is_linked==False and socket==self.inputs[-1]: # Возможна ситуация, когда последний link только подключили, а новый последний неподключенный link ещё не создали.
+            if socket.is_linked==False and socket==self.inputs[-1]: # You may have a situation where the last link has just been connected and the new last unconnected link has not yet been created.
                 break
             data = socket.sv_get(default=[], deepcopy=False)
             datas.append(data)
 
-        # Добавить ещё один входящий сокет, если последний входящий сокет подключен (но данные из него браться не будут)
+        # Add another inbound socket if the last inbound socket is connected (but data from it won’t be retrieved)
         if len(self.inputs)>=1 and self.inputs[-1].is_linked==True:
             name = f"data_{len(self.inputs)+1}"
             label = f"Data_{len(self.inputs)+1}"
@@ -352,7 +344,7 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
                 self.id_data.links.remove(link)
             self.inputs.remove(socket_to_remove)
 
-        # Проверить outputs. Если нарушен порядок или сокетов не хватает, то создать дополнительные сокеты
+        # Check outputs. If order is broken or sockets are missing, create additional sockets
         for I in range(1, len(self.outputs)+1):
             IDX = I+1
             name = f'data_{IDX}'
@@ -390,7 +382,7 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
 
         res = []
         force_reload_config = False
-        if self.levels_config: # and any([e.flatten for e in self.levels_config])==True or any([e.wrap for e in self.levels_config])==True:
+        if self.levels_config:
             levels_config = [(2 if info.flatten else 0) | (1 if info.wrap else 0) for info in self.levels_config]
             for data in datas:
                 if data:
