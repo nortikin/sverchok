@@ -652,7 +652,7 @@
         - ListShuffleNode
         - SvListSortNode
         - ListFlipNode
-        - SvListLevelsNodeMK2
+        - SvListLevelsNodeMK3
         - SvNumpyArrayNode
     - MaskListNode
     - SvMaskJoinNodeMK2
