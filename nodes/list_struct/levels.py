@@ -73,745 +73,7 @@ class SvNestingLevelEntryMK3(bpy.types.PropertyGroup):
                 options={'SKIP_SAVE'},
                 )
 
-def recursive_unpack(data, levels_info=None, level=0):
-    res = []
-    if levels_info is None:
-        raise Exception("levels_info should be provided for recursive_unpack")
-    if len(levels_info)==0:
-        raise Exception("levels_info should contain at least one level for recursive_unpack")
-
-    if isinstance(data, ALL_TYPES):
-        res = data
-    else:
-        levels_info_level = levels_info[level+1]
-        # Вполне можно рассчитать есть ли any_flatten/wrap ниже текущего уровня, чтобы в случае, когда они не выставлены до конца глубины,
-        # то и не делать обход, а сразу заливать список в результат.
-        #any_flatten = any([levels_info[I].flatten for I in range(level+1, len(levels_info)-1)])
-        #any_wrap    = any([levels_info[I].wrap    for I in range(level+1, len(levels_info)-1)])
-        flatten = levels_info_level.flatten
-        wrap = levels_info_level.wrap
-        for elem in data:
-            if isinstance(elem, ALL_TYPES):
-                if levels_info_level.wrap:
-                    res.append([elem])
-                else:
-                    # На самом нижнем уровне, где находятся элементарные типы, flatten не выполняется, даже если стоит галочка,
-                    # так как там нет вложенных списков, которые нужно распаковать. Поэтому сохранять как есть.
-                    res.append(elem)
-                pass
-            elif isinstance(elem, (list, tuple, ndarray)):
-                val = recursive_unpack(elem, levels_info, level + 1)
-                # Одна из проблем этой функции в том, что в UI не задаётся приоритет выполнения flatten и wrap,
-                # поэтому выполняться они будут только по одной, либо когда обе выключены.
-                if flatten==True and wrap==False or flatten==True and wrap==True:
-                    # Ситуация flatten==True and wrap==True обрабатывается после цикла, так как там нужно сначала распаковать все уровни,
-                    # а потом уже обернуть результат в дополнительный список.
-                    res.extend(val)
-                elif flatten==False and wrap==True:
-                    res.append([val])
-                else:
-                    # Для случая, когда включены обе галочки, то действий не выполнять, потому что
-                    # такие настройки взаимно исключают друг друга, и когда выключены обе галочки,
-                    # то сохранять как есть. Поэтому в обоих этих случаях сохранять как есть.
-                    res.append(val)
-                pass
-            else:
-                raise Exception(f'Uncompatible value for sum: {type(elem)}')
-            pass
-
-        if flatten==True and wrap==True:
-            # Обернуть результат flatten текущего уровня:
-            res = [res]
-    
-        if level==0:
-            # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
-            if levels_info[0].wrap:
-                res = [res]
-            pass
-    return res
-
-
-def recursive_unpack2(data, levels_info=None):
-    # res = []
-    if levels_info is None:
-        raise Exception("levels_info should be provided for recursive_unpack")
-    if len(levels_info)==0:
-        raise Exception("levels_info should contain at least one level for recursive_unpack")
-
-    level = 0
-    LIST_TYPES = (list, tuple, ndarray)
-
-    # Вызов только при погружении в уровень, так как при первом вызове функции data может быть простым числом,
-    # и тогда не будет смысла проверять галочки flatten/wrap, так как они относятся к спискам, а не к элементарным типам.
-    def _recursive_unpack(data, level):
-        res = []
-        res_append = res.append
-        res_extend = res.extend
-        levels_info_level = levels_info[level+1]
-        # Вполне можно рассчитать есть ли any_flatten/wrap ниже текущего уровня, чтобы в случае, когда они не выставлены до конца глубины,
-        # то и не делать обход, а сразу заливать список в результат.
-        #any_flatten = any([levels_info[I].flatten for I in range(level+1, len(levels_info)-1)])
-        #any_wrap    = any([levels_info[I].wrap    for I in range(level+1, len(levels_info)-1)])
-        flatten = levels_info_level.flatten
-        wrap = levels_info_level.wrap
-        for elem in data:
-            type_elem = type(elem)
-            # if isinstance(elem, ALL_TYPES):
-            if isinstance(elem, ALL_TYPES):
-                if wrap==True: # flatten==False and wrap==True
-                    res_append([elem])
-                else:
-                    # На самом нижнем уровне, где находятся элементарные типы, flatten не выполняется, даже если стоит галочка,
-                    # так как там нет вложенных списков, которые нужно распаковать. Поэтому сохранять как есть.
-                    res_append(elem)
-                pass
-            elif isinstance(elem, LIST_TYPES):
-                val = _recursive_unpack(elem, level + 1)
-                # Одна из проблем этой функции в том, что в UI не задаётся приоритет выполнения flatten и wrap,
-                # поэтому выполняться они будут только по одной, либо когда обе выключены.
-                if flatten==True:
-                    # Ситуация flatten==True and wrap==True обрабатывается после цикла, так как там нужно сначала распаковать все уровни,
-                    # а потом уже обернуть результат в дополнительный список.
-                    res_extend(val)
-                elif wrap==True:
-                    res_append([val])
-                else:
-                    # Для случая, когда включены обе галочки, то действий не выполнять, потому что
-                    # такие настройки взаимно исключают друг друга, и когда выключены обе галочки,
-                    # то сохранять как есть. Поэтому в обоих этих случаях сохранять как есть.
-                    res_append(val)
-                pass
-            else:
-                raise Exception(f'Uncompatible value for sum: {type(elem)}')
-            pass
-
-        if flatten==True and wrap==True:
-            # Обернуть результат flatten текущего уровня:
-            res = [res]
-
-        return res
-    
-    if isinstance(data, ALL_TYPES):
-        res = data
-    else:
-        res = _recursive_unpack(data, level)
-    
-        # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
-        if levels_info[0].wrap:
-            res = [res]
-        pass
-    return res
-
-def recursive_unpack3(data, levels_info=None):
-    # res = []
-    if levels_info is None:
-        raise Exception("levels_info should be provided for recursive_unpack")
-    if len(levels_info)==0:
-        raise Exception("levels_info should contain at least one level for recursive_unpack")
-
-    level = 0
-    LIST_TYPES = (list, tuple, ndarray)
-
-    # Вызов только при погружении в уровень, так как при первом вызове функции data может быть простым числом,
-    # и тогда не будет смысла проверять галочки flatten/wrap, так как они относятся к спискам, а не к элементарным типам.
-    def _recursive_unpack(data, level):
-        res = []
-        res_append = res.append
-        res_extend = res.extend
-        next_level = level+1
-        levels_info_level = levels_info[next_level]
-        flatten = levels_info_level.flatten
-        wrap = levels_info_level.wrap
-        n=0
-
-        if flatten==False and wrap==False:
-            for elem in data:
-                if isinstance(elem, ALL_TYPES):
-                    res_append(elem)
-                elif isinstance(elem, LIST_TYPES):
-                    val = _recursive_unpack(elem, next_level)
-                    res_append(val)
-                    pass
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                pass
-            pass
-        elif flatten==False and wrap==True:
-            for elem in data:
-                if isinstance(elem, ALL_TYPES):
-                    res_append([elem])
-                elif isinstance(elem, LIST_TYPES):
-                    val = _recursive_unpack(elem, next_level)
-                    res_append([val])
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                pass
-            pass
-        elif flatten==True and wrap==False:
-            for elem in data:
-                if isinstance(elem, ALL_TYPES):
-                    res_append(elem)
-                elif isinstance(elem, LIST_TYPES):
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                pass
-            pass
-        else: # if flatten==True and wrap==True:
-            for elem in data:
-                if isinstance(elem, ALL_TYPES):
-                    res_append([elem])
-                elif isinstance(elem, LIST_TYPES):
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                pass
-
-            pass
-
-        if flatten==True and wrap==True:
-            # Обернуть результат flatten текущего уровня:
-            res = [res]
-
-        return res
-    
-    if isinstance(data, ALL_TYPES):
-        res = data
-    else:
-        res = _recursive_unpack(data, level)
-    
-        # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
-        if levels_info[0].wrap:
-            res = [res]
-        pass
-    return res
-
-def recursive_unpack4(data, levels_info=None):
-    # res = []
-    if levels_info is None:
-        raise Exception("levels_info should be provided for recursive_unpack")
-    if len(levels_info)==0:
-        raise Exception("levels_info should contain at least one level for recursive_unpack")
-
-    level = 0
-    LIST_TYPES = (list, tuple, ndarray)
-
-    # Вызов только при погружении в уровень, так как при первом вызове функции data может быть простым числом,
-    # и тогда не будет смысла проверять галочки flatten/wrap, так как они относятся к спискам, а не к элементарным типам.
-    def _recursive_unpack(data, level):
-        res = []
-        res_append = res.append
-        res_extend = res.extend
-        next_level = level+1
-        levels_info_level = levels_info[next_level]
-        flatten = levels_info_level.flatten
-        wrap = levels_info_level.wrap
-        type1 = None
-        type2 = None
-        if flatten==False and wrap==False:
-            for elem in data:
-                if type1 == type(elem):
-                    res_append(elem)
-                if isinstance(elem, ALL_TYPES):
-                    type1   = type(elem)
-                    res_append(elem)
-                elif type2==type(elem):
-                    val     = _recursive_unpack(elem, next_level)
-                    res_append(val)
-                elif isinstance(elem, LIST_TYPES):
-                    type2   = type(elem)
-                    val     = _recursive_unpack(elem, next_level)
-                    res_append(val)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                pass
-            pass
-        elif flatten==False and wrap==True:
-            for elem in data:
-                if type1==type(elem):
-                    res_append([elem])
-                elif isinstance(elem, ALL_TYPES):
-                    type1   =type(elem)
-                    res_append([elem])
-                elif type2==type(elem):
-                    val     = _recursive_unpack(elem, next_level)
-                    res_append([val])
-                elif isinstance(elem, LIST_TYPES):
-                    type2   =type(elem)
-                    val     = _recursive_unpack(elem, next_level)
-                    res_append([val])
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                pass
-            pass
-        elif flatten==True and wrap==False:
-            for elem in data:
-                if type1==type(elem):
-                    res_append(elem)
-                elif isinstance(elem, ALL_TYPES):
-                    type1   = type(elem)
-                    res_append(elem)
-                elif type2==type(elem):
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                elif isinstance(elem, LIST_TYPES):
-                    type2   = type(elem)
-                    val     = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                pass
-            pass
-        else: # if flatten==True and wrap==True:
-            for elem in data:
-                if type1==type(elem):
-                    res_append([elem])
-                elif isinstance(elem, ALL_TYPES):
-                    type1   = type(elem)
-                    res_append([elem])
-                elif type2==type(elem):
-                    val     = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                elif isinstance(elem, LIST_TYPES):
-                    type2   = type(elem)
-                    val     = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                pass
-
-            pass
-
-        if flatten==True and wrap==True:
-            # Обернуть результат flatten текущего уровня:
-            res = [res]
-
-        return res
-    
-    if isinstance(data, ALL_TYPES):
-        res = data
-    else:
-        res = _recursive_unpack(data, level)
-    
-        # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
-        if levels_info[0].wrap:
-            res = [res]
-        pass
-    return res
-
-def recursive_unpack5(data, levels_info=None):
-    # res = []
-    if levels_info is None:
-        raise Exception("levels_info should be provided for recursive_unpack")
-    if len(levels_info)==0:
-        raise Exception("levels_info should contain at least one level for recursive_unpack")
-
-    level = 0
-    LIST_TYPES = (list, tuple, ndarray)
-    len_levels_info = len(levels_info)-1
-
-    # Вызов только при погружении в уровень, так как при первом вызове функции data может быть простым числом,
-    # и тогда не будет смысла проверять галочки flatten/wrap, так как они относятся к спискам, а не к элементарным типам.
-    def _recursive_unpack(data, level):
-        res = []
-        res_append = res.append
-        res_extend = res.extend
-        next_level = level+1
-        if len_levels_info<next_level:
-            raise Exception(f"Конфигурация данных изменилась. Требуется перенастройка конфигуратора. Level: {next_level}")
-        
-        levels_info_level = levels_info[next_level]
-        flatten = levels_info_level.flatten
-        wrap = levels_info_level.wrap
-        n=0
-
-        if flatten==False and wrap==False:
-            for elem in data:
-                if type(elem)in SIMPLE_DATA_TYPES or isinstance(elem, OBJECTS_TYPES):
-                    pass
-                elif isinstance(elem, LIST_TYPES):
-                    elem = _recursive_unpack(elem, next_level)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                res_append(elem)
-            pass
-        elif flatten==False and wrap==True:
-            for elem in data:
-                if type(elem)in SIMPLE_DATA_TYPES or isinstance(elem, OBJECTS_TYPES):
-                    pass
-                elif isinstance(elem, LIST_TYPES):
-                    elem = _recursive_unpack(elem, next_level)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                res_append([elem])
-            pass
-        elif flatten==True and wrap==False:
-            for elem in data:
-                if type(elem)in SIMPLE_DATA_TYPES or isinstance(elem, OBJECTS_TYPES):
-                    pass
-                elif isinstance(elem, LIST_TYPES):
-                    elem = _recursive_unpack(elem, next_level)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                res_extend(elem)
-            pass
-        else: # if flatten==True and wrap==True:
-            for elem in data:
-                if type(elem)in SIMPLE_DATA_TYPES or isinstance(elem, OBJECTS_TYPES):
-                    pass
-                elif isinstance(elem, LIST_TYPES):
-                    elem = _recursive_unpack(elem, next_level)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type(elem)}')
-                res_extend(elem)
-
-            pass
-
-        if flatten==True and wrap==True:
-            # Обернуть результат flatten текущего уровня:
-            res = [res]
-
-        return res
-    
-    if isinstance(data, ALL_TYPES):
-        res = data
-    else:
-        res = _recursive_unpack(data, level)
-    
-        # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
-        if levels_info[0].wrap:
-            res = [res]
-        pass
-    return res
-
-def recursive_unpack6(data, levels_info=None):
-    # res = []
-    if levels_info is None:
-        raise Exception("levels_info should be provided for recursive_unpack")
-    if len(levels_info)==0:
-        raise Exception("levels_info should contain at least one level for recursive_unpack")
-
-    level = 0
-    LIST_TYPES = (list, tuple,) # раньше ещё был ndarray, но в sv_get(deep_copy==True) его нет, так что уберу
-    LIST_TYPES_EXACT = frozenset((list, tuple,)) # На больших списках даже на 3 элемента даёт маленький прирост, его видно, если убрать frozenset
-    len_levels_info = len(levels_info)-1
-    _SIMPLE_DATA_TYPES = SIMPLE_DATA_TYPES + (bool,)
-    SIMPLE_DATA_TYPES_EXACT = frozenset(_SIMPLE_DATA_TYPES)
-
-    # Вызов только при погружении в уровень, так как при первом вызове функции data может быть простым числом,
-    # и тогда не будет смысла проверять галочки flatten/wrap, так как они относятся к спискам, а не к элементарным типам.
-    def _recursive_unpack(data, level):
-        res = []
-        res_append = res.append
-        res_extend = res.extend
-        next_level = level+1
-        if len_levels_info<next_level:
-            raise Exception(f"Конфигурация данных изменилась. Требуется перенастройка конфигуратора. Level: {next_level}")
-        
-        flatten_wrap = levels_info[next_level]
-
-        if flatten_wrap==0:
-            for elem in data:
-                type_elem = type(elem)
-                if type_elem in SIMPLE_DATA_TYPES_EXACT or isinstance(elem, OBJECTS_TYPES):
-                    pass
-                elif type_elem in LIST_TYPES_EXACT or isinstance(elem, LIST_TYPES):
-                    elem = _recursive_unpack(elem, next_level)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type_elem}')
-                res_append(elem)
-            pass
-        elif flatten_wrap==1:
-            for elem in data:
-                type_elem = type(elem)
-                if type_elem in SIMPLE_DATA_TYPES_EXACT or isinstance(elem, OBJECTS_TYPES):
-                    pass
-                elif type_elem in LIST_TYPES_EXACT or isinstance(elem, LIST_TYPES):
-                    elem = _recursive_unpack(elem, next_level)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type_elem}')
-                res_append([elem])
-            pass
-        elif flatten_wrap==2:
-            for elem in data:
-                type_elem = type(elem)
-                if type_elem in SIMPLE_DATA_TYPES_EXACT or isinstance(elem, OBJECTS_TYPES):
-                    res_append(elem)
-                elif type_elem in LIST_TYPES_EXACT or isinstance(elem, LIST_TYPES):
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type_elem}')
-            pass
-        elif flatten_wrap==3:
-            for elem in data:
-                type_elem = type(elem)
-                if type_elem in SIMPLE_DATA_TYPES_EXACT or isinstance(elem, OBJECTS_TYPES):
-                    res_append(elem)
-                    pass
-                elif type_elem in LIST_TYPES_EXACT or isinstance(elem, LIST_TYPES):
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    raise Exception(f'Uncompatible value for sum: {type_elem}')
-            pass
-        else:
-            raise Exception(f"Unsupported flatten/wrap mode: {flatten_wrap}")
-
-        if flatten_wrap==3:
-            # Обернуть результат flatten текущего уровня:
-            res = [res]
-
-        return res
-    
-    type_data = type(data)
-    if type_data in SIMPLE_DATA_TYPES_EXACT or isinstance(data, OBJECTS_TYPES):
-        res = data
-    elif type_data in LIST_TYPES_EXACT or isinstance(data, LIST_TYPES):
-        res = _recursive_unpack(data, level)
-    
-        # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
-        if levels_info[0] in (1,3):
-            res = [res]
-        pass
-    else:
-        raise Exception(f'Uncompatible value for sum: {type_data}')
-    
-    return res
-
-def recursive_unpack7(data, levels_info=None):
-    # res = []
-    if levels_info is None:
-        raise Exception("levels_info should be provided for recursive_unpack")
-    if len(levels_info)==0:
-        raise Exception("levels_info should contain at least one level for recursive_unpack")
-
-    level = 0
-    LIST_TYPES = (list, tuple,) # раньше ещё был ndarray, но в sv_get(deep_copy==True) его нет, так что уберу
-    LIST_TYPES_EXACT = frozenset(LIST_TYPES) # На больших списках даже на 3 элемента даёт маленький прирост, его видно, если убрать frozenset
-    len_levels_info = len(levels_info)-1
-    _SIMPLE_DATA_TYPES = SIMPLE_DATA_TYPES + (bool,)
-    SIMPLE_DATA_TYPES_EXACT = frozenset(_SIMPLE_DATA_TYPES)
-
-    # Вызов только при погружении в уровень, так как при первом вызове функции data может быть простым числом,
-    # и тогда не будет смысла проверять галочки flatten/wrap, так как они относятся к спискам, а не к элементарным типам.
-    def _recursive_unpack(data, level):
-        res = []
-        res_append = res.append
-        res_extend = res.extend
-        next_level = level+1
-        if len_levels_info<next_level:
-            raise Exception(f"Конфигурация данных изменилась. Требуется перенастройка конфигуратора. Level: {next_level}")
-        
-        flatten_wrap = levels_info[next_level]
-
-        if flatten_wrap==0:
-            for elem in data:
-                type_elem = type(elem)
-                if type_elem in LIST_TYPES_EXACT:
-                    elem = _recursive_unpack(elem, next_level)
-                res_append(elem)
-            pass
-        elif flatten_wrap==1:
-            for elem in data:
-                type_elem = type(elem)
-                if type_elem in LIST_TYPES_EXACT:
-                    elem = _recursive_unpack(elem, next_level)
-                res_append([elem])
-            pass
-        elif flatten_wrap==2:
-            for elem in data:
-                type_elem = type(elem)
-                if type_elem in LIST_TYPES_EXACT:
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    res_append(elem)
-            pass
-        elif flatten_wrap==3:
-            for elem in data:
-                type_elem = type(elem)
-                if type_elem in LIST_TYPES_EXACT:
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    res_append(elem)
-            pass
-            # Обернуть результат flatten текущего уровня:
-            res = [res]
-        else:
-            raise Exception(f"Unsupported flatten/wrap mode: {flatten_wrap}")
-
-        return res
-    
-    type_elem = type(data)
-    if type_elem in LIST_TYPES_EXACT:
-        res = _recursive_unpack(data, level)
-    
-        # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
-        if levels_info[0] in (1,3):
-            res = [res]
-        pass
-    else:
-        res = data
-    
-    return res
-
-
-def recursive_unpack8(data, levels_info=None):
-    # res = []
-    if levels_info is None:
-        raise Exception("levels_info should be provided for recursive_unpack")
-    if len(levels_info)==0:
-        raise Exception("levels_info should contain at least one level for recursive_unpack")
-
-    level = 0
-    LIST_TYPES = (list, tuple,) # раньше ещё был ndarray, но в sv_get(deep_copy==True) его нет, так что уберу
-    LIST_TYPES_EXACT = frozenset(LIST_TYPES) # На больших списках даже на 3 элемента даёт маленький прирост, его видно, если убрать frozenset
-    len_levels_info = len(levels_info)-1
-    _SIMPLE_DATA_TYPES = SIMPLE_DATA_TYPES + (bool,)
-    SIMPLE_DATA_TYPES_EXACT = frozenset(_SIMPLE_DATA_TYPES)
-
-    # Вызов только при погружении в уровень, так как при первом вызове функции data может быть простым числом,
-    # и тогда не будет смысла проверять галочки flatten/wrap, так как они относятся к спискам, а не к элементарным типам.
-    def _recursive_unpack(data, level):
-        res = []
-        res_append = res.append
-        res_extend = res.extend
-        next_level = level+1
-        if len_levels_info<next_level:
-            raise Exception(f"Конфигурация данных изменилась. Требуется перенастройка конфигуратора. Level: {next_level}")
-        
-        flatten_wrap = levels_info[next_level]
-
-        if flatten_wrap==0:
-            for elem in data:
-                if isinstance(elem, LIST_TYPES):
-                    elem = _recursive_unpack(elem, next_level)
-                res_append(elem)
-            pass
-        elif flatten_wrap==1:
-            for elem in data:
-                if isinstance(elem, LIST_TYPES):
-                    elem = _recursive_unpack(elem, next_level)
-                res_append([elem])
-            pass
-        elif flatten_wrap==2:
-            for elem in data:
-                if isinstance(elem, LIST_TYPES):
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    res_append(elem)
-            pass
-        elif flatten_wrap==3:
-            for elem in data:
-                if isinstance(elem, LIST_TYPES):
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    res_append(elem)
-            pass
-            # Обернуть результат flatten текущего уровня:
-            res = [res]
-        else:
-            raise Exception(f"Unsupported flatten/wrap mode: {flatten_wrap}")
-
-        return res
-    
-    type_elem = type(data)
-    if isinstance(data, LIST_TYPES):
-        res = _recursive_unpack(data, level)
-    
-        # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
-        if levels_info[0] in (1,3):
-            res = [res]
-        pass
-    else:
-        res = data
-    
-    return res
-
-def recursive_unpack9(data, levels_info=None):
-    # res = []
-    if levels_info is None:
-        raise Exception("levels_info should be provided for recursive_unpack")
-    if len(levels_info)==0:
-        raise Exception("levels_info should contain at least one level for recursive_unpack")
-
-    level = 0
-    LIST_TYPES = (list, tuple,) # раньше ещё был ndarray, но в sv_get(deep_copy==True) его нет, так что уберу
-    LIST_TYPES_EXACT = frozenset(LIST_TYPES) # На больших списках даже на 3 элемента даёт маленький прирост, его видно, если убрать frozenset
-    len_levels_info = len(levels_info)-1
-    _SIMPLE_DATA_TYPES = SIMPLE_DATA_TYPES + (bool,)
-    SIMPLE_DATA_TYPES_EXACT = frozenset(_SIMPLE_DATA_TYPES)
-
-    # Вызов только при погружении в уровень, так как при первом вызове функции data может быть простым числом,
-    # и тогда не будет смысла проверять галочки flatten/wrap, так как они относятся к спискам, а не к элементарным типам.
-    def _recursive_unpack(data, level, res=None):
-        #if res is None:
-        res = []
-        res_append = res.append
-        res_extend = res.extend
-        next_level = level+1
-        if len_levels_info<next_level:
-            if not data:
-                return res
-            raise Exception(f"Конфигурация данных изменилась. Требуется перенастройка конфигуратора. Level: {next_level}")
-        
-        flatten_wrap = levels_info[next_level]
-
-        if flatten_wrap==0: # flatten==False and wrap==False
-            for elem in data:
-                if type(elem) in LIST_TYPES_EXACT:
-                    elem = _recursive_unpack(elem, next_level)
-                res_append(elem)
-            pass
-        elif flatten_wrap==1: # flatten==False and wrap==True
-            for elem in data:
-                if type(elem) in LIST_TYPES_EXACT:
-                    elem = _recursive_unpack(elem, next_level)
-                res_append([elem])
-            pass
-        elif flatten_wrap==2: # flatten==True and wrap==False
-            for elem in data:
-                if type(elem) in LIST_TYPES_EXACT:
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    res_append(elem)
-            pass
-        elif flatten_wrap==3: # flatten==True and wrap==True
-            for elem in data:
-                if type(elem) in LIST_TYPES_EXACT:
-                    val = _recursive_unpack(elem, next_level)
-                    res_extend(val)
-                else:
-                    res_append(elem)
-            pass
-            # Обернуть результат flatten текущего уровня:
-            res = [res]
-        else:
-            raise Exception(f"Unsupported flatten/wrap mode: {flatten_wrap}")
-
-        return res
-    
-    type_elem = type(data)
-    if type_elem in LIST_TYPES_EXACT:
-        res = _recursive_unpack(data, level)
-    
-        # На верхнем уровне flatten не выполняется, так как там нет родительского уровня, который нужно распаковать. Поэтому можно выполнить только wrap:
-        if levels_info[0] in (1,3):
-            res = [res]
-        pass
-    else:
-        res = data
-    
-    return res
-
-def recursive_unpack10(data, levels_info=None):
+def recursive_unpack(data, levels_info=None):
     # res = []
     if levels_info is None:
         raise Exception("levels_info should be provided for recursive_unpack")
@@ -899,96 +161,8 @@ def recursive_unpack10(data, levels_info=None):
 
     return (res, force_reload_config)
 
-LIST_TYPES_EXACT = frozenset((list, tuple,))
-def sv_deep_copy_list_exact(lst):
-    """return deep copied data of list/tuple structure"""
-    # faster than builtin deep copy for us.
-    # useful for our limited case
-    # we should be able to specify vectors here to get them create
-    # or stop destroying them when in vector socket.
-    if type(lst) in LIST_TYPES_EXACT:
-        if lst and type(lst[0]) not in LIST_TYPES_EXACT:
-            return lst[:]
-        return [sv_deep_copy_list_exact(l) for l in lst]
-    return lst
-
 # Загрузить описание уровней данных. 
 def data_levels_info(data, levels_info=None, level_root=0):
-    if levels_info is None or level_root==0:
-        levels_info = [dict(), dict()]
-    else:
-        while( len(levels_info) <= level_root+1):
-            levels_info.append(dict())
-
-    levels_info_level_root = levels_info[level_root+1]
-    if isinstance(data, ALL_TYPES):
-        # Срабатывает, если вызов сразу происходит для простого числа
-        levels_info_level_root.setdefault(type(data).__name__, LevelInfo(TYPE=type(data).__name__, COUNT=1, ALERT=False))
-    else:
-        if level_root==0:
-            levels_info[0][type(data).__name__] = LevelInfo(TYPE=type(data).__name__, COUNT=1, ALERT=False)
-        for elem in data:
-            type_elem_name = type(elem).__name__
-            if type_elem_name not in levels_info_level_root:
-                levels_info_level_root[type_elem_name] = LevelInfo(TYPE=type_elem_name, COUNT=0, ALERT=False)
-            if isinstance(elem, ALL_TYPES):
-                levels_info_level_root[type_elem_name].COUNT += len(data)
-                # Проверка типа делается по первому элементу. Пока в Сверчке предполагается, что элементы одного уровня однотипные.
-                # TODO: Возможно, стоит добавить поддержку разнородных списков, тогда нужно будет проверять все элементы на тип,
-                # и если встретится элемент другого типа, то добавить в описание уровень "Mixed types" или что-то в этом роде.
-                break 
-            elif isinstance(elem, (list, tuple, ndarray)):
-                levels_info_level_root[type_elem_name].COUNT += 1
-                _levels_info = data_levels_info(elem, levels_info, level_root + 1)
-                pass
-            else:
-                raise Exception(f'Uncompatible value for sum: {type(elem)}')
-        pass
-    return levels_info
-
-# Загрузить описание уровней данных. 
-def data_levels_info2(data, levels_info=None, level_root=0):
-    LIST_TYPES = (list, tuple, ndarray)
-    if levels_info is None or level_root==0:
-        levels_info = [dict(), dict()]
-
-    def data_levels_info(data, levels_info, level_root):
-        if len(levels_info) <= level_root+1:
-            levels_info.append(dict())
-        levels_info_level_root = levels_info[level_root+1]
-
-        for elem in data:
-            type_elem = type(elem)
-            if type_elem not in levels_info_level_root:
-                levels_info_level_root[type_elem] = LevelInfo(TYPE=type_elem, COUNT=0, ALERT=False, SUB=False)
-            if type_elem in SIMPLE_DATA_TYPES or isinstance(elem, OBJECTS_TYPES):
-                levels_info_level_root[type_elem].COUNT += len(data)
-                # Проверка типа делается по первому элементу. Пока в Сверчке предполагается, что элементы одного уровня однотипные.
-                # TODO: Возможно, стоит добавить поддержку разнородных списков, тогда нужно будет проверять все элементы на тип,
-                # и если встретится элемент другого типа, то добавить в описание уровень "Mixed types" или что-то в этом роде.
-                break 
-            elif type_elem in LIST_TYPES:
-                levels_info_level_root[type_elem].COUNT += 1
-                levels_info_level_root[type_elem].SUB = True
-                data_levels_info(elem, levels_info, level_root + 1)
-                pass
-            else:
-                raise Exception(f'Uncompatible value for sum: {type_elem}')
-        pass
-        return
-
-
-    levels_info_level_root = levels_info[level_root+1]
-    if isinstance(data, ALL_TYPES):
-        # Срабатывает, если вызов сразу происходит для простого числа
-        levels_info_level_root.setdefault(type(data), LevelInfo(TYPE=type(data), COUNT=1, ALERT=False))
-    else:
-        levels_info[0][type(data)] = LevelInfo(TYPE=type(data), COUNT=1, ALERT=False)
-        data_levels_info(data, levels_info, level_root)
-    return levels_info
-
-# Загрузить описание уровней данных. 
-def data_levels_info3(data, levels_info=None, level_root=0):
     LIST_TYPES_EXACT = frozenset((list, tuple,))
     if levels_info is None or level_root==0:
         levels_info = [dict(), dict()]
@@ -1057,10 +231,11 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         row = layout.row(align=True)
         row.use_property_decorate = False
         row.use_property_split = True
-        if self.load_levels_config==False:
-            row.column(align=True).prop(self, 'load_levels_config', toggle=True, icon='FILE_REFRESH',)
-        else:
-            row.column(align=True).prop(self, 'load_levels_config', toggle=True, icon='GHOST_DISABLED', text='Processing... Wait')
+
+        # if self.load_levels_config==False:
+        #     row.column(align=True).prop(self, 'load_levels_config', toggle=True, icon='FILE_REFRESH',)
+        # else:
+        #     row.column(align=True).prop(self, 'load_levels_config', toggle=True, icon='GHOST_DISABLED', text='Processing... Wait')
 
         root = layout.box()
         if not self.nesting:
@@ -1068,25 +243,34 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
             return
         
         grid = root.grid_flow(row_major=True, columns=4, align=True, even_columns=False, )
-        grid.column(align=True).label(text='Lvl')
-        grid.column(align=True).label(text='Shape')
-        grid.column(align=True).label(text='Flatten')
-        grid.column(align=True).label(text='Wrap')
+        e = grid.row(align=True)
+        e.label(text='Lvl')
+        e = grid.row(align=True)
+        e.label(text='Shape')
+        e = grid.row(align=True)
+        e.label(text='Flatten')
+        e.alignment = 'CENTER'
+        e = grid.row(align=True)
+        e.alignment = 'CENTER'
+        e.label(text='Wrap')
 
         for I, entry in zip(range(self.nesting), self.levels_config):
             grid.column(align=True).label(text=f"{I+1}")
-            c = grid.row(align=True)
-            c.alert = entry.alert
-            c.label(text=entry.description,)
+            e = grid.row(align=True)
+            e.alignment = 'LEFT'
+            e.alert = entry.alert
+            e.label(text=entry.description,)
             if entry.alert:
-                c.label(text='', icon='ERROR')
-            c = grid.column(align=True)
-            # c.prop(entry, 'flatten', text='',)
+                e.label(text='', icon='ERROR')
+            e = grid.row(align=True)
+            e.alignment = 'CENTER'
             if 0<I and I<=self.nesting-2:
-                c.prop(entry, 'flatten', text='',)
+                e.prop(entry, 'flatten', text='',)
             else:
-                c.label(icon='X', text='')
-            grid.column(align=True).prop(entry, 'wrap', text='')
+                e.label(icon='X', text='')
+            e = grid.row(align=True)
+            e.alignment = 'CENTER'
+            e.prop(entry, 'wrap', text='')
         
         return
 
@@ -1107,7 +291,7 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         self.load_levels_config = False
         level_infos = []
         for data in datas:
-            _levels_info = data_levels_info3(data)
+            _levels_info = data_levels_info(data)
             for I in range(len(_levels_info)):
                 if I>=len(level_infos):
                     level_infos.append(dict())
@@ -1148,19 +332,21 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
 
     def process(self):
 
+        force_reload_config = False
         datas = []
         for I, socket in enumerate(self.inputs):
-            if socket==self.inputs[-1]:
+            if socket.is_linked==False and socket==self.inputs[-1]: # Возможна ситуация, когда последний link только подключили, а новый последний неподключенный link ещё не создали.
                 break
             data = socket.sv_get(default=[], deepcopy=False)
             datas.append(data)
 
-        # Добавить ещё один сокет, если последний сокет подключен (но данные из него браться не будут)
+        # Добавить ещё один входящий сокет, если последний входящий сокет подключен (но данные из него браться не будут)
         if len(self.inputs)>=1 and self.inputs[-1].is_linked==True:
             name = f"data_{len(self.inputs)+1}"
             label = f"Data_{len(self.inputs)+1}"
             self.inputs.new('SvStringsSocket', name)
             self.inputs[name].label = label
+            force_reload_config = True
 
         while len(self.inputs) > 1 and not self.inputs[-2].links:
             socket_to_remove = self.inputs[-1]
@@ -1178,6 +364,7 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
                     for link in list(socket_to_remove.links):
                         self.id_data.links.remove(link)
                     self.outputs.remove(socket_to_remove)
+                force_reload_config = True
                 break
             pass
 
@@ -1193,52 +380,10 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
             output_label = f"Data_{IDX}"
             self.outputs.new('SvStringsSocket', output_name)
             self.outputs[output_name].label = output_label
+            force_reload_config = True
             pass
 
-
-        # if not self.levels_config or self.load_levels_config:
-        #     self.load_levels_config = False
-        #     level_infos = []
-        #     for data in datas:
-        #         _levels_info = data_levels_info3(data)
-        #         for I in range(len(_levels_info)):
-        #             if I>=len(level_infos):
-        #                 level_infos.append(dict())
-        #             alert = False
-        #             if len(_levels_info[I])>1:
-        #                 alert = True
-        #             for key, value in _levels_info[I].items():
-        #                 if key not in level_infos[I]:
-        #                     level_infos[I][key] = LevelInfo(TYPE=key, COUNT=0, ALERT=False)
-        #                 level_infos[I][key].COUNT += value.COUNT
-        #                 level_infos[I][key].ALERT = level_infos[I][key].ALERT or alert
-        #             pass
-        #         pass
-
-        #     len_levels_info = len(level_infos)
-        #     self.nesting = len_levels_info if datas else 0
-
-        #     correct_collection_length(self.levels_config, len_levels_info)
-
-        #     for entry, description in zip(self.levels_config, level_infos):
-        #         #entry.description = ",".join([f"{k.__name__}: {v.COUNT}" for k, v in description.items()])
-        #         entry.description = ",".join([f"{k.__name__}" for k, v in description.items()])
-        #         entry.alert = next(iter(description.items()))[1].ALERT if len(description)>0 else False
-        #     pass
-
-        # if self.levels_config:
-        #     # Первый и последний элемент flatten надо очищать, чтобы он не сохранялся, чтобы в случае восстановления уровня неожиданно не восстанавливался как включённый.
-        #     # Я тут не полчаса завис, когда при переподключении списков UI увеличился на одну позицию и галочка оказалась включённой, но это не обращало на себя
-        #     # внимание, т.к. я не работал с этим нодом и не видел изменений в его UI. А ситуация может быть ещё критичнее, когда нод вообще находится 
-        #     # за пределами области видимости.
-        #     if self.levels_config[0].flatten != False:
-        #         self.levels_config[0].flatten = False
-        #     if self.levels_config[-1].flatten != False:
-        #         self.levels_config[-1].flatten = False
-        # else:
-        #     pass
-
-        if not self.levels_config or self.load_levels_config:
+        if not self.levels_config or self.load_levels_config or force_reload_config==True:
             self.reload_config(datas)
 
         # Сбрасывать в любом случае
@@ -1251,15 +396,8 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
             levels_config = [(2 if info.flatten else 0) | (1 if info.wrap else 0) for info in self.levels_config]
             for data in datas:
                 if data:
-                    #res1 = recursive_unpack2(data, self.levels_config)
-                    #res1 = recursive_unpack5(data, self.levels_config)
-                    #res1 = recursive_unpack9(data, levels_config)
-                    (res1, _force_reload_config) = recursive_unpack10(data, levels_config)
+                    (res1, _force_reload_config) = recursive_unpack(data, levels_config)
                     force_reload_config |= _force_reload_config
-                    #res1 = sv_deep_copy_list_exact(data)
-                    # res1 = sv_deep_copy(data)
-                    # res1 = sv_copy_levels_fast(data, levels_config, 0)
-                    #res1 = recursive_unpack_stream(data, self.levels_config)
                 else:
                     res1 = []
                 res.append(res1)
