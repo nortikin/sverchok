@@ -153,7 +153,6 @@ def data_levels_info(data, levels_info=None, level_root=0):
         levels_info = [dict(), dict()]
 
     def _data_levels_info(data, levels_info, level_root):
-        # TODO: разобраться, когда среди вложенных данных только list
         if not data:
             return
         if len(levels_info) <= level_root+1:
