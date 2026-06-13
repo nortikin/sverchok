@@ -16,22 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from os import link
-from platform import node
-
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty, CollectionProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, describe_data_shape_by_level, list_levels_adjust, SIMPLE_DATA_TYPES,
-                                     changable_sockets)
+from sverchok.data_structure import (updateNode, SIMPLE_DATA_TYPES, changable_sockets)
 from sverchok.utils.curve.core import SvCurve
-from sverchok.core.socket_data import sv_deep_copy
 from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.handle_blender_data import correct_collection_length
-from numpy import ndarray
 from dataclasses import dataclass
 
 ALL_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
@@ -42,11 +35,10 @@ if FreeCAD is not None:
 
 @dataclass
 class LevelInfo:
-    TYPE: str = None
+    TYPE: str = ''
     COUNT: int = 0
     ALERT: bool = False
     SUB: bool = False # leaf or list (can be deep-scanned)
-    pass
 
 class SvNestingLevelEntryMK3(bpy.types.PropertyGroup):
     def update_entry(self, context):
@@ -55,18 +47,18 @@ class SvNestingLevelEntryMK3(bpy.types.PropertyGroup):
         else:
             sv_logger.debug("Node is not defined in this context, so will not update the node.")
 
-    description : StringProperty(options = {'SKIP_SAVE'}, default="?")
-    flatten : BoolProperty(
+    description : bpy.props.StringProperty(options = {'SKIP_SAVE'}, default="?")
+    flatten : bpy.props.BoolProperty(
                 name = "Flatten",
                 description = "Concatenate all child lists into one list",
                 default=False,
                 update=update_entry)
-    wrap : BoolProperty(
+    wrap : bpy.props.BoolProperty(
                 name = "Wrap",
                 description = "Wrap data into additional pair of square brackets []",
                 default=False,
                 update=update_entry)
-    alert : BoolProperty(
+    alert : bpy.props.BoolProperty(
                 name = "Alert",
                 description = "Alert some warning about this level",
                 default=False,
@@ -75,9 +67,9 @@ class SvNestingLevelEntryMK3(bpy.types.PropertyGroup):
 
 def recursive_unpack(data, levels_info=None):
     if levels_info is None:
-        raise Exception("levels_info should be provided for recursive_unpack")
+        raise RuntimeError("levels_info should be provided for recursive_unpack")
     if len(levels_info)==0:
-        raise Exception("levels_info should contain at least one level for recursive_unpack")
+        raise RuntimeError("levels_info should contain at least one level for recursive_unpack")
 
     level = 0
     LIST_TYPES = (list, tuple,) # used to have ndarray, but it’s not in sv_get(deep_copy==True), so I’ll remove
@@ -135,7 +127,7 @@ def recursive_unpack(data, levels_info=None):
             # wrap the current level flatten result:
             res = [res]
         else:
-            raise Exception(f"Unsupported flatten/wrap mode: {flatten_wrap}")
+            raise RuntimeError(f"Unsupported flatten/wrap mode: {flatten_wrap}")
 
         return res
     
@@ -202,33 +194,12 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER'
 
     levels_config : bpy.props.CollectionProperty(type=SvNestingLevelEntryMK3)
-    nesting: IntProperty(description="How much nested levels should be shown")
-    load_levels_config_: bpy.props.BoolProperty(default=False)
+    nesting: bpy.props.IntProperty(description="How much nested levels should be shown")
     
-    def updateNodeReload(self, context):
-        if self.load_levels_config==True:
-            updateNode(self, context)
-        else:
-            pass
-        return
-    
-    load_levels_config: bpy.props.BoolProperty(
-        default = False,
-        name    = "Reload levels config",
-        description = "Relad Levels config from current data",
-        update      = updateNodeReload,
-    )
-
-
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.use_property_decorate = False
         row.use_property_split = True
-
-        # if self.load_levels_config==False:
-        #     row.column(align=True).prop(self, 'load_levels_config', toggle=True, icon='FILE_REFRESH',)
-        # else:
-        #     row.column(align=True).prop(self, 'load_levels_config', toggle=True, icon='GHOST_DISABLED', text='Processing... Wait')
 
         root = layout.box()
         if not self.nesting:
@@ -270,18 +241,59 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'data_1')
-        self.inputs['data_1'].label = 'Data'
+        self.inputs['data_1'].label = 'Data1'
 
         self.outputs.new('SvStringsSocket', 'data_1')
-        self.outputs['data_1'].label = 'Data'
+        self.outputs['data_1'].label = 'Data1'
         return
 
     def sv_update(self):
-        changable_sockets(self, 'data_1', ['data_1', ])
+        # Add another inbound socket if the last inbound socket is connected (but data from it won’t be retrieved)
+        if len(self.inputs)>=1 and self.inputs[-1].is_linked==True:
+            name = f"data_{len(self.inputs)+1}"
+            label = f"Data{len(self.inputs)+1}"
+            self.inputs.new('SvStringsSocket', name)
+            self.inputs[name].label = label
+            force_reload_config = True
+
+        while len(self.inputs) > 1 and not self.inputs[-2].links:
+            socket_to_remove = self.inputs[-1]
+            for link in list(socket_to_remove.links):
+                self.id_data.links.remove(link)
+            self.inputs.remove(socket_to_remove)
+
+        # Check outputs. If order is broken or sockets are missing, create additional sockets
+        for I in range(1, len(self.outputs)+1):
+            IDX = I+1
+            name = f'data_{IDX}'
+            if name not in self.outputs:
+                while(len(self.outputs)>IDX):
+                    socket_to_remove = self.outputs[-1]
+                    for link in list(socket_to_remove.links):
+                        self.id_data.links.remove(link)
+                    self.outputs.remove(socket_to_remove)
+                force_reload_config = True
+                break
+            pass
+
+        while(len(self.outputs)>1 and len(self.outputs) > len(self.inputs)-1):
+            socket_to_remove = self.outputs[-1]
+            for link in list(socket_to_remove.links):
+                self.id_data.links.remove(link)
+            self.outputs.remove(socket_to_remove)
+
+        for I in range(max(1, len(self.outputs)), len(self.inputs)-1):
+            IDX = I+1
+            output_name  = f"data_{IDX}"
+            output_label = f"Data{IDX}"
+            self.outputs.new('SvStringsSocket', output_name)
+            self.outputs[output_name].label = output_label
+            force_reload_config = True
+            pass
+
         return
     
     def reload_config(self, datas):
-        self.load_levels_config = False
         level_infos = []
         for data in datas:
             _levels_info = data_levels_info(data)
@@ -318,10 +330,10 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
                 self.levels_config[-1].flatten = False
         else:
             pass
+        return
 
 
     def process(self):
-
         force_reload_config = False
         datas = []
         for I, socket in enumerate(self.inputs):
@@ -330,55 +342,8 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
             data = socket.sv_get(default=[], deepcopy=False)
             datas.append(data)
 
-        # Add another inbound socket if the last inbound socket is connected (but data from it won’t be retrieved)
-        if len(self.inputs)>=1 and self.inputs[-1].is_linked==True:
-            name = f"data_{len(self.inputs)+1}"
-            label = f"Data_{len(self.inputs)+1}"
-            self.inputs.new('SvStringsSocket', name)
-            self.inputs[name].label = label
-            force_reload_config = True
-
-        while len(self.inputs) > 1 and not self.inputs[-2].links:
-            socket_to_remove = self.inputs[-1]
-            for link in list(socket_to_remove.links):
-                self.id_data.links.remove(link)
-            self.inputs.remove(socket_to_remove)
-
-        # Check outputs. If order is broken or sockets are missing, create additional sockets
-        for I in range(1, len(self.outputs)+1):
-            IDX = I+1
-            name = f'data_{IDX}'
-            if name not in self.outputs:
-                while(len(self.outputs)>IDX):
-                    socket_to_remove = self.outputs[-1]
-                    for link in list(socket_to_remove.links):
-                        self.id_data.links.remove(link)
-                    self.outputs.remove(socket_to_remove)
-                force_reload_config = True
-                break
-            pass
-
-        while(len(self.outputs)>1 and len(self.outputs) > len(self.inputs)-1):
-            socket_to_remove = self.outputs[-1]
-            for link in list(socket_to_remove.links):
-                self.id_data.links.remove(link)
-            self.outputs.remove(socket_to_remove)
-
-        for I in range(max(1, len(self.outputs)), len(self.inputs)-1):
-            IDX = I+1
-            output_name  = f"data_{IDX}"
-            output_label = f"Data_{IDX}"
-            self.outputs.new('SvStringsSocket', output_name)
-            self.outputs[output_name].label = output_label
-            force_reload_config = True
-            pass
-
-        if not self.levels_config or self.load_levels_config or force_reload_config==True:
+        if not self.levels_config or force_reload_config==True:
             self.reload_config(datas)
-
-        # Сбрасывать в любом случае
-        self.load_levels_config = False
-
 
         res = []
         force_reload_config = False
