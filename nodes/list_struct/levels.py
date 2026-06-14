@@ -338,7 +338,10 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         for I, socket in enumerate(self.inputs):
             if socket.is_linked==False and socket==self.inputs[-1]: # You may have a situation where the last link has just been connected and the new last unconnected link has not yet been created.
                 break
-            data = socket.sv_get(default=[], deepcopy=False)
+            if socket.name in self.outputs and self.outputs[socket.name].is_linked==True:
+                data = socket.sv_get(default=[], deepcopy=False)
+            else:
+                data=[]
             datas.append(data)
 
         if not self.levels_config or force_reload_config==True:
