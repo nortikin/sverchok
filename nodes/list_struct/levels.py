@@ -349,7 +349,7 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
 
         res = []
         force_reload_config = False
-        if self.levels_config:
+        if self.levels_config and any([info.flatten or info.wrap for info in self.levels_config]):
             levels_config = [(2 if info.flatten else 0) | (1 if info.wrap else 0) for info in self.levels_config]
             for data in datas:
                 if data:
