@@ -2,33 +2,27 @@
 
 ## Project Overview
 
-**Sverchok** is a powerful parametric geometry programming tool for Blender, enabling visual programming of geometry through nodes. It is an addon for Blender version 2.93 and above (currently tested with 5.1).
+**Sverchok** is a parametric geometry programming tool for Blender, enabling visual programming of geometry through nodes.
 
 - **License**: GPL3
 - **Current Version**: 1.4.0
-- **Homepage**: https://nortikin.github.io/sverchok/
-- **Documentation**: http://nortikin.github.io/sverchok/docs/main.html
+- **Blender**: Works with Blender 5.1; CI tests run on Blender 4.5
 - **GitHub**: https://github.com/nortikin/sverchok
-- **Community**: Discord (https://discord.gg/pjHHhjJz8Z), Telegram (https://t.me/sverchok_3d)
 
 ## Technological Stack
 
-- **Blender** (Python API - bpy)
+- **Blender** (Python API - `bpy`)
 - **Python** (3.x)
 - **NumPy** (array operations)
 - **Additional libraries**: scipy, geomdl, skimage, mcubes, circlify, cython, numba, numexpr, ezdxf, pyacvd, pySVCGAL, spyrrow, freecad
 
 ## Required Knowledge
 
-In order to effectively develop Sverchok, one has to have understanding of analytical geometry, linear algebra and NURBS mathematics. Knowledge of Blender Python API is also required.
-
-If you do not know how do some mathematical concepts (especially in NURBS
-mathematics) work, or not sure how to use Blender Python API properly, try to
-use searxng tool (if it is available) to search information in the internet.
+Analytical geometry, linear algebra, NURBS mathematics, and Blender Python API.
 
 ## Project Structure
 
-**IMPORTANT**: Project, its root directory and its root module are called `sverchok`, not `sverzok` or anything else! Imports follow the pattern:
+**IMPORTANT**: Project, root directory, and root module are called `sverchok`, not `sverzok`! Imports follow the pattern:
 - `import sverchok.core` → `sverchok/core/__init__.py`
 - `import sverchok.utils.curve.core` → `sverchok/utils/curve/core.py`
 - `import sverchok.nodes.geometry.mesh` → `sverchok/nodes/geometry/mesh.py`
@@ -38,7 +32,7 @@ use searxng tool (if it is available) to search information in the internet.
 | Directory | Purpose |
 |-----------|---------|
 | `core/` | Core infrastructure: node tree, update system, sockets, handlers, events, group update system |
-| `nodes/` | Node implementations organized by category (geometry, modifier, generator, etc.) |
+| `nodes/` | Node implementations organized by category (subdirectories) |
 | `old_nodes/` | Legacy nodes (deprecated but maintained for compatibility) |
 | `utils/` | Utility modules: math, geometry, file I/O, visualization, testing helpers |
 | `ui/` | User interface components: panels, menus, icons, theme management |
@@ -46,7 +40,6 @@ use searxng tool (if it is available) to search information in the internet.
 | `tests/` | Automated test suites for various components |
 | `menus/` | Menu presets and configurations (YAML format) |
 | `presets/` | Node tree presets |
-| `scripts/` | Build scripts and utilities |
 | `profile_examples/` | Profile examples for testing |
 
 ### Key Files
@@ -54,29 +47,33 @@ use searxng tool (if it is available) to search information in the internet.
 | File | Purpose |
 |------|---------|
 | `__init__.py` | Main addon initialization, registration, version info |
-| `node_tree.py` | Core node tree definitions |
+| `node_tree.py` | Core node tree definitions; defines `SverchCustomTreeNode` base class |
 | `data_structure.py` | Core data structures for Sverchok |
-| `settings.py` | Add-on preferences and settings |
+| `settings.py` | Add-on preferences and settings (`SverchokPreferences`) |
 | `dependencies.py` | External library dependencies management |
 
 ## Core Architecture
 
 ### Module Loading
 
-The addon uses a sophisticated module loading system:
+The addon uses a sophisticated module loading system in `core/__init__.py`:
 
 1. **Root modules**: `dependencies`, `data_structure`, `node_tree`, `core`, `utils`, `ui`, `nodes`, `old_nodes`
-2. **Core modules**: `sv_custom_exceptions`, `update_system`, `sockets`, `socket_data`, `handlers`, `events`, `node_group`, `tasks`, `group_update_system`, `event_system`
+2. **Core modules**: `sv_custom_exceptions`, `update_system`, `sockets`, `socket_data`, `handlers`, `events`, `node_group`, `tasks`, `group_update_system`, `event_system`, `socket_conversions`
 
 The `core/__init__.py` file contains the `init_architecture()` function that orchestrates module initialization.
 
 ### Registration System
 
-Node modules are automatically discovered and registered in `nodes/__init__.py` via `automatic_collection()` which walks the directory tree.
+Node modules are automatically discovered and registered in `nodes/__init__.py` via `automatic_collection()` which walks the directory tree. Each subdirectory under `nodes/` becomes a node category.
 
 ### Node Categories
 
-Nodes are organized into categories: geometry, modifier_change, modifier_make, generator, list, matrix, vector, scalar, scene, surface, curve, solid, text, old_nodes, special, spatial, sv_script.
+Actual categories (subdirectories under `nodes/`):
+
+`analyzer`, `CAD`, `color`, `curve`, `dictionary`, `dxf`, `exchange`, `generator`, `generators_extended`, `layout`, `list_main`, `list_masks`, `list_mutators`, `list_struct`, `logic`, `matrix`, `modifier_change`, `modifier_make`, `network`, `number`, `object_nodes`, `pulga_physics`, `quaternion`, `scene`, `script`, `solid`, `spatial`, `surface`, `text`, `transforms`, `vector`, `viz`, `old_nodes`
+
+Solid nodes use `sv_category` for sub-categorization (e.g., `"Solid Operators"`, `"Solid Inputs"`, `"Solid Outputs"`).
 
 ## Development Guidelines
 
@@ -84,7 +81,7 @@ Nodes are organized into categories: geometry, modifier_change, modifier_make, g
 
 1. **Comments**: All comments must be in English
 2. **Documentation**: Use docstrings for all functions and classes
-3. **Error handling**: Use Sverchok's custom exceptions from `sv_custom_exceptions.py`
+3. **Error handling**: Use Sverchok's custom exceptions from `core/sv_custom_exceptions.py`
 4. **Testing**: Write tests for new functionality
 
 ### Floating Point Precision
@@ -113,54 +110,70 @@ See the [Dependencies wiki page](https://github.com/nortikin/sverchok/wiki/Depen
 
 ### Core Components
 
-1. **Update System** (`core/update_system.py`) - Controls node tree evaluation and updates
-2. **Socket System** (`core/sockets.py`) - Data type definitions and conversions
-3. **Event System** (`core/event_system.py`) - Handles Blender events and callbacks
-4. **Group Update System** (`core/group_update_system.py`) - Manages node group updates
+| File | Purpose |
+|------|---------|
+| `core/update_system.py` | Controls node tree evaluation and updates |
+| `core/sockets.py` | Data type definitions and conversions |
+| `core/socket_conversions.py` | Socket type conversion logic |
+| `core/socket_data.py` | Socket data handling |
+| `core/event_system.py` | Handles Blender events and callbacks |
+| `core/group_update_system.py` | Manages node group updates |
+| `core/node_group.py` | Node group implementation |
+| `core/handlers.py` | Blender event handlers |
+| `core/events.py` | Event definitions |
+| `core/tasks.py` | Task management |
+| `core/sv_custom_exceptions.py` | Custom exceptions |
 
 ### Utility Modules
 
-1. **Math & Geometry** (`utils/math.py`, `utils/geom.py`, `utils/linalg.py`)
-2. **File I/O** (`utils/sv_json_import.py`, `utils/sv_json_export.py`, `utils/dxf.py`, `utils/svg.py`)
-3. **Visualization** (`utils/sv_viewer_utils.py`, `utils/visualize_data_tree.py`)
-4. **BMesh Operations** (`utils/sv_bmesh_utils.py`, `utils/blender_mesh.py`)
-5. **NURBS** (`utils/nurbs_common.py`, `utils/sv_curve_utils.py`, `utils/curve/`)
+| Category | Key Files |
+|----------|-----------|
+| **Math & Geometry** | `utils/math.py`, `utils/geom.py`, `utils/linalg.py`, `utils/geom_2d/` |
+| **Field-based generation** | `utils/field/` (attractor, differential, frame_along_curve, image, probe, rbf, scalar, vector, vector_operations, vector_primitives, voronoi) |
+| **NURBS** | `utils/curve/` (nurbs.py, knotvector.py, nurbs_solver.py, nurbs_algorithms.py, bezier.py, biarc.py, catmull_rom.py, splines.py, splprep.py, algorithms.py, etc.) |
+| **NURBS Exceptions** | `CantInsertKnotException`, `CantRemoveKnotException` in `utils/curve/nurbs.py` |
+| **File I/O** | `utils/sv_json_import.py`, `utils/sv_json_export.py`, `utils/dxf.py`, `utils/svg.py`, `utils/ifc.py` |
+| **Visualization** | `utils/sv_viewer_utils.py`, `utils/visualize_data_tree.py` |
+| **BMesh** | `utils/sv_bmesh_utils.py`, `utils/blender_mesh.py` |
+| **Other** | `utils/handle_blender_data.py`, `utils/listutils.py`, `utils/dictionary.py`, `utils/kdtree.py`, `utils/bvh_tree.py`, `utils/avl_tree.py` |
+| **CAD / Exchange / Layout** | `utils/exchange/`, `utils/CAD/`, `utils/layout/`, `utils/network/`, `utils/pulga_physics_core.py` |
 
 ### NURBS Architecture
 
-Sverchok implements NURBS curve operations with support for two backends:
+Sverchok implements NURBS curve operations with two backends (both inherit from `SvNurbsCurve` in `utils/curve/nurbs.py`):
 
-- **`SvGeomdlCurve`** (`utils/curve/nurbs.py`): Wrapper around the external `geomdl` library
-- **`SvNativeNurbsCurve`** (`utils/curve/nurbs.py`): Native implementation with full control over operations
+- **`SvGeomdlCurve`** — Wrapper around the external `geomdl` library
+- **`SvNativeNurbsCurve`** — Native implementation with full control over operations
 
-**Key Files:**
-- `utils/curve/nurbs.py` - Core NURBS operations: knot insertion/removal, degree elevation, basis functions
-- `utils/curve/knotvector.py` - Knot vector generation and validation
-- `utils/curve/nurbs_solver.py` - NURBS curve fitting solver
-- `utils/nurbs_common.py` - Common utilities and exceptions (`CantInsertKnotException`, `CantRemoveKnotException`)
-
-**NURBS Features:**
+**Features:**
 - Support for both clamped (endpoint-fixed) and unclamped (free) curves
 - Rational curves with weight support
 - Knot insertion and removal with configurable tolerance
 - Cumulative error tracking for multiple knot operations
 - `if_possible=True/False` parameters for flexible error handling
 
-**Testing:**
-Comprehensive test suites in `tests/nurbs_tests.py` and `tests/nurbs_solver_tests.py`.
+**Testing:** `tests/nurbs_tests.py` and `tests/nurbs_solver_tests.py`.
 
 ### UI Components
 
-1. **Panels** (`ui/sv_panels.py`, `ui/sv_3d_panel.py`)
-2. **Menus** (`ui/sv_extra_search.py`, `ui/nodeview_rclick_menu.py`)
-3. **Icons** (`ui/sv_icons.py`)
-4. **Theme** (`ui/sv_theme_apply.py`)
+| File | Purpose |
+|------|---------|
+| `ui/sv_panels.py` | Main UI panels |
+| `ui/sv_3d_panel.py` | 3D view panel |
+| `ui/sv_extra_search.py` | Node search |
+| `ui/nodeview_rclick_menu.py` | Right-click menu |
+| `ui/sv_icons.py` | Custom icons |
+| `ui/sv_theme_apply.py` | Theme application |
+| `ui/bgl_callback_3dview.py` | 3D view drawing |
+| `ui/bgl_callback_nodeview.py` | Node view drawing |
+| `ui/testing_panel.py` | Testing utilities panel |
+| `ui/themes/` | Theme XML files (`Sverchok_light_3.xml`, `Sverchok_light_4.xml`, `Sverchok_light_5.xml`) |
 
 ## Important Notes
 
 ### Module Import Path
 
-The project uses a non-standard structure where the root directory IS the module:
+The root directory IS the module:
 ```python
 import sverchok.core        # → sverchok/core/__init__.py
 import sverchok.utils.math  # → sverchok/utils/math.py
@@ -175,65 +188,21 @@ reload_event = "import_sverchok" in locals()
 
 ### Logging
 
-Configurable in preferences via `settings.py` - `SverchokPreferences` class:
+Configurable in preferences via `settings.py` — `SverchokPreferences` class:
 - Log levels: DEBUG, INFO, WARNING, ERROR
 - Log destinations: Buffer, file, console
 
 ### Theme System
 
-Sverchok supports multiple themes (Default, Nipon Blossom, Grey, Darker, Gruvbox Light/Dark) with automatic application and custom color customization.
+Themes: `Sverchok_light_3`, `Sverchok_light_4`, `Sverchok_light_5` (per Blender version). Themes are auto-applied. Custom colors can be set in preferences.
 
-## Common Development Tasks
+## Adding a New Node
 
-### Adding a New Node
-
-1. Create a Python file in the appropriate category under `nodes/`
-2. Implement the node class inheriting from `SverchokNode`
+1. Create a Python file in the appropriate category subdirectory under `nodes/`
+2. Implement the node class inheriting from `SverchCustomTreeNode` (defined in `node_tree.py`)
 3. Define `sv_icon`, `bl_idname`, `bl_label`, `bl_description`
 4. Implement `sv_get_inputs()`, `process_node()`, `sv_get_outputs()`
-5. Nodes are auto-discovered via `automatic_collection()`
-
-### Debugging
-
-1. Enable debug logging in preferences
-2. Use Blender's text editor to view logs
-3. Check `pylint_errors.log` and `tests.log` for issues
-4. Use `sv_stethoscope_helper.py` for socket data inspection
-
-## Testing Framework
-
-Tests use `SverchokTestCase` from `sverchok.utils.testing` providing:
-- Temporary node tree context manager
-- Data structure testing utilities
-- Exception handling with Sverchok custom exceptions
-- Logging utilities specific to testing
-
-## Release Process
-
-1. Update version in `__init__.py` (`bl_info` and `VERSION`)
-2. Add changelog entry in `CHANGELOG.md`
-3. Test with latest Blender version
-4. Update documentation
-5. Create release archive
-
-## Contact and Support
-
-- **Email**: sverchok-b3d@yandex.ru
-- **GitHub Issues**: https://github.com/nortikin/sverchok/issues
-- **Stack Exchange**: https://blender.stackexchange.com/questions/tagged/sverchok
-- **Discord**: https://discord.gg/pjHHhjJz8Z
-- **Telegram**: https://t.me/sverchok_3d
-
-## Contributors
-
-See GitHub contributors page. Major contributors include:
-- Alexander Nedovizin (Cfyzzz)
-- Nikita Gorodetskiy (Nikitron)
-- Linus Yng (Ly29)
-- Ilya Portnov (portnov)
-- Eleanor Howick (elfnor)
-- Deaglan McArdle (zeffii)
-- Konstantin Vorobiew (Kosvor)
+5. Nodes are auto-discovered via `automatic_collection()` in `nodes/__init__.py`
 
 ## Legacy Nodes
 
@@ -242,36 +211,6 @@ The `old_nodes/` directory contains deprecated nodes maintained for backward com
 2. Create new versions in `nodes/` directory
 3. Mark old nodes as deprecated in documentation
 
-## Performance Considerations
-
-1. Use NumPy vectorization where possible
-2. Consider Numba JIT compilation for CPU-intensive operations
-3. Use profiling tools to identify bottlenecks
-4. Be mindful of memory usage with large datasets
-
 ## Documentation
 
 Documentation is built using Sphinx (`docs/` directory, `./build_docs.sh`). Node documentation is auto-generated from docstrings.
-
-## Git Workflow
-
-- Main branch: `master`
-- Issue tracking via GitHub
-- Pull requests for contributions
-- Continuous integration via GitHub Actions
-
-## Troubleshooting
-
-### Common Issues
-
-1. **NameError: name 'nodes' is not defined** → Restart Blender
-2. **Module not found errors** → Check PYTHONPATH and module structure
-3. **Floating point precision issues** → Use tolerance-based comparisons
-4. **Theme not applying** → Check theme settings and auto-apply preferences
-5. **Node updates not happening** → Check update system and frame change mode
-
-Enable developer mode in preferences for additional debugging tools.
-
----
-
-*This document should be kept up to date as the project evolves.*
