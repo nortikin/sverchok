@@ -148,7 +148,7 @@ def recursive_unpack(data, levels_info=None):
 
 # Load data configuration
 def data_levels_info(data, levels_info=None, level_root=0):
-    LIST_TYPES_EXACT = frozenset((list, tuple,))
+    LIST_TYPES = (list, tuple,)
     if levels_info is None or level_root==0:
         levels_info = [dict(), dict()]
 
@@ -164,12 +164,13 @@ def data_levels_info(data, levels_info=None, level_root=0):
             if type_elem not in levels_info_level_root:
                 levels_info_level_root[type_elem] = LevelInfo(TYPE=type_elem, COUNT=0, ALERT=False, SUB=False)
             
-            if type_elem in LIST_TYPES_EXACT:
+            if isinstance(elem, LIST_TYPES):
+                levels_info_level_root[type_elem].COUNT += 1
                 levels_info_level_root[type_elem].SUB = True
                 _data_levels_info(elem, levels_info, level_root + 1)
                 pass
             else:
-                break
+                levels_info_level_root[type_elem].COUNT += 1
         pass
         return
 
@@ -240,84 +241,38 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'data_1')
-        self.inputs['data_1'].label = 'Data1'
+        self.inputs['data_1'].label = 'Data'
 
         self.outputs.new('SvStringsSocket', 'data_1')
-        self.outputs['data_1'].label = 'Data1'
-        return
-
-    def sv_update(self):
-        # Add another inbound socket if the last inbound socket is connected (but data from it won’t be retrieved)
-        if len(self.inputs)>=1 and self.inputs[-1].is_linked==True:
-            name = f"data_{len(self.inputs)+1}"
-            label = f"Data{len(self.inputs)+1}"
-            self.inputs.new('SvStringsSocket', name)
-            self.inputs[name].label = label
-            force_reload_config = True
-
-        while len(self.inputs) > 1 and not self.inputs[-2].links:
-            socket_to_remove = self.inputs[-1]
-            for link in list(socket_to_remove.links):
-                self.id_data.links.remove(link)
-            self.inputs.remove(socket_to_remove)
-
-        # Check outputs. If order is broken or sockets are missing, create additional sockets
-        for I in range(1, len(self.outputs)+1):
-            IDX = I+1
-            name = f'data_{IDX}'
-            if name not in self.outputs:
-                while(len(self.outputs)>IDX):
-                    socket_to_remove = self.outputs[-1]
-                    for link in list(socket_to_remove.links):
-                        self.id_data.links.remove(link)
-                    self.outputs.remove(socket_to_remove)
-                force_reload_config = True
-                break
-            pass
-
-        while(len(self.outputs)>1 and len(self.outputs) > len(self.inputs)-1):
-            socket_to_remove = self.outputs[-1]
-            for link in list(socket_to_remove.links):
-                self.id_data.links.remove(link)
-            self.outputs.remove(socket_to_remove)
-
-        for I in range(max(1, len(self.outputs)), len(self.inputs)-1):
-            IDX = I+1
-            output_name  = f"data_{IDX}"
-            output_label = f"Data{IDX}"
-            self.outputs.new('SvStringsSocket', output_name)
-            self.outputs[output_name].label = output_label
-            force_reload_config = True
-            pass
-
+        self.outputs['data_1'].label = 'Data'
         return
     
-    def reload_config(self, datas):
+    def reload_config(self, data):
         level_infos = []
-        for data in datas:
-            _levels_info = data_levels_info(data)
-            for I in range(len(_levels_info)):
-                if I>=len(level_infos):
-                    level_infos.append(dict())
-                alert = False
-                if len(_levels_info[I])>1:
-                    alert = True
-                for key, value in _levels_info[I].items():
-                    if key not in level_infos[I]:
-                        level_infos[I][key] = LevelInfo(TYPE=key, COUNT=0, ALERT=False)
-                    level_infos[I][key].COUNT += value.COUNT
-                    level_infos[I][key].ALERT = level_infos[I][key].ALERT or alert
-                pass
+        _levels_info = data_levels_info(data)
+        for IJ in range(len(_levels_info)):
+            if IJ>=len(level_infos):
+                level_infos.append(dict())
+            alert = False
+            # Если на одном уровне больше одного типа (список и простые данные), то это плохая организация уровней, такое нельзя корректно обрабатывать. Надо предупредить пользователя, что уровни содержат смешанные данные:
+            if len(_levels_info[IJ])>1:
+                alert = True
+            for key, value in _levels_info[IJ].items():
+                if key not in level_infos[IJ]:
+                    level_infos[IJ][key] = LevelInfo(TYPE=key, COUNT=0, ALERT=False)
+                level_infos[IJ][key].COUNT += value.COUNT
+                level_infos[IJ][key].ALERT = level_infos[IJ][key].ALERT or alert
             pass
+        pass
 
         len_levels_info = len(level_infos)
-        self.nesting = len_levels_info if datas else 0
+        self.nesting = len_levels_info if data else 0
 
         correct_collection_length(self.levels_config, len_levels_info)
 
         for entry, description in zip(self.levels_config, level_infos):
             #entry.description = ",".join([f"{k.__name__}: {v.COUNT}" for k, v in description.items()])
-            entry.description = ",".join([f"{k.__name__}" for k, v in description.items()])
+            entry.description = ",".join([f"{k.__name__}: {v.COUNT}" for k, v in description.items()])
             entry.alert = next(iter(description.items()))[1].ALERT if len(description)>0 else False
         pass
 
@@ -331,43 +286,35 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
             pass
         return
 
-
     def process(self):
+        if self.outputs['data_1'].is_linked==False:
+            return
+
         force_reload_config = False
-        datas = []
-        for I, socket in enumerate(self.inputs):
-            if socket.is_linked==False and socket==self.inputs[-1]: # You may have a situation where the last link has just been connected and the new last unconnected link has not yet been created.
-                break
-            if socket.name in self.outputs and self.outputs[socket.name].is_linked==True:
-                data = socket.sv_get(default=[], deepcopy=False)
-            else:
-                data=[]
-            datas.append(data)
+        if self.inputs['data_1'].is_linked==True:
+            data = self.inputs['data_1'].sv_get(default=[], deepcopy=False)
+        else:
+            data=[]
 
         if not self.levels_config or force_reload_config==True:
-            self.reload_config(datas)
+            self.reload_config(data)
 
-        res = []
-        force_reload_config = False
+        res1 = []
+        force_reload_config = True
         if self.levels_config and any([info.flatten or info.wrap for info in self.levels_config]):
             levels_config = [(2 if info.flatten else 0) | (1 if info.wrap else 0) for info in self.levels_config]
-            for data in datas:
-                if data:
-                    (res1, _force_reload_config) = recursive_unpack(data, levels_config)
-                    force_reload_config |= _force_reload_config
-                else:
-                    res1 = []
-                res.append(res1)
-            pass
+            if data:
+                (res1, _force_reload_config) = recursive_unpack(data, levels_config)
+                force_reload_config |= _force_reload_config
+            else:
+                res1 = []
         else:
-            res = datas
+            res1 = data
 
         if force_reload_config==True:
-            self.reload_config(datas)
+            self.reload_config(data)
 
-        for I, res1 in enumerate(res):
-            if self.outputs[I].is_linked:
-                self.outputs[I].sv_set(res1)
+        self.outputs['data_1'].sv_set(res1)
         return
 
 
