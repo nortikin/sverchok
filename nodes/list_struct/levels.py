@@ -287,34 +287,24 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         return
 
     def process(self):
-        # if self.outputs['data_1'].is_linked==False:
-        #     self.nesting = 0
-        #     return
 
-        force_reload_config = False
         if self.inputs['data_1'].is_linked==True:
             data = self.inputs['data_1'].sv_get(default=[], deepcopy=False)
         else:
             self.nesting = 0
             data=[]
 
-        if not self.levels_config or force_reload_config==True:
-            self.reload_config(data)
+        self.reload_config(data)
 
         res1 = []
-        force_reload_config = True
         if self.levels_config and any([info.flatten or info.wrap for info in self.levels_config]):
             levels_config = [(2 if info.flatten else 0) | (1 if info.wrap else 0) for info in self.levels_config]
             if data:
                 (res1, _force_reload_config) = recursive_unpack(data, levels_config)
-                force_reload_config |= _force_reload_config
             else:
                 res1 = []
         else:
             res1 = data
-
-        if force_reload_config==True:
-            self.reload_config(data)
 
         self.outputs['data_1'].sv_set(res1)
         return
