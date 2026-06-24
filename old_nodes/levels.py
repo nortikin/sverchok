@@ -60,7 +60,7 @@ class SvListLevelsNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvListLevelsNode'
     bl_label = 'List Levels'
     bl_icon = 'OUTLINER'
-    replacement_nodes = [('SvListLevelsNodeMK3', None, None)]
+    replacement_nodes = [('SvListLevelsNodeMK3', dict(Data='data_1'), dict(Data='data_1'))]
 
     levels_config : CollectionProperty(type=SvNestingLevelEntry)
     prev_nesting_level : IntProperty(default = 0, options = {'SKIP_SAVE'})

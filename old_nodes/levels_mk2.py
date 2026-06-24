@@ -63,7 +63,7 @@ class SvListLevelsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'List Levels'
     bl_icon = 'OUTLINER'
 
-    replacement_nodes = [('SvListLevelsNodeMK3', None, None)]
+    replacement_nodes = [('SvListLevelsNodeMK3', dict(Data='data_1'), dict(Data='data_1'))]
 
     levels_config : CollectionProperty(type=SvNestingLevelEntryMK2)
     nesting: IntProperty(description="How much nested levels should be shown")
