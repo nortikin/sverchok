@@ -272,7 +272,7 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
 
         for entry, description in zip(self.levels_config, level_infos):
             #entry.description = ",".join([f"{k.__name__}: {v.COUNT}" for k, v in description.items()])
-            entry.description = ",".join([f"{k.__name__}: {v.COUNT}" for k, v in description.items()])
+            entry.description = ",".join([f"{k.__name__}: [{v.COUNT}]" for k, v in description.items()])
             entry.alert = next(iter(description.items()))[1].ALERT if len(description)>0 else False
         pass
 
@@ -287,13 +287,15 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         return
 
     def process(self):
-        if self.outputs['data_1'].is_linked==False:
-            return
+        # if self.outputs['data_1'].is_linked==False:
+        #     self.nesting = 0
+        #     return
 
         force_reload_config = False
         if self.inputs['data_1'].is_linked==True:
             data = self.inputs['data_1'].sv_get(default=[], deepcopy=False)
         else:
+            self.nesting = 0
             data=[]
 
         if not self.levels_config or force_reload_config==True:

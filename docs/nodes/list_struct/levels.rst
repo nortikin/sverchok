@@ -1,8 +1,8 @@
 List Levels
 ===========
 
-.. image:: https://github.com/user-attachments/assets/dfad9bc3-325a-4a1b-a4c5-8986a4cc3745
-  :target: https://github.com/user-attachments/assets/dfad9bc3-325a-4a1b-a4c5-8986a4cc3745
+.. image:: https://github.com/user-attachments/assets/cc95d81f-940d-4261-abc5-5f93108b70a7
+  :target: https://github.com/user-attachments/assets/cc95d81f-940d-4261-abc5-5f93108b70a7
 
 Functionality
 -------------
@@ -66,8 +66,8 @@ structure.
 
 First and last elements can’t be flatten:
 
-  .. image:: https://github.com/user-attachments/assets/b07ea5e9-899c-420e-b016-4dade98c85bd
-    :target: https://github.com/user-attachments/assets/b07ea5e9-899c-420e-b016-4dade98c85bd
+  .. image:: https://github.com/user-attachments/assets/382c54ba-99d1-4601-a9e8-4bbf1eea5bd8
+    :target: https://github.com/user-attachments/assets/382c54ba-99d1-4601-a9e8-4bbf1eea5bd8
 
 Examples of Usage
 -----------------
