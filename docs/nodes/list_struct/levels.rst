@@ -64,7 +64,7 @@ outermost levels, there will be more different options. You can also connect
 several "List Levels" nodes to do even more complex manipulations with data
 structure.
 
- Root (First) and last elements can’t be flatten:
+Root (First) and last elements can’t be flatten:
 
   .. image:: https://github.com/user-attachments/assets/27e0df8b-616c-41aa-a559-b8652b8a2f78
     :target: https://github.com/user-attachments/assets/27e0df8b-616c-41aa-a559-b8652b8a2f78
