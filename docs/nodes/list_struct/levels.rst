@@ -1,8 +1,8 @@
 List Levels
 ===========
 
-.. image:: https://github.com/user-attachments/assets/cc95d81f-940d-4261-abc5-5f93108b70a7
-  :target: https://github.com/user-attachments/assets/cc95d81f-940d-4261-abc5-5f93108b70a7
+.. image:: https://github.com/user-attachments/assets/41ed45b5-f263-4418-93f5-686ff8a425c6
+  :target: https://github.com/user-attachments/assets/41ed45b5-f263-4418-93f5-686ff8a425c6
 
 Functionality
 -------------
@@ -64,10 +64,16 @@ outermost levels, there will be more different options. You can also connect
 several "List Levels" nodes to do even more complex manipulations with data
 structure.
 
-First and last elements can’t be flatten:
+ Root (First) and last elements can’t be flatten:
 
-  .. image:: https://github.com/user-attachments/assets/382c54ba-99d1-4601-a9e8-4bbf1eea5bd8
-    :target: https://github.com/user-attachments/assets/382c54ba-99d1-4601-a9e8-4bbf1eea5bd8
+  .. image:: https://github.com/user-attachments/assets/27e0df8b-616c-41aa-a559-b8652b8a2f78
+    :target: https://github.com/user-attachments/assets/27e0df8b-616c-41aa-a559-b8652b8a2f78
+
+Difference old "List Levels" and new "List Levels" node
+-------------------------------------------------------
+
+  .. image:: https://github.com/user-attachments/assets/544cfb24-5a0f-4499-88d2-fad0d46566a8
+    :target: https://github.com/user-attachments/assets/544cfb24-5a0f-4499-88d2-fad0d46566a8
 
 Examples of Usage
 -----------------

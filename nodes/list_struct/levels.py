@@ -219,22 +219,38 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         e.label(text='Wrap')
 
         for I, entry in zip(range(self.nesting), self.levels_config):
-            grid.column(align=True).label(text=f"{I+1}")
-            e = grid.row(align=True)
-            e.alignment = 'LEFT'
-            e.alert = entry.alert
-            e.label(text=entry.description,)
-            if entry.alert:
-                e.label(text='', icon='ERROR')
-            e = grid.row(align=True)
-            e.alignment = 'CENTER'
-            if 0<I and I<=self.nesting-2:
-                e.prop(entry, 'flatten', text='',)
-            else:
+            if I==0:
+                grid.column(align=True).label(text=f"-")
+                e = grid.row(align=True)
+                e.alignment = 'LEFT'
+                e.alert = entry.alert
+                e.label(text=entry.description,)
+                if entry.alert:
+                    e.label(text='', icon='ERROR')
+                e = grid.row(align=True)
+                e.alignment = 'CENTER'
                 e.label(icon='X', text='')
-            e = grid.row(align=True)
-            e.alignment = 'CENTER'
-            e.prop(entry, 'wrap', text='')
+                e = grid.row(align=True)
+                e.alignment = 'CENTER'
+                e.prop(entry, 'wrap', text='')
+            else:
+                grid.column(align=True).label(text=f"{I-1}")
+                e = grid.row(align=True)
+                e.alignment = 'LEFT'
+                e.alert = entry.alert
+                e.label(text=entry.description,)
+                if entry.alert:
+                    e.label(text='', icon='ERROR')
+                e = grid.row(align=True)
+                e.alignment = 'CENTER'
+                if 0<I and I<=self.nesting-2:
+                    e.prop(entry, 'flatten', text='',)
+                else:
+                    e.label(icon='X', text='')
+                e = grid.row(align=True)
+                e.alignment = 'CENTER'
+                e.prop(entry, 'wrap', text='')
+            pass
         
         return
 
@@ -270,10 +286,13 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
 
         correct_collection_length(self.levels_config, len_levels_info)
 
-        for entry, description in zip(self.levels_config, level_infos):
-            #entry.description = ",".join([f"{k.__name__}: {v.COUNT}" for k, v in description.items()])
-            entry.description = ",".join([f"{k.__name__}: [{v.COUNT}]" for k, v in description.items()])
-            entry.alert = next(iter(description.items()))[1].ALERT if len(description)>0 else False
+        for I, (entry, description) in enumerate(zip(self.levels_config, level_infos)):
+            if I==0:
+                entry.description = 'root'
+                entry.alert = next(iter(description.items()))[1].ALERT if len(description)>0 else False
+            else:
+                entry.description = ",".join([f"{k.__name__}: [{v.COUNT}]" for k, v in description.items()])
+                entry.alert = next(iter(description.items()))[1].ALERT if len(description)>0 else False
         pass
 
         if self.levels_config:
