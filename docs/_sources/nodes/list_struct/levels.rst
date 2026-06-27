@@ -1,8 +1,8 @@
 List Levels
 ===========
 
-.. image:: https://user-images.githubusercontent.com/14288520/188002611-0f681313-5bf5-4f83-a5c3-4221af3d83ae.png
-  :target: https://user-images.githubusercontent.com/14288520/188002611-0f681313-5bf5-4f83-a5c3-4221af3d83ae.png
+.. image:: https://github.com/user-attachments/assets/41ed45b5-f263-4418-93f5-686ff8a425c6
+  :target: https://github.com/user-attachments/assets/41ed45b5-f263-4418-93f5-686ff8a425c6
 
 Functionality
 -------------
@@ -63,6 +63,32 @@ results; but for more deeply nested data, or when having more items at
 outermost levels, there will be more different options. You can also connect
 several "List Levels" nodes to do even more complex manipulations with data
 structure.
+
+Root (First) and last elements can’t be flatten:
+
+  .. image:: https://github.com/user-attachments/assets/27e0df8b-616c-41aa-a559-b8652b8a2f78
+    :target: https://github.com/user-attachments/assets/27e0df8b-616c-41aa-a559-b8652b8a2f78
+
+Difference old "List Levels" and new "List Levels" node
+-------------------------------------------------------
+
+  .. image:: https://github.com/user-attachments/assets/544cfb24-5a0f-4499-88d2-fad0d46566a8
+    :target: https://github.com/user-attachments/assets/544cfb24-5a0f-4499-88d2-fad0d46566a8
+
+Some operations has more performance on long lists:
+
+  .. image:: https://github.com/user-attachments/assets/d69e3bef-f9d1-450b-83a5-108098f86c7d
+    :target: https://github.com/user-attachments/assets/d69e3bef-f9d1-450b-83a5-108098f86c7d
+
+Huge lists can be processed with new version node only:
+
+  .. image:: https://github.com/user-attachments/assets/0b08c3d3-9a76-4618-bfce-fd5d8dfc16ec
+    :target: https://github.com/user-attachments/assets/0b08c3d3-9a76-4618-bfce-fd5d8dfc16ec
+
+Can process mixed levels:
+
+  .. image:: https://github.com/user-attachments/assets/4ab6869a-8fc0-4335-addf-c56e464ad204
+    :target: https://github.com/user-attachments/assets/4ab6869a-8fc0-4335-addf-c56e464ad204
 
 Examples of Usage
 -----------------
