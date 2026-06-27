@@ -85,6 +85,11 @@ Huge lists can be processed with new version node only:
   .. image:: https://github.com/user-attachments/assets/0b08c3d3-9a76-4618-bfce-fd5d8dfc16ec
     :target: https://github.com/user-attachments/assets/0b08c3d3-9a76-4618-bfce-fd5d8dfc16ec
 
+Can process mixed levels:
+
+  .. image:: https://github.com/user-attachments/assets/4ab6869a-8fc0-4335-addf-c56e464ad204
+    :target: https://github.com/user-attachments/assets/4ab6869a-8fc0-4335-addf-c56e464ad204
+
 Examples of Usage
 -----------------
 
