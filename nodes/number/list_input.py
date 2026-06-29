@@ -112,6 +112,7 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
         default = 0,
         subtype='NONE',
         get = get_elem, set = set_elem,
+        precision=3,
         options={'SKIP_SAVE'},
         update=update_entry,
     ) # type: ignore
@@ -1613,6 +1614,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     bl_label = 'List Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_LIST_INPUT'
+    bl_width_max = 2000
 
     def wrapper_marix_elem_ui_draw_op(self, layout_element, operator_idname, idx, **keywords):
         """
@@ -1655,7 +1657,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
 
     bool_list_counter: IntProperty(
-        name='bool_list_counter',
+        name='Size',
         description='List Counter of Booleans',
         default=True,
         min=1,
@@ -1663,7 +1665,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     bool_list_items : CollectionProperty(type=SvListInputBoolEntry) # type: ignore
 
     int_list_counter: IntProperty(
-        name='int_list_counter',
+        name='Size',
         description='List Counter of Integers',
         default=1,
         min=1,
@@ -1671,7 +1673,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     int_list_items : CollectionProperty(type=SvListInputIntEntry) # type: ignore
 
     float_list_counter: IntProperty(
-        name='float_list_counter',
+        name='Size',
         description='List Counter of Floats',
         default=1,
         min=1,
@@ -1679,7 +1681,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     float_list_items : CollectionProperty(type=SvListInputFloatEntry) # type: ignore
 
     vector_list_counter: IntProperty(
-        name='vector_list_counter',
+        name='Size',
         description='List Counter of Vectors',
         default=1,
         min=1,
@@ -1687,7 +1689,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     vector_list_items : CollectionProperty(type=SvListInputVectorEntry) # type: ignore
 
     matrix_list_counter: IntProperty(
-        name='matrix_list_counter',
+        name='Size',
         description='List Counter of Matrixes',
         default=1,
         min=1,
@@ -1695,7 +1697,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     matrix_list_items : CollectionProperty(type=SvListInputMatrixEntry) # type: ignore
 
     quaternion_list_counter: IntProperty(
-        name='quaternion_list_counter',
+        name='Size',
         description='List Counter of Quaternions',
         default=1,
         min=1,
@@ -1703,7 +1705,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     quaternion_list_items : CollectionProperty(type=SvListInputQuaternionEntry) # type: ignore
 
     color_list_counter: IntProperty(
-        name='color_list_counter',
+        name='Size',
         description='List Counter of Colors',
         default=1,
         min=1,
@@ -1711,7 +1713,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     color_list_items : CollectionProperty(type=SvListInputColorEntry) # type: ignore
 
     string_list_counter: IntProperty(
-        name='string_list_counter',
+        name='Size',
         description='List Counter of Strings',
         default=1,
         min=1,
@@ -1802,10 +1804,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     ]
 
     list_items_type: EnumProperty(
-        description="Data types of node",
-        items=list_items_types,
-        default='INT_LIST_MODE',
-        update=changeListItemsType
+        name        = 'Type',
+        description = "Data types of node",
+        items       = list_items_types,
+        default     = 'INT_LIST_MODE',
+        update      = changeListItemsType
     ) # type: ignore
 
     subtypes_vector = [
@@ -1829,7 +1832,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     ]
 
     subtype_vector: EnumProperty(
-        name='Subtypes',
+        name='Subtype',
         items=subtypes_vector,
         default='NONE',
         #update=changeSubType
@@ -1843,7 +1846,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     ]
 
     subtype_color: EnumProperty(
-        name='Subtypes',
+        name='Subtype',
         items=subtypes_color,
         default='COLOR',
         #update=changeSubType
@@ -1865,7 +1868,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     ]
 
     subtype_float: EnumProperty(
-        name='Subtypes',
+        name='Metric',
         items=subtypes_float,
         default='NONE',
         #update=changeSubTypeFloat
@@ -1883,7 +1886,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     ]
     
     subtype_string: EnumProperty(
-        name='Subtypes',
+        name='Subtype',
         items=subtypes_string,
         default='NONE',
         #update=changeSubTypeFloat
@@ -1931,7 +1934,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         pass
 
     length_unit_metric: EnumProperty(
-        name='Length unit metric',
+        name='Length',
         items=length_units_metric,
         default='METERS',
         get=get_length_unit_metric, set=set_length_unit_metric,
@@ -2086,7 +2089,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     quaternion_WXYZ_SCALARVECTOR_normalize : BoolProperty(
         name = "Normalize",
-        description = "Normalize the output quaternion",
+        description = "Quaternion normalization is the mathematical process of scaling a quaternion so that its total length (magnitude) equals exactly 1",
         default=False,
         update=updateNode,
     ) # type: ignore
@@ -2192,122 +2195,113 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     #     pass
 
     def draw_buttons(self, context, layout):
-        cm_split = layout.row(align=True).split(factor=0.7, align=True)
-        cm_split_c1 = cm_split.column(align=True)
+
+        metric_property_name = None
+        subtype_property_name = None
+        metric_prop_params = None
+        add1_prop_name = None
+        add1_prop_params = None
+
         if self.list_items_type == 'BOOL_LIST_MODE':
-            cm_split_c1.prop(self, 'bool_list_counter', text="List Length (bool)")
+            prop_counter_name = 'bool_list_counter'
+
         elif self.list_items_type == 'INT_LIST_MODE':
-            cm_split_c1.prop(self, 'int_list_counter', text="List Length (int)")
+            prop_counter_name = 'int_list_counter'
+
         elif self.list_items_type == 'FLOAT_LIST_MODE':
-            cm_split_c1.prop(self, 'float_list_counter', text="List Length (float)")
+            prop_counter_name = 'float_list_counter'
+            subtype_property_name = 'subtype_float'
+            if   self.unit_system=='METRIC' and self.subtype_float=='DISTANCE':
+                metric_property_name = 'length_unit_metric'
+            elif self.unit_system=='METRIC' and self.subtype_float=='TEMPERATURE':
+                metric_property_name = 'temperature_unit_metric'
+            elif self.unit_system=='IMPERIAL' and self.subtype_float=='DISTANCE':
+                metric_property_name = 'length_unit_imperial'
+            elif self.unit_system=='IMPERIAL' and self.subtype_float=='TEMPERATURE':
+                metric_property_name = 'temperature_unit_imperial'
+            elif self.subtype_float=='ANGLE':
+                metric_property_name = 'system_rotation'
+
         elif self.list_items_type == 'VECTOR_LIST_MODE':
-            cm_split_c1.prop(self, 'vector_list_counter', text="List Length (vectors)")
+            prop_counter_name = 'vector_list_counter'
+            subtype_property_name = 'subtype_vector'
+            if   self.unit_system=='METRIC' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
+                metric_property_name = 'length_unit_metric'
+            elif self.unit_system=='IMPERIAL' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
+                metric_property_name = 'length_unit_imperial'
+            elif (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION'):
+                metric_property_name = 'system_rotation'
+
         elif self.list_items_type == 'QUATERNION_LIST_MODE':
-            cm_split_c1.prop(self, 'quaternion_list_counter', text="List Length (quaternions)")
+            prop_counter_name = 'quaternion_list_counter'
+            subtype_property_name = 'quaternion_mode'
+            if self.quaternion_mode=='EULER':
+                metric_prop_params = {'expand': False, }
+                metric_property_name = 'system_rotation'
+                add1_prop_params = dict({})
+                add1_prop_name = 'quaternion_euler_order'
+            elif self.quaternion_mode=='AXISANGLE':
+                metric_prop_params = dict({})
+                metric_property_name = 'system_rotation'
+            elif self.quaternion_mode=='WXYZ' or self.quaternion_mode=='SCALARVECTOR':
+                metric_prop_params = None
+                metric_property_name = None
+                add1_prop_params = dict({'toggle': False})
+                add1_prop_name = 'quaternion_WXYZ_SCALARVECTOR_normalize'
+
         elif self.list_items_type == 'MATRIX_LIST_MODE':
-            cm_split_c1.prop(self, 'matrix_list_counter', text="List Length (matrixes)")
+            prop_counter_name = 'matrix_list_counter'
+            if self.unit_system=='METRIC':
+                subtype_property_name = 'length_unit_metric'
+            elif self.unit_system=='IMPERIAL':
+                subtype_property_name = 'length_unit_imperial'
+            metric_prop_params = {'expand': False, }
+            metric_property_name = 'system_rotation'
+
         elif self.list_items_type == 'COLOR_LIST_MODE':
-            cm_split_c1.prop(self, 'color_list_counter', text="List Length (colors)")
+            prop_counter_name = 'color_list_counter'
+            subtype_property_name = 'subtype_color'
+            if self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA':
+                add1_prop_params = dict({'toggle': False})
+                add1_prop_name = 'use_alpha'
+
         elif self.list_items_type == 'STRING_LIST_MODE':
-            cm_split_c1.prop(self, 'string_list_counter', text="List Length (strings)")
+            prop_counter_name = 'string_list_counter'
+            subtype_property_name = 'subtype_string'
+
         else:
             raise Exception(f"[func: draw_buttons] unknown mode {self.list_items_type}.")
 
-        cm_split.column(align=True).prop(self, 'list_items_type', expand=False, text='')
+        col = layout.box().column()
+        col.use_property_decorate = False
+        col.use_property_split = True
+        col.prop(self, prop_counter_name, )
+        col.prop(self, 'list_items_type',)
 
-        r_subtype_split1 = layout.row().split(factor=0.3)
-        r_subtype_split1.column().label(text="Subtype:")
-        r_subtype_split2 = r_subtype_split1.column().split(factor=0.6)
-        if self.list_items_type=='FLOAT_LIST_MODE':
-            r_subtype_split2.column().prop(self, "subtype_float", expand=False, text='')
-        elif self.list_items_type=='VECTOR_LIST_MODE':
-            r_subtype_split2.row().prop(self, "subtype_vector", expand=False, text='')
-        elif self.list_items_type=='COLOR_LIST_MODE':
-            r_subtype_split2.row().prop(self, "subtype_color", expand=False, text='')
-        elif self.list_items_type=='STRING_LIST_MODE':
-            r_subtype_split2.row().prop(self, "subtype_string", expand=False, text='')
-        elif self.list_items_type=='QUATERNION_LIST_MODE':
-            label_row = r_subtype_split2.row()
-            label_row.label(text='Quaternion')
-        elif self.list_items_type=='MATRIX_LIST_MODE':
-            label_row = r_subtype_split2.row()
-            if self.unit_system=='METRIC':
-                label_row.prop(self, 'length_unit_metric', text='')
-            elif self.unit_system=='IMPERIAL':
-                label_row.prop(self, 'length_unit_imperial', text='')
+        if subtype_property_name==None:
+            pass
         else:
-            r_subtype_split1.enabled = False
-            pass
-
-        if self.unit_system=='METRIC':
-            if  self.list_items_type=='FLOAT_LIST_MODE' and self.subtype_float=='DISTANCE' or \
-                self.list_items_type=='VECTOR_LIST_MODE' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
-                    r_subtype_split2.column().prop(self, 'length_unit_metric', expand=False, text='')
-            elif self.list_items_type=='FLOAT_LIST_MODE' and self.subtype_float=='ANGLE' or \
-                self.list_items_type=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION') or \
-                self.list_items_type=='QUATERNION_LIST_MODE' and (self.quaternion_mode=='EULER' or self.quaternion_mode=='AXISANGLE') or \
-                self.list_items_type=='MATRIX_LIST_MODE':
-                    r_subtype_split2.row().prop(self, 'system_rotation', expand=True)
-            elif self.list_items_type=='FLOAT_LIST_MODE' and self.subtype_float=='TEMPERATURE':
-                    r_subtype_split2.column().prop(self, 'temperature_unit_metric', expand=False, text='')
-            elif self.list_items_type=='COLOR_LIST_MODE' and (self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA'):
-                    r_subtype_split2.column().prop(self, 'use_alpha')
+            col.prop(self, subtype_property_name, expand=False, )
+            if metric_property_name is None:
+                pass
+            elif metric_prop_params is None:
+                col.prop(self, metric_property_name, )
             else:
-                    r_subtype_split2.column().label(text='')
-
-        elif self.unit_system=='IMPERIAL':
-            if  self.list_items_type== 'FLOAT_LIST_MODE' and self.subtype_float=='DISTANCE' or \
-                self.list_items_type=='VECTOR_LIST_MODE' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
-                    r_subtype_split2.column().prop(self, 'length_unit_imperial', expand=False, text='')
-            elif self.list_items_type== 'FLOAT_LIST_MODE' and self.subtype_float=='ANGLE' or \
-                 self.list_items_type=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION') or \
-                 self.list_items_type=='QUATERNION_LIST_MODE' and (self.quaternion_mode=='EULER' or self.quaternion_mode=='AXISANGLE') or \
-                 self.list_items_type=='MATRIX_LIST_MODE':
-                    r_subtype_split2.row().prop(self, 'system_rotation', expand=True)
-            elif self.list_items_type=='FLOAT_LIST_MODE' and self.subtype_float=='TEMPERATURE':
-                    r_subtype_split2.column().prop(self, 'temperature_unit_imperial', expand=False, text='')
-            elif self.list_items_type=='COLOR_LIST_MODE' and (self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA'):
-                    r_subtype_split2.column().prop(self, 'use_alpha')
+                col.prop(self, metric_property_name, **metric_prop_params)
+            
+            if add1_prop_name is None:
+                pass
+            elif add1_prop_params is None:
+                col.prop(self, add1_prop_name, )
             else:
-                    r_subtype_split2.column().label(text='')
-        else:
-            if   self.list_items_type=='FLOAT_LIST_MODE' and (self.subtype_float=='ANGLE') or \
-                 self.list_items_type=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION') or \
-                 self.list_items_type=='QUATERNION_LIST_MODE' and (self.quaternion_mode=='EULER' or self.quaternion_mode=='AXISANGLE') or \
-                 self.list_items_type=='MATRIX_LIST_MODE':
-                    r_subtype_split2.column().prop(self, 'system_rotation', expand=False, text='')
-            elif self.list_items_type=='COLOR_LIST_MODE' and (self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA'):
-                    r_subtype_split2.column().prop(self, 'use_alpha')
-            else:
-                    r_subtype_split2.column().label(text='')
-
-        if self.list_items_type=='QUATERNION_LIST_MODE':
-            qp_row = layout.row() # quaternion_params_row
-            qp_row_s = qp_row.split(factor=0.3)
-            qp_row_s_c1 = qp_row_s.column()
-            qp_row_s_c1.label(text='Quaternion mode:')
-            qp_row_s_s = qp_row_s.column().split(factor=0.6)
-            qp_row_s_s_c1 = qp_row_s_s.column()
-            qp_row_s_s_c1.alignment="LEFT"
-            qp_row_s_s_c1.prop(self, 'quaternion_mode', text='')
-            qp_row_s_s_c2 = qp_row_s_s.row()
-            if self.quaternion_mode=='WXYZ' or self.quaternion_mode=='SCALARVECTOR':
-                qp_row_s_s_c2.prop(self, 'quaternion_WXYZ_SCALARVECTOR_normalize', toggle=True)
-            elif self.quaternion_mode=='EULER':
-                qp_row_s_s_c2.prop(self, 'quaternion_euler_order', text='')
-            else:
-                qp_row_s_s_c2.label(text='')
-            pass
-        elif self.list_items_type=='MATRIX_LIST_MODE':
-            pass
+                col.prop(self, add1_prop_name, **add1_prop_params)
 
         grid_service_operators = layout.grid_flow(row_major=True, columns=5, align=True)
-        #grid_service_operators.column().label(text='1')
         
         if self.list_items_type=='STRING_LIST_MODE':
             self.wrapper_tracked_ui_draw_op(grid_service_operators, SvUpdateTextInListInputNode.bl_idname, text='update text', icon='FILE_REFRESH')
         else:
-            grid_service_operators.label(text='')
+            grid_service_operators.column().label(text='')
         invert_mask_prop = grid_service_operators.column()
         # if mask socked is connected then do not show source list controls
         if self.inputs["mask"].is_linked==True:
@@ -2329,135 +2323,96 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         col = layout.column(align=align)
         J=0
         if self.list_items_type == 'BOOL_LIST_MODE':
-            grid_row = col.row().grid_flow(row_major=True, columns=4, align=True, even_rows=False)
+            if self.inputs["mask"].is_linked==False:
+                grid_row = col.row().grid_flow(row_major=True, columns=2, align=True, even_rows=False)
+            else:
+                grid_row = col.row().grid_flow(row_major=True, columns=1, align=True, even_rows=False)
+
             for I, elem in enumerate(self.bool_list_items):
-                c1 = grid_row.column()
-                c2 = grid_row.column()
-                c3 = grid_row.column()
-                c4 = grid_row.column()
-
-                c1.ui_units_x = 50
-                c2.ui_units_x = 5
-                c3.ui_units_x = 15
-                c4.ui_units_x = 30
-                
-                c4.alignment = 'RIGHT'
-
+                c1 = grid_row.column(align=True, )
                 c1.prop(elem, f'elem', text=f"({I})")
                 # if mask socked is connected then do not show source list controls
                 if self.inputs["mask"].is_linked==False:
                     if elem.item_enable==False:
                         index_label = '-'
-                        value_label = ''
                     else:
                         index_label = f'{J}'
-                        value_label = f'{elem.elem}'
                         J+=1
-                    c2.prop(elem, f'item_enable', icon_only=True)
-                    c3.label(text=index_label)
-                    c4.label(text=value_label)
+                    c2 = grid_row.row(align=True, heading=index_label)
+                    c2.prop(elem, f'item_enable', icon_only=True, )
                 else:
                     index_label = f'{J}'
-                    value_label = ''
                     J+=1
-                    c2.label(text='')
-                    c3.label(text=index_label)
-                    c4.label(text=value_label)
                 pass
 
         elif self.list_items_type == 'INT_LIST_MODE':
-            grid_row = col.row().grid_flow(row_major=True, columns=4, align=True, even_rows=False)
-            for I, elem in enumerate(self.int_list_items):
-                c1 = grid_row.column()
-                c2 = grid_row.column()
-                c3 = grid_row.column()
-                c4 = grid_row.column()
+            if self.inputs["mask"].is_linked==False:
+                grid_row = col.row().grid_flow(row_major=True, columns=2, align=True, even_rows=False)
+            else:
+                grid_row = col.row().grid_flow(row_major=True, columns=1, align=True, even_rows=False)
 
-                c1.ui_units_x = 50
-                c2.ui_units_x = 5
-                c3.ui_units_x = 15
-                c4.ui_units_x = 30
-                
-                c4.alignment = 'RIGHT'
+            for I, elem in enumerate(self.int_list_items):
+                c1 = grid_row.column(align=True, )
+                c1.alignment = 'EXPAND'
 
                 c1.prop(elem, f'elem', text=str(I))
                 # if mask socked is connected then do not show source list controls
                 if self.inputs["mask"].is_linked==False:
                     if elem.item_enable==False:
                         index_label = '-'
-                        value_label = ''
                     else:
                         index_label = f'{J}'
-                        value_label = f'{elem.elem}'
                         J+=1
-                    c2.prop(elem, f'item_enable', icon_only=True)
-                    c3.label(text=index_label)
-                    c4.label(text=value_label)
+                    c2 = grid_row.row(align=True, heading=index_label)
+                    c2.prop(elem, f'item_enable', icon_only=True, )
                 else:
                     index_label = f'{J}'
-                    value_label=''
                     J+=1
-                    c2.label(text='')
-                    c3.label(text=index_label)
-                    c4.label(text=value_label)
                 pass
 
         elif self.list_items_type == 'FLOAT_LIST_MODE':
-            grid_row = col.row().grid_flow(row_major=True, columns=4, align=True, even_rows=False)
+            if self.inputs["mask"].is_linked==False:
+                grid_row = col.row().grid_flow(row_major=True, columns=2, align=True, even_rows=False)
+            else:
+                grid_row = col.row().grid_flow(row_major=True, columns=1, align=True, even_rows=False)
+
             for I, elem in enumerate(self.float_list_items):
-                c1 = grid_row.column()
-                c2 = grid_row.column()
-                c3 = grid_row.column()
-                c4 = grid_row.column()
-
-                c1.ui_units_x = 50
-                c2.ui_units_x = 5
-                c3.ui_units_x = 15
-                c4.ui_units_x = 30
-
-                c4.alignment = 'RIGHT'
-
-                c1.prop(elem, self.subtype_float, text=str(I))
+                c1 = grid_row.column(align=True, )
+                c1.alignment = 'EXPAND'
+                c1.column(align=True).prop(elem, self.subtype_float, text=str(I))
 
                 # if mask socked is connected then do not show source list controls
                 if self.inputs["mask"].is_linked==False:
                     if elem.item_enable==False:
                         index_label = '-'
-                        value_label = ''
                     else:
                         index_label = f'{J}'
-                        value_label = f'{elem.elem}'
                         J+=1
-                    c2.prop(elem, f'item_enable', icon_only=True)
-                    c3.label(text=index_label)
-                    c4.label(text=value_label)
+                    c2 = grid_row.row(align=True, heading=index_label, )
+                    c2.prop(elem, f'item_enable', icon_only=True, )
                 else:
                     index_label = f'{J}'
-                    value_label = ''
                     J+=1
-                    c2.label(text='')
-                    c3.label(text=index_label)
-                    c4.label(text=value_label)
+                
                 pass
+            pass
 
         elif self.list_items_type == 'VECTOR_LIST_MODE':
-            grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
-            for I, elem in enumerate(self.vector_list_items):
-                c1 = grid_row.column()
-                c2 = grid_row.column()
-                c3 = grid_row.column()
+            if self.inputs["mask"].is_linked==False:
+                grid_row = col.row().grid_flow(row_major=True, columns=2, align=True, even_rows=False)
+            else:
+                grid_row = col.row().grid_flow(row_major=True, columns=1, align=True, even_rows=False)
 
-                c1.ui_units_x = 85
-                c2.ui_units_x = 5
-                c3.ui_units_x = 10
+            for I, elem in enumerate(self.vector_list_items):
+                c1 = grid_row.column(align=True)
 
                 if self.subtype_vector=='DIRECTION':
                     c1_r = c1.row(align=True)
-                    c1_r.column(align=True).prop(elem, self.subtype_vector, icon_only=True)
-                    c1_r.column(align=True).prop(elem, 'EULER', icon_only=True)
+                    c1_r.row(align=False).prop(elem, self.subtype_vector, icon_only=True, )
+                    c1_r.column(align=False).prop(elem, 'EULER', icon_only=True)
                     pass
                 else:
-                    c1.row().prop(elem, self.subtype_vector, icon_only=True)
+                    c1.row().prop(elem, self.subtype_vector, icon_only=True, emboss=True, )
 
                 # if mask socked is connected then do not show source list controls
                 if self.inputs["mask"].is_linked==False:
@@ -2466,25 +2421,21 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     else:
                         index_label = f'{J}'
                         J+=1
-                    c2.prop(elem, f'item_enable', icon_only=True)
-                    c3.label(text=index_label)
+                    c2 = grid_row.row(align=True, heading=index_label, )
+                    c2.prop(elem, f'item_enable', icon_only=True, )
                 else:
                     index_label = f'{J}'
                     J+=1
-                    c2.label(text='')
-                    c3.label(text=index_label)
                 pass
             
         elif self.list_items_type == 'QUATERNION_LIST_MODE':
-            grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
+            if self.inputs["mask"].is_linked==False:
+                grid_row = col.row().grid_flow(row_major=True, columns=2, align=True, even_rows=False)
+            else:
+                grid_row = col.row().grid_flow(row_major=True, columns=1, align=True, even_rows=False)
+
             for I, elem in enumerate(self.quaternion_list_items):
                 c1 = grid_row.row()
-                c2 = grid_row.column()
-                c3 = grid_row.column()
-
-                c1.ui_units_x = 85
-                c2.ui_units_x = 5
-                c3.ui_units_x = 10
 
                 c1.prop(elem, self.quaternion_mode+'_UI', icon_only=True)
                 if self.inputs["mask"].is_linked==False:
@@ -2493,13 +2444,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     else:
                         index_label = f'{J}'
                         J+=1
-                    c2.prop(elem, f'item_enable', icon_only=True)
-                    c3.label(text=index_label)
+                    c2 = grid_row.column()
+                    c2.prop(elem, f'item_enable', icon_only=True, text=index_label)
                 else:
                     index_label = f'{J}'
                     J+=1
-                    c2.label(text='')
-                    c3.label(text=index_label)
                 pass
             
         elif self.list_items_type == 'MATRIX_LIST_MODE':
@@ -2519,9 +2468,6 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     for I1 in range(16):
                         matrix_grid.prop(elem, 'MATRIX_UI', text='', index=I1)
                     pass
-                    # grid_row.label(text='')
-                    # grid_row.label(text='')
-                    # grid_row.label(text='')
 
                 else:
                     if elem.matrix_mode_SHEAR==False:
@@ -2533,27 +2479,20 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                                 matrix_grid.column().prop(elem, 'EULER_LOCATION_UI_TRANSLATION', text='Location')
                             matrix_grid.column().prop(elem, 'EULER_SCALE_UI', text='Scale')
                             matrix_grid.column().prop(elem, 'EULER_ANGLE_UI', text='Angle')
-                            # grid_row.label(text='')
-                            # grid_row.label(text='')
-                            # grid_row.label(text='')
 
                             pass
                         elif elem.matrix_mode1=='AXISANGLE':
-                            c1_c_row = c1_c.row()
+                            c1_c_row = c1_c.row(align=True)
                             matrix_grid = c1_c_row.grid_flow(row_major=True, columns=3, align=True)
                             if self.unit_system=='NONE':
-                                matrix_grid.column().prop(elem, 'AXISANGLE_LOCATION_UI_NONE', text='Location')
+                                matrix_grid.column(align=True).prop(elem, 'AXISANGLE_LOCATION_UI_NONE', text='Location')
                             else:
-                                matrix_grid.column().prop(elem, 'AXISANGLE_LOCATION_UI_TRANSLATION', text='Location')
-                            matrix_grid.column().prop(elem, 'AXISANGLE_SCALE_UI', text='Scale')
-                            matrix_grid.column().prop(elem, 'AXISANGLE_VECTOR_UI', text='Axis')
-                            c1_c_row_c = c1_c_row.column()
-                            c1_c_row_c.label(text='Axis Angle')
+                                matrix_grid.column(align=True).prop(elem, 'AXISANGLE_LOCATION_UI_TRANSLATION', text='Location')
+                            matrix_grid.column(align=True).prop(elem, 'AXISANGLE_SCALE_UI', text='Scale')
+                            matrix_grid.column(align=True).prop(elem, 'AXISANGLE_VECTOR_UI', text='Axis')
+                            c1_c_row_c = c1_c_row.column(align=True)
+                            c1_c_row_c.label(text='Angle')
                             c1_c_row_c.prop(elem, 'AXISANGLE_ANGLE_UI', text='')
-                            #c1_c.row().label(text='')
-                            # grid_row.label(text='')
-                            # grid_row.label(text='')
-                            # grid_row.label(text='')
                             pass
                         else:
                             raise Exception(f'Unknown Matrix mode: {elem.matrix_mode1}')
@@ -2566,10 +2505,6 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                         shears_c1.ui_units_x = 20
                         shears_c2.ui_units_x = 40
                         shears_c3.ui_units_x = 40
-
-                        # shears_c1.label(text=f'')
-                        # shears_c2.label(text=f'')
-                        # shears_c3.label(text=f'')
 
                         lst_planes = ["XY", "XZ", "YZ"]
                         for plane in lst_planes:
@@ -2584,11 +2519,6 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                             c1_c.row().label(text=f'Shears of Axis Angle View')
                         else:
                             c1_c.row().label(text=f'')
-                        #shears_c1.label(text=f'')
-
-                        # grid_row.label(text='')
-                        # grid_row.label(text='')
-                        # grid_row.label(text='')
                         pass
                 
                 if self.inputs["mask"].is_linked==False:
@@ -2602,7 +2532,6 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     J+=1
                     pass
 
-                #c2.label(text=index_label)
                 c2.row().label(text=index_label)
                 c3_row1 = c3.row(align=True)
                 c3_row1_col = c3_row1.column()
@@ -2645,15 +2574,10 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 pass
 
         elif self.list_items_type == 'COLOR_LIST_MODE':
-            grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
+            grid_row = col.row().grid_flow(row_major=True, columns=2, align=True, even_rows=False)
             for I, elem in enumerate(self.color_list_items):
                 c1 = grid_row.column().row(align=True) # row.row - to align=True only one row. If only row() then all elems in grid will connect each other.
                 c2 = grid_row.column()
-                c3 = grid_row.column()
-
-                c1.ui_units_x = 85
-                c2.ui_units_x = 5
-                c3.ui_units_x = 10
 
                 if self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA':
                     if self.use_alpha==True:
@@ -2673,13 +2597,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     else:
                         index_label = f'{J}'
                         J+=1
-                    c2.prop(elem, f'item_enable', icon_only=True)
-                    c3.label(text=index_label)
+                    c2.prop(elem, f'item_enable', icon_only=True, text=index_label)
                 else:
                     index_label = f'{J}'
                     J+=1
-                    c2.label(text='')
-                    c3.label(text=index_label)
+                    c2.label(text=index_label)
                 pass
         elif self.list_items_type == 'STRING_LIST_MODE':
             grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
@@ -2951,18 +2873,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             else:
                 col.row().label(text=f'{self.list_items_type} is unknown type of data')
                 pass
-            # if self.list_items_type == 'vector':
-            #     colum_list = layout.column(align=True)
-            #     for i in range(self.v_int):
-            #         row = colum_list.row(align=True)
-            #         for j in range(3):
-            #             row.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j]+(self.label if self.label else self.name))
-            # else:
-            #     colum_list = layout.column(align=True)
-            #     for i in range(self.int_list_counter):
-            #         row = colum_list.row(align=True)
-            #         row.prop(self, self.list_items_type, index=i, text=str(i)+(self.label if self.label else self.name))
-            #         row.scale_x = 0.8
+        return
 
     def updateTextData(self, context):
         self.process_node(context)
