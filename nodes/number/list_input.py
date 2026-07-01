@@ -2161,7 +2161,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             self.outputs[0].replace_socket(new_socket_type)
 
     def sv_init(self, context):
-        self.width = 260
+        self.width = 160
 
         self.inputs.new('SvStringsSocket', 'mask').label = "Mask"
         self.inputs['mask'].custom_draw = 'draw_mask_in_socket'
