@@ -37,7 +37,7 @@ def natural_plus_one(object_names):
 
     def extended_sort(a):
         ''' finds the digit trailing, or 0 if no digits '''
-        k = re.split('(\d*)', a)
+        k = re.split(r'(\d*)', a)
         return 0 if len(k) == 1 else int(k[1])
 
     natural_sort = sorted(object_names, key=extended_sort)
