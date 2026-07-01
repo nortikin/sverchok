@@ -95,7 +95,7 @@ el.replaceWith(d);
 
     def extended_sort(a):
         &#39;&#39;&#39; finds the digit trailing, or 0 if no digits &#39;&#39;&#39;
-        k = re.split(&#39;(\d*)&#39;, a)
+        k = re.split(r&#39;(\d*)&#39;, a)
         return 0 if len(k) == 1 else int(k[1])
 
     natural_sort = sorted(object_names, key=extended_sort)
