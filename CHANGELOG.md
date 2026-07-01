@@ -1,3 +1,9 @@
+2026.06.29
+
+- refactor List Input:
+    - https://nortikin.github.io/sverchok/docs/nodes/number/list_input.html
+    - https://github.com/nortikin/sverchok/pull/5442
+
 2024.06.01
 
 - refactor node Spacial->[Voronoi on Mesh](https://nortikin.github.io/sverchok/docs/nodes/spatial/voronoi_on_mesh.html) (Replace param 'output nesting' to 'Post processing')
