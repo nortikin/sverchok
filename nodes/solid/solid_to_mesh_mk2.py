@@ -140,7 +140,7 @@ class SvSolidToMeshNodeMk2(SverchCustomTreeNode, bpy.types.Node):
 
 
     def basic_mesher(self):
-        solids = self.inputs[self["shape_type"]].sv_get()
+        solids = self.inputs[self.shape_type].sv_get()
         precisions = self.inputs["Precision"].sv_get()[0]
         verts = []
         faces = []
