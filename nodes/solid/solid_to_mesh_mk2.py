@@ -160,7 +160,7 @@ class SvSolidToMeshNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         return verts, faces
 
     def standard_mesher(self):
-        solids = self.inputs[self["shape_type"]].sv_get()
+        solids = self.inputs[self.shape_type].sv_get()
         surface_deviation = self.inputs["Surface Deviation"].sv_get()[0]
         angle_deviation = self.inputs["Angle Deviation"].sv_get()[0]
         verts = []
@@ -186,7 +186,7 @@ class SvSolidToMeshNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         return verts, faces
 
     def mefisto_mesher(self):
-        solids = self.inputs[self["shape_type"]].sv_get()
+        solids = self.inputs[self.shape_type].sv_get()
         max_edge_length = self.inputs['Max Edge Length'].sv_get()[0]
 
         verts = []
@@ -210,7 +210,7 @@ class SvSolidToMeshNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         """
         this mode will produce a variety of polygon types (tris, quads, ngons...)
         """
-        solids = self.inputs[self["shape_type"]].sv_get()
+        solids = self.inputs[self.shape_type].sv_get()
 
         verts = []
         faces = []
@@ -232,7 +232,7 @@ class SvSolidToMeshNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         """
         this mode will produce a variety of polygon types (tris, quads, ngons...)
         """
-        solids = self.inputs[self["shape_type"]].sv_get()
+        solids = self.inputs[self.shape_type].sv_get()
 
         verts = []
         faces = []
