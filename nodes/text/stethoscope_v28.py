@@ -424,6 +424,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
 
         if self.activate and inputs[0].is_linked:
             scale, self.location_theta = self.get_preferences()
+            self.location_theta = 1.0
 
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
@@ -475,7 +476,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
             if not self.inputs[0].other:
                 nvBGL.callback_disable(node_id(self))        
         except:
-            print('stethoscope update holdout (not a problem)')
+            dummy = 0
         pass
 
 classes = [ 
