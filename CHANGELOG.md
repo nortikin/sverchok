@@ -1,3 +1,7 @@
+2026.07.03
+
+- added Length param to output sockets of Curve Domain: https://nortikin.github.io/sverchok/docs/nodes/curve/curve_range.html
+
 2026.06.29
 
 - refactor List Input:
