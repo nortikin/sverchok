@@ -319,7 +319,7 @@
         - SvExOrthoProjectCurveNode
         - SvExCurveEndpointsNode
         - SvExCurveSegmentNode
-        - SvExCurveRangeNode
+        - SvExCurveRangeNodeMK2
         - SvExtendCurveNode
         - SvSplitCurveNode
         - SvExCurveLengthNode

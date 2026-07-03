@@ -876,26 +876,37 @@
           "hide": true
         },
         "inputs": {
-          "Curve": {
+          "curves": {
             "bl_idname": "SvCurveSocket",
-            "name": "Curve"
+            "name": "Curves"
+          },
+          "resolution": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Resolution",
+            "properties": {
+              "prop_name": "resolution"
+            }
           }
         },
         "outputs": {
-          "TMin": {
+          "tmin": {
             "bl_idname": "SvStringsSocket",
             "name": "TMin"
           },
-          "TMax": {
+          "tmax": {
             "bl_idname": "SvStringsSocket",
             "name": "TMax"
           },
-          "Range": {
+          "range": {
             "bl_idname": "SvStringsSocket",
             "name": "Range"
+          },
+          "lengths": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Lengths"
           }
         },
-        "bl_idname": "SvExCurveRangeNode"
+        "bl_idname": "SvExCurveRangeNodeMK2"
       },
       "A Number.005": {
         "attributes": {
@@ -3383,7 +3394,7 @@
       },
       {
         "from_node": "Curve Domain",
-        "from_socket": "TMax",
+        "from_socket": "tmax",
         "to_node": "Evaluate Curve.002",
         "to_socket": "T"
       },
@@ -3409,7 +3420,7 @@
         "from_node": "Arc 3pt (Curve)",
         "from_socket": "Arc",
         "to_node": "Curve Domain",
-        "to_socket": "Curve"
+        "to_socket": "curves"
       },
       {
         "from_node": "Arc 3pt (Curve)",
@@ -3419,7 +3430,7 @@
       },
       {
         "from_node": "Curve Domain",
-        "from_socket": "TMax",
+        "from_socket": "tmax",
         "to_node": "Evaluate Curve.001",
         "to_socket": "T"
       },

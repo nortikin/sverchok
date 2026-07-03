@@ -1,16 +1,16 @@
 Curve Domain
 ============
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/17bf2239-0e02-4455-8254-480eba33ba93
-  :target: https://github.com/nortikin/sverchok/assets/14288520/17bf2239-0e02-4455-8254-480eba33ba93
+.. image:: https://github.com/user-attachments/assets/efcc1214-0180-4280-a467-6aa4484d5a80
+  :target: https://github.com/user-attachments/assets/efcc1214-0180-4280-a467-6aa4484d5a80
 
 Functionality
 -------------
 
 This node outputs the domain of the curve, i.e. the range of values the curve's T parameter is allowed to take.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/10ab8942-e5b2-4943-85c3-8dd07bf9a99c
-  :target: https://github.com/nortikin/sverchok/assets/14288520/10ab8942-e5b2-4943-85c3-8dd07bf9a99c
+.. image:: https://github.com/user-attachments/assets/32e7bb52-fdc1-4ef3-8a84-c7664d55e61f
+  :target: https://github.com/user-attachments/assets/32e7bb52-fdc1-4ef3-8a84-c7664d55e61f
 
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
@@ -37,8 +37,8 @@ Example of usage
 
 The domain of circle curve is from 0 to 2*pi:
 
-.. image:: https://user-images.githubusercontent.com/284644/78507901-792fca00-779c-11ea-90a7-e3c1cfecf39b.png
-  :target: https://user-images.githubusercontent.com/284644/78507901-792fca00-779c-11ea-90a7-e3c1cfecf39b.png
+.. image:: https://github.com/user-attachments/assets/1e2b4d6b-26c3-4791-8764-3379a083fa2e
+  :target: https://github.com/user-attachments/assets/1e2b4d6b-26c3-4791-8764-3379a083fa2e
 
 * Curves-> :doc:`Circle (Curve) </nodes/curve/curve_circle>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
