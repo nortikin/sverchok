@@ -870,32 +870,39 @@
       "Curve Domain": {
         "attributes": {
           "location": [
-            400.0,
-            -640.0
-          ],
-          "hide": true
+            402.9580993652344,
+            -560.0330810546875
+          ]
         },
         "inputs": {
-          "Curve": {
+          "curves": {
             "bl_idname": "SvCurveSocket",
-            "name": "Curve"
+            "name": "curves"
+          },
+          "resolution": {
+            "bl_idname": "SvStringsSocket",
+            "name": "resolution"
           }
         },
         "outputs": {
-          "TMin": {
+          "tmin": {
             "bl_idname": "SvStringsSocket",
-            "name": "TMin"
+            "name": "tmin"
           },
-          "TMax": {
+          "tmax": {
             "bl_idname": "SvStringsSocket",
-            "name": "TMax"
+            "name": "tmax"
           },
-          "Range": {
+          "range": {
             "bl_idname": "SvStringsSocket",
-            "name": "Range"
+            "name": "range"
+          },
+          "lengths": {
+            "bl_idname": "SvStringsSocket",
+            "name": "lengths"
           }
         },
-        "bl_idname": "SvExCurveRangeNode"
+        "bl_idname": "SvExCurveRangeNodeMK2"
       },
       "A Number.005": {
         "attributes": {
