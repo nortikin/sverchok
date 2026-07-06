@@ -23,6 +23,31 @@ from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
+class SocketInfo:
+    def __init__(self, name, pos, valid, is_linked, socket_links, ):
+        self.name = name
+        self.pos = pos
+        self.valid = valid
+        self.is_linked = is_linked
+        self.links = socket_links[:]
+        pass
+    
+class SocketsGroup:
+    def __init__(self, group_idx, names, default=None):
+        # Чтобы получать доступ через квадратные скобки
+        self.attr_by_index = names
+        self.group_idx = group_idx
+        for name in names:
+            setattr(self, name, SocketInfo(name, None, False, False, []) )
+        return
+    
+    def __getitem__(self, index):
+        attr_name = self.attr_by_index[index]
+        return getattr(self, attr_name)
+    
+    def __setitem__(self, index, value):
+        attr_name = self.attr_by_index[index]
+        setattr(self, attr_name, value)
 
 def mesh_join(vertices, edges, polygons):
     is_py_input = isinstance(vertices[0], (list, tuple))
@@ -33,56 +58,227 @@ def mesh_join(vertices, edges, polygons):
     return out_vertices, out_edges, out_polygons
 
 
-class SvMeshJoinNodeMk2(
-        ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
+class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode ):
     '''
     Triggers: Join Meshes
     Tooltip: Join many mesh into on mesh object
     '''
 
-    bl_idname = 'SvMeshJoinNodeMk2'
+    bl_idname = 'SvMeshJoinNodeMK3'
     bl_label = 'Mesh Join'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MESH_JOIN'
 
+    def draw_vertices_in_socket(self, socket, context, layout):
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
+        else:
+            layout.label(text=f'{socket.label}')
+        pass
+
     def sv_init(self, context):
-        verts = self.inputs.new('SvVerticesSocket', 'Vertices')
-        verts.is_mandatory = True
-        verts.nesting_level = 3
-        verts.default_mode = 'NONE'
+        groups = self.inputs.new('SvStringsSocket', 'groups')
+        groups.label = 'Groups'
+        verts1 = self.inputs.new('SvVerticesSocket', 'vertices1')
+        verts1.is_mandatory = True
+        verts1.nesting_level = 3
+        verts1.default_mode = 'NONE'
+        verts1.label = 'Vertices 1'
+        verts1.custom_draw = 'draw_vertices_in_socket'
 
-        edges = self.inputs.new('SvStringsSocket', 'Edges')
-        edges.nesting_level = 3
-        edges.default_mode = 'EMPTY_LIST'
+        pols1 = self.inputs.new('SvStringsSocket', 'polygons1')
+        pols1.nesting_level = 3
+        pols1.default_mode = 'EMPTY_LIST'
+        pols1.label = 'Polygons'
 
-        pols = self.inputs.new('SvStringsSocket', 'Polygons')
-        pols.nesting_level = 3
-        pols.default_mode = 'EMPTY_LIST'
+        # TODO: позже вернуь перед polygons
+        edges1 = self.inputs.new('SvStringsSocket', 'edges1')
+        edges1.nesting_level = 3
+        edges1.default_mode = 'EMPTY_LIST'
+        edges1.label = 'Edges'
 
-        self.outputs.new('SvVerticesSocket', 'Vertices')
-        self.outputs.new('SvStringsSocket', 'Edges')
-        self.outputs.new('SvStringsSocket', 'Polygons')
+        edges2 = self.inputs.new('SvStringsSocket', 'wrong_socket2')
+        edges2.nesting_level = 3
+        edges2.default_mode = 'EMPTY_LIST'
+        edges2.label = 'Wrong Socket2'
+
+        edges2 = self.inputs.new('SvStringsSocket', 'edges2')
+        edges2.nesting_level = 3
+        edges2.default_mode = 'EMPTY_LIST'
+        edges2.label = 'Edges [2]'
+
+        edges5 = self.inputs.new('SvStringsSocket', 'edges5')
+        edges5.nesting_level = 3
+        edges5.default_mode = 'EMPTY_LIST'
+        edges5.label = 'Edges [5]'
+
+        edges2 = self.inputs.new('SvStringsSocket', 'wrong_socket')
+        edges2.nesting_level = 3
+        edges2.default_mode = 'EMPTY_LIST'
+        edges2.label = 'Wrong Socket'
+
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs['vertices'].label = 'Vertices'
+        self.outputs.new('SvStringsSocket', 'edges')
+        self.outputs['edges'].label = 'Edges'
+        self.outputs.new('SvStringsSocket', 'polygons')
+        self.outputs['polygons'].label = 'Polygons'
+
+        return
+
+    def sv_update(self):
+        # adjust_sockets
+        # update sockets
+        dict_sockets = dict()
+
+        def reload_sockets_data(groups_offset, self_inputs, group_names):
+            elems = dict()
+            invalid_elems = []
+            valid_pos = groups_offset
+            for I in range(groups_offset, len(self_inputs)):
+                socket_I = self_inputs[I]
+                socket_group_name = None
+                for group_name in group_names:
+                    if socket_I.name.startswith(group_name):
+                        socket_group_name = group_name
+                        break
+                # Если имя сокета не начинается с имени группы, то такой сокет не валиден:
+                if socket_group_name is None:
+                    invalid_elems.append(socket_I.name)
+                    continue
+                
+                group_idx = socket_I.name.replace(socket_group_name, "")
+                # Если имя сокета не заканчивается числом (это должен быть индекс), то такой сокет не валиден:
+                if group_idx.isnumeric()==False:
+                    invalid_elems.append(socket_I.name)
+                    continue
+                else:
+                    group_idx = int(group_idx)
+                    if group_idx not in elems:
+                        elems[group_idx] = SocketsGroup(group_idx, group_names)
+                    valid_pos = (group_idx*len(group_names)+group_names.index(socket_group_name)+groups_offset)==I
+                    # Проверить, что текущий сокет находится в нужной позиции (с учётом отступа обязательного сокета)
+                    # Чисто теоретически может случиться так, что среди мешанины неправильных сокетов встретится сокет
+                    # на корректной позиции, то перед его позицией должна встретиться неправильная позиция.
+                    # В дальнейшем такая первая неправильная позиция должна будет считаться исходной для удаления
+                    # следующих сокетов и их пересоздания
+                    socket_links = []
+                    for link in socket_I.links:
+                        socket_links.append(dict(from_node_name=link.from_node.name, from_socket_name=link.from_socket.name))
+                    socketInfo = SocketInfo(socket_group_name, I, valid_pos, socket_I.is_linked, socket_links)
+                    setattr(elems[group_idx], socket_group_name, socketInfo)
+                    continue
+            return elems, invalid_elems
+        
+        groups_offset = 1 # Количество обязательных сокетов. Их надо пропустить
+        group_struct = {'vertices':{'socket_type': 'SvVerticesSocket'}, 'edges':{'socket_type':'SvStringsSocket'}, 'polygons':{'socket_type':'SvStringsSocket',}, 'matrices': {'socket_type': 'SvMatrixSocket', }} # список имён сокетов в группе. Последовательность важна. Если сокеты встретятся в другой последовательности, то это будет считаться ошибкой
+        group_names = tuple(group_struct)
+        len_group_names = len(group_names)
+        elems, invalid_elems = reload_sockets_data(groups_offset, self.inputs, group_names)
+
+        if invalid_elems:
+            while(invalid_elems):
+                socket_name = invalid_elems.pop()
+                self.inputs.remove( self.inputs[socket_name])
+            
+            # Ещё раз проверить корректность сокетов после удаления невалидных сокетов:
+            elems, invalid_elems = reload_sockets_data(groups_offset, self.inputs, group_names)
+            if invalid_elems:
+                raise RuntimeError(f"Wrong sockets: {invalid_elems}")
+        
+        # Отсортировать группы сокетов и упаковать их индексы:
+        elems = {
+            new_index: elems[old_key]
+            for new_index, old_key in enumerate(sorted(elems))
+        }
+
+        # Проверить, если последния группа, с индексом больше 0, не подключена, то отметить её для удаления
+        for I in range(len(elems)-1, 0, -1):
+            elems_I = elems[I]
+            elems_I1 = elems[I-1]
+            
+            if (all( [getattr(elems_I, name).is_linked==False for name in group_names]) and
+                all( [getattr(elems_I1, name).is_linked==False for name in group_names])):
+                del elems[I]
+                continue
+            else:
+                break
+            pass
+
+        # Проверить, если к последней группе подключен хоть один link, то добавить после последней группы ещё одну группу
+        elems_last = elems[len(elems)-1]
+        if any( [getattr(elems_last, name).is_linked==True for name in group_names])==True:
+            max_idx = len(elems)
+            elems[max_idx] = SocketsGroup(max_idx, group_names)
+            elems[max_idx].vertices.valid = True
+            elems[max_idx].edges.valid = True
+            elems[max_idx].polygons.valid = True
+
+        # Просканировать сокеты на предмет корректности позиций и удалить всех, кто ниже первой некорректной позиции:
+        min_invalid_pos = None
+        for I in range(groups_offset, len(self.inputs)):
+            group_idx, elem_idx = divmod(I-groups_offset, len_group_names)
+            group_name = group_names[elem_idx]
+            if group_idx not in elems:
+                break
+            elem_I = elems[group_idx][elem_idx]
+            if elem_I is None or elem_I.valid==False:
+                min_invalid_pos = I
+                break
+            pass
+
+        # Если минмальный индекс некорректной позиции не найден (все сокеты корректно находятся на своих местах), 
+        # то определить максимальный индекс входных сокетов, чтобы стереть лишние группы.
+        if min_invalid_pos is None:
+            min_invalid_pos = groups_offset + len(elems)*len_group_names
+
+        # Удалить все входящие сокеты включая эту позицию
+        if min_invalid_pos<=0:
+            pass
+        else:
+            while(len(self.inputs)>=min_invalid_pos+1):
+                self.inputs.remove( self.inputs[-1])
+            # тут создать недостающие сокеты и восстановить соединения для перемещаемых сокетов:
+            for I in range(len(elems)*len_group_names):
+                group_idx, elem_idx = divmod(I, len_group_names)
+                elem_I = elems[group_idx][elem_idx]
+                
+                socket_type = group_struct[elem_I.name]['socket_type']
+                if elem_I.name=='vertices':
+                    socket_label = f'{elem_I.name.capitalize()}[{group_idx}]'
+                else:
+                    socket_label = f'{elem_I.name.capitalize()}'
+                socket_name = f'{elem_I.name}{group_idx}'
+                if socket_name in self.inputs:
+                    socket = self.inputs[socket_name]
+                else:
+                    socket = self.inputs.new(socket_type, socket_name)
+                
+                if elem_I.name=='vertices':
+                    socket.custom_draw = 'draw_vertices_in_socket'
+                else:
+                    socket.custom_draw = ''
+                socket.label = socket_label
+                pass
+            pass
+        # 1. Прочитать сокеты и запомнить какие 
+        return
 
     def migrate_from(self, old_node):
-        verts = self.inputs['Vertices']
+        verts = self.inputs['vertices1']
         verts.is_mandatory = True
         verts.default_mode = 'NONE'
 
-        edges = self.inputs['Edges']
+        edges = self.inputs['edges1']
         edges.nesting_level = 3
         edges.default_mode = 'EMPTY_LIST'
 
-        pols = self.inputs['Polygons']
+        pols = self.inputs['polygons1']
         pols.nesting_level = 3
         pols.default_mode = 'EMPTY_LIST'
 
     def process_data(self, params):
         return mesh_join(*params)
 
-
-def register():
-    bpy.utils.register_class(SvMeshJoinNodeMk2)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvMeshJoinNodeMk2)
+classes = [SvMeshJoinNodeMK3,]
+register, unregister = bpy.utils.register_classes_factory(classes)
