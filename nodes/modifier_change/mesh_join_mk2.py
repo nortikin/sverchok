@@ -22,6 +22,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_elements
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
+from sverchok.data_structure import updateNode
 
 class SocketInfo:
     def __init__(self, name, pos, valid, is_linked, socket_links, ):
@@ -69,12 +70,20 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvR
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MESH_JOIN'
 
+    mesh_join: bpy.props.BoolProperty(name='Join', default=True, update=updateNode, description="If set, then this node will join output meshes into one mesh")
+
     def draw_vertices_in_socket(self, socket, context, layout):
         if socket.is_linked:  # linked INPUT or OUTPUT
             layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
         else:
             layout.label(text=f'{socket.label}')
         pass
+
+    def draw_buttons(self, context, layout):
+        root = layout.box().column(align=True)
+        root.use_property_split = True
+        root.use_property_decorate = False
+        root.prop(self, "mesh_join")
 
     def sv_init(self, context):
         groups = self.inputs.new('SvStringsSocket', 'groups')
@@ -123,6 +132,8 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvR
         self.outputs['edges'].label = 'Edges'
         self.outputs.new('SvStringsSocket', 'polygons')
         self.outputs['polygons'].label = 'Polygons'
+        self.outputs.new('SvMatrixSocket', 'matrices')
+        self.outputs['matrices'].label = 'Matrices'
 
         return
 
@@ -179,7 +190,10 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvR
         if invalid_elems:
             while(invalid_elems):
                 socket_name = invalid_elems.pop()
-                self.inputs.remove( self.inputs[socket_name])
+                socket_to_remove = self.inputs[socket_name]
+                for link in list(socket_to_remove.links):
+                    self.id_data.links.remove(link)
+                self.inputs.remove( socket_to_remove )
             
             # Ещё раз проверить корректность сокетов после удаления невалидных сокетов:
             elems, invalid_elems = reload_sockets_data(groups_offset, self.inputs, group_names)
@@ -237,7 +251,12 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvR
             pass
         else:
             while(len(self.inputs)>=min_invalid_pos+1):
-                self.inputs.remove( self.inputs[-1])
+                socket_to_remove = self.inputs[-1]
+                for link in list(socket_to_remove.links):
+                    self.id_data.links.remove(link)
+                self.inputs.remove( socket_to_remove )
+                pass
+
             # тут создать недостающие сокеты и восстановить соединения для перемещаемых сокетов:
             for I in range(len(elems)*len_group_names):
                 group_idx, elem_idx = divmod(I, len_group_names)
@@ -259,6 +278,17 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvR
                 else:
                     socket.custom_draw = ''
                 socket.label = socket_label
+
+                # Восстановить сокеты
+                if socket.is_linked==False:
+                    tree = self.id_data
+                    for link in elem_I.links:
+                        from_node_name = link['from_node_name']
+                        from_socket_name = link['from_socket_name']
+                        if from_node_name in tree.nodes and from_socket_name in tree.nodes[ from_node_name ].outputs:
+                            from_socket = tree.nodes[ from_node_name ].outputs[ from_socket_name ]
+                            new_link = tree.links.new(socket, from_socket)
+                        pass
                 pass
             pass
         # 1. Прочитать сокеты и запомнить какие 
@@ -278,7 +308,9 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvR
         pols.default_mode = 'EMPTY_LIST'
 
     def process_data(self, params):
-        return mesh_join(*params)
+        #return mesh_join(*params)
+        return [[],[],[],[]]
+
 
 classes = [SvMeshJoinNodeMK3,]
 register, unregister = bpy.utils.register_classes_factory(classes)
