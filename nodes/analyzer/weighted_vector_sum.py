@@ -112,26 +112,42 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
         items=ngon_modes,
         default="BEAUTY",
         update=updateNode) # type: ignore
+    
+    keep_original_geometry: BoolProperty(
+        name='Keep original',
+        description='On - return original geometry\nOff - return triangulated geometry',
+        default=True,
+        update=updateNode) # type: ignore
+
 
     def update_sockets(self, context):
         updateNode(self, context)
 
     def draw_buttons(self, context, layout):
-        col = layout.column()
+        box = layout.box()
+        
+        col = box.column()
 
         row = col.row()
+        row.use_property_decorate = False
+        row.use_property_split = True
         row.prop(self, 'skip_unmanifold_centers')
         
         row = col.row()
+        row.use_property_decorate = False
+        row.use_property_split = True
         row.active = False
         row.prop(self, 'skip_test_volume_are_closed')
         if self.center_mode in ['VOLUMES']:
             row.active = True
 
         row = col.row()
-        split = row.split(factor=0.4)
-        split.column().label(text="Center mode:")
-        split.column().row(align=True).prop(self, "center_mode", text='')
+        row.use_property_decorate = False
+        row.use_property_split = True
+        # split = row.split(factor=0.4)
+        # split.column().label(text="Center mode:")
+        # split.column().row(align=True).prop(self, "center_mode", text='')
+        row.prop(self, "center_mode",)
 
         row = col.row()
         row.active = False
@@ -140,20 +156,31 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
             row.active = True
 
         row = col.row()
+        row.use_property_decorate = False
+        row.use_property_split = True
         row.active = False
-        split = row.split(factor=0.4)
-        split.column().label(text="Quads mode:")
-        split.column().row(align=True).prop(self, "quad_mode", text='')
+        #split = row.split(factor=0.4)
+        #split.column().label(text="Quads mode:")
+        #split.column().row(align=True).prop(self, "quad_mode", text='')
         if self.center_mode in ['FACES', 'VOLUMES']:
             row.active = True
+        row.prop(self, "quad_mode",)
 
         row = col.row()
+        row.use_property_decorate = False
+        row.use_property_split = True
         row.active = False
-        split = row.split(factor=0.5)
-        split.column().label(text="Polygons mode:")
-        split.column().row(align=True).prop(self, "ngon_mode", text='')
+        #split = row.split(factor=0.5)
+        #split.column().label(text="Polygons mode:")
+        #split.column().row(align=True).prop(self, "ngon_mode", text='')
         if self.center_mode in ['FACES', 'VOLUMES']:
             row.active = True
+        row.prop(self, "ngon_mode",)
+
+        row = col.row()
+        row.use_property_decorate = False
+        row.use_property_split = True
+        row.prop(self, "keep_original_geometry",)
 
         pass
 
@@ -272,12 +299,20 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
                                                         self.ngon_mode)
             result_mask_list.append(result_mask)
             if result_mask==True:
-                result_vertices_list.append(result_vertices_I)
-                result_edges_list.append(result_edges_I)
-                result_polygons_list.append(result_polygons_I)
-                result_center_mass_mesh_list.append(result_center_mass_mesh_I)
-                mass_mesh_list.append(result_mass_mesh_I)
-                size_mesh_list.append(result_size_mesh_I)
+                if self.keep_original_geometry==True:
+                    result_vertices_list.append(vertices_I)
+                    result_edges_list.append(edges_I)
+                    result_polygons_list.append(faces_I)
+                    result_center_mass_mesh_list.append(result_center_mass_mesh_I)
+                    mass_mesh_list.append(result_mass_mesh_I)
+                    size_mesh_list.append(result_size_mesh_I)
+                else:
+                    result_vertices_list.append(result_vertices_I)
+                    result_edges_list.append(result_edges_I)
+                    result_polygons_list.append(result_polygons_I)
+                    result_center_mass_mesh_list.append(result_center_mass_mesh_I)
+                    mass_mesh_list.append(result_mass_mesh_I)
+                    size_mesh_list.append(result_size_mesh_I)
 
         # calc center of mass of all meshes if any mesh has center:
         if result_center_mass_mesh_list:

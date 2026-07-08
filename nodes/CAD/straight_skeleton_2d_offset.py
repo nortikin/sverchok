@@ -436,7 +436,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
     res_types = [
             ('CONTOURS', "Contours", "Edges of contours", 'SNAP_VERTEX', 0),
             ('FACES' , "Faces", "Fill faces", 'SYNTAX_ON', 1),
-            ('BEVEL' , "Bevel", "Beveled extrude throught offsets", 'MOD_BEVEL', 2),
+            ('BEVEL' , "Bevel", "Beveled extrude through offsets", 'MOD_BEVEL', 2),
             ('STRAIGHT_SKELETON' , "Skeleton", "Straight Skeletons geometry. Ignore Altitude input socket", 'MOD_SKIN', 3),
         ]
 

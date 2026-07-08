@@ -209,6 +209,9 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
                                 )
         [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, cycle(obj_matrices))]
         [setattr(prop.obj, 'show_wire', self.show_wireframe) for prop in self.object_data]
+        # I got a glitch if node regenerated different number of object and objects has parent and parents has changed.
+        # Update: It is a Rigid Body
+        #bpy.context.view_layer.update()
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 
