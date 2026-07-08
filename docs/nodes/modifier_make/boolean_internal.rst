@@ -8,7 +8,11 @@ Functionality
 -------------
 
 This node implements Blender's internal boolean modifier with 3 functions: Intersect, Union, and Difference.
-Solver options include Fast and Exact solvers. Fast Solver is simpler and faster but does not support overlapping geometries, which Exact Solver does support overlapping geometries but is slower than the Fast Solver.
+Solver options include Float, Exact, and Manifold solvers.
+
+Float: Uses a simple solver which offers good performance but lacks support for overlapping geometry.
+Exact: Uses a complex solver which offers the best results and has full support for overlapping geometry, but is much slower.
+Manifold: Uses a solver that is usually fastest but only works on Manifold meshes (plus the special case of Difference with a plane).
 
 More information on Blender's internal boolean modifier can be found here:
 https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html
