@@ -6,8 +6,11 @@ from bpy.props import EnumProperty, BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, split_by_count
+from sverchok.utils.math import supported_metrics
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvGeomdlSurface
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
+from sverchok.utils.surface.nurbs_solver import approximate_nurbs_surface
 from sverchok.dependencies import geomdl, FreeCAD
 
 if geomdl is not None:
@@ -36,8 +39,8 @@ class SvExApproxNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         self.inputs['USize'].hide_safe = self.input_mode == '2D'
         self.inputs['DegreeU'].hide_safe = (self.implementation == 'FREECAD') and ((self.input_mode == '1D') or (self.input_mode == '2D'))
         self.inputs['DegreeV'].hide_safe = (self.implementation == 'FREECAD') and ((self.input_mode == '1D') or (self.input_mode == '2D'))
-        self.inputs['PointsCntU'].hide_safe = not (self.implementation == 'GEOMDL' and self.has_points_cnt)
-        self.inputs['PointsCntV'].hide_safe = not (self.implementation == 'GEOMDL' and self.has_points_cnt)
+        self.inputs['PointsCntU'].hide_safe = not ((self.implementation == 'GEOMDL' and self.has_points_cnt) or self.implementation == 'NATIVE')
+        self.inputs['PointsCntV'].hide_safe = not ((self.implementation == 'GEOMDL' and self.has_points_cnt) or self.implementation == 'NATIVE')
 
         self.inputs['DegreeMin'].hide_safe = not (self.implementation == 'FREECAD')
         self.inputs['DegreeMax'].hide_safe = not (self.implementation == 'FREECAD')
@@ -97,6 +100,8 @@ class SvExApproxNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         implementations.append(('GEOMDL', "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
     if FreeCAD is not None:
         implementations.append(('FREECAD', "FreeCAD", "FreeCAD package implementation", 1))
+    implementations.append(
+        (SvNurbsMaths.NATIVE, "Sverchok", "Sverchok built-in implementation", 2))
 
     implementation : EnumProperty(
             name = "Implementation",
@@ -176,6 +181,13 @@ class SvExApproxNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                 ],
         update = updateNode)
 
+    metric : EnumProperty(
+            name = "Metric",
+            description = "Metric to be used for approximation",
+            items = supported_metrics,
+            default = 'DISTANCE',
+            update = updateNode)
+
     def sv_init(self, context):
         # common inputs:
         self.inputs.new('SvStringsSocket', "USize").prop_name = 'u_size'
@@ -205,15 +217,16 @@ class SvExApproxNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         if self.implementation == 'GEOMDL':
             layout.prop(self, 'centripetal')
             layout.prop(self, 'has_points_cnt')
-        else: # FreeCAD implementation:
+        elif self.implementation == 'FREECAD':
             layout.prop(self, 'continuity')
             layout.prop(self, 'method')
             if self.method == 'parametrization':
                 layout.prop(self, 'param_type')
             else: # Variational Smoothing:
                 pass
+        else: # NATIVE
+            layout.prop(self, 'metric')
         layout.prop(self, "input_mode")
-
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -308,7 +321,7 @@ class SvExApproxNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                     kwargs['ctrlpts_size_v'] = points_cnt_v
                 surf = fitting.approximate_surface(vertices, n_u, n_v, degree_u, degree_v, **kwargs)
                 surf = SvGeomdlSurface(surf)
-            else: # FreeCAD:
+            elif FreeCAD is not None and self.implementation == 'FREECAD':
                 if degree_min > degree_max:
                     raise Exception("Minimal Degree must be lower or equal to Maximal Degree")
 
@@ -334,6 +347,13 @@ class SvExApproxNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                                         ParamType = self.param_type
                                         )
                 surf = SvSolidFaceSurface(surf.toShape()).to_nurbs()
+            else: # NATIVE:
+                vertices_np = np.array(split_by_count(vertices, n_v))
+                surf = approximate_nurbs_surface(degree_u, degree_v,
+                                                 points_cnt_u, points_cnt_v,
+                                                 vertices_np,
+                                                 metric = self.metric,
+                                                 logger = self.sv_logger)
 
             points_out.append(surf.get_control_points().tolist())
             knots_u_out.append(surf.get_knotvector_u().tolist())

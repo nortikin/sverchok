@@ -10,6 +10,7 @@ from sverchok.utils.nurbs_common import SvNurbsMaths, elevate_bezier_degree, fro
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
+from sverchok.utils.nurbs_common import CantRemoveKnotException
 from sverchok.utils.curve.nurbs_solver_applications import knotvector_with_tangents_from_tknots
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface

@@ -7,7 +7,7 @@ Approximate NURBS Curve
 Dependencies
 ------------
 
-This node requires either Geomdl_, SciPy_ or FreeCAD_ library to work.
+This node can optionally use Geomdl_, SciPy_ or FreeCAD_ library to work.
 
 .. _Geomdl: https://onurraufbingol.com/NURBS-Python/
 .. _SciPy: https://scipy.org/
@@ -62,7 +62,16 @@ Every single implementation offers different ways of control:
   
   The **"Continuity"** parameter defines how smooth will be the curve internally.
   The values it can take depend on the approximation method used. It defaults to C2.
-  However, it may not be applied if it conflicts with other parameters ( especially "Maximal Degree" ).
+  However, it may not be applied if it conflicts with other parameters
+  (especially "Maximal Degree").
+* Native Sverchok implementation is somewhat slower than SciPy implementation;
+  but it is available even if no dependencies are available. If SciPy library
+  is installed, native Sverchok implementation will use dense matrices logic
+  from SciPy for optimization, in this case it will be much faster than without
+  SciPy. Similar to SciPy implementation, native implementation can make cyclic
+  (closed) curves and supports different weights for different points. But for
+  native implementation, instead of smoothing factor, you have to explicitly
+  specify the number of control points to be used.
 
 
 .. _NURBS: https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline
@@ -74,19 +83,21 @@ Inputs
 This node has the following inputs:
 
 * **Vertices**. The points to be approximated. This input is mandatory.
-* **Weights**. This input is available only when **Implementation** parameter
-  is set to **SciPy**. Weights of points to be approximated. Bigger values of
-  weight mean that the curve will pass through corresponding point at the
-  smaller distance. This does not have sense if **Smoothing** input is set to
-  zero. Optional input. If not connected, the node will consider weights of all
-  points as equal.
-* **Degree**. Available for **Geomdl** and **SciPy** only. Degree of the curve to be built. 
-  Default value is 3. Most useful values are 3, 5 and 7. 
-  If Scipy implementation is used, then maximum supported degree is 5. 
-  For Geomdl, there is no hard limit, but curves of very high degree can be hard to manipulate with.
-* **PointsCnt**. Number of curve's control points. This input is available only
+* **Weights**. This input is available when **Implementation** parameter is set
+  to **SciPy** or **Sverchok**. Weights of points to be approximated. Bigger
+  values of weight mean that the curve will pass through corresponding point at
+  the smaller distance. For SciPy implementation, this does not have sense if
+  **Smoothing** input is set to zero. Optional input. If not connected, the
+  node will consider weights of all points as equal.
+* **Degree**. Available for **Geomdl** **SciPy** and **Sverchok** only. Degree
+  of the curve to be built. Default value is 3. Most useful values are 3, 5 and
+  7. If Scipy implementation is used, then maximum supported degree is 5. For
+  Geomdl and Sverchok, there is no hard limit, but curves of very high
+  degree can be hard to manipulate with.
+* **PointsCnt**. Number of curve's control points. This input is available
   when **Implementation** parameter is set to **Geomdl**, and **Specify points
-  count** parameter is checked. Default value is 5.
+  count** parameter is checked. Also this input is available when
+  **Implementation** is set to **Sverchok**. Default value is 5.
 * **Smoothing**. This input is available only when **Implementation** parameter
   is set to **SciPy**, and **Scpecify smoothing** parameter is checked.
   Smoothing factor. Bigger values will make more smooth curves. Value of 0
@@ -121,8 +132,9 @@ This node has the following parameters:
 * **Implementation**. Approximation algorithm implementation to be used. The available values are:
 
   * **Geomdl**. Use the implementation from Geomdl_ library. This is available only when Geomdl library is installed.
-  * **SciPy**. Use the implementation from SciPy_ library. This is available only when SciPy library is installed.
+  * **SciPy - splprep**. Use the implementation from SciPy_ library. This is available only when SciPy library is installed.
   * **FreeCAD**. Use the implementation from FreeCAD_ library. This is available only when FreeCAD library is installed.
+  * **Sverchok**. Use native Sverchok implementation. This is always available.
 
   By default, the first available implementation is used.
 
@@ -136,24 +148,26 @@ This node has the following parameters:
   input. Otherwise, the node will determine required number of control points
   by itself (this number can be too big for many applications).
 * **Cyclic**. This parameter is available only when **Implementation**
-  parameter is set to **SciPy**. Defines whether the generated curve will be
-  cyclic (closed). Unchecked by default.
+  parameter is set to **SciPy** or **Sverchok**. Defines whether the generated
+  curve will be cyclic (closed). Unchecked by default.
 * **Auto**. This parameter is available only when **Implementation** parameter
-  is set to **SciPy**, and **Cyclic** parameter is enabled. If checked, the
-  node will automatically decide if the curve should be cyclic (closed), based
-  on the distance between the first and last points being approximated: if the
-  points are close enough, the curve will be closed. If not checked, the curve
-  will be closed regardless of distance between points, just because **Cyclic**
-  parameter is checked. Unchecked by default.
+  is set to **SciPy** or **Sverchok**, and **Cyclic** parameter is enabled. If
+  checked, the node will automatically decide if the curve should be cyclic
+  (closed), based on the distance between the first and last points being
+  approximated: if the points are close enough, the curve will be closed. If
+  not checked, the curve will be closed regardless of distance between points,
+  just because **Cyclic** parameter is checked. Unchecked by default.
 * **Cyclic threshold**. This parameter is available only when
-  **Implementation** parameter is set to **SciPy**, **Cyclic** parameter is
-  enabled, and **Auto** parameter is enabled as well. This defines maximum
-  distance between the first and the last points being approximated, for which
-  the node will make the curve cyclic. Default value is 0.0, i.e. the points
-  must exactly coincide in order for curve to be closed.
-* **Metric**. This parameter is available when **Implementation**
-  parameter is set to **SciPy** and **FreeCAD/Parametrization**. It's the metric (the specific knot values) to be used for interpolation. The
-  available options are:
+  **Implementation** parameter is set to **SciPy** or **Sverchok**, **Cyclic**
+  parameter is enabled, and **Auto** parameter is enabled as well. This defines
+  maximum distance between the first and the last points being approximated,
+  for which the node will make the curve cyclic. Default value is 0.0, i.e. the
+  points must exactly coincide in order for curve to be closed.
+* **Metric**. This parameter is available when **Implementation** parameter is
+  set to **SciPy** or **Sverchok**, and also for **FreeCAD** implementation in
+  **Parametrization** mode. It's the metric (the specific knot values) to be
+  used for interpolation.
+  The available options are:
 
   * **Manhattan** metric is also known as Taxicab metric or rectilinear distance.
   * **Euclidean** also known as Chord-Length or Distance metric. The parameters of the points are proportionate to the distances between them.
@@ -170,13 +184,15 @@ This node has the following parameters:
   checked, the node will select the smoothing factor automatically. Unchecked
   by default.
   
-* **Method**. Available only for the FreeCAD_ implementation. Approximation algorithm implementation to be used. The available values are:
+* **Method**. Available only for the FreeCAD_ implementation. Approximation
+  algorithm implementation to be used. The available values are:
 
   * **Parametrization**.
   * **Variational smoothing**.
   * **Explicit Knots**.
 
-* **Continuity**. Available only for the FreeCAD_ implementation. Desired internal smoothness of the result curve. The available values are:
+* **Continuity**. Available only for the FreeCAD_ implementation. Desired
+  internal smoothness of the result curve. The available values are:
 
   * **C0** : Only positional continuity.
   * **G1** : Geometric tangent continuity. Available only for the "Parametrization" method.

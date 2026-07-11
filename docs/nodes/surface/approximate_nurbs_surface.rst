@@ -4,7 +4,7 @@ Approximate NURBS Surface
 Dependencies
 ------------
 
-This node requires Geomdl_ and FreeCAD_ library to work.
+This node can optionally use Geomdl_ and FreeCAD_ library to work.
 
 .. _Geomdl: https://onurraufbingol.com/NURBS-Python/
 .. _FreeCAD: https://www.freecad.org/
@@ -39,11 +39,12 @@ This node has the following inputs:
   to **Single list**.  
   The number of control points in a row. The default value is 5.
 
-Geomdl_ implementation specific inputs:
+Geomdl_ and Sverchok implementation specific inputs:
 
-* **Degree U**, **Degree V**. Degree of the surface along U and V directions, correspondingly. The default value is 3.
+* **Degree U**, **Degree V**. Available for **Geomdl** and **Sverchok** implementations. Degree of the surface along U and V directions, correspondingly. The default value is 3.
 * **PointsCntU**, **PointsCntV**. Number of control points to be used along U and V directions, correspondingly. 
-  These inputs are available only when **Specify points count** parameter is checked. 
+  These inputs are available when **Implementation** is set to **Sverchok**. 
+  They are also available when **Implementation** is set to **Geomdl** and **Specify points count** parameter is checked. 
   Otherwise, the node will generate as many control points as it needs (which may be too many). 
   The default value for these inputs (when they are available) is 5.
 
@@ -73,6 +74,7 @@ This node has the following parameters:
 
   * **Geomdl**. Use the implementation from Geomdl_ library. This is available only when Geomdl library is installed.
   * **FreeCAD**. Use the implementation from FreeCAD_ library. This is available only when FreeCAD library is installed.
+  * **Sverchok**. Use the built-in Sverchok implementation. This is always available.
 
   By default, the first available implementation is used.
 
@@ -98,12 +100,15 @@ This node has the following parameters:
   * **Variational smoothing**. This method uses three additional parameters - "Length Weight", "Curvature Weight" and "Torsion Weight". 
     (with this smoothing algorithm, continuity C1 requires "Maximal Degree" >= 3 and C2 requires "Maximal Degree" >=5)
 
-* **Metric**. This parameter is available when **Implementation** parameter is set to **FreeCAD/Parametrization**. 
+* **Metric**. This parameter is available when **Implementation** parameter is set to **Sverchok**, 
+  and also for **FreeCAD** implementation in **Parametrization** mode. 
   It's the metric (the specific knot values) to be used for interpolation. The available options are:
 
+  * **Manhattan** also known as Taxicab metric or rectilinear distance.
   * **Euclidean** also known as Chord-Length or Distance metric. The parameters of the points are proportionate to the distances between them.
   * **Centripetal** The parameters of the points are proportionate to square roots of distances between them.
   * **Points** also known as Uniform metric. The parameters of the points are distributed uniformly. Just the number of the points from the beginning.
+  * **Chebyshev** also known as Maximum metric. The parameters of the points are proportionate to the maximum of the coordinate-wise distances between them.
 
   The default value is Euclidean.
 
