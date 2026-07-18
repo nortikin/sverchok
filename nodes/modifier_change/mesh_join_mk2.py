@@ -20,7 +20,7 @@ import bpy
 
 from typing import List, Tuple
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_elements
+from sverchok.utils.mesh_functions import meshes_py, meshes_np, to_elements
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 from sverchok.data_structure import updateNode
@@ -58,15 +58,6 @@ class SocketsGroup:
         attr_name = self.attr_by_index[index]
         setattr(self, attr_name, value)
 
-def mesh_join(vertices, edges, polygons):
-    is_py_input = isinstance(vertices[0], (list, tuple))
-    meshes = (meshes_py if is_py_input else meshes_np)(vertices, edges, polygons)
-    meshes = join_meshes(meshes)
-    out_vertices, out_edges, out_polygons = to_elements(meshes)
-
-    return out_vertices, out_edges, out_polygons
-
-
 def apply_matrices(
         *,
         vertices: SvVerts,
@@ -94,7 +85,6 @@ def apply_matrices(
     out_vertices, out_edges, out_polygons = join_meshes(vertices=sub_vertices, edges=sub_edges, polygons=sub_polygons)
     return out_vertices, out_edges, out_polygons
 
-
 def apply_matrix(
         *,
         vertices: SvVerts,
@@ -116,6 +106,50 @@ def apply_matrix(
     new_vertices = _apply_matrices(vertices, matrix)
 
     return new_vertices, edges, polygons
+
+def join_meshes(*, vertices: List[SvVerts], edges: List[SvEdges], polygons: List[SvPolys]):
+    joined_vertices = []
+    joined_edges = []
+    joined_polygons = []
+
+    if not vertices:
+        return joined_vertices, joined_edges, joined_polygons
+    else:
+        if isinstance(vertices[0], np.ndarray):
+            joined_vertices = np.concatenate(vertices)
+        else:
+            joined_vertices = [v for vs in vertices for v in vs]
+
+    if edges:
+        vertexes_number = 0
+        for i, es in enumerate(edges):
+            if es:
+                if isinstance(es, np.ndarray):
+                    joined_edges.extend((es + vertexes_number).tolist())
+                else:
+                    joined_edges.extend([(e[0] + vertexes_number, e[1] + vertexes_number) for e in es])
+                vertexes_number += len(vertices[i])
+
+    if polygons:
+        vertexes_number = 0
+        for i, ps in enumerate(polygons):
+            if ps:
+                if isinstance(ps, np.ndarray):
+                    joined_polygons.extend((ps + vertexes_number).tolist())
+                else:
+                    joined_polygons.extend([[i + vertexes_number for i in p] for p in ps])
+                vertexes_number += len(vertices[i])
+
+    return joined_vertices, joined_edges, joined_polygons
+
+def resize_list(lst, length):
+    if len(lst) >= length:
+        return lst[:length]
+
+    if not lst:
+        return lst
+
+    return lst + [lst[-1]] * (length - len(lst))
 
 class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, 
                         #SvRecursiveNode,
@@ -409,7 +443,7 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         if invalid_elems:
             pass
         else:
-            out_vertices, out_edges, out_polygons = [], [], []
+            out_vertices, out_edges, out_polygons, out_matrices = [], [], [], []
             for I, elem_I in elems.items():
                 verts_I = elem_I.vertices
                 edges_I = elem_I.edges
@@ -426,7 +460,23 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                     group_matrices  = self.inputs[matrices_I.socket_name].sv_get(default=[], deepcopy=False)
 
                     # fixing matrices nesting level if necessary, this is for back capability, can be removed later on
-                    if group_matrices:
+                    max_length = max([len(elem) for elem in [group_vertices, group_edges, group_polygons, group_matrices if group_matrices else [Matrix()] ] ])
+                    group_out_vertices, group_out_edges, group_out_polygons, group_out_matrices = resize_list(group_vertices, max_length), resize_list(group_edges, max_length), resize_list(group_polygons, max_length), resize_list(group_matrices, max_length)
+                    # if group_matrices:
+                    #     is_flat_list = not isinstance(group_matrices[0], (list, tuple))
+                    #     if is_flat_list:
+                    #         _apply_matrix = vectorize(apply_matrix, match_mode='REPEAT')
+                    #         group_out_vertices, group_out_edges, group_out_polygons = _apply_matrix(
+                    #             vertices=group_vertices, edges=group_edges, polygons=group_polygons, matrix=group_matrices, implementation_mode=self.implementation_mode)
+                    #     else:
+                    #         _apply_matrix = vectorize(apply_matrices, match_mode="REPEAT")
+                    #         group_out_vertices, group_out_edges, group_out_polygons = _apply_matrix(
+                    #             vertices=group_vertices or None, edges=group_edges or None, polygons=group_polygons or None, matrices=group_matrices or None,
+                    #             implementation_mode=self.implementation_mode)
+                    # else:
+                    #     group_out_vertices, group_out_edges, group_out_polygons, group_out_matrices = group_vertices, group_edges, group_polygons, [Matrix()]
+
+                    if self.mesh_join:
                         is_flat_list = not isinstance(group_matrices[0], (list, tuple))
                         if is_flat_list:
                             _apply_matrix = vectorize(apply_matrix, match_mode='REPEAT')
@@ -437,10 +487,7 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                             group_out_vertices, group_out_edges, group_out_polygons = _apply_matrix(
                                 vertices=group_vertices or None, edges=group_edges or None, polygons=group_polygons or None, matrices=group_matrices or None,
                                 implementation_mode=self.implementation_mode)
-                    else:
-                        group_out_vertices, group_out_edges, group_out_polygons = group_vertices, group_edges, group_polygons
 
-                    if self.mesh_join:
                         _join_mesh = devectorize(join_meshes, match_mode="REPEAT")
                         group_out_vertices, group_out_edges, group_out_polygons = _join_mesh(
                             vertices=group_out_vertices, edges=group_out_edges, polygons=group_out_polygons)
@@ -449,15 +496,22 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                             group_out_edges    if group_out_edges    is not None and len(group_out_edges   ) else group_out_edges,
                             group_out_polygons if group_out_polygons is not None and len(group_out_polygons) else group_out_polygons)
                         pass
-                    pass
-                    out_vertices.extend(group_out_vertices)
-                    out_edges   .extend(group_out_edges)
-                    out_polygons.extend(group_out_polygons)
+                        out_vertices.append(group_out_vertices)
+                        out_edges   .append(group_out_edges)
+                        out_polygons.append(group_out_polygons) 
+                        #out_matrices.append(group_out_matrices[0]) 
+                        out_matrices.append(Matrix()) 
+                    else:
+                        out_vertices.extend(group_out_vertices)
+                        out_edges   .extend(group_out_edges)
+                        out_polygons.extend(group_out_polygons) 
+                        out_matrices.extend(group_out_matrices) 
                 pass
 
         self.outputs['vertices'].sv_set(out_vertices)
         self.outputs['edges'   ].sv_set(out_edges)
         self.outputs['polygons'].sv_set(out_polygons)
+        self.outputs['matrices'].sv_set(out_matrices)
 
 
 classes = [SvMeshJoinNodeMK3,]
