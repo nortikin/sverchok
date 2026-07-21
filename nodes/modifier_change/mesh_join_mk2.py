@@ -151,6 +151,29 @@ def resize_list(lst, length):
 
     return lst + [lst[-1]] * (length - len(lst))
 
+def group_meshes_join(group_vertices, group_edges, group_polygons, group_matrices, implementation_mode ):
+    # fixing matrices nesting level if necessary, this is for back capability, can be removed later on
+    is_flat_list = not isinstance(group_matrices[0], (list, tuple))
+    if is_flat_list:
+        _apply_matrix = vectorize(apply_matrix, match_mode='REPEAT')
+        group_out_vertices, group_out_edges, group_out_polygons = _apply_matrix(
+            vertices=group_vertices, edges=group_edges, polygons=group_polygons, matrix=group_matrices, implementation_mode=implementation_mode)
+    else:
+        _apply_matrix = vectorize(apply_matrices, match_mode="REPEAT")
+        group_out_vertices, group_out_edges, group_out_polygons = _apply_matrix(
+            vertices=group_vertices or None, edges=group_edges or None, polygons=group_polygons or None, matrices=group_matrices or None,
+            implementation_mode=implementation_mode)
+
+    _join_mesh = devectorize(join_meshes, match_mode="REPEAT")
+    group_out_vertices, group_out_edges, group_out_polygons = _join_mesh(
+        vertices=group_out_vertices, edges=group_out_edges, polygons=group_out_polygons)
+    group_out_vertices, group_out_edges, group_out_polygons = (
+        group_out_vertices if group_out_vertices is not None and len(group_out_vertices) else group_out_vertices,
+        group_out_edges    if group_out_edges    is not None and len(group_out_edges   ) else group_out_edges,
+        group_out_polygons if group_out_polygons is not None and len(group_out_polygons) else group_out_polygons)
+    
+    return (group_out_vertices, group_out_edges, group_out_polygons, group_matrices)
+
 class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, 
                         #SvRecursiveNode,
                         ):
@@ -176,7 +199,7 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
 
     do_last_group_empty: bpy.props.BoolProperty(
         name='Last Group Empty',
-        default=True,
+        default=False,
         update=update_do_last_group_empty,
         description="If set then add empty group after last element"
     )
@@ -202,9 +225,16 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         # root.use_property_split = True
         # root.use_property_decorate = False
         root.prop(self, 'mesh_join')
-        root.prop(self, 'do_last_group_empty')
+        
+    def draw_buttons_ext(self, context, layout):
+        root = layout
         root.label(text='Implementation:')
-        root.row(align=True).prop(self, 'implementation_mode', expand=True)
+        row = root.row(align=True)
+        row.enabled = self.mesh_join
+        row.prop(self, 'implementation_mode', expand=True)
+
+        root.prop(self, 'do_last_group_empty')
+        return
 
     def sv_init(self, context):
         groups = self.inputs.new('SvStringsSocket', 'groups')
@@ -340,13 +370,13 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         # Проверить, если к последней группе подключен хоть один link, то добавить после последней группы ещё одну группу
         if elems:
             elems_last = elems[len(elems)-1]
-            if self.do_last_group_empty==True and any( [getattr(elems_last, name).is_linked==True for name in group_names])==True:
+            if self.do_last_group_empty==False and any( [getattr(elems_last, name).is_linked==True for name in group_names])==True:
                 max_idx = len(elems)
                 elems[max_idx] = SocketsGroup(max_idx, group_names)
                 elems[max_idx].vertices.valid = True
                 elems[max_idx].edges.valid = True
                 elems[max_idx].polygons.valid = True
-            elif self.do_last_group_empty==False and any( [getattr(elems_last, name).is_linked==True for name in group_names])==False and len(elems)>1:
+            elif self.do_last_group_empty==True and any( [getattr(elems_last, name).is_linked==True for name in group_names])==False and len(elems)>1:
                 del elems[len(elems)-1]
             pass
 
@@ -462,44 +492,14 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                     # fixing matrices nesting level if necessary, this is for back capability, can be removed later on
                     max_length = max([len(elem) for elem in [group_vertices, group_edges, group_polygons, group_matrices if group_matrices else [Matrix()] ] ])
                     group_out_vertices, group_out_edges, group_out_polygons, group_out_matrices = resize_list(group_vertices, max_length), resize_list(group_edges, max_length), resize_list(group_polygons, max_length), resize_list(group_matrices, max_length)
-                    # if group_matrices:
-                    #     is_flat_list = not isinstance(group_matrices[0], (list, tuple))
-                    #     if is_flat_list:
-                    #         _apply_matrix = vectorize(apply_matrix, match_mode='REPEAT')
-                    #         group_out_vertices, group_out_edges, group_out_polygons = _apply_matrix(
-                    #             vertices=group_vertices, edges=group_edges, polygons=group_polygons, matrix=group_matrices, implementation_mode=self.implementation_mode)
-                    #     else:
-                    #         _apply_matrix = vectorize(apply_matrices, match_mode="REPEAT")
-                    #         group_out_vertices, group_out_edges, group_out_polygons = _apply_matrix(
-                    #             vertices=group_vertices or None, edges=group_edges or None, polygons=group_polygons or None, matrices=group_matrices or None,
-                    #             implementation_mode=self.implementation_mode)
-                    # else:
-                    #     group_out_vertices, group_out_edges, group_out_polygons, group_out_matrices = group_vertices, group_edges, group_polygons, [Matrix()]
 
                     if self.mesh_join:
-                        is_flat_list = not isinstance(group_matrices[0], (list, tuple))
-                        if is_flat_list:
-                            _apply_matrix = vectorize(apply_matrix, match_mode='REPEAT')
-                            group_out_vertices, group_out_edges, group_out_polygons = _apply_matrix(
-                                vertices=group_vertices, edges=group_edges, polygons=group_polygons, matrix=group_matrices, implementation_mode=self.implementation_mode)
-                        else:
-                            _apply_matrix = vectorize(apply_matrices, match_mode="REPEAT")
-                            group_out_vertices, group_out_edges, group_out_polygons = _apply_matrix(
-                                vertices=group_vertices or None, edges=group_edges or None, polygons=group_polygons or None, matrices=group_matrices or None,
-                                implementation_mode=self.implementation_mode)
+                        group_out_vertices, group_out_edges, group_out_polygons, group_out_matrices = group_meshes_join(group_out_vertices, group_out_edges, group_out_polygons, group_out_matrices, self.implementation_mode, )
 
-                        _join_mesh = devectorize(join_meshes, match_mode="REPEAT")
-                        group_out_vertices, group_out_edges, group_out_polygons = _join_mesh(
-                            vertices=group_out_vertices, edges=group_out_edges, polygons=group_out_polygons)
-                        group_out_vertices, group_out_edges, group_out_polygons = (
-                            group_out_vertices if group_out_vertices is not None and len(group_out_vertices) else group_out_vertices,
-                            group_out_edges    if group_out_edges    is not None and len(group_out_edges   ) else group_out_edges,
-                            group_out_polygons if group_out_polygons is not None and len(group_out_polygons) else group_out_polygons)
-                        pass
                         out_vertices.append(group_out_vertices)
                         out_edges   .append(group_out_edges)
                         out_polygons.append(group_out_polygons) 
-                        #out_matrices.append(group_out_matrices[0]) 
+                        #out_matrices.append( [ group_out_matrices[0] ] ) 
                         out_matrices.append(Matrix()) 
                     else:
                         out_vertices.extend(group_out_vertices)
@@ -507,6 +507,11 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                         out_polygons.extend(group_out_polygons) 
                         out_matrices.extend(group_out_matrices) 
                 pass
+
+            if self.mesh_join:
+                out_vertices, out_edges, out_polygons, out_matrices = group_meshes_join(out_vertices, out_edges, out_polygons, out_matrices, self.implementation_mode, )
+                out_vertices, out_edges, out_polygons = [out_vertices], [out_edges], [out_polygons]
+                out_matrices = [out_matrices[0]]
 
         self.outputs['vertices'].sv_set(out_vertices)
         self.outputs['edges'   ].sv_set(out_edges)
