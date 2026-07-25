@@ -190,7 +190,8 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
     groups_offset = 1 # Количество обязательных сокетов. Их надо пропустить
     group_struct = {'vertices':{'sverchok_socket_type': 'SvVerticesSocket'}, 'edges':{'sverchok_socket_type':'SvStringsSocket'}, 'polygons':{'sverchok_socket_type':'SvStringsSocket',}, 'matrices': {'sverchok_socket_type': 'SvMatrixSocket', }} # список имён сокетов в группе. Последовательность важна. Если сокеты встретятся в другой последовательности, то это будет считаться ошибкой
 
-    mesh_join: bpy.props.BoolProperty(name='Join', default=True, update=updateNode, description="If set, then this node will join output meshes into one mesh")
+    mesh_join: bpy.props.BoolProperty(name='Join', default=False, update=updateNode, description="If set, then this node will join output meshes into one mesh")
+    apply_matrixes: bpy.props.BoolProperty(name='Apply Matrixes', default=False, update=updateNode, description="If set, then this node will apply matrices to output meshes")
 
     def update_do_last_group_empty(self, context):
         self.sv_update()
@@ -225,6 +226,8 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         # root.use_property_split = True
         # root.use_property_decorate = False
         root.prop(self, 'mesh_join')
+        row = root.row(align=True)
+        row.prop(self, 'apply_matrixes')
         
     def draw_buttons_ext(self, context, layout):
         root = layout
@@ -488,6 +491,8 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                     group_edges     = self.inputs[edges_I.socket_name   ].sv_get(default=[], deepcopy=False)
                     group_polygons  = self.inputs[polygons_I.socket_name].sv_get(default=[], deepcopy=False)
                     group_matrices  = self.inputs[matrices_I.socket_name].sv_get(default=[], deepcopy=False)
+                    if not group_matrices:
+                        group_matrices = [Matrix()]
 
                     # fixing matrices nesting level if necessary, this is for back capability, can be removed later on
                     max_length = max([len(elem) for elem in [group_vertices, group_edges, group_polygons, group_matrices if group_matrices else [Matrix()] ] ])
