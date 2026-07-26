@@ -58,76 +58,7 @@ class SocketsGroup:
         attr_name = self.attr_by_index[index]
         setattr(self, attr_name, value)
 
-def apply_matrices(
-        *,
-        vertices: SvVerts,
-        edges: SvEdges,
-        polygons: SvPolys,
-        matrices: List[Matrix],
-        implementation_mode: str = 'Python') -> Tuple[SvVerts, SvEdges, SvPolys]:
-    """several matrices can be applied to a mesh
-    in this case each matrix will populate geometry inside object"""
-
-    if not matrices or (vertices is None or not len(vertices)):
-        return vertices, edges, polygons
-
-    if implementation_mode == 'NumPy':
-        vertices = np.asarray(vertices, dtype=np.float32)
-
-    _apply_matrices = matrix_apply_np if isinstance(vertices, np.ndarray) else apply_matrix_to_vertices_py
-
-    sub_vertices = []
-    sub_edges = [edges] * len(matrices) if edges else None
-    sub_polygons = [polygons] * len(matrices) if polygons else None
-    for matrix in matrices:
-        sub_vertices.append(_apply_matrices(vertices, matrix))
-
-    out_vertices, out_edges, out_polygons = join_meshes(vertices=sub_vertices, edges=sub_edges, polygons=sub_polygons)
-    return out_vertices, out_edges, out_polygons
-
-def apply_matrix(
-        *,
-        vertices: SvVerts,
-        edges: SvEdges,
-        polygons: SvPolys,
-        matrix: Matrix,
-        implementation_mode: str = 'Python') -> Tuple[SvVerts, SvEdges, SvPolys]:
-    """several matrices can be applied to a mesh
-    in this case each matrix will populate geometry inside object"""
-
-    if not matrix or (vertices is None or not len(vertices)):
-        return vertices, edges, polygons
-
-    if implementation_mode == 'NumPy':
-        vertices = np.asarray(vertices, dtype=np.float32)
-
-    _apply_matrices = matrix_apply_np if isinstance(vertices, np.ndarray) else apply_matrix_to_vertices_py
-
-    new_vertices = _apply_matrices(vertices, matrix)
-
-    return new_vertices, edges, polygons
-
-def apply_matrix01(
-        *,
-        vertices: SvVerts,
-        matrix: Matrix,
-        implementation_mode: str = 'Python') -> Tuple[SvVerts, SvEdges, SvPolys]:
-    """several matrices can be applied to a mesh
-    in this case each matrix will populate geometry inside object"""
-
-    if not matrix or (vertices is None or not len(vertices)):
-        return vertices
-
-    if implementation_mode == 'NumPy':
-        vertices = np.asarray(vertices, dtype=np.float32)
-
-    _apply_matrices = matrix_apply_np if isinstance(vertices, np.ndarray) else apply_matrix_to_vertices_py
-
-    new_vertices = _apply_matrices(vertices, matrix)
-
-    return new_vertices
-
-def apply_matrix02(objs, matrices):
+def apply_matrix(objs, matrices):
     new_objects_vertices = []
     for object1_vertices, mat1 in zip(objs, matrices):
         if mat1==Matrix():
@@ -141,7 +72,7 @@ def apply_matrix02(objs, matrices):
 
     return new_objects_vertices
 
-def join_meshes02(meshes):
+def join_meshes(meshes):
     """
     meshes:
         iterable из троек:
@@ -170,40 +101,38 @@ def join_meshes02(meshes):
 
     return result_vertices, result_edges, result_faces
 
-def join_meshes(*, vertices: List[SvVerts], edges: List[SvEdges], polygons: List[SvPolys]):
-    joined_vertices = []
-    joined_edges = []
-    joined_polygons = []
+def clear_mesh(meshes):
+    """
+    meshes:
+        iterable из троек:
+        (vertices, edges, faces)
+    """
+    result_vertices = []
+    result_edges = []
+    result_faces = []
 
-    if not vertices:
-        return joined_vertices, joined_edges, joined_polygons
-    else:
-        if isinstance(vertices[0], np.ndarray):
-            joined_vertices = np.concatenate(vertices)
-        else:
-            joined_vertices = [v for vs in vertices for v in vs]
+    for vertices, edges, faces in meshes:
+        obj_vertices = vertices
+        obj_edges = []
+        obj_faces = []
 
-    if edges:
-        vertexes_number = 0
-        for i, es in enumerate(edges):
-            if es:
-                if isinstance(es, np.ndarray):
-                    joined_edges.extend((es + vertexes_number).tolist())
-                else:
-                    joined_edges.extend([(e[0] + vertexes_number, e[1] + vertexes_number) for e in es])
-                vertexes_number += len(vertices[i])
+        if edges:
+            obj_edges.extend(
+                [ edge for edge in edges if len(edge)>=2]
+            )
 
-    if polygons:
-        vertexes_number = 0
-        for i, ps in enumerate(polygons):
-            if ps:
-                if isinstance(ps, np.ndarray):
-                    joined_polygons.extend((ps + vertexes_number).tolist())
-                else:
-                    joined_polygons.extend([[i + vertexes_number for i in p] for p in ps])
-                vertexes_number += len(vertices[i])
+        if faces:
+            obj_faces.extend(
+                [ face for face in faces if len(face) >= 3]
+            )
+        pass
 
-    return joined_vertices, joined_edges, joined_polygons
+        result_vertices.append( obj_vertices )
+        result_edges.append( obj_edges )
+        result_faces.append( obj_faces )
+
+
+    return result_vertices, result_edges, result_faces
 
 def resize_list(lst, length):
     if isinstance(lst, (list, tuple)):
@@ -216,35 +145,6 @@ def resize_list(lst, length):
         return lst + [lst[-1]] * (length - len(lst))
     else:
         return lst
-
-def group_meshes_join(group_vertices, group_edges, group_polygons, group_matrices, implementation_mode ):
-    _apply_matrix = vectorize(apply_matrix, match_mode='REPEAT')
-    group_out_vertices, group_out_edges, group_out_polygons = _apply_matrix(vertices=group_vertices, edges=group_edges, polygons=group_polygons if group_polygons else None, matrix=group_matrices, implementation_mode=implementation_mode)
-
-    _join_mesh = devectorize(join_meshes, match_mode="REPEAT")
-    group_out_vertices, group_out_edges, group_out_polygons = _join_mesh(
-        vertices=group_out_vertices, edges=group_out_edges, polygons=group_out_polygons)
-    group_out_vertices, group_out_edges, group_out_polygons = (
-        group_out_vertices if group_out_vertices is not None and len(group_out_vertices) else group_out_vertices,
-        group_out_edges    if group_out_edges    is not None and len(group_out_edges   ) else group_out_edges,
-        group_out_polygons if group_out_polygons is not None and len(group_out_polygons) else group_out_polygons)
-    
-    return (group_out_vertices, group_out_edges, group_out_polygons, group_matrices)
-
-def group_meshes_join01(group_vertices, group_edges, group_polygons, group_matrices, implementation_mode ):
-    _apply_matrix01 = vectorize(apply_matrix01, match_mode='REPEAT')
-    group_out_vertices = _apply_matrix01(vertices=group_vertices, matrix=group_matrices, implementation_mode=implementation_mode)
-    group_out_edges, group_out_polygons = group_edges, group_polygons
-
-    _join_mesh = devectorize(join_meshes, match_mode="REPEAT")
-    group_out_vertices, group_out_edges, group_out_polygons = _join_mesh(
-        vertices=group_out_vertices, edges=group_out_edges, polygons=group_out_polygons)
-    group_out_vertices, group_out_edges, group_out_polygons = (
-        group_out_vertices if group_out_vertices is not None and len(group_out_vertices) else group_out_vertices,
-        group_out_edges    if group_out_edges    is not None and len(group_out_edges   ) else group_out_edges,
-        group_out_polygons if group_out_polygons is not None and len(group_out_polygons) else group_out_polygons)
-    
-    return (group_out_vertices, group_out_edges, group_out_polygons, group_matrices)
 
 def flatten_integer_groups(data):
     def _flatten_integer_groups(data):
@@ -265,7 +165,7 @@ def flatten_integer_groups(data):
                 yield from flatten_integer_groups(item)
             else:
                 raise ValueError(
-                    f"Элемент {item!r} находится вне конечного списка чисел"
+                    f"Element {item!r}, mixed level"
                 )
         return
 
@@ -353,7 +253,6 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         pols1.default_mode = 'EMPTY_LIST'
         pols1.label = 'Polygons'
 
-        # TODO: позже вернуь перед polygons
         edges1 = self.inputs.new('SvStringsSocket', 'edges1')
         edges1.nesting_level = 3
         edges1.default_mode = 'EMPTY_LIST'
@@ -496,7 +395,7 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                 break
             pass
 
-        # Если минмальный индекс некорректной позиции не найден (все сокеты корректно находятся на своих местах), 
+        # Если минимальный индекс некорректной позиции не найден (все сокеты корректно находятся на своих местах), 
         # то определить максимальный индекс входных сокетов, чтобы стереть лишние группы.
         if min_invalid_pos is None:
             min_invalid_pos = self.groups_offset + len(elems)*len_group_names
@@ -562,10 +461,6 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         pols.nesting_level = 3
         pols.default_mode = 'EMPTY_LIST'
 
-    # def process_data(self, params):
-    #     #return mesh_join(*params)
-    #     return [[],[],[],[]]
-
     def process(self):
         
         group_names = tuple(self.group_struct)
@@ -596,6 +491,7 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
 
                 out_vertices_IJ, out_edges_IJ, out_polygons_IJ, out_matrices_IJ = [], [], [], []
 
+                # collect  group data
                 for IJ, elem_IJ in join_group_elems.items():
                     verts_IJ = elem_IJ.vertices
                     edges_IJ = elem_IJ.edges
@@ -628,34 +524,32 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                     pass
 
                 if len(out_vertices_IJ)==0:
-                    # Skip
+                    # Skip if no vertices
                     continue
 
                 if self.matrixes_apply==False and self.mesh_join==False:
                     # Combine all input sockets and pass data to output
-                    #out_vertices_IJ, out_edges_IJ, out_polygons_IJ, out_matrices_IJ = [out_vertices_IJ], [out_edges_IJ], [out_polygons_IJ], [out_matrices_IJ]
+                    out_vertices_IJ, out_edges_IJ, out_polygons_IJ = clear_mesh(list(zip(out_vertices_IJ, out_edges_IJ, out_polygons_IJ)))
                     pass
                 elif self.matrixes_apply==False and self.mesh_join==True:
                     # Only join meshes into the first object's space.
                     m0 = out_matrices_IJ[0]
                     m0_inverted = m0.inverted()
                     out_matrices_IJ = [m0_inverted @ mat for mat in out_matrices_IJ]
-                    out_vertices_IJ = apply_matrix02(out_vertices_IJ, out_matrices_IJ)
-                    out_vertices_IJ, out_edges_IJ, out_polygons_IJ = join_meshes02(list(zip(out_vertices_IJ, out_edges_IJ, out_polygons_IJ)))
+                    out_vertices_IJ = apply_matrix(out_vertices_IJ, out_matrices_IJ)
+                    out_vertices_IJ, out_edges_IJ, out_polygons_IJ = join_meshes(list(zip(out_vertices_IJ, out_edges_IJ, out_polygons_IJ)))
                     out_vertices_IJ, out_edges_IJ, out_polygons_IJ = [out_vertices_IJ], [out_edges_IJ], [out_polygons_IJ]
                     out_matrices_IJ = [m0]
                     pass
                 elif self.matrixes_apply==True and self.mesh_join==False:
                     # Only Apply matrices and transfer results to outputs. Do not join meshes.
-                    out_vertices_IJ = apply_matrix02(out_vertices_IJ, out_matrices_IJ)
+                    out_vertices_IJ = apply_matrix(out_vertices_IJ, out_matrices_IJ)
                     out_matrices_IJ = [Matrix() for mat in out_matrices_IJ]
                     pass
                 elif self.matrixes_apply==True and self.mesh_join==True:
                     # Apply all matrixes and merge meshes into the first object. Set output matrix as Identity.
-                    #out_vertices_IJ, out_edges_IJ, out_polygons_IJ, out_matrices_IJ = group_meshes_join01(out_vertices_IJ, out_edges_IJ, out_polygons_IJ, out_matrices_IJ, self.implementation_mode, )
-                    #out_vertices_IJ, out_edges_IJ, out_polygons_IJ = [out_vertices_IJ], [out_edges_IJ], [out_polygons_IJ]
-                    out_vertices_IJ = apply_matrix02(out_vertices_IJ, out_matrices_IJ)
-                    out_vertices_IJ, out_edges_IJ, out_polygons_IJ = join_meshes02(list(zip(out_vertices_IJ, out_edges_IJ, out_polygons_IJ)))
+                    out_vertices_IJ = apply_matrix(out_vertices_IJ, out_matrices_IJ)
+                    out_vertices_IJ, out_edges_IJ, out_polygons_IJ = join_meshes(list(zip(out_vertices_IJ, out_edges_IJ, out_polygons_IJ)))
                     out_vertices_IJ, out_edges_IJ, out_polygons_IJ = [out_vertices_IJ], [out_edges_IJ], [out_polygons_IJ]
                     out_matrices_IJ = [Matrix()]
 
