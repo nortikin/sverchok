@@ -80,7 +80,12 @@ class SvMaskJoinNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
     def apply_choice_mask(self, mask, data_t, data_f):
         out = []
-        param = list_match_func[self.list_match_global]([mask, data_t, data_f])
+        if len(data_t) == 0:
+            data_t = [None] * len(data_f)
+        elif len(data_f) == 0:
+            data_f = [None] * len(data_t)
+            
+        param = list_match_func[self.list_match_global]([mask, data_t, data_f])      
         for m, t, f in zip(*param):
             if m:
                 out.append(t)
