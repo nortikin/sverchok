@@ -61,6 +61,20 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
     show_shadows: BoolProperty(default=False, update=updateNode, name="Show Shadows")
     show_in_front: BoolProperty(default=False, update=updateNode, name="Show In Front")
 
+    display_types = [
+        ('BOUNDS', "Bounds", "BOUNDS: Display the bounds of the object", "MATPLANE", 0),
+        ('WIRE', "Wire", "WIRE: Display the object as a wireframe", "MESH_CUBE", 1),
+        ('SOLID', "Solid", "SOLID: Display the object as a solid (if solid drawing is enabled in the viewport)", "SNAP_VOLUME", 2),  #custom_icon("SV_MAKE_SOLID")
+        ('TEXTURED', "Textured", "TEXTURED: Display the object with textures (if textures are enabled in the viewport)", "TEXTURE",  3),
+    ]
+
+    display_type : bpy.props.EnumProperty(
+        name = "Display As",
+        items = display_types,
+        default = 'TEXTURED',
+        update = updateNode)
+
+
     material: bpy.props.PointerProperty(type=bpy.types.Material, update=updateNode)
     is_lock_origin: bpy.props.BoolProperty(name="Lock Origin", default=True, update=updateNode,
                                            description="If unlock origin can be set manually")
@@ -90,10 +104,26 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         col.prop(self, 'is_lock_origin', text="Origin", icon='LOCKED' if self.is_lock_origin else 'UNLOCKED')
         row.prop(self, 'is_merge', text='Merge', toggle=1, icon='AUTOMERGE_ON' if self.is_merge else 'AUTOMERGE_OFF')
 
+        layout.label(text='Vieweport Display:')
+        row = layout.row(align=True)
+        row.prop(self, 'show_name', icon_only=True, toggle=True, icon='OUTLINER_OB_FONT', )
+        row.prop(self, 'show_axis', icon_only=True, toggle=True, icon='EMPTY_AXIS', )
+        row.prop(self, 'show_wireframe', icon_only=True, toggle=True, icon='MOD_WIREFRAME', )
+        row.prop(self, 'show_all_edges', icon_only=True, toggle=True, icon='MOD_EDGESPLIT', )
+        row.prop(self, 'show_texture_space', icon_only=True, toggle=True, icon='NODE_TEXTURE', )
+        row.prop(self, 'show_shadows', icon_only=True, toggle=True, icon='SELECT_EXTEND', )
+        row.prop(self, 'show_in_front', icon_only=True, toggle=True, icon='FACESEL', )
+        layout.label(text='Display As:')
+        layout.prop(self, 'display_type', expand=True, text='')
+
+
+
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'fast_mesh_update', text='Fast mesh update')
         layout.prop(self, 'is_smooth_mesh', text='smooth shade')
         layout.prop(self, 'draw_3dpanel')
+
+        layout.label(text='Vieweport Display:')
         layout.prop(self, 'show_name')
         layout.prop(self, 'show_axis')
         layout.prop(self, 'show_wireframe')
@@ -101,6 +131,9 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         layout.prop(self, 'show_texture_space')
         layout.prop(self, 'show_shadows')
         layout.prop(self, 'show_in_front')
+
+        layout.label(text='Display As:')
+        layout.prop(self, 'display_type', expand=True, text='')
 
     def draw_matrix_props(self, socket, context, layout):
         socket.draw_quick_link(context, layout, self)
@@ -229,6 +262,7 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         [setattr(prop.obj, 'show_texture_space', self.show_texture_space) for prop in self.object_data]
         [setattr(prop.obj.display, 'show_shadows', self.show_shadows) for prop in self.object_data]
         [setattr(prop.obj, 'show_in_front', self.show_in_front) for prop in self.object_data]
+        [setattr(prop.obj, 'display_type', self.display_type) for prop in self.object_data]
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 
