@@ -53,7 +53,14 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         description='Apply matrices to',
         update=updateNode)
 
+    show_name: BoolProperty(default=False, update=updateNode, name="Show Name")
+    show_axis: BoolProperty(default=False, update=updateNode, name="Show Axes")
     show_wireframe: BoolProperty(default=False, update=updateNode, name="Show Edges")
+    show_all_edges: BoolProperty(default=False, update=updateNode, name="Show All Edges")
+    show_texture_space: BoolProperty(default=False, update=updateNode, name="Show Texture Space")
+    show_shadows: BoolProperty(default=False, update=updateNode, name="Show Shadows")
+    show_in_front: BoolProperty(default=False, update=updateNode, name="Show In Front")
+
     material: bpy.props.PointerProperty(type=bpy.types.Material, update=updateNode)
     is_lock_origin: bpy.props.BoolProperty(name="Lock Origin", default=True, update=updateNode,
                                            description="If unlock origin can be set manually")
@@ -87,6 +94,13 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         layout.prop(self, 'fast_mesh_update', text='Fast mesh update')
         layout.prop(self, 'is_smooth_mesh', text='smooth shade')
         layout.prop(self, 'draw_3dpanel')
+        layout.prop(self, 'show_name')
+        layout.prop(self, 'show_axis')
+        layout.prop(self, 'show_wireframe')
+        layout.prop(self, 'show_all_edges')
+        layout.prop(self, 'show_texture_space')
+        layout.prop(self, 'show_shadows')
+        layout.prop(self, 'show_in_front')
 
     def draw_matrix_props(self, socket, context, layout):
         socket.draw_quick_link(context, layout, self)
@@ -208,7 +222,13 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
                                 to_show=[self.id_data.sv_show and self.show_objects]
                                 )
         [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, cycle(obj_matrices))]
+        [setattr(prop.obj, 'show_name', self.show_name) for prop in self.object_data]
+        [setattr(prop.obj, 'show_axis', self.show_axis) for prop in self.object_data]
         [setattr(prop.obj, 'show_wire', self.show_wireframe) for prop in self.object_data]
+        [setattr(prop.obj, 'show_all_edges', self.show_all_edges) for prop in self.object_data]
+        [setattr(prop.obj, 'show_texture_space', self.show_texture_space) for prop in self.object_data]
+        [setattr(prop.obj.display, 'show_shadows', self.show_shadows) for prop in self.object_data]
+        [setattr(prop.obj, 'show_in_front', self.show_in_front) for prop in self.object_data]
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 
