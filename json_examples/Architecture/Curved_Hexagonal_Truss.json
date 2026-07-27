@@ -2,46 +2,59 @@
   "export_version": "1.0",
   "main_tree": {
     "nodes": {
-      "A Number": {
+      "Frame": {
         "attributes": {
           "location": [
-            -1646.4666748046875,
-            -208.64300537109375
+            -856.2003173828125,
+            699.0258178710938
           ],
-          "parent": {
-            "type": "NODE",
-            "value": "Frame"
-          }
+          "height": 456.0,
+          "width": 1426.0,
+          "label": "Control Surface"
         },
-        "properties": {
-          "int_": 3,
-          "selected_mode": "int"
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.001": {
+        "attributes": {
+          "location": [
+            -90.38467407226562,
+            316.083984375
+          ],
+          "height": 565.0,
+          "width": 792.0,
+          "label": "Cover"
         },
-        "inputs": {
-          "Float": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Int",
-            "properties": {
-              "prop_name": "int_"
-            }
-          }
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.002": {
+        "attributes": {
+          "location": [
+            176.56289672851562,
+            -4.583076477050781
+          ],
+          "height": 782.9999389648438,
+          "width": 1551.0,
+          "label": "Structure"
         },
-        "outputs": {
-          "Int": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Int",
-            "properties": {
-              "custom_draw": "mode_custom_draw"
-            }
-          }
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.003": {
+        "attributes": {
+          "location": [
+            72.0343017578125,
+            189.9449462890625
+          ],
+          "height": 523.0,
+          "width": 692.0,
+          "label": "Surface Bending"
         },
-        "bl_idname": "SvNumberNode"
+        "bl_idname": "NodeFrame"
       },
       "Apply Vector Field": {
         "attributes": {
           "location": [
-            220.0428009033203,
-            -505.95892333984375
+            292.07708740234375,
+            -316.01397705078125
           ],
           "parent": {
             "type": "NODE",
@@ -89,8 +102,8 @@
       "Bend Along Surface Field": {
         "attributes": {
           "location": [
-            -43.929840087890625,
-            -344.50048828125
+            28.104461669921875,
+            -154.5555419921875
           ],
           "parent": {
             "type": "NODE",
@@ -146,8 +159,8 @@
       "Bounding Box": {
         "attributes": {
           "location": [
-            -271.97564697265625,
-            -482.13641357421875
+            -199.94134521484375,
+            -292.19146728515625
           ],
           "parent": {
             "type": "NODE",
@@ -249,8 +262,8 @@
       "Component Analyzer": {
         "attributes": {
           "location": [
-            685.193603515625,
-            -1086.7045364379883
+            861.7565002441406,
+            -1091.2876663208008
           ],
           "parent": {
             "type": "NODE",
@@ -310,36 +323,11 @@
         },
         "bl_idname": "SvComponentAnalyzerNode"
       },
-      "Cubic Spline": {
-        "attributes": {
-          "location": [
-            -614.0220947265625,
-            42.052978515625
-          ],
-          "parent": {
-            "type": "NODE",
-            "value": "Frame"
-          }
-        },
-        "inputs": {
-          "Vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "Vertices"
-          }
-        },
-        "outputs": {
-          "Curve": {
-            "bl_idname": "SvCurveSocket",
-            "name": "Curve"
-          }
-        },
-        "bl_idname": "SvExCubicSplineNode"
-      },
       "Curve Viewer": {
         "attributes": {
           "location": [
-            1815.5390930175781,
-            -833.4616775512695
+            1992.1019592285156,
+            -838.0447463989258
           ],
           "color": [
             1.0,
@@ -375,8 +363,8 @@
       "Curve Viewer.001": {
         "attributes": {
           "location": [
-            1813.3568420410156,
-            -1183.4738235473633
+            1989.9197082519531,
+            -1188.0569534301758
           ],
           "color": [
             1.0,
@@ -412,9 +400,10 @@
       "Dual Mesh": {
         "attributes": {
           "location": [
-            464.77508544921875,
-            -1319.6721878051758
+            641.3380126953125,
+            -1324.2553176879883
           ],
+          "width": 150.0,
           "parent": {
             "type": "NODE",
             "value": "Frame.002"
@@ -481,54 +470,6 @@
           }
         },
         "bl_idname": "SvDualMeshNodeMK2"
-      },
-      "Frame": {
-        "attributes": {
-          "location": [
-            -856.2003173828125,
-            699.0258178710938
-          ],
-          "height": 464.0,
-          "width": 1435.0,
-          "label": "Control Surface"
-        },
-        "bl_idname": "NodeFrame"
-      },
-      "Frame.001": {
-        "attributes": {
-          "location": [
-            -90.38467407226562,
-            316.083984375
-          ],
-          "height": 465.0,
-          "width": 792.0,
-          "label": "Cover"
-        },
-        "bl_idname": "NodeFrame"
-      },
-      "Frame.002": {
-        "attributes": {
-          "location": [
-            176.56289672851562,
-            -4.583076477050781
-          ],
-          "height": 783.9999389648438,
-          "width": 1551.0,
-          "label": "Structure"
-        },
-        "bl_idname": "NodeFrame"
-      },
-      "Frame.003": {
-        "attributes": {
-          "location": [
-            72.0343017578125,
-            189.9449462890625
-          ],
-          "height": 523.0,
-          "width": 692.0,
-          "label": "Surface Bending"
-        },
-        "bl_idname": "NodeFrame"
       },
       "Inset Special.001": {
         "attributes": {
@@ -707,57 +648,6 @@
           }
         },
         "bl_idname": "SvListSplitNode"
-      },
-      "Mesh Join.001": {
-        "attributes": {
-          "location": [
-            1551.0432434082031,
-            -921.8613967895508
-          ],
-          "parent": {
-            "type": "NODE",
-            "value": "Frame.002"
-          }
-        },
-        "inputs": {
-          "Vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "Vertices",
-            "properties": {
-              "is_mandatory": true,
-              "default_mode": "NONE"
-            }
-          },
-          "Edges": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Edges",
-            "properties": {
-              "nesting_level": 3
-            }
-          },
-          "Polygons": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Polygons",
-            "properties": {
-              "nesting_level": 3
-            }
-          }
-        },
-        "outputs": {
-          "Vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "Vertices"
-          },
-          "Edges": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Edges"
-          },
-          "Polygons": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Polygons"
-          }
-        },
-        "bl_idname": "SvMeshJoinNodeMk2"
       },
       "Mesh Viewer": {
         "attributes": {
@@ -1410,6 +1300,182 @@
           }
         },
         "bl_idname": "SvVectorMathNodeMK3"
+      },
+      "Cubic Spline": {
+        "attributes": {
+          "location": [
+            -631.71142578125,
+            93.64990234375
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          }
+        },
+        "bl_idname": "SvExCubicSplineNode"
+      },
+      "A Number": {
+        "attributes": {
+          "location": [
+            -1636.75439453125,
+            -200.9395751953125
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "int_": 3,
+          "selected_mode": "int"
+        },
+        "inputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Int",
+            "properties": {
+              "prop_name": "int_"
+            }
+          }
+        },
+        "outputs": {
+          "Int": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Int",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "Mesh Join": {
+        "attributes": {
+          "location": [
+            1551.0432434082031,
+            -921.8613967895508
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "inputs": {
+          "join_groups": {
+            "bl_idname": "SvStringsSocket",
+            "name": "join_groups",
+            "properties": {
+              "label": "Join Groups"
+            }
+          },
+          "vertices0": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices0",
+            "properties": {
+              "custom_draw": "draw_vertices_in_socket",
+              "label": "Vertices[0]",
+              "is_mandatory": true,
+              "default_mode": "NONE"
+            }
+          },
+          "edges0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges0",
+            "properties": {
+              "label": "Edges"
+            }
+          },
+          "polygons0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons0",
+            "properties": {
+              "label": "Polygons"
+            }
+          },
+          "matrices0": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices0",
+            "properties": {
+              "label": "Matrices"
+            }
+          },
+          "vertices1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices1",
+            "properties": {
+              "custom_draw": "draw_vertices_in_socket",
+              "label": "Vertices[1]",
+              "is_mandatory": true,
+              "default_mode": "NONE"
+            }
+          },
+          "edges1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges1",
+            "properties": {
+              "label": "Edges",
+              "nesting_level": 3
+            }
+          },
+          "polygons1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons1",
+            "properties": {
+              "label": "Polygons",
+              "nesting_level": 3
+            }
+          },
+          "matrices1": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices1",
+            "properties": {
+              "label": "Matrices"
+            }
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices",
+            "properties": {
+              "label": "Vertices"
+            }
+          },
+          "edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges",
+            "properties": {
+              "label": "Edges"
+            }
+          },
+          "polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons",
+            "properties": {
+              "label": "Polygons"
+            }
+          },
+          "matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices",
+            "properties": {
+              "label": "Matrices"
+            }
+          }
+        },
+        "bl_idname": "SvMeshJoinNodeMK3"
       }
     },
     "links": [
@@ -1474,20 +1540,14 @@
         "to_socket": "Faces"
       },
       {
-        "from_node": "List Split",
-        "from_socket": "Split.001",
-        "to_node": "Cubic Spline",
-        "to_socket": "Vertices"
-      },
-      {
-        "from_node": "Mesh Join.001",
-        "from_socket": "Vertices",
+        "from_node": "Mesh Join",
+        "from_socket": "vertices",
         "to_node": "Curve Viewer",
         "to_socket": "vertices"
       },
       {
-        "from_node": "Mesh Join.001",
-        "from_socket": "Edges",
+        "from_node": "Mesh Join",
+        "from_socket": "edges",
         "to_node": "Curve Viewer",
         "to_socket": "edges"
       },
@@ -1550,18 +1610,6 @@
         "from_socket": "Out",
         "to_node": "List Split.001",
         "to_socket": "Data"
-      },
-      {
-        "from_node": "Segment",
-        "from_socket": "Verts",
-        "to_node": "Mesh Join.001",
-        "to_socket": "Vertices"
-      },
-      {
-        "from_node": "Segment",
-        "from_socket": "Edges",
-        "to_node": "Mesh Join.001",
-        "to_socket": "Edges"
       },
       {
         "from_node": "Solidify.001",
@@ -1646,6 +1694,24 @@
         "from_socket": "Center",
         "to_node": "Vector Math",
         "to_socket": "A"
+      },
+      {
+        "from_node": "List Split",
+        "from_socket": "Split.001",
+        "to_node": "Cubic Spline",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Segment",
+        "from_socket": "Verts",
+        "to_node": "Mesh Join",
+        "to_socket": "vertices0"
+      },
+      {
+        "from_node": "Segment",
+        "from_socket": "Edges",
+        "to_node": "Mesh Join",
+        "to_socket": "edges0"
       }
     ]
   }
