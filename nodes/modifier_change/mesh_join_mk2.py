@@ -189,7 +189,7 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
     groups_offset = 1 # Количество обязательных сокетов. Их надо пропустить
     group_struct = {'vertices':{'sverchok_socket_type': 'SvVerticesSocket'}, 'edges':{'sverchok_socket_type':'SvStringsSocket'}, 'polygons':{'sverchok_socket_type':'SvStringsSocket',}, 'matrices': {'sverchok_socket_type': 'SvMatrixSocket', }} # список имён сокетов в группе. Последовательность важна. Если сокеты встретятся в другой последовательности, то это будет считаться ошибкой
 
-    mesh_join: bpy.props.BoolProperty(name='Join', default=False, update=updateNode, description="If set, then this node will join output meshes into one mesh")
+    mesh_join: bpy.props.BoolProperty(name='Join', default=True, update=updateNode, description="If set, then this node will join output meshes into one mesh")
     matrixes_apply: bpy.props.BoolProperty(name='Apply Matrixes', default=False, update=updateNode, description="If set, then this node will apply matrices to output meshes")
 
     def update_do_last_group_empty(self, context):
@@ -201,17 +201,17 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         name='Last Group Empty',
         default=False,
         update=update_do_last_group_empty,
-        description="If set then add empty group after last element"
+        description="If set, an empty group is added after the last element."
     )
 
-    implementation_modes = [
-        ("NumPy", "NumPy", "NumPy", 0),
-        ("Python", "Python", "Python", 1)]
+    # implementation_modes = [
+    #     ("NumPy", "NumPy", "NumPy", 0),
+    #     ("Python", "Python", "Python", 1)]
 
-    implementation_mode: bpy.props.EnumProperty(
-        name='Implementation', items=implementation_modes,
-        description='Choose calculation method (See Documentation)',
-        default="Python", update=updateNode)
+    # implementation_mode: bpy.props.EnumProperty(
+    #     name='Implementation', items=implementation_modes,
+    #     description='Choose calculation method (See Documentation)',
+    #     default="Python", update=updateNode)
 
     def draw_vertices_in_socket(self, socket, context, layout):
         if socket.is_linked:  # linked INPUT or OUTPUT
@@ -233,7 +233,7 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         root.label(text='Implementation:')
         row = root.row(align=True)
         row.enabled = self.mesh_join
-        row.prop(self, 'implementation_mode', expand=True)
+        #row.prop(self, 'implementation_mode', expand=True)
 
         root.prop(self, 'do_last_group_empty')
         return
@@ -241,42 +241,42 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
     def sv_init(self, context):
         join_groups = self.inputs.new('SvStringsSocket', 'join_groups')
         join_groups.label = 'Join Groups'
-        verts1 = self.inputs.new('SvVerticesSocket', 'vertices1')
-        verts1.is_mandatory = True
-        verts1.nesting_level = 3
-        verts1.default_mode = 'NONE'
-        verts1.label = 'Vertices 1'
-        verts1.custom_draw = 'draw_vertices_in_socket'
+        verts0 = self.inputs.new('SvVerticesSocket', 'vertices0')
+        verts0.is_mandatory = True
+        verts0.nesting_level = 3
+        verts0.default_mode = 'NONE'
+        verts0.label = 'Vertices 1'
+        verts0.custom_draw = 'draw_vertices_in_socket'
 
-        pols1 = self.inputs.new('SvStringsSocket', 'polygons1')
-        pols1.nesting_level = 3
-        pols1.default_mode = 'EMPTY_LIST'
-        pols1.label = 'Polygons'
+        edges0 = self.inputs.new('SvStringsSocket', 'edges0')
+        edges0.nesting_level = 3
+        edges0.default_mode = 'EMPTY_LIST'
+        edges0.label = 'Edges'
 
-        edges1 = self.inputs.new('SvStringsSocket', 'edges1')
-        edges1.nesting_level = 3
-        edges1.default_mode = 'EMPTY_LIST'
-        edges1.label = 'Edges'
+        polygons0 = self.inputs.new('SvStringsSocket', 'polygons0')
+        polygons0.nesting_level = 3
+        polygons0.default_mode = 'EMPTY_LIST'
+        polygons0.label = 'Polygons'
 
-        edges2 = self.inputs.new('SvStringsSocket', 'wrong_socket2')
-        edges2.nesting_level = 3
-        edges2.default_mode = 'EMPTY_LIST'
-        edges2.label = 'Wrong Socket2'
+        # edges2 = self.inputs.new('SvStringsSocket', 'wrong_socket2')
+        # edges2.nesting_level = 3
+        # edges2.default_mode = 'EMPTY_LIST'
+        # edges2.label = 'Wrong Socket2'
 
-        edges2 = self.inputs.new('SvStringsSocket', 'edges2')
-        edges2.nesting_level = 3
-        edges2.default_mode = 'EMPTY_LIST'
-        edges2.label = 'Edges [2]'
+        # edges2 = self.inputs.new('SvStringsSocket', 'edges2')
+        # edges2.nesting_level = 3
+        # edges2.default_mode = 'EMPTY_LIST'
+        # edges2.label = 'Edges [2]'
 
-        edges5 = self.inputs.new('SvStringsSocket', 'edges5')
-        edges5.nesting_level = 3
-        edges5.default_mode = 'EMPTY_LIST'
-        edges5.label = 'Edges [5]'
+        # edges5 = self.inputs.new('SvStringsSocket', 'edges5')
+        # edges5.nesting_level = 3
+        # edges5.default_mode = 'EMPTY_LIST'
+        # edges5.label = 'Edges [5]'
 
-        edges2 = self.inputs.new('SvStringsSocket', 'wrong_socket')
-        edges2.nesting_level = 3
-        edges2.default_mode = 'EMPTY_LIST'
-        edges2.label = 'Wrong Socket'
+        # edges2 = self.inputs.new('SvStringsSocket', 'wrong_socket')
+        # edges2.nesting_level = 3
+        # edges2.default_mode = 'EMPTY_LIST'
+        # edges2.label = 'Wrong Socket'
 
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs['vertices'].label = 'Vertices'

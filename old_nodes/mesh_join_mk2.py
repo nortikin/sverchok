@@ -45,9 +45,9 @@ class SvMeshJoinNodeMk2(
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MESH_JOIN'
 
-    # replacement_nodes = [('SvMeshJoinNodeMK3',
-    #                       dict(PolyEdge='Polygons'),
-    #                       dict(PolyEdge='Polygons'))]
+    replacement_nodes = [('SvMeshJoinNodeMK3',
+                          dict(Vertices='vertices0', Edges='edges0', Polygons='polygons0'),
+                          dict(Vertices='vertices', Edges='edges', Polygons='polygons'))]
 
     def sv_init(self, context):
         verts = self.inputs.new('SvVerticesSocket', 'Vertices')
