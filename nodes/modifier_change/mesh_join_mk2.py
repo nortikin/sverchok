@@ -103,6 +103,7 @@ def join_meshes(meshes):
 
 def clear_mesh(meshes):
     """
+    remove invalid edges and faces (generally if some input lists of edges and faces has zero length list of indexes. ex. [[ [], [0,1,2,3], [],  ]] -> [[[0,1,2,3]]]  )
     meshes:
         iterable из троек:
         (vertices, edges, faces)
@@ -146,32 +147,107 @@ def resize_list(lst, length):
     else:
         return lst
 
-def flatten_integer_groups(data):
-    def _flatten_integer_groups(data):
-        """
-        Finds a list of integers at any depth and returns them on the same level.
-        [ [[[1, 2], [3, 4]]], [[[[5, 6]]]], [7, 8], ]   =>   [ [1, 2], [3, 4], [5, 6], [7, 8], ]
-        """
-        if not isinstance(data, list):
-            raise TypeError(f"Ожидался list, получено: {type(data).__name__}")
+CONTAINER_TYPES = (list, tuple)
 
-        # The current list is already a finite group of numbers.
-        if data and all(type(item) is int for item in data):
-            yield data
+def flatten_atomic_groups(data):
+    """
+    Finds groups of atomic values at any nesting depth
+    and returns them at the same level.
+
+    list and tuple are treated as containers.
+    Everything else is treated as an atomic value:
+    int, float, str, Vector, Matrix, dict, None, custom objects, etc.
+
+    Valid:
+        [[[[1, 2.0], ["text", Vector(...)]]], [[Matrix(...), None]]]
+
+    Result:
+        [
+            [1, 2.0],
+            ["text", Vector(...)],
+            [Matrix(...), None],
+        ]
+
+    Invalid:
+        [[1, 2], 3]
+
+    A level cannot contain both containers and atomic values.
+    """
+
+    if not isinstance(data, CONTAINER_TYPES):
+        raise TypeError( f"Expected list or tuple, got {type(data).__name__}" )
+
+    def _flatten_atomic_groups(items, path=()):
+        # Empty containers produce no groups.
+        if not items:
             return
 
-        for item in data:
-            if isinstance(item, list):
-                yield from flatten_integer_groups(item)
-            else:
-                raise ValueError(
-                    f"Element {item!r}, mixed level"
-                )
-        return
+        first_is_container = isinstance( items[0], CONTAINER_TYPES, )
 
-    _res = _flatten_integer_groups(data)
-    res = list(_res)
-    return res
+        # Every element on this level must have the same role:
+        # either all containers or all atomic values.
+        for index, item in enumerate(items[1:], start=1):
+            item_is_container = isinstance( item, CONTAINER_TYPES, )
+
+            if item_is_container != first_is_container:
+                location = ( "".join(f"[{i}]" for i in path) or "[root]" )
+                expected = "container (list/tuple)" if first_is_container else "atomic value"
+                raise ValueError(f"Mixed level at {location}: element {index} has type {type(item).__name__}; expected {expected}")
+
+        if first_is_container:
+            for index, item in enumerate(items):
+                yield from _flatten_atomic_groups( item, path + (index,), )
+        else:
+            # Normalize tuple groups to lists.
+            yield list(items)
+
+    return list(_flatten_atomic_groups(data))
+
+
+def flatten_atomic(data):
+    """
+    Flattens nested lists/tuples into one list.
+
+    Each individual nesting level must contain either:
+    - only containers: list / tuple;
+    - only atomic values: anything except list / tuple.
+
+    Mixed levels raise ValueError.
+
+    Valid:
+        [[[[1, 2], [3, 4]]], [[5, 6]]]
+        -> [1, 2, 3, 4, 5, 6]
+
+    Invalid:
+        [[1, 2], 3]
+    """
+
+    if not isinstance(data, CONTAINER_TYPES):
+        raise TypeError( f"Expected list or tuple, got {type(data).__name__}" )
+
+    def _flatten(items, path=()):
+        if not items:
+            return
+
+        first_is_container = isinstance(items[0], CONTAINER_TYPES)
+
+        # Check that the current level is homogeneous.
+        for index, item in enumerate(items[1:], start=1):
+            item_is_container = isinstance(item, CONTAINER_TYPES)
+
+            if item_is_container != first_is_container:
+                location = "".join(f"[{i}]" for i in path) or "[root]"
+                expected = "list/tuple" if first_is_container else "non-container value"
+
+                raise ValueError( f"Mixed types at {location}: element {index} is {type(item).__name__}, expected {expected}" )
+
+        if first_is_container:
+            for index, item in enumerate(items):
+                yield from _flatten(item, path + (index,))
+        else:
+            yield from items
+
+    return list(_flatten(data))
 
 class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, 
                         #SvRecursiveNode,
@@ -258,26 +334,6 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         polygons0.default_mode = 'EMPTY_LIST'
         polygons0.label = 'Polygons'
 
-        # edges2 = self.inputs.new('SvStringsSocket', 'wrong_socket2')
-        # edges2.nesting_level = 3
-        # edges2.default_mode = 'EMPTY_LIST'
-        # edges2.label = 'Wrong Socket2'
-
-        # edges2 = self.inputs.new('SvStringsSocket', 'edges2')
-        # edges2.nesting_level = 3
-        # edges2.default_mode = 'EMPTY_LIST'
-        # edges2.label = 'Edges [2]'
-
-        # edges5 = self.inputs.new('SvStringsSocket', 'edges5')
-        # edges5.nesting_level = 3
-        # edges5.default_mode = 'EMPTY_LIST'
-        # edges5.label = 'Edges [5]'
-
-        # edges2 = self.inputs.new('SvStringsSocket', 'wrong_socket')
-        # edges2.nesting_level = 3
-        # edges2.default_mode = 'EMPTY_LIST'
-        # edges2.label = 'Wrong Socket'
-
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs['vertices'].label = 'Vertices'
         self.outputs.new('SvStringsSocket', 'edges')
@@ -286,6 +342,10 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         self.outputs['polygons'].label = 'Polygons'
         self.outputs.new('SvMatrixSocket', 'matrices')
         self.outputs['matrices'].label = 'Matrices'
+        self.outputs.new('SvStringsSocket', 'original_ids')
+        self.outputs['original_ids'].label = 'Original Ids'
+        self.outputs.new('SvStringsSocket', 'ids')
+        self.outputs['ids'].label = 'Ids'
 
         return
 
@@ -448,18 +508,18 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         # 1. Прочитать сокеты и запомнить какие 
         return
 
-    def migrate_from(self, old_node):
-        verts = self.inputs['vertices1']
-        verts.is_mandatory = True
-        verts.default_mode = 'NONE'
+    # def migrate_from(self, old_node):
+    #     verts = self.inputs['vertices1']
+    #     verts.is_mandatory = True
+    #     verts.default_mode = 'NONE'
 
-        edges = self.inputs['edges1']
-        edges.nesting_level = 3
-        edges.default_mode = 'EMPTY_LIST'
+    #     edges = self.inputs['edges1']
+    #     edges.nesting_level = 3
+    #     edges.default_mode = 'EMPTY_LIST'
 
-        pols = self.inputs['polygons1']
-        pols.nesting_level = 3
-        pols.default_mode = 'EMPTY_LIST'
+    #     pols = self.inputs['polygons1']
+    #     pols.nesting_level = 3
+    #     pols.default_mode = 'EMPTY_LIST'
 
     def process(self):
         
@@ -470,7 +530,7 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         if invalid_elems:
             pass
         else:
-            out_vertices, out_edges, out_polygons, out_matrices = [], [], [], []
+            out_vertices, out_edges, out_polygons, out_matrices, out_original_ids = [], [], [], [], []
 
             join_groups_in = self.inputs['join_groups']
             join_groups = []
@@ -481,18 +541,25 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                 _join_groups = []
 
             if _join_groups:
-                join_groups = flatten_integer_groups(_join_groups)
-
-            if not join_groups or self.mesh_join==False:
+                # Если join_groups
+                if self.mesh_join==True:
+                    join_groups = flatten_atomic_groups(_join_groups)
+                else:
+                    join_groups = [flatten_atomic(_join_groups)]
+                #join_groups = flatten_integer_groups(_join_groups)
+            else:
+                #if not join_groups or self.mesh_join==False:
                 join_groups = [list(range(0, len(elems)))]
 
             for join_group in join_groups:
-                join_group_elems = {g: elems[g] for g in join_group if g in elems}
-
-                out_vertices_IJ, out_edges_IJ, out_polygons_IJ, out_matrices_IJ = [], [], [], []
+                out_vertices_IJ, out_edges_IJ, out_polygons_IJ, out_matrices_IJ, out_original_ids_IJ = [], [], [], [], []
 
                 # collect  group data
-                for IJ, elem_IJ in join_group_elems.items():
+                #for IJ, elem_IJ in join_group_elems.items():
+                for group_id in join_group:
+                    if group_id not in elems:
+                        continue
+                    elem_IJ = elems[group_id]
                     verts_IJ = elem_IJ.vertices
                     edges_IJ = elem_IJ.edges
                     polygons_IJ = elem_IJ.polygons
@@ -521,14 +588,19 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                         out_edges_IJ     .extend(group_out_edges_IJ)
                         out_polygons_IJ  .extend(group_out_polygons_IJ)
                         out_matrices_IJ  .extend(group_out_matrices_IJ)
+                        if group_out_vertices_IJ:
+                            out_original_ids_IJ.extend([group_id]*max_length)
                     pass
 
                 if len(out_vertices_IJ)==0:
                     # Skip if no vertices
                     continue
 
+                out_original_ids.append(out_original_ids_IJ)
+
                 if self.matrixes_apply==False and self.mesh_join==False:
                     # Combine all input sockets and pass data to output
+                    out_original_ids = [[i] for elem in out_original_ids for i in elem]
                     out_vertices_IJ, out_edges_IJ, out_polygons_IJ = clear_mesh(list(zip(out_vertices_IJ, out_edges_IJ, out_polygons_IJ)))
                     pass
                 elif self.matrixes_apply==False and self.mesh_join==True:
@@ -543,6 +615,7 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                     pass
                 elif self.matrixes_apply==True and self.mesh_join==False:
                     # Only Apply matrices and transfer results to outputs. Do not join meshes.
+                    out_original_ids = [[i] for elem in out_original_ids for i in elem]
                     out_vertices_IJ = apply_matrix(out_vertices_IJ, out_matrices_IJ)
                     out_matrices_IJ = [Matrix() for mat in out_matrices_IJ]
                     pass
@@ -559,10 +632,15 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                 out_matrices.extend(out_matrices_IJ)
                 pass
 
-        self.outputs['vertices'].sv_set(out_vertices)
-        self.outputs['edges'   ].sv_set(out_edges)
-        self.outputs['polygons'].sv_set(out_polygons)
-        self.outputs['matrices'].sv_set(out_matrices)
+        out_ids = [[I] for I in range(0, len(out_original_ids))]
+        self.outputs['vertices'     ].sv_set(out_vertices)
+        self.outputs['edges'        ].sv_set(out_edges)
+        self.outputs['polygons'     ].sv_set(out_polygons)
+        self.outputs['matrices'     ].sv_set(out_matrices)
+        self.outputs['original_ids' ].sv_set(out_original_ids)
+        self.outputs['ids'          ].sv_set(out_ids)
+
+        return
 
 
 classes = [SvMeshJoinNodeMK3,]
