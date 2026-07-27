@@ -8,7 +8,7 @@
             -154.67269897460938,
             134.64405822753906
           ],
-          "height": 1236.0,
+          "height": 1216.0,
           "width": 672.0,
           "label": "inputs"
         },
@@ -20,8 +20,8 @@
             -367.63446044921875,
             -26.795333862304688
           ],
-          "height": 306.0,
-          "width": 407.00006103515625,
+          "height": 296.0,
+          "width": 407.0,
           "label": "circle",
           "parent": {
             "type": "NODE",
@@ -36,7 +36,7 @@
             -388.6966247558594,
             48.075111389160156
           ],
-          "height": 425.0,
+          "height": 415.0,
           "width": 600.0,
           "label": "bottom curve",
           "parent": {
@@ -52,8 +52,8 @@
             -376.99542236328125,
             94.86913299560547
           ],
-          "height": 430.0,
-          "width": 599.9999389648438,
+          "height": 420.0,
+          "width": 600.0000610351562,
           "label": "upper curve",
           "parent": {
             "type": "NODE",
@@ -68,7 +68,7 @@
             -312.2635803222656,
             47.90728759765625
           ],
-          "height": 534.0,
+          "height": 524.0,
           "width": 1517.0001220703125,
           "label": "logo"
         },
@@ -80,7 +80,7 @@
             -921.41748046875,
             1045.65234375
           ],
-          "height": 874.0,
+          "height": 893.0,
           "width": 673.0,
           "label": "TRI color"
         },
@@ -92,7 +92,7 @@
             341.0478515625,
             98.010009765625
           ],
-          "height": 388.0,
+          "height": 422.0,
           "width": 1222.0,
           "label": "black circle"
         },
@@ -354,7 +354,7 @@
       "Evaluate Curve": {
         "attributes": {
           "location": [
-            556.8338623046875,
+            556.8339233398438,
             -936.012092590332
           ],
           "parent": {
@@ -461,7 +461,7 @@
         "attributes": {
           "location": [
             539.0554809570312,
-            -1795.9529266357422
+            -1795.9528045654297
           ],
           "parent": {
             "type": "NODE",
@@ -647,7 +647,6 @@
           "use_custom_color": true
         },
         "properties": {
-          "n_id": "-7572912227783136283",
           "show_text": false,
           "text": "Nikitron | 2020 | Sverchok logo"
         },
@@ -1490,30 +1489,10 @@
           "list_items_type": "FLOAT_LIST_MODE",
           "float_list_items": [
             {
-              "elem": 0.10000000149011612,
-              "NONE": 0.10000000149011612,
-              "PERCENTAGE": 0.10000000149011612,
-              "FACTOR": 0.10000000149011612,
-              "ANGLE": 0.10000000149011612,
-              "TIME": 0.10000000149011612,
-              "TIME_ABSOLUTE": 0.10000000149011612,
-              "DISTANCE": 0.10000000149011612,
-              "DISTANCE_CAMERA": 0.10000000149011612,
-              "TEMPERATURE": 0.10000000149011612,
-              "POWER": 0.10000000149011612
+              "elem": 0.10000000149011612
             },
             {
-              "elem": 1.0,
-              "NONE": 1.0,
-              "PERCENTAGE": 1.0,
-              "FACTOR": 1.0,
-              "ANGLE": 1.0,
-              "TIME": 1.0,
-              "TIME_ABSOLUTE": 1.0,
-              "DISTANCE": 1.0,
-              "DISTANCE_CAMERA": 1.0,
-              "TEMPERATURE": 1.0,
-              "POWER": 1.0
+              "elem": 1.0
             },
             {}
           ],
@@ -1559,43 +1538,13 @@
           "list_items_type": "FLOAT_LIST_MODE",
           "float_list_items": [
             {
-              "elem": 0.5,
-              "NONE": 0.5,
-              "PERCENTAGE": 0.5,
-              "FACTOR": 0.5,
-              "ANGLE": 0.5,
-              "TIME": 0.5,
-              "TIME_ABSOLUTE": 0.5,
-              "DISTANCE": 0.5,
-              "DISTANCE_CAMERA": 0.5,
-              "TEMPERATURE": 0.5,
-              "POWER": 0.5
+              "elem": 0.5
             },
             {
-              "elem": 0.5,
-              "NONE": 0.5,
-              "PERCENTAGE": 0.5,
-              "FACTOR": 0.5,
-              "ANGLE": 0.5,
-              "TIME": 0.5,
-              "TIME_ABSOLUTE": 0.5,
-              "DISTANCE": 0.5,
-              "DISTANCE_CAMERA": 0.5,
-              "TEMPERATURE": 0.5,
-              "POWER": 0.5
+              "elem": 0.5
             },
             {
-              "elem": 1.0,
-              "NONE": 1.0,
-              "PERCENTAGE": 1.0,
-              "FACTOR": 1.0,
-              "ANGLE": 1.0,
-              "TIME": 1.0,
-              "TIME_ABSOLUTE": 1.0,
-              "DISTANCE": 1.0,
-              "DISTANCE_CAMERA": 1.0,
-              "TEMPERATURE": 1.0,
-              "POWER": 1.0
+              "elem": 1.0
             }
           ],
           "float_list_counter": 3
@@ -1640,31 +1589,11 @@
           "list_items_type": "FLOAT_LIST_MODE",
           "float_list_items": [
             {
-              "elem": 1.0,
-              "NONE": 1.0,
-              "PERCENTAGE": 1.0,
-              "FACTOR": 1.0,
-              "ANGLE": 1.0,
-              "TIME": 1.0,
-              "TIME_ABSOLUTE": 1.0,
-              "DISTANCE": 1.0,
-              "DISTANCE_CAMERA": 1.0,
-              "TEMPERATURE": 1.0,
-              "POWER": 1.0
+              "elem": 1.0
             },
             {},
             {
-              "elem": 0.20000000298023224,
-              "NONE": 0.20000000298023224,
-              "PERCENTAGE": 0.20000000298023224,
-              "FACTOR": 0.20000000298023224,
-              "ANGLE": 0.20000000298023224,
-              "TIME": 0.20000000298023224,
-              "TIME_ABSOLUTE": 0.20000000298023224,
-              "DISTANCE": 0.20000000298023224,
-              "DISTANCE_CAMERA": 0.20000000298023224,
-              "TEMPERATURE": 0.20000000298023224,
-              "POWER": 0.20000000298023224
+              "elem": 0.20000000298023224
             }
           ],
           "float_list_counter": 3
