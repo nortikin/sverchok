@@ -44,7 +44,7 @@
             3536.0,
             -288.0
           ],
-          "height": 335.0,
+          "height": 437.0,
           "width": 520.0,
           "parent": {
             "type": "NODE",
@@ -507,57 +507,6 @@
           }
         },
         "bl_idname": "MatrixApplyNode"
-      },
-      "Mesh Join": {
-        "attributes": {
-          "location": [
-            3726.0771484375,
-            -317.6941833496094
-          ],
-          "parent": {
-            "type": "NODE",
-            "value": "Frame.001"
-          }
-        },
-        "inputs": {
-          "Vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "Vertices",
-            "properties": {
-              "is_mandatory": true,
-              "default_mode": "NONE"
-            }
-          },
-          "Edges": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Edges",
-            "properties": {
-              "nesting_level": 3
-            }
-          },
-          "Polygons": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Polygons",
-            "properties": {
-              "nesting_level": 3
-            }
-          }
-        },
-        "outputs": {
-          "Vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "Vertices"
-          },
-          "Edges": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Edges"
-          },
-          "Polygons": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Polygons"
-          }
-        },
-        "bl_idname": "SvMeshJoinNodeMk2"
       },
       "Viewer Draw.004": {
         "attributes": {
@@ -2641,6 +2590,123 @@
           }
         },
         "bl_idname": "LineConnectNodeMK3"
+      },
+      "Mesh Join.001": {
+        "attributes": {
+          "location": [
+            3726.0771484375,
+            -317.6941833496094
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "inputs": {
+          "join_groups": {
+            "bl_idname": "SvStringsSocket",
+            "name": "join_groups",
+            "properties": {
+              "label": "Join Groups"
+            }
+          },
+          "vertices0": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices0",
+            "properties": {
+              "custom_draw": "draw_vertices_in_socket",
+              "label": "Vertices[0]",
+              "is_mandatory": true,
+              "default_mode": "NONE"
+            }
+          },
+          "edges0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges0",
+            "properties": {
+              "label": "Edges"
+            }
+          },
+          "polygons0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons0",
+            "properties": {
+              "label": "Polygons",
+              "nesting_level": 3
+            }
+          },
+          "matrices0": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices0",
+            "properties": {
+              "label": "Matrices"
+            }
+          },
+          "vertices1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices1",
+            "properties": {
+              "custom_draw": "draw_vertices_in_socket",
+              "label": "Vertices[1]",
+              "is_mandatory": true,
+              "default_mode": "NONE"
+            }
+          },
+          "edges1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges1",
+            "properties": {
+              "label": "Edges",
+              "nesting_level": 3
+            }
+          },
+          "polygons1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons1",
+            "properties": {
+              "label": "Polygons",
+              "nesting_level": 3
+            }
+          },
+          "matrices1": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices1",
+            "properties": {
+              "label": "Matrices"
+            }
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices",
+            "properties": {
+              "label": "Vertices"
+            }
+          },
+          "edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges",
+            "properties": {
+              "label": "Edges"
+            }
+          },
+          "polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons",
+            "properties": {
+              "label": "Polygons"
+            }
+          },
+          "matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices",
+            "properties": {
+              "label": "Matrices"
+            }
+          }
+        },
+        "bl_idname": "SvMeshJoinNodeMK3"
       }
     },
     "links": [
@@ -2741,26 +2807,14 @@
         "to_socket": "Matrixes"
       },
       {
-        "from_node": "UV Connection MK3",
+        "from_node": "Mesh Join.001",
         "from_socket": "vertices",
-        "to_node": "Mesh Join",
-        "to_socket": "Vertices"
-      },
-      {
-        "from_node": "UV Connection MK3",
-        "from_socket": "edges",
-        "to_node": "Mesh Join",
-        "to_socket": "Edges"
-      },
-      {
-        "from_node": "Mesh Join",
-        "from_socket": "Vertices",
         "to_node": "Viewer Draw.004",
         "to_socket": "Vertices"
       },
       {
-        "from_node": "Mesh Join",
-        "from_socket": "Edges",
+        "from_node": "Mesh Join.001",
+        "from_socket": "edges",
         "to_node": "Viewer Draw.004",
         "to_socket": "Edges"
       },
@@ -3069,6 +3123,18 @@
         "from_socket": "Vertices",
         "to_node": "UV Connection MK3",
         "to_socket": "vertices 2"
+      },
+      {
+        "from_node": "UV Connection MK3",
+        "from_socket": "vertices",
+        "to_node": "Mesh Join.001",
+        "to_socket": "vertices0"
+      },
+      {
+        "from_node": "UV Connection MK3",
+        "from_socket": "edges",
+        "to_node": "Mesh Join.001",
+        "to_socket": "edges0"
       }
     ]
   }
