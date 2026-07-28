@@ -51,8 +51,7 @@ If Last Empty Groupp is OFF then no last group:
 Inputs
 ------
 
-- **Join Groups** - If connected, you have to specify a combination sequence in the format [[group1, group2],[group3, group0]].
-If no sequence is specified, then the object-to-socket connection sequence will be used [[0,1,2,...]]
+- **Join Groups** - If connected, you have to specify a combination sequence in the format [[group1, group2],[group3, group0]]. If no sequence is specified, then the object-to-socket connection sequence will be used [[0,1,2,...]]
 
 If Join Groups connected
 
