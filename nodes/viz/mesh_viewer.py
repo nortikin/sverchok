@@ -55,7 +55,7 @@ class SV_PT_SvMeshViewerVieweportDsiplayOptionsMenu(bpy.types.Panel):
             col = layout.column(align=True, heading='Color')
             col.use_property_decorate = False
             col.use_property_split = True
-            col.prop(context.node, 'color')
+            col.prop(context.node, 'object_color')
     
             # col = layout.column(align=True, heading='Display As')
             # col.use_property_decorate = False
@@ -117,7 +117,7 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
     show_texture_space: BoolProperty(default=False, update=updateNode, name="Texture Space")
     show_shadows: BoolProperty(default=False, update=updateNode, name="Shadows")
     show_in_front: BoolProperty(default=False, update=updateNode, name="In Front")
-    color: bpy.props.FloatVectorProperty(
+    object_color: bpy.props.FloatVectorProperty(
             name        = "Color",
             subtype     = 'COLOR',
             description = "Object Color and alpha, used when the Object Color mode is enabled",
@@ -217,7 +217,7 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         col = layout.row(align=True)
         col.use_property_decorate = False
         col.use_property_split = True
-        col.prop(self, 'color')
+        col.prop(self, 'object_color')
 
         # layout.label(text='Display As:')
         # layout.prop(self, 'display_type', expand=True, text='')
@@ -364,7 +364,7 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         [setattr(prop.obj.display, 'show_shadows', self.show_shadows) for prop in self.object_data]
         [setattr(prop.obj, 'show_in_front', self.show_in_front) for prop in self.object_data]
         [setattr(prop.obj, 'display_type', self.display_type) for prop in self.object_data]
-        [setattr(prop.obj, 'color', self.color) for prop in self.object_data]
+        [setattr(prop.obj, 'color', self.object_color) for prop in self.object_data]
         [setattr(prop.obj, 'show_bounds', self.show_bounds) for prop in self.object_data]
         [setattr(prop.obj, 'display_bounds_type', self.display_bounds_type) for prop in self.object_data]
 
