@@ -431,13 +431,13 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         # Проверить, если к последней группе подключен хоть один link, то добавить после последней группы ещё одну группу
         if elems:
             elems_last = elems[len(elems)-1]
-            if self.do_last_group_empty==False and any( [getattr(elems_last, name).is_linked==True for name in group_names])==True:
+            if self.do_last_group_empty==True and any( [getattr(elems_last, name).is_linked==True for name in group_names])==True:
                 max_idx = len(elems)
                 elems[max_idx] = SocketsGroup(max_idx, group_names)
                 elems[max_idx].vertices.valid = True
                 elems[max_idx].edges.valid = True
                 elems[max_idx].polygons.valid = True
-            elif self.do_last_group_empty==True and any( [getattr(elems_last, name).is_linked==True for name in group_names])==False and len(elems)>1:
+            elif self.do_last_group_empty==False and any( [getattr(elems_last, name).is_linked==True for name in group_names])==False and len(elems)>1:
                 del elems[len(elems)-1]
             pass
 

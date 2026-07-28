@@ -1,67 +1,90 @@
 Mesh Join
 =========
 
-.. image:: https://user-images.githubusercontent.com/14288520/200012677-336dc1a6-0b6b-4bc6-b9a7-9440529776c4.png
-  :target: https://user-images.githubusercontent.com/14288520/200012677-336dc1a6-0b6b-4bc6-b9a7-9440529776c4.png
+  .. image:: https://github.com/user-attachments/assets/84889e38-c24c-4197-aeb1-fa04224166fb
+    :target: https://github.com/user-attachments/assets/84889e38-c24c-4197-aeb1-fa04224166fb
 
 Functionality
 -------------
 
-Analogue to ``Ctrl+J`` in the 3dview of Blender. Separate nested lists of *vertices* and *polygons/edges* are merged. The keys in the Edge and Polygon lists are incremented to coincide with the newly created vertex list.
+Combines several polygonal mesh objects. Node contains dynamic groups of input sockets Vertices, Edges, Faces and Matrix,
+allows you to regroup the input objects, set their order of processing, and manage their position with the help of matrices.
+In Join mode, each group’s objects are merged into one mesh with the correct cross-section of edges and borders.
 
-.. image:: https://user-images.githubusercontent.com/14288520/200015469-69825d1f-a219-4bd7-bc0f-66e08eb9e1bc.png
-  :target: https://user-images.githubusercontent.com/14288520/200015469-69825d1f-a219-4bd7-bc0f-66e08eb9e1bc.png
+  .. image:: https://github.com/user-attachments/assets/a1a41b45-955d-41ef-b512-ab356503697a
+    :target: https://github.com/user-attachments/assets/a1a41b45-955d-41ef-b512-ab356503697a
 
-The inner workings go something like::
+Options
+-------
 
-    vertices_obj_1 = [
-        (0.2, 1.5, 0.1), (1.2, 0.5, 0.1), (1.2, 1.5, 0.1),
-        (0.2, 2.5, 5.1), (0.2, 0.5, 2.1), (0.2, 2.5, 0.1)]
+  .. image:: https://github.com/user-attachments/assets/4222cd70-a219-4539-a032-1d204825ef02
+    :target: https://github.com/user-attachments/assets/4222cd70-a219-4539-a032-1d204825ef02
 
-    vertices_obj_2 = [
-        (0.2, 1.4, 0.1), (1.2, 0.2, 0.3), (1.2, 4.5, 4.1),
-        (0.2, 1.5, 3.4), (5.2, 6.5, 2.1), (0.2, 5.5, 2.1)]
+- **Join** - Join Meshes into firts object of the group
+- **Apply Matrix** - Apply Matrixes to every object or to every group of objects.
 
-    key_list_1 = [[0,1,2],[3,4,5]]
-    key_list_2 = [[0,1,2],[3,4,5]]
+Options in side panel
+---------------------
 
-    verts_nested = [vertices_obj_1, vertices_obj_2]
-    keys_nested = [key_list_1, key_list_2]
+- **Last Group Empty** - If ON Automatically add a bucket group for the new sockets. If Off then last empty socket removed.
 
-    def mesh_join(verts_nested, keys_nested):
+If no input socket connected then empty group always exists:
 
-        mega_vertex_list = []
-        mega_key_list = []
+  .. image:: https://github.com/user-attachments/assets/d7080985-9b74-4255-9edc-0c83f3844639
+    :target: https://github.com/user-attachments/assets/d7080985-9b74-4255-9edc-0c83f3844639
 
-        def adjust_indices(klist, offset):
-            return [[i+offset for i in keys] for keys in klist]
-            # for every key in klist, add offset
-            # return result
+If some socket of the first group are connected then next empty group created:
 
-        for vert_list, key_list in zip(verts_nested, keys_nested):
-            adjusted_key_list = adjust_indices(key_list, len(mega_vertex_list))
-            mega_vertex_list.extend(vert_list)
-            mega_key_list.extend(adjusted_key_list)
+  .. image:: https://github.com/user-attachments/assets/6cbd970f-01af-481b-9808-affc1522e494
+    :target: https://github.com/user-attachments/assets/6cbd970f-01af-481b-9808-affc1522e494
 
-        return mega_vertex_list, mega_key_list
+If some socket of the second group are connected then next empty group created:
 
-    print(mesh_join(verts_nested, keys_nested))
+  .. image:: https://github.com/user-attachments/assets/7ef96307-9097-4046-8ecb-c5062fbc59c7
+    :target: https://github.com/user-attachments/assets/7ef96307-9097-4046-8ecb-c5062fbc59c7
 
-    # result
-    [(0.2, 1.5, 0.1), (1.2, 0.5, 0.1), (1.2, 1.5, 0.1),
-    (0.2, 2.5, 5.1), (0.2, 0.5, 2.1), (0.2, 2.5, 0.1),
-    (0.2, 1.4, 0.1), (1.2, 0.2, 0.3), (1.2, 4.5, 4.1),
-    (0.2, 1.5, 3.4), (5.2, 6.5, 2.1), (0.2, 5.5, 2.1)]
+If Last Empty Groupp is OFF then no last group:
 
-    [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]
+  .. image:: https://github.com/user-attachments/assets/9bad7315-7fba-48e9-a03a-736455f16075
+    :target: https://github.com/user-attachments/assets/9bad7315-7fba-48e9-a03a-736455f16075
 
+Inputs
+------
 
+- **Join Groups** - If connected, you have to specify a combination sequence in the format [[group1, group2],[group3, group0]].
+If no sequence is specified, then the object-to-socket connection sequence will be used [[0,1,2,...]]
 
+If Join Groups connected
 
-Inputs & Outputs
+  .. image:: https://github.com/user-attachments/assets/4e1153c0-9169-42f9-8577-6e4e7e5ecdcc
+    :target: https://github.com/user-attachments/assets/4e1153c0-9169-42f9-8577-6e4e7e5ecdcc
+
+If Join Groups is not connected:
+
+  .. image:: https://github.com/user-attachments/assets/3a358ae0-ce41-4b59-8a3b-bffa0c00167a
+    :target: https://github.com/user-attachments/assets/3a358ae0-ce41-4b59-8a3b-bffa0c00167a
+
+- **Vertices** N, **Edges**, **Polygons**, **Matrices** - Object group. Numbering groups starts with 0.
+
+  .. image:: https://github.com/user-attachments/assets/16874326-46c5-4ad6-9ad1-9b8def00f1eb
+    :target: https://github.com/user-attachments/assets/16874326-46c5-4ad6-9ad1-9b8def00f1eb
+
+Outputs
 ----------------
 
-The inputs and outputs are *vertices*, edges and *polygons*.
+The outputs are **Vertices**, **Edges**, **Polygons**, **Matrices**, **Original Ids** and **Ids**.
+
+**Original Ids** is a id of Join Groups socket data:
+
+If Join Groups is not connected:
+
+  .. image:: https://github.com/user-attachments/assets/47e72cb2-786b-42a2-a9f6-74911d585ab7
+    :target: https://github.com/user-attachments/assets/47e72cb2-786b-42a2-a9f6-74911d585ab7
+
+If Join Groups is connected (if not object with index then no index in result, skipped):
+
+  .. image:: https://github.com/user-attachments/assets/d0143286-ca98-49e1-a21b-3caba227730f
+    :target: https://github.com/user-attachments/assets/d0143286-ca98-49e1-a21b-3caba227730f
 
 Expects a nested collection of vertex lists. Each nested list represents an object which can itself have many vertices and key lists.
 
@@ -72,6 +95,21 @@ See also
 
 Examples
 --------
+
+Combination of objects
+----------------------
+
+  .. image:: https://github.com/user-attachments/assets/36437ec4-7d38-4a3d-ac62-1e966208c63f
+    :target: https://github.com/user-attachments/assets/36437ec4-7d38-4a3d-ac62-1e966208c63f
+
+Join Groups
+-----------
+
+  .. image:: https://github.com/user-attachments/assets/7ed79182-ae70-4e6c-b364-ac58a4b6c835
+    :target: https://github.com/user-attachments/assets/7ed79182-ae70-4e6c-b364-ac58a4b6c835
+
+Old Examples
+------------
 
 .. image:: https://user-images.githubusercontent.com/14288520/200021156-1a575bae-42c8-43a8-b95e-5d0c112fb283.png
   :target: https://user-images.githubusercontent.com/14288520/200021156-1a575bae-42c8-43a8-b95e-5d0c112fb283.png
