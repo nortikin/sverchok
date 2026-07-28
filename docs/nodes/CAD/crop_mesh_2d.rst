@@ -139,7 +139,7 @@ Creating something like sewer grate:
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Modifiers->Modifier Change-> :doc:`Bevel </nodes/modifier_change/bevel>`
-* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join>`
 * Modifiers->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
 * Modifiers->Modifier Make-> :doc:`Contour 2D </nodes/modifier_make/contour2D>`
 * Modifier Make-> :doc:`Solidify </nodes/modifier_make/solidify_mk2>`
