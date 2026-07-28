@@ -246,7 +246,7 @@
             - SvEdgeBoomNode
             - SvDissolveMeshElements
             - SvPols2EdgsNodeMk2
-            - SvMeshJoinNodeMk2
+            - SvMeshJoinNodeMK3
             - ---
             - SvFillsHoleNodeMK2
             - SvRecalcNormalsNode

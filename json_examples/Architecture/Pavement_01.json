@@ -8,7 +8,7 @@
             196.0,
             -10.0
           ],
-          "height": 649.0,
+          "height": 645.0,
           "width": 848.0,
           "label": "original lines"
         },
@@ -20,7 +20,7 @@
             9.0,
             30.0
           ],
-          "height": 385.0,
+          "height": 381.0,
           "width": 201.0,
           "label": "separate"
         },
@@ -32,7 +32,7 @@
             527.107666015625,
             66.77210998535156
           ],
-          "height": 861.0,
+          "height": 1054.0,
           "width": 2858.0,
           "label": "shifting"
         },
@@ -44,7 +44,7 @@
             1733.8895263671875,
             61.31825256347656
           ],
-          "height": 500.0,
+          "height": 496.0,
           "width": 898.0,
           "label": "size display"
         },
@@ -56,7 +56,7 @@
             1628.941162109375,
             -18.320898056030273
           ],
-          "height": 388.0,
+          "height": 310.0,
           "width": 1229.999755859375,
           "label": "final size"
         },
@@ -68,7 +68,7 @@
             1370.597900390625,
             284.8363952636719
           ],
-          "height": 388.0,
+          "height": 342.0,
           "width": 769.000244140625,
           "label": "full size"
         },
@@ -80,7 +80,7 @@
             1322.791015625,
             125.82783508300781
           ],
-          "height": 351.0,
+          "height": 458.0,
           "width": 857.0,
           "label": "organize"
         },
@@ -92,7 +92,7 @@
             131.888916015625,
             411.4369659423828
           ],
-          "height": 654.0,
+          "height": 655.0,
           "width": 1264.0,
           "parent": {
             "type": "NODE",
@@ -107,7 +107,7 @@
             127.0,
             240.0
           ],
-          "height": 967.0,
+          "height": 992.0,
           "width": 336.0,
           "label": "inputs"
         },
@@ -556,7 +556,7 @@
       "List Item": {
         "attributes": {
           "location": [
-            862.1785583496094,
+            862.1785888671875,
             38.57334899902344
           ],
           "parent": {
@@ -708,6 +708,54 @@
             "name": "Data 1"
           },
           "Data 1_012": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.001": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.002": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.003": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.004": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.005": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.006": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.007": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.008": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.009": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.010": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.011": {
+            "bl_idname": "NodeSocketColor",
+            "name": "Data 1"
+          },
+          "Data 1.012": {
             "bl_idname": "NodeSocketColor",
             "name": "Data 1"
           }
@@ -995,9 +1043,10 @@
       "Vector out.002": {
         "attributes": {
           "location": [
-            5053.989501953125,
+            5053.9892578125,
             -202.96292686462402
           ],
+          "width": 100.0,
           "parent": {
             "type": "NODE",
             "value": "Frame"
@@ -1293,7 +1342,7 @@
       "Delete Loose": {
         "attributes": {
           "location": [
-            5657.681396484375,
+            5657.681640625,
             -169.16306114196777
           ],
           "width": 128.1943359375,
@@ -1334,9 +1383,10 @@
       "Vector out.003": {
         "attributes": {
           "location": [
-            4836.704345703125,
+            4836.7041015625,
             107.94683837890625
           ],
+          "width": 100.0,
           "parent": {
             "type": "NODE",
             "value": "Frame.001"
@@ -1367,7 +1417,7 @@
       "Vector in.003": {
         "attributes": {
           "location": [
-            5265.414794921875,
+            5265.4150390625,
             155.49722290039062
           ],
           "width": 100.0,
@@ -1410,7 +1460,7 @@
       "Scalar Math.006": {
         "attributes": {
           "location": [
-            5070.988037109375,
+            5070.98828125,
             23.065765380859375
           ],
           "hide": true,
@@ -1449,7 +1499,7 @@
       "Scalar Math.007": {
         "attributes": {
           "location": [
-            5070.988037109375,
+            5070.98828125,
             69.65380859375
           ],
           "hide": true,
@@ -1488,7 +1538,7 @@
       "Scalar Math.001": {
         "attributes": {
           "location": [
-            5070.988037109375,
+            5070.98828125,
             117.47128295898438
           ],
           "hide": true,
@@ -1527,7 +1577,7 @@
       "Scalar Math": {
         "attributes": {
           "location": [
-            5073.657470703125,
+            5073.6572265625,
             157.37811279296875
           ],
           "hide": true,
@@ -1795,6 +1845,7 @@
             2065.08837890625,
             118.8995590209961
           ],
+          "width": 100.0,
           "parent": {
             "type": "NODE",
             "value": "Frame.004"
@@ -2192,7 +2243,7 @@
         "attributes": {
           "location": [
             859.8543090820312,
-            186.38288116455078
+            186.38287353515625
           ],
           "parent": {
             "type": "NODE",
@@ -2255,6 +2306,7 @@
             2960.0,
             60.0
           ],
+          "width": 100.0,
           "parent": {
             "type": "NODE",
             "value": "Frame.004"
@@ -3034,57 +3086,6 @@
         },
         "bl_idname": "LineConnectNodeMK3"
       },
-      "Mesh Join.001": {
-        "attributes": {
-          "location": [
-            4560.0,
-            -80.0
-          ],
-          "parent": {
-            "type": "NODE",
-            "value": "Frame.003"
-          }
-        },
-        "inputs": {
-          "Vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "Vertices",
-            "properties": {
-              "is_mandatory": true,
-              "default_mode": "NONE"
-            }
-          },
-          "Edges": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Edges",
-            "properties": {
-              "nesting_level": 3
-            }
-          },
-          "Polygons": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Polygons",
-            "properties": {
-              "nesting_level": 3
-            }
-          }
-        },
-        "outputs": {
-          "Vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "Vertices"
-          },
-          "Edges": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Edges"
-          },
-          "Polygons": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Polygons"
-          }
-        },
-        "bl_idname": "SvMeshJoinNodeMk2"
-      },
       "Bounding Box": {
         "attributes": {
           "location": [
@@ -3395,6 +3396,11 @@
           "use_custom_color": true
         },
         "properties": {
+          "text_color": [
+            0.949999988079071,
+            0.949999988079071,
+            0.949999988079071
+          ],
           "location_theta": 1.0080000162124634,
           "num_elements": 1
         },
@@ -3405,6 +3411,122 @@
           }
         },
         "bl_idname": "SvStethoscopeNodeMK2"
+      },
+      "Mesh Join": {
+        "attributes": {
+          "location": [
+            4560.0,
+            -80.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "inputs": {
+          "join_groups": {
+            "bl_idname": "SvStringsSocket",
+            "name": "join_groups",
+            "properties": {
+              "label": "Join Groups"
+            }
+          },
+          "vertices0": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices0",
+            "properties": {
+              "custom_draw": "draw_vertices_in_socket",
+              "label": "Vertices[0]",
+              "is_mandatory": true,
+              "default_mode": "NONE"
+            }
+          },
+          "edges0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges0",
+            "properties": {
+              "label": "Edges"
+            }
+          },
+          "polygons0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons0",
+            "properties": {
+              "label": "Polygons"
+            }
+          },
+          "matrices0": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices0",
+            "properties": {
+              "label": "Matrices"
+            }
+          },
+          "vertices1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices1",
+            "properties": {
+              "custom_draw": "draw_vertices_in_socket",
+              "label": "Vertices[1]",
+              "is_mandatory": true,
+              "default_mode": "NONE"
+            }
+          },
+          "edges1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges1",
+            "properties": {
+              "label": "Edges",
+              "nesting_level": 3
+            }
+          },
+          "polygons1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons1",
+            "properties": {
+              "label": "Polygons",
+              "nesting_level": 3
+            }
+          },
+          "matrices1": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices1",
+            "properties": {
+              "label": "Matrices"
+            }
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices",
+            "properties": {
+              "label": "Vertices"
+            }
+          },
+          "edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges",
+            "properties": {
+              "label": "Edges"
+            }
+          },
+          "polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons",
+            "properties": {
+              "label": "Polygons"
+            }
+          },
+          "matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices",
+            "properties": {
+              "label": "Matrices"
+            }
+          }
+        },
+        "bl_idname": "SvMeshJoinNodeMK3"
       }
     },
     "links": [
@@ -3643,14 +3765,14 @@
         "to_socket": "y"
       },
       {
-        "from_node": "Mesh Join.001",
-        "from_socket": "Vertices",
+        "from_node": "Mesh Join",
+        "from_socket": "vertices",
         "to_node": "Offset",
         "to_socket": "Vers"
       },
       {
-        "from_node": "Mesh Join.001",
-        "from_socket": "Polygons",
+        "from_node": "Mesh Join",
+        "from_socket": "polygons",
         "to_node": "Offset",
         "to_socket": "Pols"
       },
@@ -4051,18 +4173,6 @@
         "to_socket": "vertices"
       },
       {
-        "from_node": "UV Connection MK3",
-        "from_socket": "vertices",
-        "to_node": "Mesh Join.001",
-        "to_socket": "Vertices"
-      },
-      {
-        "from_node": "UV Connection MK3",
-        "from_socket": "polygons",
-        "to_node": "Mesh Join.001",
-        "to_socket": "Polygons"
-      },
-      {
         "from_node": "Polygon Boom.001",
         "from_socket": "vertices",
         "to_node": "Bounding Box",
@@ -4091,6 +4201,18 @@
         "from_socket": "Text",
         "to_node": "Stethoscope MK2.002",
         "to_socket": "Data"
+      },
+      {
+        "from_node": "UV Connection MK3",
+        "from_socket": "vertices",
+        "to_node": "Mesh Join",
+        "to_socket": "vertices0"
+      },
+      {
+        "from_node": "UV Connection MK3",
+        "from_socket": "polygons",
+        "to_node": "Mesh Join",
+        "to_socket": "polygons0"
       }
     ]
   }
