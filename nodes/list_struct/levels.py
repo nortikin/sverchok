@@ -254,6 +254,28 @@ class SvListLevelsNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         
         return
 
+    def sv_update(self):
+        self.set_output_socketype([sock.other.bl_idname for sock in self.inputs if sock.is_linked and sock.other])
+        return
+
+    def set_output_socketype(self, slot_bl_idnames):
+        """
+        1) if the input sockets are a mixed bag of bl_idnames we convert the output socket
+        to a generic SvStringsSocket type
+        2) if all input sockets where sv_get is successful are of identical bl_idname
+        then set the output socket type to match that.
+        3) no op if current output socket matches proposed new socket type.
+        """
+
+        if not slot_bl_idnames:
+            return
+
+        num_bl_idnames = len(set(slot_bl_idnames))
+        new_socket_type = slot_bl_idnames[0] if num_bl_idnames == 1 else "SvStringsSocket"
+
+        if self.outputs[0].bl_idname != new_socket_type:
+            self.outputs[0].replace_socket(new_socket_type)
+        return
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'data_1')
