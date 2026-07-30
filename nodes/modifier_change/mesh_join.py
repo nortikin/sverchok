@@ -249,9 +249,7 @@ def flatten_atomic(data):
 
     return list(_flatten(data))
 
-class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node, 
-                        #SvRecursiveNode,
-                        ):
+class SvMeshJoinNodeMK3( SverchCustomTreeNode, bpy.types.Node, ):
     '''
     Triggers: Join Meshes
     Tooltip: Join many mesh into on mesh object
@@ -505,7 +503,6 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
                         pass
                 pass
             pass
-        # 1. Прочитать сокеты и запомнить какие 
         return
 
     # def migrate_from(self, old_node):
@@ -520,6 +517,16 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
     #     pols = self.inputs['polygons1']
     #     pols.nesting_level = 3
     #     pols.default_mode = 'EMPTY_LIST'
+
+    def migrate_links_from(self, old_node, operator):
+        # Temporary enable last empty socket on migrate links and resore them after
+        do_last_group_empty = self.do_last_group_empty
+        if self.do_last_group_empty==False:
+            self.do_last_group_empty = True
+        super().migrate_links_from(old_node, operator)
+        if do_last_group_empty==False:
+            self.do_last_group_empty = False
+        return
 
     def process(self):
         
@@ -637,8 +644,8 @@ class SvMeshJoinNodeMK3( ModifierNode, SverchCustomTreeNode, bpy.types.Node,
         self.outputs['edges'        ].sv_set(out_edges)
         self.outputs['polygons'     ].sv_set(out_polygons)
         self.outputs['matrices'     ].sv_set(out_matrices)
-        self.outputs['original_ids' ].sv_set(out_original_ids)
-        self.outputs['ids'          ].sv_set(out_ids)
+        if 'original_ids' in self.outputs: self.outputs['original_ids' ].sv_set(out_original_ids)
+        if          'ids' in self.outputs: self.outputs['ids'          ].sv_set(out_ids)
 
         return
 
