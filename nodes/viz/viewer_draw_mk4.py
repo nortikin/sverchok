@@ -164,43 +164,6 @@ def view_3d_geom(context, args):
 
     drawing.enable_blendmode()
 
-    if config.draw_polys:
-        if config.draw_gl_wireframe:
-            drawing.set_polygonmode_line()
-        if config.draw_gl_polygonoffset:
-            drawing.enable_polygon_offset_fill()
-            drawing.set_polygon_offset_amounts()
-
-        if config.shade_mode == 'fragment':
-            p_batch = batch_for_shader(config.p_shader, 'TRIS', {"position": geom.p_vertices}, indices=geom.p_indices)
-            config.p_shader.bind()
-            matrix = context.region_data.perspective_matrix
-            config.p_shader.uniform_float("viewProjectionMatrix", matrix)
-            #if hasattr(config, "brightness"):
-            #    config.p_shader.uniform_float("brightness", config.brightness)
-            #else:
-            #    config.p_shader.uniform_float("brightness", 0.5)
-        else:
-            if config.uniform_pols:
-                p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
-                drawing.set_polygonmode_fill(config.face_culling_set)
-                config.p_shader.bind()
-                config.p_shader.uniform_float("color", config.poly_color[0][0])
-                pass
-            else:
-                p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices, "color": geom.p_vertex_colors}, indices=geom.p_indices)
-                drawing.set_polygonmode_fill(config.face_culling_set)
-                config.p_shader.bind()
-
-        p_batch.draw(config.p_shader)
-
-        if config.draw_gl_polygonoffset:
-            drawing.disable_polygon_offset_fill()
-        if config.draw_gl_wireframe:
-            # this is to reset the state of drawing to fill
-            drawing.set_polygonmode_fill(config.face_culling_set)
-
-
     if config.draw_edges:
         drawing.set_line_width(config.line_width)
 
@@ -332,6 +295,42 @@ def view_3d_geom(context, args):
                     e_batch.draw(config.e_shader)
 
             drawing.reset_line_width()
+
+    if config.draw_polys:
+        if config.draw_gl_wireframe:
+            drawing.set_polygonmode_line()
+        if config.draw_gl_polygonoffset:
+            drawing.enable_polygon_offset_fill()
+            drawing.set_polygon_offset_amounts()
+
+        if config.shade_mode == 'fragment':
+            p_batch = batch_for_shader(config.p_shader, 'TRIS', {"position": geom.p_vertices}, indices=geom.p_indices)
+            config.p_shader.bind()
+            matrix = context.region_data.perspective_matrix
+            config.p_shader.uniform_float("viewProjectionMatrix", matrix)
+            #if hasattr(config, "brightness"):
+            #    config.p_shader.uniform_float("brightness", config.brightness)
+            #else:
+            #    config.p_shader.uniform_float("brightness", 0.5)
+        else:
+            if config.uniform_pols:
+                p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
+                drawing.set_polygonmode_fill(config.face_culling_set)
+                config.p_shader.bind()
+                config.p_shader.uniform_float("color", config.poly_color[0][0])
+                pass
+            else:
+                p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices, "color": geom.p_vertex_colors}, indices=geom.p_indices)
+                drawing.set_polygonmode_fill(config.face_culling_set)
+                config.p_shader.bind()
+
+        p_batch.draw(config.p_shader)
+
+        if config.draw_gl_polygonoffset:
+            drawing.disable_polygon_offset_fill()
+        if config.draw_gl_wireframe:
+            # this is to reset the state of drawing to fill
+            drawing.set_polygonmode_fill(config.face_culling_set)
 
     if config.draw_verts:
         if geom.v_vertices and (len(geom.v_vertices[0])==3):
