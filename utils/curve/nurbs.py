@@ -1445,6 +1445,13 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             raise ArgumentError("Either count or target must be specified")
 
         orig_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector(), u)
+        # Edge case: knot doesn't exist in the curve
+        if orig_multiplicity == 0:
+            if not if_possible:
+                raise CantRemoveKnotException(f"Asked to remove knot t={u}, but it doesn't exist in the curve")
+            # if_possible=True: just return the curve unchanged
+            return self
+
 
         if count == SvNurbsCurve.ALL:
             count = orig_multiplicity

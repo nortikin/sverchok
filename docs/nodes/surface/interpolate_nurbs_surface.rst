@@ -84,6 +84,14 @@ This node has the following parameters:
     It will be subdivided into rows according to **USize** input value.
   
   * **Separate Lists**. The node expects a list of lists of points for each surface.
+* **Piegl & Tiller algorithm**. This parameter is available in the N panel
+  only, only in case when **Implementation** parameter is set to **Sverchok**,
+  and SciPy library is available. If checked, the node will use older algorithm
+  by Piegl & Tiller. Otherwise, new algorithm with direct linear equations
+  system solving will be used. The newer algorithm is usually faster when SciPy
+  library is available, so in this case it is used by default. If SciPy library
+  is not available, the old algorithm will be used, because in this case it is
+  faster.
  
 Outputs
 -------
