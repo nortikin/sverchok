@@ -409,7 +409,7 @@ def pols_is_boundary(vertices, faces):
     bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
     interior, boundary, mask = Faces.process(bm, [], [])
     bm.free()
-    return mask, interior, boundary
+    return mask, boundary, interior
 
 
 def pols_edges(faces):
