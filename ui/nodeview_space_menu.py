@@ -486,7 +486,7 @@ class CategoryMenuTemplate(SverchokContext):
             # todo also it's possible to give choice of picking one of existing node trees
             self.layout.operator("node.new_node_tree",
                                  text="New Sverchok Node Tree",
-                                 icon="RNA_ADD")
+                                 icon="RNA")
             return
         for elem in self.draw_data:
             elem.draw(self.layout)
