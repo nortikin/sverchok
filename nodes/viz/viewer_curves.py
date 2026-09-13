@@ -27,7 +27,7 @@ from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # from sverchok.utils.sv_viewer_utils import matrix_sanitizer
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (dataCorrect_np, fullList, updateNode)
+from sverchok.data_structure import (dataCorrect_np, fullList, updateNode, match_long_repeat)
 
 
 def tuple_to_enumdata(*iterable):
@@ -161,7 +161,7 @@ def live_curve(obj_index, verts, edges, matrix, node):
 
 def make_curve_geometry(node, context, obj_index, verts, *topology):
     edges, matrix = topology
-
+    #print(matrix)
     sv_object = live_curve(obj_index, verts, edges, matrix, node)
     sv_object.hide_select = False
     node.push_custom_matrix_if_present(sv_object, matrix)
@@ -277,8 +277,7 @@ class SvCurveViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
 
     def get_structure(self, stype, sindex):
         if not stype:
-            return []
-
+            return [stype]
         try:
             j = stype[sindex]
         except IndexError:
@@ -318,6 +317,7 @@ class SvCurveViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
                     yield self.get_structure(geom, obj_index)
 
             # extend all non empty lists to longest of mverts or *mrest
+            # why not matchlongrepeat?
             maxlen = max(len(mverts), *(map(len, mrest)))
             fullList(mverts, maxlen)
             for idx in range(2):
@@ -329,16 +329,17 @@ class SvCurveViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
                 for obj_index, Verts in enumerate(mverts):
                     if len(Verts) == 0:
                         continue
-
                     data = get_edges_matrices(obj_index)
+                    print('Вот проверь',data)
                     make_curve_geometry(self, bpy.context, obj_index, Verts, *data)
 
                 # we must be explicit
                 obj_index = len(mverts) - 1
 
-            else:
+            else: #if self.curve_dimensions == '2D':
                 obj_index = 0
-                make_curve_geometry(self, bpy.context, obj_index, mverts, *mrest)
+                edges, metrix = mrest
+                make_curve_geometry(self, bpy.context, obj_index, mverts, *(edges, metrix[0]))
 
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
