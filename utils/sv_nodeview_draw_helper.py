@@ -15,14 +15,19 @@ from sverchok.settings import get_params
 # pylint: disable=c0111
 # pylint: disable=c0103
 
-def get_xy_for_bgl_drawing(node):
-    # adjust proposed text location in case node is framed.
-    # take into consideration the hidden state
-    _x, _y = node.absolute_location
-    _x, _y = (_x + node.width + 20), _y
 
-    # this alters location based on DPI/Scale settings.
-    return _x * node.location_theta, _y * node.location_theta
+def scale_nodeview_location(x, y):
+    """Convert node-view coordinates according to Blender's UI scale."""
+    scale = bpy.context.preferences.system.ui_scale
+    return x * scale, y * scale
+
+
+def get_xy_for_bgl_drawing(node):
+    x, y = node.absolute_location
+    x += node.width + 20
+
+    return scale_nodeview_location(x, y)
+
 
 class SvNodeViewDrawMixin():
 
