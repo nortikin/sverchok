@@ -538,15 +538,15 @@ np.array of shape (n, 3).</p></div>
 </details>
 <div class="desc"><p>Given vectors in surface's UV space, rotate them for given angle in 3D
 space around surface's normal.</p>
-<h2 id="args">Args</h2>
-<ul>
-<li>surface - SvSurface instance.</li>
-<li>uv_points - np.ndarray of shape (n,3) - vector origins in UV space</li>
-<li>uv_vectors - np.ndarray of shape (n,3) - vectors in UV space</li>
-<li>angles - np.ndarray of shape (n,) - angles to rotate vectors for (in radians)</li>
-</ul>
-<h2 id="returns">Returns</h2>
-<p>np.ndarray of shape (n,3) - rotated vectors in UV space (third component is zero).</p></div>
+<p>Args
+-----=
+* surface - SvSurface instance.
+* uv_points - np.ndarray of shape (n,3) - vector origins in UV space
+* uv_vectors - np.ndarray of shape (n,3) - vectors in UV space
+* angles - np.ndarray of shape (n,) - angles to rotate vectors for (in radians)</p>
+<p>Returns
+-----=
+np.ndarray of shape (n,3) - rotated vectors in UV space (third component is zero).</p></div>
 </dd>
 <dt id="sverchok.utils.surface.algorithms.round_knotvectors"><code class="name flex">
 <span>def <span class="ident">round_knotvectors</span></span>(<span>surface, accuracy)</span>

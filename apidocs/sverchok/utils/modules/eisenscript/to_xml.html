@@ -185,8 +185,9 @@ blend <c> <s> -&gt; blend <c> <s></p>
     return rules_elem</code></pre>
 </details>
 <div class="desc"><p>Convert an EisenScript AST :class:<code>Program</code> to an XML ElementTree element.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>program</code></strong></dt>
 <dd>A :class:<code><a title="sverchok.utils.modules.eisenscript.ast.Program" href="ast.html#sverchok.utils.modules.eisenscript.ast.Program">Program</a></code> instance.</dd>
 <dt><strong><code>support_colors</code></strong></dt>
@@ -194,10 +195,12 @@ blend <c> <s> -&gt; blend <c> <s></p>
 saturation, brightness, alpha, color, blend) are omitted
 from the XML output.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>xml.etree.ElementTree.Element &ndash; the root <code>&lt;rules&gt;</code> element.</p>
-<h2 id="raises">Raises</h2>
+<p>Returns
+-----=
+xml.etree.ElementTree.Element &ndash; the root <code>&lt;rules&gt;</code> element.</p>
 <dl>
+<dt>Raises</dt>
+<dt>-----=</dt>
 <dt><code><a title="sverchok.utils.modules.eisenscript.to_xml.ExpressionInXmlError" href="#sverchok.utils.modules.eisenscript.to_xml.ExpressionInXmlError">ExpressionInXmlError</a></code></dt>
 <dd>If the program contains Expr nodes or
 parameterized rules.</dd>
@@ -246,8 +249,9 @@ parameterized rules.</dd>
     return ast_to_xml(program, support_colors=support_colors)</code></pre>
 </details>
 <div class="desc"><p>Parse EisenScript source and convert to XML in one step.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>source</code></strong></dt>
 <dd>EisenScript source code (string).</dd>
 <dt><strong><code>support_colors</code></strong></dt>
@@ -255,10 +259,12 @@ parameterized rules.</dd>
 saturation, brightness, alpha, color, blend) are omitted
 from the XML output.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>xml.etree.ElementTree.Element &ndash; the root <code>&lt;rules&gt;</code> element.</p>
-<h2 id="raises">Raises</h2>
+<p>Returns
+-----=
+xml.etree.ElementTree.Element &ndash; the root <code>&lt;rules&gt;</code> element.</p>
 <dl>
+<dt>Raises</dt>
+<dt>-----=</dt>
 <dt><code>SyntaxError</code></dt>
 <dd>If the source cannot be parsed.</dd>
 </dl></div>
@@ -295,15 +301,17 @@ from the XML output.</dd>
 <div class="desc"><p>Pretty-print an XML element tree to a string.</p>
 <p>Uses xml.dom.minidom for formatting (same approach as the original
 eisenscript_to_xml.py converter).</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>root</code></strong></dt>
 <dd>xml.etree.ElementTree.Element</dd>
 <dt><strong><code>indent</code></strong></dt>
 <dd>Indent string (default 4 spaces).</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>str &ndash; pretty-printed XML.</p></div>
+<p>Returns
+-----=
+str &ndash; pretty-printed XML.</p></div>
 </dd>
 </dl>
 </section>
@@ -347,8 +355,9 @@ converted to XML.</p>
 <p>XML format (Generative Art) does not support Python expressions —
 all values must be concrete numbers or resolvable :class:<code>VariableRef</code>
 (via <code>#define</code>).</p>
-<h2 id="example">Example</h2>
-<p>::</p>
+<p>Example
+-----=
+::</p>
 <pre><code>1 * { x (a + 1) } box
 </code></pre>
 <p><code>a + 1</code> is an expression and cannot be represented in XML.

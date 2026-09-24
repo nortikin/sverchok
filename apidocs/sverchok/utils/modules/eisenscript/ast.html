@@ -173,8 +173,9 @@ expr
 <div class="desc"><p>Color blend: 'blend <color> <strength>'.</p>
 <p>Blends current color with specified color in HSV space.
 Strength 1.0 weights both colors evenly.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>color</code></strong></dt>
 <dd>Color string to blend with.</dd>
 <dt><strong><code>strength</code></strong></dt>
@@ -246,8 +247,9 @@ Strength 1.0 weights both colors evenly.</p>
 <div class="desc"><p>A single branch inside a rule body.</p>
 <p>A branch consists of zero or more repetition blocks followed by a
 terminal: either a rule reference or a primitive.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>repetitions</code></strong></dt>
 <dd>List of Repeat nodes.</dd>
 <dt><strong><code>terminal</code></strong></dt>
@@ -335,8 +337,9 @@ terminal: either a rule reference or a primitive.</p>
 <p>The expression string is validated at parse time via <code>ast.parse(mode='eval')</code>.
 At interpretation time it is evaluated with <code>eval()</code> using a safe namespace
 (math functions, constants, and #define variables).</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>source</code></strong></dt>
 <dd>The raw expression string (without surrounding parens).</dd>
 <dt><strong><code>ast_node</code></strong></dt>
@@ -453,8 +456,9 @@ At interpretation time it is evaluated with <code>eval()</code> using a safe nam
 </details>
 <div class="desc"><p>An #input directive: a program parameter that can be supplied at runtime.</p>
 <p>Syntax: #input <name> [number] [default_value]</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>name</code></strong></dt>
 <dd>Parameter name (string).</dd>
 <dt><strong><code>default_value</code></strong></dt>
@@ -527,8 +531,9 @@ At interpretation time it is evaluated with <code>eval()</code> using a safe nam
         ))</code></pre>
 </details>
 <div class="desc"><p>3x3 matrix transformation: 'm <f1> &hellip; <f9>'.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>matrix</code></strong></dt>
 <dd>List of 9 floats (row-major order).</dd>
 </dl></div>
@@ -580,8 +585,9 @@ At interpretation time it is evaluated with <code>eval()</code> using a safe nam
             matrix @= t_center @ mirror @ t_neg_center</code></pre>
 </details>
 <div class="desc"><p>Mirror about a single axis: 'fx'|'fy'|'fz'.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>axis</code></strong></dt>
 <dd>0=X, 1=Y, 2=Z.</dd>
 </dl></div>
@@ -678,8 +684,9 @@ At interpretation time it is evaluated with <code>eval()</code> using a safe nam
                 f&#34;settings={len(self.settings)}, rules={len(self.rules)})&#34;)</code></pre>
 </details>
 <div class="desc"><p>Top-level AST node representing a complete EisenScript program.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>inputs</code></strong></dt>
 <dd>Dict mapping parameter names to InputDef objects.
 These are #input directives — runtime-configurable values.</dd>
@@ -721,8 +728,9 @@ These are #input directives — runtime-configurable values.</dd>
         return f&#34;Repeat({self.count}, {len(self.transformations)} transforms)&#34;</code></pre>
 </details>
 <div class="desc"><p>Repetition construct: 'N * { transformations&hellip; }'.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>count</code></strong></dt>
 <dd>Number of repetitions (int).</dd>
 <dt><strong><code>transformations</code></strong></dt>
@@ -770,8 +778,9 @@ These are #input directives — runtime-configurable values.</dd>
             matrix @= t_center @ rot @ t_neg_center</code></pre>
 </details>
 <div class="desc"><p>Rotation about a single axis in degrees: 'rx'|'ry'|'rz' <float>.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>axis</code></strong></dt>
 <dd>0=X, 1=Y, 2=Z.</dd>
 <dt><strong><code>angle</code></strong></dt>
@@ -829,8 +838,9 @@ These are #input directives — runtime-configurable values.</dd>
         return f&#34;Rule({self.name!r}, md={self.maxdepth}, w={self.weight})&#34;</code></pre>
 </details>
 <div class="desc"><p>Rule definition.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>name</code></strong></dt>
 <dd>Rule identifier (string).</dd>
 <dt><strong><code>params</code></strong></dt>
@@ -894,8 +904,9 @@ default 1.0).</dd>
         return f&#34;RuleRef({inner})&#34;</code></pre>
 </details>
 <div class="desc"><p>Reference to another rule (terminal of a branch).</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>name</code></strong></dt>
 <dd>Referenced rule name (string).</dd>
 <dt><strong><code>args</code></strong></dt>
@@ -1003,8 +1014,9 @@ is reached (string or None).</dd>
 </details>
 <div class="desc"><p>Scale transformation.</p>
 <p>Can be uniform 's <float>' or per-axis 's <f1> <f2> <f3>'.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>x</code></strong></dt>
 <dd>Scale factor for X axis (float).</dd>
 <dt><strong><code>y</code></strong></dt>
@@ -1050,8 +1062,9 @@ is reached (string or None).</dd>
         return f&#34;SetColor({self.color!r})&#34;</code></pre>
 </details>
 <div class="desc"><p>Absolute color set: 'color <color>'.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>color</code></strong></dt>
 <dd>Color string (HTML hex like '#FF0000' or SVG keyword like 'red').</dd>
 </dl></div>
@@ -1096,8 +1109,9 @@ is reached (string or None).</dd>
         return f&#34;Set({self.name}, {self.value!r})&#34;</code></pre>
 </details>
 <div class="desc"><p>Global setting statement (e.g. 'set maxdepth 100').</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>name</code></strong></dt>
 <dd>Setting name (maxdepth, maxobjects, minsize, maxsize, seed,
 background, color, colorpool).</dd>
@@ -1211,8 +1225,9 @@ Color transformations are no-ops — they do not affect geometry.</p></div>
     pass</code></pre>
 </details>
 <div class="desc"><p>Apply this transformation to <em>matrix</em> in-place.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>matrix</code></strong></dt>
 <dd>4×4 mathutils.Matrix (modified in-place).</dd>
 <dt><strong><code>resolve</code></strong></dt>
@@ -1264,8 +1279,9 @@ Color transformations are no-ops — they do not affect geometry.</p></div>
             matrix @= Matrix.Translation((0.0, 0.0, v))</code></pre>
 </details>
 <div class="desc"><p>Translation along a single axis: 'x'|'y'|'z' <float>.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>axis</code></strong></dt>
 <dd>0=X, 1=Y, 2=Z.</dd>
 <dt><strong><code>value</code></strong></dt>
@@ -1312,8 +1328,9 @@ Color transformations are no-ops — they do not affect geometry.</p></div>
 </details>
 <div class="desc"><p>Custom triangle/polygon primitive.</p>
 <p>Syntax: Triangle[x1,y1,z1;x2,y2,z2;x3,y3,z3]</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>vertices</code></strong></dt>
 <dd>List of (x, y, z) tuples.</dd>
 </dl></div>
@@ -1347,8 +1364,9 @@ Color transformations are no-ops — they do not affect geometry.</p></div>
         return f&#34;Var({self.name!r})&#34;</code></pre>
 </details>
 <div class="desc"><p>Reference to a #define variable.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>name</code></strong></dt>
 <dd>Variable name (string).</dd>
 </dl></div>

@@ -563,23 +563,23 @@ list of intersection points</p>
 </details>
 <div class="desc"><p>Find intersections between a (generic) Curve and a sphere.</p>
 <p>Dependencies: scipy.</p>
-<h2 id="args">Args</h2>
-<ul>
-<li>curve: an instance of SvCurve.</li>
-<li>ctr: sphere center; 3-tuple or np.array of shape (3,).</li>
-<li>radius: sphere radius - float.</li>
-<li>init_samples: initial number of segments to split the curve into.</li>
-<li>max_results: maximum number of intersections to return. None means return all of them.</li>
-<li>direction: 1 or -1. Direction &gt; 0 means scan the curve from beginning to the end,
+<p>Args
+-----=
+* curve: an instance of SvCurve.
+* ctr: sphere center; 3-tuple or np.array of shape (3,).
+* radius: sphere radius - float.
+* init_samples: initial number of segments to split the curve into.
+* max_results: maximum number of intersections to return. None means return all of them.
+* direction: 1 or -1. Direction &gt; 0 means scan the curve from beginning to the end,
 direction &lt; 0 - scan in the opposite direction. Results will be returned in corresponding order.
 If max_results is not None, then direction defines which intersections will be returned - the first
-or the last ones.</li>
-<li>tolerance: numeric method tolerance.</li>
-<li>max_subdivisions: maximum number of recursive segment subdivisions allowed in case when both ends of
-the segment lie on the same side of the sphere.</li>
-</ul>
-<h2 id="returns">Returns</h2>
-<p>np.array of T values of intersection.</p></div>
+or the last ones.
+* tolerance: numeric method tolerance.
+* max_subdivisions: maximum number of recursive segment subdivisions allowed in case when both ends of
+the segment lie on the same side of the sphere.</p>
+<p>Returns
+-----=
+np.array of T values of intersection.</p></div>
 </dd>
 <dt id="sverchok.utils.manifolds.intersect_curve_surface"><code class="name flex">
 <span>def <span class="ident">intersect_curve_surface</span></span>(<span>curve,<br>surface,<br>init_samples=10,<br>raycast_samples=10,<br>tolerance=0.001,<br>maxiter=50,<br>raycast_method='hybr',<br>support_nurbs=False)</span>
@@ -989,23 +989,23 @@ dependencies: scipy</p></div>
 This method uses properties of NURBS curve to effectively cut the parts of the curve
 where intersections can not appear.</p>
 <p>Dependencies: scipy.</p>
-<h2 id="args">Args</h2>
-<ul>
-<li>curve: an instance of SvNurbsCurve.</li>
-<li>ctr: sphere center; 3-tuple or np.array of shape (3,).</li>
-<li>radius: sphere radius - float.</li>
-<li>max_results: maximum number of intersections to return. None means return all of them.</li>
-<li>direction: 1 or -1. Direction &gt; 0 means scan the curve from beginning to the end,
+<p>Args
+-----=
+* curve: an instance of SvNurbsCurve.
+* ctr: sphere center; 3-tuple or np.array of shape (3,).
+* radius: sphere radius - float.
+* max_results: maximum number of intersections to return. None means return all of them.
+* direction: 1 or -1. Direction &gt; 0 means scan the curve from beginning to the end,
 direction &lt; 0 - scan in the opposite direction. Results will be returned in corresponding order.
 If max_results is not None, then direction defines which intersections will be returned - the first
-or the last ones.</li>
-<li>tolerance: numeric method tolerance.</li>
-<li>max_subdivisions: maximum number of recursive segment subdivisions allowed in case when both ends of
+or the last ones.
+* tolerance: numeric method tolerance.
+* max_subdivisions: maximum number of recursive segment subdivisions allowed in case when both ends of
 the segment lie on the same side of the sphere, but there is a possibility that some part of the
-segment lies on the other side. In usual cases 1 or 2 subdivisions are enough.</li>
-</ul>
-<h2 id="returns">Returns</h2>
-<p>np.array of T values of intersection.</p></div>
+segment lies on the other side. In usual cases 1 or 2 subdivisions are enough.</p>
+<p>Returns
+-----=
+np.array of T values of intersection.</p></div>
 </dd>
 <dt id="sverchok.utils.manifolds.nearest_point_on_curve"><code class="name flex">
 <span>def <span class="ident">nearest_point_on_curve</span></span>(<span>src_points,<br>curve,<br>samples=10,<br>precise=True,<br>method='Brent',<br>output_points=True,<br>logger=None)</span>
@@ -1964,36 +1964,34 @@ dependencies: scipy</p></div>
 </details>
 <div class="desc"><p>Symmetrize a curve: cut the curve in half by a plane; take one half and
 mirror it around the same plane.</p>
-<h2 id="args">Args</h2>
-<ul>
-<li>curve: SvCurve</li>
-<li>plane: PlaneEquation</li>
-<li>sign: direction of mirror; 1 means take the part of curve which lies
-in positive direction of plane's normal.</li>
-<li>concatenate: boolean. Concatenate original parts of the curve with
-their mirrored versions. Implies flip = true.</li>
-<li>flip: boolean. Reverse the direction of mirrored parts. Required in
-order to concatenate segments.</li>
-<li>flat_output: boolean. Not used if concatenate is true. If set to
+<p>Args
+-----=
+* curve: SvCurve
+* plane: PlaneEquation
+* sign: direction of mirror; 1 means take the part of curve which lies
+in positive direction of plane's normal.
+* concatenate: boolean. Concatenate original parts of the curve with
+their mirrored versions. Implies flip = true.
+* flip: boolean. Reverse the direction of mirrored parts. Required in
+order to concatenate segments.
+* flat_output: boolean. Not used if concatenate is true. If set to
 true, output single flat list of curve segments, both origial and
 mirrored ones. Otherwise, output pairs of segments: original segment
-and mirrored one.</li>
-<li>separate_output: if true, return original and mirrored segments in
+and mirrored one.
+* separate_output: if true, return original and mirrored segments in
 two separate lists. Otherwise, return one single list of curves (if
 possible - in such an order, so that they could be concatenated;
-however, this is not guaranteed).</li>
-<li>support_nurbs: boolean. If true, use special algorithm of
+however, this is not guaranteed).
+* support_nurbs: boolean. If true, use special algorithm of
 intersecting the curve with the mirror plane for NURBS curves.
-Otherwise, always use generic algorithm.</li>
-<li>tolerance: tolerance both for intersection algorithm and for concatenation.</li>
-</ul>
-<h2 id="returns">Returns</h2>
-<ul>
-<li>If separate_output is true: 2-tuple: original parts of the curve and mirrored parts.</li>
-<li>If concatenate is true: list of SvCurve.</li>
-<li>If concatenate is false and flat_output is false: list of 2-lists: a curve and it's mirrored version.</li>
-<li>Otherwise, if flat_output is true: flat list of all resulting curve segments.</li>
-</ul></div>
+Otherwise, always use generic algorithm.
+* tolerance: tolerance both for intersection algorithm and for concatenation.</p>
+<p>Returns
+-----=
+* If separate_output is true: 2-tuple: original parts of the curve and mirrored parts.
+* If concatenate is true: list of SvCurve.
+* If concatenate is false and flat_output is false: list of 2-lists: a curve and it's mirrored version.
+* Otherwise, if flat_output is true: flat list of all resulting curve segments.</p></div>
 </dd>
 </dl>
 </section>
@@ -2239,7 +2237,8 @@ Otherwise, always use generic algorithm.</li>
 
         return result</code></pre>
 </details>
-<div class="desc"><h2 id="usage">Usage</h2>
+<div class="desc"><p>Usage
+-----=</p>
 <p>raycaster = SurfaceRaycaster(surface)
 raycaster.init_bvh(samples)
 result = raycaster.raycast(src_points, directions, &hellip;)</p>

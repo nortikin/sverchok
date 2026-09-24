@@ -179,29 +179,29 @@ el.replaceWith(d);
     return new_u_curves, new_v_curves, target_pts, u_values, v_values</code></pre>
 </details>
 <div class="desc"><p>Adjust U- or V-curves so that each U-curve would exactly intersect each V-curve.</p>
-<h2 id="args">Args</h2>
-<ul>
-<li>u_curves, v_curves: two lists of SvCurve instances.</li>
-<li>u_values, v_values: curve parameter values, at which they should
-intersect. Mandatory if corresponding (u_mode or v_mode) is EXPLICIT.</li>
-<li>bias: PRIMARY_U or PRIMARY_V. PRIMARY_U means leave U curves as is
-and adjust V curves. PRIMARY_V means adjust U curves.</li>
-<li>u_mode, v_mode: modes of providing curve parameter values for intersection.
+<p>Args
+-----=
+* u_curves, v_curves: two lists of SvCurve instances.
+* u_values, v_values: curve parameter values, at which they should
+intersect. Mandatory if corresponding (u_mode or v_mode) is EXPLICIT.
+* bias: PRIMARY_U or PRIMARY_V. PRIMARY_U means leave U curves as is
+and adjust V curves. PRIMARY_V means adjust U curves.
+* u_mode, v_mode: modes of providing curve parameter values for intersection.
 Possible values are UNIFORM, FIT and EXPLICIT. UNIFORM means uniform T
 values distribution; FIT means find nearest place on the curve to
 corresponding point on another curve; EXPLICIT means use explicitly
 provided values. u_mode and v_mode can not be set to
-FIT simultaneously.</li>
-<li>fit_samples: initial resolution parameter for finding nearest point
-(for FIT mode).</li>
-<li>crop_u, crop_v: if True, cut off tails of U and/or V curves, which
-are outside first and last intersections.</li>
-<li>preserve_tangents: if True, preserve curve tangents while adjusting.
+FIT simultaneously.
+* fit_samples: initial resolution parameter for finding nearest point
+(for FIT mode).
+* crop_u, crop_v: if True, cut off tails of U and/or V curves, which
+are outside first and last intersections.
+* preserve_tangents: if True, preserve curve tangents while adjusting.
 This may lead to error if there are too few control points on curves
-being adjusted (you may need to refine curves first).</li>
-</ul>
-<h2 id="returns">Returns</h2>
-<p>Tuple:
+being adjusted (you may need to refine curves first).</p>
+<p>Returns
+-----=
+Tuple:
 * new u_curves
 * new v_curves
 * intersection points

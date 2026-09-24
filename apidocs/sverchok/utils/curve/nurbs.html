@@ -2264,8 +2264,9 @@ el.replaceWith(d);
 </code></dt>
 <dd>
 <div class="desc"><p>Try to convert arbitrary curve into NURBS.</p>
-<h2 id="returns">Returns</h2>
-<p>an instance of SvNurbsCurve, or None,
+<p>Returns
+-----=
+an instance of SvNurbsCurve, or None,
 if this curve can not be converted to NURBS.</p></div>
 </dd>
 </dl>
@@ -2608,8 +2609,9 @@ such a way that each segment is nearly a straight line segment.</p></div>
     return curve</code></pre>
 </details>
 <div class="desc"><p>Return a new curve which is the segment of original curve between specified parameter values.</p>
-<h2 id="returns">Returns</h2>
-<p>a new instance of the same class.</p></div>
+<p>Returns
+-----=
+a new instance of the same class.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.elevate_degree"><code class="name flex">
 <span>def <span class="ident">elevate_degree</span></span>(<span>self, delta=None, target=None)</span>
@@ -2778,8 +2780,9 @@ such a way that each segment is nearly a straight line segment.</p></div>
     return np.concatenate((weighted, weights), axis=1)</code></pre>
 </details>
 <div class="desc"><p>Get NURBS curve control points and weights, unified in homogeneous coordinates.</p>
-<h2 id="returns">Returns</h2>
-<p>np.array of shape (k, 4)</p></div>
+<p>Returns
+-----=
+np.array of shape (k, 4)</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector"><code class="name flex">
 <span>def <span class="ident">get_knotvector</span></span>(<span>self)</span>
@@ -2799,8 +2802,9 @@ such a way that each segment is nearly a straight line segment.</p></div>
     raise NotImplementedError(&#34;Not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"><p>Get NURBS curve knotvector.</p>
-<h2 id="returns">Returns</h2>
-<p>np.array of shape (X,)</p></div>
+<p>Returns
+-----=
+np.array of shape (X,)</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity"><code class="name flex">
 <span>def <span class="ident">get_min_continuity</span></span>(<span>self)</span>
@@ -2889,8 +2893,9 @@ such a way that each segment is nearly a straight line segment.</p></div>
     raise NotImplementedError(&#34;Not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"><p>Get NURBS curve weights.</p>
-<h2 id="returns">Returns</h2>
-<p>np.array of shape (k,)</p></div>
+<p>Returns
+-----=
+np.array of shape (k,)</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point"><code class="name flex">
 <span>def <span class="ident">has_exactly_one_nearest_point</span></span>(<span>self, src_point)</span>
@@ -3488,10 +3493,12 @@ lie inside the sphere, or may not touch it at all.</p></div>
         return SvBezierCurve.from_control_points(points)</code></pre>
 </details>
 <div class="desc"><p>Try to convert this cure to Bezier curve.</p>
-<h2 id="returns">Returns</h2>
-<p>an instance of SvBezierCurve.</p>
-<h2 id="raises">Raises</h2>
+<p>Returns
+-----=
+an instance of SvBezierCurve.</p>
 <dl>
+<dt>Raises</dt>
+<dt>-----=</dt>
 <dt><code>UnsupportedCurveTypeException</code></dt>
 <dd>when this curve can not be represented as Bezier curve.</dd>
 </dl></div>
@@ -3532,8 +3539,9 @@ lie inside the sphere, or may not touch it at all.</p></div>
     return segments</code></pre>
 </details>
 <div class="desc"><p>Split the curve into a list of Bezier curves.</p>
-<h2 id="returns">Returns</h2>
-<p>If <code>to_bezier_class</code> is True, then a list of SvBezierCurve instances. Otherwise, a list of SvNurbsCurve instances.</p></div>
+<p>Returns
+-----=
+If <code>to_bezier_class</code> is True, then a list of SvBezierCurve instances. Otherwise, a list of SvNurbsCurve instances.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.to_knotvector"><code class="name flex">
 <span>def <span class="ident">to_knotvector</span></span>(<span>self, curve2)</span>
@@ -3607,15 +3615,17 @@ lie inside the sphere, or may not touch it at all.</p></div>
                 self.get_weights())</code></pre>
 </details>
 <div class="desc"><p>Apply transformation matrix to the curve.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>frame</code></strong></dt>
 <dd>np.array of shape (3,3) - transformation matrix</dd>
 <dt><strong><code>vector</code></strong></dt>
 <dd>np.array of shape (3,) - translation vector</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>new NURBS curve of the same implementation.</p></div>
+<p>Returns
+-----=
+new NURBS curve of the same implementation.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.translate"><code class="name flex">
 <span>def <span class="ident">translate</span></span>(<span>self, vector)</span>

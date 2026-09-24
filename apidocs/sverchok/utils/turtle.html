@@ -1051,16 +1051,18 @@ constructor.</p></div>
 </details>
 <div class="desc"><p>Find distance to a boundary edge, if the turtle will step forward
 each time.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>maximum</code></strong></dt>
 <dd>maximum number of faces to check (to prevent possible infinite loop,
 or too long paths). None means the total number of faces in the mesh.</dd>
 <dt><strong><code>bias</code></strong></dt>
 <dd>bias for get_next_face().</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>number of steps to reach a boundary edge, or None if such edge is too far.</p></div>
+<p>Returns
+-----=
+number of steps to reach a boundary edge, or None if such edge is too far.</p></div>
 </dd>
 <dt id="sverchok.utils.turtle.Turtle.get_direct_distance_to_edge"><code class="name flex">
 <span>def <span class="ident">get_direct_distance_to_edge</span></span>(<span>self, check_loop, maximum=None, bias=None)</span>
@@ -1104,8 +1106,9 @@ or too long paths). None means the total number of faces in the mesh.</dd>
 </details>
 <div class="desc"><p>Find distance to some "good" edge, if the turtle will step forward
 each time.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>check_loop</code></strong></dt>
 <dd>function taking BMLoop and returning boolean.</dd>
 <dt><strong><code>maximum</code></strong></dt>
@@ -1114,8 +1117,9 @@ or too long paths). None means the total number of faces in the mesh.</dd>
 <dt><strong><code>bias</code></strong></dt>
 <dd>bias for get_next_face().</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>number of steps to reach a "good" edge, or None if such edge is too far.</p></div>
+<p>Returns
+-----=
+number of steps to reach a "good" edge, or None if such edge is too far.</p></div>
 </dd>
 <dt id="sverchok.utils.turtle.Turtle.get_direct_distance_to_obstacle"><code class="name flex">
 <span>def <span class="ident">get_direct_distance_to_obstacle</span></span>(<span>self, maximum=None, bias=None)</span>
@@ -1158,16 +1162,18 @@ or too long paths). None means the total number of faces in the mesh.</dd>
 </details>
 <div class="desc"><p>Find distance to an edge near an obstacle, if the turtle will step forward
 each time.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>maximum</code></strong></dt>
 <dd>maximum number of faces to check (to prevent possible infinite loop,
 or too long paths). None means the total number of faces in the mesh.</dd>
 <dt><strong><code>bias</code></strong></dt>
 <dd>bias for get_next_face().</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>number of steps to reach an edge of an obstacle, or None if such edge is too far.</p></div>
+<p>Returns
+-----=
+number of steps to reach an edge of an obstacle, or None if such edge is too far.</p></div>
 </dd>
 <dt id="sverchok.utils.turtle.Turtle.get_face_at_next"><code class="name flex">
 <span>def <span class="ident">get_face_at_next</span></span>(<span>self)</span>
@@ -1474,8 +1480,9 @@ one painting layer, named Turtle.PAINT.</p></div>
 <div class="desc"><p>Mark current face as an obstacle.
 "Obstacle" is just a boolean indicator, that can be
 checked with turtle.get_is_obstacle or turtle.is_looking_at_obstacle.</p>
-<h2 id="args">Args</h2>
-<p>is_obstacle : boolean or int, 1 or True for marking face as obstacle.</p></div>
+<p>Args
+-----=
+is_obstacle : boolean or int, 1 or True for marking face as obstacle.</p></div>
 </dd>
 <dt id="sverchok.utils.turtle.Turtle.set_obstacle_mask"><code class="name flex">
 <span>def <span class="ident">set_obstacle_mask</span></span>(<span>self, face_mask, invert=False)</span>
@@ -1500,8 +1507,9 @@ checked with turtle.get_is_obstacle or turtle.is_looking_at_obstacle.</p>
             face[self.obstacle_layer] = int(is_obstacle)</code></pre>
 </details>
 <div class="desc"><p>Set obstacle indicators for all faces of the mesh.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>face_mask</code></strong></dt>
 <dd>list of booleans or ints, True or 1 to mark face as an obstacle.</dd>
 <dt><strong><code>invert</code></strong></dt>
@@ -1588,8 +1596,9 @@ one painting layer, named Turtle.PAINT.</p></div>
 </details>
 <div class="desc"><p>Start selecting faces which the turtle passes.
 This mode can be stopped by calling stop_selecting().</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>mode</code></strong></dt>
 <dd>selection mode. Can be Turtle.SELECT, Turtle.UNSELECT, Turtle.TOGGLE or Turtle.MASK.</dd>
 <dt><strong><code>mask</code></strong></dt>
@@ -1992,10 +2001,12 @@ number of times.</p></div>
     return (v != 0)</code></pre>
 </details>
 <div class="desc"><p>Whether the turtle already has previously visited the given face.</p>
-<h2 id="args">Args</h2>
-<p>face : BMFace</p>
-<h2 id="returns">Returns</h2>
-<p>boolean</p></div>
+<p>Args
+-----=
+face : BMFace</p>
+<p>Returns
+-----=
+boolean</p></div>
 </dd>
 <dt id="sverchok.utils.turtle.Turtle.zig_zag"><code class="name flex">
 <span>def <span class="ident">zig_zag</span></span>(<span>self, steps=1, leg=0, turns=1)</span>

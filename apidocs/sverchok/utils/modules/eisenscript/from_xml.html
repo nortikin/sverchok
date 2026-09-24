@@ -171,16 +171,19 @@ blend <c> <s> → BlendColor(c, s)</p>
     return Program(defines=defines, settings=settings, rules=rules)</code></pre>
 </details>
 <div class="desc"><p>Convert a Generative Art XML <code>&lt;rules&gt;</code> element to an EisenScript AST.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>xml_root</code></strong></dt>
 <dd>An <code>xml.etree.ElementTree</code> element representing
 the <code>&lt;rules&gt;</code> root element.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>A :class:<code>~sverchok.utils.modules.eisenscript.ast.Program</code> instance.</p>
-<h2 id="raises">Raises</h2>
+<p>Returns
+-----=
+A :class:<code>~sverchok.utils.modules.eisenscript.ast.Program</code> instance.</p>
 <dl>
+<dt>Raises</dt>
+<dt>-----=</dt>
 <dt><code>ValueError</code></dt>
 <dd>If the XML contains unknown or invalid content.</dd>
 </dl></div>

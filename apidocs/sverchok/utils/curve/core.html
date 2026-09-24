@@ -156,8 +156,9 @@ degree and u_bounds. M matrix is always lower-triangular matrix.
 R matrix is upper-triangular matrix. If u_bounds[0] == 0.0, then
 R is diagonal matrix.</p>
 <p>Refer to The NURBS Book, 2nd ed., p. 6.6</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>degree</code></strong></dt>
 <dd>degree of Bezier curve</dd>
 <dt><strong><code>u_bounds</code></strong></dt>
@@ -167,8 +168,9 @@ R is diagonal matrix.</p>
 <dt><strong><code>calc_R</code></strong></dt>
 <dd>whether to calculate R matrix</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>dictionary with string keys:
+<p>Returns
+-----=
+dictionary with string keys:
 * 'M': np.array of shape (degree+1, degree+1) - present only if calc_M == True
 * 'R': np.array of shape (degree+1, degree+1) - present only if calc_R == True</p></div>
 </dd>
@@ -1139,8 +1141,9 @@ with polyline.</p></div>
     return result</code></pre>
 </details>
 <div class="desc"><p>Calculate curve derivatives, up to certain order, at a series of points.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>n</code></strong></dt>
 <dd>order, up to which the derivatives are to be calculated. For example, n=2 means calculate first and second derivative. Most curve classes support only n = 1, 2 and 3.</dd>
 <dt><strong><code>ts</code></strong></dt>
@@ -1148,8 +1151,9 @@ with polyline.</p></div>
 <dt><strong><code>tangent_delta</code></strong></dt>
 <dd>delta value for derivative calculation.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>list of np.arrays, of shape (N,3) each. Numer of arrays is equal to `n'.</p></div>
+<p>Returns
+-----=
+list of np.arrays, of shape (N,3) each. Numer of arrays is equal to `n'.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.evaluate"><code class="name flex">
 <span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
@@ -1172,13 +1176,15 @@ with polyline.</p></div>
     raise NotImplementedError(&#34;not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"><p>Evaluate the curve at one point.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>t</code></strong></dt>
 <dd>curve parameter value.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>Curve point - np.array of shape (3,).</p></div>
+<p>Returns
+-----=
+Curve point - np.array of shape (3,).</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.evaluate_array"><code class="name flex">
 <span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
@@ -1201,13 +1207,15 @@ with polyline.</p></div>
     raise NotImplementedError(&#34;not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"><p>Evaluate the curve at a series of points.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>ts</code></strong></dt>
 <dd>curve parameter values. np.array of shape (n,).</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>Curve points - np.array of shape (n,3).</p></div>
+<p>Returns
+-----=
+Curve points - np.array of shape (n,3).</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.frame_array"><code class="name flex">
 <span>def <span class="ident">frame_array</span></span>(<span>self, ts, on_zero_curvature='asis', tangent_delta=None)</span>
@@ -1261,8 +1269,9 @@ with polyline.</p></div>
         raise e</code></pre>
 </details>
 <div class="desc"><p>Calculate curve frames at a series of points.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>ts</code></strong></dt>
 <dd>np.array of shape (n,)</dd>
 <dt><strong><code>on_zero_curvature</code></strong></dt>
@@ -1273,8 +1282,9 @@ The supported options are:
 * SvCurve.ASIS: do not perform special check for this case, the
 algorithm will raise a general LinAlgError exception if it can't calculate the matrix.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>tuple:
+<p>Returns
+-----=
+tuple:
 * matrices: np.array of shape (n, 3, 3)
 * normals: np.array of shape (n, 3)
 * binormals: np.array of shape (n, 3)</p></div>
@@ -1322,8 +1332,9 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 * Z axis is aligned along curve tangent;
 * X axis is orthogonal to Z, and, at the same time, lies in the plane defined by specified normal vector;
 * Y axis is orthogonal to both X and Z.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>ts</code></strong></dt>
 <dd>curve parameter values - np.array of shape (n,).</dd>
 <dt><strong><code>plane_normal</code></strong></dt>
@@ -1355,8 +1366,9 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
     #raise Exception(&#34;Curve of type type `{}&#39; does not have control points&#34;.format(type(self)))</code></pre>
 </details>
 <div class="desc"><p>Get curve control points, if applicable.</p>
-<h2 id="returns">Returns</h2>
-<p>np.array of shape (n, 3)</p></div>
+<p>Returns
+-----=
+np.array of shape (n, 3)</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.get_degree"><code class="name flex">
 <span>def <span class="ident">get_degree</span></span>(<span>self)</span>
@@ -1453,8 +1465,9 @@ If the curve is not a polyline, this method can raise an exception.</p></div>
     return []</code></pre>
 </details>
 <div class="desc"><p>Get points at which curve tilt is defined.</p>
-<h2 id="returns">Returns</h2>
-<p>list of (u, tilt) pairs, where u is curve parameter value, and `tilt'
+<p>Returns
+-----=
+list of (u, tilt) pairs, where u is curve parameter value, and `tilt'
 is tilt value.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.get_u_bounds"><code class="name flex">
@@ -1475,8 +1488,9 @@ is tilt value.</p></div>
     raise NotImplementedError(&#34;not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"><p>Obtain curve domain.</p>
-<h2 id="returns">Returns</h2>
 <dl>
+<dt>Returns</dt>
+<dt>-----=</dt>
 <dt><code>Tuple</code></dt>
 <dd>minimum and maximum value of curve's parameter.</dd>
 </dl></div>
@@ -1628,15 +1642,17 @@ is tilt value.</p></div>
     return (v2 - 2*v1 + v0) / (h * h)</code></pre>
 </details>
 <div class="desc"><p>Calculate second derivative vector at one point.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>t</code></strong></dt>
 <dd>curve parameter value.</dd>
 <dt><strong><code>tangent_delta</code></strong></dt>
 <dd>delta value for derivative calculation.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>second derivative vector - np.array of shape (3,).</p></div>
+<p>Returns
+-----=
+second derivative vector - np.array of shape (3,).</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.second_derivative_array"><code class="name flex">
 <span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
@@ -1664,15 +1680,17 @@ is tilt value.</p></div>
     return (v2s - 2*v1s + v0s) / (h * h)</code></pre>
 </details>
 <div class="desc"><p>Calculate second derivative vectors at a series of points.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>ts</code></strong></dt>
 <dd>curve parameter values - np.array of shape (n,).</dd>
 <dt><strong><code>tangent_delta</code></strong></dt>
 <dd>delta value for derivative calculation.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>second derivative vectors - np.array of shape (n,3).</p></div>
+<p>Returns
+-----=
+second derivative vectors - np.array of shape (n,3).</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.tangent"><code class="name flex">
 <span>def <span class="ident">tangent</span></span>(<span>self, t, tangent_delta=None)</span>
@@ -1699,15 +1717,17 @@ is tilt value.</p></div>
     return (v_h - v) / h</code></pre>
 </details>
 <div class="desc"><p>Calculate curve tangent vector at one point.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>t</code></strong></dt>
 <dd>curve parameter value.</dd>
 <dt><strong><code>tangent_delta</code></strong></dt>
 <dd>delta value for derivative calculation.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>tangent vector - np.array of shape (3,).</p></div>
+<p>Returns
+-----=
+tangent vector - np.array of shape (3,).</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.tangent_array"><code class="name flex">
 <span>def <span class="ident">tangent_array</span></span>(<span>self, ts, tangent_delta=None)</span>
@@ -1746,15 +1766,17 @@ is tilt value.</p></div>
     return tangents</code></pre>
 </details>
 <div class="desc"><p>Calculate curve tangent vectors at a series of points.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>ts</code></strong></dt>
 <dd>curve parameter values - np.array of shape (n,).</dd>
 <dt><strong><code>tangent_delta</code></strong></dt>
 <dd>delta value for derivative calculation.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>tangent vectors - np.array of shape (n,3).</p></div>
+<p>Returns
+-----=
+tangent vectors - np.array of shape (n,3).</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.tangent_normal_binormal_array"><code class="name flex">
 <span>def <span class="ident">tangent_normal_binormal_array</span></span>(<span>self, ts, normalize=True, tangent_delta=None)</span>
@@ -1804,15 +1826,17 @@ is tilt value.</p></div>
     return self.third_derivative_array(np.array([t]), tangent_delta=tangent_delta)[0]</code></pre>
 </details>
 <div class="desc"><p>Calculate third derivative vector at one point.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>t</code></strong></dt>
 <dd>curve parameter value.</dd>
 <dt><strong><code>tangent_delta</code></strong></dt>
 <dd>delta value for derivative calculation.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>third derivative vector - np.array of shape (3,).</p></div>
+<p>Returns
+-----=
+third derivative vector - np.array of shape (3,).</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
@@ -1841,15 +1865,17 @@ is tilt value.</p></div>
     return (- v0s + 3*v1s - 3*v2s + v3s) / (h * h * h)</code></pre>
 </details>
 <div class="desc"><p>Calculate third derivative vectors at a series of points.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>ts</code></strong></dt>
 <dd>curve parameter values - np.array of shape (n,).</dd>
 <dt><strong><code>tangent_delta</code></strong></dt>
 <dd>delta value for derivative calculation.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>third derivative vectors - np.array of shape (n,3).</p></div>
+<p>Returns
+-----=
+third derivative vectors - np.array of shape (n,3).</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.torsion_array"><code class="name flex">
 <span>def <span class="ident">torsion_array</span></span>(<span>self, ts, tangent_delta=None)</span>
@@ -1923,13 +1949,15 @@ is tilt value.</p></div>
     return integral, new_matrices</code></pre>
 </details>
 <div class="desc"><p>Calculate curve frames with zero integral torsion, at a series of points.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>ts</code></strong></dt>
 <dd>np.array of shape (n,)</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>tuple:
+<p>Returns
+-----=
+tuple:
 * cumulative torsion - np.array of shape (n,) (rotation angles in radians)
 * matrices - np.array of shape (n, 3, 3)</p></div>
 </dd>

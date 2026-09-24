@@ -530,18 +530,18 @@ iterate over any edges or do index lookups</p></div>
     return result_mask, result_vertices_I, result_edges_I, result_polygons_I, result_center_mass_mesh_I, result_mass_mesh_I, result_size_mesh_I</code></pre>
 </details>
 <div class="desc"><p>Calculate center of mass for single mesh.</p>
-<h2 id="input">Input</h2>
-<ul>
-<li>center_mode=['VERTICES', 'EDGES', 'FACES', 'VOLUMES']</li>
-<li>mesh_vertices = [[x1,y1,z1],[x2,y2,z2],&hellip;] (float) - vertices of mesh</li>
-<li>mesh_edges = [[0,1],[1,2],[2,3],&hellip;] (int) - indixes of verts (edges)</li>
-<li>mesh_faces = [[0,1,2],[1,2,3,4,&hellip;], &hellip;] - indixes of verts (faces)</li>
-<li>mass_of_vertices = [ [ 1.1, 1.0, 5.2, 0.2,&hellip;] ] - mass of every vert in mesh. Extrapolate a last value to the all vertices</li>
-<li>object_density = [1.2] - density of volume. If center_mode is EDGES or FACES then mass of objects are proportional to length or area.</li>
-<li>skip_test_volume_are_closed - (only for volume node) If you know that volume are close then you can speed up performance if you set this parameter to True. False - force test mesh are closed.</li>
-<li>quad_mode [BEAUTY, FIXED, ALTERNATE, SHORT_EDGE], ngon_mode [BEAUTY, EAR_CLIP] - modes for triangulation if mesh has faces with 4 and more vertices (for center_mode FACES of VOLUMES only)</li>
-</ul>
-<h2 id="output">Output</h2>
+<p>Input
+-----=
+- center_mode=['VERTICES', 'EDGES', 'FACES', 'VOLUMES']
+- mesh_vertices = [[x1,y1,z1],[x2,y2,z2],&hellip;] (float) - vertices of mesh
+- mesh_edges = [[0,1],[1,2],[2,3],&hellip;] (int) - indixes of verts (edges)
+- mesh_faces = [[0,1,2],[1,2,3,4,&hellip;], &hellip;] - indixes of verts (faces)
+- mass_of_vertices = [ [ 1.1, 1.0, 5.2, 0.2,&hellip;] ] - mass of every vert in mesh. Extrapolate a last value to the all vertices
+- object_density = [1.2] - density of volume. If center_mode is EDGES or FACES then mass of objects are proportional to length or area.
+- skip_test_volume_are_closed - (only for volume node) If you know that volume are close then you can speed up performance if you set this parameter to True. False - force test mesh are closed.
+- quad_mode [BEAUTY, FIXED, ALTERNATE, SHORT_EDGE], ngon_mode [BEAUTY, EAR_CLIP] - modes for triangulation if mesh has faces with 4 and more vertices (for center_mode FACES of VOLUMES only)</p>
+<p>Output
+-----=</p>
 <ul>
 <li>result_mask - True/False. If False then another output params are None</li>
 <li>result_vertices, result_edges, result_polygons - result mesh (source mesh or triangulated mesh)</li>
@@ -549,8 +549,9 @@ iterate over any edges or do index lookups</p></div>
 <li>result_mass_mesh - mass of mesh</li>
 <li>result_size_mesh - for VERTICES - count vertices, for EDGES - length of edges, for FACES - area of mesh, for VOLUMES - volume of mesh</li>
 </ul>
-<h2 id="example">Example</h2>
-<p><a href="https://github.com/nortikin/sverchok/assets/14288520/e432b5c0-35e5-432b-8c9f-798f58b71f13">https://github.com/nortikin/sverchok/assets/14288520/e432b5c0-35e5-432b-8c9f-798f58b71f13</a></p></div>
+<p>Example
+-----=
+<a href="https://github.com/nortikin/sverchok/assets/14288520/e432b5c0-35e5-432b-8c9f-798f58b71f13">https://github.com/nortikin/sverchok/assets/14288520/e432b5c0-35e5-432b-8c9f-798f58b71f13</a></p></div>
 </dd>
 <dt id="sverchok.utils.sv_bmesh_utils.diamond_mesh"><code class="name flex">
 <span>def <span class="ident">diamond_mesh</span></span>(<span>bm)</span>
@@ -1706,8 +1707,9 @@ initial vertices get index of 1, their neighbours get index of 2, and so on.</p>
     return real_process</code></pre>
 </details>
 <div class="desc"><p>Decorator for methods which can work with BMesh.</p>
-<h2 id="usage">Usage</h2>
-<p>@with_bmesh
+<p>Usage
+-----=
+@with_bmesh
 def do_something(self, bm, other_args):
 &hellip;
 return new_bmesh, other_results</p>

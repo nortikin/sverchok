@@ -46,10 +46,12 @@ plane. Signed turning angles are produced by making local plane
 normal orientation consistent along the curve. Control point
 tangents are obtained via Rodrigues rotation around the local
 plane normal.</p>
-<h2 id="reference">Reference</h2>
-<p>"Drawing Curves with Mock Curvature" - John Hobby, MetaPost source</p>
-<h2 id="api">Api</h2>
-<p>hobby_curve(points, cyclic=False, tension=1.0,
+<p>Reference
+-----=
+"Drawing Curves with Mock Curvature" - John Hobby, MetaPost source</p>
+<p>Api
+-----=
+hobby_curve(points, cyclic=False, tension=1.0,
 curl_start=1.0, curl_end=1.0,
 concat=False)</p>
 </section>
@@ -133,15 +135,17 @@ concat=False)</p>
 Signed turning angles are produced by consistent normal orientation.
 Control point tangents use Rodrigues rotation around the local normal.</p>
 <p>For planar (XY) curves, results match the original 2D MetaPost algorithm.</p>
-<h2 id="parameters">Parameters</h2>
-<p>points: list/array of 3D points, shape (n, 3)
+<p>Parameters
+-----=
+points: list/array of 3D points, shape (n, 3)
 cyclic: if True, create a closed curve
 tension: tension parameter (default 1.0)
 curl_start: curl at start endpoint (default 1.0)
 curl_end: curl at end endpoint (default 1.0)
 concat: if True, concatenate segments into a single curve</p>
-<h2 id="returns">Returns</h2>
-<p>list of SvCubicBezierCurve (or single concatenated curve if concat=True)</p></div>
+<p>Returns
+-----=
+list of SvCubicBezierCurve (or single concatenated curve if concat=True)</p></div>
 </dd>
 </dl>
 </section>

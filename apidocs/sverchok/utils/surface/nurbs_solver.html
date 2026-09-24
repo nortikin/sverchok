@@ -121,19 +121,17 @@ el.replaceWith(d);
 </details>
 <div class="desc"><p>Adjust NURBS surface in such a way that at specified value of U/V parameter
 it would pass through specified NURBS curve.</p>
-<h2 id="args">Args</h2>
-<ul>
-<li>surface: SvNurbsSurface</li>
-<li>direction: SvNurbsSurface.U or SvNurbsSurface.V</li>
-<li>targets: list of 2-tuples; in each tuple, first component must be the
+<p>Args
+-----=
+* surface: SvNurbsSurface
+* direction: SvNurbsSurface.U or SvNurbsSurface.V
+* targets: list of 2-tuples; in each tuple, first component must be the
 value of U/V surface parameter, and the second component must be a
-SvNurbsCurve to pass through.</li>
-<li>preserve_tangents: if True, then preserve surface tangents along second parameter.</li>
-</ul>
-<h2 id="returns">Returns</h2>
-<ul>
-<li>SvNurbsSurface.</li>
-</ul></div>
+SvNurbsCurve to pass through.
+* preserve_tangents: if True, then preserve surface tangents along second parameter.</p>
+<p>Returns
+-----=
+* SvNurbsSurface.</p></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs_solver.adjust_nurbs_surface_for_points"><code class="name flex">
 <span>def <span class="ident">adjust_nurbs_surface_for_points</span></span>(<span>surface, targets, implementation='NATIVE', logger=None)</span>
@@ -396,17 +394,15 @@ SvNurbsCurve to pass through.</li>
 </details>
 <div class="desc"><p>Unify degree and knotvector of a NURBS surface (in one direction)
 with a list of NURBS curves.</p>
-<h2 id="args">Args</h2>
-<ul>
-<li>surface: SvNurbsSurface</li>
-<li>direction: SvNurbsSurface.U or SvNurbsSurface.V</li>
-<li>curves: list of SvNurbsCurve</li>
-<li>accuracy: precision of knotvectors unification (number of digits after decimal point)</li>
-</ul>
-<h2 id="returns">Returns</h2>
-<ul>
-<li>Tuple: SvNurbsSurface and a list of SvNurbsCurve.</li>
-</ul></div>
+<p>Args
+-----=
+* surface: SvNurbsSurface
+* direction: SvNurbsSurface.U or SvNurbsSurface.V
+* curves: list of SvNurbsCurve
+* accuracy: precision of knotvectors unification (number of digits after decimal point)</p>
+<p>Returns
+-----=
+* Tuple: SvNurbsSurface and a list of SvNurbsCurve.</p></div>
 </dd>
 </dl>
 </section>
@@ -843,7 +839,7 @@ def from_surface(surface):
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs_solver.SvNurbsSurfaceSolver.solve_ex"><code class="name flex">
-<span>def <span class="ident">solve_ex</span></span>(<span>self,<br>problem_types={'OVERDETERMINED', 'UNDERDETERMINED', 'WELLDETERMINED'},<br>implementation='NATIVE',<br>logger=None)</span>
+<span>def <span class="ident">solve_ex</span></span>(<span>self,<br>problem_types={'UNDERDETERMINED', 'OVERDETERMINED', 'WELLDETERMINED'},<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">

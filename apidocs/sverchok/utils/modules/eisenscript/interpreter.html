@@ -250,8 +250,9 @@ result = Interpreter.interpret(program)
 - Topological ordering (dependencies are resolved before dependents)
 - External variables (<code>#input</code> params) available to expressions</p>
 <p>Raises <code>ValueError</code> on undefined variables or circular dependencies.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>raw_defines</code></strong></dt>
 <dd>Dict mapping variable names to either <code>float</code>
 or :class:<code>Expr</code> nodes.</dd>
@@ -327,10 +328,12 @@ constants.</dd>
     raise ValueError(f&#34;Undefined variable: {name}&#34;)</code></pre>
 </details>
 <div class="desc"><p>Resolve a variable name to its numeric value.</p>
-<h2 id="returns">Returns</h2>
-<p>The computed float value.</p>
-<h2 id="raises">Raises</h2>
+<p>Returns
+-----=
+The computed float value.</p>
 <dl>
+<dt>Raises</dt>
+<dt>-----=</dt>
 <dt><code>ValueError</code></dt>
 <dd>If the variable is undefined or a circular
 dependency is detected.</dd>
@@ -843,8 +846,9 @@ Expr: evaluate with params_scope + #input + #define in namespace.</p></div>
 <div class="desc"><p>Stack-based interpreter for EisenScript AST.</p>
 <p>Walks the rule graph starting from the implicit entry-point
 (<code>IMPLICIT_START_RULE</code>) and accumulates primitive placements.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>max_depth</code></strong></dt>
 <dd>Global recursion depth limit (from <code>set maxdepth</code>).</dd>
 <dt><strong><code>max_objects</code></strong></dt>
@@ -928,8 +932,9 @@ def interpret(
     return interp._interpret(program, input_values=input_values)</code></pre>
 </details>
 <div class="desc"><p>Create an interpreter and run it on <em>program</em>.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>program</code></strong></dt>
 <dd>The EisenScript program to interpret.</dd>
 <dt><strong><code>origin_as_center</code></strong></dt>
@@ -975,8 +980,9 @@ no default and is not provided, a ValueError is raised.</dd>
         self.matrices: Dict[str, List[Matrix]] = {}</code></pre>
 </details>
 <div class="desc"><p>Holds the output of an EisenScript interpretation.</p>
-<h2 id="attributes">Attributes</h2>
 <dl>
+<dt>Attributes</dt>
+<dt>-----=</dt>
 <dt><strong><code>matrices</code></strong></dt>
 <dd>Dict mapping primitive name (str) to a list of
 :class:<code>mathutils.Matrix</code> (4×4) transforms.

@@ -365,7 +365,8 @@ Otherwise, return None.</p></div>
 </details>
 <div class="desc"><p>Decorator for tests that are to be executed in interactive mode only
 (i.e. when tests are run from Blender's UI with "Run all tests" button).</p>
-<h2 id="usage">Usage</h2>
+<p>Usage
+-----=</p>
 <p>@interactive_only
 def test_something(self):
 &hellip;</p></div>
@@ -1596,7 +1597,8 @@ def assert_logs_no_errors(self):
         logging.getLogger().handlers.remove(handler)</code></pre>
 </details>
 <div class="desc"><p>Assert that the code does not write any ERROR to the log.</p>
-<h2 id="usage">Usage</h2>
+<p>Usage
+-----=</p>
 <p>with self.assert_logs_no_errors():
 sv_logger.info("this is just an information, not error")</p></div>
 </dd>
@@ -1740,7 +1742,8 @@ def assert_not_prints_stdout(self, regexp):
         self.assertNotRegex(fake_stdout.getvalue(), regexp)</code></pre>
 </details>
 <div class="desc"><p>Assert that the code does not print anything matching regexp to stdout.</p>
-<h2 id="usage">Usage</h2>
+<p>Usage
+-----=</p>
 <p>with self.assert_not_prints_stdout("hello"):
 print("goodbye")</p></div>
 </dd>
@@ -1821,7 +1824,8 @@ def assert_prints_stdout(self, regexp):
         self.assertRegex(fake_stdout.getvalue(), regexp)</code></pre>
 </details>
 <div class="desc"><p>Assert that the code prints something matching regexp to stdout.</p>
-<h2 id="usage">Usage</h2>
+<p>Usage
+-----=</p>
 <p>with self.assert_prints_stdout("hello"):
 print("hello world")</p></div>
 </dd>

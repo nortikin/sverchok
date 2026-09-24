@@ -102,13 +102,15 @@ of NumPy and Blender's bmesh library.</p>
     return new_verts_from_verts, new_verts_from_edges, new_verts_from_faces</code></pre>
 </details>
 <div class="desc"><p>Calculate coordinates of new vertices by Catmull-Clark algorithm.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>bm</code></strong></dt>
 <dd>input mesh, as Blender's bmesh object.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>Lists of new vertices, all as np.ndarray of shape (x, 3):</p>
+<p>Returns
+-----=
+Lists of new vertices, all as np.ndarray of shape (x, 3):</p>
 <ul>
 <li>new vertices to replace vertices of original mesh</li>
 <li>new vertices to be placed in the middles of edges</li>
@@ -140,15 +142,17 @@ of NumPy and Blender's bmesh library.</p>
     return bm</code></pre>
 </details>
 <div class="desc"><p>Subdivide mesh by use of Catmull-Clark algorithm, one or several times.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>bm</code></strong></dt>
 <dd>input mesh - as bmesh object.</dd>
 <dt><strong><code>iterations</code></strong></dt>
 <dd>number of times the subdivision is to be applied.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>new bmesh object.</p></div>
+<p>Returns
+-----=
+new bmesh object.</p></div>
 </dd>
 <dt id="sverchok.utils.catmull_clark.subdivide_once"><code class="name flex">
 <span>def <span class="ident">subdivide_once</span></span>(<span>bm, normal_update=False)</span>
@@ -203,15 +207,17 @@ of NumPy and Blender's bmesh library.</p>
     return new_bm</code></pre>
 </details>
 <div class="desc"><p>Subdivide mesh by use of Catmull-Clark algorithm, one time.</p>
-<h2 id="args">Args</h2>
 <dl>
+<dt>Args</dt>
+<dt>-----=</dt>
 <dt><strong><code>bm</code></strong></dt>
 <dd>input mesh - as bmesh object.</dd>
 <dt><strong><code>normal_update</code></strong></dt>
 <dd>if True, recalculate mesh normals in the end.</dd>
 </dl>
-<h2 id="returns">Returns</h2>
-<p>new bmesh object.</p></div>
+<p>Returns
+-----=
+new bmesh object.</p></div>
 </dd>
 </dl>
 </section>

@@ -131,15 +131,27 @@ def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_xy_for_bgl_drawing(node):
-    # adjust proposed text location in case node is framed.
-    # take into consideration the hidden state
-    _x, _y = node.absolute_location
-    _x, _y = (_x + node.width + 20), _y
+    x, y = node.absolute_location
+    x += node.width + 20
 
-    # this alters location based on DPI/Scale settings.
-    return _x * node.location_theta, _y * node.location_theta</code></pre>
+    return scale_nodeview_location(x, y)</code></pre>
 </details>
 <div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_nodeview_draw_helper.scale_nodeview_location"><code class="name flex">
+<span>def <span class="ident">scale_nodeview_location</span></span>(<span>x, y)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scale_nodeview_location(x, y):
+    &#34;&#34;&#34;Convert node-view coordinates according to Blender&#39;s UI scale.&#34;&#34;&#34;
+    scale = bpy.context.preferences.system.ui_scale
+    return x * scale, y * scale</code></pre>
+</details>
+<div class="desc"><p>Convert node-view coordinates according to Blender's UI scale.</p></div>
 </dd>
 </dl>
 </section>
@@ -279,6 +291,7 @@ def xy_offset(self):
 <li><code><a title="sverchok.utils.sv_nodeview_draw_helper.faces_from_xy" href="#sverchok.utils.sv_nodeview_draw_helper.faces_from_xy">faces_from_xy</a></code></li>
 <li><code><a title="sverchok.utils.sv_nodeview_draw_helper.get_console_grid" href="#sverchok.utils.sv_nodeview_draw_helper.get_console_grid">get_console_grid</a></code></li>
 <li><code><a title="sverchok.utils.sv_nodeview_draw_helper.get_xy_for_bgl_drawing" href="#sverchok.utils.sv_nodeview_draw_helper.get_xy_for_bgl_drawing">get_xy_for_bgl_drawing</a></code></li>
+<li><code><a title="sverchok.utils.sv_nodeview_draw_helper.scale_nodeview_location" href="#sverchok.utils.sv_nodeview_draw_helper.scale_nodeview_location">scale_nodeview_location</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
