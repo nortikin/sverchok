@@ -102,7 +102,7 @@ else:
         disable_depth_test = lambda self: bgl.glDisable(bgl.GL_DEPTH_TEST)
         disable_texture_2d = lambda self: bgl.glDisable(bgl.GL_TEXTURE_2D)
 
-        new_buffer_texture = lambda self: bgl.Buffer(bgl.GL_INT, 1)
+        new_buffer_texture = lambda self: bgl.Buffer(bgl.GL_INT, [1])
         get_buffer = lambda self, indexed_buffer: bgl.Buffer(bgl.GL_INT, 1, indexed_buffer)
         new_buffer_texture_sized = lambda self, size, data: bgl.Buffer(bgl.GL_FLOAT, size, data)
         bind_texture_2d = lambda self, texture: bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
