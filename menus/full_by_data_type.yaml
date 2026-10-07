@@ -163,6 +163,7 @@
         - SvBevelNodeMK2
         - SvIntersectEdgesNodeMK3
         - SvOffsetNode
+        - SvOffsetLineLiteNode
         - SvInsetSpecialMk2
         - SvInsetFaces
         - SvLatheNode
