@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Embed Mesh &#8212; Sverchok 1, 4, 0 documentation</title>
+    <title>Offset Line lite &#8212; Sverchok 1, 4, 0 documentation</title>
   
   
   
@@ -44,13 +44,13 @@
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/CAD/embed_mesh';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/CAD/offset_line_lite';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Inset Special" href="inset_special_mk2.html" />
-    <link rel="prev" title="Edges to Faces 2D" href="edges_to_faces_2d.html" />
+    <link rel="next" title="Spyrrow Nester" href="spyrrow_nester.html" />
+    <link rel="prev" title="Merge mesh 2D lite" href="merge_mesh_2d_lite.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="1, 4, 0" />
@@ -218,11 +218,11 @@
 <li class="toctree-l3"><a class="reference internal" href="crop_mesh_2d.html">Crop Mesh 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="edges_intersect_mk3.html">Intersect Edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="edges_to_faces_2d.html">Edges to Faces 2D</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Embed Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="embed_mesh.html">Embed Mesh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="inset_special_mk2.html">Inset Special</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d.html">Merge Mesh 2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d_lite.html">Merge mesh 2D lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="offset_line_lite.html">Offset Line lite</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Offset Line lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="spyrrow_nester.html">Spyrrow Nester</a></li>
 <li class="toctree-l3"><a class="reference internal" href="straight_skeleton_2d_extrude.html">Straight Skeleton 2d Extrude (Alpha)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="straight_skeleton_2d_offset.html">Straight Skeleton 2d Offset (Alpha)</a></li>
@@ -314,7 +314,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/CAD/embed_mesh.rst" target="_blank"
+      <li><a href="../../_sources/nodes/CAD/offset_line_lite.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -397,7 +397,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Embed Mesh</h1>
+    <h1>Offset Line lite</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -409,10 +409,9 @@
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modes">Modes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#n-panel">N panel</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
             </nav>
         </div>
@@ -424,50 +423,41 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="embed-mesh">
-<h1>Embed Mesh<a class="headerlink" href="#embed-mesh" title="Link to this heading">#</a></h1>
-<img alt="https://user-images.githubusercontent.com/74725748/204120088-03599881-59d5-4f6c-b7de-3b90b1f620cc.png" src="https://user-images.githubusercontent.com/74725748/204120088-03599881-59d5-4f6c-b7de-3b90b1f620cc.png" />
+  <section id="offset-line-lite">
+<h1>Offset Line lite<a class="headerlink" href="#offset-line-lite" title="Link to this heading">#</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>Embed mesh B on mesh A into mesh A, and in simple terms, you will get the structure of mesh B on mesh A</p>
+<p>It is most simple offset case.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>VertsA</strong> - vertices of mesh A</p></li>
-<li><p><strong>EdgesA</strong> - edges of mesh A</p></li>
-<li><p><strong>FacesA</strong> - faces of mesh A</p></li>
-<li><p><strong>VertsB</strong> - vertices of mesh B</p></li>
-<li><p><strong>EdgesB</strong> - edges of mesh B</p></li>
-<li><p><strong>FacesB</strong> - faces of mesh B</p></li>
-<li><p><strong>Index</strong>  - Specifies on which face of mesh A each point of mesh B is on</p></li>
+<li><p><strong>Vers</strong> - Vertices of objects</p></li>
+<li><p><strong>Edgs</strong> - Edges of objects</p></li>
+</ul>
+</section>
+<section id="options">
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Offset plane</strong> - Plane on wich lines will be offseted:
+XY: Z is up
+XZ: Y is up
+YZ: X is up</p></li>
+<li><p><strong>Offset</strong> - Subj</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<p>This node has the following outputs:</p>
 <ul class="simple">
-<li><p><strong>Verts</strong> - vertices of new mesh</p></li>
-<li><p><strong>Edges</strong> - edges of new mesh</p></li>
-<li><p><strong>Faces</strong> - faces of new mesh</p></li>
-<li><p><strong>Index</strong> - Index of the B-edge structure of the mesh on the new mesh</p></li>
+<li><p><strong>Vers</strong></p></li>
+<li><p><strong>Edgs</strong></p></li>
 </ul>
 </section>
-<section id="modes">
-<h2>Modes<a class="headerlink" href="#modes" title="Link to this heading">#</a></h2>
-<p>None</p>
-</section>
-<section id="n-panel">
-<h2>N panel<a class="headerlink" href="#n-panel" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>Epsilon</strong> - For nearness tests; number of figures after coma</p></li>
-</ul>
-</section>
-<section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
-<p><strong>knife project(with raycaster node):</strong></p>
-<img alt="https://user-images.githubusercontent.com/74725748/204120874-005aa169-166a-466d-bd07-aa5e8a35ed77.png" src="https://user-images.githubusercontent.com/74725748/204120874-005aa169-166a-466d-bd07-aa5e8a35ed77.png" />
-<p><strong>mesh bool(with Nearest Point on Mesh):</strong></p>
-<img alt="https://user-images.githubusercontent.com/74725748/204191959-202a40ea-e7ab-4994-875f-c7160a4fdf6a.png" src="https://user-images.githubusercontent.com/74725748/204191959-202a40ea-e7ab-4994-875f-c7160a4fdf6a.png" />
+<section id="examples-of-usage">
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
+<p>It is so simple, that no need to be exampled</p>
 </section>
 </section>
 
@@ -483,20 +473,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="edges_to_faces_2d.html"
+       href="merge_mesh_2d_lite.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Edges to Faces 2D</p>
+        <p class="prev-next-title">Merge mesh 2D lite</p>
       </div>
     </a>
     <a class="right-next"
-       href="inset_special_mk2.html"
+       href="spyrrow_nester.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Inset Special</p>
+        <p class="prev-next-title">Spyrrow Nester</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -520,10 +510,9 @@
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modes">Modes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#n-panel">N panel</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
   </nav></div>
 
