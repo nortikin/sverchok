@@ -1170,12 +1170,108 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         surface_v = (numerator_v - surface*denominator_v) / denominator
         return SurfaceDerivativesData(surface, surface_u, surface_v)
 
+    def _evaluate_basis(self, order, us, vs):
+        pu, pv = self.degree_u, self.degree_v
+        ncpts_u, ncpts_v, _ = self.control_points.shape
+        basis_u = [[self.basis_u.derivative(i, pu, d)(us) for i in range(ncpts_u)] for d in range(order)]
+        basis_v = [[self.basis_v.derivative(i, pv, d)(vs) for i in range(ncpts_v)] for d in range(order)]
+        return np.array(basis_u), np.array(basis_v)
+
     def curvature_calculator(self, us, vs, order=True):
+        basis_u, basis_v = self._evaluate_basis(3, us, vs)
+        calc = SvNurbsSurfaceCurvatureCalculator(
+                    self.get_degree_u(), self.get_degree_v(),
+                    self.get_control_points(), self.get_weights(),
+                    basis_u, basis_v, us, vs)
+        return calc.prepare(order=order)
     
-        numerator, denominator = self.fraction(0, 0, us, vs)
+    def nurbs_curvature_calculator(self, us, vs):
+        basis_u, basis_v = self._evaluate_basis(3, us, vs)
+        return SvNurbsSurfaceCurvatureCalculator(
+                    self.get_degree_u(), self.get_degree_v(),
+                    self.get_control_points(), self.get_weights(),
+                    basis_u, basis_v, us, vs)
+    
+class SvNurbsSurfaceCurvatureCalculator:
+    def __init__(self, degree_u, degree_v, control_points, weights, basis_u, basis_v, us, vs):
+        self.degree_u = degree_u
+        self.degree_v = degree_v
+        self._control_points = control_points
+        self._weights = weights
+        self.basis_u = basis_u
+        self.basis_v = basis_v
+        self._us = us
+        self._vs = vs
+        self._fractions = dict()
+        self._calculator = None
+
+    def copy(self, control_points = None, weights = None):
+        if control_points is None and weights is None:
+            result = SvNurbsSurfaceCurvatureCalculator(self.degree_u, self.degree_v,
+                                                       self._control_points, self._weights,
+                                                       self.basis_u, self.basis_v,
+                                                       self._us, self._vs)
+            result._fractions = self._fractions
+            result._calculator = self._calculator
+            return result
+        if control_points is None:
+            control_points = self._control_points
+        if weights is None:
+            weights = self._weights
+        result = SvNurbsSurfaceCurvatureCalculator(self.degree_u, self.degree_v,
+                                                 control_points, weights,
+                                                 self.basis_u, self.basis_v,
+                                                 self._us, self._vs)
+        #result._calculator = self._calculator
+        #result._fractions = self._fractions
+        return result
+
+    def fraction(self, deriv_order_u, deriv_order_v):
+        if (deriv_order_u, deriv_order_v) not in self._fractions:
+            #pu = self.degree_u
+            #pv = self.degree_v
+            #ku, kv, _ = self._control_points.shape
+            nsu = self.basis_u[deriv_order_u] # (ku, n)
+            nsv = self.basis_v[deriv_order_v] # (kv, n)
+            nsu = np.transpose(nsu[np.newaxis], axes=(1,0,2)) # (ku, 1, n)
+            nsv = nsv[np.newaxis] # (1, kv, n)
+            ns = nsu * nsv # (ku, kv, n)
+            weights = np.transpose(self._weights[np.newaxis], axes=(1,2,0)) # (ku, kv, 1)
+            coeffs = ns * weights # (ku, kv, n)
+            coeffs = np.transpose(coeffs[np.newaxis], axes=(3,1,2,0)) # (n,ku,kv,1)
+            controls = self._control_points # (ku,kv,3)
+
+            numerator = coeffs * controls # (n,ku,kv,3)
+            numerator = numerator.sum(axis=1).sum(axis=1) # (n,3)
+            denominator = coeffs.sum(axis=1).sum(axis=1)
+            self._fractions[(deriv_order_u,deriv_order_v)] = (numerator, denominator)
+        return self._fractions[(deriv_order_u,deriv_order_v)]
+
+    @property
+    def control_points(self):
+        return self._control_points
+
+    @control_points.setter
+    def control_points(self, points):
+        self._control_points = points
+        self._fractions = dict()
+
+    @property
+    def weights(self):
+        return self._weights
+
+    @weights.setter
+    def weights(self, weights):
+        self._weights = weights
+        self._fractions = dict()
+
+    def prepare(self, order=True):
+        if self._calculator is not None:
+            return self._calculator
+        numerator, denominator = self.fraction(0, 0)
         surface = nurbs_divide(numerator, denominator)
-        numerator_u, denominator_u = self.fraction(1, 0, us, vs)
-        numerator_v, denominator_v = self.fraction(0, 1, us, vs)
+        numerator_u, denominator_u = self.fraction(1, 0)
+        numerator_v, denominator_v = self.fraction(0, 1)
         surface_u = (numerator_u - surface*denominator_u) / denominator
         surface_v = (numerator_v - surface*denominator_v) / denominator
 
@@ -1183,12 +1279,12 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         n = np.linalg.norm(normal, axis=1, keepdims=True)
         normal = normal / n
 
-        numerator_uu, denominator_uu = self.fraction(2, 0, us, vs)
+        numerator_uu, denominator_uu = self.fraction(2, 0)
         surface_uu = (numerator_uu - 2*surface_u*denominator_u - surface*denominator_uu) / denominator
-        numerator_vv, denominator_vv = self.fraction(0, 2, us, vs)
+        numerator_vv, denominator_vv = self.fraction(0, 2)
         surface_vv = (numerator_vv - 2*surface_v*denominator_v - surface*denominator_vv) / denominator
 
-        numerator_uv, denominator_uv = self.fraction(1, 1, us, vs)
+        numerator_uv, denominator_uv = self.fraction(1, 1)
         surface_uv = (numerator_uv - surface_v*denominator_u - surface_u*denominator_v - surface*denominator_uv) / denominator
 
         nuu = (surface_uu * normal).sum(axis=1)
@@ -1199,11 +1295,12 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         dvv = np.linalg.norm(surface_v, axis=1) **2
         duv = (surface_u * surface_v).sum(axis=1)
 
-        calc = SurfaceCurvatureCalculator(us, vs, order=order)
+        calc = SurfaceCurvatureCalculator(self._us, self._vs, order=order)
         calc.set(surface, normal, surface_u, surface_v, duu, dvv, duv, nuu, nvv, nuv)
         calc.fuu = surface_uu
         calc.fvv = surface_vv
         calc.fuv = surface_uv
+        self._calculator = calc
         return calc
 
 SvNurbsMaths.surface_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsSurface

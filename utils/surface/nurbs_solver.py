@@ -7,30 +7,186 @@
 
 import enum
 import numpy as np
+import sys
 
 from sverchok.core.sv_custom_exceptions import AlgorithmError, ArgumentError
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths, SvNurbsBasisFunctions
     )
+from sverchok.utils.math import np_dot
+from sverchok.utils.geom import Spline, PlaneEquation, center, linear_approximation
 from sverchok.utils.sv_logging import get_logger
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.surface.core import other_direction, SurfaceDirection
-from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
+from sverchok.utils.surface.algorithms import unify_nurbs_surfaces, make_planar_surface
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
 from sverchok.utils.curve.nurbs_solver_applications import adjust_curve_points, interpolate_nurbs_curve
+from sverchok.utils.linalg import least_squares_dense, least_squares_sparse, least_squares_with_constraints, solve_sparse
+
+class SvNurbsSurfaceGoal:
+    pass
+
+class SvNurbsSurfacePoints(SvNurbsSurfaceGoal):
+    def __init__(self, exact=False):
+        self.us = []
+        self.vs = []
+        self.points = []
+        self.weights = []
+        self.exact = exact
+
+    def append(self, u, v, point, weight = 1.0):
+        self.us.append(u)
+        self.vs.append(v)
+        self.points.append(point)
+        self.weights.append(weight)
+
+    def extend(self, goal):
+        self.us.extend(goal.us)
+        self.vs.extend(goal.vs)
+        self.points.extend(goal.points)
+        self.weights.extend(goal.weights)
+
+    def clear(self):
+        self.us = []
+        self.vs = []
+        self.points = []
+        self.weights = []
+
+    def is_empty(self):
+        return len(self.us) == 0
+
+    def get_n_points(self):
+        return len(self.points)
+
+    def copy(self):
+        goal = SvNurbsSurfacePoints()
+        goal.us = self.us[:]
+        goal.vs = self.vs[:]
+        goal.points = self.points[:]
+        goal.weights = self.weights[:]
+        goal.exact = self.exact
+        return goal
+
+class SvNurbsSurfaceControls(SvNurbsSurfaceGoal):
+    def __init__(self, exact=False):
+        self.u_idxs = []
+        self.v_idxs = []
+        self.control_points = []
+        self.weights = []
+        self.exact = exact
+
+    def append(self, i, j, point, weight = 1.0):
+        self.u_idxs.append(i)
+        self.v_idxs.append(j)
+        self.control_points.append(point)
+        self.weights.append(weight)
+
+    def extend(self, goal):
+        self.u_idxs.extend(goal.u_idxs)
+        self.v_idxs.extend(goal.v_idxs)
+        self.control_points.extend(goal.control_points)
+        self.weights.extend(goal.weights)
+
+    def clear(self):
+        self.u_idxs = []
+        self.v_idxs = []
+        self.control_points = []
+        self.weights = []
+
+    def is_empty(self):
+        return len(self.u_idxs) == 0
+
+    def get_n_points(self):
+        return len(self.control_points)
+    
+    def copy(self):
+        goal = SvNurbsSurfaceControls()
+        goal.u_idxs = self.u_idxs[:]
+        goal.v_idxs = self.v_idxs[:]
+        goal.control_points = self.control_points[:]
+        goal.weights = self.weights[:]
+        goal.exact = self.exact
+        return goal
 
 class SvNurbsSurfaceSolver:
     def __init__(self):
-        self.degree_u = None
-        self.degree_v = None
-        self.knotvector_u = None
-        self.knotvector_v = None
+        self._degree_u = None
+        self._degree_v = None
+        self._knotvector_u = None
+        self._knotvector_v = None
         self.src_control_points = None
         self.src_surface = None
         self.src_weights = None
         self.n_cpts_u = None
         self.n_cpts_v = None
-        self.goals = []
+        self._goals = dict()
+        self._goals[(SvNurbsSurfacePoints,False)] = SvNurbsSurfacePoints(exact=False)
+        self._goals[(SvNurbsSurfaceControls,False)] = SvNurbsSurfaceControls(exact=False)
+        self._goals[(SvNurbsSurfacePoints,True)] = SvNurbsSurfacePoints(exact=True)
+        self._goals[(SvNurbsSurfaceControls,True)] = SvNurbsSurfaceControls(exact=True)
+        self._A = dict()
+        self._B = dict()
+        self._alphas = dict()
+
+    @property
+    def uv_points(self):
+        return self._goals[(SvNurbsSurfacePoints,False)]
+
+    @uv_points.setter
+    def uv_points(self, goal):
+        self._goals[(SvNurbsSurfacePoints,False)] = goal
+
+    @property
+    def exact_uv_points(self):
+        return self._goals[(SvNurbsSurfacePoints,True)]
+
+    @exact_uv_points.setter
+    def exact_uv_points(self, goal):
+        self._goals[(SvNurbsSurfacePoints,True)] = goal
+
+    @property
+    def fixed_cpts(self):
+        return self._goals[(SvNurbsSurfaceControls,False)]
+
+    @fixed_cpts.setter
+    def fixed_cpts(self, goal):
+        self._goals[(SvNurbsSurfaceControls,False)] = goal
+
+    @property
+    def exact_fixed_cpts(self):
+        return self._goals[(SvNurbsSurfaceControls,True)]
+
+    @exact_fixed_cpts.setter
+    def exact_fixed_cpts(self, goal):
+        self._goals[(SvNurbsSurfaceControls,True)] = goal
+
+    def copy(self, uv_points=None, fixed_cpts=None, knotvector_u=None, knotvector_v=None):
+        solver = SvNurbsSurfaceSolver()
+        solver._degree_u = self._degree_u
+        solver._degree_v = self._degree_v
+        if knotvector_u is None:
+            solver._knotvector_u = self._knotvector_u
+        else:
+            solver._knotvector_u = knotvector_u
+        if knotvector_v is None:
+            solver._knotvector_v = self._knotvector_v
+        else:
+            solver._knotvector_v = knotvector_v
+        solver.src_control_points = self.src_control_points
+        solver.src_surface = self.src_surface
+        solver.src_weights = self.src_weights
+        solver.n_cpts_u = self.n_cpts_u
+        solver.n_cpts_v = self.n_cpts_v
+        if uv_points is None and knotvector_u is None and knotvector_v is None:
+            solver.uv_points = self.uv_points.copy()
+            solver._alphas[False] = self._alphas[False]
+        else:
+            solver.uv_points = uv_points
+        if fixed_cpts is None:
+            solver.fixed_cpts = self.fixed_cpts.copy()
+        else:
+            solver.fixed_cpts = fixed_cpts
+        return solver
 
     PROBLEM_WELLDETERMINED = 'WELLDETERMINED'
     PROBLEM_UNDERDETERMINED = 'UNDERDETERMINED'
@@ -40,10 +196,10 @@ class SvNurbsSurfaceSolver:
     @staticmethod
     def from_surface(surface):
         solver = SvNurbsSurfaceSolver()
-        solver.degree_u = surface.get_degree_u()
-        solver.degree_v = surface.get_degree_v()
-        solver.knotvector_u = surface.get_knotvector_u()
-        solver.knotvector_v = surface.get_knotvector_v()
+        solver._degree_u = surface.get_degree_u()
+        solver._degree_v = surface.get_degree_v()
+        solver._knotvector_u = surface.get_knotvector_u()
+        solver._knotvector_v = surface.get_knotvector_v()
         solver.src_control_points = surface.get_control_points().copy()
         solver.n_cpts_u, solver.n_cpts_v, _ = solver.src_control_points.shape
         solver.src_weights = surface.get_weights().copy()
@@ -53,20 +209,172 @@ class SvNurbsSurfaceSolver:
     @staticmethod
     def from_parameters(degree_u, degree_v, n_cpts_u, n_cpts_v, knotvector_u, knotvector_v):
         solver = SvNurbsSurfaceSolver()
-        solver.degree_u = degree_u
-        solver.degree_v = degree_v
-        solver.knotvector_u = knotvector_u
-        solver.knotvector_v = knotvector_v
+        solver._degree_u = degree_u
+        solver._degree_v = degree_v
+        solver._knotvector_u = knotvector_u
+        solver._knotvector_v = knotvector_v
         solver.n_cpts_u = n_cpts_u
         solver.n_cpts_v = n_cpts_v
         return solver
 
-    def add_goal(self, u, v, point):
-        self.goals.append((u, v, point))
+    def _reset_caches(self):
+        self._A = dict()
+        self._B = dict()
+        self._alphas = dict()
 
-    def add_goals(self, goals):
+    def add_uv_point(self, u, v, point, weight=1.0, exact=False):
+        self._reset_caches()
+        if exact:
+            self.exact_uv_points.append(u, v, point, weight=weight)
+        else:
+            self.uv_points.append(u, v, point, weight=weight)
+
+    def add_uv_points(self, goals, exact=False):
         for goal in goals:
-            self.add_goal(*goal)
+            self.add_uv_point(*goal, exact=exact)
+
+    def set_control_point(self, i, j, point, weight=1.0, exact=False):
+        self._reset_caches()
+        if exact:
+            self.exact_fixed_cpts.append(i, j, point, weight=weight)
+        else:
+            self.fixed_cpts.append(i, j, point, weight=weight)
+
+    def _get_n_cpts(self):
+        if self.src_control_points is None:
+            n_cpts_u, n_cpts_v = self.n_cpts_u, self.n_cpts_v
+            ndim = 3
+        else:
+            n_cpts_u, n_cpts_v, ndim = self.src_control_points.shape
+        return n_cpts_u, n_cpts_v, ndim
+    
+    def _get_weights(self, n_cpts_u, n_cpts_v):
+        if self.src_control_points is None:
+            weights = np.ones((n_cpts_u, n_cpts_v))
+        else:
+            weights = self.src_weights
+        return weights
+
+    def _calc_alphas(self, exact, n_cpts_u, n_cpts_v):
+        if exact in self._alphas:
+            return self._alphas[exact]
+        us = np.array(self._goals[(SvNurbsSurfacePoints,exact)].us)
+        vs = np.array(self._goals[(SvNurbsSurfacePoints,exact)].vs)
+        basis_u = SvNurbsBasisFunctions(self._knotvector_u)
+        basis_v = SvNurbsBasisFunctions(self._knotvector_v)
+        alphas_u = np.array([basis_u.function(k, self._degree_u)(us) for k in range(n_cpts_u)])
+        alphas_v = np.array([basis_v.function(k, self._degree_v)(vs) for k in range(n_cpts_v)])
+        self._alphas[exact] = (alphas_u, alphas_v)
+        return self._alphas[exact]
+
+    def _get_n_points(self):
+        return sum([goal.get_n_points() for goal in self._goals.values()])
+
+    def _get_n_equations(self):
+        _n_cpts_u, _n_cpts_v, ndim = self._get_n_cpts()
+        return ndim * self._get_n_points()
+
+    def _get_n_unknowns(self):
+        n_cpts_u, n_cpts_v, ndim = self._get_n_cpts()
+        return n_cpts_u * n_cpts_v * ndim
+
+    def _prepare_A(self, exact, logger):
+        if exact in self._A:
+            return self._A[exact]
+
+        uv_points = self._goals[(SvNurbsSurfacePoints,exact)]
+        fixed_cpts = self._goals[(SvNurbsSurfaceControls,exact)]
+        n_cpts_u, n_cpts_v, ndim = self._get_n_cpts()
+        weights = self._get_weights(n_cpts_u, n_cpts_v)
+        n_cpts = n_cpts_u * n_cpts_v
+        n_uv_points = uv_points.get_n_points()
+        n_fixed_cpts = fixed_cpts.get_n_points()
+        n_equations = ndim * (n_uv_points + n_fixed_cpts)
+        n_unknowns = ndim * n_cpts
+
+        # alphas_u : (n_cpts_u, n_pts)
+        # alphas_v : (n_cpts_v, n_pts)
+        alphas_u, alphas_v = self._calc_alphas(exact, n_cpts_u, n_cpts_v)
+
+        pt_idxs = np.arange(n_uv_points)
+        cpt_idxs = np.arange(n_cpts)# n_cpts_v * cpt_u_idxs + cpt_v_idxs
+        alphas_u_t = np.transpose(alphas_u[np.newaxis], axes=(1,0,2))
+        alphas_v_t = alphas_v[np.newaxis]
+        weights_t = np.transpose(weights[np.newaxis], axes=(1,2,0))
+        alphas = alphas_u_t * alphas_v_t * weights_t # (n_cpts_u, n_cpts_v, n_pts)
+        pt_weights = np.array(uv_points.weights)
+        alphas = np.reshape(alphas, (n_cpts_u*n_cpts_v, n_uv_points)).T
+
+        A = np.zeros((n_equations, n_unknowns))
+
+        pt_idxs_A, cpt_idxs_A = np.meshgrid(ndim*pt_idxs, ndim*cpt_idxs, indexing='ij')
+
+        for dim_idx in range(ndim):
+            A[pt_idxs_A + dim_idx, cpt_idxs_A + dim_idx] = alphas
+
+        denominators = A[pt_idxs_A, cpt_idxs_A].sum(axis=1)
+        for dim_idx in range(ndim):
+            A[pt_idxs_A + dim_idx, cpt_idxs_A + dim_idx] /= denominators[pt_idxs][np.newaxis].T
+        for dim_idx in range(ndim):
+            A[pt_idxs_A + dim_idx, cpt_idxs_A + dim_idx] *= pt_weights[np.newaxis].T
+
+        for j in range(n_fixed_cpts):
+            cpt_u_idx = fixed_cpts.u_idxs[j]
+            cpt_v_idx = fixed_cpts.v_idxs[j]
+            cpt_idx = n_cpts_v * cpt_u_idx + cpt_v_idx
+            for dim_idx in range(ndim):
+                A[ndim*(j + n_uv_points) + dim_idx, ndim*cpt_idx + dim_idx] = fixed_cpts.weights[j]
+
+        self._A[exact] = A
+        return self._A[exact]
+
+    def _prepare_B(self, exact):
+        if exact in self._B:
+            return self._B[exact]
+
+        _, _, ndim = self._get_n_cpts()
+
+        uv_points = self._goals[(SvNurbsSurfacePoints,exact)]
+        fixed_cpts = self._goals[(SvNurbsSurfaceControls,exact)]
+
+        n_uv_points = uv_points.get_n_points()
+        n_fixed_cpts = fixed_cpts.get_n_points()
+        n_equations = ndim * (n_uv_points + n_fixed_cpts)
+
+        if self.src_surface is not None:
+            us = uv_points.us
+            vs = uv_points.vs
+            src_points = self.src_surface.evaluate_array(us, vs)
+        else:
+            src_points = None
+
+        pts = np.array(uv_points.points)
+
+        B = np.zeros((n_equations, 1))
+        for pt_idx, point in enumerate(pts):
+            if src_points is not None:
+                point = point - src_points[pt_idx]
+            B[pt_idx*ndim:pt_idx*ndim+ndim, 0] = point[np.newaxis] * uv_points.weights[pt_idx]
+
+        for j in range(n_fixed_cpts):
+            cpt = fixed_cpts.control_points[j]
+            B[(j+n_uv_points)*ndim : (j+n_uv_points)*ndim+ndim, 0] = cpt * self.fixed_cpts.weights[j]
+
+        self._B[exact] = B
+        return self._B[exact]
+
+    def _check_has_constraints(self, n_equations, n_unknowns):
+        if n_equations > n_unknowns:
+            for clazz, exact in self._goals:
+                if exact and not self._goals[(clazz,exact)].is_empty():
+                    return True
+            return False
+        else:
+            for clazz, exact in self._goals:
+                if exact:
+                    self._goals[(clazz,False)].extend(self._goals[(clazz,True)])
+                    self._goals[(clazz,True)].clear()
+            return False
 
     def solve(self, logger = None):
         problem_type, residue, surface = self.solve_ex(logger = logger)
@@ -75,77 +383,49 @@ class SvNurbsSurfaceSolver:
     def solve_ex(self, problem_types = PROBLEM_ANY, implementation = SvNurbsMaths.NATIVE, logger = None):
         if logger is None:
             logger = get_logger()
-        targets = self.goals
-        us = np.array([t[0] for t in targets])
-        vs = np.array([t[1] for t in targets])
-        pts = np.array([t[2] for t in targets])
-        basis_u = SvNurbsBasisFunctions(self.knotvector_u)
-        basis_v = SvNurbsBasisFunctions(self.knotvector_v)
-        if self.src_control_points is None:
-            n_cpts_u, n_cpts_v = self.n_cpts_u, self.n_cpts_v
-            ndim = 3
-            weights = np.ones((n_cpts_u, n_cpts_v))
+
+        n_cpts_u, n_cpts_v, ndim = self._get_n_cpts()
+
+        n_equations = self._get_n_equations()
+        n_unknowns = self._get_n_unknowns()
+        has_constraints = self._check_has_constraints(n_equations, n_unknowns)
+
+        A = self._prepare_A(False, logger)
+        B = self._prepare_B(False)
+        if has_constraints:
+            exact_A = self._prepare_A(True, logger)
+            exact_B = self._prepare_B(True)
         else:
-            n_cpts_u, n_cpts_v, ndim = self.src_control_points.shape
-            weights = self.src_weights
-        n_cpts = n_cpts_u * n_cpts_v
-        n_points = len(targets)
-        n_equations = ndim * n_points
-        n_unknowns = ndim * n_cpts
-        p_u = self.degree_u
-        p_v = self.degree_v
-
-        alphas_u = np.array([basis_u.function(k, p_u)(us) for k in range(n_cpts_u)])
-        alphas_v = np.array([basis_v.function(k, p_v)(vs) for k in range(n_cpts_v)])
-
-        A = np.zeros((n_equations, n_unknowns))
-        for pt_idx in range(n_points):
-            for cpt_u_idx in range(n_cpts_u):
-                for cpt_v_idx in range(n_cpts_v):
-                    cpt_idx = n_cpts_v * cpt_u_idx + cpt_v_idx
-                    alpha_u = alphas_u[cpt_u_idx][pt_idx]
-                    alpha_v = alphas_v[cpt_v_idx][pt_idx]
-                    weight = weights[cpt_u_idx,cpt_v_idx]
-                    alpha = weight * alpha_u * alpha_v
-                    for dim_idx in range(ndim):
-                        A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = alpha
-
-            denominator = A[ndim*pt_idx, :].sum()
-            for dim_idx in range(ndim):
-                A[ndim*pt_idx + dim_idx, :] /= denominator
-
-        if self.src_surface is not None:
-            src_points = self.src_surface.evaluate_array(us, vs)
-        else:
-            src_points = None
-
-        B = np.zeros((n_equations, 1))
-        for pt_idx, point in enumerate(pts):
-            if src_points is not None:
-                point = point - src_points[pt_idx]
-            B[pt_idx*ndim:pt_idx*ndim+ndim, 0] = point[np.newaxis]
+            exact_A = None
+            exact_B = None
 
         residue = None
         if n_equations == n_unknowns:
             problem_type = SvNurbsSurfaceSolver.PROBLEM_WELLDETERMINED
             if problem_type not in problem_types:
                 raise AlgorithmError("The problem is well-determined")
+            logger.debug(f"Solving well-determined system: #equations = {n_equations}, #unknowns = {n_unknowns}")
             try:
-                A1 = np.linalg.inv(A)
-                X = (A1 @ B).T
+                X = solve_sparse(A, B)
             except np.linalg.LinAlgError as e:
-                logger.error(f"Matrix: {self.A}")
+                logger.error(f"Matrix: {A}")
                 raise AlgorithmError(f"Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}") from e
         elif n_equations < n_unknowns:
             problem_type = SvNurbsSurfaceSolver.PROBLEM_UNDERDETERMINED
-            A1 = np.linalg.pinv(A)
-            X = (A1 @ B).T
+            if problem_type not in problem_types:
+                raise AlgorithmError("The problem is under-determined")
+            logger.debug(f"Solving underdetermined system: #equations = {n_equations}, #unknowns = {n_unknowns}")
+            X, residue = least_squares_sparse(A, B)
         else: # n_equations > n_unknowns
             problem_type = SvNurbsSurfaceSolver.PROBLEM_OVERDETERMINED
             if problem_type not in problem_types:
                 raise AlgorithmError("The system is overdetermined")
-            X, residues, rank, singval = np.linalg.lstsq(self.A, self.B)
-            residue = residues.sum()
+            if has_constraints:
+                logger.debug(f"Solving overdetermined system with constraints: #equations = {n_equations}, #unknonwns = {n_unknowns}")
+                X, residue = least_squares_with_constraints(A, B, exact_A, exact_B, logger=logger)
+            else:
+                logger.debug(f"Solving overdetermined system without constraints: #equations = {n_equations}, #unknonwns = {n_unknowns}")
+                X, residue = least_squares_sparse(A, B)
 
         d_cpts = X.reshape((n_cpts_u, n_cpts_v, ndim))
         if self.src_control_points is None:
@@ -154,13 +434,145 @@ class SvNurbsSurfaceSolver:
             cpts = self.src_control_points + d_cpts
 
         surface = SvNurbsMaths.build_surface(implementation=implementation,
-                                          degree_u = self.degree_u,
-                                          degree_v = self.degree_v,
-                                          knotvector_u = self.knotvector_u,
-                                          knotvector_v = self.knotvector_v,
+                                          degree_u = self._degree_u,
+                                          degree_v = self._degree_v,
+                                          knotvector_u = self._knotvector_u,
+                                          knotvector_v = self._knotvector_v,
                                           control_points = cpts,
                                           weights = self.src_weights)
         return problem_type, residue, surface
+
+def calc_uv_knots(points, metric='DISTANCE'):
+    n_pts_u, n_pts_v, _ = points.shape
+    knots = np.array([Spline.create_knots(points[:,j], metric=metric) for j in range(n_pts_v)])
+    uknots = knots.mean(axis=0)
+    knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n_pts_u)])
+    vknots = knots.mean(axis=0)
+    return uknots, vknots
+
+def interpolate_nurbs_surface(degree_u, degree_v, points,
+                              metric = 'DISTANCE',
+                              uknots = None, vknots = None,
+                              knotvector_u = None, knotvector_v = None,
+                              implementation = SvNurbsMaths.NATIVE,
+                              logger = None):
+    """
+    Interpolate NURBS surface from array of points.
+
+    This implementation solves a system of MxN equations directly. In general, this is slower
+    than a "shortcut" algorithm described in The NURBS Book. For performance, this method
+    tries to use sparse matrices implementation from scipy, when it is available.
+
+    Args:
+        * degree_u, degree_v: surface degree along U and V direction.
+        * points: points to interpolate between. List of lists of points or
+            np.array of shape (n,m,3).
+        * metric: metric to calculate U and V parameters of points.
+        * uknots, vknots: U and V parameters of points. If not provided, will be
+            calculated from metric.
+        * knotvector_u, knotvector_v: surface knotvectors along U and V direction.
+            If not provided, will be calculated from uknots / vknots or from metric.
+            If provided, has to be compatible enough with uknots/vknots, otherwie
+            thre resulting surface can have werid shape (however it still will be
+            a valid interpolation).
+        * implementation: NURBS mathematics implementation
+        * logger: a logger instance
+
+    Returns:
+        * SvNurbsSurface instance.
+    """
+    if logger is None:
+        logger = get_logger()
+    points = np.asarray(points)
+    n_pts_u, n_pts_v, ndim = points.shape
+
+    if (uknots is None) != (vknots is None):
+        raise ArgumentError("uknots and vknots must be either both provided or both omitted")
+
+    if uknots is None:
+        knots = np.array([Spline.create_knots(points[:,j], metric=metric) for j in range(n_pts_v)])
+        uknots = knots.mean(axis=0)
+    if vknots is None:
+        knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n_pts_u)])
+        vknots = knots.mean(axis=0)
+
+    if knotvector_u is None:
+        knotvector_u = sv_knotvector.from_tknots(degree_u, uknots)
+    #logger.debug("U: degree %s, N %s, knots %s => knotvector %s", degree_u, n_pts_u, uknots, knotvector_u)
+    if knotvector_v is None:
+        knotvector_v = sv_knotvector.from_tknots(degree_v, vknots)
+    #logger.debug("V: degree %s, N %s, knots %s => knotvector %s", degree_v, n_pts_v, vknots, knotvector_v)
+
+    solver = SvNurbsSurfaceSolver.from_parameters(degree_u, degree_v, n_pts_u, n_pts_v,
+                                                  knotvector_u = knotvector_u, knotvector_v = knotvector_v)
+    us, vs = np.meshgrid(uknots, vknots, indexing='ij')
+    us = us.flatten()
+    vs = vs.flatten()
+    targets = list(zip(us, vs, np.reshape(points, (n_pts_u*n_pts_v, ndim))))
+    solver.add_uv_points(targets)
+    problem_type, residue, surface = solver.solve_ex(
+                problem_types = SvNurbsSurfaceSolver.PROBLEM_WELLDETERMINED,
+                implementation = implementation,
+                logger=logger)
+    return surface
+
+def approximate_nurbs_surface(degree_u, degree_v,
+                              n_cpts_u, n_cpts_v,
+                              points,
+                              weights = None,
+                              exact_mask = None,
+                              metric = 'DISTANCE',
+                              uknots = None, vknots = None,
+                              knotvector_u = None, knotvector_v = None,
+                              implementation = SvNurbsMaths.NATIVE,
+                              logger = None):
+    points = np.asarray(points)
+    n_pts_u, n_pts_v, ndim = points.shape
+
+    if weights is None:
+        weights = np.ones((n_pts_u, n_pts_v))
+    else:
+        weights = np.array(weights)
+        if weights.shape != (n_pts_u, n_pts_v):
+            raise ArgumentError("Shape of weights array does not match shape of points array")
+    if exact_mask is None:
+        exact_mask = np.full((n_pts_u, n_pts_v), False)
+    else:
+        exact_mask = np.array(exact_mask)
+        if exact_mask.shape != (n_pts_u, n_pts_v):
+            raise ArgumentError("Shape of exact_mask array does not match shape of points array")
+
+    if (uknots is None) != (vknots is None):
+        raise ArgumentError("uknots and vknots must be either both provided or both omitted")
+
+    if uknots is None:
+        knots = np.array([Spline.create_knots(points[:,j], metric=metric) for j in range(n_pts_v)])
+        uknots = knots.mean(axis=0)
+    if vknots is None:
+        knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n_pts_u)])
+        vknots = knots.mean(axis=0)
+
+    if knotvector_u is None:
+        knotvector_u = sv_knotvector.from_tknots(degree_u, uknots, n_cpts=n_cpts_u)
+    logger.debug("U: %s", uknots)
+    if knotvector_v is None:
+        knotvector_v = sv_knotvector.from_tknots(degree_v, vknots, n_cpts=n_cpts_v)
+    logger.debug("V: %s", vknots)
+
+    solver = SvNurbsSurfaceSolver.from_parameters(degree_u, degree_v, n_cpts_u, n_cpts_v,
+                                    knotvector_u = knotvector_u, knotvector_v = knotvector_v)
+
+    us, vs = np.meshgrid(uknots, vknots, indexing='ij')
+    us = us.flatten()
+    vs = vs.flatten()
+    points_flat = np.reshape(points, (n_pts_u*n_pts_v, ndim))
+    weights_flat = np.reshape(weights, (n_pts_u*n_pts_v,))
+    exact_flat = np.reshape(exact_mask, (n_pts_u*n_pts_v,))
+    for u, v, point, weight, exact in zip(us, vs, points_flat, weights_flat, exact_flat):
+        solver.add_uv_point(u, v, point, weight=weight, exact=exact)
+    problem_type, residue, surface = solver.solve_ex(implementation = implementation, logger = logger)
+    logger.debug("Problem type: %s, residue: %s", problem_type, residue)
+    return surface
 
 def unify_surface_curve(surface, direction, curves, accuracy=6):
     """
@@ -357,7 +769,7 @@ def adjust_nurbs_surface_for_points_iso(surface, targets, preserve_tangents_u=Fa
 
 def adjust_nurbs_surface_for_points(surface, targets, implementation = SvNurbsMaths.NATIVE, logger = None):
     solver = SvNurbsSurfaceSolver.from_surface(surface)
-    solver.add_goals(targets)
+    solver.add_uv_points(targets)
     problem_type, residue, surface = solver.solve_ex(implementation = implementation, logger = logger)
     return surface
 
@@ -480,4 +892,86 @@ def snap_nurbs_surfaces(surfaces, direction, bias = SnapSurfaceBias.MID, tangent
     logger.debug("Problems: %s", problems)
 
     return [p.solve() for p in problems]
+
+def nurbs_surface_from_points(points, degree_u, degree_v, num_cpts_u, num_cpts_v, weights = None, normal = None, implementation = SvNurbsMaths.NATIVE, logger = None):
+    """
+    Generate a NURBS surface which passes either through or near the specified points.
+    Parameters:
+    * points - points to draw a surface through. np.array of shape (n,3).
+    * degree_u, degree_v - degrees of the surface along U and V directions.
+    * num_cpts_u, num_cpts_v - number of surface's control points along U and V.
+
+    If total number of control points (num_cpts_u * num_cpts_v) is equal to the
+    number of points specified, then the system will be well-determined, so
+    this will do interpolation (although depending on location of points, it
+    may fail).
+    If total number of control points is less than the number of points
+    specified, then the system will be overdetermined, so this will do
+    approximation.
+    If total number of control points is more than the number of points
+    specified, then the system will be underdetermined, i.e. there are many
+    surfaces passing through these points. In this case, the method will select
+    the surface which has all it's control points as close to origin (0.0, 0.0,
+    0.0) as possible.
+
+    Return values:
+    * SvNurbsSurface instance
+    * uv_points - coordinates of points provided in UV space of the surface.
+        np.array of shape (n, 3).
+    """
+
+    if logger is None:
+        logger = get_logger()
+
+    def calc_y_axis(plane, x_axis):
+        normal = np.array(plane.normal)
+        y_axis = np.cross(x_axis, normal)
+        y_axis /= np.linalg.norm(y_axis)
+        return y_axis
+
+    if normal is None:
+        linear = linear_approximation(points)
+        origin = linear.center
+        plane = linear.most_similar_plane()
+    else:
+        origin = center(points)
+        plane = PlaneEquation.from_normal_and_point(normal, origin)
+
+    n_pts = len(points)
+    if weights is None:
+        weights = np.ones((n_pts,))
+    if len(weights) != n_pts:
+        raise ArgumentError(f"Number of provided points {n_pts} != number of weights {len(weights)}")
+
+    start = points[0]
+    start_projection = np.asarray(plane.projection_of_point(start))
+    x_axis = start_projection - origin
+    x_axis /= np.linalg.norm(x_axis)
+    y_axis = calc_y_axis(plane, x_axis)
+    distances = np.linalg.norm(points - origin, axis=1)
+    max_distance = distances.max()
+    
+    planar_surface = make_planar_surface(origin,
+                    x_axis, y_axis,
+                    degree_u, degree_v,
+                    num_cpts_u, num_cpts_v,
+                    max_distance*2, max_distance*2,
+                    implementation = implementation)
+    
+    us = np_dot(points, x_axis)
+    vs = np_dot(points, y_axis)
+    us_min, us_max = us.min(), us.max()
+    vs_min, vs_max = vs.min(), vs.max()
+    us = (us - us_min) / (us_max - us_min)
+    vs = (vs - vs_min) / (vs_max - vs_min)
+
+    solver = SvNurbsSurfaceSolver.from_surface(planar_surface)
+    goals = list(zip(us, vs, points, weights))
+    solver.add_uv_points(goals)
+    problem_type, residue, surface = solver.solve_ex(logger = logger, implementation = implementation)
+    uv_points = np.zeros((n_pts, 3))
+    uv_points[:,0] = us
+    uv_points[:,1] = vs
+    logger.info("Problem type: %s, residue: %s", problem_type, residue)
+    return surface, uv_points
 
