@@ -281,7 +281,6 @@
             - SvSubdivideNodeMK2
             - SvSubdivideToQuadsNode
             - SvUnsubdivideNode
-            - SvOffsetLineNodeMK2
             - SvContourNode
             - ---
             - SvQuadriFlowNode
@@ -545,6 +544,7 @@
         - SvBevelNodeMK2
         - SvIntersectEdgesNodeMK3
         - SvOffsetNode
+        - SvOffsetLineNodeMK2
         - SvOffsetLineLiteNode
         - SvInsetSpecialMk2
         - SvInsetFaces
