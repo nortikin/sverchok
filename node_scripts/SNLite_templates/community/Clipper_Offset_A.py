@@ -21,7 +21,7 @@ def edges_to_paths(verts, edges):
     if not edges:
         return []
     
-    impor collections
+    import collections
     adj = collections.defaultdict(list)
     for i, e in enumerate(edges):
         if len(e) < 2: continue
