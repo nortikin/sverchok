@@ -650,7 +650,7 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
     Tooltip: Drawing preview on 3d scene.\n\tIn: Vertices, Edges, Polygons, Matrix, Colors for vertices, edges, polygons\n\tParams: Vertices size, Edges width, Draw mode, Align 3DView\n\tExtra: Depth offset, dashes, custom shader (N-panel)
     """
     bl_idname = 'SvViewerDrawMk5'
-    bl_label = 'Viewer Draw'
+    bl_label = 'Viewer Draw+'
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
 
