@@ -75,7 +75,6 @@ quads_to_nurbs.py
 location.py
 sun_position.py
 flip_surface.py
-viewer_draw_mk5.py
 """.split("\n")
 
         for module_name in self.node_file_names:
