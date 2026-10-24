@@ -322,6 +322,7 @@ class HatchResult:
     segments: np.ndarray        # (M, 2, 3)
     dots: np.ndarray            # (D, 3)
     frame: tuple                # origin, x, y, normal
+    extent: float = 0.0         # larger side of the region's bounding box in its plane
 
 
 def hatch_region(verts, pattern, loops=None, edges=None, scale=1.0, offset=(0.0, 0.0),
@@ -352,7 +353,62 @@ def hatch_region(verts, pattern, loops=None, edges=None, scale=1.0, offset=(0.0,
     to3d = lambda q: origin + np.outer(q[:, 0], x) + np.outer(q[:, 1], y)
     seg3 = to3d(seg.reshape(-1, 2)).reshape(-1, 2, 3) if len(seg) else np.zeros((0, 2, 3))
     dot3 = to3d(dot) if len(dot) else np.zeros((0, 3))
-    return HatchResult(seg3, dot3, frame)
+    used = np.unique(bnd)
+    extent = float(np.ptp(p2[used], axis=0).max()) if len(used) else 0.0
+    return HatchResult(seg3, dot3, frame, extent)
+
+
+# --------------------------------------------------------------------------- hints
+
+UNIT_TO_METRES = {"MM": 0.001, "CM": 0.01, "M": 1.0, "INCH": 0.0254, "IN": 0.0254, "FOOT": 0.3048, "FT": 0.3048}
+
+
+def pattern_spacing(pattern):
+    """typical distance between neighbouring lines of a family, in pattern units"""
+    gaps = [abs(f.dy) for f in pattern.families if abs(f.dy) > 1e-12]
+    return float(np.median(gaps)) if gaps else 0.0
+
+
+def suggest_scale(pattern, extent, lines_across=25):
+    """a scale that puts roughly lines_across hatch lines over the region"""
+    spacing = pattern_spacing(pattern)
+    if spacing <= 0 or extent <= 0:
+        return None
+    raw = extent / lines_across / spacing
+    exp = math.floor(math.log10(raw))
+    return round(raw / 10 ** exp, 1 if raw / 10 ** exp < 10 else 0) * 10 ** exp
+
+
+def describe(pattern, scale, objects, dashes, dots, extent, max_segments):
+    """
+    one short status line for the node, plus a hint when the result looks wrong.
+    returns (text, level) with level 'INFO' or 'WARNING'
+    """
+    plural = lambda n, word: f"{n:,} {word}{'' if n == 1 else 'es' if word.endswith('sh') else 's'}"
+    unit = pattern.directives.get("UNITS", "").upper()
+    spacing = pattern_spacing(pattern) * scale
+    empty = dashes == 0 and dots == 0
+    too_sparse = spacing > 0 and extent > 0 and spacing > extent / 2
+
+    if empty or too_sparse:
+        hint = "nothing inside the region" if empty else f"only {plural(dashes, 'dash')}"
+        guess = suggest_scale(pattern, extent)
+        if unit in UNIT_TO_METRES and UNIT_TO_METRES[unit] != 1.0 and abs(scale - 1.0) < 1e-12:
+            hint += f", pattern is in {unit.lower()}: Scale {UNIT_TO_METRES[unit]:g} for metres"
+        elif guess and too_sparse:
+            hint += f", lines are wider apart than the region: try Scale ≈ {guess:g}"
+        elif guess:
+            hint += f", try Scale ≈ {guess:g}"
+        return hint, "WARNING"
+
+    parts = [plural(dashes, "dash")]
+    if dots:
+        parts.append(plural(dots, "dot"))
+    parts.append(plural(objects, "object"))
+    text = " · ".join(parts)
+    if dashes + dots > 0.8 * max_segments:
+        return text + " · close to Max Segments", "WARNING"
+    return text, "INFO"
 
 
 # --------------------------------------------------------------------------- plotting

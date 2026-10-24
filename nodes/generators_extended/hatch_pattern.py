@@ -12,8 +12,8 @@ from bpy.props import EnumProperty, FloatProperty, IntProperty, PointerProperty,
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.hatch_pattern import (
-    parse_pat, hatch_region, chain_segments, order_strokes, RegionError, HatchTooDense)
+from sverchok.utils.hatch_module import (
+    parse_pat, hatch_region, chain_segments, order_strokes, describe, RegionError, HatchTooDense)
 
 
 # parsed patterns per text block, re-parsed only when the text changes
@@ -120,6 +120,9 @@ class SvHatchPatternNode(SverchCustomTreeNode, bpy.types.Node):
     order_strokes: BoolProperty(
         name="Order Strokes", default=True,
         description="Sort strokes nearest-first to cut pen travel when plotting", update=updateNode)
+    status: StringProperty(default="")
+    status_level: StringProperty(default="INFO")
+
     max_segments: IntProperty(
         name="Max Segments", default=1_000_000, min=1000,
         description="Stop with an error instead of generating more dashes than this per region",
@@ -142,6 +145,8 @@ class SvHatchPatternNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.prop_search(self, 'pattern_text', bpy.data, 'texts', text='', icon='TEXT')
         layout.prop(self, 'pattern', text='')
+        if self.status:
+            layout.label(text=self.status, icon='ERROR' if self.status_level == 'WARNING' else 'INFO')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -164,8 +169,10 @@ class SvHatchPatternNode(SverchCustomTreeNode, bpy.types.Node):
 
         pattern = self.current_pattern()
         if pattern is None:
+            self.set_status("pick a text block holding .pat data", "WARNING")
             raise ValueError("Pick a text block holding .pat data")
         if not pattern.families:
+            self.set_status(f"{pattern.name} has no line families", "WARNING")
             raise ValueError(f"Pattern '{pattern.name}' has no line families")
 
         inputs = self.inputs
@@ -178,6 +185,8 @@ class SvHatchPatternNode(SverchCustomTreeNode, bpy.types.Node):
 
         want_strokes = self.outputs['Stroke Vertices'].is_linked or self.outputs['Stroke Edges'].is_linked
         verts_out, edges_out, dots_out, stroke_verts, stroke_edges, planes = [], [], [], [], [], []
+        n_dashes = n_dots = 0
+        largest_extent, first_scale = 0.0, None
 
         for idx, (verts, polys, edges, scale, offx, offy) in enumerate(zip(*match_long_repeat(
                 [verts_in, polys_in, edges_in, scale_in, offx_in, offy_in]))):
@@ -189,7 +198,13 @@ class SvHatchPatternNode(SverchCustomTreeNode, bpy.types.Node):
                     scale=scale[0], offset=(offx[0], offy[0]),
                     min_length=self.min_length, max_segments=self.max_segments)
             except (RegionError, HatchTooDense) as err:
+                self.set_status(f"object {idx}: {err}", "WARNING")
                 raise type(err)(f"object {idx}: {err}") from None
+            n_dashes += len(result.segments)
+            n_dots += len(result.dots)
+            largest_extent = max(largest_extent, result.extent)
+            if first_scale is None:
+                first_scale = scale[0]
 
             seg = result.segments
             verts_out.append(seg.reshape(-1, 3).tolist())
@@ -205,12 +220,25 @@ class SvHatchPatternNode(SverchCustomTreeNode, bpy.types.Node):
                     stroke_verts.append(s.tolist())
                     stroke_edges.append([[i, i + 1] for i in range(len(s) - 1)])
 
+        self.set_status(*describe(pattern, first_scale or 1.0, len(verts_out), n_dashes, n_dots,
+                                  largest_extent, self.max_segments))
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Dots'].sv_set(dots_out)
         self.outputs['Stroke Vertices'].sv_set(stroke_verts)
         self.outputs['Stroke Edges'].sv_set(stroke_edges)
         self.outputs['Plane'].sv_set(planes)
+
+
+def _set_status(node, text, level="INFO"):
+    # plain StringProperties without update callbacks: setting them does not re-trigger process()
+    if node.status != text:
+        node.status = text
+    if node.status_level != level:
+        node.status_level = level
+
+
+SvHatchPatternNode.set_status = _set_status
 
 
 def _tolerance(segments):
