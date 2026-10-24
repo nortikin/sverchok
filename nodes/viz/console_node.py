@@ -22,7 +22,6 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
-from sverchok.utils.modules.drawing_abstractions import drawing
 #from sverchok.utils.decorators_compilation import njit
 
 def get_desired_xy(node):
@@ -38,65 +37,24 @@ bitmap_font_location = os.path.join(sv_path, 'utils', 'modules', 'bitmap_font')
 
 lookup_dict_data = {}
 
-no_vertex_shader = '''
-    uniform mat4 viewProjectionMatrix;
-
-    in vec2 texCoord;
-    in vec2 pos;
-    uniform float x_offset;
-    uniform float y_offset;    
-
-    out vec2 texCoord_interp;
-
+# shader bodies only, declarations come from GPUShaderCreateInfo (see build_shader)
+vertex_shader = '''
     void main()
     {
-       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
-       gl_Position.z = 1.0;
+       v_lexer = lexer;
+       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0, 1.0);
        texCoord_interp = texCoord;
     }
 '''
-no_fragment_shader = '''
-    in vec2 texCoord_interp;
 
-    out vec4 fragColor;
-    
-    uniform sampler2D image;
-    
+no_fragment_shader = '''
     void main()
     {
         fragColor = texture(image, texCoord_interp);
     }
 '''
 
-vertex_shader = '''
-    uniform mat4 viewProjectionMatrix;
-
-    in vec2 texCoord;
-    in vec2 pos;
-    in float lexer;
-    uniform float x_offset;
-    uniform float y_offset;    
-
-    out float v_lexer;
-    out vec2 texCoord_interp;
-
-    void main()
-    {
-       v_lexer = lexer;
-       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
-       gl_Position.z = 1.0;
-       texCoord_interp = texCoord;
-    }
-'''
-
 fragment_shader = '''
-    in float v_lexer;
-    in vec2 texCoord_interp;
-
-    out vec4 fragColor;
-    
-    uniform sampler2D image;
-    
     void main()
     {
         vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
@@ -118,26 +76,6 @@ lexed_colors = [
 ]
 
 lexed_fragment_shader = '''
-    in float v_lexer;
-    in vec2 texCoord_interp;
-
-    out vec4 fragColor;
-    
-    uniform sampler2D image;
-    uniform vec4 stringColor;
-    uniform vec4 numberColor;
-    uniform vec4 name1Color;
-    uniform vec4 parenColor;
-    uniform vec4 braceColor;
-    uniform vec4 bracketColor;
-    uniform vec4 opColor;
-    uniform vec4 equalsColor;
-    uniform vec4 commentColor;
-    uniform vec4 name2Color;
-    uniform vec4 name3Color;
-    uniform vec4 qualifierColor;
-    uniform vec4 bgColor;
-    
     void main()
     {
         vec4 test_tint = vec4(0.0, 0.0, 1.0, 1.0);
@@ -169,6 +107,57 @@ lexed_fragment_shader = '''
 
     }
 '''
+
+
+_gpu_cache = {}
+
+
+def get_font_texture():
+    """
+    the 256*256 greyscale atlas, uploaded once and shared by all console nodes.
+    replaces the bgl glGenTextures / glTexImage2D path (no-ops since Blender 3.5)
+    """
+    tex = _gpu_cache.get('texture')
+    if tex is None:
+        data = np.load(get_font_pydata_location())['a'].astype(np.float32)
+        rgba = np.empty((data.size, 4), dtype=np.float32)
+        rgba[:, :3] = data[:, None]
+        rgba[:, 3] = 1.0
+        buf = gpu.types.Buffer('FLOAT', rgba.size, rgba.ravel())
+        tex = _gpu_cache['texture'] = gpu.types.GPUTexture((256, 256), format='RGBA16F', data=buf)
+        if hasattr(tex, 'filter_mode'):
+            tex.filter_mode(True)
+    return tex
+
+
+def build_shader(syntax_mode):
+    shader = _gpu_cache.get(syntax_mode)
+    if shader is not None:
+        return shader
+
+    iface = gpu.types.GPUStageInterfaceInfo(f"sv_console_iface_{syntax_mode}")
+    iface.smooth('VEC2', "texCoord_interp")
+    iface.flat('FLOAT', "v_lexer")
+
+    info = gpu.types.GPUShaderCreateInfo()
+    info.push_constant('MAT4', "viewProjectionMatrix")
+    info.push_constant('FLOAT', "x_offset")
+    info.push_constant('FLOAT', "y_offset")
+    if syntax_mode == "Code":
+        for color_name in lexed_colors:
+            info.push_constant('VEC4', color_name)
+    info.sampler(0, 'FLOAT_2D', "image")
+    info.vertex_in(0, 'VEC2', "pos")
+    info.vertex_in(1, 'VEC2', "texCoord")
+    info.vertex_in(2, 'FLOAT', "lexer")
+    info.vertex_out(iface)
+    info.fragment_out(0, 'VEC4', "fragColor")
+    info.vertex_source(vertex_shader)
+    info.fragment_source({
+        "None": no_fragment_shader, "f1": fragment_shader, "Code": lexed_fragment_shader}[syntax_mode])
+
+    shader = _gpu_cache[syntax_mode] = gpu.shader.create_from_info(info)
+    return shader
 
 
 def get_font_pydata_location():
@@ -390,25 +379,37 @@ def terminal_text_to_uv(lines):
     return uvs
 
 def simple_console_xy(context, args, loc):
-    texture, config = args
-    act_tex = drawing.new_buffer_texture()
-    drawing.bind_texture_2d(texture.texture_dict['texture'])
-    config.shader.bind()
-    
-    # if not config.syntax_mode == "None":
-    matrix = gpu.matrix.get_projection_matrix()
-    config.shader.uniform_float("viewProjectionMatrix", matrix)
-    
+    _, config = args
+    if config.failed:
+        return
+    try:
+        _draw_console(config, loc)
+    except Exception as err:
+        # report once, then stay silent until the node is processed again
+        config.failed = True
+        print(f"Console node: drawing disabled, {type(err).__name__}: {err}")
+
+
+def _draw_console(config, loc):
+    shader = build_shader(config.syntax_mode)
+    if config.batch is None:
+        verts, uvs, lexer = config.data
+        if lexer is None:
+            lexer = [0.0] * len(verts)
+        config.batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uvs, "lexer": lexer})
+
+    shader.bind()
+    shader.uniform_float("viewProjectionMatrix", gpu.matrix.get_projection_matrix())
+
     if config.syntax_mode == "Code":
         for color_name, color_value in config.colors.items():
-            config.shader.uniform_float(color_name, color_value)
+            shader.uniform_float(color_name, color_value)
 
     x, y = loc
-
-    config.shader.uniform_float("x_offset", x)
-    config.shader.uniform_float("y_offset", y)
-    config.shader.uniform_int("image", act_tex)
-    config.batch.draw(config.shader)
+    shader.uniform_float("x_offset", x)
+    shader.uniform_float("y_offset", y)
+    shader.uniform_sampler("image", get_font_texture())
+    config.batch.draw(shader)
 
 #@njit(cache=True)
 def process_grid_for_shader(grid):
@@ -423,22 +424,6 @@ def process_uvs_for_shader(node):
     uv_indices = terminal_text_to_uv(node.terminal_text)
     return list(itertools.chain.from_iterable(uv_indices))
 
-
-def generate_batch_shader(node, data):
-    verts, uv_indices, lexer = data
-    # print("len(verts)", len(verts), "len(uv_indices)", len(uv_indices))
-
-    if node.syntax_mode == "None":
-        shader = gpu.types.GPUShader(no_vertex_shader, no_fragment_shader)
-        batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices})
-    elif node.syntax_mode == "Code":
-        shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
-        batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
-    elif node.syntax_mode == "f1":
-        shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
-        batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
-    
-    return batch, shader
 
 class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
     
@@ -467,9 +452,6 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
     
-    # for now all such nodes will use the same texture.
-    texture_dict = {}
-
     local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, name="scale", update=updateNode)
     show_me: bpy.props.BoolProperty(default=True, name="show me", update=updateNode)
 
@@ -503,23 +485,6 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
         char_height = int(32 * self.local_scale)
         return get_console_grid(char_width, char_height, self.terminal_width, self.num_rows)
 
-    def get_font_texture(self):
-        if not self.texture_dict:
-            filepath = get_font_pydata_location()
-            # this is a compressed npz, which we can dict lookup.
-            found_data = np.load(filepath)
-            data = found_data['a']
-
-            dsize = data.size
-            data = data.repeat(3).reshape(-1, 3)
-            data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
-            name = drawing.new_buffer_texture()
-            drawing.generate_textures(name)
-
-            self.texture_dict['texture'] = name[0]
-            self.texture_dict['texture_data'] = data
-           
-  
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
         self.id_data.update_gl_scale_info()
@@ -544,12 +509,6 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
             row = col.row()
             row.prop(self, color_name)
     
-    def init_texture(self, width, height):
-        texname = self.texture_dict['texture']
-        data = self.texture_dict['texture_data']
-        drawing.init_complex_texture(width, height, texname, data, 'RGBA')
-
-
     def set_node_props(self, socket_data):
         multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
         valid_multiline = '\n'.join(multiline)
@@ -597,12 +556,8 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
             return
 
         self.terminal_text_to_config()
-        self.get_font_texture()
-        self.init_texture(256, 256)
 
         config = lambda: None
-        texture = lambda: None
-        texture.texture_dict = self.texture_dict
 
         lexer = self.get_lexer()
         grid = self.prepare_for_grid()
@@ -611,9 +566,9 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
         verts = process_grid_for_shader(grid)
         uvs = process_uvs_for_shader(self)
 
-        batch, shader = generate_batch_shader(self, (verts, uvs, lexer))
-        config.batch = batch
-        config.shader = shader
+        config.data = (verts, uvs, lexer)
+        config.batch = None   # built on first draw, needs the GPU context
+        config.failed = False
         config.syntax_mode = self.syntax_mode
 
         if self.syntax_mode == "Code":
@@ -625,7 +580,7 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
             'loc': get_desired_xy,
             'mode': 'custom_function_context', 
             'custom_function': simple_console_xy,
-            'args': (texture, config)
+            'args': (None, config)
         }
         nvBGL2.callback_enable(n_id, draw_data)
 
