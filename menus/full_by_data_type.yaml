@@ -860,7 +860,6 @@
     - SvExecNodeMod
     - SvProfileNodeMK3
     - SvMeshEvalNode
-    - SvSNFunctorB
     - SvGenerativeArtNodeMK2
     - SvEisenscriptNode
     - SvTopologySimple
