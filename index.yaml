@@ -54,6 +54,7 @@
         - SvTriangleNode
         - SvPentagonTilerNode
         - SvSpiralNodeMK2
+        - SvHatchPatternNode
 
 
 - Curves:
