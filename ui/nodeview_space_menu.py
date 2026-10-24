@@ -497,14 +497,14 @@ def setup_add_menu():
     global add_node_menu
     datafiles = Path(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
 
-    default_menu_file = Path(__file__).parents[1] / 'index.yaml'
+    default_menu_file = Path(__file__).parents[1] / 'menus' / 'full_by_operations.yaml' #'index.yaml'
 
     with sv_preferences() as prefs:
         if prefs is None:
             raise Exception("Internal error: Sverchok preferences are not initialized yet at the moment of loading the menu")
         if prefs.menu_preset_usage == 'COPY':
             default_menu_file = get_menu_preset_path(prefs.menu_preset)
-            menu_file = datafiles / 'index.yaml'
+            menu_file = datafiles / 'menus' / 'full_by_operations.yaml'#'index.yaml'
             use_preset_copy = True
         else:
             menu_file = get_menu_preset_path(prefs.menu_preset)

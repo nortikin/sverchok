@@ -89,7 +89,7 @@ class UiTests(SverchokTestCase):
         return nodes
 
     def test_full_menu_presets(self):
-        index_path = join(sverchok_directory, 'index.yaml')
+        index_path = join(sverchok_directory, 'menus', 'full_by_operations.yaml')
         index_nodes = self._load_node_names_from_menu(index_path)
         sv_init = dirname(sverchok.__file__)
         for path in glob(join(sv_init, 'menus', 'full_*.yaml')):
@@ -98,7 +98,7 @@ class UiTests(SverchokTestCase):
                 self.assertEqual(preset_nodes, index_nodes)
 
     def test_partial_menu_presets(self):
-        index_path = join(sverchok_directory, 'index.yaml')
+        index_path = join(sverchok_directory, 'menus', 'full_by_operations.yaml')
         index_nodes = self._load_node_names_from_menu(index_path)
         sv_init = dirname(sverchok.__file__)
         for path in glob(join(sv_init, 'menus', 'partial_*.yaml')):
