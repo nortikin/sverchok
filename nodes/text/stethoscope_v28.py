@@ -18,15 +18,13 @@
 
 import numpy as np
 import pprint
-import re
 import bpy
 import blf
-import os, platform, sys
+import os
 
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
 from bpy.app.handlers import persistent
-from bpy.props import FloatProperty
-from mathutils import Vector, Matrix
+from mathutils import Matrix
 
 from sverchok.settings import get_params
 from sverchok.node_tree import SverchCustomTreeNode
@@ -35,170 +33,113 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL
 
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_xy_for_bgl_drawing
 from sverchok.utils.nodes_mixins.console_mixin import LexMixin
-from sverchok.utils.profile import profile
 
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
-def chop_up_data(data):
+def _sized(x):
+    return hasattr(x, '__len__') and not isinstance(x, (str, bytes))
 
+
+def _head_tail(seq, n=12):
+    """first n + last n items, concatenated (not summed) for numpy arrays"""
+    if isinstance(seq, np.ndarray):
+        return np.concatenate((seq[:n], seq[-n:]))
+    return seq[:n] + seq[-n:]
+
+
+def chop_up_data(data):
     """
     if data is large (either due to many small lists or n big lists) here it is sliced up
     remember the user is already comfortable with seeing their data being abbreviated when big
     """
     if len(data) == 1:
-        if len(data[0]) > 24:
-            data = [data[0][:12] + data[0][-12:]]
+        if _sized(data[0]) and len(data[0]) > 24:
+            data = [_head_tail(data[0])]
     elif len(data) > 1:
-        n = -1
-        if len(data[0]) > 12 and len(data[n]) > 12:
-            data = [data[0][:12], data[n][-12:]]
-    
+        first, last = data[0], data[-1]
+        if _sized(first) and _sized(last) and len(first) > 12 and len(last) > 12:
+            data = [first[:12], last[-12:]]
+        elif len(data) > 24:
+            # a single long list of small items (vectors, numbers), e.g. when viewing by element
+            data = _head_tail(data)
+
     # could be cleverer, because this is now optimized for the above scenarios only. they are common.
 
     return data
 
-if sys.version_info<(3,10):
-    # fix for format prettyPrint for Blender <= 3.0.0 with python  3.9.x
-    class FloatPrecisionPrinter(pprint.PrettyPrinter):
-        def __init__(self, field_width=2, precision=3, **kwargs):
-            super().__init__(**kwargs)
-            self.precision = precision
-            self.field_width = field_width
 
-        def format(self, obj, context, maxlevels, level):
-            res = self._safe_repr(obj, context, maxlevels, level)
-            return res
+def numpy_summary(data):
+    """one line describing numpy content, so it is still visible after conversion to lists"""
+    if isinstance(data, np.ndarray):
+        return f"# ndarray {data.shape} {data.dtype}"
+    if isinstance(data, (list, tuple)) and data:
+        arrays = [d for d in data if isinstance(d, np.ndarray)]
+        if arrays:
+            first = arrays[0]
+            many = f"{len(arrays)} x " if len(arrays) > 1 else ""
+            return f"# {many}ndarray, first: {first.shape} {first.dtype}"
+    return None
 
-        def _safe_repr(self, obj, context, maxlevels, level):
-            if isinstance(obj, float):
-                if obj<0:
-                    text = f"{obj:>{self.field_width+1}.{self.precision}f}"
-                else:
-                    text = f" {obj:>{self.field_width}.{self.precision}f}"
-                return text, True, False
-            elif isinstance(obj, bool):
-                text=" True" if obj==True else "False" 
-                return text, True, False
-            elif isinstance(obj, int):
-                text = f"{obj:{self.field_width}d}"
-                return text, True, False
-            elif isinstance(obj, Matrix):
-                len_rows = len(obj.row)
-                indent = " "*level
-                if len_rows==2:
-                    row0 = self._safe_repr(list(obj.row[0]), context, maxlevels, level)
-                    row1 = self._safe_repr(list(obj.row[1]), context, maxlevels, level)
-                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]}))"
-                    return text, True, False
-                if len_rows==3:
-                    row0 = self._safe_repr(list(obj.row[0]), context, maxlevels, level)
-                    row1 = self._safe_repr(list(obj.row[1]), context, maxlevels, level)
-                    row2 = self._safe_repr(list(obj.row[2]), context, maxlevels, level)
-                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]}))"
-                    return text, True, False
-                if len_rows==4:
-                    row0 = self._safe_repr(list(obj.row[0]), context, maxlevels, level)
-                    row1 = self._safe_repr(list(obj.row[1]), context, maxlevels, level)
-                    row2 = self._safe_repr(list(obj.row[2]), context, maxlevels, level)
-                    row3 = self._safe_repr(list(obj.row[3]), context, maxlevels, level)
-                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]},\n        {indent+row3[0]}))"
-                    return text, True, False
-                text = f"Matrix(): invalid row size: {len_rows}!"
-                return text, True, False
-            elif isinstance(obj, (list, tuple)):
-                # --- list/tuple ---
-                if not obj:
-                    return repr(obj), True, False
 
-                # recursion for list — pprint call _safe_repr on every element
-                items = []
-                for x in obj:
-                    s, _, _ = self._safe_repr(x, context, maxlevels, level + 1)
-                    items.append(s)
+def numpy_to_python(obj):
+    """ndarrays -> nested lists, numpy scalars -> python scalars, so the printer can format them"""
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    if isinstance(obj, np.generic):
+        return obj.item()
+    if type(obj) is list:
+        return [numpy_to_python(x) for x in obj]
+    if type(obj) is tuple:
+        return tuple(numpy_to_python(x) for x in obj)
+    if type(obj) is dict:
+        return {k: numpy_to_python(v) for k, v in obj.items()}
+    return obj
 
-                if isinstance(obj, tuple):
-                    out = "(" + ", ".join(items) + ("," if len(obj) == 1 else "") + ")"
-                else:
-                    out = "[" + ", ".join(items) + "]"
+class FloatPrecisionPrinter(pprint.PrettyPrinter):
+    def __init__(self, field_width=2, precision=3, **kwargs):
+        super().__init__(**kwargs)
+        self.precision = precision
+        self.field_width = field_width
 
-                return out, True, False
-            
-            elif isinstance(obj, dict):
-                # --- dict ---
-                if not obj:
-                    return "{}", True, False
+    def format(self, obj, context, maxlevels, level):
+        if isinstance(obj, bool):
+            text = " True" if obj else "False"
+            return text, True, False
+        elif isinstance(obj, float):
+            if obj < 0:
+                text = f"{obj:>{self.field_width+1}.{self.precision}f}"
+            else:
+                text = f" {obj:>{self.field_width}.{self.precision}f}"
+            return text, True, False
+        elif isinstance(obj, int):
+            text = f"{obj:{self.field_width}d}"
+            return text, True, False
+        elif isinstance(obj, Matrix):
+            num_rows = len(obj.row)
+            if num_rows not in (2, 3, 4):
+                return f"Matrix(): invalid row size: {num_rows}!", True, False
+            fmt = super().format
+            rows = [fmt(list(row), context, maxlevels, level)[0] for row in obj.row]
+            separator = f",\n        {' ' * level}"
+            return f"Matrix(({separator.join(rows)}))", True, False
+        return super().format(obj, context, maxlevels, level)
 
-                parts = []
-                for k, v in obj.items():
-                    k_str, _, _ = self._safe_repr(k, context, maxlevels, level + 1)
-                    v_str, _, _ = self._safe_repr(v, context, maxlevels, level + 1)
-                    parts.append(f"{k_str}: {v_str}")
 
-                return "{" + ", ".join(parts) + "}", True, False
-            
-            return repr(obj), True, False
-else:
-    class FloatPrecisionPrinter(pprint.PrettyPrinter):
-        def __init__(self, field_width=2, precision=3, **kwargs):
-            super().__init__(**kwargs)
-            self.precision = precision
-            self.field_width = field_width
-
-        def format(self, obj, context, maxlevels, level):
-            if isinstance(obj, float):
-                if obj<0:
-                    text = f"{obj:>{self.field_width+1}.{self.precision}f}"
-                else:
-                    text = f" {obj:>{self.field_width}.{self.precision}f}"
-                return text, True, False
-            elif isinstance(obj, bool):
-                text=" True" if obj==True else "False" 
-                return text, True, False
-            elif isinstance(obj, int):
-                text = f"{obj:{self.field_width}d}"
-                return text, True, False
-            elif isinstance(obj, Matrix):
-                len_rows = len(obj.row)
-                indent = " "*level
-                if len_rows==2:
-                    row0 = super().format(list(obj.row[0]), context, maxlevels, level)
-                    row1 = super().format(list(obj.row[1]), context, maxlevels, level)
-                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]}))"
-                    return text, True, False
-                if len_rows==3:
-                    row0 = super().format(list(obj.row[0]), context, maxlevels, level)
-                    row1 = super().format(list(obj.row[1]), context, maxlevels, level)
-                    row2 = super().format(list(obj.row[2]), context, maxlevels, level)
-                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]}))"
-                    return text, True, False
-                if len_rows==4:
-                    row0 = super().format(list(obj.row[0]), context, maxlevels, level)
-                    row1 = super().format(list(obj.row[1]), context, maxlevels, level)
-                    row2 = super().format(list(obj.row[2]), context, maxlevels, level)
-                    row3 = super().format(list(obj.row[3]), context, maxlevels, level)
-                    text = f"Matrix(({row0[0]},\n        {indent+row1[0]},\n        {indent+row2[0]},\n        {indent+row3[0]}))"
-                    return text, True, False
-                text = f"Matrix(): invalid row size: {len_rows}!"
-                return text, True, False
-                pass
-            return super().format(obj, context, maxlevels, level)
-
-def parse_socket(socket, field_width, rounding, element_index, view_by_element, props):
-
-    data = socket.sv_get(deepcopy=False)
+def parse_socket(data, field_width, rounding, element_index, view_by_element, props):
 
     num_data_items = len(data)
     if num_data_items > 0 and view_by_element:
-        if element_index < num_data_items:
-            data = data[element_index]
+        data = data[min(element_index, num_data_items - 1)]
+
+    summary = numpy_summary(data)
 
     if props.chop_up:
         data = chop_up_data(data)
 
-    # content_str = pprint.pformat(data, width=props.line_width, depth=props.depth, compact=props.compact)
-    # content_array = content_str.split('\n')
+    data = numpy_to_python(data)
+
     pp = FloatPrecisionPrinter(field_width=field_width, precision=rounding, width=props.line_width, depth=props.depth, compact=props.compact)
     content_str = pp.pformat(data)
     content_array = content_str.split('\n')
@@ -216,17 +157,9 @@ def parse_socket(socket, field_width, rounding, element_index, view_by_element, 
     else:
         display_text = content_array
 
-    # http://stackoverflow.com/a/7584567/1243487
-    rounded_vals = re.compile(r"\d*\.\d+")
-
-    def mround(match): return f"{float(match.group()):.{rounding}g}"
-
-    out = []
-    for line in display_text:
-        # passthru = (rounding == 0) or ("bpy." in line)
-        # out.append(line if passthru else re.sub(rounded_vals, mround, line))
-        out.append(line)
-    return out
+    if summary:
+        display_text = [summary] + display_text
+    return display_text
 
 
 def high_contrast_color(c):
@@ -244,8 +177,6 @@ def clear_font_cache_on_load(dummy):
         pass
     fonts_id_cache.clear()
     pass
-
-bpy.app.handlers.load_post.append(clear_font_cache_on_load)
 
 
 class SV_PT_StethoskopeFontPanelMK2(bpy.types.Panel):
@@ -292,13 +223,11 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     bl_icon = 'LONGDISPLAY'
 
     def update_font_path(self, context):
-        #clear_font_cache_on_load(None)
-        if self.font_pointer:
-            self.font_path = self.font_pointer.filepath
+        new_path = self.font_pointer.filepath if self.font_pointer else ""
+        if new_path != self.font_path:
+            self.font_path = new_path  # font_path's own update calls updateNode
         else:
-            self.font_path = ""
-        updateNode(self, context)
-        return
+            updateNode(self, context)
 
     font_pointer: bpy.props.PointerProperty(type=bpy.types.VectorFont, update=update_font_path)
     font_path: StringProperty(
@@ -309,11 +238,12 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     @property
     def font_id(self):
         font_id = 0
-        if self.font_path in fonts_id_cache:
-            font_id = fonts_id_cache.get(self.font_path)
-        elif os.path.exists(self.font_path):
-            font_id = blf.load(self.font_path)
-            fonts_id_cache[self.font_path] = font_id
+        path = bpy.path.abspath(self.font_path) if self.font_path else ""  # handles blend-relative "//" paths
+        if path in fonts_id_cache:
+            font_id = fonts_id_cache.get(path)
+        elif path and os.path.exists(path):
+            font_id = blf.load(path)
+            fonts_id_cache[path] = font_id
         return font_id
     
     text_color: FloatVectorProperty(
@@ -337,11 +267,11 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     view_by_element : BoolProperty(update=updateNode, description='If count of input objects more 0 then one can show every object independently')
     num_elements    : IntProperty (default=0)
     element_index   : IntProperty (default=0, update=updateNode)
-    rounding        : IntProperty (default=    3, min= 0, soft_max=10, update=updateNode, name="Precision", description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits\nNot affected if there is no fractional part")
+    rounding        : IntProperty (default=    3, min= 0, soft_max=10, update=updateNode, name="Precision", description="Number of decimals shown for floats\n : 0 rounds to whole numbers\n : 5 shows 5 decimals\nInts and bools are not affected")
     field_width     : IntProperty (default=    2, min= 1,              update=updateNode, name="Field Width", description="min 1\nMinimum length of number converted to string.\nUsed for float, int or boolean values")
     line_width      : IntProperty (default=   60, min=20,              update=updateNode, name='Line Width (chars)')
     compact         : BoolProperty(default=False,                      update=updateNode, description="this tries to show as much data per line as the linewidth will allow")
-    depth           : IntProperty (default=    5, min= 0,              update=updateNode, description="List nesting level",  )
+    depth           : IntProperty (default=    5, min= 0,              update=updateNode, description="List nesting level shown, 0 = no limit")
     chop_up         : BoolProperty(default=False,                      update=updateNode, description="perform extra data examination to reduce size of data before pprint (pretty printing, pformat)")
 
     def get_theme_colors_for_contrast(self):
@@ -437,7 +367,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
                 props.chop_up = self.chop_up
 
                 processed_data = parse_socket(
-                    inputs[0],
+                    data,
                     self.field_width,
                     self.rounding,
                     self.element_index,
@@ -490,13 +420,20 @@ def load_fonts_after_start(dummy):
     from sverchok.ui.fonts.load_fonts import load_fonts
     load_fonts()
 
+HANDLERS = (clear_font_cache_on_load, load_fonts_after_start)
+
 def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
     clear_font_cache_on_load(None)
-    bpy.app.handlers.load_post.append(load_fonts_after_start)
+    for handler in HANDLERS:
+        if handler not in bpy.app.handlers.load_post:
+            bpy.app.handlers.load_post.append(handler)
 
 def unregister():
     for class_name in reversed( classes ):
         bpy.utils.unregister_class(class_name)
-    bpy.app.handlers.load_post.remove(load_fonts_after_start)
+    for handler in HANDLERS:
+        if handler in bpy.app.handlers.load_post:
+            bpy.app.handlers.load_post.remove(handler)
+    clear_font_cache_on_load(None)
