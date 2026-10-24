@@ -78,6 +78,9 @@ lexed_colors = [
     'opColor', 'commentColor', 'name2Color', 'name3Color', 'qualifierColor', 'bgColor'
 ]
 
+# the 13 colours go in a uniform buffer: as push constants they exceed the 128 bytes Blender guarantees
+LEX_COLORS_STRUCT = "struct LexColors {\n" + "".join(f"    vec4 {name};\n" for name in lexed_colors) + "};\n"
+
 lexed_fragment_shader = '''
     void main()
     {
@@ -86,23 +89,23 @@ lexed_fragment_shader = '''
 
         int cIndex = int(v_lexer);
 
-        if (cIndex == 1) { test_tint = name1Color; }
-        else if (cIndex == 2) { test_tint = numberColor; }
-        else if (cIndex == 3) { test_tint = stringColor; }
-        else if (cIndex == 7 || cIndex == 8) { test_tint = parenColor; }
-        else if (cIndex == 9 || cIndex == 10) { test_tint = bracketColor; }
-        else if (cIndex == 22) { test_tint = equalsColor; }
-        else if (cIndex == 25 || cIndex == 26) { test_tint = braceColor; }
-        else if (cIndex == 53 || cIndex == 54) { test_tint = opColor; }
-        else if (cIndex == 55 || cIndex == 61 || cIndex == 58) { test_tint = commentColor; }
-        else if (cIndex == 90) { test_tint = name2Color; }
-        else if (cIndex == 91) { test_tint = name3Color; }
-        else if (cIndex == 92) { test_tint = qualifierColor; }
+        if (cIndex == 1) { test_tint = lex.name1Color; }
+        else if (cIndex == 2) { test_tint = lex.numberColor; }
+        else if (cIndex == 3) { test_tint = lex.stringColor; }
+        else if (cIndex == 7 || cIndex == 8) { test_tint = lex.parenColor; }
+        else if (cIndex == 9 || cIndex == 10) { test_tint = lex.bracketColor; }
+        else if (cIndex == 22) { test_tint = lex.equalsColor; }
+        else if (cIndex == 25 || cIndex == 26) { test_tint = lex.braceColor; }
+        else if (cIndex == 53 || cIndex == 54) { test_tint = lex.opColor; }
+        else if (cIndex == 55 || cIndex == 61 || cIndex == 58) { test_tint = lex.commentColor; }
+        else if (cIndex == 90) { test_tint = lex.name2Color; }
+        else if (cIndex == 91) { test_tint = lex.name3Color; }
+        else if (cIndex == 92) { test_tint = lex.qualifierColor; }
 
         vec4 pixelColor = texture(image, texCoord_interp);
 
         if (length(pixelColor.xyz) < 0.0001){
-            fragColor = mix(bgColor, texture(image, texCoord_interp) * test_tint, 0.5);
+            fragColor = mix(lex.bgColor, texture(image, texCoord_interp) * test_tint, 0.5);
         }
         else{
             fragColor = texture(image, texCoord_interp) * test_tint;
@@ -147,8 +150,8 @@ def build_shader(syntax_mode):
     info.push_constant('FLOAT', "x_offset")
     info.push_constant('FLOAT', "y_offset")
     if syntax_mode == "Code":
-        for color_name in lexed_colors:
-            info.push_constant('VEC4', color_name)
+        info.typedef_source(LEX_COLORS_STRUCT)
+        info.uniform_buf(0, "LexColors", "lex")
     info.sampler(0, 'FLOAT_2D', "image")
     info.vertex_in(0, 'VEC2', "pos")
     info.vertex_in(1, 'VEC2', "texCoord")
@@ -403,8 +406,10 @@ def _draw_console(config, loc):
     shader.uniform_float("viewProjectionMatrix", gpu.matrix.get_projection_matrix())
 
     if config.syntax_mode == "Code":
-        for color_name, color_value in config.colors.items():
-            shader.uniform_float(color_name, color_value)
+        if getattr(config, 'colors_ubo', None) is None:
+            data = np.array([config.colors[name] for name in lexed_colors], dtype=np.float32).ravel()
+            config.colors_ubo = gpu.types.GPUUniformBuf(gpu.types.Buffer('FLOAT', len(data), data.tolist()))
+        shader.uniform_block("lex", config.colors_ubo)
 
     x, y = loc
     shader.uniform_float("x_offset", x)
