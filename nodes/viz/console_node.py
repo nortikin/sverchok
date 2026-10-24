@@ -7,9 +7,12 @@
 
 # pylint: disable=c0103
 
+import io
 import os
-import numpy as np
+import token
+import tokenize
 import itertools
+import numpy as np
 
 import bpy
 import gpu
@@ -178,125 +181,123 @@ def random_color_chars(node):
     floats = np.array(ints, dtype='int').repeat(6).tolist()
     return floats
 
+def safe_tokens(text):
+    """
+    yields (token, row_offset). Since Python 3.12 tokenize uses the C tokenizer and raises on
+    anything that isn't valid Python (it used to emit ERRORTOKEN and carry on). On an error we
+    skip the offending line and resume tokenizing from the next one, so one bad line doesn't
+    stop the rest of the text from being processed.
+    """
+    lines = text.splitlines(keepends=True)
+    offset = 0
+    while offset < len(lines):
+        with io.StringIO("".join(lines[offset:])) as f:
+            try:
+                for tok in tokenize.generate_tokens(f.readline):
+                    yield tok, offset
+                return
+            except (tokenize.TokenError, SyntaxError) as err:
+                if isinstance(err, SyntaxError):
+                    lineno = err.lineno
+                else:
+                    lineno = err.args[1][0] if len(err.args) > 1 and err.args[1] else None
+                if not lineno:
+                    return
+                offset += lineno
+
+
+# color categories, these are the indices the shaders switch on (kept stable, independent of
+# the token module whose numbering changes between Python versions)
+LEX_NAME, LEX_NUMBER, LEX_STRING = 1, 2, 3
+LEX_PAREN, LEX_BRACKET, LEX_EQUALS, LEX_BRACE = 7, 9, 22, 25
+LEX_OP, LEX_COMMENT = 54, 55
+LEX_KEYWORD, LEX_BUILTIN, LEX_QUALIFIER = 90, 91, 92
+
+KEYWORDS = {
+    'print', 'break', 'continue', 'return', 'while', 'or', 'and', 'not', 'is', 'dir', 'pass',
+    'if', 'elif', 'else', 'in', 'as', 'with', 'from', 'import', 'for', 'global', 'nonlocal',
+    'try', 'except', 'finally', 'raise', 'assert', 'del', 'async', 'await'}
+QUALIFIERS = {'def', 'class', 'lambda'}
+BUILTINS = {'False', 'True', 'None', 'yield', 'repr', 'range', 'enumerate', 'len', 'zip', 'self'}
+
+STRING_TYPES = {token.STRING} | {getattr(token, n) for n in ('FSTRING_START', 'FSTRING_MIDDLE', 'FSTRING_END',
+                                                           'TSTRING_START', 'TSTRING_MIDDLE', 'TSTRING_END')
+                                 if hasattr(token, n)}
+SKIP_TYPES = {token.ENDMARKER, token.NEWLINE, token.NL, token.INDENT, token.DEDENT, token.ENCODING}
+OP_CATEGORIES = {
+    token.LPAR: LEX_PAREN, token.RPAR: LEX_PAREN,
+    token.LSQB: LEX_BRACKET, token.RSQB: LEX_BRACKET,
+    token.LBRACE: LEX_BRACE, token.RBRACE: LEX_BRACE,
+    token.EQUAL: LEX_EQUALS}
+
+
+def token_category(tok):
+    if tok.type == token.NAME:
+        if tok.string in KEYWORDS:
+            return LEX_KEYWORD
+        if tok.string in QUALIFIERS:
+            return LEX_QUALIFIER
+        if tok.string in BUILTINS:
+            return LEX_BUILTIN
+        return LEX_NAME
+    if tok.type == token.NUMBER:
+        return LEX_NUMBER
+    if tok.type in STRING_TYPES:
+        return LEX_STRING
+    if tok.type == token.COMMENT:
+        return LEX_COMMENT
+    if tok.type == token.OP:
+        return OP_CATEGORIES.get(tok.exact_type, LEX_OP)
+    return LEX_NAME
+
+
 def syntax_highlight_basic(node):
     """
-    this uses the built in lexer/tokenizer in python to identify part of code
-    will return a meaningful lookuptable for index colours per character
+    uses python's tokenizer to identify parts of code, returns a color category per character
     """
-    import tokenize
-    import io
-    import token
+    width = node.terminal_width
+    array_size = width * node.num_rows
+    categories = np.full(array_size, float(LEX_NAME))
 
-    text = node.terminal_text
-    token_dict = tokenize.tok_name
-    """
-    in py3.7 this is different than py3.9+ 
+    # terminal_text is padded with trailing spaces to a rectangular grid. Tokenize the unpadded
+    # lines instead: positions are identical, and a padded "\\" line continuation is a syntax error
+    text = "\n".join(line.rstrip() for line in node.terminal_text.split("\n"))
 
-    print(tokenize.tok_name) #   <--- dict of token-kinds.
+    for tok, row_offset in safe_tokens(text):
+        if tok.type in SKIP_TYPES or not tok.string or tok.start == tok.end:
+            continue
+        (row_start, char_start), (row_end, char_end) = tok.start, tok.end
+        index1 = (row_start - 1 + row_offset) * width + char_start
+        index2 = (row_end - 1 + row_offset) * width + char_end
+        categories[max(index1, 0):min(index2, array_size)] = token_category(tok)
 
-    {0: 'ENDMARKER', 1: 'NAME', 2: 'NUMBER', 3: 'STRING', 4: 'NEWLINE', 5: 'INDENT', 
-    6: 'DEDENT', 7: 'LPAR', 8: 'RPAR', 9: 'LSQB', 10: 'RSQB', 11: 'COLON', 
-    12: 'COMMA', 13: 'SEMI', 14: 'PLUS', 15: 'MINUS', 16: 'STAR', 17: 'SLASH', 
-    18: 'VBAR', 19: 'AMPER', 20: 'LESS', 21: 'GREATER', 22: 'EQUAL', 23: 'DOT', 
-    24: 'PERCENT', 25: 'LBRACE', 26: 'RBRACE', 27: 'EQEQUAL', 28: 'NOTEQUAL', 
-    29: 'LESSEQUAL', 30: 'GREATEREQUAL', 31: 'TILDE', 32: 'CIRCUMFLEX', 
-    33: 'LEFTSHIFT', 34: 'RIGHTSHIFT', 35: 'DOUBLESTAR', 36: 'PLUSEQUAL', 
-    37: 'MINEQUAL', 38: 'STAREQUAL', 39: 'SLASHEQUAL', 40: 'PERCENTEQUAL', 
-    41: 'AMPEREQUAL', 42: 'VBAREQUAL', 43: 'CIRCUMFLEXEQUAL', 44: 'LEFTSHIFTEQUAL', 
-    45: 'RIGHTSHIFTEQUAL', 46: 'DOUBLESTAREQUAL', 47: 'DOUBLESLASH', 48: 'DOUBLESLASHEQUAL', 
-    49: 'AT', 50: 'ATEQUAL', 51: 'RARROW', 52: 'ELLIPSIS', 53: 'COLONEQUAL', 
-    54: 'OP', 55: 'AWAIT', 56: 'ASYNC', 57: 'TYPE_IGNORE', 58: 'TYPE_COMMENT', 
-    59: 'ERRORTOKEN', 60: 'COMMENT', 61: 'NL', 62: 'ENCODING', 63: 'N_TOKENS', 256: 'NT_OFFSET'
-    }
-    """
-
-    array_size = node.terminal_width * node.num_rows
-    ones = np.ones(array_size)
-
-    with io.StringIO(text) as f:
-
-        tokens = tokenize.generate_tokens(f.readline)
-        for token in tokens:
-
-            if token.type in (0, 4, 56, 256):
-                continue
-            if not token.string or (token.start == token.end):
-                continue
-
-            # if token.type != 1:
-            #    print(f"token.type, {token.type} , precise token={token.exact_type} ({token_dict.get(token.exact_type)}) ---> {token.string}")
-
-            token_type = token.type
-            
-            if token.type == 1:
-                if token.string in {
-                        'print', 'break', 'continue', 'return', 'while', 'or', 'and', 'dir',
-                        'if', 'else', 'in', 'as', 'out', 'with', 'from', 'import', 'with', 'for',
-                        'try', 'except', 'finally'}:
-                    token_type = 90
-                elif token.string in {'def', 'class', 'lambda'}:
-                    token_type = 92
-                elif token.string in {'False', 'True', 'yield', 'repr', 'range', 'enumerate'}:
-                    token_type = 91
-
-            elif token.type == 54:
-                # OPS
-                # 7: 'LPAR', 8: 'RPAR
-                # 9: 'LSQB', 10: 'RSQB'
-                # 25: 'LBRACE', 26: 'RBRACE'
-                if token.exact_type in {7, 8, 9, 10, 25, 26}:
-                    token_type = token.exact_type
-
-                elif token.exact_type == 22:
-                    token_type = token.exact_type
-
-            # print(token)
-            #  start = (line number, 1 indexed) , (char index, 0 indexed)
-            # print('|start:', token.start, '|end:', token.end, "[", token.exact_type, token.type, "]")
-            current_type = float(token_type)
-            row_start, char_start = token.start[0]-1, token.start[1]
-            row_end, char_end = token.end[0]-1, token.end[1]
-            index1 = (row_start * node.terminal_width) + char_start
-            index2 = (row_end * node.terminal_width) + char_end
-
-            np.put(ones, np.arange(index1, index2), [current_type])
-            
-
-    # print(ones.tolist())
-    final_ones = ones.reshape((-1, node.terminal_width))
-    return final_ones
+    return categories.reshape((-1, width))
 
 def filter_incoming(socket_data):
     """
     a preprocessing step, inefficient, to replace all long string tokens with an abbreviated line + [...]
     """
 
-    import tokenize
-    import io
-    import token
     import textwrap
 
     text = socket_data[0]
     line_indices_done = set()
 
     replacements = {}
-    with io.StringIO(text) as f:
-        tokens = tokenize.generate_tokens(f.readline)
+    for tok, row_offset in safe_tokens(text):
+        if tok.type != token.STRING:
+            continue
+        if not tok.start[0] == tok.end[0]:
+            # this is a multiline nicely formatted textstring.. should be OK.
+            continue
+        if not ((tok.end[1] - tok.start[1]) > 80):
+            continue
 
-        for token in tokens:
-            if not token.type == 3:
-                continue
-            if not token.start[0] == token.end[0]:
-                # this is a multiline nicely formatted textstring.. should be OK.
-                continue
-            if not ((token.end[1] - token.start[1]) > 80):
-                continue
-
-            # if reaches here, then we have a single line, very long string
-            # print(token.string)
-            suggested_line = textwrap.shorten(token.string, width=80) + "\""
-            replacements[(token.start, token.end)] = suggested_line
-            # print(suggested_line)
+        # if reaches here, then we have a single line, very long string
+        suggested_line = textwrap.shorten(tok.string, width=80) + "\""
+        start = (tok.start[0] + row_offset, tok.start[1])
+        end = (tok.end[0] + row_offset, tok.end[1])
+        replacements[(start, end)] = suggested_line
 
     socket_data = socket_data[0].splitlines()
     for ridx, proposal in replacements.items():
