@@ -450,14 +450,18 @@ class SverchokPreferences(AddonPreferences):
 
     def get_menu_presets(self, context):
         items = []
-        name = 'full_by_data_type.yaml'
-        id = join(MENU_TYPE_DEFAULT, name)
-        items.append((id, f"Default ({name})", "Use default menu"))
+        #name = 'full_by_data_type.yaml'
+        #id = join(MENU_TYPE_DEFAULT, name)
+        #items.append((id, f"Default ({name})", "Use default menu"))
         menus = join(get_sverchok_menu_presets_directory(), '*.yaml')
         for path in sorted(glob(menus)):
             name = basename(path)
-            id = join(MENU_TYPE_SVERCHOK, name)
-            description = f"{name} (built-in)"
+            if not items:
+                id = join(MENU_TYPE_DEFAULT, name)
+                description = f"{name} (built-in default)"
+            else:
+                id = join(MENU_TYPE_SVERCHOK, name)
+                description = f"{name} (built-in)"
             items.append((id, description, description))
         menus = join(get_user_menu_presets_directory(), '*.yaml')
         for path in sorted(glob(menus)):

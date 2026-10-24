@@ -514,6 +514,7 @@ def setup_add_menu():
         logger.info(f"Applying menu preset {default_menu_file} at startup")
         shutil.copy(default_menu_file, menu_file)
     logger.debug(f"Using menu preset file: {menu_file}")
+    print('menufile:',menu_file)
     add_node_menu = Category.from_config(yaml_parser.load(menu_file), 'All Categories', icon_name='RNA')
 
 def get_add_node_menu():
