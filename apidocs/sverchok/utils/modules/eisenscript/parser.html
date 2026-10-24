@@ -42,15 +42,15 @@ from sverchok.utils.parsec.</p>
 <p>Grammar (EBNF):
 program
 -&gt; (input_stmt | define_stmt | set_statement
-| rule_definition | implicit_start)<em>
+| rule_definition | implicit_start)*
 input_stmt
 -&gt; '#input' identifier ['number'] [number]
 define_stmt
 -&gt; '#define' identifier (number | expr)
 set_statement
--&gt; 'set' setting_name value</em>
+-&gt; 'set' setting_name value*
 rule_definition
--&gt; 'rule' identifier param_list? modifier<em> '{' rule_body '}'
+-&gt; 'rule' identifier param_list? modifier* '{' rule_body '}'
 param_list
 -&gt; '(' identifier {',' identifier} ')'
 implicit_start
@@ -60,11 +60,11 @@ rule_modifier
 -&gt; ('maxdepth' | 'md') value ['&gt;' identifier]
 | ('weight' | 'w') value
 rule_body
--&gt; branch</em>
+-&gt; branch*
 branch
--&gt; (repetition | transform_block)<em> (rule_ref | primitive)
+-&gt; (repetition | transform_block)* (rule_ref | primitive)
 repetition
--&gt; count '</em>' '{' transformation+ '}'
+-&gt; count '*' '{' transformation+ '}'
 transform_block
 -&gt; '{' transformation+ '}'
 count

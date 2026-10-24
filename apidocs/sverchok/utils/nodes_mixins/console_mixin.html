@@ -54,7 +54,7 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">def advanced_parse_socket(socket, node):
 
-    out = &#34;....&#34;
+    out = [&#34;....&#34;]
     if (fulldata := socket.sv_get()):
         if len(fulldata) &gt; 0:
             try:
@@ -79,11 +79,11 @@ el.replaceWith(d);
                     edgeitems=10)
                 
                 if &#34;list&#34; in str_array:
-                    str_array = re.sub(&#34;list\((?P&lt;list&gt;.+?)\)&#34;, &#34;\g&lt;list&gt;&#34;, str_array)
+                    str_array = re.sub(r&#34;list\((?P&lt;list&gt;.+?)\)&#34;, r&#34;\g&lt;list&gt;&#34;, str_array)
                 #print(str_array)
                 return (prefix + str_array).split(&#34;\n&#34;)
-            except:
-                ...
+            except Exception as err:
+                print(f&#34;Stethoscope sv++: could not format data, {err}&#34;)
     return out</code></pre>
 </details>
 <div class="desc"></div>
@@ -169,7 +169,6 @@ dims
 </summary>
 <pre><code class="python">class LexMixin():
 
-    texture_dict = {}
     console_grid_dict = {}   # shared over all insntances.
 
     name1Color: make_color(&#34;name1 color&#34;,      (0.83, 0.91, 1.00, 1.0))  # 1
@@ -191,37 +190,6 @@ dims
     num_rows: bpy.props.IntProperty(name=&#34;num rows&#34;, default=3, min=1) #, update=updateNode)
     local_scale: bpy.props.FloatProperty(default=0.6, min=0.2, name=&#34;scale&#34;, update=lambda self, context: self.process_node(context))
 
-
-    def init_texture(self, width, height):
-        texname = self.texture_dict[&#39;texture&#39;]
-        data = self.texture_dict[&#39;texture_data&#39;]
-
-        if not &#39;texture_buffer&#39; in self.texture_dict:
-            #print(&#39;initializing texture longform&#39;)
-            texture = drawing.new_buffer_texture_sized(data.size, data.tolist())
-            self.texture_dict[&#39;texture_buffer&#39;] = texture
-        else:
-            #print(&#34;reusing&#34;)
-            texture = self.texture_dict[&#39;texture_buffer&#39;] 
-
-        drawing.init_image_from_texture(width, height, texname, texture, &#39;RGBA&#39;)
-
-
-    def get_font_texture(self):
-        if not self.texture_dict:
-            filepath = get_font_pydata_location()
-            # this is a compressed npz, which we can dict lookup.
-            found_data = np.load(filepath)
-            data = found_data[&#39;a&#39;]
-
-            dsize = data.size
-            data = data.repeat(3).reshape(-1, 3)
-            data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
-            name = drawing.new_buffer_texture()
-            drawing.generate_textures(name)
-
-            self.texture_dict[&#39;texture&#39;] = name[0]
-            self.texture_dict[&#39;texture_data&#39;] = data        
 
     def get_lexed_colors(self):
         return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]
@@ -255,7 +223,6 @@ dims
 
     @property
     def draw_data(self):          
-        texture = lambda: None
         config = lambda: None
 
         processed_data = advanced_parse_socket(self.inputs[0], self)
@@ -263,18 +230,15 @@ dims
         self.adjust_position_and_dimensions(*self.dims)  # low impact i think..
 
         lexer = syntax_highlight_basic(self).repeat(6).tolist()
-        self.get_font_texture()  # [x] this is cached after 1st run
-        self.init_texture(256, 256)  # this must be done each redraw
         grid = self.prepare_for_grid()  # [x] is cached   
 
         verts = process_grid_for_shader(grid)  # not worth caching (tried!)
         uv_indices = process_uvs_for_shader(self)  # could cache if terminal text is unchanged.
 
-        texture.texture_dict = self.texture_dict
-        shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
-        batch = batch_for_shader(shader, &#39;TRIS&#39;, {&#34;pos&#34;: verts, &#34;texCoord&#34;: uv_indices, &#34;lexer&#34;: lexer})
-        config.batch = batch
-        config.shader = shader
+        # font texture, shader and batch are created by simple_console_xy on first draw
+        config.data = (verts, uv_indices, lexer)
+        config.batch = None
+        config.failed = False
         config.syntax_mode = &#34;Code&#34;
         config.colors = {color_name: getattr(self, color_name)[:] for color_name in lexed_colors}
 
@@ -284,7 +248,7 @@ dims
           &#39;loc&#39;: get_xy_for_bgl_drawing,
           &#39;mode&#39;: &#39;custom_function_context&#39;, 
           &#39;custom_function&#39;: simple_console_xy,
-          &#39;args&#39;: (texture, config)
+          &#39;args&#39;: (None, config)
         }
         return draw_data</code></pre>
 </details>
@@ -295,19 +259,19 @@ dims
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.bgColor"><code class="name">var <span class="ident">bgColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Background', 'default': (0.06, 0.06, 0.06, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'bgColor'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.bgColor"><code class="name">var <span class="ident">bgColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Background', 'default': (0.06, 0.06, 0.06, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'bgColor'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.braceColor"><code class="name">var <span class="ident">braceColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Braces', 'default': (0.4, 0.5, 0.7, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'braceColor'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.braceColor"><code class="name">var <span class="ident">braceColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Braces', 'default': (0.4, 0.5, 0.7, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'braceColor'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.bracketColor"><code class="name">var <span class="ident">bracketColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Brackets color', 'default': (0.65, 0.68, 0.7, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'bracketColor'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.bracketColor"><code class="name">var <span class="ident">bracketColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Brackets color', 'default': (0.65, 0.68, 0.7, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'bracketColor'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.commentColor"><code class="name">var <span class="ident">commentColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Comments', 'default': (0.49, 0.49, 0.49, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'commentColor'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.commentColor"><code class="name">var <span class="ident">commentColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Comments', 'default': (0.49, 0.49, 0.49, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'commentColor'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -315,23 +279,23 @@ dims
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.equalsColor"><code class="name">var <span class="ident">equalsColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Equals', 'default': (0.9, 0.7, 0.6, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'equalsColor'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.equalsColor"><code class="name">var <span class="ident">equalsColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Equals', 'default': (0.9, 0.7, 0.6, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'equalsColor'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.local_scale"><code class="name">var <span class="ident">local_scale</span> : <_PropertyDeferred, <built-in function FloatProperty>, {'default': 0.6, 'min': 0.2, 'name': 'scale', 'update': <function <a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin">LexMixin</a>.<lambda> at 0x7f8f90047ec0>, 'attr': 'local_scale'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.local_scale"><code class="name">var <span class="ident">local_scale</span> : <_PropertyDeferred, <built-in function FloatProperty>, {'default': 0.6, 'min': 0.2, 'name': 'scale', 'update': <function <a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin">LexMixin</a>.<lambda> at 0x7f7111f33560>, 'attr': 'local_scale'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.name1Color"><code class="name">var <span class="ident">name1Color</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'name1 color', 'default': (0.83, 0.91, 1.0, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'name1Color'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.name1Color"><code class="name">var <span class="ident">name1Color</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'name1 color', 'default': (0.83, 0.91, 1.0, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'name1Color'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.name2Color"><code class="name">var <span class="ident">name2Color</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Main syntax', 'default': (0.9, 0.01, 0.02, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'name2Color'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.name2Color"><code class="name">var <span class="ident">name2Color</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Main syntax', 'default': (0.9, 0.01, 0.02, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'name2Color'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.name3Color"><code class="name">var <span class="ident">name3Color</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Bool etc,..', 'default': (0.3, 0.9, 0.4, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'name3Color'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.name3Color"><code class="name">var <span class="ident">name3Color</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Bool etc,..', 'default': (0.3, 0.9, 0.4, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'name3Color'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -339,23 +303,23 @@ dims
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.numberColor"><code class="name">var <span class="ident">numberColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'number color', 'default': (0.08, 0.7, 0.98, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'numberColor'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.numberColor"><code class="name">var <span class="ident">numberColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'number color', 'default': (0.08, 0.7, 0.98, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'numberColor'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.opColor"><code class="name">var <span class="ident">opColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Operators', 'default': (1.0, 0.18, 0.0, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'opColor'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.opColor"><code class="name">var <span class="ident">opColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Operators', 'default': (1.0, 0.18, 0.0, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'opColor'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.parenColor"><code class="name">var <span class="ident">parenColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'parenthesis', 'default': (0.7, 0.07, 0.01, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'parenColor'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.parenColor"><code class="name">var <span class="ident">parenColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'parenthesis', 'default': (0.7, 0.07, 0.01, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'parenColor'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.qualifierColor"><code class="name">var <span class="ident">qualifierColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Qualifiers', 'default': (0.18, 0.77, 0.01, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'qualifierColor'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.qualifierColor"><code class="name">var <span class="ident">qualifierColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Qualifiers', 'default': (0.18, 0.77, 0.01, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'qualifierColor'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.stringColor"><code class="name">var <span class="ident">stringColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Strings', 'default': (0.96, 0.85, 0.0, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f8fa3ab7740>, 'subtype': 'COLOR', 'attr': 'stringColor'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.stringColor"><code class="name">var <span class="ident">stringColor</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'name': 'Strings', 'default': (0.96, 0.85, 0.0, 1.0), 'size': 4, 'min': 0, 'max': 1, 'update': <function updateNode at 0x7f71259bf740>, 'subtype': 'COLOR', 'attr': 'stringColor'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -364,10 +328,6 @@ dims
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.terminal_width"><code class="name">var <span class="ident">terminal_width</span> : <_PropertyDeferred, <built-in function IntProperty>, {'name': 'terminal width', 'default': 10, 'min': 2, 'attr': 'terminal_width'}></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.texture_dict"><code class="name">var <span class="ident">texture_dict</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -397,7 +357,6 @@ def dims(self):
 </summary>
 <pre><code class="python">@property
 def draw_data(self):          
-    texture = lambda: None
     config = lambda: None
 
     processed_data = advanced_parse_socket(self.inputs[0], self)
@@ -405,18 +364,15 @@ def draw_data(self):
     self.adjust_position_and_dimensions(*self.dims)  # low impact i think..
 
     lexer = syntax_highlight_basic(self).repeat(6).tolist()
-    self.get_font_texture()  # [x] this is cached after 1st run
-    self.init_texture(256, 256)  # this must be done each redraw
     grid = self.prepare_for_grid()  # [x] is cached   
 
     verts = process_grid_for_shader(grid)  # not worth caching (tried!)
     uv_indices = process_uvs_for_shader(self)  # could cache if terminal text is unchanged.
 
-    texture.texture_dict = self.texture_dict
-    shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
-    batch = batch_for_shader(shader, &#39;TRIS&#39;, {&#34;pos&#34;: verts, &#34;texCoord&#34;: uv_indices, &#34;lexer&#34;: lexer})
-    config.batch = batch
-    config.shader = shader
+    # font texture, shader and batch are created by simple_console_xy on first draw
+    config.data = (verts, uv_indices, lexer)
+    config.batch = None
+    config.failed = False
     config.syntax_mode = &#34;Code&#34;
     config.colors = {color_name: getattr(self, color_name)[:] for color_name in lexed_colors}
 
@@ -426,7 +382,7 @@ def draw_data(self):
       &#39;loc&#39;: get_xy_for_bgl_drawing,
       &#39;mode&#39;: &#39;custom_function_context&#39;, 
       &#39;custom_function&#39;: simple_console_xy,
-      &#39;args&#39;: (texture, config)
+      &#39;args&#39;: (None, config)
     }
     return draw_data</code></pre>
 </details>
@@ -435,32 +391,6 @@ def draw_data(self):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.get_font_texture"><code class="name flex">
-<span>def <span class="ident">get_font_texture</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_font_texture(self):
-    if not self.texture_dict:
-        filepath = get_font_pydata_location()
-        # this is a compressed npz, which we can dict lookup.
-        found_data = np.load(filepath)
-        data = found_data[&#39;a&#39;]
-
-        dsize = data.size
-        data = data.repeat(3).reshape(-1, 3)
-        data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
-        name = drawing.new_buffer_texture()
-        drawing.generate_textures(name)
-
-        self.texture_dict[&#39;texture&#39;] = name[0]
-        self.texture_dict[&#39;texture_data&#39;] = data        </code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 <dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.get_lexed_colors"><code class="name flex">
 <span>def <span class="ident">get_lexed_colors</span></span>(<span>self)</span>
 </code></dt>
@@ -471,30 +401,6 @@ def draw_data(self):
 </summary>
 <pre><code class="python">def get_lexed_colors(self):
     return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.nodes_mixins.console_mixin.LexMixin.init_texture"><code class="name flex">
-<span>def <span class="ident">init_texture</span></span>(<span>self, width, height)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def init_texture(self, width, height):
-    texname = self.texture_dict[&#39;texture&#39;]
-    data = self.texture_dict[&#39;texture_data&#39;]
-
-    if not &#39;texture_buffer&#39; in self.texture_dict:
-        #print(&#39;initializing texture longform&#39;)
-        texture = drawing.new_buffer_texture_sized(data.size, data.tolist())
-        self.texture_dict[&#39;texture_buffer&#39;] = texture
-    else:
-        #print(&#34;reusing&#34;)
-        texture = self.texture_dict[&#39;texture_buffer&#39;] 
-
-    drawing.init_image_from_texture(width, height, texname, texture, &#39;RGBA&#39;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -574,9 +480,7 @@ def draw_data(self):
 <li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.dims" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.dims">dims</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.draw_data" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.draw_data">draw_data</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.equalsColor" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.equalsColor">equalsColor</a></code></li>
-<li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.get_font_texture" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.get_font_texture">get_font_texture</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.get_lexed_colors" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.get_lexed_colors">get_lexed_colors</a></code></li>
-<li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.init_texture" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.init_texture">init_texture</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.local_scale" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.local_scale">local_scale</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.name1Color" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.name1Color">name1Color</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.name2Color" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.name2Color">name2Color</a></code></li>
@@ -591,7 +495,6 @@ def draw_data(self):
 <li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.stringColor" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.stringColor">stringColor</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.terminal_text" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.terminal_text">terminal_text</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.terminal_width" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.terminal_width">terminal_width</a></code></li>
-<li><code><a title="sverchok.utils.nodes_mixins.console_mixin.LexMixin.texture_dict" href="#sverchok.utils.nodes_mixins.console_mixin.LexMixin.texture_dict">texture_dict</a></code></li>
 </ul>
 </li>
 </ul>

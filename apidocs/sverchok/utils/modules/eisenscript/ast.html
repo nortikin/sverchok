@@ -42,15 +42,15 @@ This module defines the abstract syntax tree classes that represent
 parsed EisenScript programs.</p>
 <p>Grammar overview:
 program
--&gt; (set_statement | rule_definition)<em>
-set_statement -&gt; 'set' setting_name value</em>
-rule_definition -&gt; 'rule'? rule_name rule_modifier<em> '{' rule_body '}'
+-&gt; (set_statement | rule_definition)*
+set_statement -&gt; 'set' setting_name value*
+rule_definition -&gt; 'rule'? rule_name rule_modifier* '{' rule_body '}'
 rule_body
--&gt; branch</em>
+-&gt; branch*
 branch
--&gt; repetition<em> (rule_ref | primitive)
+-&gt; repetition* (rule_ref | primitive)
 repetition
--&gt; count '</em>' '{' transformation+ '}'
+-&gt; count '*' '{' transformation+ '}'
 rule_ref
 -&gt; rule_name | 'md' count '&gt;' rule_name
 primitive
