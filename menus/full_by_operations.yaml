@@ -795,6 +795,7 @@
     - V OpenGL:
         - color_category: Viz
         - SvViewerDrawMk4
+        - SvViewerDrawMk5
         - SvCurveViewerDrawNode
         - SvSurfaceViewerDrawNode
         - SvSolidViewerNode
