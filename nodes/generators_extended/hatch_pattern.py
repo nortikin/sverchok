@@ -15,6 +15,7 @@ from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.hatch_module import (
     parse_pat, hatch_region, chain_segments, order_strokes, describe, RegionError, HatchTooDense)
 
+from sverchok.utils.handle_blender_data import keep_enum_reference
 
 # parsed patterns per text block, re-parsed only when the text changes
 _parse_cache = {}
