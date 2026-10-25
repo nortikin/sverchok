@@ -90,6 +90,7 @@ class SvHatchPatternNode(SverchCustomTreeNode, bpy.types.Node):
 
     pattern_name: StringProperty(default="", update=updateNode)
 
+    @keep_enum_reference
     def _get_pattern(self):
         names = [p.name for p in patterns_from_text(self.pattern_text)]
         return names.index(self.pattern_name) if self.pattern_name in names else 0
