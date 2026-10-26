@@ -49,8 +49,9 @@ def get_user_menu_presets_directory():
 
 def get_menu_preset_path(preset_path):
     preset_type, preset_name = preset_path.split(os.sep)
+    # just preserve if rollback to index yaml in root dir
     if preset_type == MENU_TYPE_DEFAULT:
-        directory = Path(__file__).parents[1]
+        directory = get_sverchok_menu_presets_directory()#Path(__file__).parents[1]
     elif preset_type == MENU_TYPE_SVERCHOK:
         directory = get_sverchok_menu_presets_directory()
     else: # MENU_TYPE_USER

@@ -6,7 +6,7 @@
 Welcome to Sverchok's documentation!
 ====================================
 
-.. figure:: https://user-images.githubusercontent.com/28003269/125777370-a7b7907a-92a2-4ad3-91b1-875520a95e71.jpg
+.. figure:: https://github.com/user-attachments/assets/fd73d57f-7eea-4866-a81c-dbf852b2376e
    :width: 800
 
 Sverchok is a `Blender <https://www.blender.org/>`_ add-on for creating parametric

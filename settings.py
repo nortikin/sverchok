@@ -340,11 +340,11 @@ class SverchokPreferences(AddonPreferences):
 
     show_icons: BoolProperty(
         name="Show icons in Shift-A menu",
-        default=False,
+        default=True,
         description="Use icons in Shift-A menu")
 
     over_sized_buttons: BoolProperty(
-        default=False, name="Big buttons", description="Very big buttons")
+        default=True, name="Big buttons", description="Very big buttons")
 
     input_links_options = [
             ('NONE', "Do not show", "Do not show", 0),
@@ -450,14 +450,18 @@ class SverchokPreferences(AddonPreferences):
 
     def get_menu_presets(self, context):
         items = []
-        name = 'index.yaml'
-        id = join(MENU_TYPE_DEFAULT, name)
-        items.append((id, f"Default ({name})", "Use default menu"))
+        #name = 'full_by_data_type.yaml'
+        #id = join(MENU_TYPE_DEFAULT, name)
+        #items.append((id, f"Default ({name})", "Use default menu"))
         menus = join(get_sverchok_menu_presets_directory(), '*.yaml')
         for path in sorted(glob(menus)):
             name = basename(path)
-            id = join(MENU_TYPE_SVERCHOK, name)
-            description = f"{name} (built-in)"
+            if not items:
+                id = join(MENU_TYPE_DEFAULT, name)
+                description = f"{name} (built-in default)"
+            else:
+                id = join(MENU_TYPE_SVERCHOK, name)
+                description = f"{name} (built-in)"
             items.append((id, description, description))
         menus = join(get_user_menu_presets_directory(), '*.yaml')
         for path in sorted(glob(menus)):
@@ -565,6 +569,15 @@ class SverchokPreferences(AddonPreferences):
         box_sub2_col.prop(self, 'auto_update_angle_values', text="Auto Update Angle Values")
 
         col3 = row_sub1.split().column()
+        box_sub3 = col3.box()
+        col = box_sub3.column(heading="Show")
+        col.use_property_split = True
+        col.label(text='For "Socket menu"')
+        col.label(text='look at node tree,')
+        col.label(text='"Tree UI options"')
+        col.prop(self, 'over_sized_buttons', text="Big buttons")
+        col.prop(self, 'show_icons', text="Menu icons")
+        col.prop(self, 'show_input_menus', text="Quick link")
 
     def theme_tab(self, layout):
         row = layout.row()
