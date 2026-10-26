@@ -61,7 +61,6 @@ from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
 from sverchok.utils.sv_obj_baker import SvObjBakeMK3
 
-
 # ---------------------------------------------------------------------------
 # shaders
 # ---------------------------------------------------------------------------
@@ -185,24 +184,32 @@ void main()
     else {
         N = normalize(cross(dFdx(vPos), dFdy(vPos)));
     }
-    /* two sided: always face the viewer */
-    if (dot(N, V) < 0.0) {
-        N = -N;
-    }
+    /* NB: no two-sided flip — Mk4's pols_normals follow winding, so back
+       faces must stay dark to match Mk4's polygon-color+light output. */
 
     if (shadeMode == 3) {
         FragColor = vec4(N * 0.5 + 0.5, c.a);
         return;
     }
 
-    vec3 L = normalize(lightDir.xyz);
-    float shade = dot(N, L) * 0.5 + 0.5;
-    vec3 rgb = (c.rgb * 0.8 + 0.2) * shade - c.rgb * 0.1;
+    /* Mk4 uses vector_light unnormalized; match that. */
+    vec3 L = lightDir.xyz;
+    float s = dot(N, L) * 0.5 + 0.5;
 
-    if (shadeMode == 2) {
-        vec3 H = normalize(L + V);
-        rgb += pow(max(dot(N, H), 0.0), 48.0) * 0.25;
-    }
+    /* np_ambient_occlusion(s, 0.4): V-shaped fold around 0.4 */
+    const float aoThreshold = 0.4;
+    float shade = (s < aoThreshold) ? (2.0 * aoThreshold - s) : s;
+
+    /* Mk4's colors_adjustment broadcasts -c.r * 0.1 to all channels,
+       not -c.rgb * 0.1. */
+    vec3 rgb = (c.rgb * 0.8 + 0.2) * shade - c.r * 0.1;
+
+    /* Mk5's smooth-mode specular removed to match Mk4. Re-enable
+       behind a uniform if you want it back. */
+    // if (shadeMode == 2) {
+    //     vec3 H = normalize(normalize(L) + V);
+    //     rgb += pow(max(dot(N, H), 0.0), 48.0) * 0.25;
+    // }
     FragColor = vec4(clamp(rgb, 0.0, 1.0), c.a);
 }
 '''
@@ -210,7 +217,6 @@ void main()
 SHADE_MODES = {'flat': 0, 'facet': 1, 'smooth': 2, 'normals': 3, 'custom': 3}
 
 _SHADERS = {}
-
 
 def _build_line_shader():
     iface = gpu.types.GPUStageInterfaceInfo("sv_vd5_line_iface")
@@ -234,7 +240,6 @@ def _build_line_shader():
     info.fragment_source(LINE_FS)
     return gpu.shader.create_from_info(info)
 
-
 def _build_point_shader():
     iface = gpu.types.GPUStageInterfaceInfo("sv_vd5_point_iface")
     iface.smooth('VEC4', "vColor")
@@ -253,7 +258,6 @@ def _build_point_shader():
     info.vertex_source(POINT_VS)
     info.fragment_source(POINT_FS)
     return gpu.shader.create_from_info(info)
-
 
 def _build_face_shader():
     iface = gpu.types.GPUStageInterfaceInfo("sv_vd5_face_iface")
@@ -275,9 +279,7 @@ def _build_face_shader():
     info.fragment_source(FACE_FS)
     return gpu.shader.create_from_info(info)
 
-
 _BUILDERS = {'line': _build_line_shader, 'point': _build_point_shader, 'face': _build_face_shader}
-
 
 def get_shader(name):
     """compile once, needs a GPU context, so only call from the draw callback"""
@@ -285,7 +287,6 @@ def get_shader(name):
     if shader is None:
         shader = _SHADERS[name] = _BUILDERS[name]()
     return shader
-
 
 # ---------------------------------------------------------------------------
 # geometry helpers (numpy)
@@ -306,7 +307,6 @@ def rgba(cols, n):
     if n == 0 or len(a) == 0:
         return np.zeros((n, 4), np.float32)
     return np.resize(a[:, :4], (n, 4))
-
 
 def triangulate(V, polys, all_triangles, concave_quads):
     """returns (tris (T,3) int64, face_index (T,) int64)"""
@@ -338,7 +338,6 @@ def triangulate(V, polys, all_triangles, concave_quads):
     return (np.array(tris, dtype=np.int64).reshape(-1, 3),
             np.array(fidx, dtype=np.int64))
 
-
 def vertex_normals(V, tris):
     """area weighted vertex normals"""
     vn = np.zeros_like(V)
@@ -351,7 +350,6 @@ def vertex_normals(V, tris):
     length[length == 0] = 1.0
     return vn / length
 
-
 def expand_segments(A, B, cA, cB):
     """each segment becomes a screen-space quad (4 verts, 2 tris)"""
     m = len(A)
@@ -363,7 +361,6 @@ def expand_segments(A, B, cA, cB):
            np.array([0, 1, 2, 2, 1, 3], np.uint32)).reshape(-1, 3)
     return SimpleNamespace(pos=f32(pos), other=f32(other), corner=corner, color=f32(color), idx=idx)
 
-
 def expand_points(P, C):
     m = len(P)
     pos = np.repeat(P, 4, axis=0)
@@ -373,14 +370,11 @@ def expand_points(P, C):
            np.array([0, 1, 2, 2, 1, 3], np.uint32)).reshape(-1, 3)
     return SimpleNamespace(pos=f32(pos), corner=corner, color=f32(color), idx=idx)
 
-
 def f32(a):
     return np.ascontiguousarray(a, dtype=np.float32)
 
-
 def _concat(parts, width, dtype=np.float32):
     return np.concatenate(parts) if parts else np.zeros((0, width), dtype)
-
 
 def build_geom(cfg, vecs, edges_s, polys_s, mats, vcol, ecol, pcol, seed):
     rng = np.random.default_rng(seed)
@@ -468,7 +462,6 @@ def build_geom(cfg, vecs, edges_s, polys_s, mats, vcol, ecol, pcol, seed):
         return None
     return geom
 
-
 # ---------------------------------------------------------------------------
 # drawing
 # ---------------------------------------------------------------------------
@@ -485,7 +478,6 @@ def depth_bias(rd, amount):
         return amount * abs(P[2][3])
     return amount * 0.02
 
-
 def view_info(rd):
     inv = rd.view_matrix.inverted()
     if abs(rd.window_matrix[3][3]) < 0.5:
@@ -494,13 +486,11 @@ def view_info(rd):
     z = inv.col[2]
     return (z[0], z[1], z[2], 0.0)
 
-
 def _batch(geom, key, shader, content, indices):
     batch = geom.batches.get(key)
     if batch is None:
         batch = geom.batches[key] = batch_for_shader(shader, 'TRIS', content, indices=indices)
     return batch
-
 
 def _custom_shader(geom, cfg):
     """None = not tried yet, False = failed / not defined"""
@@ -521,7 +511,6 @@ def _custom_shader(geom, cfg):
             except Exception as err:
                 print(f"Viewer Draw Mk5: custom shader failed: {err}")
     return geom.custom_shader or None
-
 
 def _draw_custom_faces(context, geom, cfg, vp):
     shader = _custom_shader(geom, cfg)
@@ -554,7 +543,6 @@ def _draw_custom_faces(context, geom, cfg, vp):
             print(f"Viewer Draw Mk5: draw_fragment failed: {err}")
     batch.draw(shader)
     return True
-
 
 def view_3d_geom(context, args):
     geom, cfg = args
@@ -617,14 +605,12 @@ def view_3d_geom(context, args):
         gpu.state.depth_test_set('NONE')
         gpu.state.blend_set('NONE')
 
-
 def draw_matrix(context, args):
     """ this takes one or more matrices packed into an iterable """
     matrices, scale = args
     mdraw = MatrixDraw28()
     for matrix in matrices:
         mdraw.draw_matrix(matrix, scale=scale)
-
 
 # ---------------------------------------------------------------------------
 # node
@@ -642,7 +628,6 @@ MIGRATE_PROPS = (
     'color_per_edge', 'color_per_polygon', 'polygon_use_vertex_color', 'edges_use_vertex_color',
     'edge_color', 'display_edges', 'polygon_color', 'display_faces', 'all_triangles',
     'matrix_draw_scale', 'use_dashed', 'custom_shader_location', 'node_ui_show_attrs_socket')
-
 
 class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -896,7 +881,7 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
             polygon_use_vertex_color=self.polygon_use_vertex_color,
             edges_use_vertex_color=self.edges_use_vertex_color,
             shade_mode=self.selected_draw_mode,
-            light=tuple(Vector(self.vector_light).normalized()),
+            light=tuple(self.vector_light),
             face_culling=self.face_culling_set,
             all_triangles=self.all_triangles,
             handle_concave_quads=self.handle_concave_quads,
@@ -1016,7 +1001,6 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
             self.process()
         else:
             callback_disable(node_id(self))
-
 
 classes = [SvViewerDrawMk5]
 register, unregister = bpy.utils.register_classes_factory(classes)
