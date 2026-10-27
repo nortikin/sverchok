@@ -8,8 +8,18 @@
 """
 SvDimensionDraw
 ---------------
-CAD-style dimensions for masked edges (aligned: extension lines, dim line,
-arrows) and face areas (centroid labels). Text always faces the viewer.
+CAD-style dimensions for masked edges and face-area labels.
+
+Edge styles:
+  ALIGNED        – dim line ∥ edge, offset faces camera
+  HORIZONTAL     – prefer horizontal layout
+  VERTICAL       – prefer vertical layout
+  RELATIVE_MAIN  – dim line ∥ edge; extensions along world ±X/±Y/±Z (or AUTO)
+
+Optional "Ext Axis" socket: one token per masked edge
+  ("AUTO", "+X", "-X", "+Y", "-Y", "+Z", "-Z", "X", "Y", "Z").
+
+Text is drawn in POST_PIXEL (always faces the viewer).
 """
 
 from types import SimpleNamespace
@@ -22,7 +32,7 @@ from bpy.props import (
     BoolProperty, FloatProperty, IntProperty, FloatVectorProperty,
     StringProperty, EnumProperty,
 )
-from mathutils import Vector, Matrix
+from mathutils import Vector
 from gpu_extras.batch import batch_for_shader
 from bpy_extras.view3d_utils import location_3d_to_region_2d
 
@@ -103,8 +113,108 @@ def expand_segments(A, B, colors):
     return SimpleNamespace(pos=pos, other=other, corner=corner, color=color, idx=idx)
 
 # ---------------------------------------------------------------------------
-# dimension geometry
+# axes / offset helpers
 # ---------------------------------------------------------------------------
+
+WORLD_AXES = {
+    'X':  Vector((1, 0, 0)),
+    '+X': Vector((1, 0, 0)),
+    '-X': Vector((-1, 0, 0)),
+    'Y':  Vector((0, 1, 0)),
+    '+Y': Vector((0, 1, 0)),
+    '-Y': Vector((0, -1, 0)),
+    'Z':  Vector((0, 0, 1)),
+    '+Z': Vector((0, 0, 1)),
+    '-Z': Vector((0, 0, -1)),
+}
+
+def auto_extension_axis(edge_dir, view_dir):
+    """World axis most perpendicular to edge; sign toward camera."""
+    d = edge_dir.normalized()
+    best_u = Vector((0, 0, 1))
+    best_score = 1e9
+    for name in ('X', 'Y', 'Z'):
+        u = WORLD_AXES[name]
+        score = abs(d.dot(u))
+        if score < best_score:
+            best_score = score
+            best_u = u.copy()
+    if best_u.dot(view_dir) > 0:
+        best_u = -best_u
+    return best_u.normalized()
+
+def parse_axis_token(token, edge_dir, view_dir):
+    if token is None:
+        token = 'AUTO'
+    t = str(token).strip().upper().replace(' ', '')
+    if t in ('', 'AUTO', 'A'):
+        return auto_extension_axis(edge_dir, view_dir)
+    if t in WORLD_AXES:
+        return WORLD_AXES[t].copy()
+    if t in ('X', 'Y', 'Z'):
+        base = WORLD_AXES[t]
+        return base if base.dot(view_dir) <= 0 else -base
+    return auto_extension_axis(edge_dir, view_dir)
+
+def _offset_dir_aligned(edge_dir, view_dir):
+    d = edge_dir.normalized()
+    n = d.cross(view_dir)
+    if n.length < 1e-6:
+        n = d.cross(Vector((0, 0, 1)))
+    if n.length < 1e-6:
+        n = d.cross(Vector((0, 1, 0)))
+    return n.normalized()
+
+def build_aligned_dim(pa, pb, offset, extension, arrow, style, view_dir, axis_token=None):
+    """
+    Returns (segments list of (Vector, Vector), text_pos Vector, length float).
+    style: ALIGNED | HORIZONTAL | VERTICAL | RELATIVE_MAIN
+    """
+    pa, pb = Vector(pa), Vector(pb)
+    edge = pb - pa
+    length = edge.length
+    if length < 1e-9:
+        return [], None, 0.0
+
+    d = edge.normalized()
+
+    if style == 'RELATIVE_MAIN':
+        n = parse_axis_token(axis_token, edge, view_dir)
+    elif style == 'HORIZONTAL':
+        horiz = Vector((edge.x, edge.y, 0.0))
+        if horiz.length > 1e-9:
+            d = horiz.normalized()
+        n = _offset_dir_aligned(d, view_dir)
+    elif style == 'VERTICAL':
+        if abs(edge.z) > 1e-9:
+            d = Vector((0, 0, 1 if edge.z >= 0 else -1))
+        else:
+            d = Vector((0, 1, 0))
+        n = _offset_dir_aligned(d, view_dir)
+    else:  # ALIGNED
+        n = _offset_dir_aligned(d, view_dir)
+
+    a0 = pa + n * offset
+    b0 = pb + n * offset
+
+    gap = min(max(offset * 0.15, 1e-6), offset * 0.5) if offset > 0 else 0.0
+    segs = [
+        (pa + n * gap, pa + n * (offset + extension)),
+        (pb + n * gap, pb + n * (offset + extension)),
+        (a0, b0),
+    ]
+
+    ah = max(arrow, 1e-6)
+    wing = ah * 0.35
+    segs += [
+        (a0, a0 + d * ah + n * wing),
+        (a0, a0 + d * ah - n * wing),
+        (b0, b0 - d * ah + n * wing),
+        (b0, b0 - d * ah - n * wing),
+    ]
+
+    text_pos = (a0 + b0) * 0.5 + n * (arrow * 0.15)
+    return segs, text_pos, length
 
 def face_centroid_area(V, poly):
     pts = V[np.asarray(poly, dtype=np.int64)]
@@ -125,81 +235,6 @@ def face_centroid_area(V, poly):
         c = pts.mean(axis=0)
     return c, float(area)
 
-def _offset_dir(edge_dir, style, view_dir):
-    """Unit offset direction for the dimension line."""
-    d = edge_dir.normalized()
-    if style == 'HORIZONTAL':
-        # dim line horizontal in XY; offset along Z or view-up
-        n = Vector((0, 0, 1))
-        if abs(d.dot(n)) > 0.95:
-            n = Vector((0, 1, 0))
-        return n.normalized()
-    if style == 'VERTICAL':
-        n = Vector((1, 0, 0))
-        if abs(d.dot(n)) > 0.95:
-            n = Vector((0, 1, 0))
-        return n.normalized()
-    # ALIGNED: perpendicular to edge, facing camera
-    n = d.cross(view_dir)
-    if n.length < 1e-6:
-        n = d.cross(Vector((0, 0, 1)))
-    if n.length < 1e-6:
-        n = d.cross(Vector((0, 1, 0)))
-    return n.normalized()
-
-def build_aligned_dim(pa, pb, offset, extension, arrow, style, view_dir):
-    """
-    Returns (segments list of (Vector, Vector), text_pos Vector, length float)
-    """
-    pa, pb = Vector(pa), Vector(pb)
-    edge = pb - pa
-    length = edge.length
-    if length < 1e-9:
-        return [], None, 0.0
-
-    d = edge.normalized()
-    n = _offset_dir(d, style, view_dir)
-
-    # For HORIZONTAL / VERTICAL, project endpoints so dim line is axis-aligned
-    if style == 'HORIZONTAL':
-        # measure along X (or longest horizontal component)
-        # keep full 3D length but place dim parallel to XY projection of edge
-        horiz = Vector((edge.x, edge.y, 0.0))
-        if horiz.length > 1e-9:
-            d = horiz.normalized()
-            # re-place pb relative to pa along horizontal measure of true length
-            # actually CAD horizontal dim measures delta-X; use true length still
-            n = _offset_dir(d, 'ALIGNED', view_dir)
-    elif style == 'VERTICAL':
-        vert = Vector((0.0, 0.0, edge.z)) if abs(edge.z) > 1e-9 else Vector((0, edge.y, 0))
-        if vert.length > 1e-9:
-            d = vert.normalized()
-            n = _offset_dir(d, 'ALIGNED', view_dir)
-
-    a0 = pa + n * offset
-    b0 = pb + n * offset
-
-    # extension lines (from near geometry out past dim line)
-    gap = min(offset * 0.2, offset * 0.5)
-    segs = [
-        (pa + n * gap, pa + n * (offset + extension)),
-        (pb + n * gap, pb + n * (offset + extension)),
-        (a0, b0),
-    ]
-
-    # arrowheads (inward)
-    ah = max(arrow, 1e-6)
-    wing = ah * 0.35
-    segs += [
-        (a0, a0 + d * ah + n * wing),
-        (a0, a0 + d * ah - n * wing),
-        (b0, b0 - d * ah + n * wing),
-        (b0, b0 - d * ah - n * wing),
-    ]
-
-    text_pos = (a0 + b0) * 0.5 + n * (arrow * 0.15)
-    return segs, text_pos, length
-
 def flatten_mask(m):
     out = []
     for item in m:
@@ -212,10 +247,19 @@ def flatten_mask(m):
                 pass
     return out
 
+def flatten_tokens(seq):
+    out = []
+    for x in seq:
+        if isinstance(x, (list, tuple)):
+            out.extend(str(y) for y in x)
+        else:
+            out.append(str(x))
+    return out
+
 def build_dimension_data(
     verts_s, edges_s, faces_s, edge_masks, face_masks, mats,
     scale, offset, extension, arrow, style, view_dir,
-    line_color, face_text_only,
+    line_color, axis_tokens_s, default_axis,
 ):
     labels = []
     seg_A, seg_B, seg_C = [], [], []
@@ -231,17 +275,23 @@ def build_dimension_data(
 
         emask = edge_masks[i % len(edge_masks)] if edge_masks else []
         edges = edges_s[i % len(edges_s)] if edges_s else []
+        axis_tokens = axis_tokens_s[i % len(axis_tokens_s)] if axis_tokens_s else []
+
         if emask and edges:
             E = np.asarray(edges, dtype=np.int64).reshape(-1, 2)
-            for ei in emask:
+            for k, ei in enumerate(emask):
                 try:
                     ei = int(ei)
                     if ei < 0 or ei >= len(E):
                         continue
                     a, b = E[ei]
                     pa, pb = V[a], V[b]
+                    token = axis_tokens[k] if k < len(axis_tokens) else default_axis
+                    if isinstance(token, (list, tuple)):
+                        token = token[0] if token else default_axis
                     segs, tpos, length = build_aligned_dim(
-                        pa, pb, offset, extension, arrow, style, view_dir
+                        pa, pb, offset, extension, arrow, style, view_dir,
+                        axis_token=token,
                     )
                     if tpos is None:
                         continue
@@ -297,7 +347,6 @@ def draw_dimensions(context, args):
     if region is None or rd is None:
         return
 
-    # GPU dimension lines
     if ticks is not None:
         shader = get_line_shader()
         batch = batch_for_shader(
@@ -320,7 +369,6 @@ def draw_dimensions(context, args):
         gpu.state.depth_test_set('NONE')
         gpu.state.blend_set('NONE')
 
-    # text
     font_id = 0
     blf.size(font_id, int(cfg.text_height))
     r, g, b, a = cfg.text_color
@@ -356,8 +404,9 @@ def draw_dimensions(context, args):
 
 class SvDimensionDraw(SverchCustomTreeNode, bpy.types.Node):
     """
-    Triggers: dimension length area mask CAD
-    Tooltip: CAD-style edge dimensions + face areas for masked indices
+    Triggers: dimension length area mask CAD axis
+    Tooltip: CAD-style edge dimensions + face areas for masked indices.\n
+             Styles: Aligned, Horizontal, Vertical, Relative–Main Axis (±X/Y/Z).
     """
     bl_idname = 'SvDimensionDraw'
     bl_label = 'Dimension Draw'
@@ -403,11 +452,29 @@ class SvDimensionDraw(SverchCustomTreeNode, bpy.types.Node):
     dim_style: EnumProperty(
         name='Style',
         items=[
-            ('ALIGNED', 'Aligned', 'Dimension line parallel to the edge'),
+            ('ALIGNED', 'Aligned', 'Dim ∥ edge, offset faces camera'),
             ('HORIZONTAL', 'Horizontal', 'Prefer horizontal layout'),
             ('VERTICAL', 'Vertical', 'Prefer vertical layout'),
+            ('RELATIVE_MAIN', 'Relative–Main Axis',
+             'Dim ∥ edge; extensions along a world axis (±X/Y/Z)'),
         ],
         default='ALIGNED',
+        update=updateNode,
+    )
+
+    ext_axis_default: EnumProperty(
+        name='Ext Axis',
+        description='Default extension axis (Relative–Main Axis style)',
+        items=[
+            ('AUTO', 'Auto', 'Most perpendicular axis, sign toward camera'),
+            ('+X', '+X', 'World +X'),
+            ('-X', '-X', 'World -X'),
+            ('+Y', '+Y', 'World +Y'),
+            ('-Y', '-Y', 'World -Y'),
+            ('+Z', '+Z', 'World +Z'),
+            ('-Z', '-Z', 'World -Z'),
+        ],
+        default='AUTO',
         update=updateNode,
     )
 
@@ -417,12 +484,17 @@ class SvDimensionDraw(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'Faces')
         self.inputs.new('SvStringsSocket', 'Edge Mask')
         self.inputs.new('SvStringsSocket', 'Face Mask')
+        self.inputs.new('SvStringsSocket', 'Ext Axis')
         self.inputs.new('SvMatrixSocket', 'Matrix')
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, 'activate', text='', icon='HIDE_' + ('OFF' if self.activate else 'ON'))
         row.prop(self, 'dim_style', text='')
+
+        if self.dim_style == 'RELATIVE_MAIN':
+            layout.prop(self, 'ext_axis_default', text='Ext Axis')
+
         row = layout.row(align=True)
         row.prop(self, 'dim_offset')
         row.prop(self, 'dim_extension')
@@ -460,10 +532,26 @@ class SvDimensionDraw(SverchCustomTreeNode, bpy.types.Node):
         if not any(len(v) for v in verts_s):
             return
 
-        edges_s = inputs['Edges'].sv_get(deepcopy=False, default=[[]]) if inputs['Edges'].is_linked else [[]]
-        faces_s = inputs['Faces'].sv_get(deepcopy=False, default=[[]]) if inputs['Faces'].is_linked else [[]]
-        edge_masks = inputs['Edge Mask'].sv_get(deepcopy=False, default=[[]]) if inputs['Edge Mask'].is_linked else [[]]
-        face_masks = inputs['Face Mask'].sv_get(deepcopy=False, default=[[]]) if inputs['Face Mask'].is_linked else [[]]
+        edges_s = (
+            inputs['Edges'].sv_get(deepcopy=False, default=[[]])
+            if inputs['Edges'].is_linked else [[]]
+        )
+        faces_s = (
+            inputs['Faces'].sv_get(deepcopy=False, default=[[]])
+            if inputs['Faces'].is_linked else [[]]
+        )
+        edge_masks = (
+            inputs['Edge Mask'].sv_get(deepcopy=False, default=[[]])
+            if inputs['Edge Mask'].is_linked else [[]]
+        )
+        face_masks = (
+            inputs['Face Mask'].sv_get(deepcopy=False, default=[[]])
+            if inputs['Face Mask'].is_linked else [[]]
+        )
+
+        axis_s = [[]]
+        if inputs['Ext Axis'].is_linked:
+            axis_s = inputs['Ext Axis'].sv_get(deepcopy=False, default=[[]])
 
         mats = []
         if inputs['Matrix'].is_linked:
@@ -473,8 +561,8 @@ class SvDimensionDraw(SverchCustomTreeNode, bpy.types.Node):
 
         edge_masks = [flatten_mask(m) for m in edge_masks] or [[]]
         face_masks = [flatten_mask(m) for m in face_masks] or [[]]
+        axis_tokens_s = [flatten_tokens(m) for m in axis_s] or [[]]
 
-        # view direction for aligned offset (approx; refined in draw if needed)
         view_dir = Vector((0, 0, -1))
         try:
             for window in bpy.context.window_manager.windows:
@@ -490,7 +578,8 @@ class SvDimensionDraw(SverchCustomTreeNode, bpy.types.Node):
         labels, ticks = build_dimension_data(
             verts_s, edges_s, faces_s, edge_masks, face_masks, mats,
             self.scale, self.dim_offset, self.dim_extension, self.arrow_size,
-            self.dim_style, view_dir, self.line_color, True,
+            self.dim_style, view_dir, self.line_color,
+            axis_tokens_s, self.ext_axis_default,
         )
         if not labels and ticks is None:
             return
