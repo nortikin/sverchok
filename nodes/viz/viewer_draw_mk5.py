@@ -20,9 +20,11 @@ Changes relative to Mk4:
 - edges/points get a depth offset applied in clip space that equals a fixed
   fraction of the view distance (no gl_FragDepth writes, so early-z stays on,
   and no break-up at distance)
-- facet / smooth lighting moved to the fragment shader: facet normals come
-  from dFdx/dFdy, so faces no longer need to be split per triangle; changing
-  colors still rebuilds, but no CPU-side light factors are needed
+- facet / smooth lighting in the shaders, with Viewer Draw Mk4's formula and colours: facet
+  normals come from dFdx/dFdy and the polygon winding (gl_FrontFacing), so faces no longer need
+  to be split per triangle; smooth shading is worked out per vertex like Mk4. Lighting uses the
+  matrix-transformed geometry (Mk4 lit the untransformed vertices)
+- colours are converted for Blender's sRGB overlay framebuffer like the built-in shaders do
 - 'fragment' mode (geometry shader, unsupported on Metal/Vulkan) is replaced
   by 'normals' (built-in normal view) and 'custom' (text-block shader)
 - geometry is built with numpy
@@ -60,11 +62,26 @@ from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
 from sverchok.utils.sv_obj_baker import SvObjBakeMK3
+from sverchok.utils.modules.vertex_utils import np_vertex_normals
 
 
 # ---------------------------------------------------------------------------
 # shaders
 # ---------------------------------------------------------------------------
+
+# Blender's viewport overlay framebuffer is sRGB. Built-in shaders convert their sRGB input to
+# linear before writing (blender_srgb_to_framebuffer_space); custom shaders must do the same or
+# every colour comes out lighter. Blender sets the srgbTarget push constant automatically.
+SRGB_GLSL = '''
+vec4 srgb_to_framebuffer(vec4 c)
+{
+    if (srgbTarget) {
+        vec3 v = max(c.rgb, vec3(0.0));
+        c.rgb = mix(v * (1.0 / 12.92), pow((v + 0.055) * (1.0 / 1.055), vec3(2.4)), step(vec3(0.04045), v));
+    }
+    return c;
+}
+'''
 
 LINE_VS = '''
 vec4 clip_toward(vec4 p, vec4 q)
@@ -127,7 +144,7 @@ void main()
     if (a <= 0.0) {
         discard;
     }
-    FragColor = vec4(vColor.rgb, vColor.a * a);
+    FragColor = srgb_to_framebuffer(vec4(vColor.rgb, vColor.a * a));
 }
 '''
 
@@ -151,59 +168,68 @@ void main()
     if (a <= 0.0) {
         discard;
     }
-    FragColor = vec4(vColor.rgb, vColor.a * a);
+    FragColor = srgb_to_framebuffer(vec4(vColor.rgb, vColor.a * a));
 }
 '''
 
+# Lighting matches Viewer Draw Mk4:
+#   light factor = ambient_occlusion(dot(normal, light) * 0.5 + 0.5), where values under 0.4 fold
+#   back up (utils.math.np_ambient_occlusion) and the light vector is used as set, not normalised.
+#   facet:  (colour * 0.8 + 0.2) * factor - red * 0.1, one factor per face from its winding normal
+#   smooth: colour * factor, worked out per vertex from the vertex normals and interpolated
 FACE_VS = '''
+float ambient_occlusion(float x)
+{
+    return (x < 0.4) ? 0.8 - x : x;
+}
+
 void main()
 {
     vPos = pos;
-    vNrm = nrm;
     vColor = color;
+    if (shadeMode == 2) {
+        float len = length(nrm);
+        float factor = (len > 1e-12) ? ambient_occlusion(dot(nrm / len, lightDir.xyz) * 0.5 + 0.5) : 1.0;
+        vColor = vec4(color.rgb * factor, color.a);
+    }
     gl_Position = viewProjectionMatrix * vec4(pos, 1.0);
 }
 '''
 
 FACE_FS = '''
+float ambient_occlusion(float x)
+{
+    return (x < 0.4) ? 0.8 - x : x;
+}
+
 void main()
 {
     vec4 c = vColor;
-    if (shadeMode == 0) {
-        FragColor = c;
+    if (shadeMode == 0 || shadeMode == 2) {
+        FragColor = srgb_to_framebuffer(c);
         return;
     }
 
-    /* direction toward the viewer (perspective: eye position, ortho: axis) */
-    vec3 V = (viewInfo.w > 0.5) ? normalize(viewInfo.xyz - vPos)
-                                : normalize(viewInfo.xyz);
-
-    vec3 N;
-    if (shadeMode == 2 && dot(vNrm, vNrm) > 1e-12) {
-        N = normalize(vNrm);
-    }
-    else {
-        N = normalize(cross(dFdx(vPos), dFdy(vPos)));
-    }
-    /* two sided: always face the viewer */
+    /* face normal from screen derivatives, turned toward the viewer, then flipped for back
+       faces so it follows the polygon's winding like Mk4's face normals */
+    vec3 V = (viewInfo.w > 0.5) ? normalize(viewInfo.xyz - vPos) : normalize(viewInfo.xyz);
+    vec3 N = normalize(cross(dFdx(vPos), dFdy(vPos)));
     if (dot(N, V) < 0.0) {
         N = -N;
     }
 
     if (shadeMode == 3) {
-        FragColor = vec4(N * 0.5 + 0.5, c.a);
+        /* normals view: two sided, colours the side you are looking at */
+        FragColor = srgb_to_framebuffer(vec4(N * 0.5 + 0.5, c.a));
         return;
     }
 
-    vec3 L = normalize(lightDir.xyz);
-    float shade = dot(N, L) * 0.5 + 0.5;
-    vec3 rgb = (c.rgb * 0.8 + 0.2) * shade - c.rgb * 0.1;
-
-    if (shadeMode == 2) {
-        vec3 H = normalize(L + V);
-        rgb += pow(max(dot(N, H), 0.0), 48.0) * 0.25;
+    if (!gl_FrontFacing) {
+        N = -N;
     }
-    FragColor = vec4(clamp(rgb, 0.0, 1.0), c.a);
+    float factor = ambient_occlusion(dot(N, lightDir.xyz) * 0.5 + 0.5);
+    vec3 rgb = (c.rgb * 0.8 + 0.2) * factor - c.r * 0.1;   /* Mk4 subtracts the red channel from all three */
+    FragColor = srgb_to_framebuffer(vec4(rgb, c.a));
 }
 '''
 
@@ -219,6 +245,7 @@ def _build_line_shader():
     iface.no_perspective('FLOAT', "vArc")
 
     info = gpu.types.GPUShaderCreateInfo()
+    info.push_constant('BOOL', "srgbTarget")
     info.push_constant('MAT4', "viewProjectionMatrix")
     info.push_constant('VEC2', "viewportSize")
     info.push_constant('VEC2', "dashPattern")
@@ -231,7 +258,7 @@ def _build_line_shader():
     info.vertex_out(iface)
     info.fragment_out(0, 'VEC4', "FragColor")
     info.vertex_source(LINE_VS)
-    info.fragment_source(LINE_FS)
+    info.fragment_source(SRGB_GLSL + LINE_FS)
     return gpu.shader.create_from_info(info)
 
 
@@ -241,6 +268,7 @@ def _build_point_shader():
     iface.no_perspective('VEC2', "vCorner")
 
     info = gpu.types.GPUShaderCreateInfo()
+    info.push_constant('BOOL', "srgbTarget")
     info.push_constant('MAT4', "viewProjectionMatrix")
     info.push_constant('VEC2', "viewportSize")
     info.push_constant('FLOAT', "pointSize")
@@ -251,17 +279,17 @@ def _build_point_shader():
     info.vertex_out(iface)
     info.fragment_out(0, 'VEC4', "FragColor")
     info.vertex_source(POINT_VS)
-    info.fragment_source(POINT_FS)
+    info.fragment_source(SRGB_GLSL + POINT_FS)
     return gpu.shader.create_from_info(info)
 
 
 def _build_face_shader():
     iface = gpu.types.GPUStageInterfaceInfo("sv_vd5_face_iface")
     iface.smooth('VEC4', "vColor")
-    iface.smooth('VEC3', "vNrm")
     iface.smooth('VEC3', "vPos")
 
     info = gpu.types.GPUShaderCreateInfo()
+    info.push_constant('BOOL', "srgbTarget")
     info.push_constant('MAT4', "viewProjectionMatrix")
     info.push_constant('VEC4', "lightDir")
     info.push_constant('VEC4', "viewInfo")
@@ -272,7 +300,7 @@ def _build_face_shader():
     info.vertex_out(iface)
     info.fragment_out(0, 'VEC4', "FragColor")
     info.vertex_source(FACE_VS)
-    info.fragment_source(FACE_FS)
+    info.fragment_source(SRGB_GLSL + FACE_FS)
     return gpu.shader.create_from_info(info)
 
 
@@ -332,8 +360,13 @@ def triangulate(V, polys, all_triangles, concave_quads):
             fidx_append(i)
         elif n > 3:
             sub = [Vector(V[j]) for j in p]
+            pts = np.asarray(V[list(p)], dtype=np.float64)
+            normal = np.cross(pts - pts.mean(axis=0), np.roll(pts, -1, axis=0) - pts.mean(axis=0)).sum(axis=0)
             for t in tessellate([sub]):
-                tris_append((p[t[0]], p[t[1]], p[t[2]]))
+                a, b, c = t
+                if np.dot(np.cross(pts[b] - pts[a], pts[c] - pts[a]), normal) < 0:
+                    b, c = c, b
+                tris_append((p[a], p[b], p[c]))
                 fidx_append(i)
     return (np.array(tris, dtype=np.int64).reshape(-1, 3),
             np.array(fidx, dtype=np.int64))
@@ -350,6 +383,17 @@ def vertex_normals(V, tris):
     length = np.linalg.norm(vn, axis=1, keepdims=True)
     length[length == 0] = 1.0
     return vn / length
+
+
+def smooth_normals(V, polys, tris):
+    """vertex normals as Viewer Draw Mk4 computes them, falling back to area weighted ones"""
+    try:
+        n = np.asarray(np_vertex_normals(V, polys, output_numpy=True), dtype=np.float64).reshape(-1, 3)
+        if n.shape == V.shape:
+            return n
+    except Exception:
+        pass
+    return vertex_normals(V, tris)
 
 
 def expand_segments(A, B, cA, cB):
@@ -435,7 +479,7 @@ def build_geom(cfg, vecs, edges_s, polys_s, mats, vcol, ecol, pcol, seed):
             if len(polys):
                 tris, fidx = triangulate(V, polys, cfg.all_triangles, cfg.handle_concave_quads)
                 if len(tris):
-                    N = vertex_normals(V, tris) if need_normals else np.zeros_like(V)
+                    N = smooth_normals(V, polys, tris) if need_normals else np.zeros_like(V)
                     if cfg.polygon_use_vertex_color:
                         fp, fn, fc, fi = V, N, pc, tris
                     elif cfg.color_per_polygon:
@@ -896,7 +940,7 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
             polygon_use_vertex_color=self.polygon_use_vertex_color,
             edges_use_vertex_color=self.edges_use_vertex_color,
             shade_mode=self.selected_draw_mode,
-            light=tuple(Vector(self.vector_light).normalized()),
+            light=tuple(self.vector_light),
             face_culling=self.face_culling_set,
             all_triangles=self.all_triangles,
             handle_concave_quads=self.handle_concave_quads,
