@@ -110,4 +110,4 @@ class YamlLine:
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(load('../index.yaml'))
+    pprint(load('../menus/full_by_operations.yaml'))
