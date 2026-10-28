@@ -200,6 +200,7 @@
         - DistancePPNode
         - SvWeightedVectorSumNode
         - SvDistancePointLineNode
+        - SvDistanceToEdgesNode
         - SvDistancePointPlaneNode
         - SvDistancetLineLineNode
         - SvPathLengthMk2Node

@@ -20,6 +20,7 @@ class SvDistanceToEdgesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvDistanceToEdgesNode'
     bl_label = 'Nearest Point on Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DISTANCE_TO_EDGES'
 
     def ensure_control_sockets(self):
         # Also upgrade nodes created with v5 when an old .blend is opened.
