@@ -63,6 +63,7 @@
             - SvTriangleNode
             - SvPentagonTilerNode
             - SvSpiralNodeMK2
+            - SvStairsNode
     - G CURVES:
         - icon_name: OUTLINER_OB_CURVE
         - extra_menu: AdvancedObjectsPartialMenu
