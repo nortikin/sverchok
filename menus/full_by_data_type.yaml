@@ -724,6 +724,7 @@
     - icon_name: RESTRICT_VIEW_OFF
     - extra_menu: ConnectionPartialMenu
     - SvViewerDrawMk4
+    - SvViewerDrawMk5
     - SvMatrixViewer28
     - SvIDXViewer28
     - SvViewer2D
