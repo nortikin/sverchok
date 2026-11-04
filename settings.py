@@ -269,6 +269,12 @@ class SverchokPreferences(AddonPreferences):
             description = "Show some additional panels or features useful for Sverchok developers only",
             default = False)
 
+    link_drag_search: BoolProperty(
+        name="Search on Link Drop",
+        description="Search compatible nodes when a socket link is dropped on empty space",
+        default=True,
+    )
+
     #  theme settings
     themes = [("default_theme", "Default", "Default"),
               ("nipon_blossom", "Nipon Blossom", "Nipon Blossom"),
@@ -518,6 +524,7 @@ class SverchokPreferences(AddonPreferences):
         box = col1.box()
         box.label(text="Other")
         box.prop(self, "frame_change_mode", expand=False)
+        box.prop(self, "link_drag_search")
 
         col2 = col_split.split().column()
 
