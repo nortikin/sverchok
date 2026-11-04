@@ -1,0 +1,83 @@
+name: Link Search
+
+on:
+  pull_request:
+    paths:
+      - 'settings.py'
+      - 'docs/user_interface/link_search.rst'
+      - 'ui/sv_link_search*.py'
+      - 'utils/sv_link_search*.py'
+      - 'nodes/list_main/func.py'
+      - 'tests/*link_search*'
+      - '.github/workflows/link-search.yml'
+  push:
+    paths:
+      - 'settings.py'
+      - 'docs/user_interface/link_search.rst'
+      - 'ui/sv_link_search*.py'
+      - 'utils/sv_link_search*.py'
+      - 'nodes/list_main/func.py'
+      - 'tests/*link_search*'
+      - '.github/workflows/link-search.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  blender:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: '4.5.10'
+            series: '4.5'
+          - version: '5.1.0'
+            series: '5.1'
+    env:
+      LIBGL_ALWAYS_SOFTWARE: '1'
+      BLENDER_USER_CONFIG: ${{ runner.temp }}/link-search-config
+    steps:
+      - uses: actions/checkout@v4
+      - name: System libraries for headless and native UI tests
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y xvfb libxfixes3 libxrender1 libxi6 libxkbcommon0 libgl1
+      - uses: actions/cache@v4
+        with:
+          path: .blender-link-search
+          key: link-search-${{ runner.os }}-${{ matrix.version }}
+      - name: Blender ${{ matrix.version }}
+        run: |
+          if [ ! -x .blender-link-search/blender ]; then
+            curl --fail --location --retry 3 \
+              "https://download.blender.org/release/Blender${{ matrix.series }}/blender-${{ matrix.version }}-linux-x64.tar.xz" \
+              --output "$RUNNER_TEMP/blender-link-search.tar.xz"
+            mkdir -p .blender-link-search
+            tar -xJf "$RUNNER_TEMP/blender-link-search.tar.xz" -C .blender-link-search --strip-components=1
+          fi
+      - name: Matching, modes, creation, groups and replacement regression tests
+        run: |
+          mkdir -p test-results
+          .blender-link-search/blender -b --factory-startup --python-exit-code 1 \
+            --python tests/link_search_tests.py 2>&1 | tee test-results/unit.log
+      - name: Disable first-run setup for native UI tests
+        run: |
+          mkdir -p "$BLENDER_USER_CONFIG"
+          .blender-link-search/blender -b --factory-startup --python-expr \
+            'import bpy; bpy.context.preferences.view.show_splash=False; bpy.ops.wm.save_userpref()'
+      - name: Native popup, filtered mouse choice, Escape and one-step undo
+        run: |
+          export LINK_SEARCH_GUI_RESULT="$PWD/test-results/gui.json"
+          timeout 180s xvfb-run -a .blender-link-search/blender \
+            --factory-startup --enable-event-simulate --python-exit-code 1 \
+            --python tests/link_search_gui.py 2>&1 | tee test-results/gui.log
+          python3 -c 'import json; r=json.load(open("test-results/gui.json")); assert r["ok"],r'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: link-search-${{ matrix.version }}
+          path: test-results/
+          retention-days: 7

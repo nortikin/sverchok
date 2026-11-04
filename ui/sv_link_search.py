@@ -1,16 +1,23 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Experimental link-drag search for Sverchok's custom node editor.
+"""Socket-aware link-drag search for Sverchok's custom node editor.
 
 The native link operator retains ownership of drawing, panning and connections.
 A small observer opens our popup only after a drag finishes over empty space.
 """
 
 import logging
-import uuid
+import sys
+from array import array
+from collections import deque
+from contextlib import contextmanager
+from time import perf_counter
 
 import bpy
+import sverchok
 from bpy.app.handlers import persistent
-from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
+from bpy.props import (
+    BoolProperty, EnumProperty, IntProperty, StringProperty,
+)
 
 from sverchok.ui.nodeview_space_menu import get_add_node_menu
 from sverchok.utils.sv_link_search import (
@@ -28,8 +35,21 @@ _enabled = False
 _keymaps = []
 _sessions = {}
 _generation = 0
-_waiting = set()
 _deferred = set()
+_active_node_type = None
+_active_variants = deque()
+_catalogue_revision = 0
+_catalogue_forced = False
+
+
+def link_drag_search_enabled(context):
+    """Read the saved preference on every gesture; manual search stays enabled."""
+    addon = context.preferences.addons.get(sverchok.__name__)
+    return bool(addon and getattr(addon.preferences, 'link_drag_search', True))
+
+
+def _has_selected_outputs(tree):
+    return any(socket.select for node in tree.nodes for socket in node.outputs)
 
 
 def available_node_types():
@@ -41,19 +61,21 @@ def available_node_types():
     for category in menu.walk_categories():
         for item in category:
             name = getattr(item, 'bl_idname', '')
-            if not name or name in {'NodeFrame', 'NodeReroute'}:
+            if not name or name in {'NodeFrame', 'NodeReroute', 'NodeGroupInput', 'NodeGroupOutput', 'SvGroupTreeNode'}:
                 continue
             cls = bpy.types.Node.bl_rna_get_subclass_py(name)
             if cls and not getattr(cls, 'missing_dependency', False):
                 ids.add(name)
     # First build useful operations, then the remaining menu in stable order.
-    priority = {'SvScalarMathNodeMK4', 'SvVectorMathNodeMK3', 'SvLogicNodeMK2',
-                'SvColorMixNode', 'SvComponentAnalyzerNode'}
-    return tuple(sorted(ids, key=lambda name: (name not in priority, name)))
+    priority = {name: i for i, name in enumerate((
+        'SvScalarMathNodeMK4', 'SvVectorMathNodeMK3', 'SvLogicNodeMK2',
+        'SvColorMixNode', 'SvComponentAnalyzerNode'))}
+    return tuple(sorted(ids, key=lambda name: (priority.get(name, len(priority)), name)))
 
 
-def collect_node_type(node_type):
-    """Create transient nodes, copy descriptions, remove ALL scratch data.
+@contextmanager
+def _index_tree():
+    """Remove ALL scratch data before returning control to Blender.
 
     A scratch tree lives within one call only; it cannot be saved between timer
     ticks. No user tree, socket data or node process() method is used.
@@ -65,30 +87,11 @@ def collect_node_type(node_type):
     helper = bpy.data.node_groups.get('sverchok_helper_group')
     helper_fake_user = helper.use_fake_user if helper else None
     tree = bpy.data.node_groups.new('.SV Link Search Index', 'SverchCustomTreeType')
-    result = []
     try:
         tree.sv_process = False
         tree.sv_animate = False
         tree.sv_show = False
-        with tree.init_tree():
-            probe = tree.nodes.new(node_type)
-            variants = tuple(operation_variants(probe))
-            tree.nodes.clear()
-            for settings, operation in variants:
-                try:
-                    node = tree.nodes.new(node_type)
-                    configure_node(node, settings)
-                    for sockets in (node.inputs, node.outputs):
-                        for index, socket in enumerate(sockets):
-                            if socket_available(socket):
-                                result.append(SearchEntry(
-                                    node_type, node.bl_label, operation, settings,
-                                    describe_socket(socket, index)))
-                except Exception:
-                    log.warning('Link search could not index %s %s',
-                                node_type, settings, exc_info=True)
-                finally:
-                    tree.nodes.clear()
+        yield tree
     finally:
         # Property callbacks can add an update-model cache even when processing
         # is disabled. Remove that cache too, before releasing RNA references.
@@ -110,51 +113,133 @@ def collect_node_type(node_type):
                 bpy.data.node_groups.remove(group)
         if helper is not None:
             helper.use_fake_user = helper_fake_user
+
+
+def _node_variants(node_type):
+    with _index_tree() as tree, tree.init_tree():
+        try:
+            return tuple(operation_variants(tree.nodes.new(node_type)))
+        finally:
+            # SV_LINK_SEARCH_VARIANT_RESOURCE_CLEANUP_V4_3
+            tree.nodes.clear()
+
+
+def collect_node_type(node_type, variants=None):
+    """Copy plain descriptions; callers can restrict this to one operation."""
+    result = []
+    with _index_tree() as tree, tree.init_tree():
+        if variants is None:
+            probe = tree.nodes.new(node_type)
+            variants = tuple(operation_variants(probe))
+            tree.nodes.clear()
+        for settings, operation in variants:
+            try:
+                node = tree.nodes.new(node_type)
+                configure_node(node, settings)
+                from sverchok.utils.sv_link_search_extensions import remember_ports
+                remember_ports(node, settings)
+                for sockets in (node.inputs, node.outputs):
+                    for index, socket in enumerate(sockets):
+                        if socket_available(socket):
+                            result.append(SearchEntry(
+                                node_type, node.bl_label, operation, settings,
+                                describe_socket(socket, index)))
+            except Exception:
+                log.warning('Link search could not index %s %s',
+                            node_type, settings, exc_info=True)
+            finally:
+                tree.nodes.clear()
     return result
 
 
-def _catalogue_tick():
-    global _ready
+def _catalogue_allowed():
+    """Disabled automatic search does no background work; explicit uses remain."""
     if not _enabled:
+        return False
+    if _catalogue_forced or link_drag_search_enabled(bpy.context):
+        return True
+    # Opening a manual search schedules its first tick before the popup is live.
+    # By the time that tick runs, only a live manual popup may keep it working.
+    popup = sys.modules.get('sverchok.ui.sv_link_search_popup')
+    for key in getattr(popup, '_live', ()):
+        session = _sessions.get(key)
+        if session and not session.get('automatic', True):
+            return True
+    return False
+
+
+def _catalogue_tick():
+    global _ready, _active_node_type, _catalogue_revision, _catalogue_forced
+    if not _catalogue_allowed():
         return None
     if _signature is None:
-        ensure_catalogue()
-    if not _pending:
-        _ready = True
-        return None
-    node_type = _pending.pop(0)
-    try:
-        _entries.extend(collect_node_type(node_type))
-    except Exception:
-        log.warning('Link search skipped %s', node_type, exc_info=True)
-    _ready = not _pending
-    return 0.01 if _pending else None
+        ensure_catalogue(background=True)
+    # Blender data stays on the main thread. A node's init is indivisible;
+    # yield between variants instead of keeping an idle polling timer alive.
+    deadline = perf_counter() + 0.008
+    while _pending or _active_variants:
+        if not _active_variants:
+            _active_node_type = _pending.pop(0)
+            try:
+                _active_variants.extend(_node_variants(_active_node_type))
+            except Exception:
+                log.warning('Link search skipped %s', _active_node_type, exc_info=True)
+        if _active_variants:
+            variant = _active_variants.popleft()
+            try:
+                _entries.extend(collect_node_type(_active_node_type, (variant,)))
+            except Exception:
+                log.warning('Link search skipped %s %s',
+                            _active_node_type, variant, exc_info=True)
+        if not _active_variants:
+            _active_node_type = None
+        if perf_counter() >= deadline:
+            break
+    _ready = not (_pending or _active_variants)
+    _catalogue_revision += 1
+    if _ready:
+        _catalogue_forced = False
+    return 0.01 if not _ready else None
 
 
-def ensure_catalogue(force=False):
-    global _signature, _ready, _generation
+def ensure_catalogue(force=False, *, background=False):
+    global _signature, _ready, _generation, _active_node_type, _catalogue_revision
+    global _catalogue_forced
+    if background and not _catalogue_allowed():
+        return _ready
+    if force:
+        _catalogue_forced = True
     signature = available_node_types()
     if force or signature != _signature:
+        from sverchok.utils.sv_link_search_extensions import clear_metadata
+        clear_metadata()
         _generation += 1
         _signature = signature
         _ready = False
         _entries.clear()
         _pending[:] = signature
-        _sessions.clear()
-    if _pending and not bpy.app.timers.is_registered(_catalogue_tick):
-        bpy.app.timers.register(_catalogue_tick, first_interval=0.05)
-    if not _pending:
+        _active_variants.clear()
+        _active_node_type = None
+        _catalogue_revision += 1
+        # Keep enum strings alive until popups close; generations reject stale results.
+    if not _pending and not _active_variants:
         _ready = True
+        _catalogue_forced = False
+    elif _enabled and not bpy.app.timers.is_registered(_catalogue_tick):
+        bpy.app.timers.register(_catalogue_tick, first_interval=0.05)
     return _ready
 
 
 @persistent
 def _file_loaded(_unused):
-    global _signature
-    # Keep only plain descriptions across undo; opening another file invalidates
-    # them because nodes may depend on that file's data.
+    global _signature, _ready, _catalogue_forced
     _signature = None
-    if _enabled and not bpy.app.timers.is_registered(_catalogue_tick):
+    _ready = False
+    _catalogue_forced = False
+    if bpy.app.timers.is_registered(_catalogue_tick):
+        bpy.app.timers.unregister(_catalogue_tick)
+    if (_enabled and not bpy.app.background
+            and link_drag_search_enabled(bpy.context)):
         bpy.app.timers.register(_catalogue_tick, first_interval=1.0)
 
 
@@ -163,7 +248,7 @@ def _editor_tree(context):
     if not space or space.type != 'NODE_EDITOR':
         return None
     tree = space.edit_tree
-    if tree and tree.bl_idname == 'SverchCustomTreeType' and not tree.library:
+    if tree and tree.bl_idname in {'SverchCustomTreeType', 'SvGroupTree'} and not tree.library:
         return tree
     return None
 
@@ -173,44 +258,66 @@ def _socket_key(socket):
 
 
 def _near_socket_column(context, x, y):
-    # Most clicks concern node controls or empty space. Do not snapshot every
-    # socket for those clicks; the native hit test below is needed only near an
-    # input/output column. Include both expanded and collapsed node widths.
+    """Reject ordinary clicks without walking every node/socket through Python.
+
+    Bulk RNA reads use temporary buffers, not a spatial cache or graph watcher.
+    The conservative hit bounds match the former per-node check exactly.
+    """
+    nodes = _editor_tree(context).nodes
+    count = len(nodes)
+    if not count:
+        return False
     scale = context.preferences.system.ui_scale
     vx, vy = context.region.view2d.region_to_view(x, y)
     margin = 20 * scale
-    for node in _editor_tree(context).nodes:
-        if not node.inputs and not node.outputs:
+    positions = array('f', [0.0]) * (count * 2)
+    dimensions = array('f', [0.0]) * (count * 2)
+    widths = array('f', [0.0]) * count
+    nodes.foreach_get('location_absolute', positions)
+    nodes.foreach_get('dimensions', dimensions)
+    nodes.foreach_get('width', widths)
+    for index in range(count):
+        offset = index * 2
+        top = positions[offset + 1] * scale
+        if not top - max(dimensions[offset + 1], 20 * scale) - margin <= vy <= top + margin:
             continue
-        left = node.location_absolute.x * scale
-        top = node.location_absolute.y * scale
-        if top - max(node.dimensions.y, 20 * scale) - margin <= vy <= top + margin:
-            if any(abs(vx - column) <= margin for column in (
-                    left, left + node.width * scale, left + node.dimensions.x)):
-                return True
+        left = positions[offset] * scale
+        if not (abs(vx - left) <= margin
+                or abs(vx - (left + widths[index] * scale)) <= margin
+                or abs(vx - (left + dimensions[offset])) <= margin):
+            continue
+        node = nodes[index]
+        if node.inputs or node.outputs:
+            return True
     return False
 
 
 def _pick_socket(context, x, y):
-    """Use Blender's hit test, never guessed socket row positions or ctypes.
-
-    Socket.select is read-only RNA. Toggle selection changes exactly the
-    indicated socket. Toggling again restores it; node selection is restored
-    separately. Blender may clear a previous selected output on the same node.
-    """
+    """Use Blender's native socket hit test and preserve existing selections."""
     tree = _editor_tree(context)
-    if tree is None or not _near_socket_column(context, x, y):
+    if tree is None:
         return None
-    nodes = [(node, node.select) for node in tree.nodes]
     active = tree.nodes.active
-    before = {_socket_key(socket): socket.select
-              for node, _ in nodes for socket in (*node.inputs, *node.outputs)}
+    if active is not None and any(socket.select for socket in active.outputs):
+        return None
+    if not _near_socket_column(context, x, y):
+        return None
+    # Socket.select is read-only. The native probe can clear another selected
+    # output; in that case defer to Blender and leave manual search available.
+    if _has_selected_outputs(tree):
+        return None
+    nodes = list(tree.nodes)
+    selected = bytearray(len(nodes))
+    tree.nodes.foreach_get('select', selected)
+    # Selecting never changes socket interfaces. Keep direct RNA references
+    # rather than building node-name/identifier keys twice for every socket.
+    before = [(socket, socket.select) for node in nodes
+              for sockets in (node.inputs, node.outputs) for socket in sockets]
     try:
         bpy.ops.node.select('EXEC_DEFAULT', location=(int(x), int(y)),
                             socket_select=True, toggle=True)
-        changed = [socket for node, _ in nodes
-                   for socket in (*node.inputs, *node.outputs)
-                   if socket.select != before[_socket_key(socket)]]
+        changed = [socket for socket, was_selected in before
+                   if socket.select != was_selected]
         added = [socket for socket in changed if socket.select]
         picked = added[0] if len(added) == 1 else (
             changed[0] if not added and len(changed) == 1 else None)
@@ -219,8 +326,11 @@ def _pick_socket(context, x, y):
                                 socket_select=True, toggle=True)
         return picked
     finally:
-        for node, selected in nodes:
-            node.select = selected
+        # Selection can reorder nodes. Restore by identity, not collection index,
+        # and avoid setting unchanged flags on thousands of unrelated nodes.
+        for node, was_selected in zip(nodes, selected):
+            if node.select != was_selected:
+                node.select = bool(was_selected)
         tree.nodes.active = active
 
 
@@ -249,6 +359,8 @@ def _source_properties():
         source_identifier=StringProperty(options={'SKIP_SAVE'}),
         source_index=IntProperty(default=-1, options={'SKIP_SAVE'}),
         source_output=BoolProperty(options={'SKIP_SAVE'}),
+        automatic=BoolProperty(default=False, options={'SKIP_SAVE'}),
+        single_link=BoolProperty(default=False, options={'SKIP_SAVE'}),
     )
 
 
@@ -273,35 +385,13 @@ class SvSocketLinkSearch(bpy.types.Operator):
         return _editor_tree(context) is not None
 
     def invoke(self, context, event):
-        tree = _editor_tree(context)
-        socket = _resolve_source(self, tree)
-        if socket is None:
-            socket = getattr(context, 'socket', None)
-            if socket is None or socket.id_data != tree:
-                self.report({'WARNING'}, 'Start by dragging a socket onto empty space')
-                return {'CANCELLED'}
-            for key, value in _source_kwargs(socket).items():
-                setattr(self, key, value)
-        if not ensure_catalogue():
-            bpy.ops.node.sv_wait_link_search('INVOKE_DEFAULT', **_source_kwargs(socket))
-            return {'CANCELLED'}
-        results = ranked_entries(describe_socket(socket, self.source_index), _entries)
-        if not results:
-            self.report({'INFO'}, 'No compatible sockets in the current catalogue')
-            return {'CANCELLED'}
-        self.session = uuid.uuid4().hex
-        # Keep strings and entries alive for the lifetime of the RNA enum popup.
-        while len(_sessions) > 7:
-            _sessions.pop(next(iter(_sessions)))
-        _sessions[self.session] = dict(
-            results=results, generation=_generation, tree_pointer=tree.as_pointer(),
-            location=tuple(context.space_data.cursor_location),
-            items=[(str(i), entry.label, entry.node_type, i)
-                   for i, entry in enumerate(results)])
-        context.window_manager.invoke_search_popup(self)
-        return {'FINISHED'}
+        from sverchok.ui.sv_link_search_popup import invoke_search
+        return invoke_search(self, context, event)
+
 
     def execute(self, context):
+        if self.automatic and not link_drag_search_enabled(context):
+            return {'CANCELLED'}
         tree = _editor_tree(context)
         session = _sessions.get(self.session)
         if (tree is None or not session or session['generation'] != _generation
@@ -313,15 +403,33 @@ class SvSocketLinkSearch(bpy.types.Operator):
             self.report({'WARNING'}, 'The source socket changed or the input is connected')
             return {'CANCELLED'}
         try:
-            entry = session['results'][int(self.choice)]
-        except (ValueError, IndexError):
+            index = int(self.choice)
+            if index < 0:
+                return {'CANCELLED'}
+            entry = session['results'][index]
+        except (ValueError, IndexError, TypeError):
             return {'CANCELLED'}
+        # The dialog is now closing. Retain only its plain descriptions for
+        # undo/enum lifetime; no borrowed popup, window or area RNA survives.
+        from sverchok.utils.sv_link_search_extensions import ExistingSocketEntry, connect_existing
+        if isinstance(entry, ExistingSocketEntry):
+            try:
+                connect_existing(tree, source, entry, single_link=self.single_link)
+            except Exception as error:
+                self.report({'ERROR'}, 'Could not connect existing socket: ' + str(error))
+                return {'CANCELLED'}
+            return {'FINISHED'}
         selected = [(node, node.select) for node in tree.nodes]
         active = tree.nodes.active
         original_nodes = {node.as_pointer() for node in tree.nodes}
         try:
+            # SV_LINK_SEARCH_RESOURCE_PREP_V4_3
+            prepare_node_resources(entry.node_type)
             with tree.init_tree():
-                node = tree.nodes.new(entry.node_type)
+                from sverchok.utils.sv_link_search_extensions import create_context_node
+                node = create_context_node(context, tree, entry)
+                if node is None:
+                    node = tree.nodes.new(entry.node_type)
                 configure_node(node, entry.settings)
                 target = find_socket(node, entry.socket)
                 if target is None:
@@ -332,9 +440,17 @@ class SvSocketLinkSearch(bpy.types.Operator):
                 if not source.is_output:
                     node.location.x -= node.width
                 output, input_ = (source, target) if source.is_output else (target, source)
-                tree.links.new(output, input_)
+                from sverchok.utils.sv_link_search_extensions import geometry_links
+                pairs = [(output, input_)] if self.single_link else geometry_links(source, target)
+                for out_socket, in_socket in pairs:
+                    tree.links.new(out_socket, in_socket)
             # In particular, let List nodes adopt the type of their new input.
-            node.update()
+            if callable(getattr(node, 'update', None)):
+                node.update()
+            if not self.source_output:
+                receiving = tree.nodes.get(self.source_node)
+                if receiving is not None and callable(getattr(receiving, 'update', None)):
+                    receiving.update()
             for other in tree.nodes:
                 other.select = other == node
             tree.nodes.active = node
@@ -353,52 +469,6 @@ class SvSocketLinkSearch(bpy.types.Operator):
             log.exception('Link search creation failed')
             return {'CANCELLED'}
         return {'FINISHED'}
-
-
-class SvWaitLinkSearch(bpy.types.Operator):
-    """Wait for the automatic socket catalogue (Esc cancels this search)"""
-    bl_idname = 'node.sv_wait_link_search'
-    bl_label = 'Preparing Sverchok Socket Search'
-    bl_options = {'INTERNAL'}
-    __annotations__ = _source_properties()
-
-    def invoke(self, context, event):
-        self._area = context.area
-        self._tree = _editor_tree(context)
-        self._location = tuple(context.space_data.cursor_location)
-        self._timer = context.window_manager.event_timer_add(0.1, window=context.window)
-        _waiting.add(self)
-        context.window_manager.modal_handler_add(self)
-        return {'RUNNING_MODAL'}
-
-    def _finish(self, context):
-        if self._timer is not None:
-            context.window_manager.event_timer_remove(self._timer)
-            self._timer = None
-        context.workspace.status_text_set(None)
-        _waiting.discard(self)
-
-    def cancel(self, context):
-        self._finish(context)
-
-    def modal(self, context, event):
-        if (not _enabled or context.area != self._area
-                or _editor_tree(context) != self._tree
-                or event.type in {'ESC', 'RIGHTMOUSE', 'WINDOW_DEACTIVATE'}):
-            self._finish(context)
-            return {'CANCELLED'}
-        if event.type == 'TIMER' and event.timer == self._timer:
-            if _ready:
-                self._finish(context)
-                context.space_data.cursor_location = self._location
-                source = _resolve_source(self, self._tree)
-                if source:
-                    bpy.ops.node.sv_socket_link_search('INVOKE_DEFAULT', **_source_kwargs(source))
-                return {'FINISHED'}
-            context.workspace.status_text_set(
-                'Indexing Sverchok sockets: {} node types remaining. Esc cancels search.'.format(
-                    len(_pending)))
-        return {'RUNNING_MODAL'}
 
 
 def _link_signature(socket):
@@ -434,6 +504,7 @@ class SvObserveLinkDrag(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         return (context.region is not None and context.region.type == 'WINDOW'
+                and link_drag_search_enabled(context)
                 and _editor_tree(context) is not None)
 
     def invoke(self, context, event):
@@ -466,6 +537,7 @@ class SvObserveLinkDrag(bpy.types.Operator):
 
     def modal(self, context, event):
         if (not _enabled or context.area != self._area
+                or not link_drag_search_enabled(context)
                 or _editor_tree(context) != self._tree
                 or event.type in {'ESC', 'RIGHTMOUSE', 'WINDOW_DEACTIVATE'}):
             return {'FINISHED', 'PASS_THROUGH'}
@@ -481,11 +553,12 @@ class SvObserveLinkDrag(bpy.types.Operator):
                 try:
                     with bpy.context.temp_override(window=window, area=area, region=region):
                         ctx = bpy.context
-                        if (_editor_tree(ctx) == tree and _link_signature(source) == links
+                        if (link_drag_search_enabled(ctx) and _editor_tree(ctx) == tree
+                                and _link_signature(source) == links
                                 and _over_empty_space(ctx, x, y)):
                             ctx.space_data.cursor_location_from_region(x, y)
                             bpy.ops.node.sv_socket_link_search(
-                                'INVOKE_DEFAULT', **_source_kwargs(source))
+                                'INVOKE_DEFAULT', automatic=True, **_source_kwargs(source))
                 except (ReferenceError, RuntimeError, AttributeError):
                     log.debug('Link search context expired', exc_info=True)
                 return None
@@ -516,15 +589,16 @@ def _socket_menu(self, context):
             setattr(operator, key, value)
 
 
-classes = (SvSocketLinkSearch, SvWaitLinkSearch, SvObserveLinkDrag, SvRebuildLinkSearch)
+classes = (SvSocketLinkSearch, SvObserveLinkDrag, SvRebuildLinkSearch)
 
 
 def register():
-    global _enabled, _signature
+    global _enabled, _signature, _catalogue_forced
     for cls in classes:
         bpy.utils.register_class(cls)
     _enabled = True
     _signature = None
+    _catalogue_forced = False
     keyconfig = bpy.context.window_manager.keyconfigs.addon
     if keyconfig:
         keymap = keyconfig.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
@@ -535,25 +609,20 @@ def register():
     if menu:
         menu.append(_socket_menu)
     bpy.app.handlers.load_post.append(_file_loaded)
-    if not bpy.app.background:
+    if not bpy.app.background and link_drag_search_enabled(bpy.context):
         bpy.app.timers.register(_catalogue_tick, first_interval=1.0)
 
 
 def unregister():
-    global _enabled, _signature, _ready
+    global _enabled, _signature, _ready, _active_node_type, _catalogue_forced
     _enabled = False
+    _catalogue_forced = False
     if bpy.app.timers.is_registered(_catalogue_tick):
         bpy.app.timers.unregister(_catalogue_tick)
     for callback in tuple(_deferred):
         if bpy.app.timers.is_registered(callback):
             bpy.app.timers.unregister(callback)
     _deferred.clear()
-    for waiter in tuple(_waiting):
-        try:
-            waiter._finish(bpy.context)
-        except (ReferenceError, RuntimeError):
-            pass
-    _waiting.clear()
     if _file_loaded in bpy.app.handlers.load_post:
         bpy.app.handlers.load_post.remove(_file_loaded)
     menu = getattr(bpy.types, 'SV_MT_SocketOptionsMenu', None)
@@ -564,8 +633,68 @@ def unregister():
     _keymaps.clear()
     _entries.clear()
     _pending.clear()
+    _active_variants.clear()
+    _active_node_type = None
     _sessions.clear()
     _signature = None
     _ready = False
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
+
+# ----------------------------------------------------------------------------
+# Curve Mapper and helper resources
+# ----------------------------------------------------------------------------
+
+from importlib import import_module
+from uuid import uuid4
+
+
+_PROVIDERS = {
+    'SvCurveMapperNode': 'sverchok.nodes.number.curve_mapper',
+    'SvColorRampNode': 'sverchok.nodes.color.color_ramp',
+}
+
+
+def prepare_node_resources(node_type):
+    """Bootstrap a missing shared helper, without touching existing mappings.
+
+    The resulting state matches creating and deleting an ordinary node: the
+    shared shader tree and its information frame remain, but the temporary
+    curve/ramp does not. Return whether a helper was created.
+    """
+    provider = _PROVIDERS.get(node_type)
+    if provider is None:
+        return False
+
+    import bpy
+
+    module = import_module(provider)
+    group_name = module.node_group_name
+    group = bpy.data.node_groups.get(group_name)
+    if group is not None:
+        if group.bl_idname != 'ShaderNodeTree':
+            raise RuntimeError("The helper {!r} is not a shader node tree".format(group_name))
+        return False
+
+    probe_name = '.SV Link Search Init ' + uuid4().hex
+    try:
+        # This is the same factory called by the node's sv_init(), including
+        # Blender-version-specific curve evaluation initialization.
+        module.get_evaluator(group_name, probe_name)
+        group = bpy.data.node_groups.get(group_name)
+        if group is None or group.bl_idname != 'ShaderNodeTree':
+            raise RuntimeError('The node did not initialize its shader helper')
+        probe = group.nodes.get(probe_name)
+        if probe is None:
+            raise RuntimeError('The helper factory did not create its temporary node')
+        group.nodes.remove(probe)
+    except Exception:
+        # Only roll back the group this call created, and only if it contains
+        # no other node resources. Existing user curves are never removed.
+        group = bpy.data.node_groups.get(group_name)
+        if (group is not None and group.bl_idname == 'ShaderNodeTree'
+                and all(node.bl_idname == 'NodeFrame' or node.name == probe_name
+                        for node in group.nodes)):
+            bpy.data.node_groups.remove(group)
+        raise
+    return True

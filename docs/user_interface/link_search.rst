@@ -1,72 +1,345 @@
 :orphan:
 
-Socket-aware node search (experimental)
-======================================
+Socket-aware node search
+========================
 
-Drag a socket link and release over empty space in the main Sverchok node
-editor. Search results identify a node, its operation (where supported), and
-the exact socket that will be connected. Choosing a result creates and connects
-the configured node at the drop location. Press Escape to cancel the search.
+Drag a socket link and release over empty space in a Sverchok node
+editor, including while editing a nested group. Results identify the node, its operation where supported, and the exact
+socket to connect. Choose a result to create and connect the configured node
+at the drop location. Escape cancels the search.
 
 Dragging from an output searches inputs; dragging from an unconnected input
-searches outputs. Existing connected-input link moves and Ctrl-drag retain
-Blender's normal behavior. Normal connections to existing sockets still use
-Blender's link operator, including its cable drawing and edge panning.
+searches outputs. Moving an existing input link retains Blender's normal
+behavior. Normal direct connections use Blender's link operator, including
+cable drawing and edge panning. Automatic search is enabled by default and can
+be disabled with the ``Search on Link Drop`` preference. Manual search is also
+available in the socket context menu.
+
+Preferences
+-----------
+
+Preferences > Add-ons > Sverchok > General > Other > ``Search on Link Drop``
+changes automatic search immediately; save Blender preferences to retain it.
+Manual ``Search and Connect...`` remains available from the socket menu.
+Ctrl-drag and connected-input link moves keep Blender's normal behavior.
+If any output socket is explicitly selected, automatic search defers to Blender
+to preserve its read-only socket selection. Selecting nodes alone does not
+disable automatic search.
+
+New nodes and existing sockets
+------------------------------
+
+Normal queries search for new nodes. Start a query with ``<`` to search sockets
+of existing nodes in the current tree. For example, ``bevel`` creates a Bevel
+node, while ``<bevel`` searches existing instances. Tab switches modes without
+discarding the query text. The footer identifies the current mode.
+
+Existing results include the instance name and socket. Occupied inputs are
+marked ``(Replace)``; selecting one explicitly replaces that input's connection.
+Outputs can have several consumers, so a linked output is not a replacement.
+Connections that would create a cycle are excluded. The chosen endpoint is
+validated again before changing links. A changed/deleted endpoint is rejected.
+
+Geometry bundles
+----------------
+
+For unambiguous geometry sockets, selecting Vertices, Edges or Polygons also
+connects the other available channels shared by both nodes. Indicators such as
+``V+E+P``, ``V+E`` and ``V+P`` show the planned bundle. This works in either
+direction and when connecting existing nodes. Shift while confirming restricts
+the operation to the selected socket.
+
+Only the chosen input is replaced when marked ``(Replace)``. Occupied companion
+inputs are preserved. A separate result marked ``(Replace V+E+P)`` (or the actual
+available channels) explicitly replaces the whole geometry bundle. This extra
+choice appears only when companion inputs are occupied. Its exact link plan is
+validated again on confirmation; changes require repeating the search. Failed
+connections restore the original links. Shift still connects the chosen socket
+only, including for a whole-bundle replacement result. Mixed topology inputs such as ``edg_pol`` and ``PolyEdge``
+prefer polygons when completing a bundle automatically; an explicitly chosen
+Edges link is respected. Ambiguous geometry groups receive only the selected
+link. Component Analyzer uses the inputs required by its operation: Edge Length
+connects Vertices and Edges, not Faces.
 
 Expanded operations
 -------------------
 
-The initial adapters expose Scalar Math, Vector Math, Logic Functions,
-Color Mix, and Component Analyzer (vertices, edges, faces and their operations).
-Operation choices are read from the nodes' own RNA enums. Other available nodes
-are indexed in their initial configuration without changes to their code.
+Operations are read from each registered node's RNA enumeration. The catalogue
+does not maintain a duplicate list of operation identifiers. Supported adapters:
 
-Matching
---------
+.. list-table:: Operation properties
+   :header-rows: 1
+   :widths: 30 45 25
 
-Exact socket types are ranked first. Generic list inputs accept other socket
-types; for example, a vector output can connect to List Mask's data input.
-A central set of name hints distinguishes Edges, Faces/Polygons, Mask, and
-numeric parameters where possible. Known incompatible topology hints are
-excluded. Some known directional type conversions are offered with lower
-priority. Unknown names keep broader suggestions.
+   * - Node
+     - RNA node identifier
+     - Property
+   * - Scalar Math
+     - ``SvScalarMathNodeMK4``
+     - ``current_op``
+   * - Vector Math
+     - ``SvVectorMathNodeMK3``
+     - ``current_op``
+   * - Color Mix
+     - ``SvColorMixNode``
+     - ``current_op``
+   * - Logic Functions
+     - ``SvLogicNodeMK2``
+     - ``function_name``
+   * - List Math
+     - ``ListFuncNode``
+     - ``func_``
+   * - Matrix Math
+     - ``SvMatrixMathNode``
+     - ``operation``
+   * - Quaternion Math
+     - ``SvQuaternionMathNode``
+     - ``operation``
+   * - Scalar Field Math
+     - ``SvExScalarFieldMathNode``
+     - ``operation``
+   * - Vector Field Math
+     - ``SvExVectorFieldMathNode``
+     - ``operation``
+   * - Strings Tools
+     - ``SvStringsToolsNodeMK2``
+     - ``current_op``
 
-This is a metadata filter, not a guarantee that the data's nesting or contents
-will satisfy a node. It does not read socket values, process trees, or propagate
-semantic information through existing links. A generic output therefore remains
-generic even if the upstream data represents edges.
+Component Analyzer additionally expands the component family and its operation.
+Other registered nodes are indexed in their initial configuration until an
+operation adapter is added. Secondary parameters such as list matching, matrix
+Pre/Post order, precision and numeric defaults remain editable on the node;
+they do not multiply catalogue entries.
+
+Search text and Triggers
+------------------------
+
+Results include muted Triggers on the right, read from the node's normal search
+metadata. Hover over the result to read the full label and Triggers. Text search
+accepts prefixes, common aliases (for example ``inverse``/``invert`` and
+``average``/``mean``), and one-character typos in longer words. Exact matches rank
+ahead of typo matches, followed by connection compatibility. Results continue to
+arrive while indexing. Explicit keyboard navigation keeps the chosen result
+stable; otherwise the best available match becomes active.
+
+Groups and configured interfaces
+--------------------------------
+
+Existing group definitions in the current blend file appear as ``Group: Name``.
+Their declared interfaces are inspected without executing the group. Groups
+that would create recursive containment are excluded. Inside a group, searches
+also offer its Group Input and Group Output interface sockets.
+
+Nodes whose configured socket interface differs from the catalogue's operation
+profiles appear as ``[instance name copy]`` templates. Only nodes in the current
+edited tree are considered. Selecting a template creates a native duplicate,
+using the node's usual copy hooks and configuration. This supports already
+configured script nodes and adaptive list interfaces without editing those
+nodes. Indexing a template reads sockets only; choosing a script template can
+execute its normal copy hook. An unconfigured script has no interface to infer
+and cannot be offered as a configured producer. Template discovery waits until
+the default catalogue is ready. Changed/deleted groups or templates are rejected
+before creating the new node.
+
+Matching and generic list outputs
+---------------------------------
+
+Exact socket types rank first. Name hints distinguish edges, polygons, masks
+and numbers where possible. Known directional conversions have lower priority.
+Generic list inputs accept other data types. Adaptive data outputs of Join,
+Item, Reverse and similar list nodes are also offered in reverse searches from
+Force, Surface and other data sockets. Numeric/control outputs such as Length,
+Index and Mask are not classified as generic list data outputs.
+
+Matching uses metadata rather than socket values. It cannot guarantee that
+data contents or nesting satisfy an operation. A generic output does not become
+semantically "edges" merely because upstream data contains edges. Nodes can
+still report normal calculation errors after connection. Link Search refreshes
+the existing receiving node's sockets before calculation, so an upstream error
+does not prevent List Join from adding its next free input.
 
 Catalogue lifecycle
 -------------------
 
-The catalogue is generated automatically after enabling Sverchok, one node type
-per timer tick, and held in memory. If a search starts before indexing finishes,
-the status bar reports progress; Escape cancels that pending search. Normal node
-creation and property callbacks run in temporary, non-processing trees; these
-and any new helper groups are removed before returning to Blender's event loop.
+With ``Search on Link Drop`` enabled, Sverchok warms the catalogue after enabling
+the addon or opening a blend file. The work runs cooperatively on Blender's main
+thread, yielding between operation variants. A single node constructor cannot
+be interrupted and can exceed the timer's normal batch budget.
 
-The menu registry is checked when searching, so newly available node types
-invalidate the catalogue. F3 > "Sverchok: Rebuild Socket Search Catalogue" forces
-rebuilding. Opening a blend file also invalidates it. Nothing is written as a
-persistent catalogue in the repository or in blend files.
+Disabling automatic link search prevents automatic warmup and pauses unfinished
+automatic indexing on its next callback. No idle polling timer is kept alive.
+An open manual ``Search and Connect...`` popup can still request compatible
+results while the preference is off. Closing that manual popup pauses indexing
+again. F3 > ``Sverchok: Rebuild Socket Search Catalogue`` is an explicit request
+that finishes even when automatic link search is disabled.
 
-Limitations of version 1
-------------------------
+A paused catalogue resumes on the next search after re-enabling the preference.
+The menu opens immediately, receives compatible results as indexing progresses,
+and uses the same selection interaction before and after the catalogue is ready.
+Progress appears in the footer; there is no separate Connect step.
 
-* Main Sverchok trees only; nested group editing is not supported yet.
-* Only initially available sockets are indexed for nodes without an adapter.
-  Script-defined interfaces and configured group instances need separate support.
-* Ctrl-drag is not intercepted. A connected input drag remains a disconnect/move.
-* Created nodes are placed at the drop point; use G to move them afterwards.
-* Unavailable dependencies are skipped. Indexing failures are logged and skipped.
-* Native socket hit-testing briefly toggles socket selection. Blender can clear
-  a previously selected output on the same node; links and node selection are
-  preserved by the probe.
+The catalogue, operation profiles and query caches are held in memory. There is
+no persistent catalogue file in the repository or blend file. Finished indexing
+unregisters its timer. Popup refresh/input timers stop when the popup closes.
+The native-link observer still checks left-button presses in the node editor;
+ordinary clicks use bulk RNA geometry reads before inspecting socket selection.
+This is a per-click cost and needs no permanent spatial cache or graph watcher.
 
-Implementation and checks
--------------------------
+Probes use temporary, non-processing trees. The indexer copies settings and
+socket descriptions, and does not call ``process()`` or read socket values.
+Normal node constructors and property callbacks still run. Probe trees, their
+queued tasks and caches, and newly created helper resources are cleaned before
+returning to Blender's event loop. Configured templates are inspected through
+their existing interfaces; choosing a template uses its normal copy hooks.
 
-``ui/sv_link_search.py`` is loaded through Sverchok's existing UI-module discovery.
-``utils/sv_link_search.py`` contains matching rules and operation adapters.
-``tests/link_search_tests.py`` includes matching and Blender creation tests.
-No existing node source file needs modification.
+The node-menu registry is checked when searching. New node types invalidate the
+catalogue; use the rebuild operator after editing an operation adapter. Opening
+a blend file invalidates the descriptions, but starts warmup only when automatic
+search is enabled.
+
+Current scope
+-------------
+
+* Main Sverchok trees and nested Sverchok groups are supported. Groups come from
+  definitions in the current blend file.
+* Configured interfaces are offered as copies of current-tree instances. This
+  does not enumerate every possible configuration or execute scripts to discover
+  their sockets. Nodes without a configured instance still need an adapter.
+* Nodes are placed at the drop point; use G to move them afterwards.
+* Missing dependencies and failed probes are logged and skipped.
+* The native socket hit test briefly toggles socket selection. Automatic search
+  is bypassed when outputs are explicitly socket-selected, to preserve native
+  dragging behavior.
+
+Developer notes
+---------------
+
+Architecture
+^^^^^^^^^^^^
+
+Four runtime modules separate the responsibilities. ``ui/sv_link_search.py``
+owns socket dragging, catalogue probes, creation and helper resources.
+``ui/sv_link_search_popup.py`` owns the live menu and keyboard/mouse selection.
+``utils/sv_link_search.py`` contains socket metadata, matching, query relevance
+and operation adapters. ``utils/sv_link_search_extensions.py`` owns existing
+endpoints, geometry bundles, groups and configured copies. Section comments
+separate the responsibilities within each file. Calculation errors use Blender
+reports and the console logger.
+
+Adding an operation adapter normally changes only ``MODE_PROPERTIES`` and,
+if necessary, ``configure_node()``. Individual node implementations do not need
+modification. Reuse their existing RNA properties and socket update methods.
+
+One operation enumeration
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. Inspect the registered node's ``bl_idname`` and the RNA enum that selects its
+   operation. Use property identifiers, not translated UI labels.
+2. Add the property name to ``MODE_PROPERTIES`` in
+   ``utils/sv_link_search.py``. For example::
+
+       MODE_PROPERTIES = {
+           # Existing adapters ...
+           'SvExampleNode': 'operation',
+       }
+
+3. ``operation_variants()`` reads identifiers and human-readable names through
+   ``enum_options()``. It yields immutable pairs of settings and search labels::
+
+       ((('operation', 'ADD'),), 'Add')
+
+4. Check the node's layout after applying the settings. Setting a property to
+   its default may leave sockets unchanged unless its update method is called
+   explicitly. Add a case to ``configure_node()`` when normalization is needed.
+
+Configuration and socket normalization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Apply settings in the same order used when probing. Use the node's existing
+structural methods; these may hide sockets, replace their types or change names.
+For example::
+
+    # Methods without a context parameter:
+    node.update_sockets()
+
+    # RNA-style callbacks with a context parameter:
+    node.update_sockets(None)
+
+The new Matrix, Quaternion and Strings Tools adapters use the first form.
+Scalar/Vector Field Math use the second. Component Analyzer has its own
+``update_mode(None)`` normalization. Never assume all methods share a signature.
+
+List Math has static sockets. Its original operation callback now updates its
+label and schedules calculation without calling a nonexistent socket updater.
+No class monkeypatch is installed by the adapter.
+
+Both probing and creation call ``configure_node()`` before describing/finding
+the target socket. This is essential for operations that change output type:
+Quaternion Dot returns a number, Vector Field Norm returns a scalar field, and
+Strings Tools To Number returns a number instead of text.
+
+Nested or dependent modes
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Use a dedicated branch in ``operation_variants()`` when a node has a parent
+mode and a dependent operation. Store every required setting, in dependency
+order. Component Analyzer is the existing example::
+
+    ((('mode', 'Edges'), ('edge_mode', 'Length')), 'Edges > Length')
+
+For a genuinely dependent enum, set the parent on the temporary probe before
+reading the child's allowed choices. Do not enumerate every enum/boolean on a
+node: display options, list matching and unrelated parameters create a large
+Cartesian product without improving socket search.
+
+Probe invariants
+^^^^^^^^^^^^^^^^
+
+* Keep all ``bpy`` access on the main thread. The timer budget is cooperative;
+  yield between variants rather than running Blender data access in workers.
+* Never call ``process()``, ``sv_get()`` or evaluate a user tree for indexing.
+* Store plain settings and socket metadata, not temporary node/socket RNA.
+* Include only sockets passing ``socket_available()`` after configuration.
+* Recreate the same settings before resolving a chosen socket. Match identifier,
+  then position/name/type, and cancel if the intended socket no longer exists.
+* Respect the temporary-tree cleanup in ``_index_tree()``. A new adapter must
+  not leave helper nodes, groups, update caches or queued probe tasks behind.
+* Keep the menu's physical-row mapping. Blender may retain old button operator
+  properties after filtering; using the original global index recreates the
+  stale-selection bug fixed by ``_choice_index()``.
+* When extending reverse creation, retain the explicit receiving-node update
+  after ``init_tree()`` ends. Socket layout updates must precede tree evaluation.
+
+Tests and review
+^^^^^^^^^^^^^^^^
+
+The native event suite also exercises Blender's real socket hit test before
+opening search menus. It checks inputs, outputs and collapsed nodes, preserves
+node/socket selection, and defers when an output is already selected. This
+covers the bulk RNA geometry path used by the drag observer, as well as the
+separate search-menu interaction. The workflow runs the unit and native suites
+with Blender 4.5.10 and 5.1.0; its result must be checked on the actual PR branch.
+
+The isolated suite includes matching, all operation profiles, forward/reverse
+creation, group recursion and interface changes, configured templates, explicit
+bundle replacement and restoration after failure. Run from the repository::
+
+    blender -b --factory-startup --python-exit-code 1 --python tests/link_search_tests.py
+
+Native popup tests exercise filtered mouse choices, typo ranking, whole-bundle
+replacement, groups, configured interfaces, Escape and one-step undo::
+
+    blender --factory-startup --enable-event-simulate --python-exit-code 1 --python tests/link_search_gui.py
+
+The native test writes ``link-search-gui.json`` (override the destination with
+``LINK_SEARCH_GUI_RESULT``); require its ``ok`` value to be true. Disable the
+first-run splash before running unattended. The dedicated ``Link Search`` GitHub
+Actions workflow runs both suites with pinned Blender 4.5 and 5.1 builds under
+Xvfb and retains the logs. Local results do not imply that remote CI has run.
+
+For each additional adapter, test the default operation, a different operation,
+a return to the default, unary/binary signatures and type-changing outputs.
+Check forward and reverse creation, a real mouse choice after filtering, Escape
+and one-step undo. Verify that an upstream calculation error cannot prevent a
+receiving multi-input node from adding its next free socket. Force a catalogue
+rebuild and confirm that unsupported socket directions/types remain excluded.
