@@ -1,0 +1,880 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Nearest Point on Edges &#8212; Sverchok 1, 4, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=c14129a0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/analyzer/distance_to_edges';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Angles at the Edges" href="edge_angles.html" />
+    <link rel="prev" title="Distance" href="distance_pp.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 4, 0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 4, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 4, 0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="analyzer_index.html">Analyzers</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="area.html">Area</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bbox_aligned.html">Aligned Bounding Box (Alpha)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bbox_mk3.html">Bounding Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bvh_overlap_polys.html">Overlap Polygons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chess_selection.html">Chess Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="circle_approx.html">Circle Fit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="component_analyzer.html">Component Analyzer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deformation.html">Deformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="diameter.html">Diameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distance_line_line.html">Distance Line Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distance_point_line.html">Distance Point Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distance_point_plane.html">Distance Point Plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distance_pp.html">Distance</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Nearest Point on Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edge_angles.html">Angles at the Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image_components.html">Image Decomposer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="inscribed_circle.html">Inscribed Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_circle_circle.html">Circle Intersection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_line_sphere.html">Compass 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_plane_plane.html">Plane Intersection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kd_tree_MK2.html">KDT Closest Verts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kd_tree_edges.html">KDT Closest Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kd_tree_path.html">KDT Closest Path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linear_approx.html">Linear Approximation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linked_verts.html">Linked Verts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_filter.html">Mesh Filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_select_mk2.html">Select Mesh Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nearest_point_on_mesh.html">Nearest Point on Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="normals_mk2.html">Calculate Normals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="object_insolation.html">Insolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="origins.html">Origins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="path_group_length.html">Path Group Length</a></li>
+<li class="toctree-l3"><a class="reference internal" href="path_length_2.html">Path Length</a></li>
+<li class="toctree-l3"><a class="reference internal" href="points_inside_mesh.html">Points Inside Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="poly_inscribed_circle.html">Polygon Inscribed Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="project_point_to_line.html">Project Points to Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proportional.html">Proportional Edit Falloff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="raycaster_lite.html">Raycaster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="select_similar.html">Select Similar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sphere_approx.html">Sphere Fit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="steiner_ellipse.html">Steiner Ellipse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="volume.html">Volume</a></li>
+
+<li class="toctree-l3"><a class="reference internal" href="wave_paint.html">Wave Painter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="weighted_vector_sum.html">Center of Mass (Mesh) (Alpha)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dxf/dxf_index.html">DXF</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/analyzer/distance_to_edges.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Nearest Point on Edges</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#query-mode-node-body">Query mode (node body)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#settings-n-panel">Settings (N-panel)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-a-circle-to-a-plane-grid">Connecting a Circle to a Plane Grid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distance-based-displacement-on-an-icosphere">Distance-based Displacement on an Icosphere</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nearest-in-range-connecting-line-endpoints-to-nearby-edges">Nearest in Range: Connecting Line Endpoints to Nearby Edges</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nearest-n-connecting-line-endpoints-to-a-fixed-number-of-edges">Nearest N: Connecting Line Endpoints to a Fixed Number of Edges</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-list-item-needs-unwrap">Why List Item needs Unwrap</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="nearest-point-on-edges">
+<h1>Nearest Point on Edges<a class="headerlink" href="#nearest-point-on-edges" title="Link to this heading">#</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
+<p>Finds the <strong>exact</strong> closest points on an indexed network of finite segments
+(edges) for each query point. Optionally, isolated target vertices are
+considered as point targets too. Three modes are available: <strong>Nearest</strong>,
+<strong>Nearest in Range</strong>, and <strong>Nearest N</strong>.</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Points</strong>: query positions, grouped into objects; required.</p></li>
+<li><p><strong>Target Verts</strong>: target positions, grouped into objects; required.</p></li>
+<li><p><strong>Target Edges</strong>: target vertex-index pairs, indexing <strong>Target Verts</strong>. Optional;
+when unconnected the target consists of loose vertices only.</p></li>
+<li><p><strong>Distance</strong> (Nearest in Range): inclusive maximum distance per query point.
+A single value is used for every point; a list such as <code class="docutils literal notranslate"><span class="pre">[[0.5,</span> <span class="pre">1.0,</span> <span class="pre">2.0]]</span></code>
+assigns independent limits to successive points. Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
+<li><p><strong>Count</strong> (Nearest N): number of nearest edges requested per query point.
+A single value is used for every point; a list such as <code class="docutils literal notranslate"><span class="pre">[[1,</span> <span class="pre">3,</span> <span class="pre">0]]</span></code>
+requests 1, 3, and 0 results respectively. Default: <code class="docutils literal notranslate"><span class="pre">3</span></code>. Values from
+linked number sockets are truncated to integers; zero gives an empty list.</p></li>
+</ul>
+<p>Only the relevant numeric socket is displayed in each mode. Both numeric
+sockets retain their links when the mode changes.</p>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Distance</strong>: non-negative distance to each matching target.</p></li>
+<li><p><strong>Closest Point</strong>: exact location on the finite segment / loose vertex.</p></li>
+<li><p><strong>Edge Index</strong>: index in <strong>Target Edges</strong>; <code class="docutils literal notranslate"><span class="pre">-1</span></code> for a loose vertex or no target.</p></li>
+<li><p><strong>Factor</strong>: parameter along the matching segment (0 at the first endpoint,
+1 at the second endpoint); <code class="docutils literal notranslate"><span class="pre">-1</span></code> for loose vertices or no target.</p></li>
+</ul>
+<p><strong>Nearest</strong> preserves the original one-result-per-point structure. With no
+targets, its result is <code class="docutils literal notranslate"><span class="pre">inf</span></code> distance, <code class="docutils literal notranslate"><span class="pre">[nan,</span> <span class="pre">nan,</span> <span class="pre">nan]</span></code> location and
+<code class="docutils literal notranslate"><span class="pre">-1</span></code> for index and factor.</p>
+<p><strong>Nearest in Range</strong> and <strong>Nearest N</strong> add one level per input point: each
+point has its own list of zero or more matches. For example, the <code class="docutils literal notranslate"><span class="pre">Distance</span></code>
+output of a single object with two query points could be
+<code class="docutils literal notranslate"><span class="pre">[[0.1,</span> <span class="pre">0.3],</span> <span class="pre">[]]</span></code> (2 hits for the first point, none for the second).
+Sverchok object nesting remains above the point level. All outputs use the
+same structure; distances are sorted from nearest to farthest, breaking
+numerical ties by input edge order. Each <strong>edge</strong> contributes at most one
+result, even when multiple edges project onto the same 3D location. Loose
+vertices are separate targets when enabled. Missing hits yield <code class="docutils literal notranslate"><span class="pre">[]</span></code>, not
+<code class="docutils literal notranslate"><span class="pre">inf</span></code>.</p>
+<p>A flat output is intentionally not offered: keeping a list for each query
+point makes it possible to match all four outputs correctly.</p>
+</section>
+<section id="query-mode-node-body">
+<h2>Query mode (node body)<a class="headerlink" href="#query-mode-node-body" title="Link to this heading">#</a></h2>
+<p>The mode selector is visible directly on the node, not in the sidebar:</p>
+<ul class="simple">
+<li><p><strong>Nearest</strong> (default): the nearest point on the whole target network; no
+extra numeric input.</p></li>
+<li><p><strong>Nearest in Range</strong>: all target edges at or below the point’s <strong>Distance</strong>
+socket value. An inclusive radius of zero returns exact on-edge hits only.</p></li>
+<li><p><strong>Nearest N</strong>: up to the point’s <strong>Count</strong> nearest edges, if they exist.
+Counts of zero return empty hit lists.</p></li>
+</ul>
+<p><strong>Per-point matching</strong>: the numeric input is matched to the query points within
+its object, not to target edges. With <em>Repeat Last</em> a shorter list repeats its
+last value; <em>Cycle</em> wraps around; <em>Short</em> limits the number of query points to
+match a multi-value list. A single scalar is broadcast to all points in any
+mode. On higher nesting levels the lists of controls are matched to entire
+point objects using the same <em>List Match</em> setting.</p>
+</section>
+<section id="settings-n-panel">
+<h2>Settings (N-panel)<a class="headerlink" href="#settings-n-panel" title="Link to this heading">#</a></h2>
+<p>The sidebar (press <code class="docutils literal notranslate"><span class="pre">N</span></code> and select the node) holds the advanced settings:</p>
+<ul class="simple">
+<li><p><strong>Engine</strong>: Auto, NumPy, Numba. Auto always selects Numba when installed,
+regardless of geometry size, and NumPy otherwise. Numba is optional, and
+its first execution may include a compilation cost.</p></li>
+<li><p><strong>Include Loose Vertices</strong>: include target vertices unused by all edges.
+Connected endpoints are already included through their segments.</p></li>
+<li><p><strong>List Match</strong>: Repeat Last / Cycle / Short, applied recursively to whole
+objects and to pointwise numeric controls. Every point is tested against all
+edges in its matched target object.</p></li>
+<li><p><strong>Output NumPy</strong>: keep NumPy result arrays at the object level.</p></li>
+<li><p><strong>NumPy Block Pairs</strong>: maximum number of point-segment pairs processed in one
+vectorized tile, relevant only when using NumPy.</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<section id="connecting-a-circle-to-a-plane-grid">
+<h3>Connecting a Circle to a Plane Grid<a class="headerlink" href="#connecting-a-circle-to-a-plane-grid" title="Link to this heading">#</a></h3>
+<img alt="Circle points connected to their nearest points on plane grid edges" class="align-center" src="https://github.com/user-attachments/assets/b6a02aa6-b97a-4808-9b1e-6dde23eaa153" />
+<p>A <strong>Circle</strong> supplies the query <code class="docutils literal notranslate"><span class="pre">Points</span></code> (300 vertices in the illustrated
+setup). A <strong>Plane</strong> supplies the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Verts</span></code> and <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Edges</span></code> (a
+4-by-4 grid in the example). For each circle vertex,
+<strong>Nearest Point on Edges</strong> finds the closest point <strong>on the grid’s edges</strong>, not the closest point on
+a plane face.</p>
+<p>Other nodes used in this example:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p><a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p><a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p><a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<p>Connect the nodes as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Circle:</span> <span class="pre">Vertices</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">Nearest</span> <span class="pre">Point</span> <span class="pre">on</span> <span class="pre">Edges:</span> <span class="pre">Points</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Plane:</span> <span class="pre">Vertices</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">Nearest</span> <span class="pre">Point</span> <span class="pre">on</span> <span class="pre">Edges:</span> <span class="pre">Target</span> <span class="pre">Verts</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Plane:</span> <span class="pre">Edges</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">Nearest</span> <span class="pre">Point</span> <span class="pre">on</span> <span class="pre">Edges:</span> <span class="pre">Target</span> <span class="pre">Edges</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Circle:</span> <span class="pre">Vertices</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">Segment:</span> <span class="pre">A</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Nearest</span> <span class="pre">Point</span> <span class="pre">on</span> <span class="pre">Edges:</span> <span class="pre">Closest</span> <span class="pre">Point</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">Segment:</span> <span class="pre">B</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Segment:</span> <span class="pre">Vertices</span> <span class="pre">/</span> <span class="pre">Edges</span></code> -&gt; a <strong>Viewer Draw</strong> node.</p></li>
+</ul>
+<p>Use separate <strong>Viewer Draw</strong> nodes to display the circle and the plane grid.
+The resulting connecting segments visualize the closest-point projection to
+the <em>edge network</em>: each segment starts on the circle and terminates at its
+nearest location on a grid edge. Changing the circle radius, sample count or
+grid density changes the projection pattern.</p>
+</section>
+<section id="distance-based-displacement-on-an-icosphere">
+<h3>Distance-based Displacement on an Icosphere<a class="headerlink" href="#distance-based-displacement-on-an-icosphere" title="Link to this heading">#</a></h3>
+<img alt="Subdivided icosphere displaced along normals by distance to original edges" class="align-center" src="https://github.com/user-attachments/assets/122eccbc-f1d8-449a-87cc-c131779bdf03" />
+<p>This example uses a low-resolution <strong>Icosphere</strong> as a reference edge network
+and a more densely subdivided copy as the surface to deform. The distance
+from each subdivided vertex to the <strong>original</strong> icosphere edges controls a
+normal-based displacement.</p>
+<p>Other nodes used in this example:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p><a class="reference internal" href="../modifier_change/subdivide_mk2.html"><span class="doc">Subdivide</span></a></p></li>
+<li><p><a class="reference internal" href="component_analyzer.html"><span class="doc">Component Analyzer</span></a></p></li>
+<li><p><a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p><a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a> (Multiply Scalar, Add)</p></li>
+<li><p><a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<p>Set up the node tree as follows:</p>
+<ul class="simple">
+<li><p>Connect the original <strong>Icosphere</strong> vertices, edges and faces to
+<strong>Subdivide</strong> to create the denser surface.</p></li>
+<li><p>Connect <code class="docutils literal notranslate"><span class="pre">Subdivide:</span> <span class="pre">Vertices</span></code> to <code class="docutils literal notranslate"><span class="pre">Nearest</span> <span class="pre">Point</span> <span class="pre">on</span> <span class="pre">Edges:</span> <span class="pre">Points</span></code>.</p></li>
+<li><p>Connect the <strong>original Icosphere</strong> <code class="docutils literal notranslate"><span class="pre">Vertices</span></code> and <code class="docutils literal notranslate"><span class="pre">Edges</span></code> to
+<code class="docutils literal notranslate"><span class="pre">Nearest</span> <span class="pre">Point</span> <span class="pre">on</span> <span class="pre">Edges:</span> <span class="pre">Target</span> <span class="pre">Verts</span></code> and <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Edges</span></code> respectively.</p></li>
+<li><p>Feed the <strong>Subdivide</strong> vertices and faces into <strong>Component Analyzer</strong> in
+<em>Vertices / Normal</em> mode to calculate vertex normals.</p></li>
+<li><p>Multiply <code class="docutils literal notranslate"><span class="pre">Nearest</span> <span class="pre">Point</span> <span class="pre">on</span> <span class="pre">Edges:</span> <span class="pre">Distance</span></code> by a scalar with
+<strong>Scalar Math</strong> (<em>Multiply</em>; 1.18 in the screenshot).</p></li>
+<li><p>Multiply the vertex normals by the scaled distances with <strong>Vector Math</strong>
+(<em>Multiply Scalar</em>).</p></li>
+<li><p>Add that displacement vector to <code class="docutils literal notranslate"><span class="pre">Subdivide:</span> <span class="pre">Vertices</span></code> using <strong>Vector
+Math</strong> (<em>Add</em>).</p></li>
+<li><p>Send the displaced vertices, together with the <strong>Subdivide</strong> edges and
+faces, to <strong>Viewer Draw</strong>.</p></li>
+</ul>
+<p>The resulting surface is displaced more strongly wherever its vertices are
+farther from the original icosphere’s edges. Points on the reference edges
+have zero distance, so they remain fixed by this displacement. This produces
+a faceted, embossed relief that follows the low-resolution edge structure.
+Adjust the scalar multiplier to control the intensity of the effect; a
+negative value inverts the displacement direction.</p>
+</section>
+<section id="nearest-in-range-connecting-line-endpoints-to-nearby-edges">
+<h3>Nearest in Range: Connecting Line Endpoints to Nearby Edges<a class="headerlink" href="#nearest-in-range-connecting-line-endpoints-to-nearby-edges" title="Link to this heading">#</a></h3>
+<img alt="Two line endpoints connected to nearby icosphere edges using Nearest in Range" class="align-center" src="https://github.com/user-attachments/assets/2795af8f-b430-4e99-b58f-ac9b76178eec" />
+<p>This example demonstrates how <strong>Nearest in Range</strong> returns <em>multiple closest
+locations per query point</em>, rather than a single closest point. The two
+endpoints of an elevated line are the queries, and the edges of an icosphere
+are the targets. Each yellow segment joins one line endpoint to the closest
+location on one target edge within the selected radius. The original line is
+shown in red, and the reference icosphere in blue.</p>
+<p>Other nodes used in this example:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p><a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a> (Add)</p></li>
+<li><p><a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p><a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p><a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p><a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<p>Build the node tree as follows:</p>
+<ol class="arabic simple">
+<li><p>Create a <strong>Line</strong> with two vertices. Add a Z-offset with <strong>Vector Math</strong>
+(<em>Add</em>) to move the line above the icosphere. Pass the translated vertices
+to <code class="docutils literal notranslate"><span class="pre">Points</span></code> and draw the line with <strong>Viewer Draw</strong>.</p></li>
+<li><p>Create an <strong>IcoSphere</strong> and connect its <code class="docutils literal notranslate"><span class="pre">Vertices</span></code> and <code class="docutils literal notranslate"><span class="pre">Edges</span></code> outputs
+to <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Verts</span></code> and <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Edges</span></code> respectively. Draw this reference
+mesh with a separate <strong>Viewer Draw</strong>.</p></li>
+<li><p>Set <strong>Nearest Point on Edges</strong> to <em>Nearest in Range</em> and choose the
+<code class="docutils literal notranslate"><span class="pre">Max</span> <span class="pre">Distance</span></code> (about <code class="docutils literal notranslate"><span class="pre">4.22</span></code> in the screenshot). Every query endpoint
+receives a list containing all target-edge projections within that
+distance. The two endpoints can have different numbers of hits.</p></li>
+<li><p>Connect the translated line vertices to <strong>two List Item</strong> nodes, both with
+<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">=</span> <span class="pre">2</span></code>. Set their <code class="docutils literal notranslate"><span class="pre">Index</span></code> values to <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> to isolate
+the first and second endpoint.</p></li>
+<li><p>Connect <code class="docutils literal notranslate"><span class="pre">Closest</span> <span class="pre">Point</span></code> to <strong>two more List Item</strong> nodes, also at
+<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">=</span> <span class="pre">2</span></code>, using <code class="docutils literal notranslate"><span class="pre">Index</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">Index</span> <span class="pre">=</span> <span class="pre">1</span></code>. These select the
+matching <em>lists of projected locations</em> for the corresponding endpoints.</p></li>
+<li><p><strong>Enable Unwrap on the Item output socket of each List Item</strong>, as explained
+below. Connect the selected endpoint to <code class="docutils literal notranslate"><span class="pre">Segment:</span> <span class="pre">A</span></code> and its matching
+projected locations to <code class="docutils literal notranslate"><span class="pre">Segment:</span> <span class="pre">B</span></code>. Use one <strong>Segment</strong> per endpoint;
+send each segment node’s <code class="docutils literal notranslate"><span class="pre">Verts</span></code> and <code class="docutils literal notranslate"><span class="pre">Edges</span></code> to a separate
+<strong>Viewer Draw</strong>.</p></li>
+</ol>
+<p>The example illustrates that a radius search can return a different number of
+results for each point: the pictured setup creates different-sized fans of
+connections from the two line endpoints. No result is produced for a point
+with no edges within the maximum distance.</p>
+</section>
+<section id="nearest-n-connecting-line-endpoints-to-a-fixed-number-of-edges">
+<h3>Nearest N: Connecting Line Endpoints to a Fixed Number of Edges<a class="headerlink" href="#nearest-n-connecting-line-endpoints-to-a-fixed-number-of-edges" title="Link to this heading">#</a></h3>
+<img alt="Two line endpoints connected to their 31 nearest icosphere edges using Nearest N" class="align-center" src="https://github.com/user-attachments/assets/b665f924-942c-4e4b-b898-3e78177ea034" />
+<p>This example uses almost the same node tree as the range example, but switches
+<strong>Nearest Point on Edges</strong> to <em>Nearest N</em> and sets <code class="docutils literal notranslate"><span class="pre">Count</span> <span class="pre">=</span> <span class="pre">31</span></code>. For each
+query endpoint, the node returns the closest location on each of the 31
+nearest <strong>different target edges</strong>, ordered by increasing distance. If fewer
+than 31 eligible target edges exist, it returns only the available ones.</p>
+<p>Other nodes used in this example:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p><a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a> (Add)</p></li>
+<li><p><a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p><a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p><a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p><a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Keep the <strong>Line</strong>, its <strong>Vector Math</strong> translation and the <strong>IcoSphere</strong>
+connected exactly as in the preceding example.</p></li>
+<li><p>Select <em>Nearest N</em> and set the <code class="docutils literal notranslate"><span class="pre">Count</span></code> socket to <code class="docutils literal notranslate"><span class="pre">31</span></code>. Unlike
+<em>Nearest in Range</em>, this mode does <strong>not</strong> use a radius. Provided at least
+31 target edges exist, each query point has 31 results, even when the
+farthest selected edge is relatively distant.</p></li>
+<li><p>Keep the four <strong>List Item</strong> nodes at <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">=</span> <span class="pre">2</span></code>: a pair selects the
+input endpoints at <code class="docutils literal notranslate"><span class="pre">Index</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">Index</span> <span class="pre">=</span> <span class="pre">1</span></code>, and another pair
+selects those endpoints’ corresponding <code class="docutils literal notranslate"><span class="pre">Closest</span> <span class="pre">Point</span></code> lists.</p></li>
+<li><p>Keep <strong>Unwrap</strong> enabled on all four <code class="docutils literal notranslate"><span class="pre">Item</span></code> output sockets. Connect each
+endpoint and its closest-point list to the respective <strong>Segment</strong> node,
+then display both sets of segments with <strong>Viewer Draw</strong>.</p></li>
+</ol>
+<p>In the illustrated setup, both endpoint fans have 31 segments because the
+search requests the same count for both points. The <code class="docutils literal notranslate"><span class="pre">Count</span></code> input also
+accepts different values per point, if different fan sizes are wanted.</p>
+</section>
+<section id="why-list-item-needs-unwrap">
+<h3>Why List Item needs Unwrap<a class="headerlink" href="#why-list-item-needs-unwrap" title="Link to this heading">#</a></h3>
+<p>In <em>Nearest in Range</em> and <em>Nearest N</em>, <strong>Closest Point</strong> preserves a separate
+list of matches for each query point. For one object with two input points,
+its structure is conceptually:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>                            <span class="c1"># one Sverchok object</span>
+    <span class="p">[</span>                        <span class="c1"># the two query points</span>
+        <span class="p">[</span><span class="n">Q00</span><span class="p">,</span> <span class="n">Q01</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>    <span class="c1"># hits for point 0</span>
+        <span class="p">[</span><span class="n">Q10</span><span class="p">,</span> <span class="n">Q11</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>    <span class="c1"># hits for point 1</span>
+    <span class="p">]</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Here <code class="docutils literal notranslate"><span class="pre">Qij</span></code> denotes an XYZ coordinate. A <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a> at <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">=</span> <span class="pre">2</span></code> with <code class="docutils literal notranslate"><span class="pre">Index</span> <span class="pre">=</span> <span class="pre">0</span></code> isolates the
+first point’s matches, but it <strong>keeps an extra surrounding list</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[[</span><span class="n">Q00</span><span class="p">,</span> <span class="n">Q01</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span>         <span class="c1"># List Item&#39;s Item output</span>
+</pre></div>
+</div>
+<p>The output socket’s <strong>Unwrap</strong> option removes that <em>single-item outer list</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="n">Q00</span><span class="p">,</span> <span class="n">Q01</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>           <span class="c1"># after Unwrap: one list of target points</span>
+</pre></div>
+</div>
+<p>Likewise, selecting the first query point gives <code class="docutils literal notranslate"><span class="pre">[[P0]]</span></code> before Unwrap and
+<code class="docutils literal notranslate"><span class="pre">[P0]</span></code> after Unwrap. This makes the selected endpoint and its corresponding
+list of target points suitable for the <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a> node, which connects the source point to every
+selected target location by list matching.</p>
+<p><strong>Unwrap is important because it removes the extra level introduced by the
+selection, not the level that groups the matches belonging to a query point.</strong>
+Without it, the additional nesting can cause <strong>Segment</strong> to interpret the
+selected data at the wrong object/list level and produce incorrectly grouped
+connections. Do <strong>not</strong> use Flatten as a substitute: Flatten may merge the
+matches of different query points and destroy their correspondence.</p>
+<p>To enable it, open the output-socket options menu on the <code class="docutils literal notranslate"><span class="pre">Item</span></code> socket of
+<strong>each</strong> of the four <strong>List Item</strong> nodes, and select <strong>Unwrap</strong>. It is a
+<strong>socket setting</strong>, not the <code class="docutils literal notranslate"><span class="pre">Level</span></code> or <code class="docutils literal notranslate"><span class="pre">Index</span></code> setting of List Item.
+Unwrap works here because each List Item selects one outer item. It would
+not apply unchanged to an output containing multiple outer items.</p>
+</section>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<p>The algorithm always measures distance to the <strong>finite segment</strong>, not its
+infinite supporting line. Zero-length edges are supported. Ties are resolved
+in favor of the first edge in input order; loose vertices follow all edges.
+Out-of-range vertex indices raise a ValueError.</p>
+<p>Both engines use exhaustive comparisons, with O(P * E) geometric work.
+For <strong>Nearest N</strong>, Numba allocates exactly the requested slots per point (up
+to the number of available targets), rather than using the largest Count for
+every point. For <strong>Nearest in Range</strong>, Numba uses a two-pass method to
+allocate only the number of hits found. The range result’s size can be large
+when nearly all edges match every point. No SciPy approximation or BVH is used.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="distance_pp.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Distance</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="edge_angles.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Angles at the Edges</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#query-mode-node-body">Query mode (node body)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#settings-n-panel">Settings (N-panel)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-a-circle-to-a-plane-grid">Connecting a Circle to a Plane Grid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distance-based-displacement-on-an-icosphere">Distance-based Displacement on an Icosphere</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nearest-in-range-connecting-line-endpoints-to-nearby-edges">Nearest in Range: Connecting Line Endpoints to Nearby Edges</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nearest-n-connecting-line-endpoints-to-a-fixed-number-of-edges">Nearest N: Connecting Line Endpoints to a Fixed Number of Edges</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-list-item-needs-unwrap">Why List Item needs Unwrap</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2026, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
