@@ -15,6 +15,24 @@ cable drawing and edge panning. Automatic search is enabled by default and can
 be disabled with the ``Search on Link Drop`` preference. Manual search is also
 available in the socket context menu.
 
+`Watch: Create a Curve Mapper from an output <https://github.com/user-attachments/assets/3f230c0a-b7cf-4112-9708-731815be6126>`__
+
+.. raw:: html
+
+   <video controls preload="none" style="width: 100%; max-width: 960px;" aria-label="Create a Curve Mapper from an output">
+     <source src="https://github.com/user-attachments/assets/3f230c0a-b7cf-4112-9708-731815be6126" type="video/mp4">
+     <a href="https://github.com/user-attachments/assets/3f230c0a-b7cf-4112-9708-731815be6126">Watch the demonstration video.</a>
+   </video>
+
+`Watch: Create a number node by dragging backwards from an input <https://github.com/user-attachments/assets/0a5c3d28-f38e-49ea-bca8-779be15ad0a4>`__
+
+.. raw:: html
+
+   <video controls preload="none" style="width: 100%; max-width: 960px;" aria-label="Create a number node by dragging backwards from an input">
+     <source src="https://github.com/user-attachments/assets/0a5c3d28-f38e-49ea-bca8-779be15ad0a4" type="video/mp4">
+     <a href="https://github.com/user-attachments/assets/0a5c3d28-f38e-49ea-bca8-779be15ad0a4">Watch the demonstration video.</a>
+   </video>
+
 Preferences
 -----------
 
@@ -40,6 +58,15 @@ Outputs can have several consumers, so a linked output is not a replacement.
 Connections that would create a cycle are excluded. The chosen endpoint is
 validated again before changing links. A changed/deleted endpoint is rejected.
 
+`Watch: Use < to connect to an existing node <https://github.com/user-attachments/assets/2f383f0a-2c75-464a-bc27-d18d7aaf39cf>`__
+
+.. raw:: html
+
+   <video controls preload="none" style="width: 100%; max-width: 960px;" aria-label="Use &lt; to connect to an existing node">
+     <source src="https://github.com/user-attachments/assets/2f383f0a-2c75-464a-bc27-d18d7aaf39cf" type="video/mp4">
+     <a href="https://github.com/user-attachments/assets/2f383f0a-2c75-464a-bc27-d18d7aaf39cf">Watch the demonstration video.</a>
+   </video>
+
 Geometry bundles
 ----------------
 
@@ -60,6 +87,26 @@ prefer polygons when completing a bundle automatically; an explicitly chosen
 Edges link is respected. Ambiguous geometry groups receive only the selected
 link. Component Analyzer uses the inputs required by its operation: Edge Length
 connects Vertices and Edges, not Faces.
+
+`Watch: Connect Vertices, Edges and Polygons to a new Bevel node <https://github.com/user-attachments/assets/8162e0d3-123e-49e6-a749-1303e50d8fc7>`__
+
+.. raw:: html
+
+   <video controls preload="none" style="width: 100%; max-width: 960px;" aria-label="Connect Vertices, Edges and Polygons to a new Bevel node">
+     <source src="https://github.com/user-attachments/assets/8162e0d3-123e-49e6-a749-1303e50d8fc7" type="video/mp4">
+     <a href="https://github.com/user-attachments/assets/8162e0d3-123e-49e6-a749-1303e50d8fc7">Watch the demonstration video.</a>
+   </video>
+
+`Watch: Connect only Vertices and Edges for Edge Length <https://github.com/user-attachments/assets/f7564f36-f3db-4b7a-86ef-d331d24fa6a1>`__
+
+.. raw:: html
+
+   <video controls preload="none" style="width: 100%; max-width: 960px;" aria-label="Connect only Vertices and Edges for Edge Length">
+     <source src="https://github.com/user-attachments/assets/f7564f36-f3db-4b7a-86ef-d331d24fa6a1" type="video/mp4">
+     <a href="https://github.com/user-attachments/assets/f7564f36-f3db-4b7a-86ef-d331d24fa6a1">Watch the demonstration video.</a>
+   </video>
+
+`Alternative recording: Edge Length <https://github.com/user-attachments/assets/43cf2792-f58b-4301-8710-849139b2687a>`__
 
 Expanded operations
 -------------------
@@ -111,6 +158,15 @@ operation adapter is added. Secondary parameters such as list matching, matrix
 Pre/Post order, precision and numeric defaults remain editable on the node;
 they do not multiply catalogue entries.
 
+`Watch: Search directly for Scalar Math Multiply <https://github.com/user-attachments/assets/c4345e36-c86e-42c8-b4ae-532da1e00c95>`__
+
+.. raw:: html
+
+   <video controls preload="none" style="width: 100%; max-width: 960px;" aria-label="Search directly for Scalar Math Multiply">
+     <source src="https://github.com/user-attachments/assets/c4345e36-c86e-42c8-b4ae-532da1e00c95" type="video/mp4">
+     <a href="https://github.com/user-attachments/assets/c4345e36-c86e-42c8-b4ae-532da1e00c95">Watch the demonstration video.</a>
+   </video>
+
 Search text and Triggers
 ------------------------
 
@@ -157,6 +213,15 @@ semantically "edges" merely because upstream data contains edges. Nodes can
 still report normal calculation errors after connection. Link Search refreshes
 the existing receiving node's sockets before calculation, so an upstream error
 does not prevent List Join from adding its next free input.
+
+`Watch: Build a Pulga force chain with List Join and reverse search <https://github.com/user-attachments/assets/e777a977-275c-4af2-9400-6cc75e51eb8b>`__
+
+.. raw:: html
+
+   <video controls preload="none" style="width: 100%; max-width: 960px;" aria-label="Build a Pulga force chain with List Join and reverse search">
+     <source src="https://github.com/user-attachments/assets/e777a977-275c-4af2-9400-6cc75e51eb8b" type="video/mp4">
+     <a href="https://github.com/user-attachments/assets/e777a977-275c-4af2-9400-6cc75e51eb8b">Watch the demonstration video.</a>
+   </video>
 
 Catalogue lifecycle
 -------------------
