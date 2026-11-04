@@ -278,7 +278,6 @@ class SvStringsToolsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             socket.custom_draw = 'draw_prop_socket'
 
             if len(data)>4:
-                print(data[4], idx)
                 socket.label = data[4][idx]
             else:
                 socket.label = socket.name

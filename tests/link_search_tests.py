@@ -179,7 +179,8 @@ class LinkSearchCreationTests(unittest.TestCase):
         # RNA Socket.select is read-only; exact interaction coverage lives in
         # the GUI regression checks. Here verify the guard precedes ALL probes.
         output = SimpleNamespace(select=True)
-        fake_tree = SimpleNamespace(nodes=[SimpleNamespace(outputs=[output])])
+        active = SimpleNamespace(outputs=[output])
+        fake_tree = SimpleNamespace(nodes=SimpleNamespace(active=active))
         with patch.object(self.ui, '_editor_tree', return_value=fake_tree), \
                 patch.object(self.ui, '_near_socket_column', side_effect=AssertionError('probe ran')):
             self.assertIsNone(self.ui._pick_socket(bpy.context, 0, 0))
@@ -640,24 +641,20 @@ class LinkSearchContextTests(unittest.TestCase):
         from sverchok.ui import sv_link_search as base
         receiver = self.tree.nodes.new('ListJoinNode')
         cls = type(receiver)
-        process = cls.process
         updates = []
         update = cls.update
-        try:
-            def fail(node):
-                raise RuntimeError('Intentional producer calculation failure')
-            def record(node):
-                updates.append(node.as_pointer())
-                return update(node)
-            cls.process = fail
-            cls.update = record
+        def fail(node):
+            raise RuntimeError('Intentional producer calculation failure')
+        def record(node):
+            updates.append(node.as_pointer())
+            return update(node)
+        # patch.object removes inherited overrides on exit instead of leaving
+        # an own `update` attribute that breaks later node-consistency tests.
+        with patch.object(cls, 'process', fail), patch.object(cls, 'update', record):
             entry = next(e for e in base.collect_node_type('SvScalarMathNodeMK4') if e.socket.is_output)
             self.assertEqual(self.execute(receiver.inputs[0], entry), {'FINISHED'})
             self.assertIn(receiver.as_pointer(), updates)
             self.assertGreaterEqual(len(receiver.inputs), 2)
-        finally:
-            cls.process = process
-            cls.update = update
 
     def test_new_exact_result_supersedes_fuzzy_until_navigation(self):
         from sverchok.ui import sv_link_search as base, sv_link_search_popup as popup
