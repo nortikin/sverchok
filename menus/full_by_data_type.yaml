@@ -730,6 +730,7 @@
     - SvViewer2D
     - SvCurveViewerDrawNode
     - SvSurfaceViewerDrawNode
+    - SvSDFViewerNode
     - ---
     - SvMeshViewer
     - SvGeoNodesViewerNode
