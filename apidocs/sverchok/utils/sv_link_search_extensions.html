@@ -1,0 +1,999 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.sv_link_search_extensions API documentation</title>
+<meta name="description" content="Existing endpoints and conservative geometry bundles for Link Search …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_link_search_extensions</code></h1>
+</header>
+<section id="section-intro">
+<p>Existing endpoints and conservative geometry bundles for Link Search.</p>
+<p>No node evaluation, worker threads, or persistent graph cache. Existing links
+are inspected only when opening tree search and when committing a connection.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.sv_link_search_extensions.bundle_label"><code class="name flex">
+<span>def <span class="ident">bundle_label</span></span>(<span>source, source_ports, entry)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bundle_label(source, source_ports, entry):
+    if getattr(entry, &#39;replace_all&#39;, False):
+        source_ports = entry.source_ports
+    if hasattr(entry, &#39;ports&#39;):
+        target_ports = entry.ports
+    else:
+        cached = _ports.get((entry.node_type, tuple(entry.settings)))
+        if cached is None:
+            return &#39;&#39;
+        target_ports = cached[1 if entry.socket.is_output else 0]
+    pairs = geometry_pairs(source, entry.socket, source_ports, target_ports)
+    if len(pairs) &lt; 2:
+        return &#39;&#39;
+    roles = []
+    for output, input_ in pairs:
+        role = geometry_role(input_)
+        if role == &#39;EP&#39;:
+            role = geometry_role(output)
+            if role == &#39;EP&#39;:
+                role = &#39;E/P&#39;
+        roles.append(role)
+    order = {&#39;V&#39;: 0, &#39;E&#39;: 1, &#39;P&#39;: 2, &#39;E/P&#39;: 3}
+    return &#39;+&#39;.join(sorted(set(roles), key=lambda role: order.get(role, 4)))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.bundle_ports"><code class="name flex">
+<span>def <span class="ident">bundle_ports</span></span>(<span>node, is_output, anchor=None, include_occupied=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bundle_ports(node, is_output, anchor=None, include_occupied=False):
+    &#34;&#34;&#34;Free companion inputs, the selected input, and all geometry anchors.
+
+    Keep occupied Vertices ports in the ambiguity check. Their presence must
+    not make a node with several geometry groups look like a single group.
+    &#34;&#34;&#34;
+    ports = node_ports(node, is_output)
+    if is_output:
+        return ports
+    if node.bl_idname == &#39;SvComponentAnalyzerNode&#39;:
+        # Linked inputs can remain visible after an operation change. Read the
+        # node&#39;s own operation signature, including after those links are freed.
+        from sverchok.nodes.analyzer.component_analyzer import modes_dicts
+        required = modes_dicts[node.mode][node.actual_mode().replace(&#39;_&#39;, &#39; &#39;)][1]
+        roles = {role for key, role in ((&#39;v&#39;, &#39;V&#39;), (&#39;e&#39;, &#39;E&#39;), (&#39;p&#39;, &#39;P&#39;)) if key in required}
+        ports = tuple(info for info in ports if geometry_role(info) in roles)
+    if include_occupied:
+        return BundlePorts(ports)
+    return BundlePorts(
+        (info for info in ports if not node.inputs[info.index].is_linked
+         or node.inputs[info.index] == anchor or geometry_role(info) == &#39;V&#39;),
+        occupied=(info for info in ports if node.inputs[info.index].is_linked))</code></pre>
+</details>
+<div class="desc"><p>Free companion inputs, the selected input, and all geometry anchors.</p>
+<p>Keep occupied Vertices ports in the ambiguity check. Their presence must
+not make a node with several geometry groups look like a single group.</p></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.clear_metadata"><code class="name flex">
+<span>def <span class="ident">clear_metadata</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear_metadata():
+    _ports.clear()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.configured_entries"><code class="name flex">
+<span>def <span class="ident">configured_entries</span></span>(<span>tree)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def configured_entries(tree):
+    entries = []
+    excluded = {&#39;NodeFrame&#39;, &#39;NodeReroute&#39;, &#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;, &#39;SvGroupTreeNode&#39;}
+    for node in tree.nodes:
+        if node.bl_idname in excluded:
+            continue
+        signature = node_signature(node)
+        if not signature:
+            continue
+        defaults = known_signatures(node.bl_idname)
+        if not defaults or signature in defaults:
+            continue
+        for sockets in (node.inputs, node.outputs):
+            for index, socket in enumerate(sockets):
+                if socket_available(socket):
+                    entries.append(ConfiguredEntry(node.bl_idname, node.bl_label,
+                        node.name, node.as_pointer(), signature, describe_socket(socket, index),
+                        ports=tuple(describe_socket(port, i) for i, port in enumerate(sockets)
+                                    if socket_available(port))))
+    return entries</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.connect_existing"><code class="name flex">
+<span>def <span class="ident">connect_existing</span></span>(<span>tree, source, entry, single_link=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def connect_existing(tree, source, entry, single_link=False):
+    node = tree.nodes.get(entry.node_name)
+    if node is None or node.as_pointer() != entry.node_pointer:
+        raise RuntimeError(&#39;The chosen node was removed or replaced&#39;)
+    target = find_socket(node, entry.socket)
+    if target is None or target.as_pointer() != entry.socket_pointer:
+        raise RuntimeError(&#39;The chosen socket was removed or changed&#39;)
+    output, input_ = (source, target) if source.is_output else (target, source)
+    if not socket_available(source) or not socket_available(target):
+        raise RuntimeError(&#39;The chosen socket is hidden or unavailable&#39;)
+    if input_.is_linked:
+        if not entry.replace or _input_link_ids(input_) != entry.input_links:
+            raise RuntimeError(&#39;The connection changed after opening search; repeat the search&#39;)
+    source_sockets = source.node.outputs if source.is_output else source.node.inputs
+    if connection_score(describe_socket(source, list(source_sockets).index(source)),
+                        describe_socket(target, entry.socket.index)) is None:
+        raise RuntimeError(&#39;The socket types are no longer compatible&#39;)
+    if node.as_pointer() in cycle_blocked_nodes(tree, source.node, source.is_output):
+        raise RuntimeError(&#39;This connection would create a cycle&#39;)
+    pairs = ([(output, input_)] if single_link else
+             geometry_links(source, target, allow_primary_replace=entry.replace, replace_all=entry.replace_all))
+    if entry.replace_all and not single_link:
+        plan = tuple((out.as_pointer(), inp.as_pointer()) for out, inp in pairs)
+        state = tuple((inp.as_pointer(), _input_link_ids(inp)) for out, inp in pairs)
+        if plan != entry.bundle_plan or state != entry.bundle_inputs:
+            raise RuntimeError(&#39;The geometry bundle changed after opening search; repeat the search&#39;)
+    _apply_existing_links(tree, pairs, input_, replace=entry.replace,
+                          replace_inputs=[inp for out, inp in pairs] if entry.replace_all and not single_link else ())
+    return len(pairs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.create_context_node"><code class="name flex">
+<span>def <span class="ident">create_context_node</span></span>(<span>context, tree, entry)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_context_node(context, tree, entry):
+    import bpy
+    if isinstance(entry, GroupEntry):
+        group = bpy.data.node_groups.get(entry.group_name)
+        if (group is None or group.as_pointer() != entry.group_pointer
+                or interface_signature(group) != entry.signature):
+            raise RuntimeError(&#39;The group interface changed; repeat the search&#39;)
+        if entry.interface_node:
+            if group != tree:
+                raise RuntimeError(&#39;The edited group changed; repeat the search&#39;)
+        elif not group_allowed(group, tree):
+            raise RuntimeError(&#39;This group would create recursive containment&#39;)
+        node = tree.nodes.new(entry.node_type)
+        if not entry.interface_node:
+            node.group_tree = group
+            # The creator batches changes under init_tree(), suppressing the
+            # wrapper update callback. Materialize this configured interface.
+            node.sv_update()
+        return node
+    if isinstance(entry, ConfiguredEntry):
+        template = tree.nodes.get(entry.template_name)
+        if (template is None or template.as_pointer() != entry.template_pointer
+                or node_signature(template) != entry.signature):
+            raise RuntimeError(&#39;The configured template changed; repeat the search&#39;)
+        before = {node.as_pointer() for node in tree.nodes}
+        for node in tree.nodes:
+            node.select = node == template
+        tree.nodes.active = template
+        result = bpy.ops.node.duplicate(&#39;EXEC_DEFAULT&#39;, keep_inputs=False, linked=False)
+        if &#39;FINISHED&#39; not in result:
+            raise RuntimeError(&#39;Could not duplicate the configured template&#39;)
+        node = tree.nodes.active
+        if node is None or node.as_pointer() in before or node.bl_idname != entry.node_type:
+            raise RuntimeError(&#39;The configured copy is unavailable&#39;)
+        node.parent = None
+        return node
+    return None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.cycle_blocked_nodes"><code class="name flex">
+<span>def <span class="ident">cycle_blocked_nodes</span></span>(<span>tree, source_node, source_output)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cycle_blocked_nodes(tree, source_node, source_output):
+    &#34;&#34;&#34;Ancestors when dragging an output, descendants when dragging an input.&#34;&#34;&#34;
+    adjacency = {}
+    for link in tree.links:
+        start, end = (link.to_node, link.from_node) if source_output else (link.from_node, link.to_node)
+        adjacency.setdefault(start.as_pointer(), set()).add(end.as_pointer())
+    blocked = {source_node.as_pointer()}
+    pending = list(blocked)
+    while pending:
+        for pointer in adjacency.get(pending.pop(), ()):
+            if pointer not in blocked:
+                blocked.add(pointer)
+                pending.append(pointer)
+    return blocked</code></pre>
+</details>
+<div class="desc"><p>Ancestors when dragging an output, descendants when dragging an input.</p></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.existing_entries"><code class="name flex">
+<span>def <span class="ident">existing_entries</span></span>(<span>tree, source)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def existing_entries(tree, source):
+    if not source.is_output and source.is_linked:
+        return []
+    sockets = source.node.outputs if source.is_output else source.node.inputs
+    source_info = describe_socket(source, list(sockets).index(source))
+    blocked = cycle_blocked_nodes(tree, source.node, source.is_output)
+    results = []
+    for node in tree.nodes:
+        if node.as_pointer() in blocked:
+            continue
+        candidates = node.inputs if source.is_output else node.outputs
+        for index, socket in enumerate(candidates):
+            if not socket_available(socket):
+                continue
+            info = describe_socket(socket, index)
+            score = connection_score(source_info, info)
+            if score is None:
+                continue
+            search_label = node.bl_label
+            if node.bl_idname == &#39;SvComponentAnalyzerNode&#39;:
+                search_label += &#39; &#39; + node.mode + &#39; &#39; + node.actual_mode().replace(&#39;_&#39;, &#39; &#39;)
+            entry = ExistingSocketEntry(node.name, node.label, search_label,
+                                        node.bl_idname, node.as_pointer(), socket.as_pointer(), info,
+                                        replace=not socket.is_output and socket.is_linked,
+                                        input_links=_input_link_ids(socket) if not socket.is_output else (),
+                                        ports=bundle_ports(node, socket.is_output, anchor=socket))
+            results.append((score, entry))
+            full_pairs = geometry_links(source, socket, allow_primary_replace=entry.replace, replace_all=True)
+            if len(full_pairs) &gt; 1 and any(input_.is_linked for output, input_ in full_pairs[1:]):
+                full = replace_entry(entry, replace_all=True,
+                    ports=bundle_ports(node, socket.is_output, anchor=socket, include_occupied=True),
+                    source_ports=bundle_ports(source.node, source.is_output, anchor=source, include_occupied=True),
+                    bundle_plan=tuple((output.as_pointer(), input_.as_pointer()) for output, input_ in full_pairs),
+                    bundle_inputs=tuple((input_.as_pointer(), _input_link_ids(input_)) for output, input_ in full_pairs))
+                full = replace_entry(full, bundle_name=bundle_label(source_info, full.source_ports, full))
+                results.append((score, full))
+    return [entry for score, entry in sorted(results, key=lambda item: (
+        item[0], item[1].replace_all, item[1].replace, item[1].label.casefold()))]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.geometry_links"><code class="name flex">
+<span>def <span class="ident">geometry_links</span></span>(<span>source, target, allow_primary_replace=False, replace_all=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def geometry_links(source, target, allow_primary_replace=False, replace_all=False):
+    source_ports = bundle_ports(source.node, source.is_output, anchor=source, include_occupied=replace_all)
+    target_ports = bundle_ports(target.node, target.is_output, anchor=target, include_occupied=replace_all)
+    pairs = geometry_pairs(describe_socket(source, list(source.node.outputs if source.is_output else source.node.inputs).index(source)),
+                           describe_socket(target, list(target.node.outputs if target.is_output else target.node.inputs).index(target)),
+                           source_ports, target_ports)
+    output_node, input_node = ((source.node, target.node) if source.is_output
+                               else (target.node, source.node))
+    primary_input = target if source.is_output else source
+    result = []
+    for out_info, in_info in pairs:
+        out_socket = find_socket(output_node, out_info)
+        in_socket = find_socket(input_node, in_info)
+        if out_socket is None or in_socket is None:
+            raise RuntimeError(&#39;A geometry socket changed or is unavailable&#39;)
+        if in_socket.is_linked and not (replace_all or (allow_primary_replace and in_socket == primary_input)):
+            raise RuntimeError(&#39;A geometry socket changed or is already connected&#39;)
+        result.append((out_socket, in_socket))
+    return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.geometry_pairs"><code class="name flex">
+<span>def <span class="ident">geometry_pairs</span></span>(<span>source, target, source_ports, target_ports)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def geometry_pairs(source, target, source_ports, target_ports):
+    &#34;&#34;&#34;Return descriptor pairs in output/input order, with the primary first.
+
+    An unambiguous V, E, P or combined topology anchor enables companions.
+    Hidden/unused operation inputs and occupied companion inputs are excluded.
+    Explicit topology choices win over automatic Polygon/Edge preferences.
+    &#34;&#34;&#34;
+    output, input_ = (source, target) if source.is_output else (target, source)
+    pairs = [(output, input_)]
+    out_role, in_role = geometry_role(output), geometry_role(input_)
+    if (out_role, in_role) not in {
+            (&#39;V&#39;, &#39;V&#39;), (&#39;E&#39;, &#39;E&#39;), (&#39;P&#39;, &#39;P&#39;), (&#39;E&#39;, &#39;EP&#39;), (&#39;P&#39;, &#39;EP&#39;), (&#39;EP&#39;, &#39;EP&#39;)}:
+        return pairs
+    outputs, inputs = ((source_ports, target_ports) if source.is_output
+                       else (target_ports, source_ports))
+
+    def groups(ports):
+        result = {}
+        for info in ports:
+            role = geometry_role(info)
+            if role:
+                result.setdefault(role, []).append(info)
+        return result
+
+    outs, ins = groups(outputs), groups(inputs)
+    # Without one clear vertex channel on each node there is no reliable
+    # geometry group to complete. Keep the explicitly requested link alone.
+    if len(outs.get(&#39;V&#39;, ())) != 1 or len(ins.get(&#39;V&#39;, ())) != 1:
+        return pairs
+    if outs.get(out_role) != [output] or ins.get(in_role) != [input_]:
+        return pairs
+    occupied = getattr(inputs, &#39;occupied&#39;, ())
+    for role in (&#39;V&#39;, &#39;E&#39;, &#39;P&#39;):
+        if len(outs.get(role, ())) == 1 and len(ins.get(role, ())) == 1:
+            target_info = ins[role][0]
+            if target_info != input_ and target_info not in occupied:
+                pairs.append((outs[role][0], target_info))
+    # Treat combined inputs as a single topology channel, never two links to
+    # the same input. Mixed signatures are ambiguous, so use dedicated ports.
+    if (not ins.get(&#39;E&#39;) and not ins.get(&#39;P&#39;) and len(ins.get(&#39;EP&#39;, ())) == 1
+            and ins[&#39;EP&#39;][0] != input_ and ins[&#39;EP&#39;][0] not in occupied):
+        for role in (&#39;P&#39;, &#39;E&#39;, &#39;EP&#39;):
+            candidates = outs.get(role, ())
+            if candidates:
+                if len(candidates) == 1:
+                    pairs.append((candidates[0], ins[&#39;EP&#39;][0]))
+                break
+    return pairs</code></pre>
+</details>
+<div class="desc"><p>Return descriptor pairs in output/input order, with the primary first.</p>
+<p>An unambiguous V, E, P or combined topology anchor enables companions.
+Hidden/unused operation inputs and occupied companion inputs are excluded.
+Explicit topology choices win over automatic Polygon/Edge preferences.</p></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.geometry_role"><code class="name flex">
+<span>def <span class="ident">geometry_role</span></span>(<span>info)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def geometry_role(info):
+    name = re.sub(r&#39;[^a-z]&#39;, &#39;&#39;, info.name.casefold())
+    if info.socket_type == &#39;SvVerticesSocket&#39; and name in _VERTICES:
+        return &#39;V&#39;
+    if info.socket_type == &#39;SvStringsSocket&#39;:
+        if name in _EDGES:
+            return &#39;E&#39;
+        if name in _POLYGONS:
+            return &#39;P&#39;
+        if name in _COMBINED:
+            return &#39;EP&#39;
+    return &#39;&#39;</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.group_allowed"><code class="name flex">
+<span>def <span class="ident">group_allowed</span></span>(<span>group, destination)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def group_allowed(group, destination):
+    &#34;&#34;&#34;Reject self containment and already-recursive group graphs.&#34;&#34;&#34;
+    stack = [(group, False)]
+    visiting, complete = set(), set()
+    while stack:
+        tree, leaving = stack.pop()
+        pointer = tree.as_pointer()
+        if leaving:
+            visiting.discard(pointer)
+            complete.add(pointer)
+            continue
+        if pointer == destination.as_pointer() or pointer in visiting:
+            return False
+        if pointer in complete:
+            continue
+        visiting.add(pointer)
+        stack.append((tree, True))
+        for node in tree.nodes:
+            nested = getattr(node, &#39;node_tree&#39;, None)
+            if nested is not None and nested.bl_idname == &#39;SvGroupTree&#39;:
+                stack.append((nested, False))
+    return True</code></pre>
+</details>
+<div class="desc"><p>Reject self containment and already-recursive group graphs.</p></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.group_entries"><code class="name flex">
+<span>def <span class="ident">group_entries</span></span>(<span>destination)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def group_entries(destination):
+    import bpy
+    entries = []
+    for group in bpy.data.node_groups:
+        if group.bl_idname != &#39;SvGroupTree&#39; or not group_allowed(group, destination):
+            continue
+        signature = interface_signature(group)
+        description = getattr(group, &#39;description&#39;, &#39;&#39;).splitlines()
+        ports = tuple(_interface_ports(group))
+        for info in ports:
+            entries.append(GroupEntry(&#39;SvGroupTreeNode&#39;, &#39;Group: &#39; + group.name,
+                group.name, group.as_pointer(), signature, info,
+                ports=tuple(port for port in ports if port.is_output == info.is_output),
+                triggers=description[0] if description else &#39;Group&#39;))
+    if destination.bl_idname == &#39;SvGroupTree&#39;:
+        signature = interface_signature(destination)
+        for info in _interface_ports(destination, interface_node=True):
+            node_type = &#39;NodeGroupInput&#39; if info.is_output else &#39;NodeGroupOutput&#39;
+            label = &#39;Group Input&#39; if info.is_output else &#39;Group Output&#39;
+            entries.append(GroupEntry(node_type, label, destination.name,
+                destination.as_pointer(), signature, info, interface_node=True,
+                triggers=&#39;Current group interface&#39;))
+    return entries</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.interface_signature"><code class="name flex">
+<span>def <span class="ident">interface_signature</span></span>(<span>tree)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interface_signature(tree):
+    return tuple((item.identifier, item.name, item.in_out, item.socket_type)
+                 for item in tree.interface.items_tree if item.item_type == &#39;SOCKET&#39;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.known_signatures"><code class="name flex">
+<span>def <span class="ident">known_signatures</span></span>(<span>node_type)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def known_signatures(node_type):
+    return {tuple((info.is_output, info.name, info.socket_type)
+                  for side in ports for info in side)
+            for (registered, settings), ports in _ports.items() if registered == node_type}</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.node_ports"><code class="name flex">
+<span>def <span class="ident">node_ports</span></span>(<span>node, is_output, free_inputs=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def node_ports(node, is_output, free_inputs=False):
+    sockets = node.outputs if is_output else node.inputs
+    return tuple(describe_socket(socket, index) for index, socket in enumerate(sockets)
+                 if socket_available(socket)
+                 and (is_output or not free_inputs or not socket.is_linked))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.node_signature"><code class="name flex">
+<span>def <span class="ident">node_signature</span></span>(<span>node)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def node_signature(node):
+    return tuple((socket.is_output, socket.name, socket.bl_idname)
+                 for sockets in (node.inputs, node.outputs) for socket in sockets
+                 if socket_available(socket))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.remember_ports"><code class="name flex">
+<span>def <span class="ident">remember_ports</span></span>(<span>node, settings)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remember_ports(node, settings):
+    _ports[node.bl_idname, tuple(settings)] = (
+        node_ports(node, False), node_ports(node, True))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.sv_link_search_extensions.BundlePorts"><code class="flex name class">
+<span>class <span class="ident">BundlePorts</span></span>
+<span>(</span><span>values, occupied=())</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BundlePorts(tuple):
+    &#34;&#34;&#34;Plain socket descriptions plus occupancy for companion-link planning.&#34;&#34;&#34;
+
+    def __new__(cls, values, occupied=()):
+        result = super().__new__(cls, values)
+        result.occupied = tuple(occupied)
+        return result</code></pre>
+</details>
+<div class="desc"><p>Plain socket descriptions plus occupancy for companion-link planning.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry"><code class="flex name class">
+<span>class <span class="ident">ConfiguredEntry</span></span>
+<span>(</span><span>node_type: str,<br>node_label: str,<br>template_name: str,<br>template_pointer: int,<br>signature: tuple,<br>socket: <a title="sverchok.utils.sv_link_search.SocketInfo" href="sv_link_search.html#sverchok.utils.sv_link_search.SocketInfo">SocketInfo</a>,<br>ports: tuple = (),<br>operation: str = 'Configured copy',<br>settings: tuple = (),<br>triggers: str = 'Copy configured interface')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass(frozen=True)
+class ConfiguredEntry:
+    node_type: str
+    node_label: str
+    template_name: str
+    template_pointer: int
+    signature: tuple
+    socket: SocketInfo
+    ports: tuple = ()
+    operation: str = &#39;Configured copy&#39;
+    settings: tuple = ()
+    triggers: str = &#39;Copy configured interface&#39;
+
+    @property
+    def label(self):
+        return &#39;{} [{} copy] &gt; {}&#39;.format(self.node_label, self.template_name, self.socket.name)</code></pre>
+</details>
+<div class="desc"><p>ConfiguredEntry(node_type: str, node_label: str, template_name: str, template_pointer: int, signature: tuple, socket: sverchok.utils.sv_link_search.SocketInfo, ports: tuple = (), operation: str = 'Configured copy', settings: tuple = (), triggers: str = 'Copy configured interface')</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.label"><code class="name">prop <span class="ident">label</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def label(self):
+    return &#39;{} [{} copy] &gt; {}&#39;.format(self.node_label, self.template_name, self.socket.name)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.node_label"><code class="name">var <span class="ident">node_label</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.node_type"><code class="name">var <span class="ident">node_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.operation"><code class="name">var <span class="ident">operation</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.ports"><code class="name">var <span class="ident">ports</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.settings"><code class="name">var <span class="ident">settings</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.signature"><code class="name">var <span class="ident">signature</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.socket"><code class="name">var <span class="ident">socket</span> : <a title="sverchok.utils.sv_link_search.SocketInfo" href="sv_link_search.html#sverchok.utils.sv_link_search.SocketInfo">SocketInfo</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.template_name"><code class="name">var <span class="ident">template_name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.template_pointer"><code class="name">var <span class="ident">template_pointer</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.triggers"><code class="name">var <span class="ident">triggers</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry"><code class="flex name class">
+<span>class <span class="ident">ExistingSocketEntry</span></span>
+<span>(</span><span>node_name: str,<br>instance_label: str,<br>node_label: str,<br>node_type: str,<br>node_pointer: int,<br>socket_pointer: int,<br>socket: object,<br>replace: bool = False,<br>input_links: tuple = (),<br>ports: tuple = (),<br>replace_all: bool = False,<br>source_ports: tuple = (),<br>bundle_name: str = '',<br>bundle_plan: tuple = (),<br>bundle_inputs: tuple = ())</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass(frozen=True)
+class ExistingSocketEntry:
+    node_name: str
+    instance_label: str
+    node_label: str
+    node_type: str
+    node_pointer: int
+    socket_pointer: int
+    socket: object
+    replace: bool = False
+    input_links: tuple = ()
+    ports: tuple = ()
+    replace_all: bool = False
+    source_ports: tuple = ()
+    bundle_name: str = &#39;&#39;
+    bundle_plan: tuple = ()
+    bundle_inputs: tuple = ()
+
+    @property
+    def label(self):
+        instance = self.node_name
+        if self.instance_label and self.instance_label != instance:
+            instance = &#39;{} [{}]&#39;.format(self.instance_label, instance)
+        action = &#39; (Replace &#39; + self.bundle_name + &#39;)&#39; if self.replace_all else (&#39; (Replace)&#39; if self.replace else &#39;&#39;)
+        return instance + &#39; &gt; &#39; + self.socket.name + action</code></pre>
+</details>
+<div class="desc"><p>ExistingSocketEntry(node_name: str, instance_label: str, node_label: str, node_type: str, node_pointer: int, socket_pointer: int, socket: object, replace: bool = False, input_links: tuple = (), ports: tuple = (), replace_all: bool = False, source_ports: tuple = (), bundle_name: str = '', bundle_plan: tuple = (), bundle_inputs: tuple = ())</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.bundle_inputs"><code class="name">var <span class="ident">bundle_inputs</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.bundle_name"><code class="name">var <span class="ident">bundle_name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.bundle_plan"><code class="name">var <span class="ident">bundle_plan</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.input_links"><code class="name">var <span class="ident">input_links</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.instance_label"><code class="name">var <span class="ident">instance_label</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.label"><code class="name">prop <span class="ident">label</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def label(self):
+    instance = self.node_name
+    if self.instance_label and self.instance_label != instance:
+        instance = &#39;{} [{}]&#39;.format(self.instance_label, instance)
+    action = &#39; (Replace &#39; + self.bundle_name + &#39;)&#39; if self.replace_all else (&#39; (Replace)&#39; if self.replace else &#39;&#39;)
+    return instance + &#39; &gt; &#39; + self.socket.name + action</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_label"><code class="name">var <span class="ident">node_label</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_name"><code class="name">var <span class="ident">node_name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_pointer"><code class="name">var <span class="ident">node_pointer</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_type"><code class="name">var <span class="ident">node_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.ports"><code class="name">var <span class="ident">ports</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.replace"><code class="name">var <span class="ident">replace</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.replace_all"><code class="name">var <span class="ident">replace_all</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.socket"><code class="name">var <span class="ident">socket</span> : object</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.socket_pointer"><code class="name">var <span class="ident">socket_pointer</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.source_ports"><code class="name">var <span class="ident">source_ports</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry"><code class="flex name class">
+<span>class <span class="ident">GroupEntry</span></span>
+<span>(</span><span>node_type: str,<br>node_label: str,<br>group_name: str,<br>group_pointer: int,<br>signature: tuple,<br>socket: <a title="sverchok.utils.sv_link_search.SocketInfo" href="sv_link_search.html#sverchok.utils.sv_link_search.SocketInfo">SocketInfo</a>,<br>ports: tuple = (),<br>interface_node: bool = False,<br>triggers: str = '',<br>operation: str = 'Group',<br>settings: tuple = ())</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass(frozen=True)
+class GroupEntry:
+    node_type: str
+    node_label: str
+    group_name: str
+    group_pointer: int
+    signature: tuple
+    socket: SocketInfo
+    ports: tuple = ()
+    interface_node: bool = False
+    triggers: str = &#39;&#39;
+    operation: str = &#39;Group&#39;
+    settings: tuple = ()
+
+    @property
+    def label(self):
+        return self.node_label + &#39; &gt; &#39; + self.socket.name</code></pre>
+</details>
+<div class="desc"><p>GroupEntry(node_type: str, node_label: str, group_name: str, group_pointer: int, signature: tuple, socket: sverchok.utils.sv_link_search.SocketInfo, ports: tuple = (), interface_node: bool = False, triggers: str = '', operation: str = 'Group', settings: tuple = ())</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.group_name"><code class="name">var <span class="ident">group_name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.group_pointer"><code class="name">var <span class="ident">group_pointer</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.interface_node"><code class="name">var <span class="ident">interface_node</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.label"><code class="name">prop <span class="ident">label</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def label(self):
+    return self.node_label + &#39; &gt; &#39; + self.socket.name</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.node_label"><code class="name">var <span class="ident">node_label</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.node_type"><code class="name">var <span class="ident">node_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.operation"><code class="name">var <span class="ident">operation</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.ports"><code class="name">var <span class="ident">ports</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.settings"><code class="name">var <span class="ident">settings</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.signature"><code class="name">var <span class="ident">signature</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.socket"><code class="name">var <span class="ident">socket</span> : <a title="sverchok.utils.sv_link_search.SocketInfo" href="sv_link_search.html#sverchok.utils.sv_link_search.SocketInfo">SocketInfo</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search_extensions.GroupEntry.triggers"><code class="name">var <span class="ident">triggers</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_link_search_extensions.bundle_label" href="#sverchok.utils.sv_link_search_extensions.bundle_label">bundle_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.bundle_ports" href="#sverchok.utils.sv_link_search_extensions.bundle_ports">bundle_ports</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.clear_metadata" href="#sverchok.utils.sv_link_search_extensions.clear_metadata">clear_metadata</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.configured_entries" href="#sverchok.utils.sv_link_search_extensions.configured_entries">configured_entries</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.connect_existing" href="#sverchok.utils.sv_link_search_extensions.connect_existing">connect_existing</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.create_context_node" href="#sverchok.utils.sv_link_search_extensions.create_context_node">create_context_node</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.cycle_blocked_nodes" href="#sverchok.utils.sv_link_search_extensions.cycle_blocked_nodes">cycle_blocked_nodes</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.existing_entries" href="#sverchok.utils.sv_link_search_extensions.existing_entries">existing_entries</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.geometry_links" href="#sverchok.utils.sv_link_search_extensions.geometry_links">geometry_links</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.geometry_pairs" href="#sverchok.utils.sv_link_search_extensions.geometry_pairs">geometry_pairs</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.geometry_role" href="#sverchok.utils.sv_link_search_extensions.geometry_role">geometry_role</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.group_allowed" href="#sverchok.utils.sv_link_search_extensions.group_allowed">group_allowed</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.group_entries" href="#sverchok.utils.sv_link_search_extensions.group_entries">group_entries</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.interface_signature" href="#sverchok.utils.sv_link_search_extensions.interface_signature">interface_signature</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.known_signatures" href="#sverchok.utils.sv_link_search_extensions.known_signatures">known_signatures</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.node_ports" href="#sverchok.utils.sv_link_search_extensions.node_ports">node_ports</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.node_signature" href="#sverchok.utils.sv_link_search_extensions.node_signature">node_signature</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.remember_ports" href="#sverchok.utils.sv_link_search_extensions.remember_ports">remember_ports</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.sv_link_search_extensions.BundlePorts" href="#sverchok.utils.sv_link_search_extensions.BundlePorts">BundlePorts</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry">ConfiguredEntry</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.label" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.label">label</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.node_label" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.node_label">node_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.node_type" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.node_type">node_type</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.operation" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.operation">operation</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.ports" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.ports">ports</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.settings" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.settings">settings</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.signature" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.signature">signature</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.socket" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.socket">socket</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.template_name" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.template_name">template_name</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.template_pointer" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.template_pointer">template_pointer</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ConfiguredEntry.triggers" href="#sverchok.utils.sv_link_search_extensions.ConfiguredEntry.triggers">triggers</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry">ExistingSocketEntry</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.bundle_inputs" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.bundle_inputs">bundle_inputs</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.bundle_name" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.bundle_name">bundle_name</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.bundle_plan" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.bundle_plan">bundle_plan</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.input_links" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.input_links">input_links</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.instance_label" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.instance_label">instance_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.label" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.label">label</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_label" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_label">node_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_name" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_name">node_name</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_pointer" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_pointer">node_pointer</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_type" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.node_type">node_type</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.ports" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.ports">ports</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.replace" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.replace">replace</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.replace_all" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.replace_all">replace_all</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.socket" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.socket">socket</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.socket_pointer" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.socket_pointer">socket_pointer</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.source_ports" href="#sverchok.utils.sv_link_search_extensions.ExistingSocketEntry.source_ports">source_ports</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry" href="#sverchok.utils.sv_link_search_extensions.GroupEntry">GroupEntry</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.group_name" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.group_name">group_name</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.group_pointer" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.group_pointer">group_pointer</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.interface_node" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.interface_node">interface_node</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.label" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.label">label</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.node_label" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.node_label">node_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.node_type" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.node_type">node_type</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.operation" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.operation">operation</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.ports" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.ports">ports</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.settings" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.settings">settings</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.signature" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.signature">signature</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.socket" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.socket">socket</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search_extensions.GroupEntry.triggers" href="#sverchok.utils.sv_link_search_extensions.GroupEntry.triggers">triggers</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -550,7 +550,7 @@ If a Blender file does not posses the collection the empty collection will be ge
         _set_optional(self._struct[&#34;attributes&#34;], &#39;hide_value&#39;, socket.hide_value)
         _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
 
-        for prop_name in _iter_idprop_names(socket):
+        for prop_name in _iter_saved_prop_names(socket):
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -644,7 +644,7 @@ If a Blender file does not posses the collection the empty collection will be ge
     _set_optional(self._struct[&#34;attributes&#34;], &#39;hide_value&#39;, socket.hide_value)
     _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
 
-    for prop_name in _iter_idprop_names(socket):
+    for prop_name in _iter_saved_prop_names(socket):
         prop = BPYProperty(socket, prop_name)
         if prop.is_valid and prop.is_to_save:
             raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -1231,7 +1231,7 @@ If a Blender file does not posses the material the empty material will be genera
             del self._struct[&#34;attributes&#34;][&#34;parent&#34;]
 
         # add non default node properties
-        for prop_name in node.keys():
+        for prop_name in _iter_saved_prop_names(node):
             prop = BPYProperty(node, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -1410,7 +1410,7 @@ The methods will get empty dictionary for storing advanced properties</p></div>
         del self._struct[&#34;attributes&#34;][&#34;parent&#34;]
 
     # add non default node properties
-    for prop_name in node.keys():
+    for prop_name in _iter_saved_prop_names(node):
         prop = BPYProperty(node, prop_name)
         if prop.is_valid and prop.is_to_save:
             raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -1691,7 +1691,7 @@ Structure of the class can be just a value or usual dictionary (in case of a poi
         _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
 
 
-        for prop_name in _iter_idprop_names(socket):
+        for prop_name in _iter_saved_prop_names(socket):
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -1804,7 +1804,7 @@ Structure of the class can be just a value or usual dictionary (in case of a poi
     _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
 
 
-    for prop_name in _iter_idprop_names(socket):
+    for prop_name in _iter_saved_prop_names(socket):
         prop = BPYProperty(socket, prop_name)
         if prop.is_valid and prop.is_to_save:
             raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -2448,7 +2448,7 @@ The argument must be an iterable if specified.</p></div>
             raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
             self._struct[&#34;outputs&#34;][socket.identifier] = raw_struct
 
-        for prop_name in tree.keys():
+        for prop_name in _iter_saved_prop_names(tree):
             prop = BPYProperty(tree, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -2610,7 +2610,7 @@ The argument must be an iterable if specified.</p></div>
         raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
         self._struct[&#34;outputs&#34;][socket.identifier] = raw_struct
 
-    for prop_name in tree.keys():
+    for prop_name in _iter_saved_prop_names(tree):
         prop = BPYProperty(tree, prop_name)
         if prop.is_valid and prop.is_to_save:
             raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)

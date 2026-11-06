@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.sv_link_search API documentation</title>
+<meta name="description" content="Descriptions and matching for socket-aware search. No graph traversal or bpy import.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_link_search</code></h1>
+</header>
+<section id="section-intro">
+<p>Descriptions and matching for socket-aware search. No graph traversal or bpy import.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.sv_link_search.configure_node"><code class="name flex">
+<span>def <span class="ident">configure_node</span></span>(<span>node, settings)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def configure_node(node, settings):
+    for key, value in settings:
+        setattr(node, key, value)
+    # Some default values do not trigger a callback; normalize the socket layout.
+    if node.bl_idname in {
+            &#39;SvScalarMathNodeMK4&#39;, &#39;SvVectorMathNodeMK3&#39;, &#39;SvMatrixMathNode&#39;,
+            &#39;SvQuaternionMathNode&#39;, &#39;SvStringsToolsNodeMK2&#39;}:
+        node.update_sockets()
+    elif node.bl_idname in {&#39;SvExScalarFieldMathNode&#39;, &#39;SvExVectorFieldMathNode&#39;}:
+        node.update_sockets(None)
+    elif node.bl_idname == &#39;SvLogicNodeMK2&#39;:
+        node.change_function(None)
+    elif node.bl_idname == &#39;SvComponentAnalyzerNode&#39;:
+        # Its callback hides unused outputs but doesn&#39;t unhide previously hidden
+        # ones when a new operation uses more outputs. Normalize this new node.
+        for socket in node.outputs:
+            socket.hide = False
+        node.update_mode(None)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.connection_score"><code class="name flex">
+<span>def <span class="ident">connection_score</span></span>(<span>source, destination)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def connection_score(source, destination):
+    &#34;&#34;&#34;Lower is better; None means deliberately not suggested in version 1.
+
+    Conservative: same types, generic list sockets and a small set of known
+    conversions. Runtime values and custom per-link conversion policies are not
+    inspected, so this cannot promise that a downstream node can process data.
+    &#34;&#34;&#34;
+    if source.is_output == destination.is_output:
+        return None
+    output, input_ = (source, destination) if source.is_output else (destination, source)
+    out_type, in_type = output.socket_type, input_.socket_type
+    a, b = output.semantic, input_.semantic
+    topology = {&#39;edges&#39;, &#39;faces&#39;}
+    if out_type == in_type:
+        if out_type == &#39;SvStringsSocket&#39;:
+            if a in topology and b in topology and a != b:
+                return None
+            if (a in topology and b in {&#39;number&#39;, &#39;mask&#39;}) or (
+                    b in topology and a in {&#39;number&#39;, &#39;mask&#39;}):
+                return None
+            if a and a == b and a != &#39;generic&#39;:
+                return 0
+            return 15 if &#39;generic&#39; in {a, b} else 10
+        return 0
+    # Adaptive list data outputs can eventually carry the requested type when
+    # their upstream input is connected. This is distinct from numeric Strings
+    # outputs: Length, Index, masks and statistics remain excluded.
+    if (out_type == &#39;SvStringsSocket&#39; and output.generic_output
+            and in_type not in {&#39;SvLoopControlSocket&#39;, &#39;SvDummySocket&#39;}):
+        return 20
+    # The default policy accepts arbitrary data into a Strings socket. Restrict
+    # that suggestion to inputs with no more specific numeric/topology meaning.
+    if in_type == &#39;SvStringsSocket&#39; and b in {&#39;&#39;, &#39;generic&#39;}:
+        return 20
+    if input_.policy == &#39;LenientImplicitConversionPolicy&#39;:
+        return 25
+    conversions = {
+        (&#39;SvVerticesSocket&#39;, &#39;SvMatrixSocket&#39;),
+        (&#39;SvMatrixSocket&#39;, &#39;SvVerticesSocket&#39;),
+        (&#39;SvMatrixSocket&#39;, &#39;SvQuaternionSocket&#39;),
+        (&#39;SvQuaternionSocket&#39;, &#39;SvMatrixSocket&#39;),
+        (&#39;SvVerticesSocket&#39;, &#39;SvColorSocket&#39;),
+    }
+    if (out_type, in_type) in conversions:
+        return 30
+    if (input_.policy == &#39;FieldImplicitConversionPolicy&#39;
+            and (out_type, in_type) in {
+                (&#39;SvMatrixSocket&#39;, &#39;SvVectorFieldSocket&#39;),
+                (&#39;SvVerticesSocket&#39;, &#39;SvVectorFieldSocket&#39;),
+                (&#39;SvStringsSocket&#39;, &#39;SvScalarFieldSocket&#39;)}):
+        return 30 if a not in topology else None
+    return None</code></pre>
+</details>
+<div class="desc"><p>Lower is better; None means deliberately not suggested in version 1.</p>
+<p>Conservative: same types, generic list sockets and a small set of known
+conversions. Runtime values and custom per-link conversion policies are not
+inspected, so this cannot promise that a downstream node can process data.</p></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.describe_socket"><code class="name flex">
+<span>def <span class="ident">describe_socket</span></span>(<span>socket, index)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def describe_socket(socket, index):
+    # Read only metadata, never sv_get(): searching must not evaluate a tree.
+    return SocketInfo(
+        socket.name, socket.bl_idname, socket.is_output,
+        socket.identifier, index,
+        semantic_hint(socket.name, socket.bl_idname,
+                      getattr(socket, &#39;prop_name&#39;, &#39;&#39;), socket.node.bl_idname),
+        getattr(socket, &#39;default_conversion_name&#39;, &#39;DefaultImplicitConversionPolicy&#39;),
+        _generic_output(socket, index),
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.enum_options"><code class="name flex">
+<span>def <span class="ident">enum_options</span></span>(<span>node, property_name)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enum_options(node, property_name):
+    prop = node.bl_rna.properties[property_name]
+    return [(item.identifier, item.name) for item in prop.enum_items if item.identifier]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.find_socket"><code class="name flex">
+<span>def <span class="ident">find_socket</span></span>(<span>node, info)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_socket(node, info):
+    sockets = node.outputs if info.is_output else node.inputs
+    # Dynamic sockets may receive a new identifier on every creation. Match by
+    # identifier, then by position AND name/type; never silently pick another.
+    for socket in sockets:
+        if (socket.identifier == info.identifier and socket.name == info.name
+                and socket.bl_idname == info.socket_type and socket_available(socket)):
+            return socket
+    if info.index &lt; len(sockets):
+        socket = sockets[info.index]
+        if (socket.name == info.name and socket.bl_idname == info.socket_type
+                and socket_available(socket)):
+            return socket
+    return None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.operation_variants"><code class="name flex">
+<span>def <span class="ident">operation_variants</span></span>(<span>node)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def operation_variants(node):
+    &#34;&#34;&#34;Read the node&#39;s existing RNA enums; no duplicate list of operations.&#34;&#34;&#34;
+    if node.bl_idname == &#39;SvComponentAnalyzerNode&#39;:
+        for component, label in enum_options(node, &#39;mode&#39;):
+            prop_name = COMPONENT_MODES.get(component)
+            if prop_name:
+                for operation, op_label in enum_options(node, prop_name):
+                    yield (((&#39;mode&#39;, component), (prop_name, operation)),
+                           label + &#39; &gt; &#39; + op_label)
+    elif node.bl_idname in MODE_PROPERTIES:
+        prop_name = MODE_PROPERTIES[node.bl_idname]
+        for value, label in enum_options(node, prop_name):
+            if node.bl_idname == &#39;SvLogicNodeMK2&#39;:
+                label = LOGIC_SEARCH_NAMES.get(value, label)
+            yield (((prop_name, value),), label)
+    else:
+        yield ((), &#39;&#39;)</code></pre>
+</details>
+<div class="desc"><p>Read the node's existing RNA enums; no duplicate list of operations.</p></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.query_score"><code class="name flex">
+<span>def <span class="ident">query_score</span></span>(<span>query, text)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@lru_cache(maxsize=32768)
+def query_score(query, text):
+    &#34;&#34;&#34;Lower ranks first; None means no match. Allow one typo in longer words.&#34;&#34;&#34;
+    wanted, available = words(query), words(text)
+    if not wanted:
+        return 0
+    total = 0
+    for token in wanted:
+        canonical = _SYNONYMS.get(token, token)
+        best = None
+        for word in available:
+            if token == word:
+                cost = 0
+            elif canonical == _SYNONYMS.get(word, word):
+                cost = 1
+            elif word.startswith(token):
+                cost = 2
+            elif len(token) &gt;= 2 and token in word:
+                cost = 3
+            elif len(token) &gt;= 4 and len(word) &gt;= 4 and _one_edit(token, word):
+                cost = 5
+            else:
+                continue
+            best = cost if best is None else min(best, cost)
+        if best is None:
+            return None
+        total += best
+    return total</code></pre>
+</details>
+<div class="desc"><p>Lower ranks first; None means no match. Allow one typo in longer words.</p></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.ranked_entries"><code class="name flex">
+<span>def <span class="ident">ranked_entries</span></span>(<span>source, entries)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ranked_entries(source, entries):
+    results = [(connection_score(source, item.socket), item) for item in entries]
+    return [item for score, item in sorted(
+        ((score, item) for score, item in results if score is not None),
+        key=lambda pair: (pair[0], pair[1].label.casefold(), pair[1].socket.index))]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.semantic_hint"><code class="name flex">
+<span>def <span class="ident">semantic_hint</span></span>(<span>name, socket_type, prop_name='', node_type='')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def semantic_hint(name, socket_type, prop_name=&#39;&#39;, node_type=&#39;&#39;):
+    if socket_type != &#39;SvStringsSocket&#39;:
+        return &#39;&#39;
+    tokens = re.sub(r&#39;([a-z])([A-Z])&#39;, r&#39;\1 \2&#39;, name).lower()
+    words = set(re.findall(r&#39;[a-z]+&#39;, tokens))
+    # &#34;Face Mask&#34; contains booleans, and &#34;Edge Length&#34; contains numbers.
+    if words &amp; {&#39;mask&#39;, &#39;masks&#39;}:
+        return &#39;mask&#39;
+    if words &amp; {&#39;length&#39;, &#39;area&#39;, &#39;volume&#39;, &#39;perimeter&#39;, &#39;angle&#39;, &#39;count&#39;, &#39;distance&#39;}:
+        return &#39;number&#39;
+    for word, hint in NAME_HINTS.items():
+        if word in words:
+            return hint
+    compact = &#39;&#39;.join(re.findall(r&#39;[a-z]+&#39;, name.lower()))
+    if compact in GENERIC_NAMES or words &amp; {&#39;data&#39;, &#39;list&#39;, &#39;items&#39;}:
+        return &#39;generic&#39;
+    if node_type in {&#39;SvScalarMathNodeMK4&#39;, &#39;SvVectorMathNodeMK3&#39;}:
+        return &#39;number&#39;
+    if node_type == &#39;SvLogicNodeMK2&#39;:
+        return &#39;mask&#39;
+    if prop_name or compact in NUMBER_NAMES:
+        return &#39;number&#39;
+    return &#39;&#39;</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.socket_available"><code class="name flex">
+<span>def <span class="ident">socket_available</span></span>(<span>socket)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def socket_available(socket):
+    return (socket.bl_idname not in {&#39;NodeSocketVirtual&#39;, &#39;SvDummySocket&#39;}
+            and getattr(socket, &#39;enabled&#39;, True)
+            and not getattr(socket, &#39;hide&#39;, False)
+            and not getattr(socket, &#39;is_unavailable&#39;, False))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.words"><code class="name flex">
+<span>def <span class="ident">words</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@lru_cache(maxsize=8192)
+def words(text):
+    text = re.sub(r&#39;([a-z])([A-Z])&#39;, r&#39;\1 \2&#39;, text)
+    text = unicodedata.normalize(&#39;NFKD&#39;, text.casefold())
+    text = &#39;&#39;.join(c for c in text if not unicodedata.combining(c))
+    text = text.replace(&#39;square root&#39;, &#39;sqrt&#39;)
+    return tuple(re.findall(r&#39;[\w]+|[&lt;&gt;!=]+&#39;, text))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.sv_link_search.SearchEntry"><code class="flex name class">
+<span>class <span class="ident">SearchEntry</span></span>
+<span>(</span><span>node_type: str,<br>node_label: str,<br>operation: str,<br>settings: tuple,<br>socket: <a title="sverchok.utils.sv_link_search.SocketInfo" href="#sverchok.utils.sv_link_search.SocketInfo">SocketInfo</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass(frozen=True)
+class SearchEntry:
+    node_type: str
+    node_label: str
+    operation: str
+    settings: tuple
+    socket: SocketInfo
+
+    @property
+    def label(self):
+        parts = [self.node_label]
+        if self.operation:
+            parts.append(self.operation)
+        parts.append(self.socket.name)
+        return &#39; &gt; &#39;.join(parts)</code></pre>
+</details>
+<div class="desc"><p>SearchEntry(node_type: str, node_label: str, operation: str, settings: tuple, socket: sverchok.utils.sv_link_search.SocketInfo)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_link_search.SearchEntry.label"><code class="name">prop <span class="ident">label</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def label(self):
+    parts = [self.node_label]
+    if self.operation:
+        parts.append(self.operation)
+    parts.append(self.socket.name)
+    return &#39; &gt; &#39;.join(parts)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SearchEntry.node_label"><code class="name">var <span class="ident">node_label</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SearchEntry.node_type"><code class="name">var <span class="ident">node_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SearchEntry.operation"><code class="name">var <span class="ident">operation</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SearchEntry.settings"><code class="name">var <span class="ident">settings</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SearchEntry.socket"><code class="name">var <span class="ident">socket</span> : <a title="sverchok.utils.sv_link_search.SocketInfo" href="#sverchok.utils.sv_link_search.SocketInfo">SocketInfo</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SocketInfo"><code class="flex name class">
+<span>class <span class="ident">SocketInfo</span></span>
+<span>(</span><span>name: str,<br>socket_type: str,<br>is_output: bool,<br>identifier: str = '',<br>index: int = 0,<br>semantic: str = '',<br>policy: str = 'DefaultImplicitConversionPolicy',<br>generic_output: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass(frozen=True)
+class SocketInfo:
+    name: str
+    socket_type: str
+    is_output: bool
+    identifier: str = &#39;&#39;
+    index: int = 0
+    semantic: str = &#39;&#39;
+    policy: str = &#39;DefaultImplicitConversionPolicy&#39;
+    generic_output: bool = False</code></pre>
+</details>
+<div class="desc"><p>SocketInfo(name: str, socket_type: str, is_output: bool, identifier: str = '', index: int = 0, semantic: str = '', policy: str = 'DefaultImplicitConversionPolicy', generic_output: bool = False)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_link_search.SocketInfo.generic_output"><code class="name">var <span class="ident">generic_output</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SocketInfo.identifier"><code class="name">var <span class="ident">identifier</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SocketInfo.index"><code class="name">var <span class="ident">index</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SocketInfo.is_output"><code class="name">var <span class="ident">is_output</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SocketInfo.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SocketInfo.policy"><code class="name">var <span class="ident">policy</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SocketInfo.semantic"><code class="name">var <span class="ident">semantic</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_link_search.SocketInfo.socket_type"><code class="name">var <span class="ident">socket_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_link_search.configure_node" href="#sverchok.utils.sv_link_search.configure_node">configure_node</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.connection_score" href="#sverchok.utils.sv_link_search.connection_score">connection_score</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.describe_socket" href="#sverchok.utils.sv_link_search.describe_socket">describe_socket</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.enum_options" href="#sverchok.utils.sv_link_search.enum_options">enum_options</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.find_socket" href="#sverchok.utils.sv_link_search.find_socket">find_socket</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.operation_variants" href="#sverchok.utils.sv_link_search.operation_variants">operation_variants</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.query_score" href="#sverchok.utils.sv_link_search.query_score">query_score</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.ranked_entries" href="#sverchok.utils.sv_link_search.ranked_entries">ranked_entries</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.semantic_hint" href="#sverchok.utils.sv_link_search.semantic_hint">semantic_hint</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.socket_available" href="#sverchok.utils.sv_link_search.socket_available">socket_available</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.words" href="#sverchok.utils.sv_link_search.words">words</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.sv_link_search.SearchEntry" href="#sverchok.utils.sv_link_search.SearchEntry">SearchEntry</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_link_search.SearchEntry.label" href="#sverchok.utils.sv_link_search.SearchEntry.label">label</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SearchEntry.node_label" href="#sverchok.utils.sv_link_search.SearchEntry.node_label">node_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SearchEntry.node_type" href="#sverchok.utils.sv_link_search.SearchEntry.node_type">node_type</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SearchEntry.operation" href="#sverchok.utils.sv_link_search.SearchEntry.operation">operation</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SearchEntry.settings" href="#sverchok.utils.sv_link_search.SearchEntry.settings">settings</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SearchEntry.socket" href="#sverchok.utils.sv_link_search.SearchEntry.socket">socket</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_link_search.SocketInfo" href="#sverchok.utils.sv_link_search.SocketInfo">SocketInfo</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_link_search.SocketInfo.generic_output" href="#sverchok.utils.sv_link_search.SocketInfo.generic_output">generic_output</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SocketInfo.identifier" href="#sverchok.utils.sv_link_search.SocketInfo.identifier">identifier</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SocketInfo.index" href="#sverchok.utils.sv_link_search.SocketInfo.index">index</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SocketInfo.is_output" href="#sverchok.utils.sv_link_search.SocketInfo.is_output">is_output</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SocketInfo.name" href="#sverchok.utils.sv_link_search.SocketInfo.name">name</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SocketInfo.policy" href="#sverchok.utils.sv_link_search.SocketInfo.policy">policy</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SocketInfo.semantic" href="#sverchok.utils.sv_link_search.SocketInfo.semantic">semantic</a></code></li>
+<li><code><a title="sverchok.utils.sv_link_search.SocketInfo.socket_type" href="#sverchok.utils.sv_link_search.SocketInfo.socket_type">socket_type</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
