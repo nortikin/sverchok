@@ -94,7 +94,7 @@ class ListFuncNode(SverchCustomTreeNode, bpy.types.Node):
         if func_params:
             func_name = [mi for mi in self.mode_items if self.func_==mi[0]][0][1]
         self.label = f'{ListFuncNode.bl_label}: {func_name}'
-        self.update_sockets()
+        # This node has one fixed data input and one fixed output in every mode.
         updateNode(self, context)
 
     func_: EnumProperty(
