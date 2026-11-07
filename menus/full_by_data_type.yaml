@@ -94,6 +94,7 @@
         - SvSeparateMeshNode
         - SvSeparatePartsToIndexes
         - SvEdgenetToPathsNode
+        - SvEdgenetToSegmentsNode
         - SvLimitedDissolve
         - SvLimitedDissolveMK2
         - SvPlanarFacesNode
