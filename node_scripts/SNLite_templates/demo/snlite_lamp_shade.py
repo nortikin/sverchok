@@ -1,1 +1,0 @@
-C:/Users/zeffi/GITWORX/sdfnumba/sverchok/examples/snlite_lamp_shade.py

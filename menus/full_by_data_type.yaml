@@ -167,6 +167,7 @@
         - SvInsetSpecialMk2
         - SvInsetFaces
         - SvLatheNode
+        - SvSDFRevolveNode
         - SvSmoothNode
         - SvRelaxMeshNode
         - SvSmoothLines
@@ -810,6 +811,8 @@
     - SvFCStdSpreadsheetNode
     - SvApproxSubdtoNurbsNode
     - SvGlbExportNode
+    - SvSDFMeshNode 
+    - SvSDFRemeshNode
 
 - Layout:
     - icon_name: NODETREE
