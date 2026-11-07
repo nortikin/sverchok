@@ -1,0 +1,1 @@
+C:/Users/zeffi/GITWORX/sdfnumba/sverchok/examples/sdfnumba_lamp_shade.py
