@@ -1,0 +1,665 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Offset Line Shapely &#8212; Sverchok 1, 4, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=c14129a0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/CAD/offset_shapely_2d';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Spyrrow Nester" href="spyrrow_nester.html" />
+    <link rel="prev" title="Offset Line lite" href="offset_line_lite.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 4, 0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 4, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 4, 0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="CAD_index.html">CAD</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="crop_mesh_2d.html">Crop Mesh 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edges_intersect_mk3.html">Intersect Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edges_to_faces_2d.html">Edges to Faces 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="embed_mesh.html">Embed Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="inset_special_mk2.html">Inset Special</a></li>
+<li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d.html">Merge Mesh 2d</a></li>
+<li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d_lite.html">Merge mesh 2D lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="offset_line_lite.html">Offset Line lite</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Offset Line Shapely</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spyrrow_nester.html">Spyrrow Nester</a></li>
+<li class="toctree-l3"><a class="reference internal" href="straight_skeleton_2d_extrude.html">Straight Skeleton 2d Extrude (Alpha)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="straight_skeleton_2d_offset.html">Straight Skeleton 2d Offset (Alpha)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dxf/dxf_index.html">DXF</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/CAD/offset_shapely_2d.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Offset Line Shapely</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#behaviour-notes">Behaviour Notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="offset-line-shapely">
+<h1>Offset Line Shapely<a class="headerlink" href="#offset-line-shapely" title="Link to this heading">#</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
+<p>Offset line using shapely library (GEOS-based). Unlike the native
+Offset Line 2D Lite node, this node performs a “true” offset with
+self-intersection removal via <code class="docutils literal notranslate"><span class="pre">buffer</span></code>, producing clean results on
+complex topology: collapsing appendices, splitting into components,
+holes, self-intersecting input.</p>
+<p>Requires <strong>shapely</strong> installed in Blender’s Python:</p>
+<p>Use developer mode of sverchok and in properties install shapely in bottom</p>
+<p>If shapely is not installed, the node is not active</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<p>This node has the following inputs:</p>
+<ul class="simple">
+<li><p><strong>Verts</strong> - Vertices of objects. Expects an ordered vertices list.
+Only X and Y are used; Z is ignored (2D offset). Accepts a list of
+contours (one path per element).</p></li>
+<li><p><strong>Offset</strong> - Offset distance. For <code class="docutils literal notranslate"><span class="pre">Polygon</span></code> end type: positive
+grows the area, negative shrinks it. For <code class="docutils literal notranslate"><span class="pre">ClosedLine</span></code> and <code class="docutils literal notranslate"><span class="pre">Open*</span></code>
+types the sign flips the side of the “capsule”.</p></li>
+<li><p><strong>Miter_limit</strong> - Ratio <code class="docutils literal notranslate"><span class="pre">miter_length</span> <span class="pre">/</span> <span class="pre">|offset|</span></code>. Used only when
+<code class="docutils literal notranslate"><span class="pre">Join</span> <span class="pre">Type</span> <span class="pre">=</span> <span class="pre">Miter</span></code>. If the real miter spike is longer than
+<code class="docutils literal notranslate"><span class="pre">miter_limit</span> <span class="pre">*</span> <span class="pre">|offset|</span></code>, the corner is clipped (effectively to a
+bevel). Default <code class="docutils literal notranslate"><span class="pre">2.0</span></code> (same as Clipper). Clamped to <code class="docutils literal notranslate"><span class="pre">1.0</span></code> minimum.</p></li>
+<li><p><strong>Quad_segs</strong> - Segments per quarter circle (90°), controls arc
+smoothness. If <code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">0</span></code> — used directly, <code class="docutils literal notranslate"><span class="pre">Arc_tol</span></code> is ignored.
+If <code class="docutils literal notranslate"><span class="pre">&lt;=</span> <span class="pre">0</span></code> — computed from <code class="docutils literal notranslate"><span class="pre">Arc_tol</span></code>. Default <code class="docutils literal notranslate"><span class="pre">8</span></code> (shapely
+default, coarse); <code class="docutils literal notranslate"><span class="pre">16–32</span></code> gives smooth arcs; <code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">64</span></code> is visually
+indistinguishable from a perfect arc.</p></li>
+<li><p><strong>Arc_tol</strong> - Absolute arc tolerance (in scene units). Used <strong>only</strong>
+when <code class="docutils literal notranslate"><span class="pre">Quad_segs</span> <span class="pre">&lt;=</span> <span class="pre">0</span></code>. Converted to <code class="docutils literal notranslate"><span class="pre">quad_segs</span></code> via the sagitta
+formula: <code class="docutils literal notranslate"><span class="pre">theta</span> <span class="pre">=</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">acos(1</span> <span class="pre">-</span> <span class="pre">arc_tol</span> <span class="pre">/</span> <span class="pre">|offset|)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">quad_segs</span> <span class="pre">=</span> <span class="pre">ceil(pi</span> <span class="pre">/</span> <span class="pre">theta)</span></code>, clamped to <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">512]</span></code>.</p></li>
+</ul>
+<p>All parameters except <code class="docutils literal notranslate"><span class="pre">Verts</span></code> are optional: if a socket is not
+connected, the value comes from the node’s property. If connected,
+a list is supported (one value per contour; if shorter, <code class="docutils literal notranslate"><span class="pre">[0]</span></code> is
+reused).</p>
+</section>
+<section id="options">
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading">#</a></h2>
+<p><strong>Join Type</strong> - controls how corners between segments are handled:</p>
+<ul>
+<li><p><strong>Miter</strong> - Sharp corners; the miter spike is limited by
+<code class="docutils literal notranslate"><span class="pre">Miter_limit</span></code>. Shapely <code class="docutils literal notranslate"><span class="pre">join_style</span> <span class="pre">=</span> <span class="pre">2</span></code> (mitre).</p></li>
+<li><p><strong>Round</strong> - Rounded corners; arcs are tessellated with
+<code class="docutils literal notranslate"><span class="pre">Quad_segs</span></code> segments per quadrant. Shapely <code class="docutils literal notranslate"><span class="pre">join_style</span> <span class="pre">=</span> <span class="pre">1</span></code>
+(round).</p></li>
+<li><p><strong>Bevel</strong> - Flat cut of the corner. Shapely <code class="docutils literal notranslate"><span class="pre">join_style</span> <span class="pre">=</span> <span class="pre">3</span></code>
+(bevel).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">Bevel</span></code> is <strong>not</strong> an equivalent of Clipper’s <code class="docutils literal notranslate"><span class="pre">JT_SQUARE</span></code>.
+Clipper’s <code class="docutils literal notranslate"><span class="pre">JT_SQUARE</span></code> produces a 45° cut (“square” corner);
+Shapely’s <code class="docutils literal notranslate"><span class="pre">bevel</span></code> produces a flat cut. There is no direct
+analogue of <code class="docutils literal notranslate"><span class="pre">JT_SQUARE</span></code> in Shapely — <code class="docutils literal notranslate"><span class="pre">Bevel</span></code> is the closest
+visually.</p>
+</div>
+</li>
+</ul>
+<p><strong>End Type</strong> - controls the topology of the offset result:</p>
+<ul>
+<li><p><strong>Polygon</strong> - Offset of an <strong>area</strong>. <code class="docutils literal notranslate"><span class="pre">Polygon.buffer(d)</span></code>:
+<code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> grows outward, <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> shrinks inward. Output: <strong>all</strong>
+rings (exterior + holes), each <strong>closed</strong>.</p></li>
+<li><p><strong>ClosedLine</strong> - “Capsule” around a <strong>closed</strong> line:
+<code class="docutils literal notranslate"><span class="pre">LineString(ring).buffer(d,</span> <span class="pre">cap_style=round)</span></code>. Output: <strong>all</strong>
+rings of the capsule polygon, <strong>closed</strong>.</p></li>
+<li><p><strong>OpenButt</strong> - “Thick” line with flat caps:
+<code class="docutils literal notranslate"><span class="pre">LineString(pts).buffer(d,</span> <span class="pre">cap_style=flat)</span></code>. Output: a <strong>closed</strong>
+capsule (exterior ring + possible holes).</p></li>
+<li><p><strong>OpenSquare</strong> - Same, square caps (protruding by <code class="docutils literal notranslate"><span class="pre">d</span></code>):
+<code class="docutils literal notranslate"><span class="pre">cap_style=square</span></code>.</p></li>
+<li><p><strong>OpenRound</strong> - Same, round caps: <code class="docutils literal notranslate"><span class="pre">cap_style=round</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">Open*</span></code> types produce a <strong>closed capsule</strong>, not a single
+one-sided offset line. <code class="docutils literal notranslate"><span class="pre">LineString.buffer</span></code> returns a polygon
+(“thick” line); its boundary is <strong>two</strong> offset lines (left and
+right of the original) plus caps. This is <strong>not</strong> the same as
+Clipper’s <code class="docutils literal notranslate"><span class="pre">ET_OPENBUTT</span></code>, which returns <strong>one</strong> line (offset
+in one direction). Use <code class="docutils literal notranslate"><span class="pre">Offset</span> <span class="pre">Line</span> <span class="pre">2D</span> <span class="pre">Lite</span></code> for a one-sided
+offset, or add a half-edge filter (heuristic by normal, not
+always reliable).</p>
+</div>
+</li>
+</ul>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<p>This node has the following outputs:</p>
+<ul class="simple">
+<li><p><strong>Vers</strong> - Result vertices. Each vertex is <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">0.0]</span></code> (Z is
+always 0). The output is a <strong>list of lists</strong>: multiple rings/contours
+may be returned if shapely produced a multipolygon, a polygon with
+holes, or several components.</p></li>
+<li><p><strong>Edgs</strong> - Result edges. For closed outputs — a cycle
+<code class="docutils literal notranslate"><span class="pre">[i,</span> <span class="pre">(i+1)</span> <span class="pre">%</span> <span class="pre">n]</span></code>; for open outputs — a chain <code class="docutils literal notranslate"><span class="pre">[i,</span> <span class="pre">i+1]</span></code>.
+Also a <strong>list of lists</strong>, matching the structure of <code class="docutils literal notranslate"><span class="pre">Vers</span></code>.</p></li>
+</ul>
+</section>
+<section id="behaviour-notes">
+<h2>Behaviour Notes<a class="headerlink" href="#behaviour-notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Polygon with negative offset</strong> may produce a <code class="docutils literal notranslate"><span class="pre">MultiPolygon</span></code> if
+the shape splits into parts. The node handles <strong>all</strong> polygons:
+every ring (exterior + holes) of every polygon becomes a separate
+contour in the output. This is correct for a “clean” offset.</p></li>
+<li><p><strong>Polygon with negative offset</strong> may produce a polygon <strong>with holes</strong>
+if an inner “island” does not collapse. The hole is emitted as a
+separate closed ring (its winding may be opposite — take this into
+account in downstream processing).</p></li>
+<li><p><strong>Invalid input polygon</strong>: if <code class="docutils literal notranslate"><span class="pre">Polygon(ring)</span></code> is not valid
+(self-intersecting, degenerate), the node calls <code class="docutils literal notranslate"><span class="pre">buffer(0)</span></code> to
+repair it before applying the offset.</p></li>
+<li><p><strong>quad_segs takes priority</strong> over <code class="docutils literal notranslate"><span class="pre">arc_tol</span></code>. To control smoothness
+only via <code class="docutils literal notranslate"><span class="pre">arc_tol</span></code>, set <code class="docutils literal notranslate"><span class="pre">Quad_segs</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p></li>
+<li><p>The node does not crash when shapely is missing: it draws an
+<code class="docutils literal notranslate"><span class="pre">ERROR</span></code> indicator and returns empty outputs.</p></li>
+</ul>
+</section>
+<section id="examples-of-usage">
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
+<img alt="https://github.com/user-attachments/assets/69a1cba7-c7a5-43ee-bd7f-3bd5ffee3df6" src="https://github.com/user-attachments/assets/69a1cba7-c7a5-43ee-bd7f-3bd5ffee3df6" />
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="offset_line_lite.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Offset Line lite</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="spyrrow_nester.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Spyrrow Nester</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#behaviour-notes">Behaviour Notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2026, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
