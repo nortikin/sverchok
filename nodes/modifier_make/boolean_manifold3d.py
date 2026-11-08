@@ -52,6 +52,8 @@ import numpy as np
 import bpy
 import bmesh
 from bpy.props import EnumProperty, BoolProperty, FloatProperty
+from mathutils import Vector
+from mathutils.geometry import tessellate_polygon as tessellate
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle as mlr
@@ -71,18 +73,43 @@ except ImportError:
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _to_triangles(faces):
-    """Fan-triangulate a list of polygons. Returns list of 3-tuples."""
+def _to_triangles(verts, faces):
+    """
+    Properly tessellate a list of polygons (including concave / non-planar ngons)
+    using Blender's tessellate_polygon.
+
+    Parameters
+    ----------
+    verts : list of (x, y, z)
+    faces : list of lists of vertex indices
+
+    Returns
+    -------
+    list of 3-tuples (triangle indices)
+    """
+    if not faces:
+        return []
+
     tris = []
     for f in faces:
         if len(f) < 3:
             continue
         if len(f) == 3:
             tris.append(tuple(f))
-        else:
-            v0 = f[0]
-            for i in range(1, len(f) - 1):
-                tris.append((v0, f[i], f[i + 1]))
+            continue
+
+        # Build coordinate list for this polygon
+        try:
+            subcoords = [Vector(verts[i]) for i in f]
+        except (IndexError, TypeError):
+            # skip malformed face
+            continue
+
+        # tessellate_polygon expects a list of polygons (we pass one)
+        for pol in tessellate([subcoords]):
+            # pol contains indices into subcoords → map back to original vertex indices
+            tris.append(tuple(f[i] for i in pol))
+
     return tris
 
 
@@ -100,7 +127,7 @@ def mesh_to_manifold(verts, faces, make_original=False):
         raise ValueError("Vertices must be an (N, 3+) array")
     verts_np = verts_np[:, :3]
 
-    tris = _to_triangles(faces)
+    tris = _to_triangles(verts, faces)
     if not tris:
         return Manifold()
 
