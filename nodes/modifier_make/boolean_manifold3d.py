@@ -27,17 +27,23 @@ Notes
 * Input polygons are triangulated with a simple fan when they have more
   than three vertices.  For better triangulation of concave / non-planar
   faces feed already-triangulated meshes.
+* When "Allow Ngons" is enabled the triangulated result is post-processed
+  with bmesh.ops.dissolve_limit so that coplanar adjacent faces are merged
+  back into n-gons.
 """
 
 import sys
+import math
 import numpy as np
 
 import bpy
-from bpy.props import EnumProperty, BoolProperty
+import bmesh
+from bpy.props import EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle as mlr
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 try:
     from manifold3d import Manifold, Mesh
@@ -107,7 +113,36 @@ def manifold_to_mesh(manifold):
     return verts, faces
 
 
-def boolean_manifold(VA, PA, VB, PB, operation):
+def dissolve_coplanar(verts, faces, angle_limit_deg=0.1):
+    """
+    Merge adjacent coplanar faces into n-gons using bmesh limited dissolve.
+    angle_limit_deg : maximum angle (in degrees) between face normals that
+                      are still considered coplanar.
+    """
+    if not faces:
+        return verts, faces
+
+    bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
+
+    # Limited Dissolve – merges coplanar faces and cleans collinear edges
+    bmesh.ops.dissolve_limit(
+        bm,
+        angle_limit=math.radians(angle_limit_deg),
+        use_dissolve_boundaries=False,
+        verts=bm.verts,
+        edges=bm.edges,
+        delimit={'NORMAL'},          # only dissolve when normals match
+    )
+
+    # Optional: also remove any remaining degenerate geometry
+    bmesh.ops.dissolve_degenerate(bm, dist=1e-6, edges=bm.edges)
+
+    new_verts, _, new_faces = pydata_from_bmesh(bm)
+    bm.free()
+    return new_verts, new_faces
+
+
+def boolean_manifold(VA, PA, VB, PB, operation, allow_ngons=False, angle_limit=0.1):
     """
     Perform a single Boolean operation with manifold3d.
 
@@ -116,6 +151,8 @@ def boolean_manifold(VA, PA, VB, PB, operation):
     VA, PA : verts / polys of mesh A
     VB, PB : verts / polys of mesh B
     operation : 'ITX' | 'JOIN' | 'DIFF'
+    allow_ngons : if True, post-process with limited dissolve
+    angle_limit : angle threshold in degrees for coplanar test
 
     Returns
     -------
@@ -123,8 +160,8 @@ def boolean_manifold(VA, PA, VB, PB, operation):
     """
     if not MANIFOLD_AVAILABLE:
         raise RuntimeError(
-            "manifold3d is not installed. In BlenderPython console run: \n"
-            ">>> from sverchok.utils.pip_utils import install_package\m"
+            "manifold3d is not installed. In BlenderPython console run:\n"
+            ">>> from sverchok.utils.pip_utils import install_package\n"
             ">>> install_package(\"manifold3d\")\n"
         )
 
@@ -140,7 +177,12 @@ def boolean_manifold(VA, PA, VB, PB, operation):
     else:
         raise ValueError(f"Unknown operation: {operation}")
 
-    return manifold_to_mesh(result)
+    verts, faces = manifold_to_mesh(result)
+
+    if allow_ngons and faces:
+        verts, faces = dissolve_coplanar(verts, faces, angle_limit_deg=angle_limit)
+
+    return verts, faces
 
 
 class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
@@ -159,6 +201,23 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
         items=mode_options,
         description="Boolean operation",
         default="ITX",
+        update=updateNode,
+    )
+
+    allow_ngons: BoolProperty(
+        name="Allow Ngons",
+        description="After the boolean, merge adjacent coplanar faces into n-gons (Limited Dissolve)",
+        default=True,
+        update=updateNode,
+    )
+
+    angle_limit: FloatProperty(
+        name="Angle Limit",
+        description="Maximum angle (degrees) between face normals that are still considered coplanar",
+        default=0.1,
+        min=0.0,
+        max=5.0,
+        precision=3,
         update=updateNode,
     )
 
@@ -212,10 +271,16 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
 
         row = layout.row()
         row.prop(self, 'selected_mode', expand=True)
+
         col = layout.column(align=True)
         col.prop(self, "nest_objs", toggle=True)
         if self.nest_objs:
             col.prop(self, "out_last", toggle=True)
+
+        col.separator()
+        col.prop(self, "allow_ngons", toggle=True)
+        if self.allow_ngons:
+            col.prop(self, "angle_limit")
 
     def process(self):
         OutV, OutP = self.outputs
@@ -231,6 +296,8 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
 
         VertA, PolA, VertB, PolB, VertN, PolN = self.inputs
         SMode = self.selected_mode
+        allow_ngons = self.allow_ngons
+        angle_limit = self.angle_limit
         out = []
 
         # Raise recursion limit only while we are chaining many nested ops
@@ -245,7 +312,11 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
                     VertB.sv_get(default=[[]]),
                     PolB.sv_get(default=[[]]),
                 ])):
-                    out.append(boolean_manifold(v1, p1, v2, p2, SMode))
+                    out.append(boolean_manifold(
+                        v1, p1, v2, p2, SMode,
+                        allow_ngons=allow_ngons,
+                        angle_limit=angle_limit,
+                    ))
             else:
                 vnest = VertN.sv_get(default=[[]])
                 pnest = PolN.sv_get(default=[[]])
@@ -255,17 +326,27 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
                         OutP.sv_set([])
                     return
 
-                First = boolean_manifold(vnest[0], pnest[0], vnest[1], pnest[1], SMode)
+                First = boolean_manifold(
+                    vnest[0], pnest[0], vnest[1], pnest[1], SMode,
+                    allow_ngons=allow_ngons,
+                    angle_limit=angle_limit,
+                )
                 if not self.out_last:
                     out.append(First)
                     for i in range(2, len(vnest)):
                         out.append(boolean_manifold(
-                            First[0], First[1], vnest[i], pnest[i], SMode))
+                            First[0], First[1], vnest[i], pnest[i], SMode,
+                            allow_ngons=allow_ngons,
+                            angle_limit=angle_limit,
+                        ))
                         First = out[-1]
                 else:
                     for i in range(2, len(vnest)):
                         First = boolean_manifold(
-                            First[0], First[1], vnest[i], pnest[i], SMode)
+                            First[0], First[1], vnest[i], pnest[i], SMode,
+                            allow_ngons=allow_ngons,
+                            angle_limit=angle_limit,
+                        )
                     out.append(First)
         finally:
             sys.setrecursionlimit(recursionlimit)
