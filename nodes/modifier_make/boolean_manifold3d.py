@@ -300,7 +300,7 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
         angle_limit = self.angle_limit
         out = []
 
-        # Raise recursion limit only while we are chaining many nested ops
+        # Raise recursion limit only while we are chaining many nested ops ?
         recursionlimit = sys.getrecursionlimit()
         sys.setrecursionlimit(10000)
 
