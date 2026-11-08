@@ -17,23 +17,36 @@
 # ##### END GPL LICENSE BLOCK #####
 
 """
-Requires:  pip install manifold3d
+Boolean operations using manifold3d
 
-Notes
------
-* Manifold expects *manifold* (watertight, correctly oriented) triangle
-  meshes.  Non-manifold, open or self-intersecting geometry will usually
-  produce an empty result or raise.
-* Input polygons are triangulated with a simple fan when they have more
-  than three vertices.  For better triangulation of concave / non-planar
-  faces feed already-triangulated meshes.
-* When "Allow Ngons" is enabled the triangulated result is post-processed
-  with bmesh.ops.dissolve_limit so that coplanar adjacent faces are merged
-  back into n-gons.
+Requires:  pip install manifold3d
+(or from Blender's Python console:
+    from sverchok.utils.pip_utils import install_package
+    install_package("manifold3d")
+) (restart required for now)
+
+Features
+--------
+* Intersect / Union / Difference
+* Nested accumulate mode
+* Optional n-gon reconstruction (Limited Dissolve on coplanar faces)
+* Optional origin tracking:
+    - Face Origins : 0 = came from mesh A, 1 = came from mesh B
+    - Cut Edges    : edges that lie on the Boolean intersection
+
+Verts A --+
+Polys A --+
+          +--> Manifold Boolean --> Vertices
+Verts B --+                     --> Polygons
+Polys B --+                     +-> Face Origins   (0 = A, 1 = B)
+                                +-> Cut Edges      (intersection curves)
+
 """
 
 import sys
 import math
+from collections import defaultdict
+
 import numpy as np
 
 import bpy
@@ -54,8 +67,12 @@ except ImportError:
     Mesh = None
 
 
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
 def _to_triangles(faces):
-    """Fan-triangulate a list of polygons.  Returns list of 3-tuples."""
+    """Fan-triangulate a list of polygons. Returns list of 3-tuples."""
     tris = []
     for f in faces:
         if len(f) < 3:
@@ -63,17 +80,17 @@ def _to_triangles(faces):
         if len(f) == 3:
             tris.append(tuple(f))
         else:
-            # simple fan – works for convex faces
             v0 = f[0]
             for i in range(1, len(f) - 1):
                 tris.append((v0, f[i], f[i + 1]))
     return tris
 
 
-def mesh_to_manifold(verts, faces):
+def mesh_to_manifold(verts, faces, make_original=False):
     """
-    Convert Sverchok verts / faces (lists) into a manifold3d.Manifold.
-    Faces are triangulated if necessary.
+    Convert Sverchok verts/faces into a manifold3d.Manifold.
+    When make_original=True the manifold receives a unique OriginalID
+    so that provenance can be tracked through Boolean operations.
     """
     if not verts or not faces:
         return Manifold()
@@ -81,8 +98,6 @@ def mesh_to_manifold(verts, faces):
     verts_np = np.asarray(verts, dtype=np.float32)
     if verts_np.ndim != 2 or verts_np.shape[1] < 3:
         raise ValueError("Vertices must be an (N, 3+) array")
-
-    # Keep only xyz
     verts_np = verts_np[:, :3]
 
     tris = _to_triangles(faces)
@@ -90,106 +105,204 @@ def mesh_to_manifold(verts, faces):
         return Manifold()
 
     faces_np = np.asarray(tris, dtype=np.uint32)
-
-    mesh = Mesh(
-        vert_properties=verts_np,
-        tri_verts=faces_np,
-    )
-    return Manifold(mesh)
+    mesh = Mesh(vert_properties=verts_np, tri_verts=faces_np)
+    m = Manifold(mesh)
+    if make_original:
+        m = m.as_original()
+    return m
 
 
 def manifold_to_mesh(manifold):
-    """
-    Convert a manifold3d.Manifold back to Sverchok-style lists
-    (verts list-of-lists, faces list-of-lists).
-    """
+    """Plain conversion (no origin data)."""
     if manifold.is_empty():
         return [], []
-
     out = manifold.to_mesh()
-    # vert_properties may contain extra channels; take only xyz
     verts = out.vert_properties[:, :3].tolist()
     faces = out.tri_verts.tolist()
     return verts, faces
 
 
+def manifold_to_mesh_with_origins(manifold):
+    """
+    Returns verts, faces, face_origins
+    face_origins[i] = OriginalID of the input mesh that produced faces[i]
+    """
+    if manifold.is_empty():
+        return [], [], []
+
+    out = manifold.to_mesh()
+    verts = out.vert_properties[:, :3].tolist()
+    faces = out.tri_verts.tolist()
+
+    face_origins = [-1] * len(faces)
+    run_ids = list(getattr(out, "run_original_id", []))
+    run_index = list(getattr(out, "run_index", []))
+
+    if run_ids and run_index:
+        # Ensure run_index is one longer than run_ids
+        if len(run_index) == len(run_ids):
+            run_index = run_index + [len(faces) * 3]
+        for i, oid in enumerate(run_ids):
+            start = run_index[i] // 3
+            end = run_index[i + 1] // 3
+            for t in range(start, min(end, len(face_origins))):
+                face_origins[t] = int(oid)
+
+    return verts, faces, face_origins
+
+
+def find_cut_edges(faces, face_origins):
+    """
+    An edge is a cut edge when the two faces that share it have
+    different origin IDs. Returns list of [v0, v1] with v0 < v1.
+    """
+    edge_to_faces = defaultdict(list)
+
+    for fi, f in enumerate(faces):
+        n = len(f)
+        for i in range(n):
+            a, b = f[i], f[(i + 1) % n]
+            edge = (min(a, b), max(a, b))
+            edge_to_faces[edge].append(fi)
+
+    cut = []
+    for edge, flist in edge_to_faces.items():
+        if len(flist) == 2:
+            o0 = face_origins[flist[0]]
+            o1 = face_origins[flist[1]]
+            if o0 != o1 and o0 >= 0 and o1 >= 0:
+                cut.append(list(edge))
+    return cut
+
+
 def dissolve_coplanar(verts, faces, angle_limit_deg=0.1):
-    """
-    Merge adjacent coplanar faces into n-gons using bmesh limited dissolve.
-    angle_limit_deg : maximum angle (in degrees) between face normals that
-                      are still considered coplanar.
-    """
+    """Classic limited-dissolve (no origin awareness)."""
     if not faces:
         return verts, faces
 
     bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
-
-    # Limited Dissolve – merges coplanar faces and cleans collinear edges
     bmesh.ops.dissolve_limit(
         bm,
         angle_limit=math.radians(angle_limit_deg),
         use_dissolve_boundaries=False,
         verts=bm.verts,
         edges=bm.edges,
-        delimit={'NORMAL'},          # only dissolve when normals match
+        delimit={"NORMAL"},
     )
-
-    # Optional: also remove any remaining degenerate geometry
     bmesh.ops.dissolve_degenerate(bm, dist=1e-6, edges=bm.edges)
-
     new_verts, _, new_faces = pydata_from_bmesh(bm)
     bm.free()
     return new_verts, new_faces
 
 
-def boolean_manifold(VA, PA, VB, PB, operation, allow_ngons=False, angle_limit=0.1):
+def dissolve_coplanar_same_origin(verts, faces, face_origins, angle_limit_deg=0.1):
     """
-    Perform a single Boolean operation with manifold3d.
+    Limited-dissolve that only merges faces sharing the same origin ID.
+    Preserves a meaningful Face Origins list after n-gon creation.
+    """
+    if not faces:
+        return verts, faces, face_origins
 
-    Parameters
-    ----------
-    VA, PA : verts / polys of mesh A
-    VB, PB : verts / polys of mesh B
-    operation : 'ITX' | 'JOIN' | 'DIFF'
-    allow_ngons : if True, post-process with limited dissolve
-    angle_limit : angle threshold in degrees for coplanar test
+    bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
 
+    # Store origin on each face
+    origin_layer = bm.faces.layers.int.new("origin")
+    for i, f in enumerate(bm.faces):
+        f[origin_layer] = face_origins[i] if i < len(face_origins) else -1
+
+    # Collect edges that can be dissolved (same origin + nearly coplanar)
+    edges_to_dissolve = []
+    angle_limit = math.radians(angle_limit_deg)
+    for e in bm.edges:
+        if e.is_manifold and len(e.link_faces) == 2:
+            f0, f1 = e.link_faces
+            if (f0[origin_layer] == f1[origin_layer] and
+                    f0[origin_layer] >= 0 and
+                    f0.normal.angle(f1.normal) < angle_limit):
+                edges_to_dissolve.append(e)
+
+    if edges_to_dissolve:
+        bmesh.ops.dissolve_edges(bm, edges=edges_to_dissolve, use_verts=True)
+
+    bmesh.ops.dissolve_degenerate(bm, dist=1e-6, edges=bm.edges)
+
+    new_verts, _, new_faces = pydata_from_bmesh(bm)
+    new_origins = [f[origin_layer] for f in bm.faces]
+    bm.free()
+    return new_verts, new_faces, new_origins
+
+
+# ---------------------------------------------------------------------------
+# Boolean entry point
+# ---------------------------------------------------------------------------
+
+def boolean_manifold(VA, PA, VB, PB, operation,
+                     allow_ngons=False, angle_limit=0.1,
+                     track_origins=False):
+    """
     Returns
     -------
-    (verts, faces) of the resulting mesh
+    When track_origins is False:
+        (verts, faces, None, None)
+    When track_origins is True:
+        (verts, faces, face_origins, cut_edges)
+        face_origins : list[int]  0 = mesh A, 1 = mesh B
+        cut_edges    : list[[v0, v1]]
     """
     if not MANIFOLD_AVAILABLE:
         raise RuntimeError(
-            "manifold3d is not installed. In BlenderPython console run:\n"
+            "manifold3d is not installed.\n"
+            "In Blender's Python console run:\n"
             ">>> from sverchok.utils.pip_utils import install_package\n"
-            ">>> install_package(\"manifold3d\")\n"
+            ">>> install_package(\"manifold3d\")"
         )
 
-    a = mesh_to_manifold(VA, PA)
-    b = mesh_to_manifold(VB, PB)
+    a = mesh_to_manifold(VA, PA, make_original=track_origins)
+    b = mesh_to_manifold(VB, PB, make_original=track_origins)
 
-    if operation == 'ITX':
-        result = a ^ b          # intersection
-    elif operation == 'JOIN':
-        result = a + b          # union
-    elif operation == 'DIFF':
-        result = a - b          # difference
+    id_a = a.original_id() if track_origins else -1
+    id_b = b.original_id() if track_origins else -1
+
+    if operation == "ITX":
+        result = a ^ b
+    elif operation == "JOIN":
+        result = a + b
+    elif operation == "DIFF":
+        result = a - b
     else:
         raise ValueError(f"Unknown operation: {operation}")
 
-    verts, faces = manifold_to_mesh(result)
+    if not track_origins:
+        verts, faces = manifold_to_mesh(result)
+        if allow_ngons and faces:
+            verts, faces = dissolve_coplanar(verts, faces, angle_limit_deg=angle_limit)
+        return verts, faces, None, None
+
+    # --- with origin tracking ---
+    verts, faces, face_origins = manifold_to_mesh_with_origins(result)
+
+    # Map real OriginalIDs → convenient 0 / 1
+    origin_map = {id_a: 0, id_b: 1}
+    face_origins = [origin_map.get(oid, -1) for oid in face_origins]
 
     if allow_ngons and faces:
-        verts, faces = dissolve_coplanar(verts, faces, angle_limit_deg=angle_limit)
+        verts, faces, face_origins = dissolve_coplanar_same_origin(
+            verts, faces, face_origins, angle_limit_deg=angle_limit
+        )
 
-    return verts, faces
+    cut_edges = find_cut_edges(faces, face_origins)
+    return verts, faces, face_origins, cut_edges
 
+
+# ---------------------------------------------------------------------------
+# Node
+# ---------------------------------------------------------------------------
 
 class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """Boolean node powered by the manifold3d library"""
-    bl_idname = 'SvManifoldBooleanNode'
-    bl_label = 'Manifold Boolean'
-    bl_icon = 'MOD_BOOLEAN'
+    bl_idname = "SvManifoldBooleanNode"
+    bl_label = "Manifold Boolean"
+    bl_icon = "MOD_BOOLEAN"
 
     mode_options = [
         ("ITX", "Intersect", "", 0),
@@ -206,14 +319,14 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
 
     allow_ngons: BoolProperty(
         name="Allow Ngons",
-        description="After the boolean, merge adjacent coplanar faces into n-gons (Limited Dissolve)",
+        description="After the boolean, merge adjacent coplanar faces into n-gons",
         default=True,
         update=updateNode,
     )
 
     angle_limit: FloatProperty(
         name="Angle Limit",
-        description="Maximum angle (degrees) between face normals that are still considered coplanar",
+        description="Maximum angle (degrees) between face normals still considered coplanar",
         default=0.1,
         min=0.0,
         max=5.0,
@@ -221,13 +334,20 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
         update=updateNode,
     )
 
+    track_origins: BoolProperty(
+        name="Track Origins",
+        description="Output which input each face came from (0=A, 1=B) and the cut edges",
+        default=False,
+        update=updateNode,
+    )
+
     def update_mode(self, context):
-        self.inputs['Verts A'].hide_safe = self.nest_objs
-        self.inputs['Polys A'].hide_safe = self.nest_objs
-        self.inputs['Verts B'].hide_safe = self.nest_objs
-        self.inputs['Polys B'].hide_safe = self.nest_objs
-        self.inputs['Verts Nested'].hide_safe = not self.nest_objs
-        self.inputs['Polys Nested'].hide_safe = not self.nest_objs
+        self.inputs["Verts A"].hide_safe = self.nest_objs
+        self.inputs["Polys A"].hide_safe = self.nest_objs
+        self.inputs["Verts B"].hide_safe = self.nest_objs
+        self.inputs["Polys B"].hide_safe = self.nest_objs
+        self.inputs["Verts Nested"].hide_safe = not self.nest_objs
+        self.inputs["Polys Nested"].hide_safe = not self.nest_objs
         updateNode(self, context)
 
     nest_objs: BoolProperty(
@@ -245,32 +365,35 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
     )
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', 'Verts A')
-        self.inputs.new('SvStringsSocket',  'Polys A')
-        self.inputs.new('SvVerticesSocket', 'Verts B')
-        self.inputs.new('SvStringsSocket',  'Polys B')
-        self.inputs.new('SvVerticesSocket', 'Verts Nested').hide_safe = True
-        self.inputs.new('SvStringsSocket',  'Polys Nested').hide_safe = True
-        self.outputs.new('SvVerticesSocket', 'Vertices')
-        self.outputs.new('SvStringsSocket', 'Polygons')
+        self.inputs.new("SvVerticesSocket", "Verts A")
+        self.inputs.new("SvStringsSocket", "Polys A")
+        self.inputs.new("SvVerticesSocket", "Verts B")
+        self.inputs.new("SvStringsSocket", "Polys B")
+        self.inputs.new("SvVerticesSocket", "Verts Nested").hide_safe = True
+        self.inputs.new("SvStringsSocket", "Polys Nested").hide_safe = True
+
+        self.outputs.new("SvVerticesSocket", "Vertices")
+        self.outputs.new("SvStringsSocket", "Polygons")
+        self.outputs.new("SvStringsSocket", "Face Origins")
+        self.outputs.new("SvStringsSocket", "Cut Edges")
 
     @property
     def sv_internal_links(self):
         if self.nest_objs:
             return [
-                (self.inputs['Verts Nested'], self.outputs[0]),
-                (self.inputs['Polys Nested'], self.outputs[1]),
+                (self.inputs["Verts Nested"], self.outputs[0]),
+                (self.inputs["Polys Nested"], self.outputs[1]),
             ]
         return super().sv_internal_links
 
     def draw_buttons(self, context, layout):
         if not MANIFOLD_AVAILABLE:
-            layout.label(text="manifold3d not found!", icon='ERROR')
+            layout.label(text="manifold3d not found!", icon="ERROR")
             layout.label(text="pip install manifold3d")
             return
 
         row = layout.row()
-        row.prop(self, 'selected_mode', expand=True)
+        row.prop(self, "selected_mode", expand=True)
 
         col = layout.column(align=True)
         col.prop(self, "nest_objs", toggle=True)
@@ -282,25 +405,35 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
         if self.allow_ngons:
             col.prop(self, "angle_limit")
 
+        col.separator()
+        col.prop(self, "track_origins", toggle=True)
+
     def process(self):
-        OutV, OutP = self.outputs
+        OutV = self.outputs["Vertices"]
+        OutP = self.outputs["Polygons"]
+        OutOrig = self.outputs["Face Origins"]
+        OutCut = self.outputs["Cut Edges"]
+
         if not OutV.is_linked:
             return
 
         if not MANIFOLD_AVAILABLE:
-            # keep sockets empty rather than crash the tree
             OutV.sv_set([])
             if OutP.is_linked:
                 OutP.sv_set([])
+            if OutOrig.is_linked:
+                OutOrig.sv_set([])
+            if OutCut.is_linked:
+                OutCut.sv_set([])
             return
 
         VertA, PolA, VertB, PolB, VertN, PolN = self.inputs
         SMode = self.selected_mode
         allow_ngons = self.allow_ngons
         angle_limit = self.angle_limit
+        track = self.track_origins
         out = []
 
-        # Raise recursion limit only while we are chaining many nested ops ?
         recursionlimit = sys.getrecursionlimit()
         sys.setrecursionlimit(10000)
 
@@ -316,6 +449,7 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
                         v1, p1, v2, p2, SMode,
                         allow_ngons=allow_ngons,
                         angle_limit=angle_limit,
+                        track_origins=track,
                     ))
             else:
                 vnest = VertN.sv_get(default=[[]])
@@ -324,12 +458,17 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
                     OutV.sv_set([])
                     if OutP.is_linked:
                         OutP.sv_set([])
+                    if OutOrig.is_linked:
+                        OutOrig.sv_set([])
+                    if OutCut.is_linked:
+                        OutCut.sv_set([])
                     return
 
                 First = boolean_manifold(
                     vnest[0], pnest[0], vnest[1], pnest[1], SMode,
                     allow_ngons=allow_ngons,
                     angle_limit=angle_limit,
+                    track_origins=track,
                 )
                 if not self.out_last:
                     out.append(First)
@@ -338,6 +477,7 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
                             First[0], First[1], vnest[i], pnest[i], SMode,
                             allow_ngons=allow_ngons,
                             angle_limit=angle_limit,
+                            track_origins=track,
                         ))
                         First = out[-1]
                 else:
@@ -346,6 +486,7 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
                             First[0], First[1], vnest[i], pnest[i], SMode,
                             allow_ngons=allow_ngons,
                             angle_limit=angle_limit,
+                            track_origins=track,
                         )
                     out.append(First)
         finally:
@@ -354,6 +495,10 @@ class SvManifoldBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
         OutV.sv_set([i[0] for i in out])
         if OutP.is_linked:
             OutP.sv_set([i[1] for i in out])
+        if OutOrig.is_linked:
+            OutOrig.sv_set([i[2] if i[2] is not None else [] for i in out])
+        if OutCut.is_linked:
+            OutCut.sv_set([i[3] if i[3] is not None else [] for i in out])
 
 
 def register():
