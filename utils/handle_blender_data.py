@@ -559,9 +559,21 @@ class BPYProperty:
         elif self.type == 'POINTER' and isinstance(value, str):
             setattr(self._data, self.name, self.data_collection.get(value))
         elif self.type == 'ENUM' and self.is_array_like:
-            setattr(self._data, self.name, set(value))
+            setattr(self._data, self.name, set(self._enum_alias(v) for v in value))
+        elif self.type == 'ENUM':
+            setattr(self._data, self.name, self._enum_alias(value))
         else:
             setattr(self._data, self.name, value)
+
+    def _enum_alias(self, identifier):
+        """
+        Renamed enum items keep working in older files: a class can map old identifiers to new ones
+            enum_aliases = {'property_name': {'OLD_ITEM': 'NEW_ITEM'}}
+        (.blend files store an enum's number, not its identifier, so they only need the item order kept)
+        """
+        aliases = getattr(type(self._data), 'enum_aliases', None) or {}
+        return aliases.get(self.name, {}).get(identifier, identifier)
+
 
     @property
     def type(self) -> str:

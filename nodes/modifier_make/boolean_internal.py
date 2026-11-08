@@ -23,6 +23,18 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle as mlr
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
+
+def blender_solver(solver):
+    """
+    The Boolean modifier's identifier for a solver in the running Blender: Blender 4.x calls the
+    simple solver FAST, 5.x calls it FLOAT, and MANIFOLD only exists from 4.5. Falls back to EXACT.
+    """
+    available = bpy.types.BooleanModifier.bl_rna.properties['solver'].enum_items.keys()
+    for candidate in (solver, {'FLOAT': 'FAST', 'FAST': 'FLOAT'}.get(solver)):
+        if candidate in available:
+            return candidate
+    return 'EXACT'
+
 def boolean_internal(VA, PA, VB, PB, operation, solver):
     """
     Create two temporary mesh objects from the given vertices and faces,
@@ -45,7 +57,7 @@ def boolean_internal(VA, PA, VB, PB, operation, solver):
 
     mod = obj_a.modifiers.new(name="Boolean", type='BOOLEAN')
     mod.object = obj_b
-    mod.solver = solver
+    mod.solver = blender_solver(solver)
 
     if operation == 'ITX':
         mod.operation = 'INTERSECT'
@@ -89,14 +101,19 @@ class SvInternalBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
         default="ITX",
         update=updateNode)
 
+    # .blend files store the item number: keep 0 and 1 where they are, only append new items
     solver_options: EnumProperty(
         items=[
-            ("FAST", "Fast", "Fast, but does not support overlapping geometry"),
-            ("EXACT", "Exact", "Best result")
+            ("FLOAT", "Float", "Simple solver, offers good performance but lacks support for overlapping geometry.", 0),
+            ("EXACT", "Exact", "Complex solver, offers the best results and has full support for overlapping geometry, but is much slower.", 1),
+            ("MANIFOLD", "Manifold", "Fast and usually correct solver, but requires Manifold meshes (plus the special case of Difference with a plane).", 2)
         ],
         description="Select solver type for the Boolean modifier",
         default="EXACT",
         update=updateNode)
+
+    # JSON files (trees, node groups, presets) store the identifier: FAST was renamed to FLOAT
+    enum_aliases = {'solver_options': {'FAST': 'FLOAT'}}
 
     def update_mode(self, context):
         self.inputs['Verts A'].hide_safe = self.nest_objs
@@ -143,6 +160,8 @@ class SvInternalBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
         row = layout.row()
         row.prop(self, 'selected_mode', expand=True)
         layout.prop(self, "solver_options", text="Solver")
+        if self.solver_options != 'EXACT' and blender_solver(self.solver_options) == 'EXACT':
+            layout.label(text=f"{self.solver_options.title()} needs a newer Blender, using Exact", icon='INFO')        
         col = layout.column(align=True)
         col.prop(self, "nest_objs", toggle=True)
         if self.nest_objs:
