@@ -236,9 +236,9 @@ class SvOffsetLineShapelyNode(SverchCustomTreeNode, bpy.types.Node):
     end_types = [
         ('Polygon', "Polygon", "Closed polygon offset (in/out)", 0),
         ('ClosedLine', "ClosedLine", "Closed line with round caps at the seam", 1),
-        ('OpenButt', "OpenButt", "Open line, flat caps", 2),
-        ('OpenSquare', "OpenSquare", "Open line, square caps", 3),
-        ('OpenRound', "OpenRound", "Open line, round caps", 4),
+        #('OpenButt', "OpenButt", "Open line, flat caps", 2),
+        #('OpenSquare', "OpenSquare", "Open line, square caps", 3),
+        #('OpenRound', "OpenRound", "Open line, round caps", 4),
     ]
     end_type: EnumProperty(
         name="End Type",
@@ -284,21 +284,21 @@ class SvOffsetLineShapelyNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', "Quad_segs").prop_name = 'quad_segs'
         self.inputs.new('SvStringsSocket', "Arc_tol").prop_name = 'arc_tol'
 
-        self.outputs.new('SvVerticesSocket', 'Vertices_out')
-        self.outputs.new('SvStringsSocket', "Edges_out")
+        self.outputs.new('SvVerticesSocket', 'Verts')
+        self.outputs.new('SvStringsSocket', "Edges")
 
     def process(self):
         if not any(socket.is_linked for socket in list(self.outputs) + list(self.inputs)):
             return
-        if not self.inputs['Vertices_in'].is_linked:
-            raise SvNotFullyConnected(self, sockets=["Vertices_in"])
+        if not self.inputs['Verts'].is_linked:
+            raise SvNotFullyConnected(self, sockets=["Verts"])
         if not any(socket.is_linked for socket in self.outputs):
             return
         if not HAS_SHAPELY:
             return
 
         verts_in = self.inputs['Verts'].sv_get()
-        dist_in = self.inputs['Offset'].sv_get(deepcopy=False) if self.inputs['Distance'].is_linked else [[self.offset]]
+        dist_in = self.inputs['Offset'].sv_get(deepcopy=False) if self.inputs['Offset'].is_linked else [[self.offset]]
         mlim_in = self.inputs['Miter_limit'].sv_get(deepcopy=False) if self.inputs['Miter_limit'].is_linked else [[self.miter_limit]]
         qseg_in = self.inputs['Quad_segs'].sv_get(deepcopy=False) if self.inputs['Quad_segs'].is_linked else [[self.quad_segs]]
         atol_in = self.inputs['Arc_tol'].sv_get(deepcopy=False) if self.inputs['Arc_tol'].is_linked else [[self.arc_tol]]
@@ -338,12 +338,12 @@ class SvOffsetLineShapelyNode(SverchCustomTreeNode, bpy.types.Node):
                 out_e.append(e_out)
 
         if not out_v:
-            self.outputs['Vertices_out'].sv_set([])
-            self.outputs['Edges_out'].sv_set([])
+            self.outputs['Verts'].sv_set([])
+            self.outputs['Edges'].sv_set([])
             return
 
-        self.outputs['Vertices_out'].sv_set(out_v)
-        self.outputs['Edges_out'].sv_set(out_e)
+        self.outputs['Verts'].sv_set(out_v)
+        self.outputs['Edges'].sv_set(out_e)
 
 
 def register():
