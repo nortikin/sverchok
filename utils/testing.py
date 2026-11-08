@@ -606,11 +606,11 @@ class SverchokTestCase(unittest.TestCase):
         logging.getLogger().addHandler(handler)
 
         try:
-            sv_logger.debug("=== \/ === [%s] Here should be no errors === \/ ===", self.__class__.__name__)
+            sv_logger.debug(r"=== \/ === [%s] Here should be no errors === \/ ===", self.__class__.__name__)
             yield handler
             self.assertFalse(has_errors, "There were some errors logged")
         finally:
-            sv_logger.debug("=== /\ === [%s] There should be no errors === /\ ===", self.__class__.__name__)
+            sv_logger.debug(r"=== /\ === [%s] There should be no errors === /\ ===", self.__class__.__name__)
             logging.getLogger().handlers.remove(handler)
 
     def subtest_assert_equals(self, value1, value2, message=None):
