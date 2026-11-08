@@ -162,6 +162,7 @@
         - icon_name: TOOL_SETTINGS
         - SvBevelNodeMK2
         - SvIntersectEdgesNodeMK3
+        - SvOffsetLineShapelyNode
         - SvOffsetNode
         - SvOffsetLineNodeMK2
         - SvOffsetLineLiteNode

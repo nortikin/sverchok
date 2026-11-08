@@ -545,6 +545,7 @@
         - extra_menu: MeshPartialMenu
         - SvBevelNodeMK2
         - SvIntersectEdgesNodeMK3
+        - SvOffsetLineShapelyNode
         - SvOffsetNode
         - SvOffsetLineNodeMK2
         - SvOffsetLineLiteNode
