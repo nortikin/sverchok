@@ -94,6 +94,7 @@
         - SvSeparateMeshNode
         - SvSeparatePartsToIndexes
         - SvEdgenetToPathsNode
+        - SvEdgenetToSegmentsNode
         - SvLimitedDissolve
         - SvLimitedDissolveMK2
         - SvPlanarFacesNode
@@ -108,7 +109,7 @@
         - SvEdgeBoomNode
         - SvDissolveMeshElements
         - SvPols2EdgsNodeMk2
-        - SvMeshJoinNodeMk2
+        - SvMeshJoinNodeMK3
         - ---
         - SvFillsHoleNodeMK2
         - SvRecalcNormalsNode
@@ -136,7 +137,6 @@
         - SvSubdivideNodeMK2
         - SvSubdivideToQuadsNode
         - SvUnsubdivideNode
-        - SvOffsetLineNodeMK2
         - SvContourNode
         - ---
         - SvQuadriFlowNode
@@ -163,6 +163,8 @@
         - SvBevelNodeMK2
         - SvIntersectEdgesNodeMK3
         - SvOffsetNode
+        - SvOffsetLineNodeMK2
+        - SvOffsetLineLiteNode
         - SvInsetSpecialMk2
         - SvInsetFaces
         - SvLatheNode
@@ -194,11 +196,12 @@
         - SvAlignedBBoxNode
         - SvComponentAnalyzerNode
         - SvDiameterNode
-        - SvVolumeNodeMK2
+        - SvVolumeNodeMK3
         - SvAreaNodeMK2
         - DistancePPNode
         - SvWeightedVectorSumNode
         - SvDistancePointLineNode
+        - SvDistanceToEdgesNode
         - SvDistancePointPlaneNode
         - SvDistancetLineLineNode
         - SvPathLengthMk2Node
@@ -259,6 +262,7 @@
         - SvExCurveFormulaNode
         - SvExCubicSplineNode
         - SvCatmullRomSplineNode
+        - SvHobbySplineNode
         - SvTangentsCurveNode
         - SvExRbfCurveNode
         - SvExCirclifyNode
@@ -318,7 +322,7 @@
         - SvExOrthoProjectCurveNode
         - SvExCurveEndpointsNode
         - SvExCurveSegmentNode
-        - SvExCurveRangeNode
+        - SvExCurveRangeNodeMK2
         - SvExtendCurveNode
         - SvSplitCurveNode
         - SvExCurveLengthNode
@@ -689,7 +693,7 @@
         - ListShuffleNode
         - SvListSortNode
         - ListFlipNode
-        - SvListLevelsNodeMK2
+        - SvListLevelsNodeMK3
         - SvNumpyArrayNode
     - MaskListNode
     - SvMaskJoinNodeMK2
@@ -721,6 +725,7 @@
     - icon_name: RESTRICT_VIEW_OFF
     - extra_menu: ConnectionPartialMenu
     - SvViewerDrawMk4
+    - SvViewerDrawMk5
     - SvMatrixViewer28
     - SvIDXViewer28
     - SvViewer2D
@@ -732,7 +737,7 @@
     - SvCurveViewerNodeV28
     - SvPolylineViewerNode
     - SvTypeViewerNodeV28
-    - SvSkinViewerNodeV28
+    - SvSkinViewerNodeV29
     - SvMetaballOutNode
     - SvBezierCurveOutNode
     - SvNurbsCurveOutNode
@@ -768,7 +773,7 @@
     - NoteNode
     - SvGTextNode
     - ---
-    - SvStringsToolsNode
+    - SvStringsToolsNodeMK2
     - SvSimpleTextNodeMK2
 
 - Scene:
@@ -857,8 +862,8 @@
     - SvExecNodeMod
     - SvProfileNodeMK3
     - SvMeshEvalNode
-    - SvSNFunctorB
     - SvGenerativeArtNodeMK2
+    - SvEisenscriptNode
     - SvTopologySimple
     - ---
     - SvScriptNodeLite

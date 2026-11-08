@@ -35,16 +35,16 @@ class TreeCleaningTest(SverchokTestCase):
 
             self._assert_socks_equal(f_tree._from_sock.keys(),
                                      t_tree._from_sock.keys())
-            for f_s, t_s in zip(sorted(f_tree._from_sock, key=lambda k: k.name),
-                                sorted(t_tree._from_sock, key=lambda k: k.name)):
+            for f_s, t_s in zip(sorted(f_tree._from_sock, key=_path),
+                                sorted(t_tree._from_sock, key=_path)):
                 self._assert_sock_equal(f_s, t_s)
                 self._assert_sock_equal(f_tree._from_sock[f_s],
                                         t_tree._from_sock[t_s])
 
             self._assert_socks_equal(f_tree._to_socks.keys(),
                                      t_tree._to_socks.keys())
-            for f_s, t_s in zip(sorted(f_tree._to_socks, key=lambda k: k.name),
-                                sorted(t_tree._to_socks, key=lambda k: k.name)):
+            for f_s, t_s in zip(sorted(f_tree._to_socks, key=_path),
+                                sorted(t_tree._to_socks, key=_path)):
                 self._assert_sock_equal(f_s, t_s)
                 self._assert_socks_equal(f_tree._to_socks[f_s],
                                          t_tree._to_socks[t_s])

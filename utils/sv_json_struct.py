@@ -545,7 +545,7 @@ class TreeStruct(Struct):
             raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
             self._struct["outputs"][socket.identifier] = raw_struct
 
-        for prop_name in tree.keys():
+        for prop_name in _iter_saved_prop_names(tree):
             prop = BPYProperty(tree, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -657,7 +657,7 @@ class NodeStruct(Struct):
             del self._struct["attributes"]["parent"]
 
         # add non default node properties
-        for prop_name in node.keys():
+        for prop_name in _iter_saved_prop_names(node):
             prop = BPYProperty(node, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -764,7 +764,7 @@ class SocketStruct(Struct):
         _set_optional(self._struct, "attributes", self._struct["attributes"])
 
 
-        for prop_name in _iter_idprop_names(socket):
+        for prop_name in _iter_saved_prop_names(socket):
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -832,7 +832,7 @@ class InterfaceStruct(Struct):
         _set_optional(self._struct["attributes"], 'hide_value', socket.hide_value)
         _set_optional(self._struct, "attributes", self._struct["attributes"])
 
-        for prop_name in _iter_idprop_names(socket):
+        for prop_name in _iter_saved_prop_names(socket):
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
@@ -1139,6 +1139,29 @@ def _iter_idprop_names(bpy_obj) -> tuple[str, ...]:
         if "doesn't support IDProperties" in str(ex):
             return ()
         raise
+
+
+def _iter_saved_prop_names(bpy_obj) -> tuple[str, ...]:
+    """
+    Names of the properties which were set on the object, properties left at
+    their default are not listed. Up to Blender 4.x every bpy.props value which
+    was set was also stored as an IDProperty, so keys() was enough. Blender 5
+    keeps them apart from IDProperties, so keys() no longer lists them and RNA
+    is asked which Python defined properties are set.
+    """
+    names = list(_iter_idprop_names(bpy_obj))
+    seen = set(names)
+    for prop in bpy_obj.bl_rna.properties:
+        name = prop.identifier
+        if name in seen or not prop.is_runtime:
+            continue
+        try:
+            if bpy_obj.is_property_set(name):
+                names.append(name)
+                seen.add(name)
+        except TypeError:
+            continue
+    return tuple(names)
 
 
 def _set_optional(data: dict, key, value, condition=None):

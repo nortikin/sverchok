@@ -1,8 +1,8 @@
 List Input
 ==========
 
-.. image:: https://github.com/user-attachments/assets/dda5d39e-91ab-48e2-8a61-aad2dbe06a59
-  :target: https://github.com/user-attachments/assets/dda5d39e-91ab-48e2-8a61-aad2dbe06a59
+.. image:: https://github.com/user-attachments/assets/7cc7e709-ea12-47b1-bcc2-9fed1e10d6f9
+  :target: https://github.com/user-attachments/assets/7cc7e709-ea12-47b1-bcc2-9fed1e10d6f9
 
 Functionality
 -------------

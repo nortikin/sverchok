@@ -37,7 +37,7 @@ Examples
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
-* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 ---------

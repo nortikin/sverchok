@@ -12,11 +12,12 @@
 ![GitHub issues by-label](https://img.shields.io/github/issues/nortikin/sverchok/bug%20:bug:?color=%23f4f277&label=Bug)
 [![Telegram chat](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/sverchok_3d)
 [![VK](https://img.shields.io/badge/вконтакте-%232E87FB.svg?&style=for-the-badge&logo=vk&logoColor=white)](https://vk.com/sverchok_b3d)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/nortikin/sverchok)
 
 ## По-русски
 
 [EN](https://github.com/nortikin/sverchok/blob/master/README.md)   
-**Дополнение к**: [Blender](http://blender.org)  версия *2.80* и выше. Для версии *2.79*, см. [специальную инструкцию по установке](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation). 
+**Дополнение к**: [Blender](http://blender.org)  версия 5.1, 4.5, 3.6, 2.8. Для версии *2.79*, см. [специальную инструкцию по установке](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation). 
 
 **Текущая версия**: Смотри настройки Сверчка или панель   
 **Лицензия**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   

@@ -1,8 +1,10 @@
 Mesh Viewer
 ===========
 
-.. image:: https://user-images.githubusercontent.com/14288520/190240580-873e87cf-17e4-4e19-9e49-2ca4e02b8a6d.png
-  :target: https://user-images.githubusercontent.com/14288520/190240580-873e87cf-17e4-4e19-9e49-2ca4e02b8a6d.png
+.. image:: https://github.com/user-attachments/assets/f4f4f5be-6914-4711-b876-f28f9ee6af98
+  :target: https://github.com/user-attachments/assets/f4f4f5be-6914-4711-b876-f28f9ee6af98
+
+------
 
 .. image:: https://user-images.githubusercontent.com/14288520/190859387-573095d4-9731-4e81-82b2-94f1d9c63a3b.png
   :target: https://user-images.githubusercontent.com/14288520/190859387-573095d4-9731-4e81-82b2-94f1d9c63a3b.png
@@ -118,3 +120,13 @@ Examples
 
 .. image:: https://user-images.githubusercontent.com/28003269/91182715-93425880-e6fb-11ea-9ff5-393bbcb41490.gif
     :target: https://user-images.githubusercontent.com/28003269/91182715-93425880-e6fb-11ea-9ff5-393bbcb41490.gif
+
+
+**Dropdown menu with Viewport Display properties**
+
+.. raw:: html
+
+   <video width="700" controls>
+     <source src="https://github.com/user-attachments/assets/b3554fc9-fe93-48fe-989b-a401eda5a91b" type="video/mp4">
+   Your browser does not support the video tag.
+   </video>

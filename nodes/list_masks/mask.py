@@ -121,6 +121,8 @@ class MaskListNode(SverchCustomTreeNode, bpy.types.Node):
         changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         inputs = self.inputs
         outputs = self.outputs
         if not any(s.is_linked for s in outputs) and inputs[0].is_linked:

@@ -29,6 +29,7 @@ from gpu_extras.batch import batch_for_shader
 
 from sverchok.utils.modules.drawing_abstractions import drawing 
 from sverchok.utils.modules.shader_utils import get_2d_smooth_color_shader, get_2d_uniform_color_shader
+from sverchok.utils.sv_nodeview_draw_helper import scale_nodeview_location
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
@@ -101,7 +102,8 @@ def fill_points_colors(vectors_color, data, color_per_point, random_colors):
 
 def get_drawing_location(node):
     x, y = node.get_offset()
-    return x * node.location_theta, y * node.location_theta
+    return scale_nodeview_location(x, y)
+
 
 def view_2d_geom(x, y, args):
     """

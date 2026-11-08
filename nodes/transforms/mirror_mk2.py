@@ -77,7 +77,7 @@ def mirror_plane_point_and_normal(vertices, points, normals):
         n = Vector(normal)
         v = Vector(i)
         r = (v - center).reflect(n) + center
-        vert.append(r)
+        vert.append(r[:])
     return vert
 
 def mirror_axis_coordinate(vertex, axis):

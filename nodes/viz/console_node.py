@@ -7,9 +7,12 @@
 
 # pylint: disable=c0103
 
+import io
 import os
-import numpy as np
+import token
+import tokenize
 import itertools
+import numpy as np
 
 import bpy
 import gpu
@@ -22,7 +25,6 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
-from sverchok.utils.modules.drawing_abstractions import drawing
 #from sverchok.utils.decorators_compilation import njit
 
 def get_desired_xy(node):
@@ -38,65 +40,24 @@ bitmap_font_location = os.path.join(sv_path, 'utils', 'modules', 'bitmap_font')
 
 lookup_dict_data = {}
 
-no_vertex_shader = '''
-    uniform mat4 viewProjectionMatrix;
-
-    in vec2 texCoord;
-    in vec2 pos;
-    uniform float x_offset;
-    uniform float y_offset;    
-
-    out vec2 texCoord_interp;
-
+# shader bodies only, declarations come from GPUShaderCreateInfo (see build_shader)
+vertex_shader = '''
     void main()
     {
-       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
-       gl_Position.z = 1.0;
+       v_lexer = lexer;
+       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0, 1.0);
        texCoord_interp = texCoord;
     }
 '''
-no_fragment_shader = '''
-    in vec2 texCoord_interp;
 
-    out vec4 fragColor;
-    
-    uniform sampler2D image;
-    
+no_fragment_shader = '''
     void main()
     {
         fragColor = texture(image, texCoord_interp);
     }
 '''
 
-vertex_shader = '''
-    uniform mat4 viewProjectionMatrix;
-
-    in vec2 texCoord;
-    in vec2 pos;
-    in float lexer;
-    uniform float x_offset;
-    uniform float y_offset;    
-
-    out float v_lexer;
-    out vec2 texCoord_interp;
-
-    void main()
-    {
-       v_lexer = lexer;
-       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
-       gl_Position.z = 1.0;
-       texCoord_interp = texCoord;
-    }
-'''
-
 fragment_shader = '''
-    in float v_lexer;
-    in vec2 texCoord_interp;
-
-    out vec4 fragColor;
-    
-    uniform sampler2D image;
-    
     void main()
     {
         vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
@@ -117,27 +78,10 @@ lexed_colors = [
     'opColor', 'commentColor', 'name2Color', 'name3Color', 'qualifierColor', 'bgColor'
 ]
 
-lexed_fragment_shader = '''
-    in float v_lexer;
-    in vec2 texCoord_interp;
+# the 13 colours go in a uniform buffer: as push constants they exceed the 128 bytes Blender guarantees
+LEX_COLORS_STRUCT = "struct LexColors {\n" + "".join(f"    vec4 {name};\n" for name in lexed_colors) + "};\n"
 
-    out vec4 fragColor;
-    
-    uniform sampler2D image;
-    uniform vec4 stringColor;
-    uniform vec4 numberColor;
-    uniform vec4 name1Color;
-    uniform vec4 parenColor;
-    uniform vec4 braceColor;
-    uniform vec4 bracketColor;
-    uniform vec4 opColor;
-    uniform vec4 equalsColor;
-    uniform vec4 commentColor;
-    uniform vec4 name2Color;
-    uniform vec4 name3Color;
-    uniform vec4 qualifierColor;
-    uniform vec4 bgColor;
-    
+lexed_fragment_shader = '''
     void main()
     {
         vec4 test_tint = vec4(0.0, 0.0, 1.0, 1.0);
@@ -145,23 +89,23 @@ lexed_fragment_shader = '''
 
         int cIndex = int(v_lexer);
 
-        if (cIndex == 1) { test_tint = name1Color; }
-        else if (cIndex == 2) { test_tint = numberColor; }
-        else if (cIndex == 3) { test_tint = stringColor; }
-        else if (cIndex == 7 || cIndex == 8) { test_tint = parenColor; }
-        else if (cIndex == 9 || cIndex == 10) { test_tint = bracketColor; }
-        else if (cIndex == 22) { test_tint = equalsColor; }
-        else if (cIndex == 25 || cIndex == 26) { test_tint = braceColor; }
-        else if (cIndex == 53 || cIndex == 54) { test_tint = opColor; }
-        else if (cIndex == 55 || cIndex == 61 || cIndex == 58) { test_tint = commentColor; }
-        else if (cIndex == 90) { test_tint = name2Color; }
-        else if (cIndex == 91) { test_tint = name3Color; }
-        else if (cIndex == 92) { test_tint = qualifierColor; }
+        if (cIndex == 1) { test_tint = lex.name1Color; }
+        else if (cIndex == 2) { test_tint = lex.numberColor; }
+        else if (cIndex == 3) { test_tint = lex.stringColor; }
+        else if (cIndex == 7 || cIndex == 8) { test_tint = lex.parenColor; }
+        else if (cIndex == 9 || cIndex == 10) { test_tint = lex.bracketColor; }
+        else if (cIndex == 22) { test_tint = lex.equalsColor; }
+        else if (cIndex == 25 || cIndex == 26) { test_tint = lex.braceColor; }
+        else if (cIndex == 53 || cIndex == 54) { test_tint = lex.opColor; }
+        else if (cIndex == 55 || cIndex == 61 || cIndex == 58) { test_tint = lex.commentColor; }
+        else if (cIndex == 90) { test_tint = lex.name2Color; }
+        else if (cIndex == 91) { test_tint = lex.name3Color; }
+        else if (cIndex == 92) { test_tint = lex.qualifierColor; }
 
         vec4 pixelColor = texture(image, texCoord_interp);
 
         if (length(pixelColor.xyz) < 0.0001){
-            fragColor = mix(bgColor, texture(image, texCoord_interp) * test_tint, 0.5);
+            fragColor = mix(lex.bgColor, texture(image, texCoord_interp) * test_tint, 0.5);
         }
         else{
             fragColor = texture(image, texCoord_interp) * test_tint;
@@ -169,6 +113,57 @@ lexed_fragment_shader = '''
 
     }
 '''
+
+
+_gpu_cache = {}
+
+
+def get_font_texture():
+    """
+    the 256*256 greyscale atlas, uploaded once and shared by all console nodes.
+    replaces the bgl glGenTextures / glTexImage2D path (no-ops since Blender 3.5)
+    """
+    tex = _gpu_cache.get('texture')
+    if tex is None:
+        data = np.load(get_font_pydata_location())['a'].astype(np.float32)
+        rgba = np.empty((data.size, 4), dtype=np.float32)
+        rgba[:, :3] = data[:, None]
+        rgba[:, 3] = 1.0
+        buf = gpu.types.Buffer('FLOAT', rgba.size, rgba.ravel())
+        tex = _gpu_cache['texture'] = gpu.types.GPUTexture((256, 256), format='RGBA16F', data=buf)
+        if hasattr(tex, 'filter_mode'):
+            tex.filter_mode(True)
+    return tex
+
+
+def build_shader(syntax_mode):
+    shader = _gpu_cache.get(syntax_mode)
+    if shader is not None:
+        return shader
+
+    iface = gpu.types.GPUStageInterfaceInfo(f"sv_console_iface_{syntax_mode}")
+    iface.smooth('VEC2', "texCoord_interp")
+    iface.flat('FLOAT', "v_lexer")
+
+    info = gpu.types.GPUShaderCreateInfo()
+    info.push_constant('MAT4', "viewProjectionMatrix")
+    info.push_constant('FLOAT', "x_offset")
+    info.push_constant('FLOAT', "y_offset")
+    if syntax_mode == "Code":
+        info.typedef_source(LEX_COLORS_STRUCT)
+        info.uniform_buf(0, "LexColors", "lex")
+    info.sampler(0, 'FLOAT_2D', "image")
+    info.vertex_in(0, 'VEC2', "pos")
+    info.vertex_in(1, 'VEC2', "texCoord")
+    info.vertex_in(2, 'FLOAT', "lexer")
+    info.vertex_out(iface)
+    info.fragment_out(0, 'VEC4', "fragColor")
+    info.vertex_source(vertex_shader)
+    info.fragment_source({
+        "None": no_fragment_shader, "f1": fragment_shader, "Code": lexed_fragment_shader}[syntax_mode])
+
+    shader = _gpu_cache[syntax_mode] = gpu.shader.create_from_info(info)
+    return shader
 
 
 def get_font_pydata_location():
@@ -189,125 +184,123 @@ def random_color_chars(node):
     floats = np.array(ints, dtype='int').repeat(6).tolist()
     return floats
 
+def safe_tokens(text):
+    """
+    yields (token, row_offset). Since Python 3.12 tokenize uses the C tokenizer and raises on
+    anything that isn't valid Python (it used to emit ERRORTOKEN and carry on). On an error we
+    skip the offending line and resume tokenizing from the next one, so one bad line doesn't
+    stop the rest of the text from being processed.
+    """
+    lines = text.splitlines(keepends=True)
+    offset = 0
+    while offset < len(lines):
+        with io.StringIO("".join(lines[offset:])) as f:
+            try:
+                for tok in tokenize.generate_tokens(f.readline):
+                    yield tok, offset
+                return
+            except (tokenize.TokenError, SyntaxError) as err:
+                if isinstance(err, SyntaxError):
+                    lineno = err.lineno
+                else:
+                    lineno = err.args[1][0] if len(err.args) > 1 and err.args[1] else None
+                if not lineno:
+                    return
+                offset += lineno
+
+
+# color categories, these are the indices the shaders switch on (kept stable, independent of
+# the token module whose numbering changes between Python versions)
+LEX_NAME, LEX_NUMBER, LEX_STRING = 1, 2, 3
+LEX_PAREN, LEX_BRACKET, LEX_EQUALS, LEX_BRACE = 7, 9, 22, 25
+LEX_OP, LEX_COMMENT = 54, 55
+LEX_KEYWORD, LEX_BUILTIN, LEX_QUALIFIER = 90, 91, 92
+
+KEYWORDS = {
+    'print', 'break', 'continue', 'return', 'while', 'or', 'and', 'not', 'is', 'dir', 'pass',
+    'if', 'elif', 'else', 'in', 'as', 'with', 'from', 'import', 'for', 'global', 'nonlocal',
+    'try', 'except', 'finally', 'raise', 'assert', 'del', 'async', 'await'}
+QUALIFIERS = {'def', 'class', 'lambda'}
+BUILTINS = {'False', 'True', 'None', 'yield', 'repr', 'range', 'enumerate', 'len', 'zip', 'self'}
+
+STRING_TYPES = {token.STRING} | {getattr(token, n) for n in ('FSTRING_START', 'FSTRING_MIDDLE', 'FSTRING_END',
+                                                           'TSTRING_START', 'TSTRING_MIDDLE', 'TSTRING_END')
+                                 if hasattr(token, n)}
+SKIP_TYPES = {token.ENDMARKER, token.NEWLINE, token.NL, token.INDENT, token.DEDENT, token.ENCODING}
+OP_CATEGORIES = {
+    token.LPAR: LEX_PAREN, token.RPAR: LEX_PAREN,
+    token.LSQB: LEX_BRACKET, token.RSQB: LEX_BRACKET,
+    token.LBRACE: LEX_BRACE, token.RBRACE: LEX_BRACE,
+    token.EQUAL: LEX_EQUALS}
+
+
+def token_category(tok):
+    if tok.type == token.NAME:
+        if tok.string in KEYWORDS:
+            return LEX_KEYWORD
+        if tok.string in QUALIFIERS:
+            return LEX_QUALIFIER
+        if tok.string in BUILTINS:
+            return LEX_BUILTIN
+        return LEX_NAME
+    if tok.type == token.NUMBER:
+        return LEX_NUMBER
+    if tok.type in STRING_TYPES:
+        return LEX_STRING
+    if tok.type == token.COMMENT:
+        return LEX_COMMENT
+    if tok.type == token.OP:
+        return OP_CATEGORIES.get(tok.exact_type, LEX_OP)
+    return LEX_NAME
+
+
 def syntax_highlight_basic(node):
     """
-    this uses the built in lexer/tokenizer in python to identify part of code
-    will return a meaningful lookuptable for index colours per character
+    uses python's tokenizer to identify parts of code, returns a color category per character
     """
-    import tokenize
-    import io
-    import token
+    width = node.terminal_width
+    array_size = width * node.num_rows
+    categories = np.full(array_size, float(LEX_NAME))
 
-    text = node.terminal_text
-    token_dict = tokenize.tok_name
-    """
-    in py3.7 this is different than py3.9+ 
+    # terminal_text is padded with trailing spaces to a rectangular grid. Tokenize the unpadded
+    # lines instead: positions are identical, and a padded "\\" line continuation is a syntax error
+    text = "\n".join(line.rstrip() for line in node.terminal_text.split("\n"))
 
-    print(tokenize.tok_name) #   <--- dict of token-kinds.
+    for tok, row_offset in safe_tokens(text):
+        if tok.type in SKIP_TYPES or not tok.string or tok.start == tok.end:
+            continue
+        (row_start, char_start), (row_end, char_end) = tok.start, tok.end
+        index1 = (row_start - 1 + row_offset) * width + char_start
+        index2 = (row_end - 1 + row_offset) * width + char_end
+        categories[max(index1, 0):min(index2, array_size)] = token_category(tok)
 
-    {0: 'ENDMARKER', 1: 'NAME', 2: 'NUMBER', 3: 'STRING', 4: 'NEWLINE', 5: 'INDENT', 
-    6: 'DEDENT', 7: 'LPAR', 8: 'RPAR', 9: 'LSQB', 10: 'RSQB', 11: 'COLON', 
-    12: 'COMMA', 13: 'SEMI', 14: 'PLUS', 15: 'MINUS', 16: 'STAR', 17: 'SLASH', 
-    18: 'VBAR', 19: 'AMPER', 20: 'LESS', 21: 'GREATER', 22: 'EQUAL', 23: 'DOT', 
-    24: 'PERCENT', 25: 'LBRACE', 26: 'RBRACE', 27: 'EQEQUAL', 28: 'NOTEQUAL', 
-    29: 'LESSEQUAL', 30: 'GREATEREQUAL', 31: 'TILDE', 32: 'CIRCUMFLEX', 
-    33: 'LEFTSHIFT', 34: 'RIGHTSHIFT', 35: 'DOUBLESTAR', 36: 'PLUSEQUAL', 
-    37: 'MINEQUAL', 38: 'STAREQUAL', 39: 'SLASHEQUAL', 40: 'PERCENTEQUAL', 
-    41: 'AMPEREQUAL', 42: 'VBAREQUAL', 43: 'CIRCUMFLEXEQUAL', 44: 'LEFTSHIFTEQUAL', 
-    45: 'RIGHTSHIFTEQUAL', 46: 'DOUBLESTAREQUAL', 47: 'DOUBLESLASH', 48: 'DOUBLESLASHEQUAL', 
-    49: 'AT', 50: 'ATEQUAL', 51: 'RARROW', 52: 'ELLIPSIS', 53: 'COLONEQUAL', 
-    54: 'OP', 55: 'AWAIT', 56: 'ASYNC', 57: 'TYPE_IGNORE', 58: 'TYPE_COMMENT', 
-    59: 'ERRORTOKEN', 60: 'COMMENT', 61: 'NL', 62: 'ENCODING', 63: 'N_TOKENS', 256: 'NT_OFFSET'
-    }
-    """
-
-    array_size = node.terminal_width * node.num_rows
-    ones = np.ones(array_size)
-
-    with io.StringIO(text) as f:
-
-        tokens = tokenize.generate_tokens(f.readline)
-        for token in tokens:
-
-            if token.type in (0, 4, 56, 256):
-                continue
-            if not token.string or (token.start == token.end):
-                continue
-
-            # if token.type != 1:
-            #    print(f"token.type, {token.type} , precise token={token.exact_type} ({token_dict.get(token.exact_type)}) ---> {token.string}")
-
-            token_type = token.type
-            
-            if token.type == 1:
-                if token.string in {
-                        'print', 'break', 'continue', 'return', 'while', 'or', 'and', 'dir',
-                        'if', 'else', 'in', 'as', 'out', 'with', 'from', 'import', 'with', 'for',
-                        'try', 'except', 'finally'}:
-                    token_type = 90
-                elif token.string in {'def', 'class', 'lambda'}:
-                    token_type = 92
-                elif token.string in {'False', 'True', 'yield', 'repr', 'range', 'enumerate'}:
-                    token_type = 91
-
-            elif token.type == 54:
-                # OPS
-                # 7: 'LPAR', 8: 'RPAR
-                # 9: 'LSQB', 10: 'RSQB'
-                # 25: 'LBRACE', 26: 'RBRACE'
-                if token.exact_type in {7, 8, 9, 10, 25, 26}:
-                    token_type = token.exact_type
-
-                elif token.exact_type == 22:
-                    token_type = token.exact_type
-
-            # print(token)
-            #  start = (line number, 1 indexed) , (char index, 0 indexed)
-            # print('|start:', token.start, '|end:', token.end, "[", token.exact_type, token.type, "]")
-            current_type = float(token_type)
-            row_start, char_start = token.start[0]-1, token.start[1]
-            row_end, char_end = token.end[0]-1, token.end[1]
-            index1 = (row_start * node.terminal_width) + char_start
-            index2 = (row_end * node.terminal_width) + char_end
-
-            np.put(ones, np.arange(index1, index2), [current_type])
-            
-
-    # print(ones.tolist())
-    final_ones = ones.reshape((-1, node.terminal_width))
-    return final_ones
+    return categories.reshape((-1, width))
 
 def filter_incoming(socket_data):
     """
     a preprocessing step, inefficient, to replace all long string tokens with an abbreviated line + [...]
     """
 
-    import tokenize
-    import io
-    import token
     import textwrap
 
     text = socket_data[0]
     line_indices_done = set()
 
     replacements = {}
-    with io.StringIO(text) as f:
-        tokens = tokenize.generate_tokens(f.readline)
+    for tok, row_offset in safe_tokens(text):
+        if tok.type != token.STRING:
+            continue
+        if not tok.start[0] == tok.end[0]:
+            # this is a multiline nicely formatted textstring.. should be OK.
+            continue
+        if not ((tok.end[1] - tok.start[1]) > 80):
+            continue
 
-        for token in tokens:
-            if not token.type == 3:
-                continue
-            if not token.start[0] == token.end[0]:
-                # this is a multiline nicely formatted textstring.. should be OK.
-                continue
-            if not ((token.end[1] - token.start[1]) > 80):
-                continue
-
-            # if reaches here, then we have a single line, very long string
-            # print(token.string)
-            suggested_line = textwrap.shorten(token.string, width=80) + "\""
-            replacements[(token.start, token.end)] = suggested_line
-            # print(suggested_line)
+        # if reaches here, then we have a single line, very long string
+        suggested_line = textwrap.shorten(tok.string, width=80) + "\""
+        start = (tok.start[0] + row_offset, tok.start[1])
+        end = (tok.end[0] + row_offset, tok.end[1])
+        replacements[(start, end)] = suggested_line
 
     socket_data = socket_data[0].splitlines()
     for ridx, proposal in replacements.items():
@@ -390,25 +383,39 @@ def terminal_text_to_uv(lines):
     return uvs
 
 def simple_console_xy(context, args, loc):
-    texture, config = args
-    act_tex = drawing.new_buffer_texture()
-    drawing.bind_texture_2d(texture.texture_dict['texture'])
-    config.shader.bind()
-    
-    # if not config.syntax_mode == "None":
-    matrix = gpu.matrix.get_projection_matrix()
-    config.shader.uniform_float("viewProjectionMatrix", matrix)
-    
+    _, config = args
+    if config.failed:
+        return
+    try:
+        _draw_console(config, loc)
+    except Exception as err:
+        # report once, then stay silent until the node is processed again
+        config.failed = True
+        print(f"Console node: drawing disabled, {type(err).__name__}: {err}")
+
+
+def _draw_console(config, loc):
+    shader = build_shader(config.syntax_mode)
+    if config.batch is None:
+        verts, uvs, lexer = config.data
+        if lexer is None:
+            lexer = [0.0] * len(verts)
+        config.batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uvs, "lexer": lexer})
+
+    shader.bind()
+    shader.uniform_float("viewProjectionMatrix", gpu.matrix.get_projection_matrix())
+
     if config.syntax_mode == "Code":
-        for color_name, color_value in config.colors.items():
-            config.shader.uniform_float(color_name, color_value)
+        if getattr(config, 'colors_ubo', None) is None:
+            data = np.array([config.colors[name] for name in lexed_colors], dtype=np.float32).ravel()
+            config.colors_ubo = gpu.types.GPUUniformBuf(gpu.types.Buffer('FLOAT', len(data), data.tolist()))
+        shader.uniform_block("lex", config.colors_ubo)
 
     x, y = loc
-
-    config.shader.uniform_float("x_offset", x)
-    config.shader.uniform_float("y_offset", y)
-    config.shader.uniform_int("image", act_tex)
-    config.batch.draw(config.shader)
+    shader.uniform_float("x_offset", x)
+    shader.uniform_float("y_offset", y)
+    shader.uniform_sampler("image", get_font_texture())
+    config.batch.draw(shader)
 
 #@njit(cache=True)
 def process_grid_for_shader(grid):
@@ -423,22 +430,6 @@ def process_uvs_for_shader(node):
     uv_indices = terminal_text_to_uv(node.terminal_text)
     return list(itertools.chain.from_iterable(uv_indices))
 
-
-def generate_batch_shader(node, data):
-    verts, uv_indices, lexer = data
-    # print("len(verts)", len(verts), "len(uv_indices)", len(uv_indices))
-
-    if node.syntax_mode == "None":
-        shader = gpu.types.GPUShader(no_vertex_shader, no_fragment_shader)
-        batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices})
-    elif node.syntax_mode == "Code":
-        shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
-        batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
-    elif node.syntax_mode == "f1":
-        shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
-        batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
-    
-    return batch, shader
 
 class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
     
@@ -467,9 +458,6 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
     
-    # for now all such nodes will use the same texture.
-    texture_dict = {}
-
     local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, name="scale", update=updateNode)
     show_me: bpy.props.BoolProperty(default=True, name="show me", update=updateNode)
 
@@ -503,23 +491,6 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
         char_height = int(32 * self.local_scale)
         return get_console_grid(char_width, char_height, self.terminal_width, self.num_rows)
 
-    def get_font_texture(self):
-        if not self.texture_dict:
-            filepath = get_font_pydata_location()
-            # this is a compressed npz, which we can dict lookup.
-            found_data = np.load(filepath)
-            data = found_data['a']
-
-            dsize = data.size
-            data = data.repeat(3).reshape(-1, 3)
-            data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
-            name = drawing.new_buffer_texture()
-            drawing.generate_textures(name)
-
-            self.texture_dict['texture'] = name[0]
-            self.texture_dict['texture_data'] = data
-           
-  
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
         self.id_data.update_gl_scale_info()
@@ -544,12 +515,6 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
             row = col.row()
             row.prop(self, color_name)
     
-    def init_texture(self, width, height):
-        texname = self.texture_dict['texture']
-        data = self.texture_dict['texture_data']
-        drawing.init_complex_texture(width, height, texname, data, 'RGBA')
-
-
     def set_node_props(self, socket_data):
         multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
         valid_multiline = '\n'.join(multiline)
@@ -597,12 +562,8 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
             return
 
         self.terminal_text_to_config()
-        self.get_font_texture()
-        self.init_texture(256, 256)
 
         config = lambda: None
-        texture = lambda: None
-        texture.texture_dict = self.texture_dict
 
         lexer = self.get_lexer()
         grid = self.prepare_for_grid()
@@ -611,9 +572,9 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
         verts = process_grid_for_shader(grid)
         uvs = process_uvs_for_shader(self)
 
-        batch, shader = generate_batch_shader(self, (verts, uvs, lexer))
-        config.batch = batch
-        config.shader = shader
+        config.data = (verts, uvs, lexer)
+        config.batch = None   # built on first draw, needs the GPU context
+        config.failed = False
         config.syntax_mode = self.syntax_mode
 
         if self.syntax_mode == "Code":
@@ -625,7 +586,7 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
             'loc': get_desired_xy,
             'mode': 'custom_function_context', 
             'custom_function': simple_console_xy,
-            'args': (texture, config)
+            'args': (None, config)
         }
         nvBGL2.callback_enable(n_id, draw_data)
 

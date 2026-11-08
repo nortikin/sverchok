@@ -22,7 +22,7 @@ from functools import wraps
 from math import radians, ceil
 import itertools
 import copy
-from itertools import zip_longest, chain, cycle, islice
+from itertools import zip_longest, repeat, chain, cycle, islice
 import bpy
 from mathutils import Vector, Matrix
 from numpy import (
@@ -137,6 +137,20 @@ def match_long_repeat(lsts):
         else:
             tmp.append(repeat_last(l))
     return list(map(list, zip(*zip(*tmp))))
+
+def zip_to_first(first, *others):
+    n = len(first)
+
+    iterables = [first]
+
+    for seq in others:
+        if not seq:
+            raise ValueError("Cannot extend empty sequence by last element")
+
+        extended = chain(seq, repeat(seq[-1]))
+        iterables.append(islice(extended, n))
+
+    return zip(*iterables)
 
 def zip_long_repeat(*lists):
     objects = match_long_repeat(lists)

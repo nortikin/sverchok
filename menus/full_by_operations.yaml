@@ -104,6 +104,7 @@
             - SvExCurveFormulaNode
             - SvExCubicSplineNode
             - SvCatmullRomSplineNode
+            - SvHobbySplineNode
             - SvTangentsCurveNode
             - SvExRbfCurveNode
             - SvExCirclifyNode
@@ -231,6 +232,7 @@
             - SvSeparateMeshNode
             - SvSeparatePartsToIndexes
             - SvEdgenetToPathsNode
+            - SvEdgenetToSegmentsNode
             - SvLimitedDissolve
             - SvLimitedDissolveMK2
             - SvPlanarFacesNode
@@ -245,7 +247,7 @@
             - SvEdgeBoomNode
             - SvDissolveMeshElements
             - SvPols2EdgsNodeMk2
-            - SvMeshJoinNodeMk2
+            - SvMeshJoinNodeMK3
             - ---
             - SvFillsHoleNodeMK2
             - SvRecalcNormalsNode
@@ -280,7 +282,6 @@
             - SvSubdivideNodeMK2
             - SvSubdivideToQuadsNode
             - SvUnsubdivideNode
-            - SvOffsetLineNodeMK2
             - SvContourNode
             - ---
             - SvQuadriFlowNode
@@ -436,11 +437,12 @@
         - SvAlignedBBoxNode
         - SvComponentAnalyzerNode
         - SvDiameterNode
-        - SvVolumeNodeMK2
+        - SvVolumeNodeMK3
         - SvAreaNodeMK2
         - DistancePPNode
         - SvWeightedVectorSumNode
         - SvDistancePointLineNode
+        - SvDistanceToEdgesNode
         - SvDistancePointPlaneNode
         - SvDistancetLineLineNode
         - SvPathLengthMk2Node
@@ -492,7 +494,7 @@
         - SvExOrthoProjectCurveNode
         - SvExCurveEndpointsNode
         - SvExCurveSegmentNode
-        - SvExCurveRangeNode
+        - SvExCurveRangeNodeMK2
         - SvExtendCurveNode
         - SvSplitCurveNode
         - SvExCurveLengthNode
@@ -544,6 +546,8 @@
         - SvBevelNodeMK2
         - SvIntersectEdgesNodeMK3
         - SvOffsetNode
+        - SvOffsetLineNodeMK2
+        - SvOffsetLineLiteNode
         - SvInsetSpecialMk2
         - SvInsetFaces
         - SvLatheNode
@@ -629,7 +633,7 @@
         - ListReverseNode
         - ListShuffleNode
         - ListFlipNode
-        - SvListLevelsNodeMK2
+        - SvListLevelsNodeMK3
         - SvListModifierNode
         - SvFixEmptyObjectsNode
     - List items/masks:
@@ -696,8 +700,8 @@
     - SvExecNodeMod
     - SvProfileNodeMK3
     - SvMeshEvalNode
-    - SvSNFunctorB
     - SvGenerativeArtNodeMK2
+    - SvEisenscriptNode
     - SvTopologySimple
     - ---
     - SvScriptNodeLite
@@ -793,6 +797,7 @@
     - V OpenGL:
         - color_category: Viz
         - SvViewerDrawMk4
+        - SvViewerDrawMk5
         - SvCurveViewerDrawNode
         - SvSurfaceViewerDrawNode
         - SvSolidViewerNode
@@ -806,7 +811,7 @@
         - SvCurveViewerNodeV28
         - SvPolylineViewerNode
         - SvTypeViewerNodeV28
-        - SvSkinViewerNodeV28
+        - SvSkinViewerNodeV29
         - SvMetaballOutNode
         - SvBezierCurveOutNode
         - SvNurbsCurveOutNode
@@ -865,7 +870,7 @@
     - SvGTextNode
     - ---
     - SvDatetimeStrings
-    - SvStringsToolsNode
+    - SvStringsToolsNodeMK2
     - SvSimpleTextNodeMK2
 
 ################################################################################

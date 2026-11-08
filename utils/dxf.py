@@ -973,7 +973,7 @@ def export(fp,dxf,scal=1000.0,t_scal=1.0,info='',do_block=False):
         lib = BlockLibrary(doc)
         
         # Создаем блок
-        lib.make_block(do_block, dxf, scal, [lpols,ledgs,lhatc,ldims])
+        lib.make_block(do_block, dxf, scal)
         doc = lib.return_block()
         # Вставляем блок
         #lib.place_block('BOLT_M10', insert=(0, 0))
@@ -999,17 +999,18 @@ class BlockLibrary:
         self.doc = doc
         self.block = []
 
-    def make_block(self, name='Sverchok_block', dxf=[], scal=[], layers=[]):
+    def make_block(self, name='Sverchok_block', dxf=[], scal=[]):
         """Создает блок"""
         if not dxf:
             return
-        lpols,ledgs,lhatc,ldims = layers
         block = self.doc.blocks.new(name=name)
+        num = 0
         for data in dxf:
+            layer = 'Sverchok_'+data[0].__repr__()[5:-2]+'_'+str(num)
             if data[0].__repr__() == '<DXF Pols>':
-                self.pols(block,data,scal,lpols) #(p,v,d1,d2,scal,lpols,msp)
+                self.pols(block,data,scal,layer) #(p,v,d1,d2,scal,lpols,msp)
             if data[0].__repr__() == '<DXF Lines>':
-                self.edgs(block,data,scal,ledgs)
+                self.edgs(block,data,scal,layer)
             if data[0].__repr__() == '<DXF Hatch>':
                 pass
                 #self.hatc(block,data,scal,lhatc)
@@ -1017,7 +1018,8 @@ class BlockLibrary:
                 #self.dims(block,data,scal,ldims)
                 pass
             if data[0].__repr__() == '<DXF Circles>':
-                self.crcl(block,data,scal,ledgs)
+                self.crcl(block,data,scal,layer)
+            num += 1
         self.block = [block]
 
     def pols(self,block,data,scal,lpols):

@@ -698,6 +698,9 @@ class SvVerticesSocket(SocketDomain, NodeSocket, SvSocketCommon):
             param_node.x_ = value[0]
             param_node.y_ = value[1]
             param_node.z_ = value[2]
+    
+    def get_quick_link_to_node(self):
+        return self.get("quick_link_to_node", self.quick_link_to_node)
 
 
     # this property is needed for back capability, after renaming prop to default_property

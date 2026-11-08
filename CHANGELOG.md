@@ -1,3 +1,18 @@
+2027.07.28
+
+- Upgrade Mesh Join Node (to MK3). Added dynamically sockets and groups. https://nortikin.github.io/sverchok/docs/nodes/modifier_change/mesh_join.html
+- Update Mesh Viewer. Added Viewport Display Properties. https://nortikin.github.io/sverchok/docs/nodes/viz/mesh_viewer.html
+
+2026.07.03
+
+- added Length param to output sockets of Curve Domain: https://nortikin.github.io/sverchok/docs/nodes/curve/curve_range.html
+
+2026.06.29
+
+- refactor List Input:
+    - https://nortikin.github.io/sverchok/docs/nodes/number/list_input.html
+    - https://github.com/nortikin/sverchok/pull/5442
+
 2024.06.01
 
 - refactor node Spacial->[Voronoi on Mesh](https://nortikin.github.io/sverchok/docs/nodes/spatial/voronoi_on_mesh.html) (Replace param 'output nesting' to 'Post processing')

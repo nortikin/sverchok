@@ -404,7 +404,7 @@ def fan_regular_pols(np_verts, np_pols,
     pol_sides = np_pols.shape[1]
     v_pols = np_verts[np_pols] #shape [num_pols, num_corners, 3]
 
-    if (len(np_distances) > 1 and np.any(np_distances != 0)) or np_distances != 0:
+    if np.any(np_distances != 0):
         if use_custom_normals:
             normals = custom_normals
         else:

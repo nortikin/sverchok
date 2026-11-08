@@ -37,7 +37,7 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Approximate NURBS Curve'
     bl_icon = 'CURVE_NCURVE'
     sv_icon = 'SV_APPROXIMATE_CURVE'
-    sv_dependencies = {'geomdl', 'scipy', 'FreeCAD'}
+    sv_dependencies = {'scipy', } #'geomdl', 'FreeCAD'}
 
     degree : IntProperty(
             name = "Degree",

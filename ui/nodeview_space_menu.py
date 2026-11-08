@@ -486,7 +486,7 @@ class CategoryMenuTemplate(SverchokContext):
             # todo also it's possible to give choice of picking one of existing node trees
             self.layout.operator("node.new_node_tree",
                                  text="New Sverchok Node Tree",
-                                 icon="RNA_ADD")
+                                 icon="RNA")
             return
         for elem in self.draw_data:
             elem.draw(self.layout)
@@ -497,14 +497,14 @@ def setup_add_menu():
     global add_node_menu
     datafiles = Path(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
 
-    default_menu_file = Path(__file__).parents[1] / 'index.yaml'
+    default_menu_file = Path(__file__).parents[1] / 'menus' / 'full_by_operations.yaml' #'index.yaml'
 
     with sv_preferences() as prefs:
         if prefs is None:
             raise Exception("Internal error: Sverchok preferences are not initialized yet at the moment of loading the menu")
         if prefs.menu_preset_usage == 'COPY':
             default_menu_file = get_menu_preset_path(prefs.menu_preset)
-            menu_file = datafiles / 'index.yaml'
+            menu_file = datafiles / 'menus' / 'full_by_operations.yaml'#'index.yaml'
             use_preset_copy = True
         else:
             menu_file = get_menu_preset_path(prefs.menu_preset)
@@ -514,6 +514,7 @@ def setup_add_menu():
         logger.info(f"Applying menu preset {default_menu_file} at startup")
         shutil.copy(default_menu_file, menu_file)
     logger.debug(f"Using menu preset file: {menu_file}")
+    print('menufile:',menu_file)
     add_node_menu = Category.from_config(yaml_parser.load(menu_file), 'All Categories', icon_name='RNA')
 
 def get_add_node_menu():
@@ -610,7 +611,7 @@ class NodeCategoryMenu(SverchokContext, bpy.types.Menu):
             cats = defaultdict(list)
             # todo replace with `bpy.types.Node.bl_rna_get_subclass_py` after dummy nodes refactoring
             for cls in iter_classes_from_module(sverchok.nodes, [bpy.types.Node]):
-                print("F", cls)
+                #print("F", cls)
                 if name := getattr(cls, 'sv_category', None):
                     cats[name].append(AddNode(cls.bl_idname))
             self._categories = cats

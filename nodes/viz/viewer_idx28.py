@@ -7,7 +7,10 @@
 
 
 import bpy
+import blf
+import os, platform, sys
 from types import SimpleNamespace
+from bpy.app.handlers import persistent
 
 from mathutils import Vector
 from mathutils.geometry import normal  # takes 3 or more! :)
@@ -27,6 +30,49 @@ def calc_median(vlist):
     for v in vlist:
         a += v
     return a / len(vlist)
+
+fonts_id_cache = {} # share font_id over stethoscope nodes
+
+@bpy.app.handlers.persistent
+def clear_font_cache_on_load(dummy):
+    '''Clear font cache on start on reload addon in development process'''
+    for K in fonts_id_cache:
+        blf.unload(K)
+        pass
+    fonts_id_cache.clear()
+    pass
+
+bpy.app.handlers.load_post.append(clear_font_cache_on_load)
+
+class SV_PT_IDXViewerFontPanelMK28(bpy.types.Panel):
+    '''Select font for text display. For numeric data, it is recommended to use monospaced text.'''
+    # Do not use that combination of params else this panel will registered in the N-panel: 
+    # bl_label = "Font Settings"
+    # bl_space_type = 'NODE_EDITOR'
+    # bl_region_type = 'UI'
+    # bl_category = "Node"
+    # bl_context = "data"
+
+    # use this combination - popover will visible only in a node
+    bl_idname="SV_PT_IDXViewerFontPanelMK28"
+    bl_label = "Font Settings"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'WINDOW'
+    bl_ui_units_x = 14 # popover width
+
+    def draw(self, context):
+        layout = self.layout
+        if hasattr(context, 'node'):
+            col0 = layout.column(align=True)
+            col0.label(text='Select fonts:')
+            col0.template_ID(context.node, "font_pointer", open="font.open", unlink="font.unlink")  # https://docs.blender.org/api/current/bpy.types.UILayout.html#bpy.types.UILayout.template_ID
+            if context.node is not None and hasattr(context.node,'font_pointer') and context.node.font_pointer:
+                font_name = context.node.font_pointer.name
+            else:
+                font_name='-'
+            col0.label(text=f'{font_name}')
+
+        pass
 
 class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
 
@@ -96,6 +142,31 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
         name='text_scale', description='Scale coefficient for text height', min=0.1,
         default=1.0, update=updateNode)
 
+    def update_font_path(self, context):
+        #clear_font_cache_on_load(None)
+        if self.font_pointer:
+            self.font_path = self.font_pointer.filepath
+        else:
+            self.font_path = ""
+        updateNode(self, context)
+        return
+
+    font_pointer: bpy.props.PointerProperty(type=bpy.types.VectorFont, update=update_font_path)
+    font_path: StringProperty(
+        name = "Font",
+        default = "",
+        update=updateNode,
+    )
+    @property
+    def font_id(self):
+        font_id = 0
+        if self.font_path in fonts_id_cache:
+            font_id = fonts_id_cache.get(self.font_path)
+        elif os.path.exists(self.font_path):
+            font_id = blf.load(self.font_path)
+            fonts_id_cache[self.font_path] = font_id
+        return font_id
+
     bg_edges_col: make_color_prop("bg_edges", (.2, .2, .2, 1.0))
     bg_faces_col: make_color_prop("bg_faces", (.2, .2, .2, 1.0))
     bg_verts_col: make_color_prop("bg_verts", (.2, .2, .2, 1.0))
@@ -127,7 +198,16 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
         elem = column_all.row()
         elem.row(align=False).prop(self, 'text_mode', expand=True,)
         elem.prop(self, 'draw_obj_idx', text="", toggle=True, icon='SNAP_VOLUME',)
-        column_all.row().prop(self, 'text_scale', text="Text Scale")
+        col = column_all.column(align=True)
+        col.prop(self, 'text_scale', text="Text Scale")
+        row4 = column_all.row(align=True)
+        row4.popover(panel="SV_PT_IDXViewerFontPanelMK28", icon='FILE_FONT', text="")
+        if self.font_pointer:
+            font_name = self.font_pointer.name
+        else:
+            font_name='-'
+        row4.label(text=font_name)
+
 
         col = column_all.column(align=True)
         for item, item_icon in zip(['vert', 'edge', 'face'], ['VERTEXSEL', 'EDGESEL', 'FACESEL']):
@@ -136,7 +216,8 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
             row.prop(self, f"numid_{item}s_col", text="")
             if self.draw_bg:
                 row.prop(self, f"bg_{item}s_col", text="")
-        
+            pass
+        return
 
     def get_settings_dict(self):
         '''Produce a dict of settings for the callback'''
@@ -156,7 +237,8 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
             'draw_obj_idx': self.draw_obj_idx,
             'draw_bface': self.draw_bface,
             'draw_bg': self.draw_bg,
-            'scale': self.get_scale()
+            'scale': self.get_scale(),
+            'font_id': int(self.font_id),
         }.copy()
 
     def draw_buttons_ext(self, context, layout):
@@ -304,7 +386,8 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
         draw_data = {
             'tree_name': self.id_data.name[:],
             'custom_function': draw_indices_2D_wbg,
-            'args': (geom, config)}
+            'args': (geom, config),
+        }
 
         callback_enable(n_id, draw_data, overlay='POST_PIXEL')
 
@@ -329,9 +412,32 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
     def toggle_viewer(self, context):
         self.activate = not self.activate
 
-def register():
-    bpy.utils.register_class(SvIDXViewer28)
+# def register():
+#     bpy.utils.register_class(SvIDXViewer28)
+# def unregister():
+#     bpy.utils.unregister_class(SvIDXViewer28)
 
+
+
+classes = [ 
+            SV_PT_IDXViewerFontPanelMK28,
+            SvIDXViewer28,
+        ]
+
+#register, unregister = bpy.utils.register_classes_factory(classes) - need individual call to clear fonts cache on reload addon
+
+@persistent
+def load_fonts_after_start(dummy):
+    from sverchok.ui.fonts.load_fonts import load_fonts
+    load_fonts()
+
+def register():
+    for class_name in classes:
+        bpy.utils.register_class(class_name)
+    clear_font_cache_on_load(None)
+    bpy.app.handlers.load_post.append(load_fonts_after_start)
 
 def unregister():
-    bpy.utils.unregister_class(SvIDXViewer28)
+    for class_name in reversed( classes ):
+        bpy.utils.unregister_class(class_name)
+    bpy.app.handlers.load_post.remove(load_fonts_after_start)

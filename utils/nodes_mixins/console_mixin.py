@@ -9,27 +9,19 @@ import re
 
 import bpy
 import numpy as np
-import gpu
-from gpu_extras.batch import batch_for_shader
-
 from sverchok.utils.sv_nodeview_draw_helper import get_console_grid, get_xy_for_bgl_drawing 
-from sverchok.utils.modules.drawing_abstractions import drawing 
 from sverchok.nodes.viz.console_node import (
     simple_console_xy, 
-    terminal_text_to_uv, 
     process_uvs_for_shader,
     syntax_highlight_basic, 
     make_color, 
     process_grid_for_shader, 
-    vertex_shader,
-    lexed_fragment_shader, 
     lexed_colors,
-    get_font_pydata_location,
 )
 
 def advanced_parse_socket(socket, node):
 
-    out = "...."
+    out = ["...."]
     if (fulldata := socket.sv_get()):
         if len(fulldata) > 0:
             try:
@@ -54,11 +46,11 @@ def advanced_parse_socket(socket, node):
                     edgeitems=10)
                 
                 if "list" in str_array:
-                    str_array = re.sub("list\((?P<list>.+?)\)", "\g<list>", str_array)
+                    str_array = re.sub(r"list\((?P<list>.+?)\)", r"\g<list>", str_array)
                 #print(str_array)
                 return (prefix + str_array).split("\n")
-            except:
-                ...
+            except Exception as err:
+                print(f"Stethoscope sv++: could not format data, {err}")
     return out
 
 
@@ -96,7 +88,6 @@ def advanced_text_decompose(content):
 
 class LexMixin():
 
-    texture_dict = {}
     console_grid_dict = {}   # shared over all insntances.
 
     name1Color: make_color("name1 color",      (0.83, 0.91, 1.00, 1.0))  # 1
@@ -118,37 +109,6 @@ class LexMixin():
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
     local_scale: bpy.props.FloatProperty(default=0.6, min=0.2, name="scale", update=lambda self, context: self.process_node(context))
 
-
-    def init_texture(self, width, height):
-        texname = self.texture_dict['texture']
-        data = self.texture_dict['texture_data']
-
-        if not 'texture_buffer' in self.texture_dict:
-            #print('initializing texture longform')
-            texture = drawing.new_buffer_texture_sized(data.size, data.tolist())
-            self.texture_dict['texture_buffer'] = texture
-        else:
-            #print("reusing")
-            texture = self.texture_dict['texture_buffer'] 
-
-        drawing.init_image_from_texture(width, height, texname, texture, 'RGBA')
-
-
-    def get_font_texture(self):
-        if not self.texture_dict:
-            filepath = get_font_pydata_location()
-            # this is a compressed npz, which we can dict lookup.
-            found_data = np.load(filepath)
-            data = found_data['a']
-
-            dsize = data.size
-            data = data.repeat(3).reshape(-1, 3)
-            data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
-            name = drawing.new_buffer_texture()
-            drawing.generate_textures(name)
-
-            self.texture_dict['texture'] = name[0]
-            self.texture_dict['texture_data'] = data        
 
     def get_lexed_colors(self):
         return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]
@@ -182,7 +142,6 @@ class LexMixin():
 
     @property
     def draw_data(self):          
-        texture = lambda: None
         config = lambda: None
 
         processed_data = advanced_parse_socket(self.inputs[0], self)
@@ -190,18 +149,15 @@ class LexMixin():
         self.adjust_position_and_dimensions(*self.dims)  # low impact i think..
 
         lexer = syntax_highlight_basic(self).repeat(6).tolist()
-        self.get_font_texture()  # [x] this is cached after 1st run
-        self.init_texture(256, 256)  # this must be done each redraw
         grid = self.prepare_for_grid()  # [x] is cached   
 
         verts = process_grid_for_shader(grid)  # not worth caching (tried!)
         uv_indices = process_uvs_for_shader(self)  # could cache if terminal text is unchanged.
 
-        texture.texture_dict = self.texture_dict
-        shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
-        batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
-        config.batch = batch
-        config.shader = shader
+        # font texture, shader and batch are created by simple_console_xy on first draw
+        config.data = (verts, uv_indices, lexer)
+        config.batch = None
+        config.failed = False
         config.syntax_mode = "Code"
         config.colors = {color_name: getattr(self, color_name)[:] for color_name in lexed_colors}
 
@@ -211,6 +167,6 @@ class LexMixin():
           'loc': get_xy_for_bgl_drawing,
           'mode': 'custom_function_context', 
           'custom_function': simple_console_xy,
-          'args': (texture, config)
+          'args': (None, config)
         }
         return draw_data

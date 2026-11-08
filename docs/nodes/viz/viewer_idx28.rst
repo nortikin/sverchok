@@ -1,11 +1,13 @@
 Viewer Index+
 =============
 
-.. image:: https://user-images.githubusercontent.com/14288520/189987500-f9bf79a3-79a2-4250-af0d-eb98372bdde8.png
-  :target: https://user-images.githubusercontent.com/14288520/189987500-f9bf79a3-79a2-4250-af0d-eb98372bdde8.png
+.. image:: https://github.com/user-attachments/assets/9f7a4617-e619-4d88-a748-e09313972054
+  :target: https://github.com/user-attachments/assets/9f7a4617-e619-4d88-a748-e09313972054
 
-.. image:: https://user-images.githubusercontent.com/14288520/190139465-2d5beff6-e871-4148-be65-03f47d951f24.png
-  :target: https://user-images.githubusercontent.com/14288520/190139465-2d5beff6-e871-4148-be65-03f47d951f24.png
+----
+
+  .. image:: https://github.com/user-attachments/assets/f3c5c274-884d-434a-b663-12cb1cb7eea5
+    :target: https://github.com/user-attachments/assets/f3c5c274-884d-434a-b663-12cb1cb7eea5
 
 Functionality
 -------------
@@ -74,6 +76,12 @@ Draw text with inex of elements
 
   .. image:: https://github.com/user-attachments/assets/070c8afa-df80-464a-a756-d59ea011db98
     :target: https://github.com/user-attachments/assets/070c8afa-df80-464a-a756-d59ea011db98
+
+Font Selector
+  The node can select font to display text
+
+  .. image:: https://github.com/user-attachments/assets/ac70e3a3-deb9-4e1b-9f47-8f949a505d3c
+    :target: https://github.com/user-attachments/assets/ac70e3a3-deb9-4e1b-9f47-8f949a505d3c
 
 Examples
 --------

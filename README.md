@@ -12,13 +12,14 @@
 ![GitHub issues by-label](https://img.shields.io/github/issues/nortikin/sverchok/bug%20:bug:?color=%23f4f277&label=Bug)
 [![Telegram chat](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/sverchok_3d)
 [![VK](https://img.shields.io/badge/вконтакте-%232E87FB.svg?&style=for-the-badge&logo=vk&logoColor=white)](https://vk.com/sverchok_b3d)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/nortikin/sverchok)
 
 [comment]: <> (To get more labels or edit current go to https://shields.io/, type Github in project URL field and you will get available labels which can be customized)
 
 ## English
 
 [RU](https://github.com/nortikin/sverchok/blob/master/README_RU.md)  
-**Addon for**: [Blender](http://blender.org) version *2.93* and above (currently tested with 5.1). For *2.79*, see [special installation instructions](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).  
+**Addon for**: [Blender](http://blender.org) version 5.1, 4.5, 3.6, 2.8. For *2.79*, see [special installation instructions](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).  
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)  
 **Prerequisites**: Some optional nodes require additional libraries. See this [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for a list of dependencies and installation instructions.  
 [**Documentation**](http://nortikin.github.io/sverchok/docs/main.html): If anything is unclear or missing in this document, please ask on the [Issue Tracker](https://github.com/nortikin/sverchok/issues). We want to improve these resources and your feedback helps!  

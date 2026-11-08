@@ -75,7 +75,7 @@ Trajectories of vertices colliding with a hard spherical mesh.
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Generator-> :doc:`Sphere </nodes/generator/sphere>`
-* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join>`
 * Transform-> :doc:`Move </nodes/transforms/move_mk3>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`

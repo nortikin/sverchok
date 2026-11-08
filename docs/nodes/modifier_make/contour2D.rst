@@ -106,7 +106,7 @@ Examples of usage
 .. image:: https://user-images.githubusercontent.com/10011941/34644864-46463d24-f33f-11e7-80c1-bb0718d9966b.png
   :target: https://user-images.githubusercontent.com/10011941/34644864-46463d24-f33f-11e7-80c1-bb0718d9966b.png
 
-* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join>`
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 

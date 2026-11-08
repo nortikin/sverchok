@@ -2552,7 +2552,7 @@
             }
           }
         },
-        "bl_idname": "SvStringsToolsNode"
+        "bl_idname": "SvStringsToolsNodeMK2"
       },
       "Viewer Index+.002": {
         "attributes": {

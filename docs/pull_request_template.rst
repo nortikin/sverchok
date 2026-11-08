@@ -18,3 +18,11 @@ Put an x letter in each brackets when you're done this item:
 - [ ] Unit-tests implemented.
 - [ ] Ready for merge.
 
+## AI Usage Disclosure
+
+If AI was used to generate some part of code or documetation, please state this fact. Examples:
+
+* No AI was used.
+* Claude / GPT / local ModelName was used for some small parts of code.
+* Claude / GPT / local model was used to design and write the entire thing.
+

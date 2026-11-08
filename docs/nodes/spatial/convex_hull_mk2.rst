@@ -61,7 +61,7 @@ Examples
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
-* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join>`
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

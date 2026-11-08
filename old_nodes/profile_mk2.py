@@ -418,7 +418,7 @@ class PathParser(object):
         # extract parens, but allow internal parens if needed.. internal parens
         # are not supported in literal_eval.
         side = component[1:-1]
-        pat = '([\(\)\-+*\/])'
+        pat = r'([\(\)\-+*\/])'
         chopped = re.split(pat, side)
 
         # - replace known variable chars with intended variable

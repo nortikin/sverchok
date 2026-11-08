@@ -8,7 +8,7 @@
             -547.0574340820312,
             204.78759765625
           ],
-          "height": 443.0,
+          "height": 439.0,
           "width": 1256.0,
           "label": "field",
           "color": [
@@ -26,7 +26,7 @@
             -673.7312622070312,
             325.0784912109375
           ],
-          "height": 481.0,
+          "height": 472.0,
           "width": 560.0,
           "label": "initial surface",
           "color": [
@@ -44,7 +44,7 @@
             -319.84234619140625,
             -53.864864349365234
           ],
-          "height": 388.0,
+          "height": 294.0,
           "width": 613.9224853515625,
           "label": "making top",
           "color": [
@@ -62,7 +62,7 @@
             -273.0513610839844,
             -28.251087188720703
           ],
-          "height": 698.0,
+          "height": 732.0,
           "width": 1333.0,
           "label": "making bottom",
           "color": [
@@ -80,7 +80,7 @@
             -345.42083740234375,
             74.20722961425781
           ],
-          "height": 518.0,
+          "height": 532.0,
           "width": 842.0,
           "label": "total mesh",
           "color": [
@@ -98,7 +98,7 @@
             -720.0,
             -237.0
           ],
-          "height": 421.0,
+          "height": 417.0,
           "width": 1200.0,
           "label": "matrix for bisect",
           "color": [
@@ -116,7 +116,7 @@
             -150.16033935546875,
             55.08168411254883
           ],
-          "height": 1051.0,
+          "height": 1147.0,
           "width": 582.0,
           "label": "panno",
           "color": [
@@ -134,7 +134,7 @@
             -591.152587890625,
             -69.03903198242188
           ],
-          "height": 791.0,
+          "height": 787.0,
           "width": 773.999755859375,
           "label": "2d",
           "color": [
@@ -152,7 +152,7 @@
             -91.44577026367188,
             68.74293518066406
           ],
-          "height": 898.0,
+          "height": 901.0,
           "width": 1148.0,
           "label": "curve shape",
           "color": [
@@ -439,7 +439,7 @@
         "attributes": {
           "location": [
             1089.9188232421875,
-            -581.5363464355469
+            -581.536376953125
           ],
           "label": "max slices",
           "parent": {
@@ -1607,57 +1607,6 @@
           }
         },
         "bl_idname": "SvMergeByDistanceNode"
-      },
-      "Mesh Join.001": {
-        "attributes": {
-          "location": [
-            1647.1758422851562,
-            162.31610107421875
-          ],
-          "parent": {
-            "type": "NODE",
-            "value": "Frame.004"
-          }
-        },
-        "inputs": {
-          "Vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "Vertices",
-            "properties": {
-              "is_mandatory": true,
-              "default_mode": "NONE"
-            }
-          },
-          "Edges": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Edges",
-            "properties": {
-              "nesting_level": 3
-            }
-          },
-          "Polygons": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Polygons",
-            "properties": {
-              "nesting_level": 3
-            }
-          }
-        },
-        "outputs": {
-          "Vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "Vertices"
-          },
-          "Edges": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Edges"
-          },
-          "Polygons": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Polygons"
-          }
-        },
-        "bl_idname": "SvMeshJoinNodeMk2"
       },
       "Mesh viewer": {
         "attributes": {
@@ -3719,6 +3668,12 @@
             3614.438232421875,
             153.97206115722656
           ],
+          "color": [
+            1.0,
+            0.5889999866485596,
+            0.21400000154972076
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.007"
@@ -3848,6 +3803,12 @@
             2769.5657348632812,
             448.5388069152832
           ],
+          "color": [
+            1.0,
+            0.5889999866485596,
+            0.21400000154972076
+          ],
+          "use_custom_color": true,
           "parent": {
             "type": "NODE",
             "value": "Frame.006"
@@ -4034,6 +3995,122 @@
           }
         },
         "bl_idname": "LineConnectNodeMK3"
+      },
+      "Mesh Join": {
+        "attributes": {
+          "location": [
+            1647.1758422851562,
+            162.31610107421875
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "inputs": {
+          "join_groups": {
+            "bl_idname": "SvStringsSocket",
+            "name": "join_groups",
+            "properties": {
+              "label": "Join Groups"
+            }
+          },
+          "vertices0": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices0",
+            "properties": {
+              "custom_draw": "draw_vertices_in_socket",
+              "label": "Vertices[0]",
+              "is_mandatory": true,
+              "default_mode": "NONE"
+            }
+          },
+          "edges0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges0",
+            "properties": {
+              "label": "Edges"
+            }
+          },
+          "polygons0": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons0",
+            "properties": {
+              "label": "Polygons"
+            }
+          },
+          "matrices0": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices0",
+            "properties": {
+              "label": "Matrices"
+            }
+          },
+          "vertices1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices1",
+            "properties": {
+              "custom_draw": "draw_vertices_in_socket",
+              "label": "Vertices[1]",
+              "is_mandatory": true,
+              "default_mode": "NONE"
+            }
+          },
+          "edges1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges1",
+            "properties": {
+              "label": "Edges",
+              "nesting_level": 3
+            }
+          },
+          "polygons1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons1",
+            "properties": {
+              "label": "Polygons",
+              "nesting_level": 3
+            }
+          },
+          "matrices1": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices1",
+            "properties": {
+              "label": "Matrices"
+            }
+          }
+        },
+        "outputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices",
+            "properties": {
+              "label": "Vertices"
+            }
+          },
+          "edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges",
+            "properties": {
+              "label": "Edges"
+            }
+          },
+          "polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "polygons",
+            "properties": {
+              "label": "Polygons"
+            }
+          },
+          "matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrices",
+            "properties": {
+              "label": "Matrices"
+            }
+          }
+        },
+        "bl_idname": "SvMeshJoinNodeMK3"
       }
     },
     "links": [
@@ -4254,28 +4331,16 @@
         "to_socket": "A"
       },
       {
-        "from_node": "Mesh Join.001",
-        "from_socket": "Vertices",
+        "from_node": "Mesh Join",
+        "from_socket": "vertices",
         "to_node": "Merge by Distance",
         "to_socket": "Vertices"
       },
       {
-        "from_node": "Mesh Join.001",
-        "from_socket": "Polygons",
+        "from_node": "Mesh Join",
+        "from_socket": "polygons",
         "to_node": "Merge by Distance",
         "to_socket": "PolyEdge"
-      },
-      {
-        "from_node": "List Join",
-        "from_socket": "data_001",
-        "to_node": "Mesh Join.001",
-        "to_socket": "Vertices"
-      },
-      {
-        "from_node": "List Join.001",
-        "from_socket": "data",
-        "to_node": "Mesh Join.001",
-        "to_socket": "Polygons"
       },
       {
         "from_node": "Bisect",
@@ -4696,6 +4761,18 @@
         "from_socket": "vout",
         "to_node": "UV Connection MK3.001",
         "to_socket": "vertices 1"
+      },
+      {
+        "from_node": "List Join",
+        "from_socket": "data_001",
+        "to_node": "Mesh Join",
+        "to_socket": "vertices0"
+      },
+      {
+        "from_node": "List Join.001",
+        "from_socket": "data",
+        "to_node": "Mesh Join",
+        "to_socket": "polygons0"
       }
     ]
   }
