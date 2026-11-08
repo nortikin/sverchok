@@ -104,9 +104,9 @@ class SvInternalBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
     # .blend files store the item number: keep 0 and 1 where they are, only append new items
     solver_options: EnumProperty(
         items=[
-            ("FLOAT", "Float", "Uses a simple solver which offers good performance but lacks support for overlapping geometry.", 0),
-            ("EXACT", "Exact", "Uses a complex solver which offers the best results and has full support for overlapping geometry, but is much slower.", 1),
-            ("MANIFOLD", "Manifold", "Uses a solver that is usually fastest but only works on Manifold meshes (plus the special case of Difference with a plane).", 2)
+            ("FLOAT", "Float", "Simple solver, offers good performance but lacks support for overlapping geometry.", 0),
+            ("EXACT", "Exact", "Complex solver, offers the best results and has full support for overlapping geometry, but is much slower.", 1),
+            ("MANIFOLD", "Manifold", "Fast and usually correct solved, but requires Manifold meshes(plus the special case of Difference with a plane).", 2)
         ],
         description="Select solver type for the Boolean modifier",
         default="EXACT",
