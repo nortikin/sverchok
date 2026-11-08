@@ -917,6 +917,7 @@
     - SvDxfImportNode
     - SvDxfExportNode
     - SvDxfLinDimsNode
+    - SvDxfAngDimsNode
     - SvDxfTextsNode
     - SvDxfHatchNode
     - SvDxfLinesNode

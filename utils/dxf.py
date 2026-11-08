@@ -754,7 +754,7 @@ def text_draw(t,scal,ltext,msp):
             textout.set_xdata("Sverchok", [(1000, metadata)])
 
 def dimensions_draw(points,scal,ldims,msp):
-    #print('LINEAR DIMS!!')
+    print('LINEAR DIMS!!',points)
     for points_ in points:
         vers = [[i*scal for i in ver] for ver in points_.vers]
         col = points_.color
@@ -769,26 +769,35 @@ def dimensions_draw(points,scal,ldims,msp):
         )
         #dim.render()
 
-def angular_dimensions_draw(ang,scal,ldims,msp,t_scal):
+def angular_dimensions_draw(ang,scal,ldims,msp):
     ''' 2026 todo '''
-    from mathutils import Vector
-    #print('ANGULAR DIMS!!')
-    for a1,a2,a3 in zip(*ang):
-        for ang1,ang2,ang3 in zip(a1,a2,a3):
-            if scal != 1.0:
-                bas = list(Vector(ang1)*scal+((Vector(ang3)*scal-Vector(ang1)*scal)/2))
-                ang1_ = [i*scal for i in ang1]
-                ang2_ = [i*scal for i in ang2]
-                ang3_ = [i*scal for i in ang3]
-                dim = msp.add_angular_dim_3p(base=bas, center=ang2_, p1=ang1_, p2=ang3_, \
-                            override={"dimtad": 1,"dimtxt": t_scal}, \
-                            dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims})
-            else:
-                bas = list(Vector(ang1)+((Vector(ang3)-Vector(ang1))/2))
-                dim = msp.add_angular_dim_3p(base=bas, center=ang2, p1=ang1, p2=ang3, \
-                            override={"dimtad": 1,"dimtxt": t_scal}, \
-                            dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims})
-            #dim.render()
+    print('ANGULAR DIMS!!',ang,scal)
+    for dim in ang:
+        points = dim.vers
+        col = dim.color
+        lw,lt = dim.lineweight, dim.linetype
+        t_scal = dim.text_scale
+        ang1,ang2,ang3 = points
+        if scal != 1.0:
+            bas = list((V(ang1)-V(ang2))*scal*0.5+V(ang1)*scal+((V(ang3)*scal-V(ang1)*scal)/3))
+            ang1_ = [i*scal for i in ang1]
+            ang2_ = [i*scal for i in ang2]
+            ang3_ = [i*scal for i in ang3]
+            dim = msp.add_angular_dim_3p(base=bas, center=ang2_, p1=ang1_, p2=ang3_, \
+                        override={"dimtad": 1,"dimtxt": t_scal}, \
+                        dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims})
+            #dim = msp.add_angular_dim_2l(base=bas, line1=(ang2_, ang1_), line2=(ang2_, ang3_), \
+            #            override={"dimtad": 1,"dimtxt": t_scal}, \
+            #            dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims})
+        else:
+            bas = list((V(ang1)-V(ang2))*0.5+V(ang1)+((V(ang3)-V(ang1))/3))
+            #dim = msp.add_angular_dim_2l(base=bas, line1=(ang2, ang1), line2=(ang2, ang3), \
+            #            override={"dimtad": 1,"dimtxt": t_scal}, \
+            #            dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims})
+            dim = msp.add_angular_dim_3p(base=bas, center=ang2, p1=ang1, p2=ang3, \
+                        override={"dimtad": 1,"dimtxt": t_scal}, \
+                        dimstyle='Sverchok_dimstyle',dxfattribs={"layer": ldims})
+        #dim.render()
 
 def get_values(diction):
     data = []
@@ -963,6 +972,8 @@ def export(fp,dxf,scal=1000.0,t_scal=1.0,info='',do_block=False):
                 hatches_draw(data,scal,layer,msp)
             if data[0].__repr__() == '<DXF LinDims>':
                 dimensions_draw(data,scal,layer,msp)
+            if data[0].__repr__() == '<DXF AngDims>':
+                angular_dimensions_draw(data,scal,layer,msp)
             if data[0].__repr__() == '<DXF Circles>':
                 circles_draw(data,scal,layer,msp)
             if data[0].__repr__() == '<DXF Texts>':
