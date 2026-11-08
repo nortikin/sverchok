@@ -45,33 +45,42 @@ el.replaceWith(d);
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sverchok.utils.dxf.angular_dimensions_draw"><code class="name flex">
-<span>def <span class="ident">angular_dimensions_draw</span></span>(<span>ang, scal, ldims, msp, t_scal)</span>
+<span>def <span class="ident">angular_dimensions_draw</span></span>(<span>ang, scal, ldims, msp)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def angular_dimensions_draw(ang,scal,ldims,msp,t_scal):
+<pre><code class="python">def angular_dimensions_draw(ang,scal,ldims,msp):
     &#39;&#39;&#39; 2026 todo &#39;&#39;&#39;
-    from mathutils import Vector
-    #print(&#39;ANGULAR DIMS!!&#39;)
-    for a1,a2,a3 in zip(*ang):
-        for ang1,ang2,ang3 in zip(a1,a2,a3):
-            if scal != 1.0:
-                bas = list(Vector(ang1)*scal+((Vector(ang3)*scal-Vector(ang1)*scal)/2))
-                ang1_ = [i*scal for i in ang1]
-                ang2_ = [i*scal for i in ang2]
-                ang3_ = [i*scal for i in ang3]
-                dim = msp.add_angular_dim_3p(base=bas, center=ang2_, p1=ang1_, p2=ang3_, \
-                            override={&#34;dimtad&#34;: 1,&#34;dimtxt&#34;: t_scal}, \
-                            dimstyle=&#39;Sverchok_dimstyle&#39;,dxfattribs={&#34;layer&#34;: ldims})
-            else:
-                bas = list(Vector(ang1)+((Vector(ang3)-Vector(ang1))/2))
-                dim = msp.add_angular_dim_3p(base=bas, center=ang2, p1=ang1, p2=ang3, \
-                            override={&#34;dimtad&#34;: 1,&#34;dimtxt&#34;: t_scal}, \
-                            dimstyle=&#39;Sverchok_dimstyle&#39;,dxfattribs={&#34;layer&#34;: ldims})
-            #dim.render()</code></pre>
+    print(&#39;ANGULAR DIMS!!&#39;,ang,scal)
+    for dim in ang:
+        points = dim.vers
+        col = dim.color
+        lw,lt = dim.lineweight, dim.linetype
+        t_scal = dim.text_scale
+        ang1,ang2,ang3 = points
+        if scal != 1.0:
+            bas = list((V(ang1)-V(ang2))*scal*0.5+V(ang1)*scal+((V(ang3)*scal-V(ang1)*scal)/3))
+            ang1_ = [i*scal for i in ang1]
+            ang2_ = [i*scal for i in ang2]
+            ang3_ = [i*scal for i in ang3]
+            dim = msp.add_angular_dim_3p(base=bas, center=ang2_, p1=ang1_, p2=ang3_, \
+                        override={&#34;dimtad&#34;: 1,&#34;dimtxt&#34;: t_scal}, \
+                        dimstyle=&#39;Sverchok_dimstyle&#39;,dxfattribs={&#34;layer&#34;: ldims})
+            #dim = msp.add_angular_dim_2l(base=bas, line1=(ang2_, ang1_), line2=(ang2_, ang3_), \
+            #            override={&#34;dimtad&#34;: 1,&#34;dimtxt&#34;: t_scal}, \
+            #            dimstyle=&#39;Sverchok_dimstyle&#39;,dxfattribs={&#34;layer&#34;: ldims})
+        else:
+            bas = list((V(ang1)-V(ang2))*0.5+V(ang1)+((V(ang3)-V(ang1))/3))
+            #dim = msp.add_angular_dim_2l(base=bas, line1=(ang2, ang1), line2=(ang2, ang3), \
+            #            override={&#34;dimtad&#34;: 1,&#34;dimtxt&#34;: t_scal}, \
+            #            dimstyle=&#39;Sverchok_dimstyle&#39;,dxfattribs={&#34;layer&#34;: ldims})
+            dim = msp.add_angular_dim_3p(base=bas, center=ang2, p1=ang1, p2=ang3, \
+                        override={&#34;dimtad&#34;: 1,&#34;dimtxt&#34;: t_scal}, \
+                        dimstyle=&#39;Sverchok_dimstyle&#39;,dxfattribs={&#34;layer&#34;: ldims})
+        #dim.render()</code></pre>
 </details>
 <div class="desc"><p>2026 todo</p></div>
 </dd>
@@ -207,7 +216,7 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def dimensions_draw(points,scal,ldims,msp):
-    #print(&#39;LINEAR DIMS!!&#39;)
+    print(&#39;LINEAR DIMS!!&#39;,points)
     for points_ in points:
         vers = [[i*scal for i in ver] for ver in points_.vers]
         col = points_.color
@@ -702,6 +711,8 @@ el.replaceWith(d);
                 hatches_draw(data,scal,layer,msp)
             if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
                 dimensions_draw(data,scal,layer,msp)
+            if data[0].__repr__() == &#39;&lt;DXF AngDims&gt;&#39;:
+                angular_dimensions_draw(data,scal,layer,msp)
             if data[0].__repr__() == &#39;&lt;DXF Circles&gt;&#39;:
                 circles_draw(data,scal,layer,msp)
             if data[0].__repr__() == &#39;&lt;DXF Texts&gt;&#39;:
