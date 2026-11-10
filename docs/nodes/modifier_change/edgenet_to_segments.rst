@@ -44,4 +44,3 @@ Examples of usage
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
----------
