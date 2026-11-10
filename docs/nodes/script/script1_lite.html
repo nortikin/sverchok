@@ -30,7 +30,7 @@
   <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
   
@@ -497,7 +497,7 @@ Instead of pressing the reload button the Node’s UI you can press “Ctrl+Ente
 </li>
 </ul>
 <p>you make them visible on the ui by doing:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">ui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
     <span class="n">layout</span><span class="o">.</span><span class="n">prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;custom_enum&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">layout</span><span class="o">.</span><span class="n">prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;custom_enum_2&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">pass</span>
@@ -515,7 +515,7 @@ Instead of pressing the reload button the Node’s UI you can press “Ctrl+Ente
 <p>see a working script that uses two enums here: <a class="github reference external" href="https://github.com/nortikin/sverchok/pull/3455">nortikin/sverchok#3455</a></p>
 <ul>
 <li><p>add <code class="docutils literal notranslate"><span class="pre">ddir</span></code> (a dunderless dir() function) to local namespace.  <code class="docutils literal notranslate"><span class="pre">ddir(object,</span> <span class="pre">filter_str=&quot;some_string&quot;)</span></code> . filter_str is optional:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ddir</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">filter_str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">ddir</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">filter_str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">filter_str</span><span class="p">:</span>
         <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)]</span>
@@ -540,13 +540,13 @@ Instead of pressing the reload button the Node’s UI you can press “Ctrl+Ente
 <span class="sd">in verts v</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="k">def</span> <span class="nf">my_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;verts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">())</span>
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;FINISHED&#39;</span><span class="p">}</span>
 
 <span class="bp">self</span><span class="o">.</span><span class="n">make_operator</span><span class="p">(</span><span class="s1">&#39;my_operator&#39;</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">ui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
     <span class="n">cb_str</span> <span class="o">=</span> <span class="s1">&#39;node.scriptlite_custom_callback&#39;</span>
     <span class="n">layout</span><span class="o">.</span><span class="n">operator</span><span class="p">(</span><span class="n">cb_str</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;show me&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cb_name</span><span class="o">=</span><span class="s1">&#39;my_operator&#39;</span>
 </pre></div>
@@ -726,7 +726,7 @@ of example scripts which are distributed with Sverchok.</p>
 <span class="sd">out edges_out s</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 
 <span class="n">verts</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>

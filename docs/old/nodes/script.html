@@ -30,7 +30,7 @@
   <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
   
@@ -430,7 +430,7 @@ with algorithms. Scripts written for SN are easily converted to full PyNodes.</p
 <p><strong>sv_main()</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">sv_main()</span></code> can take int, float and list or nested list.
 Here are some legal examples:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sv_main</span><span class="p">(</span><span class="n">vecs_in_multi</span><span class="o">=</span><span class="p">[[]],</span> <span class="n">vecs_in_flat</span><span class="o">=</span><span class="p">[],</span> <span class="n">some_var</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">some_ratio</span><span class="o">=</span><span class="mf">1.2</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sv_main</span><span class="p">(</span><span class="n">vecs_in_multi</span><span class="o">=</span><span class="p">[[]],</span> <span class="n">vecs_in_flat</span><span class="o">=</span><span class="p">[],</span> <span class="n">some_var</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">some_ratio</span><span class="o">=</span><span class="mf">1.2</span><span class="p">):</span>
     <span class="k">pass</span>
 
 <span class="p">[[]]</span>        <span class="c1"># for nested input (lists of lists of any data type currently supported)</span>
@@ -543,11 +543,11 @@ They are intended to be lightweight and educational, but some of them will show
 advanced use cases. The images and animations on this <a class="reference external" href="https://github.com/nortikin/sverchok/issues/85">thread on github</a>.
 may also provide some insight into what’s possible.</p>
 <p>A typical nodescript may look like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">radians</span><span class="p">,</span> <span class="n">pi</span>
-<span class="kn">from</span> <span class="nn">mathutils</span> <span class="kn">import</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Euler</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">radians</span><span class="p">,</span> <span class="n">pi</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mathutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Euler</span>
 
 
-<span class="k">def</span> <span class="nf">sv_main</span><span class="p">(</span><span class="n">n_petals</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">vp_petal</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">profile_radius</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sv_main</span><span class="p">(</span><span class="n">n_petals</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">vp_petal</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">profile_radius</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
 
     <span class="n">in_sockets</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;Num Petals&#39;</span><span class="p">,</span>  <span class="n">n_petals</span><span class="p">],</span>
@@ -595,7 +595,7 @@ may also provide some insight into what’s possible.</p>
 </pre></div>
 </div>
 <p>but we are not forced to have all code inside sv_main, we can also do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">):</span>
     <span class="n">add_vert</span> <span class="o">=</span> <span class="n">verts</span><span class="o">.</span><span class="n">append</span>
     <span class="n">h</span> <span class="o">=</span> <span class="mf">0.01</span>
     <span class="n">a</span> <span class="o">=</span> <span class="mf">10.0</span>
@@ -613,7 +613,7 @@ may also provide some insight into what’s possible.</p>
 
         <span class="n">add_vert</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">z1</span><span class="p">))</span>
 
-<span class="k">def</span> <span class="nf">sv_main</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sv_main</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
 
     <span class="n">verts</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">in_sockets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">]]</span>
@@ -631,12 +631,12 @@ if we could access the input data directly from the variable <cite>items_in</cit
 currently this is not possible – therefor the solution is to use what
 sverchok nodes use in their internal code too. The upshot, is that this exposes
 you to how you might access the socket content of other nodes. Experiment :)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sv_main</span><span class="p">(</span><span class="n">items_in</span><span class="o">=</span><span class="p">[[]]):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sv_main</span><span class="p">(</span><span class="n">items_in</span><span class="o">=</span><span class="p">[[]]):</span>
 
     <span class="n">in_sockets</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;items_in&#39;</span><span class="p">,</span> <span class="n">items_in</span><span class="p">]]</span>
 
-    <span class="k">def</span> <span class="nf">func1</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func1</span><span class="p">():</span>
         <span class="c1"># directly from incoming Object_in socket.</span>
         <span class="n">sn</span> <span class="o">=</span> <span class="n">bpy</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">node</span>
 
@@ -664,11 +664,11 @@ I made a folder inside sverchok-master called <code class="docutils literal notr
 have a file called <cite>sv_curve_utils</cite>, which contains a function <cite>loft</cite>. This way
 of coding requires a bit of setup work, but then you can focus purely on
 the algorithm inside <cite>loft</cite>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mathutils</span> <span class="kn">import</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Euler</span><span class="p">,</span> <span class="n">Matrix</span>
-<span class="kn">import</span> <span class="nn">sv_modules</span>
-<span class="kn">from</span> <span class="nn">sv_modules.sv_curve_utils</span> <span class="kn">import</span> <span class="n">loft</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mathutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Euler</span><span class="p">,</span> <span class="n">Matrix</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sv_modules</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sv_modules.sv_curve_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">loft</span>
 
-<span class="k">def</span> <span class="nf">sv_main</span><span class="p">(</span><span class="n">verts_p</span><span class="o">=</span><span class="p">[],</span> <span class="n">edges_p</span><span class="o">=</span><span class="p">[],</span> <span class="n">verts_t</span><span class="o">=</span><span class="p">[],</span> <span class="n">edges_t</span><span class="o">=</span><span class="p">[]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sv_main</span><span class="p">(</span><span class="n">verts_p</span><span class="o">=</span><span class="p">[],</span> <span class="n">edges_p</span><span class="o">=</span><span class="p">[],</span> <span class="n">verts_t</span><span class="o">=</span><span class="p">[],</span> <span class="n">edges_t</span><span class="o">=</span><span class="p">[]):</span>
 
     <span class="n">in_sockets</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;verts_p&#39;</span><span class="p">,</span> <span class="n">verts_p</span><span class="p">],</span>
@@ -678,7 +678,7 @@ the algorithm inside <cite>loft</cite>.</p>
 
     <span class="n">verts_out</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">out_sockets</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">out_sockets</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">[[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;verts_out&#39;</span><span class="p">,</span> <span class="n">verts_out</span><span class="p">]]</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">verts_p</span><span class="p">,</span> <span class="n">edges_p</span><span class="p">,</span> <span class="n">verts_t</span><span class="p">,</span> <span class="n">edges_t</span><span class="p">]):</span>
@@ -686,9 +686,9 @@ the algorithm inside <cite>loft</cite>.</p>
 
     <span class="c1"># while developing, it can be useful to uncomment this</span>
     <span class="k">if</span> <span class="s1">&#39;loft&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">():</span>
-        <span class="kn">import</span> <span class="nn">imp</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">imp</span>
         <span class="n">imp</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">sv_modules</span><span class="o">.</span><span class="n">sv_curve_utils</span><span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">sv_modules.sv_curve_utils</span> <span class="kn">import</span> <span class="n">loft</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sv_modules.sv_curve_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">loft</span>
 
     <span class="n">verts_out</span> <span class="o">=</span> <span class="n">loft</span><span class="p">(</span><span class="n">verts_p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">verts_t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1">#  this is your break-out code</span>
 

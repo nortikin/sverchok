@@ -30,7 +30,7 @@
   <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
   
@@ -515,22 +515,22 @@ advanced use cases. The images and animations on this <a class="reference extern
 may also provide some insight into what’s possible.</p>
 <p>A typical nodescript using the <code class="docutils literal notranslate"><span class="pre">SvScriptSimpleGenerator</span></code> may look like this, note that
 the third argument for outputs is specific to this template:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">import</span> <span class="nn">itertools</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 
-<span class="k">class</span> <span class="nc">GridGen</span><span class="p">(</span><span class="n">SvScriptSimpleGenerator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GridGen</span><span class="p">(</span><span class="n">SvScriptSimpleGenerator</span><span class="p">):</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;Size&quot;</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
               <span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;Subdivs&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;verts&quot;</span><span class="p">,</span> <span class="s2">&quot;make_verts&quot;</span><span class="p">),</span>
                <span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;edges&quot;</span><span class="p">,</span> <span class="s2">&quot;make_edges&quot;</span><span class="p">)]</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">make_verts</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">sub</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_verts</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">sub</span><span class="p">):</span>
         <span class="n">side</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="n">side</span><span class="p">))</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">make_edges</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">sub</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_edges</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">sub</span><span class="p">):</span>
         <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sub</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sub</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
@@ -542,7 +542,7 @@ the third argument for outputs is specific to this template:</p>
 <p>Note that here the name of the method that should be called for producing data
 for each socket in the final last arguments to <code class="docutils literal notranslate"><span class="pre">outputs</span></code> but we are not forced
 to have all code inside the class, we can also do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
     <span class="n">add_vert</span> <span class="o">=</span> <span class="n">verts</span><span class="o">.</span><span class="n">append</span>
 
     <span class="n">x0</span> <span class="o">=</span> <span class="mf">0.1</span>
@@ -556,7 +556,7 @@ to have all code inside the class, we can also do:</p>
 
         <span class="n">add_vert</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">z1</span><span class="p">))</span>
 
-<span class="k">class</span> <span class="nc">LorenzAttractor</span><span class="p">(</span><span class="n">SvScriptSimpleGenerator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LorenzAttractor</span><span class="p">(</span><span class="n">SvScriptSimpleGenerator</span><span class="p">):</span>
 
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>
@@ -567,13 +567,13 @@ to have all code inside the class, we can also do:</p>
     <span class="p">]</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">make_verts</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_verts</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
         <span class="n">verts</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">verts</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">make_edges</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">h</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_edges</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">h</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span>
         <span class="n">edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">edges</span>
 
@@ -587,9 +587,9 @@ to have all code inside the class, we can also do:</p>
 illustration for a type of script that uses the <code class="docutils literal notranslate"><span class="pre">`SvScriptSimpleFunction`</span></code> template that
 has one main function that decomposes into separate sockets. The methods don’t have be static
 but in general it is good practice to keep them free from side effects.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
 
-<span class="k">class</span> <span class="nc">DeleteLooseVerts</span><span class="p">(</span><span class="n">SvScriptSimpleFunction</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DeleteLooseVerts</span><span class="p">(</span><span class="n">SvScriptSimpleFunction</span><span class="p">):</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;verts&#39;</span><span class="p">),</span>
         <span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;pol&#39;</span><span class="p">)</span>
@@ -601,7 +601,7 @@ but in general it is good practice to keep them free from side effects.:</p>
 
     <span class="c1"># delete loose verts</span>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">ve</span><span class="p">,</span> <span class="n">pe</span> <span class="o">=</span> <span class="n">args</span>
         <span class="c1"># find used indexes</span>
         <span class="n">v_index</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">pe</span><span class="p">)))</span>
@@ -619,11 +619,11 @@ but in general it is good practice to keep them free from side effects.:</p>
 <h2>Breakout Scripts<a class="headerlink" href="#breakout-scripts" title="Link to this heading">#</a></h2>
 <p>Scripts that needs to access the node can do so via the <code class="docutils literal notranslate"><span class="pre">`self.node`</span></code> variable
 that is automatically set.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Breakout</span><span class="p">(</span><span class="n">SvScript</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Breakout</span><span class="p">(</span><span class="n">SvScript</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span>
         <span class="n">node_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">id_data</span>
         <span class="c1"># here you can do anything to the node or node group</span>

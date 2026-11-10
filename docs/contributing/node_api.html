@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=337302ae" />
   
@@ -429,15 +429,15 @@ one of the available categories in the <code class="docutils literal notranslate
 <span class="c1"># SPDX-License-Identifier: GPL3</span>
 <span class="c1"># License-Filename: LICENSE</span>
 
-<span class="kn">import</span> <span class="nn">bpy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">bpy</span>
 
-<span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
     <span class="o">...</span>
 
-<span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">():</span>
     <span class="o">...</span>
 
-<span class="k">def</span> <span class="nf">unregister</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unregister</span><span class="p">():</span>
     <span class="o">...</span>
 </pre></div>
 </div>
@@ -474,7 +474,7 @@ Viewer add-on can be used, which is included in Blender by default.</p>
 variable. All custom icons are stored in the <code class="docutils literal notranslate"><span class="pre">sverchok.ui.icons</span></code> folder in png
 format. The variable value should repeat the png file name without extension
 and in upper case.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SvSetMeshAttributeNode</span><span class="p">(</span><span class="n">SverchCustomTreeNode</span><span class="p">,</span> <span class="n">bpy</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Node</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SvSetMeshAttributeNode</span><span class="p">(</span><span class="n">SverchCustomTreeNode</span><span class="p">,</span> <span class="n">bpy</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Node</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Triggers: set mesh attribute</span>
 <span class="sd">    Tooltip: It adds an attribute to a mesh</span>
@@ -483,7 +483,7 @@ and in upper case.</p>
     <span class="n">bl_label</span> <span class="o">=</span> <span class="s1">&#39;Set Mesh Attribute&#39;</span>
     <span class="n">bl_icon</span> <span class="o">=</span> <span class="s1">&#39;SORTALPHA&#39;</span>
 
-    <span class="k">def</span> <span class="nf">draw_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Label1&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop</span> <span class="k">else</span> <span class="s2">&quot;Label2&quot;</span>
 </pre></div>
 </div>
@@ -514,11 +514,11 @@ an argument to the update parameter directly. Instead it’s possible to use
 lambda expression:
 <code class="docutils literal notranslate"><span class="pre">update=lambda</span> <span class="pre">self,</span> <span class="pre">context:</span> <span class="pre">self.process_node(context)</span></code></p>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NodeClass</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">NodeClass</span><span class="p">:</span>
 
     <span class="c1"># ...</span>
 
-    <span class="k">def</span> <span class="nf">update_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
         <span class="c1"># some logic</span>
         <span class="n">updateNode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 
@@ -534,7 +534,7 @@ ones. Also the node should use <code class="docutils literal notranslate"><span 
 <code class="docutils literal notranslate"><span class="pre">draft_properties_mapping</span></code> class variable with mapping between standard
 properties and draft ones, and <code class="docutils literal notranslate"><span class="pre">does_support_draft_mode</span></code> method which should
 return boolean value.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NodeClass</span><span class="p">(</span><span class="n">sverchok</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">nodes_mixins</span><span class="o">.</span><span class="n">DraftMode</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">NodeClass</span><span class="p">(</span><span class="n">sverchok</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">nodes_mixins</span><span class="o">.</span><span class="n">DraftMode</span><span class="p">):</span>
 
     <span class="c1"># ...</span>
 
@@ -543,7 +543,7 @@ return boolean value.</p>
 
     <span class="n">draft_properties_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">some_mode</span> <span class="o">=</span> <span class="s1">&#39;some_mode_draft&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">does_support_draft_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">does_support_draft_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
@@ -603,14 +603,14 @@ regularly during work with a node tree. They should be defined in
 are rarely changed or should be changed only once. To make properties appear on that panel
 place them inside a <code class="docutils literal notranslate"><span class="pre">sv_draw_buttons_ext</span></code> method, this method also expects <code class="docutils literal notranslate"><span class="pre">context</span></code> and <code class="docutils literal notranslate"><span class="pre">layout</span></code>
 arguments.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">IntProperty</span><span class="p">()</span>
     <span class="n">mode</span><span class="p">:</span> <span class="n">BoolProperty</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">sv_draw_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sv_draw_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
         <span class="n">layout</span><span class="o">.</span><span class="n">prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">sv_draw_buttons_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sv_draw_buttons_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
         <span class="n">layout</span><span class="o">.</span><span class="n">prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -622,9 +622,9 @@ UI should obtain only one string. It’s possible to show UI on several lines bu
 in this case <code class="docutils literal notranslate"><span class="pre">utils.node_mixins.Popup3DMenu</span></code> operator should be used. The
 operator calls the same <code class="docutils literal notranslate"><span class="pre">draw_buttons_3dpanel</span></code> method but with <code class="docutils literal notranslate"><span class="pre">in_menu</span></code>
 argument as True.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="n">Show3DProperties</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">(</span><span class="n">Show3DProperties</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">draw_buttons_3dpanel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">in_menu</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_buttons_3dpanel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">in_menu</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">in_menu</span><span class="p">:</span>
             <span class="n">menu</span> <span class="o">=</span> <span class="n">layout</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">align</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">operator</span><span class="p">(</span><span class="s1">&#39;node.popup_3d_menu&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Show: &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
             <span class="n">menu</span><span class="o">.</span><span class="n">tree_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_data</span><span class="o">.</span><span class="n">name</span>
@@ -653,8 +653,8 @@ off. The proper way to make to show its property is to assign True value to
 in <code class="docutils literal notranslate"><span class="pre">default_property_type</span></code> attribute which can receive either ‘float’ or
 ‘int’ values. Default values are stored in <code class="docutils literal notranslate"><span class="pre">default_float_property</span></code> and
 <code class="docutils literal notranslate"><span class="pre">default_int_property</span></code> attributes.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">sv_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sv_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
         <span class="n">socket</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;SvStringsSocket&#39;</span><span class="p">,</span> <span class="s2">&quot;Size&quot;</span><span class="p">)</span>
         <span class="n">socket</span><span class="o">.</span><span class="n">use_prop</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">socket</span><span class="o">.</span><span class="n">default_float_property</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -664,8 +664,8 @@ in <code class="docutils literal notranslate"><span class="pre">default_property
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Alternative way of creating input sockets is using <code class="docutils literal notranslate"><span class="pre">sv_new_input</span></code> method.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">sv_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sv_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sv_new_input</span><span class="p">(</span><span class="s1">&#39;SvStringsSocket&#39;</span><span class="p">,</span> <span class="s2">&quot;Size&quot;</span><span class="p">,</span> <span class="n">use_prop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                           <span class="n">default_float_property</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
@@ -712,18 +712,18 @@ in Geometry Nodes project there was a decision that sockets should be
 independent to data layer. So to generate such nodes is not recommended now.
 If there is no way but to have this functionality possible solution could be
 to add a button to a node which would recreate sockets explicitly.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">mode_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mode_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;Value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">process_node</span><span class="p">()</span>
 
     <span class="n">mode</span><span class="p">:</span> <span class="n">BoolProperty</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="n">mode_update</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">sv_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sv_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;SvStringsSocket&#39;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">use_prop</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;SvStringsSocket&#39;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">sv_update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sv_update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">data_structure</span><span class="o">.</span><span class="n">changable_sockets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Value&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -742,8 +742,8 @@ to add a button to a node which would recreate sockets explicitly.</p>
 </dd>
 <dt>custom_draw</dt><dd><p>Expects name of a method of the node of the socket. If defined the method
 will be used draw UI elements for the socket.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">custom_draw_socket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">socket</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">custom_draw_socket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">socket</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
         <span class="n">layout</span><span class="o">.</span><span class="n">prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;node_property&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -755,15 +755,15 @@ create quick link to the given node.</p>
 works when displaying quick links is in multiple values mode. In the class
 its possible to define extra nodes for connections. This is analog of
 creating nodes during dragging a link from a socket in Blender 3.1.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
-    <span class="k">class</span> <span class="nc">MenuHandler</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">MenuHandler</span><span class="p">:</span>
         <span class="nd">@classmethod</span>
-        <span class="k">def</span> <span class="nf">get_items</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">socket</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_items</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">socket</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Return list of extra options for the menu&quot;&quot;&quot;</span>
             <span class="k">return</span> <span class="p">[(</span><span class="s1">&#39;KEY&#39;</span><span class="p">,</span> <span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">),</span> <span class="p">]</span>
 
         <span class="nd">@classmethod</span>
-        <span class="k">def</span> <span class="nf">on_selected</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">socket</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">on_selected</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">socket</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;In this method the node should be created and linked to the socket&quot;&quot;&quot;</span>
             <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;KEY&#39;</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello world!&quot;</span><span class="p">)</span>
@@ -853,8 +853,8 @@ such optimization is execution system.</p>
 </div>
 <p>After handling input data <code class="docutils literal notranslate"><span class="pre">sv_set</span></code> method of sockets can be used for
 saving result. It expects only one parameter - data.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;My Socket&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">deepcopy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">handle_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -903,8 +903,8 @@ the number can be limited by some particular input in case it does not have
 sense to repeat it.</p>
 <p>There are helping functions / generators to perform data matching in
 <code class="docutils literal notranslate"><span class="pre">data_structure</span></code> module. Generators are preferable before functions.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">sv_get</span><span class="p">(</span><span class="n">deepcopy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[[]])</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">]</span>
         <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1065,10 +1065,10 @@ make sure that you have appropriate logging level in the settings.</p>
 It can be done in function with <code class="docutils literal notranslate"><span class="pre">register</span></code> name in the same module with node
 class. This function will be called whenever the add-on is enabled. For the
 class registration standard Blender function is used.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
     <span class="o">...</span>
 
-<span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">():</span>
     <span class="n">bpy</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">register_class</span><span class="p">(</span><span class="n">Node</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1160,15 +1160,15 @@ Dummy nodes do nothing but display information that a library is not installed.<
 </figure>
 <p>Also when library is not installed the nodes should not register their selves.
 Also such nodes dose not apper in the Add node menu.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sverchok.dependencies</span> <span class="kn">import</span> <span class="n">FreeCAD</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sverchok.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">FreeCAD</span>
 
 <span class="k">if</span> <span class="n">FreeCAD</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">utils</span><span class="o">.</span><span class="n">dummy_nodes</span><span class="o">.</span><span class="n">add_dummy</span><span class="p">(</span><span class="s1">&#39;SvSolidAreaNode&#39;</span><span class="p">,</span> <span class="s1">&#39;Solid Area&#39;</span><span class="p">,</span> <span class="s1">&#39;FreeCAD&#39;</span><span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">SvSolidAreaNode</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SvSolidAreaNode</span><span class="p">:</span>
     <span class="o">...</span>
 
-<span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">FreeCAD</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">bpy</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">register_class</span><span class="p">(</span><span class="n">SvSolidAreaNode</span><span class="p">)</span>
 </pre></div>
@@ -1264,7 +1264,7 @@ the old version of the node which automatically replace old node with new one
 with keeping all connected links. This can be done by adding
 <code class="docutils literal notranslate"><span class="pre">replacement_nodes</span></code> attribute. The operator will appear in the node context
 menu.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
     <span class="n">replacement_nodes</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="n">new_node_bl_idname</span><span class="p">,</span> <span class="n">inputs_mapping_dict</span><span class="p">,</span> <span class="n">outputs_mapping_dict</span><span class="p">)</span>
     <span class="p">]</span>
@@ -1302,7 +1302,7 @@ of the node can break them. To avoid this it’s possible to mark a node to show
 to users that the node is in development state and that backwards incompatible
 changes can be introduced. In order to do this Alpa or Beta icon should be
 assigned to <code class="docutils literal notranslate"><span class="pre">sv_icon</span></code> attribute of the node class.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
     <span class="n">sv_icon</span> <span class="o">=</span> <span class="s1">&#39;SV_ALPHA`  # or &#39;</span><span class="n">SV_BETA</span><span class="s1">&#39;</span>
 </pre></div>
 </div>

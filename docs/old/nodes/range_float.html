@@ -30,7 +30,7 @@
   <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
   
@@ -379,7 +379,7 @@
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
 <p><em>alias: List Range Float</em></p>
 <p>Useful for generating sequences of Float values. The code perhaps describes best what the three modes do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">frange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">frange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;Behaves like range but for floats&#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="n">stop</span><span class="p">:</span>
         <span class="n">stop</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -395,7 +395,7 @@
             <span class="n">start</span> <span class="o">+=</span> <span class="n">step</span>
 
 
-<span class="k">def</span> <span class="nf">frange_count</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">frange_count</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39; Gives count total values in [start,stop] &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">start</span>
@@ -409,7 +409,7 @@
         <span class="k">yield</span> <span class="n">stop</span>
 
 
-<span class="k">def</span> <span class="nf">frange_step</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">frange_step</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39; Gives count values with step from start&#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">:</span>
         <span class="n">step</span> <span class="o">=</span> <span class="mi">1</span>

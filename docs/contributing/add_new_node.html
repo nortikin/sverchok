@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=337302ae" />
   
@@ -435,11 +435,11 @@ may be born because current approach has
 </section>
 <section id="imports">
 <h3>Imports<a class="headerlink" href="#imports" title="Link to this heading">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bpy</span>
-<span class="kn">from</span> <span class="nn">mathutils</span> <span class="kn">import</span> <span class="n">Vector</span>
-<span class="kn">from</span> <span class="nn">bpy.props</span> <span class="kn">import</span> <span class="n">FloatProperty</span>
-<span class="kn">from</span> <span class="nn">sverchok.node_tree</span> <span class="kn">import</span> <span class="n">SverchCustomTreeNode</span>
-<span class="kn">from</span> <span class="nn">sverchok.data_structure</span> <span class="kn">import</span> <span class="n">updateNode</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">bpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mathutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bpy.props</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatProperty</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sverchok.node_tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">SverchCustomTreeNode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sverchok.data_structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">updateNode</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -457,7 +457,7 @@ it adds a <code class="docutils literal notranslate"><span class="pre">poll</spa
 </section>
 <section id="node-class">
 <h3>Node Class<a class="headerlink" href="#node-class" title="Link to this heading">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SvScaleVectorNode</span><span class="p">(</span><span class="n">SverchCustomTreeNode</span><span class="p">,</span> <span class="n">bpy</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Node</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SvScaleVectorNode</span><span class="p">(</span><span class="n">SverchCustomTreeNode</span><span class="p">,</span> <span class="n">bpy</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Node</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Triggers: vector multiple scale</span>
 <span class="sd">    Tooltip: This node multiply vector and some value</span>
@@ -493,7 +493,7 @@ for custom icons (but for a different topic)</p>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">value</span><span class="p">:</span> <span class="n">FloatProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;My value&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="n">updateNode</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">draw_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">draw_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
     <span class="n">layout</span><span class="o">.</span><span class="n">prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -509,7 +509,7 @@ More information in the
 <a class="reference external" href="https://docs.blender.org/api/current/bpy.types.UILayout.html">Blender documentation</a>.</p>
 </dd>
 </dl>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sv_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sv_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;SvVerticesSocket&#39;</span><span class="p">,</span> <span class="s2">&quot;Vertices&quot;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;SvVerticesSocket&#39;</span><span class="p">,</span> <span class="s2">&quot;Vertices&quot;</span><span class="p">)</span>
 </pre></div>
@@ -520,7 +520,7 @@ and their properties. This is where we tell a socket to appear as a slider. To b
 it’s used for do a search for this function in the Sverchok repository.</p>
 </dd>
 </dl>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="c1"># read input value</span>
     <span class="n">input_vertices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;Vertices&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">[])</span>
 
@@ -562,11 +562,11 @@ vertices and wrap the result back. Last string assign the result to output socke
 </section>
 <section id="register-node-class">
 <h3>Register node class<a class="headerlink" href="#register-node-class" title="Link to this heading">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">():</span>
     <span class="n">bpy</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">register_class</span><span class="p">(</span><span class="n">SvScaleVectorNode</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">unregister</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unregister</span><span class="p">():</span>
     <span class="n">bpy</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">unregister_class</span><span class="p">(</span><span class="n">SvScaleVectorNode</span><span class="p">)</span>
 </pre></div>
 </div>

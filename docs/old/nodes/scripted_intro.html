@@ -30,7 +30,7 @@
   <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
   
@@ -388,7 +388,7 @@
 <section id="scripted-node-1-an-informal-introduction">
 <h2>Scripted Node 1 – an informal introduction<a class="headerlink" href="#scripted-node-1-an-informal-introduction" title="Link to this heading">#</a></h2>
 <p>Here is a classic ‘Hello World’ style example used to demonstrate graphics coding. It’s called a Lorenz Attractor.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">):</span>
     <span class="n">add_vert</span> <span class="o">=</span> <span class="n">verts</span><span class="o">.</span><span class="n">append</span>
     <span class="n">h</span> <span class="o">=</span> <span class="mf">0.01</span>
     <span class="n">a</span> <span class="o">=</span> <span class="mf">10.0</span>
@@ -406,7 +406,7 @@
 
         <span class="n">add_vert</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">z1</span><span class="p">))</span>
 
-<span class="k">def</span> <span class="nf">sv_main</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sv_main</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
 
     <span class="n">verts</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">in_sockets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">]]</span>
