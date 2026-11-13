@@ -112,7 +112,7 @@ quads, the numerical closest-point solver is not guaranteed to find the
 global minimum.
 
 N-gon collision behavior
------------------------
+------------------------
 
 For simple convex n-gons (five or more vertices), the triangulation locates
 an initial contact. Mean value coordinates in a stable 2D projection are then

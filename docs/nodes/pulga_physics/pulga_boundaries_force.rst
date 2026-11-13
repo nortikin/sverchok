@@ -213,7 +213,7 @@ Scheme for options:
 
 
 Solid boundaries: Fast and Precise
----------------------------------
+----------------------------------
 
 The **Solid (Surface)**, **Solid (Volume)** and **Solid Face** modes require
 FreeCAD and offer two calculation methods, with **Fast** selected by default.
