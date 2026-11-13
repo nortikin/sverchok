@@ -952,8 +952,19 @@ def nearest_point_on_surface(points_from, surface, init_samples=50, precise=True
     v_max = surface.get_v_max()
 
     def init_guess():
-        us = np.linspace(u_min, u_max, num=init_samples)
-        vs = np.linspace(v_min, v_max, num=init_samples)
+        # A scalar retains the historical square grid. A pair allows
+        # independent U/V initial sampling, without changing other callers.
+        if isinstance(init_samples, (tuple, list)):
+            if len(init_samples) != 2:
+                raise ValueError('init_samples must be an integer or a pair (U, V)')
+            u_samples, v_samples = init_samples
+        else:
+            u_samples = v_samples = init_samples
+        u_samples, v_samples = int(u_samples), int(v_samples)
+        if u_samples < 2 or v_samples < 2:
+            raise ValueError('Initial samples U/V must be at least 2')
+        us = np.linspace(u_min, u_max, num=u_samples)
+        vs = np.linspace(v_min, v_max, num=v_samples)
         us, vs = np.meshgrid(us, vs)
         us = us.flatten()
         vs = vs.flatten()
