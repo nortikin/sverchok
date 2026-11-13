@@ -39,11 +39,12 @@ There can be the following situations:
 import numpy as np
 from collections import defaultdict
 
-from sverchok.core.sv_custom_exceptions import AlgorithmError, ArgumentError, InvalidStateError
+from sverchok.core.sv_custom_exceptions import AlgorithmError, ArgumentError, InvalidStateError, SvInvalidInputException, SvInvalidResultException
 from sverchok.utils.sv_logging import get_logger
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, to_homogenous
+from sverchok.utils.linalg import least_squares_sparse, solve_sparse, least_squares_with_constraints
 
 class SvNurbsCurveGoal(object):
     """
@@ -61,12 +62,15 @@ class SvNurbsCurveGoal(object):
     def get_n_defined_control_points(self):
         raise NotImplementedError("Not implemented")
 
+    def is_exact(self):
+        return self.exact
+
 class SvNurbsCurvePoints(SvNurbsCurveGoal):
     """
     Goal which says that the curve must pass through the specified points at
     specified values of parameter.
     """
-    def __init__(self, us, points, weights = None, relative=False):
+    def __init__(self, us, points, weights = None, relative=False, exact=False):
         self.us = np.asarray(us)
         if self.us.ndim != 1:
             raise ArgumentError(f"T values array must be 1-dimensional, but got {self.us.shape}")
@@ -76,6 +80,7 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         if len(us) != len(self.vectors):
             raise ArgumentError(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
         self.relative = relative
+        self.exact = exact
         if weights is None:
             self.weights = None
         else:
@@ -83,9 +88,9 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
 
     def __repr__(self):
         if self.relative:
-            return f"<Relative Points, cnt={len(self.us)}>"
+            return f"<Relative Points, cnt={len(self.us)}, exact={self.exact}>"
         else:
-            return f"<Points, cnt={len(self.us)}>"
+            return f"<Points, cnt={len(self.us)}, exact={self.exact}>"
 
     @staticmethod
     def single(u, point, weight=None, relative=False):
@@ -96,7 +101,7 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         return SvNurbsCurvePoints([u], [point], weights, relative=relative)
 
     def copy(self):
-        return SvNurbsCurvePoints(self.us, self.vectors, self.weights, relative=self.relative)
+        return SvNurbsCurvePoints(self.us, self.vectors, self.weights, relative=self.relative, exact=self.exact)
 
     def get_weights(self):
         weights = self.weights
@@ -110,7 +115,7 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         return weights
 
     def add(self, other):
-        if other.relative != self.relative:
+        if other.relative != self.relative or self.exact != other.exact:
             return None
         g = self.copy()
         g.us = np.concatenate((g.us, other.us))
@@ -148,16 +153,17 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         alphas = self.calc_alphas(solver, us)
 
         weights = self.get_weights()
+        alphas = (alphas * weights[np.newaxis]).T
 
         A = np.zeros((n_equations, n_unknowns))
         B = np.zeros((n_equations, 1))
         #print(f"A: {A.shape}, W {weights.shape}, n_points {n_points}")
 
-        for pt_idx in range(n_points):
-            for cpt_idx in range(solver.n_cpts):
-                alpha = alphas[cpt_idx][pt_idx]
-                for dim_idx in range(ndim):
-                    A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = weights[pt_idx] * alpha
+        pt_idxs = np.arange(n_points)
+        cpt_idxs = np.arange(solver.n_cpts)
+        pt_idxs, cpt_idxs = np.meshgrid(ndim*pt_idxs, ndim*cpt_idxs, indexing='ij')
+        for dim_idx in range(ndim):
+            A[pt_idxs + dim_idx, cpt_idxs + dim_idx] = alphas
 
         if solver.src_curve is None:
             if self.relative:
@@ -182,7 +188,7 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
     Goal which says that the curve must have specified tangent vectors at
     specified values of parameter.
     """
-    def __init__(self, us, tangents, weights = None, relative=False):
+    def __init__(self, us, tangents, weights = None, relative=False, exact=False):
         self.us = np.asarray(us)
         if self.us.ndim != 1:
             raise ArgumentError(f"T values array must be 1-dimensional, but got {self.us.shape}")
@@ -192,6 +198,7 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
         if len(us) != len(self.vectors):
             raise ArgumentError(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
         self.relative = relative
+        self.exact = exact
         if weights is None:
             self.weights = None
         else:
@@ -212,10 +219,10 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
         return SvNurbsCurveTangents([u], [tangent], weights, relative=relative)
 
     def copy(self):
-        return SvNurbsCurveTangents(self.us, self.vectors, self.weights, relative=self.relative)
+        return SvNurbsCurveTangents(self.us, self.vectors, self.weights, relative=self.relative, exact=self.exact)
 
     def add(self, other):
-        if self.relative != other.relative:
+        if self.relative != other.relative or self.exact != other.exact:
             return None
         g = self.copy()
         g.us = np.concatenate((g.us, other.us))
@@ -248,7 +255,7 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
         return tangents
 
 class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
-    def __init__(self, order, us, vectors, weights = None, relative=False):
+    def __init__(self, order, us, vectors, weights = None, relative=False, exact=False):
         self.order = order
         self.us = np.asarray(us)
         if self.us.ndim != 1:
@@ -259,6 +266,7 @@ class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
         if len(us) != len(self.vectors):
             raise ArgumentError(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
         self.relative = relative
+        self.exact = exact
         if weights is None:
             self.weights = None
         else:
@@ -279,10 +287,10 @@ class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
         return SvNurbsCurveDerivatives(order, [u], [tangent], weights, relative=relative)
 
     def copy(self):
-        return SvNurbsCurveDerivatives(self.order, self.us, self.vectors, self.weights, relative=self.relative)
+        return SvNurbsCurveDerivatives(self.order, self.us, self.vectors, self.weights, relative=self.relative, exact=self.exact)
 
     def add(self, other):
-        if self.relative != other.relative:
+        if self.relative != other.relative or self.exact != other.exact:
             return None
         if self.order != other.order:
             return None
@@ -310,13 +318,14 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
     Goal which says that the curve must have self-intersections at specified
     sets of parameter values.
     """
-    def __init__(self, us1, us2, weights = None, relative_u=False, relative=False):
+    def __init__(self, us1, us2, weights = None, relative_u=False, relative=False, exact=False):
         if len(us1) != len(us2):
             raise ArgumentError("Lengths of us1 and us2 must be equal")
         self.us1 = np.asarray(us1)
         self.us2 = np.asarray(us2)
         self.relative_u = relative_u
         self.relative = relative
+        self.exact = exact
         if weights is None:
             self.weights = None
         else:
@@ -326,15 +335,15 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
         return f"<Self-intersections, cnt={len(self.us1)}>"
 
     @staticmethod
-    def single(u1, u2, weight=None, relative_u=False, relative=False):
+    def single(u1, u2, weight=None, relative_u=False, relative=False, exact=False):
         if weight is None:
             weights = None
         else:
             weights = [weight]
-        return SvNurbsCurveSelfIntersections([u1], [u2], weights, relative_u=relative_u, relative=relative)
+        return SvNurbsCurveSelfIntersections([u1], [u2], weights, relative_u=relative_u, relative=relative, exact=exact)
 
     def copy(self):
-        return SvNurbsCurveSelfIntersections(self.us1, self.us2, self.weights, self.relative_u, self.relative)
+        return SvNurbsCurveSelfIntersections(self.us1, self.us2, self.weights, self.relative_u, self.relative, exact=self.exact)
 
     def get_weights(self):
         weights = self.weights
@@ -346,7 +355,7 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
     def add(self, other):
         if other.relative_u != self.relative_u:
             return None
-        if other.relative != self.relative:
+        if other.relative != self.relative or self.exact != other.exact:
             return None
         g = self.copy()
         g.us1 = np.concatenate((g.us1, other.us1))
@@ -416,13 +425,14 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
     Goal which says that curve must have equal tangent vectors at two sets of
     parameter values.
     """
-    def __init__(self, us1, us2, weights = None, relative_u=False, relative=False):
+    def __init__(self, us1, us2, weights = None, relative_u=False, relative=False, exact=False):
         if len(us1) != len(us2):
             raise ArgumentError("Lengths of us1 and us2 must be equal")
         self.us1 = np.asarray(us1)
         self.us2 = np.asarray(us2)
         self.relative_u = relative_u
         self.relative = relative
+        self.exact = exact
         if weights is None:
             self.weights = None
         else:
@@ -432,15 +442,15 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
         return f"<Equal tangents, cnt={len(self.us1)}>"
 
     @staticmethod
-    def single(u1, u2, weight=None, relative_u=False, relative=False):
+    def single(u1, u2, weight=None, relative_u=False, relative=False, exact=False):
         if weight is None:
             weights = None
         else:
             weights = [weight]
-        return SvNurbsCurveCotangents([u1], [u2], weights, relative_u=relative_u, relative=relative)
+        return SvNurbsCurveCotangents([u1], [u2], weights, relative_u=relative_u, relative=relative, exact=exact)
 
     def copy(self):
-        return SvNurbsCurveCotangents(self.us1, self.us2, self.weights, self.relative_u, self.relative)
+        return SvNurbsCurveCotangents(self.us1, self.us2, self.weights, self.relative_u, self.relative, exact=self.exact)
 
     def calc_alphas(self, solver):
         us1 = self.us1
@@ -506,10 +516,11 @@ class SvNurbsCurveControlPoints(SvNurbsCurveGoal):
     Goal which says that the curve must have control points at particular
     locations.
     """
-    def __init__(self, cpt_idxs, cpt_vectors, weights = None, relative=True):
+    def __init__(self, cpt_idxs, cpt_vectors, weights = None, relative=True, exact=False):
         self.cpt_idxs = np.asarray(cpt_idxs)
         self.cpt_vectors = np.asarray(cpt_vectors)
         self.relative = relative
+        self.exact = exact
         if weights is None:
             self.weights = None
         else:
@@ -531,10 +542,10 @@ class SvNurbsCurveControlPoints(SvNurbsCurveGoal):
         return weights
 
     def copy(self):
-        return SvNurbsCurveControlPoints(self.cpt_idxs, self.cpt_vectors, self.weights, self.relative)
+        return SvNurbsCurveControlPoints(self.cpt_idxs, self.cpt_vectors, self.weights, self.relative, exact=self.exact)
 
     def add(self, other):
-        if other.relative != self.relative:
+        if other.relative != self.relative or self.exact != other.exact:
             return None
         g = self.copy()
         g.cpt_idxs = np.concatenate((g.cpt_idxs, other.cpt_idxs))
@@ -704,7 +715,9 @@ class SvNurbsCurveSolver(SvCurve):
 
     def _sort_goals(self):
         goal_dict = defaultdict(list)
+        self._has_constraints = False
         for goal in self.goals:
+            self._has_constraints = self._has_constraints or goal.is_exact()
             goal_dict[type(goal)].append(goal)
         goals = []
         for clazz in goal_dict:
@@ -741,21 +754,52 @@ class SvNurbsCurveSolver(SvCurve):
         self._sort_goals()
         As = []
         Bs = []
+        exact_As = []
+        exact_Bs = []
         for goal in self.goals:
             Ai, Bi = goal.get_equations(self)
-            As.append(Ai)
-            Bs.append(Bi)
-        self.A = np.concatenate(As)
-        self.B = np.concatenate(Bs)
+            if goal.is_exact():
+                exact_As.append(Ai)
+                exact_Bs.append(Bi)
+            else:
+                As.append(Ai)
+                Bs.append(Bi)
+        
+        n_equations = sum(g.get_n_defined_control_points() for g in self.goals) * 3
+        n_unknowns = self.n_cpts * 3
+        if n_equations > n_unknowns and len(exact_As) > 0: # OVERDETERMINED
+            self.exact_A = np.concatenate(exact_As)
+            self.exact_B = np.concatenate(exact_Bs)
+            self.A = np.concatenate(As)
+            self.B = np.concatenate(Bs)
+        else:
+            self.exact_A = None
+            self.exact_B = None
+            self.A = np.concatenate(exact_As + As)
+            self.B = np.concatenate(exact_Bs + Bs)
         self._inited = True
 
     def get_matrices(self):
         self._init()
         return self.A, self.B
 
+    def get_n_equations(self):
+        if not self._inited:
+            raise InvalidStateError("Solver is not initialized yet")
+        n = self.A.shape[0]
+        if self.exact_A is not None:
+            n += self.exact_A.shape[0]
+        return n
+
+    def get_n_unknowns(self):
+        if not self._inited:
+            raise InvalidStateError("Solver is not initialized yet")
+        return self.A.shape[1]
+
     def get_problem_type(self):
         self._init()
-        n_equations, n_unknowns = self.A.shape
+        n_equations = self.get_n_equations()
+        n_unknowns = self.get_n_unknowns()
         if n_equations == n_unknowns:
             return SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
         elif n_equations < n_unknowns:
@@ -786,15 +830,16 @@ class SvNurbsCurveSolver(SvCurve):
         residue = 0.0
         ndim = self.ndim
         n = self.n_cpts
-        n_equations, n_unknowns = self.A.shape
+        n_equations = self.get_n_equations()
+        n_unknowns = self.get_n_unknowns()
+        #logger.info("A: %s / %s = %s", np.count_nonzero(self.A), (n_equations*n_unknowns), np.count_nonzero(self.A) / (n_equations * n_unknowns))
         if n_equations == n_unknowns:
             #logger.debug(f"Solving well-determined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
             problem_type = SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
             if problem_type not in problem_types:
                 raise AlgorithmError("The problem is well-determined")
             try:
-                A1 = np.linalg.inv(self.A)
-                X = (A1 @ self.B).T
+                X = solve_sparse(self.A, self.B)
             except np.linalg.LinAlgError as e:
                 logger.error(f"Matrix: {self.A}")
                 raise AlgorithmError(f"Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}") from e
@@ -803,15 +848,18 @@ class SvNurbsCurveSolver(SvCurve):
             problem_type = SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
             if problem_type not in problem_types:
                 raise AlgorithmError("The problem is underdetermined")
-            A1 = np.linalg.pinv(self.A)
-            X = (A1 @ self.B).T
+            X, residue = least_squares_sparse(self.A, self.B)
         else: # n_equations > n_unknowns
             #logger.debug(f"Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
             problem_type = SvNurbsCurveSolver.PROBLEM_OVERDETERMINED
             if problem_type not in problem_types:
                 raise AlgorithmError("The system is overdetermined")
-            X, residues, rank, singval = np.linalg.lstsq(self.A, self.B)
-            residue = residues.sum()
+            if self._has_constraints:
+                logger.debug(f"Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns} with constraints")
+                X, residue = least_squares_with_constraints(self.A, self.B, self.exact_A, self.exact_B, logger=logger)
+            else:
+                logger.debug(f"Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns} without constraints")
+                X, residue = least_squares_sparse(self.A, self.B)
             
         d_cpts = X.reshape((n, ndim))
         if ndim == 4:
