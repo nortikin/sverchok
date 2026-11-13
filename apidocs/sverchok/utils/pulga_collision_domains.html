@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.pulga_collision_domains API documentation</title>
+<meta name="description" content="Contact geometry for deforming polygons and stationary point/edge obstacles …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.pulga_collision_domains</code></h1>
+</header>
+<section id="section-intro">
+<p>Contact geometry for deforming polygons and stationary point/edge obstacles.</p>
+<p>Standalone mathematical kernels, no bpy dependency. All contacts are discrete
+(no continuous collision detection). The Numba version uses the same serial
+accumulation as Python, avoiding races on shared face vertices.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.pulga_collision_domains.group_polygon_faces"><code class="name flex">
+<span>def <span class="ident">group_polygon_faces</span></span>(<span>triangles, excluded)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def group_polygon_faces(triangles, excluded):
+    &#34;&#34;&#34;Group triangles by their original face, retained in ``excluded``.
+
+    Triangulation is used only for triangles and n-gons; each original face
+    produces *one* collision response per particle. Quads use a bilinear patch.
+    &#34;&#34;&#34;
+    triangles = np.asarray(triangles, dtype=np.int64).reshape(-1, 3)
+    excluded = np.asarray(excluded, dtype=np.int64)
+    if excluded.ndim != 2 or len(excluded) != len(triangles):
+        raise ValueError(&#39;Excluded faces must match triangle count&#39;)
+    if len(triangles) == 0:
+        return (np.zeros((0, excluded.shape[1]), dtype=np.int64),
+                np.zeros(0, dtype=np.int64), np.zeros(1, dtype=np.int64))
+    faces, counts, offsets = [], [], [0]
+    for t, row in enumerate(excluded):
+        if t &gt; 0 and np.array_equal(row, excluded[t - 1]):
+            offsets[-1] = t + 1
+        else:
+            faces.append(row.copy())
+            counts.append(int(np.count_nonzero(row &gt;= 0)))
+            offsets.append(t + 1)
+    return (np.ascontiguousarray(faces, dtype=np.int64),
+            np.asarray(counts, dtype=np.int64),
+            np.asarray(offsets, dtype=np.int64))</code></pre>
+</details>
+<div class="desc"><p>Group triangles by their original face, retained in <code>excluded</code>.</p>
+<p>Triangulation is used only for triangles and n-gons; each original face
+produces <em>one</em> collision response per particle. Quads use a bilinear patch.</p></div>
+</dd>
+<dt id="sverchok.utils.pulga_collision_domains.polygon_contact_forces"><code class="name flex">
+<span>def <span class="ident">polygon_contact_forces</span></span>(<span>positions,<br>velocity,<br>radii,<br>triangles,<br>excluded,<br>strength,<br>thickness,<br>damping,<br>engine='AUTO',<br>grouping=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def polygon_contact_forces(positions, velocity, radii, triangles, excluded,
+                           strength, thickness, damping, engine=&#39;AUTO&#39;,
+                           grouping=None):
+    accelerated=_validate_engine(engine)
+    pos=_points(positions); vel=_points(velocity)
+    if len(pos)!=len(vel): raise ValueError(&#39;Position/velocity mismatch&#39;)
+    triangles=np.ascontiguousarray(np.asarray(triangles,dtype=np.int64).reshape(-1,3))
+    excluded=np.ascontiguousarray(np.asarray(excluded,dtype=np.int64))
+    if len(excluded)!=len(triangles): raise ValueError(&#39;Exclusion/triangle count mismatch&#39;)
+    if len(triangles) and (np.min(triangles)&lt;0 or np.max(triangles)&gt;=len(pos)):
+        raise ValueError(&#39;Triangle vertex index out of range&#39;)
+    count=len(pos)
+    r=_fit_parameter(radii,count,&#39;Radius&#39;)
+    s=_fit_parameter(strength,count,&#39;Strength&#39;)
+    t=_fit_parameter(thickness,count,&#39;Thickness&#39;)
+    d=_fit_parameter(damping,count,&#39;Damping&#39;)
+    if not count or not len(triangles): return np.zeros((count,3),dtype=np.float64)
+    faces,sizes,offsets = (group_polygon_faces(triangles, excluded)
+                           if grouping is None else grouping)
+    if len(faces) and (np.min(faces[faces&gt;=0])&lt;0 or np.max(faces)&gt;=len(pos)):
+        raise ValueError(&#39;Polygon vertex index out of range&#39;)
+    kernel=_polygon_forces_jit if accelerated else _polygon_forces_loop
+    return kernel(pos,vel,r,triangles,faces,sizes,offsets,s,t,d)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_collision_domains.triangulate_faces"><code class="name flex">
+<span>def <span class="ident">triangulate_faces</span></span>(<span>verts, faces)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def triangulate_faces(verts, faces):
+    &#34;&#34;&#34;Ear-clip planar polygons into triangles; preserve whole-face exclusion.
+
+    Supports concave simple polygons. Nonplanar polygons use their best-area
+    projection; triangulation is determined once at force setup.
+    &#34;&#34;&#34;
+    v = _points(verts)
+    tris, exclude = [], []
+    for face in faces:
+        ids = [int(i) for i in face]
+        if len(ids) &lt; 3:
+            raise ValueError(&#39;Polygon must have at least three vertices&#39;)
+        if len(set(ids)) != len(ids) or min(ids) &lt; 0 or max(ids) &gt;= len(v):
+            raise ValueError(&#39;Invalid polygon indices&#39;)
+        if len(ids) == 3:
+            tris.append(ids)
+            exclude.append(ids)
+            continue
+        coords = v[ids]
+        # Newell normal: robust projection plane for a generally planar face.
+        nx = ny = nz = 0.0
+        for p, q in zip(coords, np.roll(coords, -1, axis=0)):
+            nx += (p[1]-q[1])*(p[2]+q[2])
+            ny += (p[2]-q[2])*(p[0]+q[0])
+            nz += (p[0]-q[0])*(p[1]+q[1])
+        if max(abs(nx),abs(ny),abs(nz)) &lt; 1.e-12:
+            raise ValueError(&#39;Degenerate polygon cannot be triangulated&#39;)
+        drop = int(np.argmax(np.abs([nx, ny, nz])))
+        axes = [k for k in range(3) if k != drop]
+        flat = coords[:, axes]
+        sign = 1.0 if _area_2d(flat) &gt; 0 else -1.0
+        remaining = list(range(len(ids)))
+        epsilon = 1e-13 * max(1.0, np.max(np.abs(flat))**2)
+        while len(remaining) &gt; 3:
+            found = False
+            for k in range(len(remaining)):
+                prev, mid, nxt = (remaining[k-1], remaining[k],
+                                  remaining[(k+1) % len(remaining)])
+                a, b, c = flat[prev], flat[mid], flat[nxt]
+                if sign * _orient2(a, b, c) &lt;= epsilon:
+                    continue
+                if any(_point_in_triangle2(flat[m], a, b, c, sign, epsilon)
+                       for m in remaining if m not in (prev, mid, nxt)):
+                    continue
+                tris.append([ids[prev], ids[mid], ids[nxt]])
+                exclude.append(ids)
+                remaining.pop(k)
+                found = True
+                break
+            if not found:
+                raise ValueError(&#39;Polygon is degenerate or non-simple; cannot ear-clip&#39;)
+        tris.append([ids[i] for i in remaining])
+        exclude.append(ids)
+    max_len = max(map(len, exclude), default=0)
+    blocked = np.full((len(tris), max_len), -1, dtype=np.int64)
+    for i, ids in enumerate(exclude):
+        blocked[i, :len(ids)] = ids
+    return np.asarray(tris, dtype=np.int64).reshape(-1, 3), blocked</code></pre>
+</details>
+<div class="desc"><p>Ear-clip planar polygons into triangles; preserve whole-face exclusion.</p>
+<p>Supports concave simple polygons. Nonplanar polygons use their best-area
+projection; triangulation is determined once at force setup.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.pulga_collision_domains.SvSelfPolygonCollisionForce"><code class="flex name class">
+<span>class <span class="ident">SvSelfPolygonCollisionForce</span></span>
+<span>(</span><span>polygons, strength, thickness, damping, engine='AUTO')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvSelfPolygonCollisionForce:
+    def __init__(self, polygons, strength, thickness, damping, engine=&#39;AUTO&#39;):
+        self.polygons=polygons
+        self.strength=strength
+        self.thickness=thickness
+        self.damping=damping
+        self.engine=engine
+
+    def setup(self, ps):
+        self.tris,self.exclude=triangulate_faces(ps.verts,self.polygons)
+        self.groups=group_polygon_faces(self.tris,self.exclude)
+        self._s=_fit_parameter(self.strength,ps.v_len,&#39;Strength&#39;)
+        self._t=_fit_parameter(self.thickness,ps.v_len,&#39;Thickness&#39;)
+        self._d=_fit_parameter(self.damping,ps.v_len,&#39;Damping&#39;)
+
+    def add(self, ps):
+        ps.force_resultant += polygon_contact_forces(
+            ps.verts,ps.vel,ps.rads,self.tris,self.exclude,
+            self._s,self._t,self._d,self.engine,self.groups)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.pulga_collision_domains.SvSelfPolygonCollisionForce.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    ps.force_resultant += polygon_contact_forces(
+        ps.verts,ps.vel,ps.rads,self.tris,self.exclude,
+        self._s,self._t,self._d,self.engine,self.groups)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_collision_domains.SvSelfPolygonCollisionForce.setup"><code class="name flex">
+<span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    self.tris,self.exclude=triangulate_faces(ps.verts,self.polygons)
+    self.groups=group_polygon_faces(self.tris,self.exclude)
+    self._s=_fit_parameter(self.strength,ps.v_len,&#39;Strength&#39;)
+    self._t=_fit_parameter(self.thickness,ps.v_len,&#39;Thickness&#39;)
+    self._d=_fit_parameter(self.damping,ps.v_len,&#39;Damping&#39;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce"><code class="flex name class">
+<span>class <span class="ident">SvStaticPointEdgeObstacleForce</span></span>
+<span>(</span><span>verts, edges, absorption, thickness, domain, engine='AUTO')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvStaticPointEdgeObstacleForce:
+    &#34;&#34;&#34;Stationary point or segment obstacles with one deepest contact per particle.
+
+    Same positional response concept as SvObstaclesBVHForce, but no polygon
+    normals are required. SciPy cKDTree is used for stationary point targets.
+    &#34;&#34;&#34;
+    def __init__(self, verts, edges, absorption, thickness, domain, engine=&#39;AUTO&#39;):
+        self.verts=_points(verts)
+        self.domain=domain
+        self.edges=_edges(edges,len(self.verts)) if domain==&#39;EDGES&#39; else np.zeros((0,2),np.int64)
+        self.absorption=1.0-max(0.0,min(1.0,float(np.asarray(absorption).reshape(-1)[0])))
+        self.thickness=np.asarray(thickness,dtype=np.float64).reshape(-1)
+        self.engine=engine
+        self.tree=None
+        if domain==&#39;VERTS&#39; and engine==&#39;AUTO&#39; and HAS_SCIPY and len(self.verts):
+            self.tree=scipy.spatial.cKDTree(self.verts)
+        if domain==&#39;EDGES&#39;:
+            self.starts=np.ascontiguousarray(self.verts[self.edges[:,0]])
+            self.ends=np.ascontiguousarray(self.verts[self.edges[:,1]])
+
+    def setup(self, ps):
+        self._validate=_validate_engine(self.engine)
+        self._thickness=_fit_parameter(self.thickness,ps.v_len,&#39;Thickness&#39;)
+
+    def nearest(self, points):
+        p=_points(points)
+        if self.domain==&#39;VERTS&#39;:
+            if not len(self.verts):
+                return np.zeros_like(p),np.full(len(p),np.inf)
+            if self.tree is not None:
+                d,ids=self.tree.query(p)
+                return np.ascontiguousarray(self.verts[ids]),np.asarray(d*d)
+            fn=_nearest_points_jit if _validate_engine(self.engine) else _nearest_points_loop
+            return fn(p,self.verts)
+        if not len(self.edges):
+            return np.zeros_like(p),np.full(len(p),np.inf)
+        fn=_nearest_edges_jit if _validate_engine(self.engine) else _nearest_edges_loop
+        return fn(p,self.starts,self.ends)
+
+    def add(self, ps):
+        closest,ds2=self.nearest(ps.verts)
+        radii=ps.rads + self._thickness
+        mask=np.where(ds2 &lt; radii*radii)[0]
+        for i in mask:
+            d=math.sqrt(max(ds2[i],0.0))
+            if d &gt; 1.e-12:
+                n=(ps.verts[i]-closest[i])/d
+            else:
+                v=ps.vel[i]
+                norm=float(np.linalg.norm(v))
+                if norm&gt;1.e-12:
+                    n=-v/norm
+                elif self.domain==&#39;EDGES&#39; and len(self.edges):
+                    # Find the segment responsible for the exact overlap.
+                    best_j=0
+                    best_d2=math.inf
+                    for j in range(len(self.edges)):
+                        qx,qy,qz,_=_segment_closest(
+                            *ps.verts[i], *self.starts[j], *self.ends[j])
+                        ds=(ps.verts[i,0]-qx)**2+(ps.verts[i,1]-qy)**2+(ps.verts[i,2]-qz)**2
+                        if ds &lt; best_d2:
+                            best_j=j
+                            best_d2=ds
+                    e=self.ends[best_j]-self.starts[best_j]
+                    p=np.cross(e,[0.,0.,1.])
+                    if np.linalg.norm(p)&lt;=1.e-12:p=np.cross(e,[0.,1.,0.])
+                    norm=float(np.linalg.norm(p))
+                    n=p/norm if norm&gt;1.e-12 else np.array([1.,0.,0.])
+                else:
+                    n=np.array([1.,0.,0.])
+            ps.verts[i]=closest[i]+n*radii[i]
+            vn=np.dot(ps.vel[i],n)
+            if vn &lt; 0.0:
+                ps.vel[i]-=2*vn*n
+            ps.vel[i]*=self.absorption
+            fn=np.dot(ps.force_resultant[i],n)
+            if fn &lt; 0.0:
+                ps.force_resultant[i]-=2*fn*n
+            ps.force_resultant[i]*=self.absorption</code></pre>
+</details>
+<div class="desc"><p>Stationary point or segment obstacles with one deepest contact per particle.</p>
+<p>Same positional response concept as SvObstaclesBVHForce, but no polygon
+normals are required. SciPy cKDTree is used for stationary point targets.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    closest,ds2=self.nearest(ps.verts)
+    radii=ps.rads + self._thickness
+    mask=np.where(ds2 &lt; radii*radii)[0]
+    for i in mask:
+        d=math.sqrt(max(ds2[i],0.0))
+        if d &gt; 1.e-12:
+            n=(ps.verts[i]-closest[i])/d
+        else:
+            v=ps.vel[i]
+            norm=float(np.linalg.norm(v))
+            if norm&gt;1.e-12:
+                n=-v/norm
+            elif self.domain==&#39;EDGES&#39; and len(self.edges):
+                # Find the segment responsible for the exact overlap.
+                best_j=0
+                best_d2=math.inf
+                for j in range(len(self.edges)):
+                    qx,qy,qz,_=_segment_closest(
+                        *ps.verts[i], *self.starts[j], *self.ends[j])
+                    ds=(ps.verts[i,0]-qx)**2+(ps.verts[i,1]-qy)**2+(ps.verts[i,2]-qz)**2
+                    if ds &lt; best_d2:
+                        best_j=j
+                        best_d2=ds
+                e=self.ends[best_j]-self.starts[best_j]
+                p=np.cross(e,[0.,0.,1.])
+                if np.linalg.norm(p)&lt;=1.e-12:p=np.cross(e,[0.,1.,0.])
+                norm=float(np.linalg.norm(p))
+                n=p/norm if norm&gt;1.e-12 else np.array([1.,0.,0.])
+            else:
+                n=np.array([1.,0.,0.])
+        ps.verts[i]=closest[i]+n*radii[i]
+        vn=np.dot(ps.vel[i],n)
+        if vn &lt; 0.0:
+            ps.vel[i]-=2*vn*n
+        ps.vel[i]*=self.absorption
+        fn=np.dot(ps.force_resultant[i],n)
+        if fn &lt; 0.0:
+            ps.force_resultant[i]-=2*fn*n
+        ps.force_resultant[i]*=self.absorption</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce.nearest"><code class="name flex">
+<span>def <span class="ident">nearest</span></span>(<span>self, points)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nearest(self, points):
+    p=_points(points)
+    if self.domain==&#39;VERTS&#39;:
+        if not len(self.verts):
+            return np.zeros_like(p),np.full(len(p),np.inf)
+        if self.tree is not None:
+            d,ids=self.tree.query(p)
+            return np.ascontiguousarray(self.verts[ids]),np.asarray(d*d)
+        fn=_nearest_points_jit if _validate_engine(self.engine) else _nearest_points_loop
+        return fn(p,self.verts)
+    if not len(self.edges):
+        return np.zeros_like(p),np.full(len(p),np.inf)
+    fn=_nearest_edges_jit if _validate_engine(self.engine) else _nearest_edges_loop
+    return fn(p,self.starts,self.ends)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce.setup"><code class="name flex">
+<span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    self._validate=_validate_engine(self.engine)
+    self._thickness=_fit_parameter(self.thickness,ps.v_len,&#39;Thickness&#39;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.pulga_collision_domains.group_polygon_faces" href="#sverchok.utils.pulga_collision_domains.group_polygon_faces">group_polygon_faces</a></code></li>
+<li><code><a title="sverchok.utils.pulga_collision_domains.polygon_contact_forces" href="#sverchok.utils.pulga_collision_domains.polygon_contact_forces">polygon_contact_forces</a></code></li>
+<li><code><a title="sverchok.utils.pulga_collision_domains.triangulate_faces" href="#sverchok.utils.pulga_collision_domains.triangulate_faces">triangulate_faces</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.pulga_collision_domains.SvSelfPolygonCollisionForce" href="#sverchok.utils.pulga_collision_domains.SvSelfPolygonCollisionForce">SvSelfPolygonCollisionForce</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.pulga_collision_domains.SvSelfPolygonCollisionForce.add" href="#sverchok.utils.pulga_collision_domains.SvSelfPolygonCollisionForce.add">add</a></code></li>
+<li><code><a title="sverchok.utils.pulga_collision_domains.SvSelfPolygonCollisionForce.setup" href="#sverchok.utils.pulga_collision_domains.SvSelfPolygonCollisionForce.setup">setup</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce" href="#sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce">SvStaticPointEdgeObstacleForce</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce.add" href="#sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce.add">add</a></code></li>
+<li><code><a title="sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce.nearest" href="#sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce.nearest">nearest</a></code></li>
+<li><code><a title="sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce.setup" href="#sverchok.utils.pulga_collision_domains.SvStaticPointEdgeObstacleForce.setup">setup</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

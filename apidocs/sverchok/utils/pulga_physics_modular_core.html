@@ -1820,6 +1820,8 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">class SvBoundingSolidForce():
     def __init__(self, solid, volume=False):
+        # Keep the full solid for reliable inside/outside tests.
+        self.volume_shape = solid if isinstance(solid, Part.Solid) else None
 
         if isinstance(solid, Part.Solid):
             self.shape = solid.OuterShell
@@ -1837,9 +1839,24 @@ el.replaceWith(d);
         vertex = Part.Vertex(Base.Vector(v))
 
         dist = self.shape.distToShape(vertex)
-        if str(dist[2][0][0]) == &#34;b&#39;Face&#39;&#34;:
+        # &#39;Face&#39;/&#39;Edge&#39;/&#39;Vertex&#39; or b&#39;Face&#39;/b&#39;Edge&#39;/b&#39;Vertex&#39;.
+        # The old str(bytes) comparison mistakenly classified str &#39;Face&#39;
+        # as a vertex, causing &#34;Sequence index out of range&#34;.
+        if len(dist) &lt; 3 or not dist[1] or not dist[2] or not dist[2][0]:
+            raise RuntimeError(
+                &#39;Pulga Boundaries Solid: FreeCAD distToShape did not return &#39;
+                &#39;a valid closest point and subelement.&#39;
+            )
+        element_type = dist[2][0][0]
+        if isinstance(element_type, bytes):
+            element_type = element_type.decode(&#39;utf-8&#39;, errors=&#39;replace&#39;)
+        elif not isinstance(element_type, str):
+            element_type = str(element_type)
+        if element_type.startswith(&#34;b&#39;&#34;) and element_type.endswith(&#34;&#39;&#34;):
+            element_type = element_type[2:-1]
+        if element_type == &#39;Face&#39;:
             normal = self.shape.Faces[dist[2][0][1]].normalAt(*dist[2][0][2])
-        elif str(dist[2][0][0]) == &#34;b&#39;Edge&#39;&#34;:
+        elif element_type == &#39;Edge&#39;:
             edge = self.shape.Edges[dist[2][0][1]]
             vector = self.shape.Edges[dist[2][0][1]].valueAt(dist[2][0][2])
             face_list = self.shape.ancestorsOfType(edge, Part.Face)
@@ -1862,7 +1879,7 @@ el.replaceWith(d);
                 normal[2] /= count
             else:
                 normal = [0, 0, 1]
-        else:
+        elif element_type == &#39;Vertex&#39;:
             vertex = self.shape.Vertexes[dist[2][0][1]]
             face_list = self.shape.ancestorsOfType(vertex, Part.Face)
             normal = [0, 0, 0]
@@ -1884,6 +1901,11 @@ el.replaceWith(d);
                 normal[2] /= count
             else:
                 normal = [0, 0, 1]
+        else:
+            raise RuntimeError(
+                &#39;Pulga Boundaries Solid: unsupported FreeCAD closest &#39;
+                f&#39;subelement {element_type!r}&#39;
+            )
         return dist[1][0][0], normal
 
     def find(self, verts):
@@ -1899,20 +1921,17 @@ el.replaceWith(d);
             norm[2] = normal[2]
 
     def find_masked(self, verts, mask):
-        v_nearest = self.nearest
-        v_normals = self.normals
-        for v, near, norm in zip(verts[mask], v_nearest[mask], v_normals[mask]):
-            nearest, normal = self.find_closest(v)
-            near[0] = nearest[0]
-            near[1] = nearest[1]
-            near[2] = nearest[2]
-            norm[0] = normal[0]
-            norm[1] = normal[1]
-            norm[2] = normal[2]
+        # Boolean indexing (self.nearest[mask]) returns a COPY in NumPy.
+        # Write by the original particle index so add_volume reads the results.
+        for i in np.flatnonzero(mask):
+            nearest, normal = self.find_closest(verts[i])
+            self.nearest[i] = nearest
+            self.normals[i] = normal
 
     def is_outside(self, verts):
 
-        return np.array([not self.shape.isInside(Base.Vector(v), 1e-6, False) for v in verts], dtype=np.bool_)
+        inside_shape = self.volume_shape if self.volume_shape is not None else self.shape
+        return np.array([not inside_shape.isInside(Base.Vector(v), 1e-6, False) for v in verts], dtype=np.bool_)
     def setup(self, ps):
         self.nearest = np.zeros(ps.verts.shape, dtype=np.float64)
         self.normals = np.zeros(ps.verts.shape, dtype=np.float64)
@@ -2001,9 +2020,24 @@ el.replaceWith(d);
     vertex = Part.Vertex(Base.Vector(v))
 
     dist = self.shape.distToShape(vertex)
-    if str(dist[2][0][0]) == &#34;b&#39;Face&#39;&#34;:
+    # &#39;Face&#39;/&#39;Edge&#39;/&#39;Vertex&#39; or b&#39;Face&#39;/b&#39;Edge&#39;/b&#39;Vertex&#39;.
+    # The old str(bytes) comparison mistakenly classified str &#39;Face&#39;
+    # as a vertex, causing &#34;Sequence index out of range&#34;.
+    if len(dist) &lt; 3 or not dist[1] or not dist[2] or not dist[2][0]:
+        raise RuntimeError(
+            &#39;Pulga Boundaries Solid: FreeCAD distToShape did not return &#39;
+            &#39;a valid closest point and subelement.&#39;
+        )
+    element_type = dist[2][0][0]
+    if isinstance(element_type, bytes):
+        element_type = element_type.decode(&#39;utf-8&#39;, errors=&#39;replace&#39;)
+    elif not isinstance(element_type, str):
+        element_type = str(element_type)
+    if element_type.startswith(&#34;b&#39;&#34;) and element_type.endswith(&#34;&#39;&#34;):
+        element_type = element_type[2:-1]
+    if element_type == &#39;Face&#39;:
         normal = self.shape.Faces[dist[2][0][1]].normalAt(*dist[2][0][2])
-    elif str(dist[2][0][0]) == &#34;b&#39;Edge&#39;&#34;:
+    elif element_type == &#39;Edge&#39;:
         edge = self.shape.Edges[dist[2][0][1]]
         vector = self.shape.Edges[dist[2][0][1]].valueAt(dist[2][0][2])
         face_list = self.shape.ancestorsOfType(edge, Part.Face)
@@ -2026,7 +2060,7 @@ el.replaceWith(d);
             normal[2] /= count
         else:
             normal = [0, 0, 1]
-    else:
+    elif element_type == &#39;Vertex&#39;:
         vertex = self.shape.Vertexes[dist[2][0][1]]
         face_list = self.shape.ancestorsOfType(vertex, Part.Face)
         normal = [0, 0, 0]
@@ -2048,6 +2082,11 @@ el.replaceWith(d);
             normal[2] /= count
         else:
             normal = [0, 0, 1]
+    else:
+        raise RuntimeError(
+            &#39;Pulga Boundaries Solid: unsupported FreeCAD closest &#39;
+            f&#39;subelement {element_type!r}&#39;
+        )
     return dist[1][0][0], normal</code></pre>
 </details>
 <div class="desc"></div>
@@ -2061,16 +2100,12 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def find_masked(self, verts, mask):
-    v_nearest = self.nearest
-    v_normals = self.normals
-    for v, near, norm in zip(verts[mask], v_nearest[mask], v_normals[mask]):
-        nearest, normal = self.find_closest(v)
-        near[0] = nearest[0]
-        near[1] = nearest[1]
-        near[2] = nearest[2]
-        norm[0] = normal[0]
-        norm[1] = normal[1]
-        norm[2] = normal[2]</code></pre>
+    # Boolean indexing (self.nearest[mask]) returns a COPY in NumPy.
+    # Write by the original particle index so add_volume reads the results.
+    for i in np.flatnonzero(mask):
+        nearest, normal = self.find_closest(verts[i])
+        self.nearest[i] = nearest
+        self.normals[i] = normal</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -2084,7 +2119,8 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">def is_outside(self, verts):
 
-    return np.array([not self.shape.isInside(Base.Vector(v), 1e-6, False) for v in verts], dtype=np.bool_)</code></pre>
+    inside_shape = self.volume_shape if self.volume_shape is not None else self.shape
+    return np.array([not inside_shape.isInside(Base.Vector(v), 1e-6, False) for v in verts], dtype=np.bool_)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.pulga_boundaries_extra API documentation</title>
+<meta name="description" content="Additional geometric constraints for Pulga Physics …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.pulga_boundaries_extra</code></h1>
+</header>
+<section id="section-intro">
+<p>Additional geometric constraints for Pulga Physics.</p>
+<p>Boundary forces project particle positions and remove velocity/force components
+normal to the constraint. All heavy static data is built once in <strong>init</strong>.
+Fast curve/surface methods do not need SciPy; Precise methods require SciPy.
+Solid constraints remain in Sverchok's existing modular core.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.pulga_boundaries_extra.nearest_on_segments"><code class="name flex">
+<span>def <span class="ident">nearest_on_segments</span></span>(<span>points, starts, ends, point_chunk=256, edge_chunk=256)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nearest_on_segments(points, starts, ends, point_chunk=256, edge_chunk=256):
+    &#34;&#34;&#34;Exact nearest point on a segment set; bounded temporary memory.
+
+    Returns closest points and the tangent of the chosen segment. Zero-length
+    segments are discarded by the caller.
+    &#34;&#34;&#34;
+    points = np.asarray(points, dtype=np.float64).reshape((-1, 3))
+    starts = np.asarray(starts, dtype=np.float64).reshape((-1, 3))
+    ends = np.asarray(ends, dtype=np.float64).reshape((-1, 3))
+    if len(starts) == 0:
+        raise ValueError(&#39;Boundary requires at least one nondegenerate edge&#39;)
+    if len(starts) != len(ends):
+        raise ValueError(&#39;Edge start/end point counts differ&#39;)
+
+    segment = ends - starts
+    lengths2 = np.einsum(&#39;ij,ij-&gt;i&#39;, segment, segment)
+    valid = lengths2 &gt; _EPS
+    if not valid.any():
+        raise ValueError(&#39;Boundary requires at least one nondegenerate edge&#39;)
+    starts, segment, lengths2 = starts[valid], segment[valid], lengths2[valid]
+    closest = np.empty_like(points)
+    tangent = np.empty_like(points)
+    for i in range(0, len(points), point_chunk):
+        p = points[i:i + point_chunk]
+        best_d2 = np.full(len(p), np.inf)
+        best_p = np.zeros_like(p)
+        best_t = np.zeros_like(p)
+        rows = np.arange(len(p))
+        for j in range(0, len(starts), edge_chunk):
+            a = starts[j:j + edge_chunk]
+            ab = segment[j:j + edge_chunk]
+            sq = lengths2[j:j + edge_chunk]
+            t = np.einsum(&#39;nmk,mk-&gt;nm&#39;, p[:, None, :] - a[None, :, :], ab)
+            t = np.clip(t / sq[None, :], 0.0, 1.0)
+            candidate = a[None, :, :] + t[:, :, None] * ab[None, :, :]
+            d2 = np.einsum(&#39;nmk,nmk-&gt;nm&#39;, candidate - p[:, None, :], candidate - p[:, None, :])
+            idx = np.argmin(d2, axis=1)
+            selected = d2[rows, idx] &lt; best_d2
+            best_d2[selected] = d2[rows, idx][selected]
+            best_p[selected] = candidate[rows, idx][selected]
+            best_t[selected] = ab[idx][selected]
+        closest[i:i + len(p)] = best_p
+        tangent[i:i + len(p)] = best_t
+    return closest, _unit(tangent)</code></pre>
+</details>
+<div class="desc"><p>Exact nearest point on a segment set; bounded temporary memory.</p>
+<p>Returns closest points and the tangent of the chosen segment. Zero-length
+segments are discarded by the caller.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingCurveForce"><code class="flex name class">
+<span>class <span class="ident">SvBoundingCurveForce</span></span>
+<span>(</span><span>curve, method='FAST', resolution=64, init_samples=32)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvBoundingCurveForce:
+    &#34;&#34;&#34;Constrain particle positions and velocities to a stationary SvCurve.
+
+    Fast mode projects onto pre-sampled segments. Precise mode optimizes a
+    point on the original curve via Sverchok&#39;s SciPy nearest-point utility.
+    &#34;&#34;&#34;
+
+    def __init__(self, curve, method=&#39;FAST&#39;, resolution=64, init_samples=32):
+        self.curve = curve
+        self.method = method
+        if method not in {&#39;FAST&#39;, &#39;PRECISE&#39;}:
+            raise ValueError(&#39;Unknown Curve boundary method: &#39; + str(method))
+        if method == &#39;FAST&#39;:
+            resolution = max(2, int(resolution))
+            t_min, t_max = curve.get_u_bounds()
+            ts = np.linspace(t_min, t_max, resolution)
+            sampled = np.asarray(curve.evaluate_array(ts), dtype=np.float64)
+            if sampled.shape != (resolution, 3) or not np.isfinite(sampled).all():
+                raise ValueError(&#39;Curve sampling returned invalid points&#39;)
+            self.starts, self.ends = sampled[:-1], sampled[1:]
+        else:
+            from sverchok.dependencies import scipy
+            if scipy is None:
+                raise ImportError(&#39;Curve Precise boundaries require SciPy&#39;)
+            self.init_samples = max(3, int(init_samples))
+
+    def setup(self, ps):
+        pass
+
+    def add(self, ps):
+        points = np.asarray(ps.verts, dtype=np.float64)
+        if not len(points):
+            return
+        if self.method == &#39;FAST&#39;:
+            closest, tangents = nearest_on_segments(points, self.starts, self.ends)
+        else:
+            from sverchok.utils.manifolds import nearest_point_on_curve
+            result = nearest_point_on_curve(
+                points.tolist(), self.curve, samples=self.init_samples,
+                precise=True, output_points=True, method=&#39;bounded&#39;)
+            parameters = np.asarray([entry[0] for entry in result], dtype=np.float64)
+            closest = np.asarray([entry[1] for entry in result], dtype=np.float64)
+            tangents = np.asarray(self.curve.tangent_array(parameters.copy()), dtype=np.float64)
+        if closest.shape != points.shape or tangents.shape != points.shape:
+            raise ValueError(&#39;Curve nearest-point calculation returned unexpected dimensions&#39;)
+        _apply_curve_constraint(ps, closest, tangents)</code></pre>
+</details>
+<div class="desc"><p>Constrain particle positions and velocities to a stationary SvCurve.</p>
+<p>Fast mode projects onto pre-sampled segments. Precise mode optimizes a
+point on the original curve via Sverchok's SciPy nearest-point utility.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingCurveForce.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    points = np.asarray(ps.verts, dtype=np.float64)
+    if not len(points):
+        return
+    if self.method == &#39;FAST&#39;:
+        closest, tangents = nearest_on_segments(points, self.starts, self.ends)
+    else:
+        from sverchok.utils.manifolds import nearest_point_on_curve
+        result = nearest_point_on_curve(
+            points.tolist(), self.curve, samples=self.init_samples,
+            precise=True, output_points=True, method=&#39;bounded&#39;)
+        parameters = np.asarray([entry[0] for entry in result], dtype=np.float64)
+        closest = np.asarray([entry[1] for entry in result], dtype=np.float64)
+        tangents = np.asarray(self.curve.tangent_array(parameters.copy()), dtype=np.float64)
+    if closest.shape != points.shape or tangents.shape != points.shape:
+        raise ValueError(&#39;Curve nearest-point calculation returned unexpected dimensions&#39;)
+    _apply_curve_constraint(ps, closest, tangents)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingCurveForce.setup"><code class="name flex">
+<span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingEdgesForce"><code class="flex name class">
+<span>class <span class="ident">SvBoundingEdgesForce</span></span>
+<span>(</span><span>vertices, edges)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvBoundingEdgesForce:
+    &#34;&#34;&#34;Constrain particles to the nearest edge of a Sverchok indexed mesh.&#34;&#34;&#34;
+
+    def __init__(self, vertices, edges):
+        vertices = np.asarray(vertices, dtype=np.float64).reshape((-1, 3))
+        edges = np.asarray(edges, dtype=np.int64).reshape((-1, 2))
+        if not len(vertices) or not len(edges):
+            raise ValueError(&#39;Mesh (Edges) requires vertices and edges&#39;)
+        if (edges &lt; 0).any() or (edges &gt;= len(vertices)).any():
+            raise ValueError(&#39;Mesh (Edges) has an out-of-range vertex index&#39;)
+        self.starts = vertices[edges[:, 0]]
+        self.ends = vertices[edges[:, 1]]
+        self.setup_done = False
+
+    def setup(self, ps):
+        self.setup_done = True
+
+    def add(self, ps):
+        closest, tangent = nearest_on_segments(ps.verts, self.starts, self.ends)
+        _apply_curve_constraint(ps, closest, tangent)</code></pre>
+</details>
+<div class="desc"><p>Constrain particles to the nearest edge of a Sverchok indexed mesh.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingEdgesForce.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    closest, tangent = nearest_on_segments(ps.verts, self.starts, self.ends)
+    _apply_curve_constraint(ps, closest, tangent)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingEdgesForce.setup"><code class="name flex">
+<span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    self.setup_done = True</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingSolidFastForce"><code class="flex name class">
+<span>class <span class="ident">SvBoundingSolidFastForce</span></span>
+<span>(</span><span>solid, volume=False, deflection=0.1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvBoundingSolidFastForce:
+    &#34;&#34;&#34;Fast static FreeCAD solid / solid-face constraint.
+
+    Build one tessellation, delegate to the *existing* mesh surface/volume
+    boundary force. The cached mesh and its BVH are reused every iteration.
+    &#34;&#34;&#34;
+
+    def __init__(self, solid, volume=False, deflection=0.1):
+        from sverchok.utils.pulga_physics_modular_core import SvBoundingMeshForce
+
+        tolerance = float(deflection)
+        if not np.isfinite(tolerance) or tolerance &lt;= 0.0:
+            raise ValueError(&#39;Solid boundary Deflection must be positive and finite&#39;)
+        # SvSolidFaceSurface has a FreeCAD face in .face; Part.Solid is directly
+        # tessellatable. Do not convert a face wrapper to its untrimmed Surface.
+        shape = getattr(solid, &#39;face&#39;, None)
+        if shape is None:
+            shape = solid
+        if not hasattr(shape, &#39;tessellate&#39;):
+            raise TypeError(&#39;Solid Fast boundary expects a FreeCAD solid/face&#39;)
+
+        points, triangles = shape.tessellate(tolerance)
+        vertices = [((float(point.x), float(point.y), float(point.z))
+                     if hasattr(point, &#39;x&#39;) else tuple(float(c) for c in point))
+                    for point in points]
+        faces = [tuple(int(index) for index in tri) for tri in triangles]
+        if not vertices or not faces or any(len(face) != 3 for face in faces):
+            raise ValueError(&#39;FreeCAD tessellation returned an empty/invalid triangle mesh&#39;)
+        nverts = len(vertices)
+        if any(any(index &lt; 0 or index &gt;= nverts for index in tri) for tri in faces):
+            raise ValueError(&#39;FreeCAD tessellation returned invalid vertex indices&#39;)
+        self.mesh_force = SvBoundingMeshForce(vertices, faces, volume=bool(volume))
+
+    def setup(self, ps):
+        self.mesh_force.setup(ps)
+
+    def add(self, ps):
+        self.mesh_force.add(ps)</code></pre>
+</details>
+<div class="desc"><p>Fast static FreeCAD solid / solid-face constraint.</p>
+<p>Build one tessellation, delegate to the <em>existing</em> mesh surface/volume
+boundary force. The cached mesh and its BVH are reused every iteration.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingSolidFastForce.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    self.mesh_force.add(ps)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingSolidFastForce.setup"><code class="name flex">
+<span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    self.mesh_force.setup(ps)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingSurfaceForce"><code class="flex name class">
+<span>class <span class="ident">SvBoundingSurfaceForce</span></span>
+<span>(</span><span>surface,<br>method='FAST',<br>resolution_u=25,<br>resolution_v=25,<br>init_samples_u=15,<br>init_samples_v=15)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvBoundingSurfaceForce:
+    &#34;&#34;&#34;Constrain particles to the full untrimmed domain of a SvSurface.
+
+    Fast uses a cached triangle BVH; Precise refines a point on the original
+    parametric surface with independent U/V initial search densities.
+    &#34;&#34;&#34;
+
+    def __init__(self, surface, method=&#39;FAST&#39;, resolution_u=25, resolution_v=25,
+                 init_samples_u=15, init_samples_v=15):
+        self.surface = surface
+        self.method = method
+        if method not in {&#39;FAST&#39;, &#39;PRECISE&#39;}:
+            raise ValueError(&#39;Unknown Surface boundary method: &#39; + str(method))
+        if method == &#39;FAST&#39;:
+            from mathutils.bvhtree import BVHTree
+            nu, nv = max(2, int(resolution_u)), max(2, int(resolution_v))
+            if nu * nv &gt; 160000:
+                raise ValueError(&#39;Surface boundary resolution exceeds 160000 points&#39;)
+            umin, umax = surface.get_u_bounds()
+            vmin, vmax = surface.get_v_bounds()
+            us, vs = np.meshgrid(np.linspace(umin, umax, nu),
+                                 np.linspace(vmin, vmax, nv), indexing=&#39;ij&#39;)
+            vertices = np.asarray(surface.evaluate_array(us.ravel(), vs.ravel()), dtype=np.float64)
+            if vertices.shape != (nu * nv, 3) or not np.isfinite(vertices).all():
+                raise ValueError(&#39;Surface sampling returned invalid points&#39;)
+            triangles = []
+            for i in range(nu - 1):
+                for j in range(nv - 1):
+                    a = i * nv + j
+                    b = (i + 1) * nv + j
+                    triangles.extend(((a, b, b+1), (a, b+1, a+1)))
+            self.bvh = BVHTree.FromPolygons(vertices.tolist(), triangles,
+                                             all_triangles=True, epsilon=0.0)
+        else:
+            from sverchok.dependencies import scipy
+            if scipy is None:
+                raise ImportError(&#39;Surface Precise boundaries require SciPy&#39;)
+            self.init_samples_u = max(3, int(init_samples_u))
+            self.init_samples_v = max(3, int(init_samples_v))
+
+    def setup(self, ps):
+        pass
+
+    def add(self, ps):
+        points = np.asarray(ps.verts, dtype=np.float64)
+        if not len(points):
+            return
+        if self.method == &#39;FAST&#39;:
+            nearest = np.empty_like(points)
+            normals = np.empty_like(points)
+            for i, point in enumerate(points):
+                hit, normal, _, _ = self.bvh.find_nearest(tuple(point))
+                if hit is None or normal is None:
+                    raise ValueError(&#39;Surface BVH did not return a nearest point&#39;)
+                nearest[i] = hit
+                normals[i] = normal
+        else:
+            from sverchok.utils.manifolds import nearest_point_on_surface
+            # Current Sverchok branch supports (U, V) for init_samples.
+            us, vs, closest = nearest_point_on_surface(
+                points.tolist(), self.surface,
+                init_samples=(self.init_samples_u, self.init_samples_v),
+                precise=True, method=&#39;L-BFGS-B&#39;, sequential=False,
+                output_points=True)
+            nearest = np.asarray(closest, dtype=np.float64)
+            normals = np.asarray(
+                self.surface.normal_array(np.asarray(us), np.asarray(vs)),
+                dtype=np.float64)
+        if nearest.shape != points.shape or normals.shape != points.shape:
+            raise ValueError(&#39;Surface nearest-point calculation returned unexpected dimensions&#39;)
+        _apply_surface_constraint(ps, nearest, normals)</code></pre>
+</details>
+<div class="desc"><p>Constrain particles to the full untrimmed domain of a SvSurface.</p>
+<p>Fast uses a cached triangle BVH; Precise refines a point on the original
+parametric surface with independent U/V initial search densities.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingSurfaceForce.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    points = np.asarray(ps.verts, dtype=np.float64)
+    if not len(points):
+        return
+    if self.method == &#39;FAST&#39;:
+        nearest = np.empty_like(points)
+        normals = np.empty_like(points)
+        for i, point in enumerate(points):
+            hit, normal, _, _ = self.bvh.find_nearest(tuple(point))
+            if hit is None or normal is None:
+                raise ValueError(&#39;Surface BVH did not return a nearest point&#39;)
+            nearest[i] = hit
+            normals[i] = normal
+    else:
+        from sverchok.utils.manifolds import nearest_point_on_surface
+        # Current Sverchok branch supports (U, V) for init_samples.
+        us, vs, closest = nearest_point_on_surface(
+            points.tolist(), self.surface,
+            init_samples=(self.init_samples_u, self.init_samples_v),
+            precise=True, method=&#39;L-BFGS-B&#39;, sequential=False,
+            output_points=True)
+        nearest = np.asarray(closest, dtype=np.float64)
+        normals = np.asarray(
+            self.surface.normal_array(np.asarray(us), np.asarray(vs)),
+            dtype=np.float64)
+    if nearest.shape != points.shape or normals.shape != points.shape:
+        raise ValueError(&#39;Surface nearest-point calculation returned unexpected dimensions&#39;)
+    _apply_surface_constraint(ps, nearest, normals)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_boundaries_extra.SvBoundingSurfaceForce.setup"><code class="name flex">
+<span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.pulga_boundaries_extra.nearest_on_segments" href="#sverchok.utils.pulga_boundaries_extra.nearest_on_segments">nearest_on_segments</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingCurveForce" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingCurveForce">SvBoundingCurveForce</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingCurveForce.add" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingCurveForce.add">add</a></code></li>
+<li><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingCurveForce.setup" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingCurveForce.setup">setup</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingEdgesForce" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingEdgesForce">SvBoundingEdgesForce</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingEdgesForce.add" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingEdgesForce.add">add</a></code></li>
+<li><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingEdgesForce.setup" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingEdgesForce.setup">setup</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingSolidFastForce" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingSolidFastForce">SvBoundingSolidFastForce</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingSolidFastForce.add" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingSolidFastForce.add">add</a></code></li>
+<li><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingSolidFastForce.setup" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingSolidFastForce.setup">setup</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingSurfaceForce" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingSurfaceForce">SvBoundingSurfaceForce</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingSurfaceForce.add" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingSurfaceForce.add">add</a></code></li>
+<li><code><a title="sverchok.utils.pulga_boundaries_extra.SvBoundingSurfaceForce.setup" href="#sverchok.utils.pulga_boundaries_extra.SvBoundingSurfaceForce.setup">setup</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
