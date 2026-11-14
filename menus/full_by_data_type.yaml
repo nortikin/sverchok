@@ -39,6 +39,7 @@
         - SvRingNodeMK2
         - SvRegularSolid
         - SvPentagonTilerNode
+        - SvHatchPatternNode
 
     - Generate Path:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
