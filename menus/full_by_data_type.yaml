@@ -182,6 +182,7 @@
         - SvEmbedMesh
         - SvCropMesh2D
         - SvCSGBooleanNodeMK2
+        - SvManifoldBooleanNode
         - SvInternalBooleanNode
         - SvWafelNode
         - ---
