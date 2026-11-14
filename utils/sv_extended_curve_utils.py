@@ -203,7 +203,7 @@ def nurb_make_curve(nu, resolu, stride=3):
     EPS = 1e-6
     coord_index = istart = iend = 0
 
-    coord_array = [0.0] * (3 * nu.resolution_u * macro_segmentsu(nu))
+    coord_array = [0.0] * (3 * resolu * macro_segmentsu(nu))
     sum_array = [0] * nu.point_count_u
     basisu = [0.0] * macro_knotsu(nu)
     knots = makeknots(nu)
