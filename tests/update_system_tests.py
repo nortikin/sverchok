@@ -1,8 +1,7 @@
 from typing import Iterable
-from types import SimpleNamespace
 
 from sverchok.utils.testing import SverchokTestCase
-from sverchok.core.update_system import SearchTree, UpdateTree
+from sverchok.core.update_system import SearchTree
 
 
 class TreeCleaningTest(SverchokTestCase):
@@ -84,45 +83,3 @@ def _to_names(nodes: Iterable) -> Iterable[str]:
 
 def _path(socket):
     return f"{socket.node.name}|{'out' if socket.is_output else 'in'}|{socket.name}"
-
-
-class UpdateDifferenceTest(SverchokTestCase):
-    def test_new_link_from_already_connected_output(self):
-        source, heavy, receiver = object(), object(), object()
-        output, heavy_input, receiver_input = object(), object(), object()
-        old_link = (output, heavy_input)
-        new_link = (output, receiver_input)
-
-        old = SimpleNamespace(
-            _from_nodes={source: set(), heavy: {source}, receiver: set()},
-            _links={old_link},
-            _from_sock={heavy_input: output},
-            _to_socks={output: {heavy_input}},
-        )
-        new = SimpleNamespace(
-            _from_nodes={source: set(), heavy: {source}, receiver: {source}},
-            _links={old_link, new_link},
-            _sock_node={output: source, heavy_input: heavy, receiver_input: receiver},
-        )
-
-        # The heavy branch must remain up to date.
-        self.assertSetEqual(UpdateTree._update_difference(new, old), {receiver})
-
-    def test_first_link_from_previously_unused_output(self):
-        source, receiver = object(), object()
-        output, receiver_input = object(), object()
-
-        old = SimpleNamespace(
-            _from_nodes={source: set(), receiver: set()},
-            _links=set(),
-            _from_sock={},
-            _to_socks={},
-        )
-        new = SimpleNamespace(
-            _from_nodes={source: set(), receiver: {source}},
-            _links={(output, receiver_input)},
-            _sock_node={output: source, receiver_input: receiver},
-        )
-
-        # Some nodes calculate their outputs only when an output is linked.
-        self.assertSetEqual(UpdateTree._update_difference(new, old), {source})

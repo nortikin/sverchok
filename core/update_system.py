@@ -625,7 +625,7 @@ class UpdateTree(SearchTree):
         nodes_to_update = self._from_nodes.keys() - old._from_nodes.keys()
         new_links = self._links - old._links
         for from_sock, to_sock in new_links:
-            if not old._to_socks.get(from_sock):  # socket was not connected
+            if from_sock not in old._from_sock:  # socket was not connected
                 # protect from if not self.outputs[0].is_linked: return
                 nodes_to_update.add(self._sock_node[from_sock])
             else:
