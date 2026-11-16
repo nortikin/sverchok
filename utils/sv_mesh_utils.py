@@ -64,6 +64,24 @@ def polygons_to_edges(obj, unique_edges=False):
     return out
 
 
+def _unique_polygon_edges(edges):
+    """Deduplicate undirected edges in lexicographic order."""
+    low = np.minimum(edges[:, 0], edges[:, 1]).astype(np.int64)
+    high = np.maximum(edges[:, 0], edges[:, 1]).astype(np.int64)
+
+    # Pack signed int32 indices into signed int64 keys. Bias the lower
+    # 32 bits so that sorting keys preserves the signed order of both indices.
+    sign_bit = 1 << 31
+    low <<= 32
+    high += sign_bit
+    keys = np.unique(low | high)
+
+    unique_edges = np.empty((keys.size, 2), dtype=edges.dtype)
+    unique_edges[:, 0] = keys >> 32
+    unique_edges[:, 1] = (keys & ((1 << 32) - 1)) - sign_bit
+    return unique_edges
+
+
 def pols_to_edges_irregular_mesh(pols, unique_edges):
     np_pols = np.array(pols,dtype=object)
     np_len = np.vectorize(len)
@@ -82,7 +100,7 @@ def pols_to_edges_irregular_mesh(pols, unique_edges):
         edges_g = edges_g.reshape(-1, 2)
         edges.append(edges_g)
     if unique_edges:
-        return np.unique(np.sort(np.concatenate([eds for eds in edges])), axis=0)
+        return _unique_polygon_edges(np.concatenate(edges))
 
     return np.concatenate([eds for eds in edges])
 
@@ -115,12 +133,12 @@ def polygons_to_edges_np(obj, unique_edges=False, output_numpy=False):
             edges = edges.reshape(-1, 2)
             if output_numpy:
                 if unique_edges:
-                    result.append(np.unique(np.sort(edges), axis=0))
+                    result.append(_unique_polygon_edges(edges))
                 else:
                     result.append(edges)
             else:
                 if unique_edges:
-                    result.append(np.unique(np.sort(edges), axis=0).tolist())
+                    result.append(_unique_polygon_edges(edges).tolist())
                 else:
                     result.append(edges.tolist())
     return result
