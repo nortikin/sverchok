@@ -701,7 +701,7 @@ Boolean List with preserved items marked as True - List[bool])</p></div>
         edges_g = edges_g.reshape(-1, 2)
         edges.append(edges_g)
     if unique_edges:
-        return np.unique(np.sort(np.concatenate([eds for eds in edges])), axis=0)
+        return _unique_polygon_edges(np.concatenate(edges))
 
     return np.concatenate([eds for eds in edges])</code></pre>
 </details>
@@ -769,12 +769,12 @@ Boolean List with preserved items marked as True - List[bool])</p></div>
             edges = edges.reshape(-1, 2)
             if output_numpy:
                 if unique_edges:
-                    result.append(np.unique(np.sort(edges), axis=0))
+                    result.append(_unique_polygon_edges(edges))
                 else:
                     result.append(edges)
             else:
                 if unique_edges:
-                    result.append(np.unique(np.sort(edges), axis=0).tolist())
+                    result.append(_unique_polygon_edges(edges).tolist())
                 else:
                     result.append(edges.tolist())
     return result</code></pre>
