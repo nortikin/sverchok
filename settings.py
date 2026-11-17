@@ -104,6 +104,84 @@ def get_dpi_factor(factor=0.014):
     return dpi * factor
 
 
+# Short help strings shown when hovering over a dependency name.
+# Keep this list alongside the preferences UI rather than duplicating
+# dependency metadata in the installation logic.
+DEPENDENCY_DESCRIPTIONS = {
+    "pip": "Python package manager used to install Sverchok dependencies.",
+    "scipy": "Scientific algorithms for interpolation, optimization and solvers.",
+    "geomdl": "NURBS curves and surfaces (evaluation and modeling).",
+    "skimage": "Image processing and isosurface extraction (scikit-image).",
+    "mcubes": "Marching cubes isosurface extraction (PyMCubes).",
+    "circlify": "Circle packing and nested-circle layouts.",
+    "shapely": "Robust 2D geometry. Used by Offset Line 2D Shapely.",
+    "cython": "Tools for compiling accelerated Python extension modules.",
+    "numba": "JIT acceleration of numerical Python and NumPy operations.",
+    "numexpr": "Fast evaluation of numerical array expressions.",
+    "ezdxf": "Reading and writing DXF CAD files.",
+    "pyacvd": "Clustering and remeshing of surface meshes.",
+    "pySVCGAL": "CGAL-based advanced geometry and straight-skeleton operations.",
+    "spyrrow": "2D nesting and irregular strip-packing optimization.",
+    "pyOpenSubdiv": "Subdivision surface operations based on OpenSubdiv.",
+    "pyQuadriFlow": "Quadrangulation of triangle meshes using QuadriFlow.",
+}
+
+DEPENDENCIES_INSTALL_URL = "https://github.com/nortikin/sverchok/wiki/Dependencies"
+
+
+class SvDependencyInfo(bpy.types.Operator):
+    """Display package information on hover and open its website on click."""
+    bl_idname = 'node.sv_dependency_info'
+    bl_label = "Dependency information"
+    bl_options = {'INTERNAL'}
+
+    dependency_key: StringProperty()
+
+    @classmethod
+    def description(cls, context, properties):
+        note = DEPENDENCY_DESCRIPTIONS.get(
+            properties.dependency_key, "Optional Sverchok dependency.")
+        return f"{note}\nClick to open the package website."
+
+    def execute(self, context):
+        dependency = sv_dependencies.get(self.dependency_key)
+        if dependency is None:
+            return {'CANCELLED'}
+        bpy.ops.wm.url_open(url=dependency.url)
+        return {'FINISHED'}
+
+
+def draw_compact_dependency(layout, key):
+    """One row: availability + name (with tooltip), website, install/help."""
+    dependency = sv_dependencies[key]
+    row = layout.row(align=True)
+    split = row.split(factor=0.56, align=True)
+    info = split.row(align=True)
+    info.alignment = 'LEFT'
+    actions = split.row(align=True)
+
+    name = info.operator('node.sv_dependency_info',
+                         text=dependency.package,
+                         icon=get_icon(dependency.module), emboss=False)
+    name.dependency_key = key
+    actions.operator('wm.url_open', text="", icon='URL').url = dependency.url
+
+    if key == 'pip':
+        if pip is not None:
+            actions.operator('node.sv_ex_pip_install',
+                             text="Upgrade PIP").package = "pip setuptools wheel"
+        elif ensurepip is not None:
+            actions.operator('node.sv_ex_ensurepip', text="Install PIP")
+        else:
+            actions.operator('wm.url_open', text="Instructions", icon='HELP').url = DEPENDENCIES_INSTALL_URL
+    elif dependency.pip_installable and pip is not None:
+        label = "Install" if dependency.module is None else "Upgrade"
+        actions.operator('node.sv_ex_pip_install',
+                         text=label).package = dependency.package
+    else:
+        actions.operator('wm.url_open', text="Instructions", icon='HELP').url = DEPENDENCIES_INSTALL_URL
+
+
 class SvExPipInstall(bpy.types.Operator):
     """Install the package by calling pip install"""
     bl_idname = 'node.sv_ex_pip_install'
@@ -656,33 +734,26 @@ dependencies, or install only some of them.""")
         box = layout.box()
         box.label(text="Dependencies:")
         # please, not activate pyOpenSubdiv and pyQuadriFlow it crashes sverchok sometimes
-        package_names_allatonce = ["scipy", "geomdl", "skimage", "mcubes", "circlify", "cython", "numba", "numexpr", "ezdxf", "pyacvd", "pySVCGAL", "spyrrow"]
-        package_names = ["scipy", "geomdl", "skimage", "mcubes", "circlify", "cython", "numba", "numexpr", "ezdxf", "pyacvd", "pySVCGAL", "spyrrow","pyOpenSubdiv","pyQuadriFlow"]
-        col = box.column(align=True)
-        row = col.row(align=True)
-        row.operator('sverchok.install_or_update_dependencies_operator', text="Install or Update all packages (Upgrade PIP FIRST)").serialized_items=";".join(package_names_allatonce)
-        row = draw_message(box, "pip")
-        if pip is not None:
-            row.operator('node.sv_ex_pip_install', text="Upgrade PIP").package = "pip setuptools wheel"
-        else:
-            if ensurepip is not None:
-                row.operator('node.sv_ex_ensurepip', text="Install PIP")
-            else:
-                row.operator('wm.url_open', text="Installation instructions").url = "https://pip.pypa.io/en/stable/installing/"
-        row_lib = col.row(align=True)
-        col_lib = row_lib.box()
-        ind = 0
-        l = (len(package_names) // 2)
-        for k in package_names:
-            draw_message(col_lib, k)
-            ind += 1
-            if ind % l == 0:
-                col_lib = row_lib.box()
+        package_names_allatonce = ["scipy", "geomdl", "skimage", "mcubes", "circlify", "shapely", "cython", "numba", "numexpr", "ezdxf", "pyacvd", "pySVCGAL", "spyrrow"]
+        package_names = ["scipy", "geomdl", "skimage", "mcubes", "circlify", "shapely", "cython", "numba", "numexpr", "ezdxf", "pyacvd", "pySVCGAL", "spyrrow","pyOpenSubdiv","pyQuadriFlow"]
+        # Global actions: keep pip in its own bordered row.
+        box.label(text="Global actions:")
+        pip_box = box.box()
+        draw_compact_dependency(pip_box, "pip")
+        box.operator('sverchok.install_or_update_dependencies_operator',
+                     text="Install / Update All (Upgrade PIP first)").serialized_items = ";".join(package_names_allatonce)
+
+        # 15 packages in a fixed 3-column x 5-row grid, regardless of status.
+        # FreeCAD keeps its existing separate controls below.
+        box.label(text="Packages:")
+        grid = box.grid_flow(row_major=True, columns=3,
+                             even_columns=True, align=True)
+        for key in package_names:
+            cell = grid.row(align=True)
+            draw_compact_dependency(cell, key)
+            cell.separator(factor=2.5)  # Horizontal gap between package columns
 
         draw_freecad_ops()
-
-        if any(package.module is None for package in sv_dependencies.values()):
-            box.operator('wm.url_open', text="Read installation instructions for missing dependencies").url = "https://github.com/nortikin/sverchok/wiki/Dependencies"
         draw_extra_addons(layout)
         if self.developer_mode:
             col = layout.column(align=True)
@@ -728,6 +799,7 @@ def register():
     bpy.utils.register_class(SvOverwriteMenuFile)
     bpy.utils.register_class(SvExPipInstall)
     bpy.utils.register_class(SvExEnsurePip)
+    bpy.utils.register_class(SvDependencyInfo)
     bpy.utils.register_class(SvSetFreeCadPath)
     bpy.utils.register_class(SvSelectFreeCadPath)
     bpy.utils.register_class(SverchokPreferences)
@@ -736,6 +808,7 @@ def unregister():
     bpy.utils.unregister_class(SverchokPreferences)
     bpy.utils.unregister_class(SvSelectFreeCadPath)
     bpy.utils.unregister_class(SvSetFreeCadPath)
+    bpy.utils.unregister_class(SvDependencyInfo)
     bpy.utils.unregister_class(SvExEnsurePip)
     bpy.utils.unregister_class(SvExPipInstall)
     bpy.utils.unregister_class(SvOverwriteMenuFile)
