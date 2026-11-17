@@ -1,8 +1,8 @@
 A Number
 ========
 
-.. image:: https://github.com/user-attachments/assets/25848436-3f59-448b-80e4-a17ba775b308
-  :target: https://github.com/user-attachments/assets/25848436-3f59-448b-80e4-a17ba775b308
+.. image:: https://github.com/user-attachments/assets/9a2f90af-3704-48b1-9b94-4c224c55fe6d
+  :target: https://github.com/user-attachments/assets/9a2f90af-3704-48b1-9b94-4c224c55fe6d
 
 Functionality
 -------------
@@ -28,6 +28,17 @@ Extended parameters
 
 **Show Limits** - boolean switch will show the Min and Max sliders on the UI when pressed. Unpressed the node only shows the choice between Integer and Float mode.
 
+  .. image:: https://github.com/user-attachments/assets/b8644098-c35a-4878-926e-389577086c6e
+    :target: https://github.com/user-attachments/assets/b8644098-c35a-4878-926e-389577086c6e
+
+**High precision** - show float propery with more digits and control mouse input in precision mode for float numbers. It is used only as visual effect. (When shift-precision is not enought)
+
+  .. raw:: html
+
+    <video width="700" controls>
+      <source src="https://github.com/user-attachments/assets/349484dc-b6dd-4b05-b2b2-2706c52b6244" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>
 
 Outputs
 -------
