@@ -147,6 +147,14 @@ try:
 except ImportError:
     circlify = None
 
+shapely_d = sv_dependencies["shapely"] = SvDependency("shapely", "https://shapely.readthedocs.io/")
+shapely_d.pip_installable = True
+try:
+    import shapely
+    shapely_d.module = shapely
+except ImportError:
+    shapely = None
+
 freecad_d = sv_dependencies["freecad"] = SvDependency("FreeCAD", "https://www.freecadweb.org/")
 try:
     import FreeCAD
