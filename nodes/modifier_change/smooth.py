@@ -18,11 +18,11 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty
-import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.dependencies import numba
+from sverchok.utils.mesh.smooth import smooth_vertices
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
@@ -44,6 +44,18 @@ class SvSmoothNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     laplacian: BoolProperty(
         name="Laplacian Smooth", description="Use Laplacian smoothing",
         default=False, update=update_mode)
+
+    use_numba: BoolProperty(
+        name="Use Numba", description="Accelerate smoothing when Numba is installed",
+        default=True, update=updateNode)
+
+    output_numpy_vertices: BoolProperty(
+        name="Vertices", description="Output vertex coordinates as NumPy arrays",
+        default=False, update=updateNode)
+
+    output_numpy_edges: BoolProperty(
+        name="Edges", description="Output edge indices as NumPy arrays",
+        default=False, update=updateNode)
 
     iterations: IntProperty(
         name="Iterations", min=1, max=1000, default=1, update=updateNode, description="Number of smoothing operation iterations")
@@ -121,6 +133,17 @@ class SvSmoothNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             row.prop(self, "mirror_clip_y", toggle=True)
             row.prop(self, "mirror_clip_z", toggle=True)
 
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row()
+        row.enabled = numba is not None
+        row.prop(self, "use_numba")
+        if numba is None:
+            layout.label(text="Numba is not installed")
+        layout.label(text="Output NumPy")
+        row = layout.row(align=True)
+        row.prop(self, "output_numpy_vertices", toggle=True)
+        row.prop(self, "output_numpy_edges", toggle=True)
+
     def process(self):
         if not any(output.is_linked for output in self.outputs):
             return
@@ -144,49 +167,31 @@ class SvSmoothNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         result_edges = []
         result_faces = []
 
+        axes = (self.use_x, self.use_y, self.use_z)
+        clip = (self.mirror_clip_x, self.mirror_clip_y, self.mirror_clip_z)
+        output_vertices = self.outputs['Vertices'].is_linked
+        output_edges = self.outputs['Edges'].is_linked
+        output_faces = self.outputs['Faces'].is_linked
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, clip_dist_s, factor_s, border_factor_s, iterations_s])
         for vertices, edges, faces, masks, clip_dist, factor, border_factor, iterations in zip(*meshes):
-            masks_matched = repeat_last_for_length(masks, len(vertices))
-
-            bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
-            selected_verts = [vert for mask, vert in zip(masks_matched, bm.verts) if mask]
-
-            for i in range(iterations):
-                if self.laplacian:
-                    # for some reason smooth_laplacian_vert does not work properly if faces are not selected
-                    for f in bm.faces:
-                        f.select = True
-                    bmesh.ops.smooth_laplacian_vert(bm, verts = selected_verts,
-                            lambda_factor = factor,
-                            lambda_border = border_factor,
-                            use_x = self.use_x,
-                            use_y = self.use_y,
-                            use_z = self.use_z,
-                            preserve_volume = self.preserve_volume)
-                else:
-                    bmesh.ops.smooth_vert(bm, verts = selected_verts,
-                            factor = factor,
-                            mirror_clip_x = self.mirror_clip_x,
-                            mirror_clip_y = self.mirror_clip_y,
-                            mirror_clip_z = self.mirror_clip_z,
-                            clip_dist = clip_dist,
-                            use_axis_x = self.use_x,
-                            use_axis_y = self.use_y,
-                            use_axis_z = self.use_z)
-
-            new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
-            bm.free()
-
+            new_vertices, new_edges, new_faces = smooth_vertices(
+                vertices, edges, faces, masks, axes, clip, clip_dist, factor,
+                iterations, use_numba=self.use_numba,
+                laplacian=self.laplacian, border_factor=border_factor,
+                preserve_volume=self.preserve_volume,
+                output_vertices=output_vertices,
+                output_edges=output_edges,
+                output_faces=output_faces,
+                numpy_vertices=self.output_numpy_vertices,
+                numpy_edges=self.output_numpy_edges)
             result_vertices.append(new_vertices)
             result_edges.append(new_edges)
             result_faces.append(new_faces)
 
-        self.outputs['Vertices'].sv_set(result_vertices)
-        self.outputs['Edges'].sv_set(result_edges)
-        self.outputs['Faces'].sv_set(result_faces)
+        for name, result in zip(('Vertices', 'Edges', 'Faces'),
+                                (result_vertices, result_edges, result_faces)):
+            if self.outputs[name].is_linked:
+                self.outputs[name].sv_set(result)
 
 def register():
     bpy.utils.register_class(SvSmoothNode)

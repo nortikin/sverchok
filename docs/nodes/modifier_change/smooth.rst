@@ -7,7 +7,8 @@ Smooth Vertices
 Functionality
 -------------
 
-This node applies Blender's Smooth or Laplacian Smooth operation to the input mesh.
+This node smooths the input mesh using NumPy, with optional Numba acceleration.
+It provides classical averaging and implicit cotangent Laplacian smoothing.
 
 Inputs
 ------
@@ -36,6 +37,19 @@ This node has the following parameters:
 - **Clip threshold**. Threshold for "Mirror Clipping" procedure. Available only when **Laplacian Smooth** is off. This parameter can also be provided as input.
 - **Factor**. Smoothing factor. Zero means no smoothing. For simple mode, 1.0 is maximum sensible value, bigger values will create degenerated forms in most cases. For Laplacian mode, sensible values can be much bigger. This parameter can also be provided as input.
 - **Border factor**. Smoothing factor for border. This parameter is only available when **Laplacian Smooth** is on. This parameter can also be provided as input.
+
+Additional options are available in the N-panel.
+
+- **Use Numba**. Enabled by default. Uses compiled routines when Numba is installed.
+  NumPy is used when Numba is unavailable or this option is disabled.
+  The first Numba evaluation can include compilation time.
+- **Output NumPy — Vertices**. Output each mesh's coordinates as a numeric array
+  with shape ``(vertex_count, 3)``.
+- **Output NumPy — Edges**. Output each mesh's edge indices as an integer array
+  with shape ``(edge_count, 2)``.
+
+Both Output NumPy options are disabled by default. Faces are output as lists
+to support triangles, quads and ngons of different lengths within the same mesh.
 
 Outputs
 -------
