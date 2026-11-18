@@ -433,7 +433,7 @@
             "name": "Faces"
           }
         },
-        "bl_idname": "SvIcosphereNode"
+        "bl_idname": "SvIcosphereNodeMk2"
       },
       "List Join": {
         "attributes": {
@@ -874,7 +874,7 @@
             0.11354930698871613,
             1.0
           ],
-          "use_dashed": true,
+          "use_dashed": false,
           "vector_color": [
             1.0,
             0.19698314368724823,
