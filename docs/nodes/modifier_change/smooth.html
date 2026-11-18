@@ -460,7 +460,8 @@
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node applies Blender’s Smooth or Laplacian Smooth operation to the input mesh.</p>
+<p>This node smooths the input mesh using NumPy, with optional Numba acceleration.
+It provides classical averaging and implicit cotangent Laplacian smoothing.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
@@ -489,6 +490,18 @@
 <li><p><strong>Factor</strong>. Smoothing factor. Zero means no smoothing. For simple mode, 1.0 is maximum sensible value, bigger values will create degenerated forms in most cases. For Laplacian mode, sensible values can be much bigger. This parameter can also be provided as input.</p></li>
 <li><p><strong>Border factor</strong>. Smoothing factor for border. This parameter is only available when <strong>Laplacian Smooth</strong> is on. This parameter can also be provided as input.</p></li>
 </ul>
+<p>Additional options are available in the N-panel.</p>
+<ul class="simple">
+<li><p><strong>Use Numba</strong>. Enabled by default. Uses compiled routines when Numba is installed.
+NumPy is used when Numba is unavailable or this option is disabled.
+The first Numba evaluation can include compilation time.</p></li>
+<li><p><strong>Output NumPy — Vertices</strong>. Output each mesh’s coordinates as a numeric array
+with shape <code class="docutils literal notranslate"><span class="pre">(vertex_count,</span> <span class="pre">3)</span></code>.</p></li>
+<li><p><strong>Output NumPy — Edges</strong>. Output each mesh’s edge indices as an integer array
+with shape <code class="docutils literal notranslate"><span class="pre">(edge_count,</span> <span class="pre">2)</span></code>.</p></li>
+</ul>
+<p>Both Output NumPy options are disabled by default. Faces are output as lists
+to support triangles, quads and ngons of different lengths within the same mesh.</p>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
