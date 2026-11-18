@@ -416,7 +416,13 @@
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options-inputs">Options &amp; Inputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solid-boundaries-fast-and-precise">Solid boundaries: Fast and Precise</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grouping-solid-faces">Grouping Solid Faces</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#curve-boundary-particles-constrained-to-an-ellipse">Curve boundary: particles constrained to an ellipse</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-boundary-particles-constrained-to-a-parametric-surface">Surface boundary: particles constrained to a parametric surface</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -591,7 +597,87 @@
 <li><p><strong>Solid Face</strong>: Run the simulation the surface of a solid face (requires _FreeCAD)</p>
 <p>Inputs: Solid Face</p>
 </li>
+<li><p><strong>Mesh (Edges)</strong>: Constrain particles to the closest point on a mesh edge.</p>
+<p>Inputs: <strong>Vertices</strong>, <strong>Edges</strong>. Each particle is projected onto the closest
+segment and its velocity and resultant force are projected onto that segment’s
+tangent. This is an exact projection onto the <em>input segments</em>; no Fast/Precise
+selector is necessary. Zero-length edges are ignored.</p>
+</li>
+<li><p><strong>Curve</strong>: Constrain particles to a Sverchok parametric curve.</p>
+<p>Input: <strong>Curve</strong>. <strong>Method</strong> offers:</p>
+<ul class="simple">
+<li><p><strong>Fast</strong>: discretize the curve once using <strong>Resolution</strong> points, then project
+to the nearest segment. This is fast, but the boundary is the sampled polyline.</p></li>
+<li><p><strong>Precise</strong> (SciPy): find a point on the original parametric curve using
+Sverchok’s numerical nearest-point routine; <strong>Initial Samples</strong> determines
+the number of samples used to initialize the search. Numerical optimization
+is not guaranteed to find the global minimum for every curve.</p></li>
 </ul>
+<p>Velocity and force are projected onto the local tangent. Curve endpoints are
+part of the constraint domain.</p>
+</li>
+<li><p><strong>Surface</strong>: Constrain particles to a Sverchok parametric surface, from either
+side of its normal.</p>
+<p>Input: <strong>Surface</strong>. <strong>Method</strong> offers:</p>
+<ul class="simple">
+<li><p><strong>Fast</strong>: tessellate the surface once using <strong>Resolution U</strong> and
+<strong>Resolution V</strong>, build a cached BVH and project particles to its triangles.</p></li>
+<li><p><strong>Precise</strong> (SciPy): minimize distance to the original parametric surface,
+using independent <strong>Initial Samples U</strong> and <strong>Initial Samples V</strong> to seed
+optimization. This is slower and may converge to a local minimum.</p></li>
+</ul>
+<p>Velocity and force remain tangent to the surface. Both methods operate on the
+<em>full rectangular UV domain</em>; trimmed FreeCAD faces should use <strong>Solid Face</strong>.</p>
+</li>
+</ul>
+</section>
+<section id="solid-boundaries-fast-and-precise">
+<h2>Solid boundaries: Fast and Precise<a class="headerlink" href="#solid-boundaries-fast-and-precise" title="Link to this heading">#</a></h2>
+<p>The <strong>Solid (Surface)</strong>, <strong>Solid (Volume)</strong> and <strong>Solid Face</strong> modes require
+FreeCAD and offer two calculation methods, with <strong>Fast</strong> selected by default.</p>
+<ul class="simple">
+<li><p><strong>Fast</strong>: tessellates the FreeCAD shape once, builds a Blender BVH, and uses
+the same projection behavior as <strong>Mesh (Surface)</strong> or <strong>Mesh (Volume)</strong>.
+For <strong>Solid Face</strong>, the particles are projected onto the tessellated face.
+The <strong>Deflection</strong> socket controls tessellation precision; smaller values
+usually improve fidelity but produce more triangles and may be slower.</p></li>
+<li><p><strong>Precise</strong>: uses the original FreeCAD B-Rep nearest-point and containment
+operations. It may be significantly slower for many particles/iterations.</p></li>
+</ul>
+<p>The <strong>Curve</strong> and <strong>Surface</strong> modes also use <strong>Fast</strong> by default, with their
+existing Resolution / Resolution U-V controls, and offer <strong>Precise</strong> with
+Initial Samples / Initial Samples U-V.</p>
+<p>For <strong>Solid (Volume)</strong>, the Fast method assumes a watertight, properly oriented
+triangulation. If the source solid has invalid topology or an unsuitable mesh,
+the inside/outside classification may be unreliable. In that case increase
+tessellation precision or use <strong>Precise</strong>.</p>
+<p>The Fast method uses the cached FreeCAD tessellation for the lifetime of the
+force. Changing the solid or Deflection rebuilds it on the next node update.</p>
+</section>
+<section id="grouping-solid-faces">
+<h2>Grouping Solid Faces<a class="headerlink" href="#grouping-solid-faces" title="Link to this heading">#</a></h2>
+<p><strong>Solid Face</strong> uses the socket’s list nesting to define independent boundary
+forces and composite boundaries:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[face_a,</span> <span class="pre">face_b]</span></code> creates <strong>two forces</strong>, one for each face.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[[face_a,</span> <span class="pre">face_b]]</span></code> creates <strong>one force</strong> from both faces.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[[face_a,</span> <span class="pre">face_b],</span> <span class="pre">[face_c]]</span></code> creates <strong>two forces</strong>: a composite of
+<code class="docutils literal notranslate"><span class="pre">face_a</span></code> and <code class="docutils literal notranslate"><span class="pre">face_b</span></code>, followed by a separate <code class="docutils literal notranslate"><span class="pre">face_c</span></code> constraint.</p></li>
+</ul>
+<p>Each force acts on <strong>all particles of the same Pulga simulation</strong>, and forces
+are applied <strong>in sequence</strong>. Thus two separate noncoincident faces may still
+pull all particles back and forth or collapse them toward an intersection.
+Use one nested group when the intention is to constrain particles to the
+nearest location on the <strong>union of several faces</strong>.</p>
+<p>For each group containing more than one face:</p>
+<ul class="simple">
+<li><p><strong>Fast</strong> constructs a FreeCAD compound, tessellates it only once and builds
+a shared Blender BVH. <strong>Deflection</strong> controls the approximation quality.</p></li>
+<li><p><strong>Precise</strong> queries the compound’s trimmed B-Rep geometry directly.</p></li>
+</ul>
+<p>A group containing a single face keeps the original face object. The outer
+and inner trimming wires still define the face’s boundaries; this is a
+surface constraint, <strong>not</strong> an Outer Wire-only perimeter constraint.</p>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
@@ -613,6 +699,44 @@
 </ul>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/52bc7f13-5ac3-4426-baa4-5851a1d6e322"><img alt="https://github.com/nortikin/sverchok/assets/14288520/52bc7f13-5ac3-4426-baa4-5851a1d6e322" src="https://github.com/nortikin/sverchok/assets/14288520/52bc7f13-5ac3-4426-baa4-5851a1d6e322" />
 </a>
+<section id="curve-boundary-particles-constrained-to-an-ellipse">
+<h3>Curve boundary: particles constrained to an ellipse<a class="headerlink" href="#curve-boundary-particles-constrained-to-an-ellipse" title="Link to this heading">#</a></h3>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/4a3a0298-79c6-484a-ad68-c097201c9530"><img alt="https://github.com/user-attachments/assets/4a3a0298-79c6-484a-ad68-c097201c9530" src="https://github.com/user-attachments/assets/4a3a0298-79c6-484a-ad68-c097201c9530" />
+</a>
+<p>An <strong>Ellipse (Curve)</strong> defines the path that the particles must follow.
+<strong>Pulga Boundaries Force</strong> is set to <strong>Curve</strong>, with the <strong>Fast</strong> method and a
+<strong>Resolution</strong> of 64. The curve is sampled once and its segments are used to
+project the particles back onto the approximate ellipse during simulation.
+Velocity and force components normal to the boundary are removed, while
+motion along the curve remains possible.</p>
+<p><strong>Random Vector</strong> creates the initial particle positions. <strong>Pulga Physics
+Solver</strong> combines the boundary with <strong>Pulga Fit Force</strong>, <strong>Pulga Collision
+Force</strong>, <strong>Pulga Timed Force</strong>, and <strong>Pulga Drag Force</strong>. These forces influence
+particle size, spacing and motion, while the boundary keeps particle centers
+on the discretized curve. Increasing <strong>Resolution</strong> improves the geometric
+approximation at an additional setup cost. The <strong>Precise</strong> method instead
+projects onto the original curve using numerical optimization (SciPy).</p>
+</section>
+<section id="surface-boundary-particles-constrained-to-a-parametric-surface">
+<h3>Surface boundary: particles constrained to a parametric surface<a class="headerlink" href="#surface-boundary-particles-constrained-to-a-parametric-surface" title="Link to this heading">#</a></h3>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/3f689315-a97b-4150-848d-82e915b65668"><img alt="https://github.com/user-attachments/assets/3f689315-a97b-4150-848d-82e915b65668" src="https://github.com/user-attachments/assets/3f689315-a97b-4150-848d-82e915b65668" />
+</a>
+<p>A <strong>Surface Formula</strong> node creates a parametric surface with the height
+expression <code class="docutils literal notranslate"><span class="pre">sin(u)*sin(v)</span></code>. <strong>Pulga Boundaries Force</strong> uses <strong>Surface</strong> mode
+and the <strong>Fast</strong> method with <strong>Resolution U</strong> and <strong>Resolution V</strong> set to 25.
+The surface is tessellated once, and the resulting triangle mesh is used to
+constrain particle positions. The boundary also removes the normal component
+of particle velocity and force, allowing motion tangential to the surface.</p>
+<p>The solver starts from randomly distributed points and combines the boundary
+with <strong>Pulga Fit Force</strong>, <strong>Pulga Collision Force</strong>, and <strong>Pulga Drag Force</strong>.
+For visualization, the resulting point arrangement is connected using
+<strong>Delaunay 2D</strong>, producing a network over the surface. <strong>Nearest Point on
+Surface</strong> is used in the displayed node setup for the visualization workflow;
+it is not required by the boundary force itself. Increasing U/V resolution
+improves the Fast approximation, while <strong>Precise</strong> uses numerical projection
+onto the original parametric surface with independent <strong>Initial Samples U</strong>
+and <strong>Initial Samples V</strong> (SciPy).</p>
+</section>
 </section>
 </section>
 
@@ -665,7 +789,13 @@
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options-inputs">Options &amp; Inputs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solid-boundaries-fast-and-precise">Solid boundaries: Fast and Precise</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grouping-solid-faces">Grouping Solid Faces</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#curve-boundary-particles-constrained-to-an-ellipse">Curve boundary: particles constrained to an ellipse</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-boundary-particles-constrained-to-a-parametric-surface">Surface boundary: particles constrained to a parametric surface</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

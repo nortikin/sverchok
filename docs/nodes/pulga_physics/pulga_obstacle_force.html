@@ -417,6 +417,12 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#obstacle-geometry-domains">Obstacle geometry domains</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parametric-obstacle-domains">Parametric obstacle domains</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precise-surface-initial-sampling">Precise surface initial sampling</a></li>
 </ul>
             </nav>
         </div>
@@ -508,6 +514,100 @@
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e4e95fa6-9b2d-4c6e-8ccc-0e8754cfbac4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e4e95fa6-9b2d-4c6e-8ccc-0e8754cfbac4" src="https://github.com/nortikin/sverchok/assets/14288520/e4e95fa6-9b2d-4c6e-8ccc-0e8754cfbac4" />
 </a>
 </section>
+<section id="obstacle-geometry-domains">
+<h2>Obstacle geometry domains<a class="headerlink" href="#obstacle-geometry-domains" title="Link to this heading">#</a></h2>
+<p>The <strong>Domain</strong> selector provides <strong>Vertices</strong>, <strong>Edges</strong>, and <strong>Polygons</strong>.
+The default <strong>Polygons</strong> mode keeps the existing BVH-based response intact,
+including the original <code class="docutils literal notranslate"><span class="pre">Vertices</span></code>, <code class="docutils literal notranslate"><span class="pre">Pols</span></code> and <code class="docutils literal notranslate"><span class="pre">Absorption</span></code> inputs.</p>
+<ul class="simple">
+<li><p><strong>Vertices</strong>: stationary point obstacles, using the supplied vertex positions.
+<strong>Auto</strong> uses a cached SciPy <code class="docutils literal notranslate"><span class="pre">cKDTree</span></code> when available; <strong>NumPy</strong> and
+<strong>Numba</strong> use their explicitly selected closest-point kernels.</p></li>
+<li><p><strong>Edges</strong>: stationary line segments defined by <code class="docutils literal notranslate"><span class="pre">Vertices</span></code> and <code class="docutils literal notranslate"><span class="pre">Edges</span></code>
+index pairs. Each particle is corrected toward the closest point on the
+nearest segment. Auto uses a Numba kernel when available.</p></li>
+<li><p><strong>Polygons</strong>: the existing polygonal BVH obstacles, unchanged.</p></li>
+</ul>
+<p><strong>Thickness</strong>, visible for point and edge obstacles, adds to the solver’s
+particle radius; unlike the source polygon response, point/edge obstacles do
+not require a surface normal. <code class="docutils literal notranslate"><span class="pre">Absorption</span></code> retains its existing meaning.
+When a new point/edge contact is approached, velocity is reflected and damped;
+forces are likewise reflected when directed into the obstacle.</p>
+<p>External obstacle geometry remains fixed throughout solver iterations. These
+modes use discrete closest-point tests, not continuous collision detection.</p>
+<p>See also <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a>
+and <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a>.</p>
+</section>
+<section id="parametric-obstacle-domains">
+<h2>Parametric obstacle domains<a class="headerlink" href="#parametric-obstacle-domains" title="Link to this heading">#</a></h2>
+<p>The <strong>Domain</strong> selector adds <strong>Curve</strong>, <strong>Surface</strong> and <strong>Solid</strong> to the
+existing <strong>Vertices</strong>, <strong>Edges</strong> and <strong>Polygons</strong> obstacle modes. These are
+<strong>stationary external obstacles</strong>, not deformable self-collision geometry.
+The original <strong>Polygons</strong> mode and its absorption response are unchanged.</p>
+<p>For parametric obstacles, the <strong>Method</strong> selector offers:</p>
+<ul class="simple">
+<li><p><strong>Fast</strong>: Precompute a discretized obstacle once for the simulation. Curves
+become polyline segments, surfaces become a triangular UV grid, and FreeCAD
+solids become a tessellated surface. The nearest-point calculations are
+exact for that <em>discretized representation</em>, not for the original shape.</p></li>
+<li><p><strong>Precise</strong>: Query nearest points directly on the parametric curve or
+surface using Sverchok’s numerical closest-point solvers (SciPy required),
+or on a FreeCAD solid using its geometric <code class="docutils literal notranslate"><span class="pre">distToShape</span></code> operation. These
+are more expensive and numerical solvers do not guarantee the global
+mathematical minimum for all geometries.</p></li>
+</ul>
+<p><strong>Curve</strong> inputs:</p>
+<ul class="simple">
+<li><p><strong>Curve</strong>: <code class="docutils literal notranslate"><span class="pre">SvCurve</span></code> geometry. Collisions act like a tube around it,
+with radius equal to particle radius plus <strong>Thickness</strong>.</p></li>
+<li><p><strong>Resolution</strong>: number of sampled points in Fast mode, including endpoints.</p></li>
+<li><p><strong>Initial Samples</strong>: initial samples for the Precise optimization.</p></li>
+</ul>
+<p><strong>Surface</strong> inputs:</p>
+<ul class="simple">
+<li><p><strong>Surface</strong>: <code class="docutils literal notranslate"><span class="pre">SvSurface</span></code> geometry, with two-sided contact.</p></li>
+<li><p><strong>Resolution U</strong>, <strong>Resolution V</strong>: numbers of sample points in the two
+parameter directions in Fast mode. Each grid cell becomes two triangles.</p></li>
+<li><p><strong>Initial Samples U</strong>, <strong>Initial Samples V</strong>: independent initial
+sampling counts for Surface Precise.</p></li>
+</ul>
+<p><strong>Solid</strong> inputs (FreeCAD required):</p>
+<ul class="simple">
+<li><p><strong>Solid</strong>: a FreeCAD <code class="docutils literal notranslate"><span class="pre">Part.Shape</span></code>. The boundary is the collision surface.</p></li>
+<li><p><strong>Deflection</strong>: absolute tessellation deflection in Fast mode. Smaller
+values yield a finer (slower and larger) collision mesh.</p></li>
+<li><p><strong>Fast</strong> classifies a particle as inside/outside using the nearest BVH
+triangle normal, as in <strong>Mesh (Volume)</strong>. It requires a closed, outward-
+oriented tessellation and does not call <code class="docutils literal notranslate"><span class="pre">FreeCAD.isInside</span></code> each step.</p></li>
+<li><p><strong>Precise</strong> uses FreeCAD’s <code class="docutils literal notranslate"><span class="pre">distToShape</span></code> and <code class="docutils literal notranslate"><span class="pre">isInside</span></code> on the
+original B-Rep. Both methods project contacts toward the boundary.</p></li>
+</ul>
+<p><strong>Absorption</strong> retains its role as a multiplier on the reflected velocity and
+force. <strong>Thickness</strong> adds to the radius of each simulated particle. The Fast
+representations are cached in the force object, which is reconstructed when
+Sverchok rebuilds the simulation; they are not recomputed per Pulga step.</p>
+<section id="limitations">
+<h3>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h3>
+<p>The simulation uses discrete positional correction, not continuous collision
+sweeps, so fast-moving particles may tunnel through thin obstacles. Fast UV
+sampling currently covers the rectangular parametric domain and does not
+explicitly process trim boundaries. Precise surface queries use numerical
+minimization and may require more initial samples on complex surfaces.
+Fast Solid classification assumes a closed, outward-oriented mesh; Precise
+uses the FreeCAD solid for inside/outside checks.</p>
+</section>
+</section>
+<section id="precise-surface-initial-sampling">
+<h2>Precise surface initial sampling<a class="headerlink" href="#precise-surface-initial-sampling" title="Link to this heading">#</a></h2>
+<p>In <strong>Surface</strong> / <strong>Precise</strong> mode, <strong>Initial Samples U / Initial Samples V</strong>
+control the number of samples along each parameter direction used to generate
+an initial guess for the numerical nearest-point optimization. These settings
+are independent of <strong>Resolution U / Resolution V</strong>, which apply only to
+<strong>Fast</strong> tessellation. For example, U=30 and V=8 builds 240 initial samples.
+Higher initial sampling can improve convergence but increases preparation cost
+for every nearest-point search. Curve / Precise retains its single
+<strong>Initial Samples</strong> value.</p>
+</section>
 </section>
 
 
@@ -560,6 +660,12 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#obstacle-geometry-domains">Obstacle geometry domains</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parametric-obstacle-domains">Parametric obstacle domains</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precise-surface-initial-sampling">Precise surface initial sampling</a></li>
 </ul>
   </nav></div>
 
