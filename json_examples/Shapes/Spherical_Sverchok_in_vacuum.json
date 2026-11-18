@@ -81,7 +81,7 @@
       "width": 206.7218017578125
     },
     "IcoSphere": {
-      "bl_idname": "SvIcosphereNode",
+      "bl_idname": "SvIcosphereNodeMk2",
       "color": [
         0.9200000166893005,
         0.9200000166893005,
