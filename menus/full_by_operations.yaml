@@ -558,6 +558,8 @@
         - ---
         - SvBisectNode
         - SvCutObjBySurfaceNode
+        - SvMeshIntersectionNpNode
+        - SvCutByMeshNpNode
         - SvEdgesToFaces2D
         - SvPlanarEdgenetToPolygons
         - SvMergeMesh2D
