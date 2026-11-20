@@ -1,0 +1,241 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Box": {
+      "bl_idname": "SvBoxNodeMk2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -780.0,
+        420.0
+      ],
+      "params": {
+        "Size": 2.0,
+        "Divx": 1,
+        "Divy": 1,
+        "Divz": 1,
+        "origin": "BOTTOM"
+      },
+      "width": 175.0
+    },
+    "IcoSphere": {
+      "bl_idname": "SvIcosphereNodeMk2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -780.0,
+        -300.0
+      ],
+      "params": {
+        "subdivisions": 2,
+        "radius": 1.54
+      },
+      "width": 175.0
+    },
+    "Mesh Intersection": {
+      "bl_idname": "SvMeshIntersectionNpNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -350.0,
+        440.0
+      ],
+      "params": {
+        "acceleration": "AUTO",
+        "advanced_outputs": false,
+        "include_coplanar": true,
+        "tolerance": 1e-06
+      },
+      "width": 190.0
+    },
+    "Cut by Mesh": {
+      "bl_idname": "SvCutByMeshNpNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -350.0,
+        -160.0
+      ],
+      "params": {
+        "mode": "SEPARATE",
+        "keep": "LARGEST",
+        "preserve_polygons": true,
+        "acceleration": "AUTO",
+        "advanced_outputs": false,
+        "include_coplanar": true,
+        "tolerance": 1e-06
+      },
+      "width": 190.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "SvViewerDrawMk4",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -370.0,
+        -600.0
+      ],
+      "params": {
+        "activate": true,
+        "selected_draw_mode": "facet",
+        "face_culling_set": "NONE",
+        "display_verts": true,
+        "display_edges": true,
+        "display_faces": false,
+        "point_size": 3,
+        "line_width": 1,
+        "draw_gl_polygonoffset": false
+      },
+      "width": 180.0
+    },
+    "Viewer Draw.001": {
+      "bl_idname": "SvViewerDrawMk4",
+      "height": 100.0,
+      "hide": false,
+      "label": "Only intersection lines",
+      "location": [
+        180.0,
+        440.0
+      ],
+      "params": {
+        "activate": true,
+        "selected_draw_mode": "facet",
+        "face_culling_set": "NONE",
+        "display_verts": false,
+        "display_edges": true,
+        "display_faces": false,
+        "point_size": 3,
+        "line_width": 16,
+        "draw_gl_polygonoffset": false
+      },
+      "width": 200.0
+    },
+    "Viewer Draw.002": {
+      "bl_idname": "SvViewerDrawMk4",
+      "height": 100.0,
+      "hide": false,
+      "label": "Polygonal cut mesh",
+      "location": [
+        180.0,
+        -160.0
+      ],
+      "params": {
+        "activate": true,
+        "selected_draw_mode": "facet",
+        "face_culling_set": "NONE",
+        "display_verts": false,
+        "display_edges": true,
+        "display_faces": true,
+        "point_size": 3,
+        "line_width": 1,
+        "draw_gl_polygonoffset": true
+      },
+      "width": 200.0
+    }
+  },
+  "update_lists": [
+    [
+      "Box",
+      "Vers",
+      "Mesh Intersection",
+      "Vertices A"
+    ],
+    [
+      "Box",
+      "Pols",
+      "Mesh Intersection",
+      "Faces A"
+    ],
+    [
+      "IcoSphere",
+      "Vertices",
+      "Mesh Intersection",
+      "Vertices Cutter"
+    ],
+    [
+      "IcoSphere",
+      "Faces",
+      "Mesh Intersection",
+      "Faces Cutter"
+    ],
+    [
+      "Box",
+      "Vers",
+      "Cut by Mesh",
+      "Vertices A"
+    ],
+    [
+      "Box",
+      "Pols",
+      "Cut by Mesh",
+      "Faces A"
+    ],
+    [
+      "IcoSphere",
+      "Vertices",
+      "Cut by Mesh",
+      "Vertices Cutter"
+    ],
+    [
+      "IcoSphere",
+      "Faces",
+      "Cut by Mesh",
+      "Faces Cutter"
+    ],
+    [
+      "Mesh Intersection",
+      "Vertices",
+      "Viewer Draw.001",
+      "Vertices"
+    ],
+    [
+      "Mesh Intersection",
+      "Edges",
+      "Viewer Draw.001",
+      "Edges"
+    ],
+    [
+      "Cut by Mesh",
+      "Vertices",
+      "Viewer Draw.002",
+      "Vertices"
+    ],
+    [
+      "Cut by Mesh",
+      "Edges",
+      "Viewer Draw.002",
+      "Edges"
+    ],
+    [
+      "Cut by Mesh",
+      "Faces",
+      "Viewer Draw.002",
+      "Polygons"
+    ],
+    [
+      "IcoSphere",
+      "Vertices",
+      "Viewer Draw",
+      "Vertices"
+    ],
+    [
+      "IcoSphere",
+      "Edges",
+      "Viewer Draw",
+      "Edges"
+    ],
+    [
+      "IcoSphere",
+      "Faces",
+      "Viewer Draw",
+      "Polygons"
+    ]
+  ]
+}
