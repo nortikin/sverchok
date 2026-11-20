@@ -1,0 +1,654 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Mesh Intersection &#8212; Sverchok 1, 4, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=c14129a0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/modifier_make/mesh_intersection';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Offset Line" href="offset_line.html" />
+    <link rel="prev" title="Matrix Tube" href="matrix_tube.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 4, 0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 4, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 4, 0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="modifier_make_index.html">Modifier Make</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adaptive_polygons_mk3.html">Adaptive Polygons Mk2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bevel_curve.html">Bevel a Curve (Mesh)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bisect.html">Bisect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolean_internal.html">Internal Boolean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clip_verts.html">Clip Vertices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contour2D.html">Contour 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="csg_booleanMK2.html">CSG Boolean MK2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cut_by_mesh.html">Cut by Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cut_object_by_surface.html">Cut Object by Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="diamond_mesh.html">Diamond Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dual_mesh.html">Dual Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edges_adaptative.html">Adaptative Edges</a></li>
+
+<li class="toctree-l3"><a class="reference internal" href="fractal_curve.html">Fractal Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="framework.html">Framework</a></li>
+<li class="toctree-l3"><a class="reference internal" href="join_tris.html">Join Triangles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lathe.html">Lathe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_tube.html">Matrix Tube</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Mesh Intersection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="offset_line.html">Offset Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pipe_tubes.html">Pipe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solidify_mk2.html">Solidify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweep_modulator.html">Sweep Modulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uv_connect.html">UV Connection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wafel.html">Wafel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframe.html">Wireframe</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dxf/dxf_index.html">DXF</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/modifier_make/mesh_intersection.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Mesh Intersection</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="mesh-intersection">
+<h1>Mesh Intersection<a class="headerlink" href="#mesh-intersection" title="Link to this heading">#</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
+<p><strong>Mesh Intersection</strong> computes the geometrical intersections of two surface
+meshes, without modifying either input mesh. It can be used to build section
+curves, measure contact geometry, and provide intersection lines for subsequent
+modelling operations. Unlike <a class="reference internal" href="cut_by_mesh.html"><span class="doc">Cut by Mesh</span></a>,
+it does <strong>not</strong> insert edges into the source mesh.</p>
+<p>Both open and closed surface meshes are accepted. Triangle, quad and simple
+n-gon faces are triangulated internally. Coplanar contacts and overlapping
+areas are also detected.</p>
+<p>The numerical kernel uses NumPy. SciPy accelerates candidate searching when
+available and Numba is used automatically when installed. It does not import
+<code class="docutils literal notranslate"><span class="pre">bmesh</span></code>, <code class="docutils literal notranslate"><span class="pre">mathutils</span></code> or <code class="docutils literal notranslate"><span class="pre">bpy</span></code>. The node UI uses Blender as usual.</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Vertices A</strong>: Coordinates of the first mesh.</p></li>
+<li><p><strong>Faces A</strong>: Face vertex-index lists of the first mesh.</p></li>
+<li><p><strong>Vertices Cutter</strong>: Coordinates of the second mesh.</p></li>
+<li><p><strong>Faces Cutter</strong>: Face vertex-index lists of the second mesh.</p></li>
+</ul>
+<p>Inputs are paired by Sverchok’s repeat-last list matching. Mesh objects should
+be expressed in the same coordinate system.</p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<p>The node displays <strong>Advanced Outputs</strong> as a toggle. When it is off, only
+<code class="docutils literal notranslate"><span class="pre">Vertices</span></code> and <code class="docutils literal notranslate"><span class="pre">Edges</span></code> are shown. Linked advanced sockets are kept by
+Sverchok’s <code class="docutils literal notranslate"><span class="pre">hide_safe</span></code> behavior.</p>
+<p>In the node’s N-panel:</p>
+<ul class="simple">
+<li><p><strong>Search / Auto</strong> (default): SciPy <code class="docutils literal notranslate"><span class="pre">cKDTree</span></code> if available, otherwise the
+built-in NumPy BVH.</p></li>
+<li><p><strong>Search / SciPy</strong>: Force the SciPy search; requires SciPy installed.</p></li>
+<li><p><strong>Search / NumPy</strong>: Force the NumPy AABB BVH.</p></li>
+<li><p><strong>Search / Brute Force</strong>: Exhaustive AABB candidate filtering for comparison
+and diagnosis, not recommended for large meshes.</p></li>
+<li><p><strong>Coplanar</strong>: Include coplanar overlap polygons and coplanar contacts.</p></li>
+<li><p><strong>Tolerance</strong>: Absolute tolerance in scene coordinate units (default
+<code class="docutils literal notranslate"><span class="pre">1e-6</span></code>). Set this to match your mesh scale.</p></li>
+</ul>
+<p>Numba automatically accelerates the triangle-pair narrow-phase when installed.
+Its first invocation may include JIT compilation time.</p>
+<p>The <strong>Output NumPy</strong> option in the N-panel has separate toggles for
+<strong>Vertices</strong> and <strong>Edges</strong>. By default both outputs are Python lists.
+When enabled, each mesh object uses a contiguous-shaped NumPy array
+of vertex coordinates (<code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">x</span> <span class="pre">3</span></code>) or edge indices (<code class="docutils literal notranslate"><span class="pre">M</span> <span class="pre">x</span> <span class="pre">2</span></code>).
+This avoids list conversion when passing geometry between compatible nodes.
+Other outputs retain their original formats.</p>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Vertices</strong>: Shared coordinates of intersection vertices.</p></li>
+<li><p><strong>Edges</strong>: Pairs of indices into <strong>Vertices</strong> defining intersection segments.</p></li>
+</ul>
+<p>When <strong>Advanced Outputs</strong> is enabled:</p>
+<ul class="simple">
+<li><p><strong>Point Indices</strong>: Indices into <strong>Vertices</strong> for isolated point contacts.</p></li>
+<li><p><strong>Coplanar Polygons</strong>: Vertex-index loops of overlapping coplanar triangles;
+multiple polygons can correspond to one original n-gon.</p></li>
+<li><p><strong>Edge Face Pairs</strong>: <code class="docutils literal notranslate"><span class="pre">[face_a,</span> <span class="pre">face_b]</span></code> for each <strong>Edges</strong> segment.</p></li>
+<li><p><strong>Point Face Pairs</strong>: Source face pairs for isolated point contacts.</p></li>
+<li><p><strong>Coplanar Face Pairs</strong>: Source face pairs for coplanar overlap polygons.</p></li>
+</ul>
+<p>Face indices refer to the original (pre-triangulation) faces. Duplicated
+intersection segments are welded; in that case the first source face pair is
+retained. Intersection edges are not necessarily ordered as a polyline.</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<p>The following example intersects a deformed plane with an IcoSphere.
+The plane (mesh A) is generated on a grid, rotated with <strong>Matrix In</strong>, and
+perturbed by <strong>Randomize</strong> in the Z direction. The IcoSphere is supplied as
+the cutter mesh. In this example, <strong>Mesh Intersection</strong> returns only the
+intersection <strong>Vertices</strong> and <strong>Edges</strong>; neither input mesh is altered.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/4ea9ed9b-3fef-4712-9904-54b5feebd33e"><img alt="Mesh Intersection node tree with a randomized, rotated plane, an IcoSphere and the intersection curves in the 3D viewport." src="https://github.com/user-attachments/assets/4ea9ed9b-3fef-4712-9904-54b5feebd33e" />
+</a>
+<p>The screenshot uses a centered <strong>4 x 4</strong> plane with <strong>6 x 6</strong> vertices,
+<code class="docutils literal notranslate"><span class="pre">Randomize</span></code> with Z amplitude <code class="docutils literal notranslate"><span class="pre">0.36</span></code>, and an IcoSphere with radius <code class="docutils literal notranslate"><span class="pre">1</span></code>
+and subdivision level <code class="docutils literal notranslate"><span class="pre">3</span></code>. The highlighted curves mark where the two
+surfaces cross. Viewing both input meshes alongside the intersection lines
+makes the contact geometry easier to understand.</p>
+<p>A change in the plane’s orientation or displacement changes the extracted
+curves without modifying the geometry of either mesh. The returned edges
+are not guaranteed to form one ordered or closed polyline; for continuous
+paths, apply a suitable edge-to-path operation afterwards.</p>
+<p>A separate introductory tree, <code class="docutils literal notranslate"><span class="pre">Mesh_Intersection_and_Cut_by_Mesh.json</span></code>,
+is provided under <code class="docutils literal notranslate"><span class="pre">json_examples/Introduction/</span></code> and compares this node
+with <a class="reference internal" href="cut_by_mesh.html"><span class="doc">Cut by Mesh</span></a>.</p>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="cut_by_mesh.html"><span class="doc">Cut by Mesh</span></a></p></li>
+<li><p><a class="reference internal" href="bisect.html"><span class="doc">Bisect</span></a></p></li>
+<li><p><a class="reference internal" href="cut_object_by_surface.html"><span class="doc">Cut Object by Surface</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="matrix_tube.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Matrix Tube</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="offset_line.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Offset Line</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2026, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
