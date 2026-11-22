@@ -227,7 +227,7 @@
         - icon_name: OBJECT_DATAMODE  # icon name to show
         - M CHANGE:
             - SvDeleteLooseNode
-            - SvMergeByDistanceNode
+            - SvMergeByDistanceNumpyNode
             - SvMeshCleanNode
             - SvSeparateMeshNode
             - SvSeparatePartsToIndexes
