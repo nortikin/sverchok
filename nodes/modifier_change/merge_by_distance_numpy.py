@@ -76,9 +76,11 @@ class SV_MT_MergeByDistanceNumpyOutputs(bpy.types.Menu):
 
 
 class SvMergeByDistanceNumpyNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
-    """Merge nearby vertices using independent GRID clustering.
+    """
+    Triggers: Weld, Doubled Verts
+    Tooltip: Merge nearby vertices using independent GRID clustering.
 
-    Distance is one scalar per mesh; distance arrays match *meshes*, not vertices.
+    Distance is one scalar per mesh; distance arrays match meshes, not vertices.
     """
     bl_idname = 'SvMergeByDistanceNumpyNode'
     bl_label = 'Merge by Distance'
