@@ -228,11 +228,15 @@ class MergeBlenderRegistrationTests(unittest.TestCase):
         tree = bpy.data.node_groups.new('Merge CI registration', 'SverchCustomTreeType')
         tree.sv_process = False
         try:
-            for node_id in ('SvMergeByDistanceNode', 'SvMergeByDistanceNumpyNode'):
+            expected_counts = (
+                ('SvMergeByDistanceNode', 5, 6),
+                ('SvMergeByDistanceNumpyNode', 8, 11),
+            )
+            for node_id, num_inputs, num_outputs in expected_counts:
                 with self.subTest(node_id=node_id):
                     node = tree.nodes.new(node_id)
-                    self.assertEqual(len(node.inputs), 5)
-                    self.assertEqual(len(node.outputs), 6)
+                    self.assertEqual(len(node.inputs), num_inputs)
+                    self.assertEqual(len(node.outputs), num_outputs)
             node = next(n for n in tree.nodes if n.bl_idname == 'SvMergeByDistanceNumpyNode')
             self.assertEqual(node.mode, 'FAST')
             self.assertEqual(node.list_match, 'REPEAT')
