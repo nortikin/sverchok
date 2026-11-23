@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.mesh.smooth_laplacian API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.mesh.smooth_laplacian</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.mesh.smooth_laplacian.laplacian_smooth"><code class="name flex">
+<span>def <span class="ident">laplacian_smooth</span></span>(<span>vertices,<br>edges,<br>polygons,<br>corners,<br>lengths,<br>incidence,<br>selected,<br>axes,<br>factor,<br>border_factor,<br>preserve_volume,<br>iterations,<br>compiled)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def laplacian_smooth(vertices, edges, polygons, corners, lengths, incidence, selected,
+                     axes, factor, border_factor, preserve_volume, iterations, compiled):
+    if not len(corners):
+        return
+    count = len(vertices)
+    factor, border_factor = np.float32(factor), np.float32(border_factor)
+    ends = np.cumsum(lengths)
+    starts = np.r_[0, ends[:-1]]
+    previous = np.roll(corners, 1)
+    following = np.roll(corners, -1)
+    previous[starts] = corners[ends-1]
+    following[ends-1] = corners[starts]
+    loops = np.column_stack((previous, corners, following))
+    boundary_edges = edges[incidence == 1]
+    boundary = np.zeros(count, dtype=np.bool_)
+    boundary[boundary_edges.ravel()] = True
+    # Sverchok selects every face before the BMesh operator. That also selects
+    # its edges, which Blender excludes from inverse-length boundary weights.
+    active = np.flatnonzero(selected)
+    column_index = np.full(count, -1, dtype=np.intp)
+    column_index[active] = np.arange(len(active))
+    # Match Blender&#39;s least-squares mask semantics. Locked variables start at
+    # zero in its solver, while their mesh coordinates remain unchanged.
+
+    # Entries match Blender&#39;s six cotangent contributions per face corner.
+    p, c, n = loops.T
+    face_rows = np.column_stack((p, p, c, c, n, n)).ravel()
+    face_cols = np.column_stack((c, n, n, p, c, p)).ravel()
+    rows = np.concatenate((active, face_rows))
+    cols = column_index[np.concatenate((active, face_cols))]
+    keep = cols &gt;= 0
+    # Aggregate duplicates once. Only numerical values change per iteration.
+    keys, inverse = np.unique(rows[keep] * len(active) + cols[keep], return_inverse=True)
+    rows, cols = keys // len(active), keys % len(active)
+    weight_kernel = _laplacian_weights_numba if compiled else _laplacian_weights_numpy
+    solver = _laplacian_cgls_numba if compiled else _laplacian_cgls_impl
+
+    volume_groups = None
+    if preserve_volume:
+        triangle_faces = np.asarray(
+            [face for face in polygons if len(face) == 3], dtype=np.intp).reshape(-1, 3)
+        quad_indices = np.flatnonzero(lengths == 4)
+        quad_faces = ()
+        if len(quad_indices):
+            quad_faces = (np.asarray([polygons[i] for i in quad_indices], dtype=np.intp),
+                          quad_indices)
+        ngons = [(i, face) for i, face in enumerate(polygons) if len(face) &gt; 4]
+        volume_groups = triangle_faces, quad_faces, ngons
+
+    for _ in range(iterations):
+        normals = None
+        if preserve_volume:
+            delta = vertices[previous] - vertices[corners]
+            total = vertices[previous] + vertices[corners]
+            newell = delta[:, (1,2,0)] * total[:, (2,0,1)]
+            normals = np.add.reduceat(newell, starts)
+        weights, ring, sums, zero = weight_kernel(vertices, loops)
+        valid = selected &amp; ~zero &amp; (ring != 0)
+        vertex_scale = sums.copy()
+        divisor = np.float32(4) * (sums[valid] * ring[valid])
+        vertex_scale[valid] = np.divide(-factor, divisor, out=np.zeros_like(divisor),
+                                       where=divisor != 0)
+        diagonal = np.ones(count, dtype=np.float32)
+        interior = valid &amp; ~boundary
+        diagonal[interior] += factor / (np.float32(4)*ring[interior])
+        diagonal[valid &amp; boundary] += border_factor * np.float32(2)
+        w1, w2, w3 = weights.T
+        face_values = np.column_stack((w2, w1, w3, w2, w3, w1)).ravel()
+        face_values *= vertex_scale[face_rows]
+        face_values[zero[face_rows] | boundary[face_rows]] = 0
+        values = np.concatenate((diagonal[active], face_values))
+        values = np.bincount(inverse, weights=values[keep], minlength=len(keys))
+        diagonal_normal = np.bincount(cols, weights=values*values, minlength=len(active))
+        inverse_diagonal = np.divide(1, diagonal_normal, out=np.ones_like(diagonal_normal),
+                                     where=diagonal_normal != 0)
+        rhs = np.zeros((count, 3), dtype=np.float64)
+        rhs[active] = vertices[active]
+        solution, converged = solver(rows, cols, values, rhs,
+                                     vertices[active].astype(np.float64), inverse_diagonal)
+        if not converged and count * len(active) &lt;= 262144:
+            # Small, badly conditioned systems can stagnate in normal-equation
+            # CG. An SVD solve avoids squaring their condition number.
+            matrix = np.zeros((count, len(active)), dtype=np.float64)
+            matrix[rows, cols] = values
+            solution = np.linalg.lstsq(matrix, rhs, rcond=None)[0]
+            converged = True
+        if not converged or not np.all(np.isfinite(solution)):
+            raise RuntimeError(&#34;Laplacian solver did not converge; try a smaller Factor&#34;)
+        proposed = np.zeros_like(vertices)
+        proposed[active] = solution
+        old_delta = vertices[edges[:, 0]] - vertices[edges[:, 1]]
+        new_delta = proposed[edges[:, 0]] - proposed[edges[:, 1]]
+        old_length = np.sqrt((old_delta*old_delta).sum(axis=1))
+        new_length = np.sqrt((new_delta*new_delta).sum(axis=1))
+        rejected = (new_length &gt; old_length*np.float32(1.8)) | (
+            new_length &lt; old_length*np.float32(0.15))
+        zero[edges[rejected].ravel()] = True
+        volume_before = _volume(vertices, volume_groups, normals) if preserve_volume else np.float32(0)
+        moving = np.flatnonzero(selected &amp; ~zero)
+        for axis in np.flatnonzero(axes):
+            vertices[moving, axis] = proposed[moving, axis]
+        if preserve_volume:
+            volume_after = _volume(vertices, volume_groups, normals)
+            if volume_after != 0:
+                scale = np.float32(float(volume_before/volume_after) ** float(np.float32(1)/3))
+                for axis in np.flatnonzero(axes):
+                    vertices[active, axis] *= scale</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.mesh" href="index.html">sverchok.utils.mesh</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.mesh.smooth_laplacian.laplacian_smooth" href="#sverchok.utils.mesh.smooth_laplacian.laplacian_smooth">laplacian_smooth</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.mesh.mesh_intersections API documentation</title>
+<meta name="description" content="Standalone mesh/mesh surface intersections for Sverchok …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.mesh.mesh_intersections</code></h1>
+</header>
+<section id="section-intro">
+<p>Standalone mesh/mesh surface intersections for Sverchok.</p>
+<p>No Blender imports. Requires NumPy; SciPy and Numba are optional.</p>
+<p>Scope: detect intersection segments, isolated contacts and coplanar overlaps.
+This does NOT split faces or create a cut mesh (a separate topology step).</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.mesh.mesh_intersections.intersect_meshes"><code class="name flex">
+<span>def <span class="ident">intersect_meshes</span></span>(<span>vertices_a: Sequence[Sequence[float]],<br>faces_a: Sequence[Sequence[int]],<br>vertices_b: Sequence[Sequence[float]],<br>faces_b: Sequence[Sequence[int]],<br>*,<br>tolerance: float = 1e-08,<br>acceleration: str = 'bvh',<br>use_numba: bool | None = None,<br>include_coplanar: bool = True) ‑> <a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult">IntersectionResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_meshes(vertices_a: Sequence[Sequence[float]],
+                     faces_a: Sequence[Sequence[int]],
+                     vertices_b: Sequence[Sequence[float]],
+                     faces_b: Sequence[Sequence[int]], *,
+                     tolerance: float = 1e-8,
+                     acceleration: str = &#39;bvh&#39;,
+                     use_numba: bool | None = None,
+                     include_coplanar: bool = True) -&gt; IntersectionResult:
+    &#34;&#34;&#34;Detect mesh-mesh intersections without bpy, bmesh or mathutils.
+
+    Parameters
+    ----------
+    vertices_a, vertices_b : (N,3) NumPy arrays or lists
+    faces_a, faces_b : iterables of triangle / quad / simple n-gon index lists
+    tolerance : absolute scene-space numerical/weld tolerance
+    acceleration : &#39;bvh&#39; (default), &#39;scipy&#39; or &#39;brute&#39;
+    use_numba : True, False, None (&#39;auto&#39;: Numba for &gt;=128 plane-candidate pairs)
+    include_coplanar : whether to return area overlaps (and 1D contacts)
+
+    Notes
+    -----
+    Edges are raw surface intersection segments; edge crossing / T-junction
+    splitting and face reconstruction are intentionally deferred to stage 2.
+    &#34;&#34;&#34;
+    if not np.isfinite(tolerance) or tolerance &lt;= 0:
+        raise ValueError(&#39;tolerance must be a positive finite number&#39;)
+    if acceleration not in (&#39;bvh&#39;, &#39;scipy&#39;, &#39;brute&#39;):
+        raise ValueError(&#39;acceleration must be bvh, scipy or brute&#39;)
+    if use_numba is True and not HAS_NUMBA:
+        raise ImportError(&#39;Numba requested but not installed&#39;)
+    # In auto mode, do not pay Numba&#39;s initial JIT compilation cost for tiny
+    # meshes. The decision uses pair count only, with no timing/probe overhead.
+    auto_jit = use_numba is None
+    use_jit = bool(use_numba) if not auto_jit else False
+    va, vb = _as_vertices(vertices_a, &#39;vertices_a&#39;), _as_vertices(vertices_b, &#39;vertices_b&#39;)
+    fa, oa = triangulate_faces(va, faces_a, tolerance=tolerance)
+    fb, ob = triangulate_faces(vb, faces_b, tolerance=tolerance)
+    if not len(fa) or not len(fb):
+        return _empty_result(len(fa), len(fb), acceleration, use_jit)
+    a, b = va[fa], vb[fb]
+    min_a, max_a = a.min(axis=1), a.max(axis=1)
+    min_b, max_b = b.min(axis=1), b.max(axis=1)
+    if acceleration == &#39;bvh&#39;:
+        pairs = _candidate_bvh(min_a, max_a, min_b, max_b, tolerance)
+    elif acceleration == &#39;scipy&#39;:
+        pairs = _candidate_scipy(min_a, max_a, min_b, max_b, tolerance)
+    else:
+        pairs = _candidate_brute(min_a, max_a, min_b, max_b, tolerance)
+    if not len(pairs):
+        return _empty_result(len(fa), len(fb), acceleration, use_jit)
+
+    # Cheap vectorized plane-sidedness rejection is used for both backends.
+    # Preserve the AABB candidate count for profiling.
+    num_aabb_candidates = len(pairs)
+    pairs = _plane_prefilter(a, b, pairs, tolerance)
+    if auto_jit:
+        use_jit = HAS_NUMBA and len(pairs) &gt;= 128
+    if not len(pairs):
+        return _empty_result(len(fa), len(fb), acceleration, use_jit,
+                             num_aabb_candidates)
+    kernel = _triangle_pair_jit if use_jit else _triangle_pair_raw
+    # Intermediate vertices refer to indices in &#39;raw_points&#39;. Welding occurs
+    # once, after detecting all intersections, for consistent shared vertices.
+    raw_points: list[np.ndarray] = []
+    raw_segments: list[tuple[int, int, tuple[int, int]]] = []
+    raw_contacts: list[tuple[int, tuple[int, int]]] = []
+    raw_polys: list[tuple[list[int], tuple[int, int]]] = []
+    hits = []
+    for ia, ib in pairs:
+        kind, endpoints = kernel(a[ia], b[ib], tolerance)
+        face_pair = (int(oa[ia]), int(ob[ib]))
+        if kind == 3:
+            if not include_coplanar:
+                continue
+            kind, coords = _clip_coplanar(a[ia], b[ib], tolerance)
+        else:
+            coords = endpoints[:1] if kind == 1 else endpoints
+        if kind == 0:
+            continue
+        if kind == 1:
+            idx = len(raw_points)
+            raw_points.append(coords[0].copy())
+            raw_contacts.append((idx, face_pair))
+        elif kind == 2:
+            idx = len(raw_points)
+            raw_points.extend((coords[0].copy(), coords[1].copy()))
+            raw_segments.append((idx, idx + 1, face_pair))
+        else:
+            ids = list(range(len(raw_points), len(raw_points) + len(coords)))
+            raw_points.extend(p.copy() for p in coords)
+            raw_polys.append((ids, face_pair))
+        hits.append((int(ia), int(ib)))
+
+    if not raw_points:
+        return _empty_result(len(fa), len(fb), acceleration, use_jit, num_aabb_candidates)
+    xyz, inverse = _weld(raw_points, tolerance)
+    edges = []
+    edge_faces = []
+    edge_keys = set()
+    for i, j, pair in raw_segments:
+        u, v = int(inverse[i]), int(inverse[j])
+        if u == v:
+            continue
+        key = (min(u, v), max(u, v))
+        if key not in edge_keys:
+            edge_keys.add(key)
+            edges.append(key)
+            edge_faces.append(pair)
+    point_ids, point_faces = [], []
+    seen_points = set()
+    used_in_other_geometry = {v for edge in edges for v in edge}
+    used_in_other_geometry.update(int(inverse[i]) for ids, _ in raw_polys for i in ids)
+    for idx, face_pair in raw_contacts:
+        p = int(inverse[idx])
+        if p not in seen_points and p not in used_in_other_geometry:
+            seen_points.add(p)
+            point_ids.append(p)
+            point_faces.append(face_pair)
+    polys, cop_faces = [], []
+    seen_polys = set()
+    for indices, face_pair in raw_polys:
+        polygon = []
+        for idx in indices:
+            p = int(inverse[idx])
+            if not polygon or p != polygon[-1]:
+                polygon.append(p)
+        if len(polygon) &gt; 1 and polygon[0] == polygon[-1]:
+            polygon.pop()
+        if len(set(polygon)) &lt; 3:
+            continue
+        # Only remove duplicates of geometrically identical clipped polygons.
+        key = tuple(sorted(polygon))
+        if key in seen_polys:
+            continue
+        seen_polys.add(key)
+        polys.append(np.asarray(polygon, dtype=np.int64))
+        cop_faces.append(face_pair)
+    return IntersectionResult(
+        vertices=xyz,
+        edges=np.asarray(edges, dtype=np.int64).reshape(-1, 2),
+        edge_face_pairs=np.asarray(edge_faces, dtype=np.int64).reshape(-1, 2),
+        point_indices=np.asarray(point_ids, dtype=np.int64),
+        point_face_pairs=np.asarray(point_faces, dtype=np.int64).reshape(-1, 2),
+        coplanar_polygons=polys,
+        coplanar_face_pairs=np.asarray(cop_faces, dtype=np.int64).reshape(-1, 2),
+        intersecting_triangle_pairs=np.asarray(hits, dtype=np.int64).reshape(-1, 2),
+        candidate_pairs=num_aabb_candidates, triangle_count_a=len(fa), triangle_count_b=len(fb),
+        acceleration=acceleration, numba_used=use_jit)</code></pre>
+</details>
+<div class="desc"><p>Detect mesh-mesh intersections without bpy, bmesh or mathutils.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>vertices_a</code></strong>, <strong><code>vertices_b</code></strong> :&ensp;<code>(N,3) NumPy arrays</code> or <code>lists</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>faces_a</code></strong>, <strong><code>faces_b</code></strong> :&ensp;<code>iterables</code> of <code>triangle / quad / simple n-gon index lists</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>tolerance</code></strong> :&ensp;<code>absolute scene-space numerical/weld tolerance</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>acceleration</code></strong> :&ensp;<code>'bvh' (default), 'scipy'</code> or <code>'brute'</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>use_numba</code></strong> :&ensp;<code>True, False, None ('auto': Numba for &gt;=128 plane-candidate pairs)</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>include_coplanar</code></strong> :&ensp;<code>whether to return area overlaps (and 1D contacts)</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>Edges are raw surface intersection segments; edge crossing / T-junction
+splitting and face reconstruction are intentionally deferred to stage 2.</p></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.triangulate_faces"><code class="name flex">
+<span>def <span class="ident">triangulate_faces</span></span>(<span>vertices: Sequence[Sequence[float]],<br>faces: Sequence[Sequence[int]],<br>tolerance: float = 1e-08) ‑> tuple[numpy.ndarray, numpy.ndarray]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def triangulate_faces(vertices: Sequence[Sequence[float]],
+                      faces: Sequence[Sequence[int]],
+                      tolerance: float = 1e-8) -&gt; tuple[np.ndarray, np.ndarray]:
+    &#34;&#34;&#34;Triangulate polygon faces without Blender; return triangles + face IDs.
+
+    For concave n-gons uses ear clipping. For triangulated input this is a
+    fast index-preserving pass. Edges-only geometry is not supported.
+    &#34;&#34;&#34;
+    v = _as_vertices(vertices, &#39;vertices&#39;)
+    if tolerance &lt;= 0 or not np.isfinite(tolerance):
+        raise ValueError(&#39;tolerance must be positive and finite&#39;)
+
+    # Fast vectorized paths for triangle / predominantly convex-quad meshes.
+    # Keep face indices even though every quad becomes two triangles.
+    try:
+        dense = np.asarray(faces)
+    except ValueError:  # Ragged n-gons; use the general ear clipping path.
+        dense = None
+    if dense is not None and dense.ndim == 2 and dense.shape[1] in (3, 4):
+        if not np.issubdtype(dense.dtype, np.integer):
+            raise ValueError(&#39;face indices must be integers&#39;)
+        indices = np.asarray(dense, dtype=np.int64)
+        if np.any(indices &lt; 0) or np.any(indices &gt;= len(v)):
+            raise ValueError(&#39;face indices out of range&#39;)
+        # Distinct indices in each polygon, without Python set creation.
+        if np.any(np.sort(indices, axis=1)[:, 1:] ==
+                  np.sort(indices, axis=1)[:, :-1]):
+            raise ValueError(&#39;face contains invalid or repeated vertex indices&#39;)
+        if indices.shape[1] == 3:
+            return np.ascontiguousarray(indices), np.arange(len(indices), dtype=np.int64)
+        p = v[indices]
+        e = np.roll(p, -1, axis=1) - p
+        n = (np.cross(p[:, 1] - p[:, 0], p[:, 2] - p[:, 0]) +
+             np.cross(p[:, 2] - p[:, 0], p[:, 3] - p[:, 0]))
+        signed = np.einsum(&#39;mij,mj-&gt;mi&#39;, np.cross(e, np.roll(e, -1, axis=1)), n)
+        convex = np.all(signed &gt; 1e-25, axis=1)
+        if np.all(convex):
+            t = np.concatenate((indices[:, [0, 1, 2]], indices[:, [0, 2, 3]]), axis=1)
+            return t.reshape(-1, 3), np.repeat(np.arange(len(indices), dtype=np.int64), 2)
+        # A mixed convex/concave batch: process only the unusual quads slowly.
+        tri = []
+        origins = []
+        for face_id, row in enumerate(indices):
+            pieces = ([row[[0, 1, 2]].tolist(), row[[0, 2, 3]].tolist()]
+                      if convex[face_id] else _earclip(row, p[face_id], tolerance))
+            tri.extend(pieces)
+            origins.extend([face_id] * len(pieces))
+        return np.asarray(tri, dtype=np.int64).reshape(-1, 3), np.asarray(origins, dtype=np.int64)
+
+    tri: list[list[int]] = []
+    origins: list[int] = []
+    for face_id, raw in enumerate(faces):
+        face = np.asarray(raw)
+        if face.ndim != 1 or len(face) &lt; 3:
+            raise ValueError(f&#39;face {face_id} must have at least 3 vertices&#39;)
+        if not np.issubdtype(face.dtype, np.integer):
+            raise ValueError(f&#39;face {face_id} must contain integer vertex indices&#39;)
+        face = face.astype(np.int64, copy=False)
+        if (np.any(face &lt; 0) or np.any(face &gt;= len(v)) or
+                len(set(face.tolist())) != len(face)):
+            raise ValueError(f&#39;face {face_id}: invalid or repeated vertex index&#39;)
+        if len(face) == 3:
+            # Degenerate triangles silently contribute no intersections.
+            tri.append(face.tolist())
+            origins.append(face_id)
+        else:
+            new_tri = _earclip(face, v[face], tolerance)
+            tri.extend(new_tri)
+            origins.extend([face_id] * len(new_tri))
+    return (np.asarray(tri, dtype=np.int64).reshape(-1, 3),
+            np.asarray(origins, dtype=np.int64))</code></pre>
+</details>
+<div class="desc"><p>Triangulate polygon faces without Blender; return triangles + face IDs.</p>
+<p>For concave n-gons uses ear clipping. For triangulated input this is a
+fast index-preserving pass. Edges-only geometry is not supported.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult"><code class="flex name class">
+<span>class <span class="ident">IntersectionResult</span></span>
+<span>(</span><span>vertices: np.ndarray,<br>edges: np.ndarray,<br>edge_face_pairs: np.ndarray,<br>point_indices: np.ndarray,<br>point_face_pairs: np.ndarray,<br>coplanar_polygons: list[np.ndarray],<br>coplanar_face_pairs: np.ndarray,<br>intersecting_triangle_pairs: np.ndarray,<br>candidate_pairs: int,<br>triangle_count_a: int,<br>triangle_count_b: int,<br>acceleration: str,<br>numba_used: bool)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class IntersectionResult:
+    &#34;&#34;&#34;Intersection geometry and provenance.
+
+    vertices: (N, 3) float64, in input coordinates.
+    edges: (E, 2) int64. Includes proper intersection segments and
+        coplanar *one-dimensional* contacts; excludes overlapping-area rims.
+    edge_face_pairs: (E, 2) int64, first originating (A-face, B-face) pair.
+    point_indices: (P,) int64, isolated point contacts, excluding segment
+        endpoints and vertices of coplanar overlap regions.
+    point_face_pairs: (P, 2) int64, first originating face pair.
+    coplanar_polygons: list of int64 index arrays, one per overlapping
+        triangle pair (not merged across faces or triangulation diagonals).
+    coplanar_face_pairs: (C, 2) int64.
+    intersecting_triangle_pairs: (I, 2) int64, pair for every raw hit.
+    candidate_pairs: broad-phase AABB-overlapping triangle-pair count.
+    &#34;&#34;&#34;
+    vertices: np.ndarray
+    edges: np.ndarray
+    edge_face_pairs: np.ndarray
+    point_indices: np.ndarray
+    point_face_pairs: np.ndarray
+    coplanar_polygons: list[np.ndarray]
+    coplanar_face_pairs: np.ndarray
+    intersecting_triangle_pairs: np.ndarray
+    candidate_pairs: int
+    triangle_count_a: int
+    triangle_count_b: int
+    acceleration: str
+    numba_used: bool</code></pre>
+</details>
+<div class="desc"><p>Intersection geometry and provenance.</p>
+<p>vertices: (N, 3) float64, in input coordinates.
+edges: (E, 2) int64. Includes proper intersection segments and
+coplanar <em>one-dimensional</em> contacts; excludes overlapping-area rims.
+edge_face_pairs: (E, 2) int64, first originating (A-face, B-face) pair.
+point_indices: (P,) int64, isolated point contacts, excluding segment
+endpoints and vertices of coplanar overlap regions.
+point_face_pairs: (P, 2) int64, first originating face pair.
+coplanar_polygons: list of int64 index arrays, one per overlapping
+triangle pair (not merged across faces or triangulation diagonals).
+coplanar_face_pairs: (C, 2) int64.
+intersecting_triangle_pairs: (I, 2) int64, pair for every raw hit.
+candidate_pairs: broad-phase AABB-overlapping triangle-pair count.</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.acceleration"><code class="name">var <span class="ident">acceleration</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.candidate_pairs"><code class="name">var <span class="ident">candidate_pairs</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.coplanar_face_pairs"><code class="name">var <span class="ident">coplanar_face_pairs</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.coplanar_polygons"><code class="name">var <span class="ident">coplanar_polygons</span> : list[numpy.ndarray]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.edge_face_pairs"><code class="name">var <span class="ident">edge_face_pairs</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.edges"><code class="name">var <span class="ident">edges</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.intersecting_triangle_pairs"><code class="name">var <span class="ident">intersecting_triangle_pairs</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.numba_used"><code class="name">var <span class="ident">numba_used</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.point_face_pairs"><code class="name">var <span class="ident">point_face_pairs</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.point_indices"><code class="name">var <span class="ident">point_indices</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.triangle_count_a"><code class="name">var <span class="ident">triangle_count_a</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.triangle_count_b"><code class="name">var <span class="ident">triangle_count_b</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_intersections.IntersectionResult.vertices"><code class="name">var <span class="ident">vertices</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.mesh" href="index.html">sverchok.utils.mesh</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.intersect_meshes" href="#sverchok.utils.mesh.mesh_intersections.intersect_meshes">intersect_meshes</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.triangulate_faces" href="#sverchok.utils.mesh.mesh_intersections.triangulate_faces">triangulate_faces</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult">IntersectionResult</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.acceleration" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.acceleration">acceleration</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.candidate_pairs" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.candidate_pairs">candidate_pairs</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.coplanar_face_pairs" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.coplanar_face_pairs">coplanar_face_pairs</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.coplanar_polygons" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.coplanar_polygons">coplanar_polygons</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.edge_face_pairs" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.edge_face_pairs">edge_face_pairs</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.edges" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.edges">edges</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.intersecting_triangle_pairs" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.intersecting_triangle_pairs">intersecting_triangle_pairs</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.numba_used" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.numba_used">numba_used</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.point_face_pairs" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.point_face_pairs">point_face_pairs</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.point_indices" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.point_indices">point_indices</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.triangle_count_a" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.triangle_count_a">triangle_count_a</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.triangle_count_b" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.triangle_count_b">triangle_count_b</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_intersections.IntersectionResult.vertices" href="#sverchok.utils.mesh.mesh_intersections.IntersectionResult.vertices">vertices</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -1466,11 +1466,11 @@ not have a method with the specified name.</p></div>
         logging.getLogger().addHandler(handler)
 
         try:
-            sv_logger.debug(&#34;=== \/ === [%s] Here should be no errors === \/ ===&#34;, self.__class__.__name__)
+            sv_logger.debug(r&#34;=== \/ === [%s] Here should be no errors === \/ ===&#34;, self.__class__.__name__)
             yield handler
             self.assertFalse(has_errors, &#34;There were some errors logged&#34;)
         finally:
-            sv_logger.debug(&#34;=== /\ === [%s] There should be no errors === /\ ===&#34;, self.__class__.__name__)
+            sv_logger.debug(r&#34;=== /\ === [%s] There should be no errors === /\ ===&#34;, self.__class__.__name__)
             logging.getLogger().handlers.remove(handler)
 
     def subtest_assert_equals(self, value1, value2, message=None):
@@ -1589,11 +1589,11 @@ def assert_logs_no_errors(self):
     logging.getLogger().addHandler(handler)
 
     try:
-        sv_logger.debug(&#34;=== \/ === [%s] Here should be no errors === \/ ===&#34;, self.__class__.__name__)
+        sv_logger.debug(r&#34;=== \/ === [%s] Here should be no errors === \/ ===&#34;, self.__class__.__name__)
         yield handler
         self.assertFalse(has_errors, &#34;There were some errors logged&#34;)
     finally:
-        sv_logger.debug(&#34;=== /\ === [%s] There should be no errors === /\ ===&#34;, self.__class__.__name__)
+        sv_logger.debug(r&#34;=== /\ === [%s] There should be no errors === /\ ===&#34;, self.__class__.__name__)
         logging.getLogger().handlers.remove(handler)</code></pre>
 </details>
 <div class="desc"><p>Assert that the code does not write any ERROR to the log.</p>

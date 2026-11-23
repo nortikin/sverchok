@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.mesh.mesh_cut API documentation</title>
+<meta name="description" content="Blender-independent topological knife cutting of mesh A by surface mesh B …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.mesh.mesh_cut</code></h1>
+</header>
+<section id="section-intro">
+<p>Blender-independent topological knife cutting of mesh A by surface mesh B.</p>
+<p>NumPy required. SciPy broad phase and Numba triangle intersections are optional,
+via mesh_intersections.py. The topological recovery phase is pure Python/NumPy.</p>
+<p>The internal triangulation is dissolved back to original polygon regions wherever
+possible. Cut edges and original source face boundaries are never dissolved.
+No Boolean classification or caps are performed; ambiguous geometry fails explicitly.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.mesh.mesh_cut.cut_mesh"><code class="name flex">
+<span>def <span class="ident">cut_mesh</span></span>(<span>vertices_a,<br>faces_a,<br>vertices_b,<br>faces_b,<br>*,<br>tolerance=1e-06,<br>acceleration='auto',<br>use_numba=None,<br>include_coplanar=True,<br>preserve_polygons=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cut_mesh(vertices_a, faces_a, vertices_b, faces_b, *,
+             tolerance=1e-6, acceleration=&#39;auto&#39;, use_numba=None,
+             include_coplanar=True, preserve_polygons=True):
+    &#34;&#34;&#34;Cut mesh A with surface B. Return a connected (not separated) mesh A.
+
+    Open and closed cutter surfaces are supported, without Boolean inside/outside
+    classification. The cutter&#39;s mesh is not included in the returned topology.
+    Coplanar overlaps are traced at their per-triangle rim, not filled.
+    &#34;&#34;&#34;
+    if tolerance &lt;= 0 or not np.isfinite(tolerance):
+        raise ValueError(&#39;tolerance must be positive and finite&#39;)
+    backend = (&#39;scipy&#39; if HAS_SCIPY else &#39;bvh&#39;) if acceleration == &#39;auto&#39; else acceleration
+    if backend not in (&#39;scipy&#39;, &#39;bvh&#39;, &#39;brute&#39;):
+        raise ValueError(&#39;Unknown search backend&#39;)
+    va = _as_vertices(vertices_a, &#39;vertices_a&#39;)
+    base_faces = [list(map(int, face)) for face in faces_a]
+    base_edges = _edges_from_faces(base_faces)
+    intersections = intersect_meshes(va, faces_a, vertices_b, faces_b,
+                                    tolerance=tolerance, acceleration=backend,
+                                    use_numba=HAS_NUMBA if use_numba is None else use_numba,
+                                    include_coplanar=include_coplanar)
+    # Point-only contacts do not cut a surface. Keep them available in the
+    # separate Mesh Intersection node, but do not create triangle fans here.
+    if not (len(intersections.edges) or len(intersections.coplanar_polygons)):
+        return CutResult(va.copy(), base_edges, base_faces,
+                         np.zeros(len(base_edges), dtype=bool),
+                         np.zeros(len(va), dtype=bool),
+                         np.arange(len(base_faces), dtype=np.int64),
+                         intersections.vertices, intersections.edges,
+                         backend, intersections.numba_used)
+
+    triangles, origins = triangulate_faces(va, faces_a, tolerance)
+    # Each mesh-A original polygon can yield several triangles.
+    by_face = {}
+    for i, oid in enumerate(origins):
+        by_face.setdefault(int(oid), []).append(i)
+
+    # Local A-triangle projections. New points are lifted onto the original
+    # source triangle plane, guaranteeing no drift off mesh A.
+    axes, local, normals = [], [], []
+    for ids in triangles:
+        tri = va[ids]
+        n = np.cross(tri[1] - tri[0], tri[2] - tri[0])
+        if np.linalg.norm(n) &lt; tolerance * tolerance * 1e-4:
+            raise ValueError(&#39;Degenerate triangle in mesh A&#39;)
+        dropped = int(np.argmax(np.abs(n)))
+        axes.append([j for j in range(3) if j != dropped])
+        normals.append((n, dropped))
+        local.append(tri[:, axes[-1]])
+
+    segments = [[] for _ in triangles]
+    raw_segments = []
+    for (i, j), (fa, _) in zip(intersections.edges, intersections.edge_face_pairs):
+        raw_segments.append((intersections.vertices[int(i)], intersections.vertices[int(j)], int(fa)))
+    for polygon, (fa, _) in zip(intersections.coplanar_polygons, intersections.coplanar_face_pairs):
+        for k in range(len(polygon)):
+            raw_segments.append((intersections.vertices[int(polygon[k])],
+                                 intersections.vertices[int(polygon[(k + 1) % len(polygon)])], int(fa)))
+
+    for p, q, original_face in raw_segments:
+        for ti in by_face.get(original_face, []):
+            u = np.asarray(p)[axes[ti]]
+            v = np.asarray(q)[axes[ti]]
+            clipped = _clip_to_triangle(u, v, local[ti], tolerance)
+            if clipped is None:
+                continue
+            a, b = clipped
+            if np.linalg.norm(b - a) &gt; tolerance:
+                segments[ti].append((a, b))
+            # A segment clipped to a single point cannot create a local
+            # cut; genuine edge crossings are propagated by shared[] below.
+
+    # A common mesh edge can lie in triangles with different local plane
+    # projections; share exact parametric edge cuts before rebuilding topology.
+    shared = {}
+    for ti, tri in enumerate(triangles):
+        candidates = [p for seg in segments[ti] for p in seg]
+        for j in range(3):
+            i0, i1 = (int(tri[j]), int(tri[(j + 1) % 3]))
+            key = _edge_key(i0, i1)
+            a, b = local[ti][j], local[ti][(j + 1) % 3]
+            for p in candidates:
+                if _on_edge(p, a, b, tolerance):
+                    p3 = va[i0] + float(np.dot(p - a, b - a) / np.dot(b - a, b - a)) * (va[i1] - va[i0])
+                    v0, v1 = va[key[0]], va[key[1]]
+                    t = float(np.clip(np.dot(p3 - v0, v1 - v0) / np.dot(v1 - v0, v1 - v0), 0, 1))
+                    if t &gt; tolerance / np.linalg.norm(v1 - v0) and t &lt; 1 - tolerance / np.linalg.norm(v1 - v0):
+                        shared.setdefault(key, []).append(t)
+    for key, params in shared.items():
+        shared[key] = sorted(set(round(t, 12) for t in params))
+
+    store = _VertexStore(va, tolerance)
+    out_faces = []
+    out_origin = []
+    marked = set()
+    for ti, tri in enumerate(triangles):
+        points_extra = []
+        for j in range(3):
+            i0, i1 = int(tri[j]), int(tri[(j + 1) % 3])
+            for t in shared.get(_edge_key(i0, i1), []):
+                key = _edge_key(i0, i1)
+                p3 = va[key[0]] + t * (va[key[1]] - va[key[0]])
+                points_extra.append(p3[axes[ti]])
+        pts, constraints = _planarize(local[ti], segments[ti], points_extra, tolerance)
+        if len(pts) == 3:
+            out_faces.append(list(map(int, tri)))
+            out_origin.append(int(origins[ti]))
+            continue
+        local_tris = _triangulate_pslg(pts, constraints, tolerance)
+        n, dropped = normals[ti]
+        xyz = np.empty((len(pts), 3), dtype=np.float64)
+        xyz[:, axes[ti]] = pts
+        xyz[:, dropped] = va[tri[0], dropped] - (
+            (pts[:, 0] - va[tri[0], axes[ti][0]]) * n[axes[ti][0]] +
+            (pts[:, 1] - va[tri[0], axes[ti][1]]) * n[axes[ti][1]]
+        ) / n[dropped]
+        ids = [int(tri[0]), int(tri[1]), int(tri[2])]
+        ids.extend(store.intern(xyz[i]) for i in range(3, len(pts)))
+        if _orient(*local[ti]) &lt; 0:
+            local_tris = [[a, c, b] for a, b, c in local_tris]
+        for face in local_tris:
+            out_faces.append([ids[k] for k in face])
+            out_origin.append(int(origins[ti]))
+        for a, b in constraints:
+            marked.add(_edge_key(ids[a], ids[b]))
+
+    verts = np.asarray(store.vertices, dtype=np.float64)
+    if preserve_polygons:
+        out_faces, out_origin = _restore_polygons(
+            verts, out_faces, out_origin, marked, base_faces, tolerance)
+        verts, out_faces, marked = _simplify_interior_cut_vertices(
+            verts, out_faces, out_origin, marked, len(va), base_faces, tolerance)
+
+    _mark_existing_intersection_edges(verts, out_faces, out_origin,
+                                      raw_segments, marked, tolerance)
+    out_edges = _edges_from_faces(out_faces)
+    used = {tuple(edge) for edge in out_edges}
+    missing = marked - used
+    if missing:
+        raise ValueError(f&#39;Missing {len(missing)} recovered cut edges from output topology&#39;)
+    cut_mask = np.asarray([tuple(edge) in marked for edge in out_edges], dtype=bool)
+    cut_vertices = np.zeros(len(verts), dtype=bool)
+    for a, b in marked:
+        cut_vertices[a] = True
+        cut_vertices[b] = True
+    # Identify inserted vertices even on A edges where constraints end.
+    cut_vertices[len(va):] = True
+    return CutResult(verts, out_edges, out_faces, cut_mask, cut_vertices,
+                     np.asarray(out_origin, dtype=np.int64),
+                     intersections.vertices.copy(), intersections.edges.copy(),
+                     backend, intersections.numba_used)</code></pre>
+</details>
+<div class="desc"><p>Cut mesh A with surface B. Return a connected (not separated) mesh A.</p>
+<p>Open and closed cutter surfaces are supported, without Boolean inside/outside
+classification. The cutter's mesh is not included in the returned topology.
+Coplanar overlaps are traced at their per-triangle rim, not filled.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult"><code class="flex name class">
+<span>class <span class="ident">CutResult</span></span>
+<span>(</span><span>vertices: np.ndarray,<br>edges: np.ndarray,<br>faces: list[list[int]],<br>cut_edge_mask: np.ndarray,<br>cut_vertex_mask: np.ndarray,<br>face_origins: np.ndarray,<br>intersection_vertices: np.ndarray,<br>intersection_edges: np.ndarray,<br>acceleration: str,<br>numba_used: bool)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class CutResult:
+    vertices: np.ndarray
+    edges: np.ndarray
+    faces: list[list[int]]
+    cut_edge_mask: np.ndarray
+    cut_vertex_mask: np.ndarray
+    face_origins: np.ndarray
+    intersection_vertices: np.ndarray
+    intersection_edges: np.ndarray
+    acceleration: str
+    numba_used: bool</code></pre>
+</details>
+<div class="desc"><p>CutResult(vertices: 'np.ndarray', edges: 'np.ndarray', faces: 'list[list[int]]', cut_edge_mask: 'np.ndarray', cut_vertex_mask: 'np.ndarray', face_origins: 'np.ndarray', intersection_vertices: 'np.ndarray', intersection_edges: 'np.ndarray', acceleration: 'str', numba_used: 'bool')</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult.acceleration"><code class="name">var <span class="ident">acceleration</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult.cut_edge_mask"><code class="name">var <span class="ident">cut_edge_mask</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult.cut_vertex_mask"><code class="name">var <span class="ident">cut_vertex_mask</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult.edges"><code class="name">var <span class="ident">edges</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult.face_origins"><code class="name">var <span class="ident">face_origins</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult.faces"><code class="name">var <span class="ident">faces</span> : list[list[int]]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult.intersection_edges"><code class="name">var <span class="ident">intersection_edges</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult.intersection_vertices"><code class="name">var <span class="ident">intersection_vertices</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult.numba_used"><code class="name">var <span class="ident">numba_used</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.mesh.mesh_cut.CutResult.vertices"><code class="name">var <span class="ident">vertices</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.mesh" href="index.html">sverchok.utils.mesh</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.mesh.mesh_cut.cut_mesh" href="#sverchok.utils.mesh.mesh_cut.cut_mesh">cut_mesh</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.mesh.mesh_cut.CutResult" href="#sverchok.utils.mesh.mesh_cut.CutResult">CutResult</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.mesh.mesh_cut.CutResult.acceleration" href="#sverchok.utils.mesh.mesh_cut.CutResult.acceleration">acceleration</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_cut.CutResult.cut_edge_mask" href="#sverchok.utils.mesh.mesh_cut.CutResult.cut_edge_mask">cut_edge_mask</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_cut.CutResult.cut_vertex_mask" href="#sverchok.utils.mesh.mesh_cut.CutResult.cut_vertex_mask">cut_vertex_mask</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_cut.CutResult.edges" href="#sverchok.utils.mesh.mesh_cut.CutResult.edges">edges</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_cut.CutResult.face_origins" href="#sverchok.utils.mesh.mesh_cut.CutResult.face_origins">face_origins</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_cut.CutResult.faces" href="#sverchok.utils.mesh.mesh_cut.CutResult.faces">faces</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_cut.CutResult.intersection_edges" href="#sverchok.utils.mesh.mesh_cut.CutResult.intersection_edges">intersection_edges</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_cut.CutResult.intersection_vertices" href="#sverchok.utils.mesh.mesh_cut.CutResult.intersection_vertices">intersection_vertices</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_cut.CutResult.numba_used" href="#sverchok.utils.mesh.mesh_cut.CutResult.numba_used">numba_used</a></code></li>
+<li><code><a title="sverchok.utils.mesh.mesh_cut.CutResult.vertices" href="#sverchok.utils.mesh.mesh_cut.CutResult.vertices">vertices</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
