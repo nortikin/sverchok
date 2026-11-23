@@ -507,6 +507,7 @@ def build_geom(cfg, vecs, edges_s, polys_s, mats, vcol, ecol, pcol, seed):
         geom.faces = SimpleNamespace(
             pos=f32(_concat(f_pos, 3)), nrm=f32(_concat(f_nrm, 3)), color=f32(_concat(f_col, 4)),
             idx=np.ascontiguousarray(_concat(f_idx, 3, np.int64), dtype=np.uint32))
+        geom.faces.translucent = bool((geom.faces.color[:, 3] < 0.999).any())
 
     if not (geom.points or geom.lines or geom.faces):
         return None
@@ -599,6 +600,19 @@ def _draw_custom_faces(context, geom, cfg, vp):
     batch.draw(shader)
     return True
 
+def _draw_lines(geom, cfg, vp, viewport, bias):
+    ln = geom.lines
+    shader = get_shader('line')
+    batch = _batch(geom, 'lines', shader,
+                   {"pos": ln.pos, "other": ln.other, "corner": ln.corner, "color": ln.color}, ln.idx)
+    shader.bind()
+    shader.uniform_float("viewProjectionMatrix", vp)
+    shader.uniform_float("viewportSize", viewport)
+    shader.uniform_float("dashPattern", cfg.dash if cfg.dashed else (0.0, 0.0))
+    shader.uniform_float("lineWidth", float(cfg.line_width))
+    shader.uniform_float("depthBias", bias)
+    batch.draw(shader)
+
 
 def view_3d_geom(context, args):
     geom, cfg = args
@@ -615,6 +629,16 @@ def view_3d_geom(context, args):
     gpu.state.depth_test_set('LESS_EQUAL')
     gpu.state.depth_mask_set(True)
     try:
+        see_through = (cfg.see_through_edges and geom.lines is not None
+                       and geom.faces is not None and geom.faces.translucent)
+        if see_through:
+            # Mk4 drew edges before faces, so translucent faces showed the edges behind them.
+            # Draw them first without writing depth: the faces then blend over them and the
+            # normal pass below still puts crisp edges on top.
+            gpu.state.depth_mask_set(False)
+            _draw_lines(geom, cfg, vp, viewport, bias)
+            gpu.state.depth_mask_set(True)
+
         if geom.faces is not None:
             gpu.state.face_culling_set(cfg.face_culling)
             drawn = cfg.shade_mode == 'custom' and _draw_custom_faces(context, geom, cfg, vp)
@@ -632,17 +656,7 @@ def view_3d_geom(context, args):
             gpu.state.face_culling_set('NONE')
 
         if geom.lines is not None:
-            ln = geom.lines
-            shader = get_shader('line')
-            batch = _batch(geom, 'lines', shader,
-                           {"pos": ln.pos, "other": ln.other, "corner": ln.corner, "color": ln.color}, ln.idx)
-            shader.bind()
-            shader.uniform_float("viewProjectionMatrix", vp)
-            shader.uniform_float("viewportSize", viewport)
-            shader.uniform_float("dashPattern", cfg.dash if cfg.dashed else (0.0, 0.0))
-            shader.uniform_float("lineWidth", float(cfg.line_width))
-            shader.uniform_float("depthBias", bias)
-            batch.draw(shader)
+            _draw_lines(geom, cfg, vp, viewport, bias)
 
         if geom.points is not None:
             pt = geom.points
@@ -805,6 +819,10 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
 
     node_ui_show_attrs_socket: BoolProperty(default=False, name='Show attributes socket', update=configureAttrSocket)
 
+    see_through_edges: BoolProperty(
+        name="See-through Edges", default=True, update=updateNode,
+        description="With translucent faces, also show the edges behind them, dimmed by the faces in front (as Viewer Draw Mk4 did)")
+
     # -- ui -----------------------------------------------------------------
 
     def draw_buttons(self, context, layout):
@@ -833,6 +851,7 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
         layout.label(text='Light Direction')
         layout.prop(self, 'vector_light', text='')
         layout.prop(self, 'depth_offset')
+        layout.prop(self, 'see_through_edges')
         self.draw_additional_props(context, layout)
         if self.use_dashed:
             row = layout.row(align=True)
@@ -947,6 +966,7 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
             dashed=self.use_dashed,
             dash=(self.dash_length, self.gap_length),
             depth_offset=self.depth_offset,
+            see_through_edges=self.see_through_edges,
             custom_ns=None,
         )
         if cfg.shade_mode == 'custom':
