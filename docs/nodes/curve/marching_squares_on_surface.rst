@@ -120,7 +120,7 @@ https://gist.github.com/10ddbe4d04655dc8a1553c9b7fb68ee8
 * Surfaces-> :doc:`Extrude Curve Along Vector </nodes/surface/extrude_vector>`
 * Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Fields-> :doc:`Attractor Field </nodes/field/attractor_field_mk2>`
-* Modifiers->Modifier Change-> :doc:`Merge by Distance </nodes/modifier_change/merge_by_distance>`
+* Modifiers->Modifier Change-> :doc:`Merge by Distance </nodes/modifier_change/merge_by_distance_numpy>`
 * Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
