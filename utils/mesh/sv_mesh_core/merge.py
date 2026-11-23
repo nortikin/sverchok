@@ -93,7 +93,9 @@ def _regular_topology(poly_edge, remap, count, face_data, output_numpy=False, *,
 def merge_by_distance(vertices, poly_edge, distance, face_data=(), mask=(),
                       output_doubles=True, output_mask=True, use_numba=True, *,
                       backend='AUTO', reference_version='4.3', output_numpy=False,
-                      output_edges=True, output_polygons=True, output_face_data=True):
+                      output_edges=True, output_polygons=True, output_face_data=True,
+                      edges=(), vert_data=(), edge_data=(), output_mesh_data=False,
+                      edge_data_from_poly=False):
     """Independent mesh weld with a speed-first GRID clustering default.
 
     This is the *portable* backend: it never constructs a BMesh. It exposes
@@ -137,6 +139,10 @@ def merge_by_distance(vertices, poly_edge, distance, face_data=(), mask=(),
     compact = np.full(count, -1, dtype=np.intp)
     compact[representatives] = np.arange(len(representatives))
     remap = compact[target]
+    # For provenance, reconstruct the faces even if the visible polygon socket
+    # is unlinked: face provenance must match the retained topology.
+    output_edges = output_edges or output_mesh_data
+    output_polygons = output_polygons or output_mesh_data
     want_faces = output_polygons or output_face_data
     output_faces, output_data, seen_faces, extra_edges = [], [], set(), []
     edge_mode = len(poly_edge) > 0 and len(poly_edge[0]) == 2
@@ -175,12 +181,109 @@ def merge_by_distance(vertices, poly_edge, distance, face_data=(), mask=(),
         result_edges = mesh_edges([], extra_edges) if output_edges else []
     else:
         output_faces, output_data, result_edges = regular
+    # The new Edges input supplies *additional* explicit wire/boundary edges.
+    # The historical PolyEdge input still accepts edges and faces.
+    if output_edges and len(edges):
+        explicit = []
+        for edge in edges:
+            if len(edge) != 2:
+                raise ValueError('Edges input requires pairs of vertex indices')
+            a, b = (int(edge[0]), int(edge[1]))
+            a = a if a >= 0 else a + count
+            b = b if b >= 0 else b + count
+            if not (0 <= a < count and 0 <= b < count):
+                raise IndexError('Edges input references a vertex outside the mesh')
+            explicit.append([int(remap[a]), int(remap[b])])
+        result_edges = mesh_edges([], list(result_edges) + explicit)
+
+    # Metadata is a deliberately optional path. The original fast GRID route
+    # does no provenance work at all when output_mesh_data=False.
+    extras = None
+    if output_mesh_data:
+        extras = _mesh_provenance(
+            vertices, remap, representatives, poly_edge, edges,
+            result_edges, output_faces, vert_data, edge_data,
+            edge_data_from_poly=edge_data_from_poly)
+
     doubles = vertices[target != np.arange(count)] if output_doubles else np.empty((0, 3),dtype=np.float32)
     mask_result = full_mask[representatives] if output_mask and len(full_mask) else np.empty(0, dtype=bool)
     output_vertices = vertices[representatives]
     if output_numpy:
-        return (output_vertices, np.asarray(result_edges, dtype=np.intp).reshape(-1, 2),
+        result = (output_vertices, np.asarray(result_edges, dtype=np.intp).reshape(-1, 2),
                 RaggedArray.from_rows(output_faces), output_data,
                 doubles.astype(np.float32, copy=False), mask_result)
-    return (output_vertices.tolist(), result_edges, output_faces,
-            output_data, doubles.tolist(), mask_result.tolist())
+    else:
+        result = (output_vertices.tolist(), result_edges, output_faces,
+                  output_data, doubles.tolist(), mask_result.tolist())
+    return result + extras if extras is not None else result
+
+
+def _face_key(face):
+    """Winding- and rotation-invariant polygon signature."""
+    row = list(map(int, face))
+    start = row.index(min(row))
+    forward = row[start:] + row[:start]
+    backward = forward[:1] + forward[:0:-1]
+    return min(tuple(forward), tuple(backward))
+
+
+def _mesh_provenance(vertices, remap, representatives, poly_edge,
+                     source_edges, output_edges, output_faces,
+                     vert_data, edge_data, *, edge_data_from_poly):
+    """Trace all source indices, preserving deterministic first-source data.
+
+    - Vertex origins: original indices mapped to the same survivor.
+    - Edge origins: indices into the *Edges* input, or into PolyEdge
+      in historical edge-only mode when Edges is not supplied.
+    - Face origins: all source polygon indices that produced the face.
+
+    Perimeter edges generated solely from polygons have no explicit source
+    edge index, hence an empty origin list. This is not face provenance.
+    """
+    vertex_origins = [[] for _ in range(len(representatives))]
+    for index, output_index in enumerate(remap):
+        vertex_origins[int(output_index)].append(int(index))
+
+    face_origins_by_key = {}
+    edge_mode = len(poly_edge) > 0 and len(poly_edge[0]) == 2
+    if not edge_mode:
+        for source_index, polygon in enumerate(poly_edge):
+            indices = np.asarray(polygon, dtype=np.intp)
+            indices = np.where(indices < 0, indices + len(vertices), indices)
+            mapped = remap[indices].tolist()
+            for face in _split_face(mapped):
+                key = _face_key(face)
+                origins = face_origins_by_key.setdefault(key, [])
+                if source_index not in origins:
+                    origins.append(source_index)
+    face_origins = [face_origins_by_key.get(_face_key(face), [])
+                    for face in output_faces]
+
+    edge_origins_by_key = {}
+    # Only *one* source is authoritative for edge attributes: the separate
+    # Edges socket when supplied; otherwise the original PolyEdge edge rows.
+    origin_edges = poly_edge if edge_data_from_poly else source_edges
+    for source_index, edge in enumerate(origin_edges):
+        if len(edge) != 2:
+            raise ValueError('Explicit edge source must have exactly two indices')
+        a, b = map(int, edge)
+        n = len(vertices)
+        a = a if a >= 0 else a + n
+        b = b if b >= 0 else b + n
+        if not (0 <= a < n and 0 <= b < n):
+            raise IndexError('Explicit edge source references missing vertex')
+        a, b = int(remap[a]), int(remap[b])
+        if a == b:
+            continue
+        key = (min(a, b), max(a, b))
+        edge_origins_by_key.setdefault(key, []).append(int(source_index))
+
+    edge_origins = [edge_origins_by_key.get(tuple(sorted(map(int, edge))), [])
+                    for edge in output_edges]
+    vertex_data = [vert_data[origins[0]] if len(vert_data) > origins[0] else None
+                   for origins in vertex_origins]
+    edge_data_out = [edge_data[origins[0]] if origins and len(edge_data) > origins[0]
+                     else None for origins in edge_origins]
+    # Return order matches the five appended node sockets. Linked outputs can
+    # contain arbitrary Python objects; provenance is always list-of-lists.
+    return vertex_data, edge_data_out, vertex_origins, edge_origins, face_origins
