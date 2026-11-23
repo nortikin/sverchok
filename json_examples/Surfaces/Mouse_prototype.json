@@ -3447,65 +3447,127 @@
                 "bl_idname": "NodeFrame"
             },
             "Merge by Distance": {
-                "attributes": {
-                    "location": [6350.0, -4490.0],
-                    "parent": {
-                        "type": "NODE",
-                        "value": "Frame.001"
-                    }
+              "attributes": {
+                "location": [
+                  6350,
+                  -4490
+                ],
+                "parent": {
+                  "type": "NODE",
+                  "value": "Frame.001"
+                }
+              },
+              "inputs": {
+                "Vertices": {
+                  "bl_idname": "SvVerticesSocket",
+                  "name": "Vertices"
                 },
-                "inputs": {
-                    "Vertices": {
-                        "bl_idname": "SvVerticesSocket",
-                        "name": "Vertices"
-                    },
-                    "PolyEdge": {
-                        "bl_idname": "SvStringsSocket",
-                        "name": "PolyEdge"
-                    },
-                    "FaceData": {
-                        "bl_idname": "SvStringsSocket",
-                        "name": "FaceData"
-                    },
-                    "Mask": {
-                        "bl_idname": "SvStringsSocket",
-                        "name": "Mask"
-                    },
-                    "Distance": {
-                        "bl_idname": "SvStringsSocket",
-                        "name": "Distance",
-                        "properties": {
-                            "prop_name": "distance"
-                        }
-                    }
+                "Edges": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "Edges"
                 },
-                "outputs": {
-                    "Vertices": {
-                        "bl_idname": "SvVerticesSocket",
-                        "name": "Vertices"
-                    },
-                    "Edges": {
-                        "bl_idname": "SvStringsSocket",
-                        "name": "Edges"
-                    },
-                    "Polygons": {
-                        "bl_idname": "SvStringsSocket",
-                        "name": "Polygons"
-                    },
-                    "FaceData": {
-                        "bl_idname": "SvStringsSocket",
-                        "name": "FaceData"
-                    },
-                    "Doubles": {
-                        "bl_idname": "SvVerticesSocket",
-                        "name": "Doubles"
-                    },
-                    "Mask": {
-                        "bl_idname": "SvStringsSocket",
-                        "name": "Mask"
-                    }
+                "Polygons": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "Polygons"
                 },
-                "bl_idname": "SvMergeByDistanceNode"
+                "Verts Mask": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "Verts Mask"
+                },
+                "Distance": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "Distance",
+                  "properties": {
+                    "prop_name": "distance"
+                  }
+                },
+                "VertData": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "VertData",
+                  "attributes": {
+                    "hide": true
+                  }
+                },
+                "EdgeData": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "EdgeData",
+                  "attributes": {
+                    "hide": true
+                  }
+                },
+                "FaceData": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "FaceData",
+                  "attributes": {
+                    "hide": true
+                  }
+                }
+              },
+              "outputs": {
+                "Vertices": {
+                  "bl_idname": "SvVerticesSocket",
+                  "name": "Vertices"
+                },
+                "Edges": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "Edges"
+                },
+                "Polygons": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "Polygons"
+                },
+                "Doubles": {
+                  "bl_idname": "SvVerticesSocket",
+                  "name": "Doubles"
+                },
+                "Mask": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "Mask"
+                },
+                "VertData": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "VertData",
+                  "attributes": {
+                    "hide": true
+                  }
+                },
+                "EdgeData": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "EdgeData",
+                  "attributes": {
+                    "hide": true
+                  }
+                },
+                "FaceData": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "FaceData",
+                  "attributes": {
+                    "hide": true
+                  }
+                },
+                "Vert Init Index": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "Vert Init Index",
+                  "attributes": {
+                    "hide": true
+                  }
+                },
+                "Edge Init Index": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "Edge Init Index",
+                  "attributes": {
+                    "hide": true
+                  }
+                },
+                "Face Init Index": {
+                  "bl_idname": "SvStringsSocket",
+                  "name": "Face Init Index",
+                  "attributes": {
+                    "hide": true
+                  }
+                }
+              },
+              "bl_idname": "SvMergeByDistanceNumpyNode"
             },
             "NURBS Loft.003": {
                 "attributes": {
@@ -4524,7 +4586,7 @@
                 "from_node": "Mesh Join",
                 "from_socket": "edges",
                 "to_node": "Merge by Distance",
-                "to_socket": "PolyEdge"
+                "to_socket": "Edges"
             }, {
                 "from_node": "List Join.006",
                 "from_socket": "data_001",

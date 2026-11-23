@@ -234,7 +234,7 @@
       "width": 140.0
     },
     "Merge by Distance": {
-      "bl_idname": "SvMergeByDistanceNode",
+      "bl_idname": "SvMergeByDistanceNumpyNode",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,

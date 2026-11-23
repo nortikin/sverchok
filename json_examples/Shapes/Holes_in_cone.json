@@ -125,7 +125,7 @@
       "width": 141.03147888183594
     },
     "Merge by Distance": {
-      "bl_idname": "SvMergeByDistanceNode",
+      "bl_idname": "SvMergeByDistanceNumpyNode",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
@@ -268,7 +268,7 @@
       "Matrix Apply to Mesh.001",
       2,
       "Merge by Distance",
-      1
+      2
     ],
     [
       "Polygon Boom",
