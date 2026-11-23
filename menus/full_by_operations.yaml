@@ -54,6 +54,7 @@
             - HilbertImageNode
             - SvImageComponentsNode
             - SvWFCTextureNode
+            - SvHatchPatternNode
             - SvTorusKnotNodeMK2
             - SvRingNodeMK2
             - SvEllipseNodeMK3
