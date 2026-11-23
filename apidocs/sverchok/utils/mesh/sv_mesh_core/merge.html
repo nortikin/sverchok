@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.mesh.sv_mesh_core.merge API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.mesh.sv_mesh_core.merge</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.mesh.sv_mesh_core.merge.merge_by_distance"><code class="name flex">
+<span>def <span class="ident">merge_by_distance</span></span>(<span>vertices,<br>poly_edge,<br>distance,<br>face_data=(),<br>mask=(),<br>output_doubles=True,<br>output_mask=True,<br>use_numba=True,<br>*,<br>backend='AUTO',<br>reference_version='4.3',<br>output_numpy=False,<br>output_edges=True,<br>output_polygons=True,<br>output_face_data=True,<br>edges=(),<br>vert_data=(),<br>edge_data=(),<br>output_mesh_data=False,<br>edge_data_from_poly=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def merge_by_distance(vertices, poly_edge, distance, face_data=(), mask=(),
+                      output_doubles=True, output_mask=True, use_numba=True, *,
+                      backend=&#39;AUTO&#39;, reference_version=&#39;4.3&#39;, output_numpy=False,
+                      output_edges=True, output_polygons=True, output_face_data=True,
+                      edges=(), vert_data=(), edge_data=(), output_mesh_data=False,
+                      edge_data_from_poly=False):
+    &#34;&#34;&#34;Independent mesh weld with a speed-first GRID clustering default.
+
+    This is the *portable* backend: it never constructs a BMesh. It exposes
+    the original node&#39;s features (mask, face data, wires, ngons and doubles),
+    without promising Blender&#39;s element indexing or output ordering.
+    Unlinked topology outputs may be omitted for faster node evaluation.
+    &#34;&#34;&#34;
+    vertices = np.asarray(vertices, dtype=np.float32).reshape(-1, 3)
+    if not np.all(np.isfinite(vertices)) or not np.isfinite(distance) or distance &lt; 0:
+        raise ValueError(&#34;Merge by Distance needs finite coordinates and a nonnegative Distance&#34;)
+    if isinstance(poly_edge, RaggedArray):
+        poly_edge = list(poly_edge)
+    count = len(vertices)
+    selected = np.ones(count, dtype=np.bool_)
+    input_mask = np.asarray(mask)
+    if input_mask.ndim &gt; 1:
+        raise ValueError(&#39;Mask must be a flat sequence&#39;)
+    if input_mask.size:
+        full_mask = np.empty(count, dtype=input_mask.dtype)
+        used = min(count, len(input_mask))
+        full_mask[:used] = input_mask[:used]
+        full_mask[used:] = input_mask[-1]
+        selected[:] = full_mask.astype(np.bool_)
+    else:
+        full_mask = np.empty(0, dtype=np.bool_)
+    selected_indices = np.flatnonzero(selected)
+    target = np.arange(count, dtype=np.intp)
+    if len(selected_indices) &gt; 1:
+        # No vertex copy when the whole array is selected.  Particularly
+        # useful for large meshes whose input is already an ndarray.
+        if len(selected_indices) == count:
+            target = duplicate_map(vertices, distance, reference_version=reference_version,
+                                   backend=backend, use_numba=use_numba)
+        else:
+            local_targets = duplicate_map(vertices[selected_indices], distance,
+                                          reference_version=reference_version,
+                                          backend=backend, use_numba=use_numba)
+            target[selected_indices] = selected_indices[local_targets]
+
+    representatives = np.flatnonzero(target == np.arange(count))
+    compact = np.full(count, -1, dtype=np.intp)
+    compact[representatives] = np.arange(len(representatives))
+    remap = compact[target]
+    # For provenance, reconstruct the faces even if the visible polygon socket
+    # is unlinked: face provenance must match the retained topology.
+    output_edges = output_edges or output_mesh_data
+    output_polygons = output_polygons or output_mesh_data
+    want_faces = output_polygons or output_face_data
+    output_faces, output_data, seen_faces, extra_edges = [], [], set(), []
+    edge_mode = len(poly_edge) &gt; 0 and len(poly_edge[0]) == 2
+    if output_edges or want_faces:
+        regular = _regular_topology(poly_edge, remap, count, face_data, output_numpy,
+                                    output_edges=output_edges, output_faces=output_polygons,
+                                    output_face_data=output_face_data)
+    else:
+        regular = ([], [], np.empty((0,2), dtype=np.intp) if output_numpy else [])
+    for source, element in enumerate(poly_edge if regular is None else ()):
+        indices = np.asarray(element, dtype=np.intp)
+        indices = np.where(indices &lt; 0, indices+count, indices)
+        if np.any(indices &lt; 0) or np.any(indices &gt;= count):
+            raise IndexError(&#34;Merge by Distance vertex index out of range&#34;)
+        mapped = remap[indices].tolist()
+        if edge_mode:
+            if output_edges: extra_edges.append(mapped)
+            continue
+        if output_edges: extra_edges.extend(zip(mapped, mapped[1:]+mapped[:1]))
+        if not want_faces: continue
+        for face in _split_face(mapped):
+            start = face.index(min(face))
+            forward = face[start:]+face[:start]
+            backward = forward[:1]+forward[:0:-1]
+            key = min(tuple(forward), tuple(backward))
+            if key not in seen_faces:
+                seen_faces.add(key)
+                if output_polygons: output_faces.append(face)
+                if output_face_data and len(face_data):
+                    output_data.append(face_data[source] if source &lt; len(face_data) else None)
+    if regular is None:
+        # The source-loop edges are already present in extra_edges, including
+        # the closing edges of any pinched face split by _split_face.
+        # Do not seed mesh_edges from output_faces: that changes edge order
+        # depending on whether the Polygons socket is linked.
+        result_edges = mesh_edges([], extra_edges) if output_edges else []
+    else:
+        output_faces, output_data, result_edges = regular
+    # The new Edges input supplies *additional* explicit wire/boundary edges.
+    # The historical PolyEdge input still accepts edges and faces.
+    if output_edges and len(edges):
+        explicit = []
+        for edge in edges:
+            if len(edge) != 2:
+                raise ValueError(&#39;Edges input requires pairs of vertex indices&#39;)
+            a, b = (int(edge[0]), int(edge[1]))
+            a = a if a &gt;= 0 else a + count
+            b = b if b &gt;= 0 else b + count
+            if not (0 &lt;= a &lt; count and 0 &lt;= b &lt; count):
+                raise IndexError(&#39;Edges input references a vertex outside the mesh&#39;)
+            explicit.append([int(remap[a]), int(remap[b])])
+        result_edges = mesh_edges([], list(result_edges) + explicit)
+
+    # Metadata is a deliberately optional path. The original fast GRID route
+    # does no provenance work at all when output_mesh_data=False.
+    extras = None
+    if output_mesh_data:
+        extras = _mesh_provenance(
+            vertices, remap, representatives, poly_edge, edges,
+            result_edges, output_faces, vert_data, edge_data,
+            edge_data_from_poly=edge_data_from_poly)
+
+    doubles = vertices[target != np.arange(count)] if output_doubles else np.empty((0, 3),dtype=np.float32)
+    mask_result = full_mask[representatives] if output_mask and len(full_mask) else np.empty(0, dtype=bool)
+    output_vertices = vertices[representatives]
+    if output_numpy:
+        result = (output_vertices, np.asarray(result_edges, dtype=np.intp).reshape(-1, 2),
+                RaggedArray.from_rows(output_faces), output_data,
+                doubles.astype(np.float32, copy=False), mask_result)
+    else:
+        result = (output_vertices.tolist(), result_edges, output_faces,
+                  output_data, doubles.tolist(), mask_result.tolist())
+    return result + extras if extras is not None else result</code></pre>
+</details>
+<div class="desc"><p>Independent mesh weld with a speed-first GRID clustering default.</p>
+<p>This is the <em>portable</em> backend: it never constructs a BMesh. It exposes
+the original node's features (mask, face data, wires, ngons and doubles),
+without promising Blender's element indexing or output ordering.
+Unlinked topology outputs may be omitted for faster node evaluation.</p></div>
+</dd>
+<dt id="sverchok.utils.mesh.sv_mesh_core.merge.mesh_edges"><code class="name flex">
+<span>def <span class="ident">mesh_edges</span></span>(<span>faces, extra_edges=())</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mesh_edges(faces, extra_edges=()):
+    pairs = []
+    for face in faces:
+        # Array slicing uses elementwise addition, not concatenation; use a
+        # list here so the final closing edge is never silently omitted.
+        ring = list(face)
+        pairs.extend(zip(ring, ring[1:] + ring[:1]))
+    pairs.extend(extra_edges)
+    result, seen = [], set()
+    for a, b in pairs:
+        if a == b:
+            continue
+        key = (min(a, b), max(a, b))
+        if key not in seen:
+            seen.add(key)
+            result.append([int(a), int(b)])
+    return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.mesh.sv_mesh_core" href="index.html">sverchok.utils.mesh.sv_mesh_core</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.mesh.sv_mesh_core.merge.merge_by_distance" href="#sverchok.utils.mesh.sv_mesh_core.merge.merge_by_distance">merge_by_distance</a></code></li>
+<li><code><a title="sverchok.utils.mesh.sv_mesh_core.merge.mesh_edges" href="#sverchok.utils.mesh.sv_mesh_core.merge.mesh_edges">mesh_edges</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
