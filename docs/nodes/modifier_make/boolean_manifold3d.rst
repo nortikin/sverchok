@@ -1,7 +1,8 @@
 Manifold Boolean
 ================
 
-.. TODO: node screenshot here
+.. image:: https://github.com/user-attachments/assets/f3c73caf-7d6d-4e56-acdf-2993bd4e595c
+  :target: https://github.com/user-attachments/assets/f3c73caf-7d6d-4e56-acdf-2993bd4e595c
 
 Functionality
 -------------
