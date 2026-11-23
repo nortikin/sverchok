@@ -44,7 +44,7 @@ Example in description:
 * Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * Spatial-> :doc:`Voronoi on Mesh </nodes/spatial/voronoi_on_mesh>`
 * Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join>`
-* Modifiers->Modifier Change-> :doc:`Merge by Distance </nodes/modifier_change/merge_by_distance>`
+* Modifiers->Modifier Change-> :doc:`Merge by Distance </nodes/modifier_change/merge_by_distance_numpy>`
 * Analyzers->Component Analyzer **Vertices->Sharpness**: :ref:`Vertices Sharpness<VERTICES_SHARPNESS>`
 * Analyzers->Component Analyzer **Vertices->Is Boundary**: :ref:`Vertices Is Boundary<VERTICES_IS_BOUNDARY>`
 * List->List Main-> :doc:`List Zip </nodes/list_main/zip>`
