@@ -641,6 +641,8 @@ def view_3d_geom(context, args):
 
         if geom.faces is not None:
             gpu.state.face_culling_set(cfg.face_culling)
+            # translucent faces don't write depth, so every layer blends whatever the draw order
+            gpu.state.depth_mask_set(not geom.faces.translucent)
             drawn = cfg.shade_mode == 'custom' and _draw_custom_faces(context, geom, cfg, vp)
             if not drawn:
                 f = geom.faces
@@ -653,6 +655,17 @@ def view_3d_geom(context, args):
                 shader.uniform_float("viewInfo", view_info(rd))
                 shader.uniform_int("shadeMode", SHADE_MODES[cfg.shade_mode])
                 batch.draw(shader)
+
+            if geom.faces.translucent:
+                # depth only, so edges and points behind the faces stay hidden
+                gpu.state.depth_mask_set(True)
+                gpu.state.color_mask_set(False, False, False, False)
+                if drawn:
+                    _draw_custom_faces(context, geom, cfg, vp)
+                else:
+                    batch.draw(shader)
+                gpu.state.color_mask_set(True, True, True, True)
+
             gpu.state.face_culling_set('NONE')
 
         if geom.lines is not None:
