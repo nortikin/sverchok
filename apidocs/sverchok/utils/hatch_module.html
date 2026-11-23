@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.hatch_module API documentation</title>
+<meta name="description" content="AutoCAD / Revit .pat hatch patterns: parsing, and generating hatch lines clipped to planar regions.
+Pure python + numpy (no bpy), so it can be tested …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.hatch_module</code></h1>
+</header>
+<section id="section-intro">
+<p>AutoCAD / Revit .pat hatch patterns: parsing, and generating hatch lines clipped to planar regions.
+Pure python + numpy (no bpy), so it can be tested outside Blender.</p>
+<p>.pat line family:
+angle, x, y, delta-x, delta-y [, dash, dash, &hellip;]</p>
+<pre><code>line k of a family passes through  O + k * (dx * u + dy * n)
+    u = (cos angle, sin angle)   direction of the lines
+    n = (-sin angle, cos angle)  perpendicular; the delta is given in this rotated frame
+the dash sequence starts at that point and repeats along the line.
+dash &gt; 0 pen down, dash &lt; 0 gap, dash == 0 a dot. No dashes: continuous lines.
+</code></pre>
+<p>A region is any set of boundary edges in which every vertex is shared by an even number of edges
+(closed boundaries). Inside is decided by the even-odd rule, so holes need no special treatment.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.hatch_module.chain_segments"><code class="name flex">
+<span>def <span class="ident">chain_segments</span></span>(<span>segments, tol=1e-06, simplify=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def chain_segments(segments, tol=1e-6, simplify=True):
+    &#34;&#34;&#34;
+    join segments that share endpoints into polylines (pen strokes). Collinear interior points are
+    removed when simplify is on, so touching dashes on one line become a single stroke.
+    returns a list of (N, D) arrays; closed strokes repeat their first point at the end.
+    &#34;&#34;&#34;
+    segments = np.asarray(segments, dtype=np.float64)
+    if not len(segments):
+        return []
+    dim = segments.shape[2]
+    pts = segments.reshape(-1, dim)
+    keys = np.round(pts / tol).astype(np.int64)
+    _, node, inverse = np.unique(keys, axis=0, return_index=True, return_inverse=True)
+    inverse = inverse.ravel()
+    ends = inverse.reshape(-1, 2)
+    coords = pts[node]
+
+    adjacency = [[] for _ in range(len(node))]
+    for e, (a, b) in enumerate(ends):
+        adjacency[a].append(e)
+        adjacency[b].append(e)
+    used = np.zeros(len(ends), dtype=bool)
+    degree = np.array([len(a) for a in adjacency])
+
+    def walk(start):
+        path = [start]
+        cur = start
+        while True:
+            nxt = None
+            for e in adjacency[cur]:
+                if not used[e]:
+                    nxt = e
+                    break
+            if nxt is None:
+                return path
+            used[nxt] = True
+            a, b = ends[nxt]
+            cur = b if a == cur else a
+            path.append(cur)
+
+    strokes = []
+    # open chains first (start at odd-degree nodes), then what is left are closed loops
+    for start in np.nonzero(degree % 2 == 1)[0]:
+        if any(not used[e] for e in adjacency[start]):
+            strokes.append(walk(start))
+    for e in range(len(ends)):
+        if not used[e]:
+            strokes.append(walk(ends[e][0]))
+
+    out = []
+    for path in strokes:
+        poly = coords[path]
+        if simplify and len(poly) &gt; 2:
+            poly = _drop_collinear(poly, tol)
+        out.append(poly)
+    return out</code></pre>
+</details>
+<div class="desc"><p>join segments that share endpoints into polylines (pen strokes). Collinear interior points are
+removed when simplify is on, so touching dashes on one line become a single stroke.
+returns a list of (N, D) arrays; closed strokes repeat their first point at the end.</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.check_closed"><code class="name flex">
+<span>def <span class="ident">check_closed</span></span>(<span>edges)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_closed(edges):
+    &#34;&#34;&#34;every vertex used by the boundary must be shared by an even number of edges&#34;&#34;&#34;
+    edges = np.asarray(edges, dtype=np.int64).reshape(-1, 2)
+    edges = edges[edges[:, 0] != edges[:, 1]]
+    if not len(edges):
+        raise RegionError(&#34;no boundary edges&#34;)
+    ids, counts = np.unique(edges.ravel(), return_counts=True)
+    odd = ids[counts % 2 == 1]
+    if len(odd):
+        shown = &#34;, &#34;.join(str(int(i)) for i in odd[:6])
+        raise RegionError(f&#34;boundary is not closed, open at vertex {shown}{&#39; …&#39; if len(odd) &gt; 6 else &#39;&#39;}&#34;)
+    return edges</code></pre>
+</details>
+<div class="desc"><p>every vertex used by the boundary must be shared by an even number of edges</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.describe"><code class="name flex">
+<span>def <span class="ident">describe</span></span>(<span>pattern, scale, objects, dashes, dots, extent, max_segments)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def describe(pattern, scale, objects, dashes, dots, extent, max_segments):
+    &#34;&#34;&#34;
+    one short status line for the node, plus a hint when the result looks wrong.
+    returns (text, level) with level &#39;INFO&#39; or &#39;WARNING&#39;
+    &#34;&#34;&#34;
+    plural = lambda n, word: f&#34;{n:,} {word}{&#39;&#39; if n == 1 else &#39;es&#39; if word.endswith(&#39;sh&#39;) else &#39;s&#39;}&#34;
+    unit = pattern.directives.get(&#34;UNITS&#34;, &#34;&#34;).upper()
+    spacing = pattern_spacing(pattern) * scale
+    empty = dashes == 0 and dots == 0
+    too_sparse = spacing &gt; 0 and extent &gt; 0 and spacing &gt; extent / 2
+
+    if empty or too_sparse:
+        hint = &#34;nothing inside the region&#34; if empty else f&#34;only {plural(dashes, &#39;dash&#39;)}&#34;
+        guess = suggest_scale(pattern, extent)
+        if unit in UNIT_TO_METRES and UNIT_TO_METRES[unit] != 1.0 and abs(scale - 1.0) &lt; 1e-12:
+            hint += f&#34;, pattern is in {unit.lower()}: Scale {UNIT_TO_METRES[unit]:g} for metres&#34;
+        elif guess and too_sparse:
+            hint += f&#34;, lines are wider apart than the region: try Scale ≈ {guess:g}&#34;
+        elif guess:
+            hint += f&#34;, try Scale ≈ {guess:g}&#34;
+        return hint, &#34;WARNING&#34;
+
+    parts = [plural(dashes, &#34;dash&#34;)]
+    if dots:
+        parts.append(plural(dots, &#34;dot&#34;))
+    parts.append(plural(objects, &#34;object&#34;))
+    text = &#34; · &#34;.join(parts)
+    if dashes + dots &gt; 0.8 * max_segments:
+        return text + &#34; · close to Max Segments&#34;, &#34;WARNING&#34;
+    return text, &#34;INFO&#34;</code></pre>
+</details>
+<div class="desc"><p>one short status line for the node, plus a hint when the result looks wrong.
+returns (text, level) with level 'INFO' or 'WARNING'</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.frame_from_normal"><code class="name flex">
+<span>def <span class="ident">frame_from_normal</span></span>(<span>n, points)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def frame_from_normal(n, points):
+    &#34;&#34;&#34;
+    origin: the point of the plane closest to the world origin, so coplanar regions share one
+    continuous hatch. Axes: on (near) horizontal planes x follows world X; otherwise y runs up the
+    plane (world Z projected) and x runs level, which suits walls and roof slopes.
+    &#34;&#34;&#34;
+    n = n / np.linalg.norm(n)
+    origin = n * float(np.dot(np.mean(points, axis=0), n))
+    if abs(n[2]) &gt; 0.99:
+        x = np.array([1.0, 0.0, 0.0]) - n * n[0]
+        x /= np.linalg.norm(x)
+        y = np.cross(n, x)
+    else:
+        y = np.array([0.0, 0.0, 1.0]) - n * n[2]
+        y /= np.linalg.norm(y)
+        x = np.cross(y, n)
+    return origin, x, y, n</code></pre>
+</details>
+<div class="desc"><p>origin: the point of the plane closest to the world origin, so coplanar regions share one
+continuous hatch. Axes: on (near) horizontal planes x follows world X; otherwise y runs up the
+plane (world Z projected) and x runs level, which suits walls and roof slopes.</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.hatch_edges_2d"><code class="name flex">
+<span>def <span class="ident">hatch_edges_2d</span></span>(<span>A, B, pattern, scale=1.0, offset=(0.0, 0.0), max_segments=1000000)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hatch_edges_2d(A, B, pattern, scale=1.0, offset=(0.0, 0.0), max_segments=1_000_000):
+    &#34;&#34;&#34;
+    A, B: (E, 2) boundary edge endpoints in plane coordinates (closed boundaries, even-odd inside).
+    returns (segments (M, 2, 2), dots (D, 2))
+    &#34;&#34;&#34;
+    A = np.asarray(A, dtype=np.float64).reshape(-1, 2)
+    B = np.asarray(B, dtype=np.float64).reshape(-1, 2)
+    if not len(A) or scale &lt;= 0:
+        return np.zeros((0, 2, 2)), np.zeros((0, 2))
+    num_edges = len(A)
+    segments, dots = [], []
+    total = 0
+
+    def too_dense():
+        return HatchTooDense(f&#34;pattern &#39;{pattern.name}&#39; would produce more than {max_segments:,} dashes, &#34;
+                             f&#34;raise Scale or Max Segments&#34;)
+
+    for fam in pattern.families:
+        a = math.radians(fam.angle)
+        u = np.array([math.cos(a), math.sin(a)])
+        n = np.array([-math.sin(a), math.cos(a)])
+        o = np.array([fam.x * scale + offset[0], fam.y * scale + offset[1]])
+        dx, dy = fam.dx * scale, fam.dy * scale
+        dashes = np.array(fam.dashes, dtype=np.float64) * scale
+
+        # edges in the family frame: s along the lines, t across them
+        As, At = (A - o) @ u, (A - o) @ n
+        Bs, Bt = (B - o) @ u, (B - o) @ n
+        tmin, tmax = min(At.min(), Bt.min()), max(At.max(), Bt.max())
+
+        if abs(dy) &gt; 1e-12:
+            lo, hi = sorted((tmin / dy, tmax / dy))
+            ks = np.arange(math.ceil(lo), math.floor(hi) + 1)
+        else:
+            ks = np.array([0]) if tmin &lt;= 0 &lt;= tmax else np.array([], dtype=np.int64)
+        if not len(ks):
+            continue
+        if len(ks) &gt; max_segments:
+            raise too_dense()
+
+        # crossings of every hatch line with every edge, chunked to bound memory.
+        # half-open rule (t &lt;= line) counts a vertex lying on a line exactly once.
+        iv_k, iv_a, iv_b = [], [], []
+        chunk = max(1, 4_000_000 // num_edges)
+        for start in range(0, len(ks), chunk):
+            kk = ks[start:start + chunk]
+            tk = kk * dy
+            cross = (At[None, :] &lt;= tk[:, None]) != (Bt[None, :] &lt;= tk[:, None])
+            ki, ei = np.nonzero(cross)
+            if not len(ki):
+                continue
+            t = tk[ki]
+            s = As[ei] + (t - At[ei]) * (Bs[ei] - As[ei]) / (Bt[ei] - At[ei])
+            order = np.lexsort((s, ki))
+            ki, s = ki[order], s[order]
+            # closed boundaries cross each line an even number of times: pair them up
+            iv_k.append(kk[ki[0::2]])
+            iv_a.append(s[0::2])
+            iv_b.append(s[1::2])
+        if not iv_k:
+            continue
+        k = np.concatenate(iv_k)
+        ia = np.concatenate(iv_a)
+        ib = np.concatenate(iv_b)
+        keep = ib &gt; ia
+        k, ia, ib = k[keep], ia[keep], ib[keep]
+        if not len(k):
+            continue
+
+        period = float(np.abs(dashes).sum()) if len(dashes) else 0.0
+        if not len(dashes) or period &lt;= 1e-12:
+            seg_k, seg_a, seg_b = k, ia, ib
+            dot_k = dot_s = np.zeros(0)
+        else:
+            shift = k * dx
+            r0 = np.floor((ia - shift) / period).astype(np.int64)
+            r1 = np.floor((ib - shift) / period).astype(np.int64)
+            reps = r1 - r0 + 1
+            expanded = int(reps.sum())
+            if total + expanded * len(dashes) &gt; max_segments:
+                raise too_dense()
+            idx = np.repeat(np.arange(len(k)), reps)
+            first = np.repeat(np.cumsum(reps) - reps, reps)
+            r = r0[idx] + (np.arange(expanded) - first)
+            base = shift[idx] + r * period
+            lo_s, hi_s, kx = ia[idx], ib[idx], k[idx]
+
+            starts = np.concatenate(([0.0], np.cumsum(np.abs(dashes))[:-1]))
+            seg_k, seg_a, seg_b, dot_k, dot_s = [], [], [], [], []
+            for d, c in zip(dashes, starts):
+                p = base + c
+                if d &gt; 0:
+                    sa, sb = np.maximum(p, lo_s), np.minimum(p + d, hi_s)
+                    ok = sb &gt; sa
+                    seg_k.append(kx[ok]); seg_a.append(sa[ok]); seg_b.append(sb[ok])
+                elif d == 0:
+                    ok = (p &gt;= lo_s) &amp; (p &lt;= hi_s)
+                    dot_k.append(kx[ok]); dot_s.append(p[ok])
+            cat = lambda xs: np.concatenate(xs) if xs else np.zeros(0)
+            seg_k, seg_a, seg_b, dot_k, dot_s = map(cat, (seg_k, seg_a, seg_b, dot_k, dot_s))
+
+        total += len(seg_k) + len(dot_k)
+        if total &gt; max_segments:
+            raise too_dense()
+
+        line_pt = lambda kk, ss: o + np.outer(ss, u) + np.outer(kk * dy, n)
+        if len(seg_k):
+            segments.append(np.stack([line_pt(seg_k, seg_a), line_pt(seg_k, seg_b)], axis=1))
+        if len(dot_k):
+            dots.append(line_pt(dot_k, dot_s))
+
+    seg = np.concatenate(segments) if segments else np.zeros((0, 2, 2))
+    dot = np.concatenate(dots) if dots else np.zeros((0, 2))
+    return seg, dot</code></pre>
+</details>
+<div class="desc"><p>A, B: (E, 2) boundary edge endpoints in plane coordinates (closed boundaries, even-odd inside).
+returns (segments (M, 2, 2), dots (D, 2))</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.hatch_region"><code class="name flex">
+<span>def <span class="ident">hatch_region</span></span>(<span>verts,<br>pattern,<br>loops=None,<br>edges=None,<br>scale=1.0,<br>offset=(0.0, 0.0),<br>min_length=0.0,<br>max_segments=1000000)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hatch_region(verts, pattern, loops=None, edges=None, scale=1.0, offset=(0.0, 0.0),
+                 min_length=0.0, max_segments=1_000_000):
+    &#34;&#34;&#34;
+    one planar region given as polygon loops (index lists) or as boundary edges (index pairs).
+    loops win when both are given; with neither, the vertices form one loop in order.
+    &#34;&#34;&#34;
+    verts = np.asarray(verts, dtype=np.float64).reshape(-1, 3)
+    if loops is not None and len(loops):
+        loops = [list(l) for l in loops if len(l) &gt;= 3]
+        frame = plane_from_loops(verts, loops)
+        bnd = loops_to_edges(loops)
+    else:
+        if edges is None or not len(edges):
+            if len(verts) &lt; 3:
+                raise RegionError(&#34;a region needs at least 3 vertices&#34;)
+            edges = loops_to_edges([list(range(len(verts)))])
+        bnd = check_closed(edges)
+        frame = plane_from_edges(verts, bnd)
+
+    origin, x, y, _ = frame
+    p2 = np.stack([(verts - origin) @ x, (verts - origin) @ y], axis=1)
+    seg, dot = hatch_edges_2d(p2[bnd[:, 0]], p2[bnd[:, 1]], pattern, scale, offset, max_segments)
+    if min_length &gt; 0 and len(seg):
+        seg = seg[np.linalg.norm(seg[:, 1] - seg[:, 0], axis=1) &gt;= min_length]
+
+    to3d = lambda q: origin + np.outer(q[:, 0], x) + np.outer(q[:, 1], y)
+    seg3 = to3d(seg.reshape(-1, 2)).reshape(-1, 2, 3) if len(seg) else np.zeros((0, 2, 3))
+    dot3 = to3d(dot) if len(dot) else np.zeros((0, 3))
+    used = np.unique(bnd)
+    extent = float(np.ptp(p2[used], axis=0).max()) if len(used) else 0.0
+    return HatchResult(seg3, dot3, frame, extent)</code></pre>
+</details>
+<div class="desc"><p>one planar region given as polygon loops (index lists) or as boundary edges (index pairs).
+loops win when both are given; with neither, the vertices form one loop in order.</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.loops_to_edges"><code class="name flex">
+<span>def <span class="ident">loops_to_edges</span></span>(<span>loops)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def loops_to_edges(loops):
+    &#34;&#34;&#34;index loops -&gt; (E, 2) index pairs&#34;&#34;&#34;
+    pairs = []
+    for loop in loops:
+        loop = list(loop)
+        if len(loop) &gt;= 3:
+            pairs.extend(zip(loop, loop[1:] + loop[:1]))
+    return np.array(pairs, dtype=np.int64).reshape(-1, 2)</code></pre>
+</details>
+<div class="desc"><p>index loops -&gt; (E, 2) index pairs</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.newell_normal"><code class="name flex">
+<span>def <span class="ident">newell_normal</span></span>(<span>points)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def newell_normal(points):
+    &#34;&#34;&#34;unnormalized normal of a closed loop, its length is twice the loop area&#34;&#34;&#34;
+    p = np.asarray(points, dtype=np.float64)
+    q = np.roll(p, -1, axis=0)
+    return np.array([
+        np.sum((p[:, 1] - q[:, 1]) * (p[:, 2] + q[:, 2])),
+        np.sum((p[:, 2] - q[:, 2]) * (p[:, 0] + q[:, 0])),
+        np.sum((p[:, 0] - q[:, 0]) * (p[:, 1] + q[:, 1])),
+    ])</code></pre>
+</details>
+<div class="desc"><p>unnormalized normal of a closed loop, its length is twice the loop area</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.order_strokes"><code class="name flex">
+<span>def <span class="ident">order_strokes</span></span>(<span>strokes, start=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def order_strokes(strokes, start=None):
+    &#34;&#34;&#34;
+    greedy nearest-neighbour ordering to cut pen travel: from the current pen position pick the
+    closest stroke end, reversing the stroke when its far end is nearer.
+    &#34;&#34;&#34;
+    if not strokes:
+        return []
+    firsts = np.array([s[0] for s in strokes])
+    lasts = np.array([s[-1] for s in strokes])
+    remaining = np.ones(len(strokes), dtype=bool)
+    pos = firsts[0] * 0 if start is None else np.asarray(start, dtype=np.float64)
+    ordered = []
+    for _ in range(len(strokes)):
+        d_first = np.where(remaining, np.sum((firsts - pos) ** 2, axis=1), np.inf)
+        d_last = np.where(remaining, np.sum((lasts - pos) ** 2, axis=1), np.inf)
+        i_f, i_l = int(np.argmin(d_first)), int(np.argmin(d_last))
+        if d_first[i_f] &lt;= d_last[i_l]:
+            i, stroke = i_f, strokes[i_f]
+        else:
+            i, stroke = i_l, strokes[i_l][::-1]
+        remaining[i] = False
+        ordered.append(stroke)
+        pos = stroke[-1]
+    return ordered</code></pre>
+</details>
+<div class="desc"><p>greedy nearest-neighbour ordering to cut pen travel: from the current pen position pick the
+closest stroke end, reversing the stroke when its far end is nearer.</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.parse_pat"><code class="name flex">
+<span>def <span class="ident">parse_pat</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_pat(text):
+    &#34;&#34;&#34;
+    returns (patterns, issues). Handles several *NAME blocks per file, ;; comments,
+    Revit ;%KEY=VALUE directives (file level ones are inherited by the patterns that follow)
+    and the DOS end-of-file marker (Ctrl-Z) found in older files.
+    &#34;&#34;&#34;
+    text = re.sub(r&#34;\x1a[\s\S]*$&#34;, &#34;&#34;, text)
+    patterns, issues = [], []
+    file_directives = {}
+    current = None
+
+    for line_no, raw in enumerate(text.splitlines(), start=1):
+        line = raw.strip()
+        if not line:
+            continue
+        if line.startswith(&#34;;%&#34;):
+            m = re.match(r&#34;^([A-Za-z_]+)\s*=\s*(.*)$&#34;, line[2:])
+            if m:
+                target = current.directives if current else file_directives
+                target[m.group(1).upper()] = m.group(2).strip()
+            continue
+        if line.startswith(&#34;;&#34;):
+            continue
+        if line.startswith(&#34;*&#34;):
+            name, _, description = line[1:].partition(&#34;,&#34;)
+            current = Pattern(name.strip(), description.strip(), directives=dict(file_directives))
+            patterns.append(current)
+            continue
+
+        if current is None:
+            issues.append(f&#34;line {line_no}: data before any *NAME header&#34;)
+            continue
+        parts = [p.strip() for p in line.split(&#34;;&#34;)[0].split(&#34;,&#34;) if p.strip()]
+        try:
+            values = [float(p) for p in parts]
+        except ValueError:
+            current.issues.append(f&#34;line {line_no}: not a number in &#39;{line}&#39;&#34;)
+            continue
+        if len(values) &lt; 5:
+            current.issues.append(f&#34;line {line_no}: needs angle, x, y, delta-x, delta-y&#34;)
+            continue
+        angle, x, y, dx, dy, *dashes = values
+        current.families.append(PatFamily(angle, x, y, dx, dy, tuple(dashes)))
+
+    for p in patterns:
+        if not p.families:
+            p.issues.append(&#34;no line families defined&#34;)
+    if not patterns:
+        issues.append(&#34;no *NAME header found&#34;)
+    return patterns, issues</code></pre>
+</details>
+<div class="desc"><p>returns (patterns, issues). Handles several *NAME blocks per file, ;; comments,
+Revit ;%KEY=VALUE directives (file level ones are inherited by the patterns that follow)
+and the DOS end-of-file marker (Ctrl-Z) found in older files.</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.pattern_spacing"><code class="name flex">
+<span>def <span class="ident">pattern_spacing</span></span>(<span>pattern)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pattern_spacing(pattern):
+    &#34;&#34;&#34;typical distance between neighbouring lines of a family, in pattern units&#34;&#34;&#34;
+    gaps = [abs(f.dy) for f in pattern.families if abs(f.dy) &gt; 1e-12]
+    return float(np.median(gaps)) if gaps else 0.0</code></pre>
+</details>
+<div class="desc"><p>typical distance between neighbouring lines of a family, in pattern units</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.pen_travel"><code class="name flex">
+<span>def <span class="ident">pen_travel</span></span>(<span>strokes, start=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pen_travel(strokes, start=None):
+    &#34;&#34;&#34;total pen-up distance, for comparing orderings&#34;&#34;&#34;
+    if not strokes:
+        return 0.0
+    pos = strokes[0][0] * 0 if start is None else np.asarray(start, dtype=np.float64)
+    total = 0.0
+    for s in strokes:
+        total += float(np.linalg.norm(s[0] - pos))
+        pos = s[-1]
+    return total</code></pre>
+</details>
+<div class="desc"><p>total pen-up distance, for comparing orderings</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.plane_from_edges"><code class="name flex">
+<span>def <span class="ident">plane_from_edges</span></span>(<span>verts, edges)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plane_from_edges(verts, edges):
+    &#34;&#34;&#34;best fit plane through the boundary vertices; edges carry no winding, so the facing is fixed&#34;&#34;&#34;
+    verts = np.asarray(verts, dtype=np.float64)
+    pts = verts[np.unique(np.asarray(edges, dtype=np.int64))]
+    if len(pts) &lt; 3:
+        raise RegionError(&#34;a region needs at least 3 boundary vertices&#34;)
+    centred = pts - pts.mean(axis=0)
+    _, sv, vt = np.linalg.svd(centred, full_matrices=False)
+    if sv[1] &lt; 1e-9 * max(sv[0], 1e-30):
+        raise RegionError(&#34;boundary vertices are collinear&#34;)
+    return frame_from_normal(_upright(vt[2]), pts)</code></pre>
+</details>
+<div class="desc"><p>best fit plane through the boundary vertices; edges carry no winding, so the facing is fixed</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.plane_from_loops"><code class="name flex">
+<span>def <span class="ident">plane_from_loops</span></span>(<span>verts, loops)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plane_from_loops(verts, loops):
+    &#34;&#34;&#34;normal follows the winding of the largest loop, like a Blender face normal&#34;&#34;&#34;
+    verts = np.asarray(verts, dtype=np.float64)
+    normals = [newell_normal(verts[list(loop)]) for loop in loops if len(loop) &gt;= 3]
+    if not normals:
+        raise RegionError(&#34;no polygon with 3 or more vertices&#34;)
+    n = max(normals, key=lambda v: float(np.dot(v, v)))
+    if np.linalg.norm(n) &lt; 1e-12:
+        raise RegionError(&#34;polygon has no area&#34;)
+    used = np.unique(np.concatenate([np.asarray(list(l), dtype=np.int64) for l in loops]))
+    return frame_from_normal(n, verts[used])</code></pre>
+</details>
+<div class="desc"><p>normal follows the winding of the largest loop, like a Blender face normal</p></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.suggest_scale"><code class="name flex">
+<span>def <span class="ident">suggest_scale</span></span>(<span>pattern, extent, lines_across=25)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def suggest_scale(pattern, extent, lines_across=25):
+    &#34;&#34;&#34;a scale that puts roughly lines_across hatch lines over the region&#34;&#34;&#34;
+    spacing = pattern_spacing(pattern)
+    if spacing &lt;= 0 or extent &lt;= 0:
+        return None
+    raw = extent / lines_across / spacing
+    exp = math.floor(math.log10(raw))
+    return round(raw / 10 ** exp, 1 if raw / 10 ** exp &lt; 10 else 0) * 10 ** exp</code></pre>
+</details>
+<div class="desc"><p>a scale that puts roughly lines_across hatch lines over the region</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.hatch_module.HatchResult"><code class="flex name class">
+<span>class <span class="ident">HatchResult</span></span>
+<span>(</span><span>segments: numpy.ndarray, dots: numpy.ndarray, frame: tuple, extent: float = 0.0)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class HatchResult:
+    segments: np.ndarray        # (M, 2, 3)
+    dots: np.ndarray            # (D, 3)
+    frame: tuple                # origin, x, y, normal
+    extent: float = 0.0         # larger side of the region&#39;s bounding box in its plane</code></pre>
+</details>
+<div class="desc"><p>HatchResult(segments: numpy.ndarray, dots: numpy.ndarray, frame: tuple, extent: float = 0.0)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.hatch_module.HatchResult.dots"><code class="name">var <span class="ident">dots</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.HatchResult.extent"><code class="name">var <span class="ident">extent</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.HatchResult.frame"><code class="name">var <span class="ident">frame</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.HatchResult.segments"><code class="name">var <span class="ident">segments</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.hatch_module.HatchTooDense"><code class="flex name class">
+<span>class <span class="ident">HatchTooDense</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HatchTooDense(ValueError):
+    pass</code></pre>
+</details>
+<div class="desc"><p>Inappropriate argument value (of correct type).</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.ValueError</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.hatch_module.PatFamily"><code class="flex name class">
+<span>class <span class="ident">PatFamily</span></span>
+<span>(</span><span>angle: float, x: float, y: float, dx: float, dy: float, dashes: tuple = ())</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class PatFamily:
+    angle: float
+    x: float
+    y: float
+    dx: float
+    dy: float
+    dashes: tuple = ()</code></pre>
+</details>
+<div class="desc"><p>PatFamily(angle: float, x: float, y: float, dx: float, dy: float, dashes: tuple = ())</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.hatch_module.PatFamily.angle"><code class="name">var <span class="ident">angle</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.PatFamily.dashes"><code class="name">var <span class="ident">dashes</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.PatFamily.dx"><code class="name">var <span class="ident">dx</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.PatFamily.dy"><code class="name">var <span class="ident">dy</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.PatFamily.x"><code class="name">var <span class="ident">x</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.PatFamily.y"><code class="name">var <span class="ident">y</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.hatch_module.Pattern"><code class="flex name class">
+<span>class <span class="ident">Pattern</span></span>
+<span>(</span><span>name: str,<br>description: str = '',<br>families: list = &lt;factory&gt;,<br>directives: dict = &lt;factory&gt;,<br>issues: list = &lt;factory&gt;)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class Pattern:
+    name: str
+    description: str = &#34;&#34;
+    families: list = field(default_factory=list)
+    directives: dict = field(default_factory=dict)
+    issues: list = field(default_factory=list)</code></pre>
+</details>
+<div class="desc"><p>Pattern(name: str, description: str = '', families: list = <factory>, directives: dict = <factory>, issues: list = <factory>)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.hatch_module.Pattern.description"><code class="name">var <span class="ident">description</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.Pattern.directives"><code class="name">var <span class="ident">directives</span> : dict</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.Pattern.families"><code class="name">var <span class="ident">families</span> : list</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.Pattern.issues"><code class="name">var <span class="ident">issues</span> : list</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.hatch_module.Pattern.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.hatch_module.RegionError"><code class="flex name class">
+<span>class <span class="ident">RegionError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RegionError(ValueError):
+    pass</code></pre>
+</details>
+<div class="desc"><p>Inappropriate argument value (of correct type).</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.ValueError</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.hatch_module.chain_segments" href="#sverchok.utils.hatch_module.chain_segments">chain_segments</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.check_closed" href="#sverchok.utils.hatch_module.check_closed">check_closed</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.describe" href="#sverchok.utils.hatch_module.describe">describe</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.frame_from_normal" href="#sverchok.utils.hatch_module.frame_from_normal">frame_from_normal</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.hatch_edges_2d" href="#sverchok.utils.hatch_module.hatch_edges_2d">hatch_edges_2d</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.hatch_region" href="#sverchok.utils.hatch_module.hatch_region">hatch_region</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.loops_to_edges" href="#sverchok.utils.hatch_module.loops_to_edges">loops_to_edges</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.newell_normal" href="#sverchok.utils.hatch_module.newell_normal">newell_normal</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.order_strokes" href="#sverchok.utils.hatch_module.order_strokes">order_strokes</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.parse_pat" href="#sverchok.utils.hatch_module.parse_pat">parse_pat</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.pattern_spacing" href="#sverchok.utils.hatch_module.pattern_spacing">pattern_spacing</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.pen_travel" href="#sverchok.utils.hatch_module.pen_travel">pen_travel</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.plane_from_edges" href="#sverchok.utils.hatch_module.plane_from_edges">plane_from_edges</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.plane_from_loops" href="#sverchok.utils.hatch_module.plane_from_loops">plane_from_loops</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.suggest_scale" href="#sverchok.utils.hatch_module.suggest_scale">suggest_scale</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.hatch_module.HatchResult" href="#sverchok.utils.hatch_module.HatchResult">HatchResult</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.hatch_module.HatchResult.dots" href="#sverchok.utils.hatch_module.HatchResult.dots">dots</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.HatchResult.extent" href="#sverchok.utils.hatch_module.HatchResult.extent">extent</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.HatchResult.frame" href="#sverchok.utils.hatch_module.HatchResult.frame">frame</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.HatchResult.segments" href="#sverchok.utils.hatch_module.HatchResult.segments">segments</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.hatch_module.HatchTooDense" href="#sverchok.utils.hatch_module.HatchTooDense">HatchTooDense</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.hatch_module.PatFamily" href="#sverchok.utils.hatch_module.PatFamily">PatFamily</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.hatch_module.PatFamily.angle" href="#sverchok.utils.hatch_module.PatFamily.angle">angle</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.PatFamily.dashes" href="#sverchok.utils.hatch_module.PatFamily.dashes">dashes</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.PatFamily.dx" href="#sverchok.utils.hatch_module.PatFamily.dx">dx</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.PatFamily.dy" href="#sverchok.utils.hatch_module.PatFamily.dy">dy</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.PatFamily.x" href="#sverchok.utils.hatch_module.PatFamily.x">x</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.PatFamily.y" href="#sverchok.utils.hatch_module.PatFamily.y">y</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.hatch_module.Pattern" href="#sverchok.utils.hatch_module.Pattern">Pattern</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.hatch_module.Pattern.description" href="#sverchok.utils.hatch_module.Pattern.description">description</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.Pattern.directives" href="#sverchok.utils.hatch_module.Pattern.directives">directives</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.Pattern.families" href="#sverchok.utils.hatch_module.Pattern.families">families</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.Pattern.issues" href="#sverchok.utils.hatch_module.Pattern.issues">issues</a></code></li>
+<li><code><a title="sverchok.utils.hatch_module.Pattern.name" href="#sverchok.utils.hatch_module.Pattern.name">name</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.hatch_module.RegionError" href="#sverchok.utils.hatch_module.RegionError">RegionError</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
