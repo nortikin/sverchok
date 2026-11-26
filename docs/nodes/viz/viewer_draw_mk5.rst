@@ -79,8 +79,13 @@ Features
 - "quad tessellator" (Handle Concave Quads), this mode treats all quads as potentially irregular and tessellates them with mathutils.
 - "All Triangles", enable if all incoming faces are triangles, this skips tessellation and makes the node faster.
 - can show matrices if you only connect matrices without any other geometry. Size can be defined in the N-Panel or in the right click menu
+- one mesh with many matrices is drawn by instancing: the mesh is built and uploaded once, and the GPU draws it once per matrix. This keeps large arrays and scatterings fast (10,000 copies build in milliseconds instead of seconds). It is used automatically whenever every copy looks the same; per-object colour lists, random colours and the custom shader mode fall back to building one copy per matrix.
 - alpha channel, the color socket is rgba.
+  - translucent faces blend every layer behind them, whatever order the faces are drawn in, so they look even rather than patchy.
+  - "See-through Edges" (N-Panel, on by default): with translucent faces, the edges behind them also show, dimmed by the faces in front, as they did in Mk4.
   - multiple simultaneous viewers mixing opaque geometry may show render artifacts.
+  - for exact per-face transparency, bake the geometry and use Blender's own materials.
+- "Tint Back Faces" (N-Panel, off by default): faces seen from behind, against their winding, are tinted red. Handy for spotting flipped normals and seeing the inside of open meshes. Works in the flat, facet and smooth modes.
 - (experimental..) the "Attribute socket" can be used to configure the viewer node from another node, in this case a dedicated Attributes node.
 
 .. image:: https://user-images.githubusercontent.com/14288520/189983532-9bdaf0ed-0534-4221-af20-d334c1e34ae5.png
