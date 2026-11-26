@@ -83,6 +83,34 @@ vec4 srgb_to_framebuffer(vec4 c)
 }
 '''
 
+# Matrix instancing: one mesh drawn once per matrix. The matrices sit in a float texture,
+# seven texels per instance (the four matrix columns, then the three columns of its normal
+# matrix, worked out on the CPU), INSTANCES_PER_ROW instances per texture row.
+INSTANCES_PER_ROW = 1024
+TEXELS_PER_INSTANCE = 7
+
+MODEL_GLSL = {
+    False: '''
+vec3 to_world(vec3 p) { return p; }
+vec3 to_world_normal(vec3 n) { return n; }
+''',
+    True: '''
+vec4 instance_texel(int k)
+{
+    int i = gpu_InstanceIndex;
+    return texelFetch(instanceMatrices, ivec2((i % PER_ROW) * 7 + k, i / PER_ROW), 0);
+}
+vec3 to_world(vec3 p)
+{
+    return (mat4(instance_texel(0), instance_texel(1), instance_texel(2), instance_texel(3)) * vec4(p, 1.0)).xyz;
+}
+vec3 to_world_normal(vec3 n)
+{
+    return mat3(instance_texel(4).xyz, instance_texel(5).xyz, instance_texel(6).xyz) * n;
+}
+'''.replace("PER_ROW", str(INSTANCES_PER_ROW)),
+}
+
 LINE_VS = '''
 vec4 clip_toward(vec4 p, vec4 q)
 {
@@ -100,10 +128,10 @@ void main()
     vDist = 0.0;
     vArc = 0.0;
 
-    vec4 p = clip_toward(viewProjectionMatrix * vec4(pos, 1.0),
-                         viewProjectionMatrix * vec4(other, 1.0));
-    vec4 q = clip_toward(viewProjectionMatrix * vec4(other, 1.0),
-                         viewProjectionMatrix * vec4(pos, 1.0));
+    vec4 a = viewProjectionMatrix * vec4(to_world(pos), 1.0);
+    vec4 b = viewProjectionMatrix * vec4(to_world(other), 1.0);
+    vec4 p = clip_toward(a, b);
+    vec4 q = clip_toward(b, a);
 
     if (p.w < 1e-5) {
         /* whole segment behind the eye: emit outside the clip volume */
@@ -154,7 +182,7 @@ void main()
     vColor = color;
     float r = pointSize * 0.5 + 1.0;    /* +1px for the AA fringe */
     vCorner = corner * r;
-    vec4 p = viewProjectionMatrix * vec4(pos, 1.0);
+    vec4 p = viewProjectionMatrix * vec4(to_world(pos), 1.0);
     p.xy += corner * r / (viewportSize * 0.5) * p.w;
     p.z -= depthBias;
     gl_Position = p;
@@ -185,14 +213,15 @@ float ambient_occlusion(float x)
 
 void main()
 {
-    vPos = pos;
+    vPos = to_world(pos);
     vColor = color;
     if (shadeMode == 2) {
-        float len = length(nrm);
-        float factor = (len > 1e-12) ? ambient_occlusion(dot(nrm / len, lightDir.xyz) * 0.5 + 0.5) : 1.0;
+        vec3 n = to_world_normal(nrm);
+        float len = length(n);
+        float factor = (len > 1e-12) ? ambient_occlusion(dot(n / len, lightDir.xyz) * 0.5 + 0.5) : 1.0;
         vColor = vec4(color.rgb * factor, color.a);
     }
-    gl_Position = viewProjectionMatrix * vec4(pos, 1.0);
+    gl_Position = viewProjectionMatrix * vec4(vPos, 1.0);
 }
 '''
 
@@ -202,11 +231,20 @@ float ambient_occlusion(float x)
     return (x < 0.4) ? 0.8 - x : x;
 }
 
+/* optional: faces seen from behind (against their winding) lean towards red */
+vec3 back_face_tint(vec3 rgb)
+{
+    if (tintBackFaces && !gl_FrontFacing) {
+        return mix(rgb, vec3(0.85, 0.22, 0.18), 0.55);
+    }
+    return rgb;
+}
+
 void main()
 {
     vec4 c = vColor;
     if (shadeMode == 0 || shadeMode == 2) {
-        FragColor = srgb_to_framebuffer(c);
+        FragColor = srgb_to_framebuffer(vec4(back_face_tint(c.rgb), c.a));
         return;
     }
 
@@ -229,7 +267,7 @@ void main()
     }
     float factor = ambient_occlusion(dot(N, lightDir.xyz) * 0.5 + 0.5);
     vec3 rgb = (c.rgb * 0.8 + 0.2) * factor - c.r * 0.1;   /* Mk4 subtracts the red channel from all three */
-    FragColor = srgb_to_framebuffer(vec4(rgb, c.a));
+    FragColor = srgb_to_framebuffer(vec4(back_face_tint(rgb), c.a));
 }
 '''
 
@@ -238,8 +276,8 @@ SHADE_MODES = {'flat': 0, 'facet': 1, 'smooth': 2, 'normals': 3, 'custom': 3}
 _SHADERS = {}
 
 
-def _build_line_shader():
-    iface = gpu.types.GPUStageInterfaceInfo("sv_vd5_line_iface")
+def _build_line_shader(instanced):
+    iface = gpu.types.GPUStageInterfaceInfo(f"sv_vd5_line_iface{int(instanced)}")
     iface.smooth('VEC4', "vColor")
     iface.no_perspective('FLOAT', "vDist")
     iface.no_perspective('FLOAT', "vArc")
@@ -257,13 +295,14 @@ def _build_line_shader():
     info.vertex_in(3, 'VEC4', "color")
     info.vertex_out(iface)
     info.fragment_out(0, 'VEC4', "FragColor")
-    info.vertex_source(LINE_VS)
+    _model_space(info, instanced)
+    info.vertex_source(MODEL_GLSL[instanced] + LINE_VS)
     info.fragment_source(SRGB_GLSL + LINE_FS)
     return gpu.shader.create_from_info(info)
 
 
-def _build_point_shader():
-    iface = gpu.types.GPUStageInterfaceInfo("sv_vd5_point_iface")
+def _build_point_shader(instanced):
+    iface = gpu.types.GPUStageInterfaceInfo(f"sv_vd5_point_iface{int(instanced)}")
     iface.smooth('VEC4', "vColor")
     iface.no_perspective('VEC2', "vCorner")
 
@@ -278,13 +317,14 @@ def _build_point_shader():
     info.vertex_in(2, 'VEC4', "color")
     info.vertex_out(iface)
     info.fragment_out(0, 'VEC4', "FragColor")
-    info.vertex_source(POINT_VS)
+    _model_space(info, instanced)
+    info.vertex_source(MODEL_GLSL[instanced] + POINT_VS)
     info.fragment_source(SRGB_GLSL + POINT_FS)
     return gpu.shader.create_from_info(info)
 
 
-def _build_face_shader():
-    iface = gpu.types.GPUStageInterfaceInfo("sv_vd5_face_iface")
+def _build_face_shader(instanced):
+    iface = gpu.types.GPUStageInterfaceInfo(f"sv_vd5_face_iface{int(instanced)}")
     iface.smooth('VEC4', "vColor")
     iface.smooth('VEC3', "vPos")
 
@@ -294,12 +334,14 @@ def _build_face_shader():
     info.push_constant('VEC4', "lightDir")
     info.push_constant('VEC4', "viewInfo")
     info.push_constant('INT', "shadeMode")
+    info.push_constant('BOOL', "tintBackFaces")
     info.vertex_in(0, 'VEC3', "pos")
     info.vertex_in(1, 'VEC3', "nrm")
     info.vertex_in(2, 'VEC4', "color")
     info.vertex_out(iface)
     info.fragment_out(0, 'VEC4', "FragColor")
-    info.vertex_source(FACE_VS)
+    _model_space(info, instanced)
+    info.vertex_source(MODEL_GLSL[instanced] + FACE_VS)
     info.fragment_source(SRGB_GLSL + FACE_FS)
     return gpu.shader.create_from_info(info)
 
@@ -307,11 +349,17 @@ def _build_face_shader():
 _BUILDERS = {'line': _build_line_shader, 'point': _build_point_shader, 'face': _build_face_shader}
 
 
-def get_shader(name):
+def _model_space(info, instanced):
+    if instanced:
+        info.sampler(0, 'FLOAT_2D', "instanceMatrices")
+
+
+def get_shader(name, instanced=False):
     """compile once, needs a GPU context, so only call from the draw callback"""
-    shader = _SHADERS.get(name)
+    key = (name, instanced)
+    shader = _SHADERS.get(key)
     if shader is None:
-        shader = _SHADERS[name] = _BUILDERS[name]()
+        shader = _SHADERS[key] = _BUILDERS[name](instanced)
     return shader
 
 
@@ -496,7 +544,8 @@ def build_geom(cfg, vecs, edges_s, polys_s, mats, vcol, ecol, pcol, seed):
                     f_idx.append(fi + f_off)
                     f_off += len(fp)
 
-    geom = SimpleNamespace(points=None, lines=None, faces=None, batches={}, custom_shader=None)
+    geom = SimpleNamespace(points=None, lines=None, faces=None, batches={}, custom_shader=None,
+                           instances=None, instance_texture=None)
 
     if pts_p:
         geom.points = expand_points(_concat(pts_p, 3), _concat(pts_c, 4))
@@ -512,6 +561,32 @@ def build_geom(cfg, vecs, edges_s, polys_s, mats, vcol, ecol, pcol, seed):
     if not (geom.points or geom.lines or geom.faces):
         return None
     return geom
+
+
+def can_instance(cfg, vecs, edges_s, polys_s, mats, vcol, ecol, pcol):
+    """
+    True when one mesh meets many matrices and every copy would look the same: the same
+    edges, polygons and colours. Per-object colour lists and random colours give each copy
+    its own colour, and a custom shader knows nothing about instance matrices, so those
+    keep building one copy per matrix.
+    """
+    if len(mats) < 2 or len(vecs) != 1 or len(edges_s) > 1 or len(polys_s) > 1:
+        return False
+    if cfg.random_colors or cfg.shade_mode == 'custom':
+        return False
+
+    def same_for_every_object(cols, per_element):
+        # mirrors how build_geom picks colours for object i
+        return len(cols) == 1 if per_element else (len(cols) == 1 and len(cols[0]) == 1)
+
+    if not same_for_every_object(vcol, cfg.color_per_point):
+        return False
+    if cfg.draw_edges and not cfg.edges_use_vertex_color and not same_for_every_object(ecol, cfg.color_per_edge):
+        return False
+    if (cfg.draw_polys and not cfg.polygon_use_vertex_color
+            and not same_for_every_object(pcol, cfg.color_per_polygon)):
+        return False
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -538,6 +613,35 @@ def view_info(rd):
         return (t.x, t.y, t.z, 1.0)
     z = inv.col[2]
     return (z[0], z[1], z[2], 0.0)
+
+
+def _instance_texture(geom):
+    """the instance matrices as a float texture, made on first use (needs the GPU context)"""
+    if geom.instance_texture is None:
+        mats = geom.instances.astype(np.float64)
+        count = len(mats)
+        rows = (count + INSTANCES_PER_ROW - 1) // INSTANCES_PER_ROW
+        width = min(count, INSTANCES_PER_ROW)
+        texels = np.zeros((rows * width, TEXELS_PER_INSTANCE, 4), np.float32)
+        texels[:count, :4] = mats.transpose(0, 2, 1)   # texel k holds matrix column k
+        # normal matrix: inverse transpose of the 3x3 part, so non-uniform scale lights correctly
+        lin = mats[:, :3, :3]
+        ok = np.abs(np.linalg.det(lin)) > 1e-12
+        normal = np.repeat(np.eye(3)[None], count, axis=0)
+        normal[ok] = np.linalg.inv(lin[ok]).transpose(0, 2, 1)
+        texels[:count, 4:, :3] = normal.transpose(0, 2, 1)
+        buf = gpu.types.Buffer('FLOAT', texels.size, texels.ravel().tolist())
+        geom.instance_texture = gpu.types.GPUTexture((width * TEXELS_PER_INSTANCE, rows), format='RGBA32F', data=buf)
+    return geom.instance_texture
+
+
+def _draw(geom, batch, shader):
+    """draw once, or once per instance matrix"""
+    if geom.instances is None:
+        batch.draw(shader)
+    else:
+        shader.uniform_sampler("instanceMatrices", _instance_texture(geom))
+        batch.draw_instanced(shader, instance_start=0, instance_count=len(geom.instances))
 
 
 def _batch(geom, key, shader, content, indices):
@@ -602,7 +706,7 @@ def _draw_custom_faces(context, geom, cfg, vp):
 
 def _draw_lines(geom, cfg, vp, viewport, bias):
     ln = geom.lines
-    shader = get_shader('line')
+    shader = get_shader('line', geom.instances is not None)
     batch = _batch(geom, 'lines', shader,
                    {"pos": ln.pos, "other": ln.other, "corner": ln.corner, "color": ln.color}, ln.idx)
     shader.bind()
@@ -611,7 +715,7 @@ def _draw_lines(geom, cfg, vp, viewport, bias):
     shader.uniform_float("dashPattern", cfg.dash if cfg.dashed else (0.0, 0.0))
     shader.uniform_float("lineWidth", float(cfg.line_width))
     shader.uniform_float("depthBias", bias)
-    batch.draw(shader)
+    _draw(geom, batch, shader)
 
 
 def view_3d_geom(context, args):
@@ -646,7 +750,7 @@ def view_3d_geom(context, args):
             drawn = cfg.shade_mode == 'custom' and _draw_custom_faces(context, geom, cfg, vp)
             if not drawn:
                 f = geom.faces
-                shader = get_shader('face')
+                shader = get_shader('face', geom.instances is not None)
                 batch = _batch(geom, 'faces', shader,
                                {"pos": f.pos, "nrm": f.nrm, "color": f.color}, f.idx)
                 shader.bind()
@@ -654,7 +758,8 @@ def view_3d_geom(context, args):
                 shader.uniform_float("lightDir", (*cfg.light, 0.0))
                 shader.uniform_float("viewInfo", view_info(rd))
                 shader.uniform_int("shadeMode", SHADE_MODES[cfg.shade_mode])
-                batch.draw(shader)
+                shader.uniform_bool("tintBackFaces", cfg.tint_back_faces)
+                _draw(geom, batch, shader)
 
             if geom.faces.translucent:
                 # depth only, so edges and points behind the faces stay hidden
@@ -663,7 +768,7 @@ def view_3d_geom(context, args):
                 if drawn:
                     _draw_custom_faces(context, geom, cfg, vp)
                 else:
-                    batch.draw(shader)
+                    _draw(geom, batch, shader)
                 gpu.state.color_mask_set(True, True, True, True)
 
             gpu.state.face_culling_set('NONE')
@@ -673,7 +778,7 @@ def view_3d_geom(context, args):
 
         if geom.points is not None:
             pt = geom.points
-            shader = get_shader('point')
+            shader = get_shader('point', geom.instances is not None)
             batch = _batch(geom, 'points', shader,
                            {"pos": pt.pos, "corner": pt.corner, "color": pt.color}, pt.idx)
             shader.bind()
@@ -681,7 +786,7 @@ def view_3d_geom(context, args):
             shader.uniform_float("viewportSize", viewport)
             shader.uniform_float("pointSize", float(cfg.point_size))
             shader.uniform_float("depthBias", bias)
-            batch.draw(shader)
+            _draw(geom, batch, shader)
     finally:
         gpu.state.face_culling_set('NONE')
         gpu.state.depth_mask_set(False)
@@ -832,6 +937,10 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
 
     node_ui_show_attrs_socket: BoolProperty(default=False, name='Show attributes socket', update=configureAttrSocket)
 
+    tint_back_faces: BoolProperty(
+        name="Tint Back Faces", default=False, update=updateNode,
+        description="Show faces seen from behind (against their winding) in red, to spot flipped normals")
+
     see_through_edges: BoolProperty(
         name="See-through Edges", default=True, update=updateNode,
         description="With translucent faces, also show the edges behind them, dimmed by the faces in front (as Viewer Draw Mk4 did)")
@@ -865,6 +974,7 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'vector_light', text='')
         layout.prop(self, 'depth_offset')
         layout.prop(self, 'see_through_edges')
+        layout.prop(self, 'tint_back_faces')
         self.draw_additional_props(context, layout)
         if self.use_dashed:
             row = layout.row(align=True)
@@ -980,6 +1090,7 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
             dash=(self.dash_length, self.gap_length),
             depth_offset=self.depth_offset,
             see_through_edges=self.see_through_edges,
+            tint_back_faces=self.tint_back_faces,
             custom_ns=None,
         )
         if cfg.shade_mode == 'custom':
@@ -1053,19 +1164,27 @@ class SvViewerDrawMk5(SverchCustomTreeNode, bpy.types.Node):
             if cfg.draw_edges and not has_edges and has_polys:
                 edges_s = polygons_to_edges_np(polys_s, unique_edges=True)
 
-            mats = []
-            if inputs['Matrix'].is_linked:
-                mats = inputs['Matrix'].sv_get(deepcopy=False, default=[])
-                if mats:
-                    vecs, mats = match_long_repeat([vecs, mats])
-
             vcol = inputs['Vector Color'].sv_get(deepcopy=False, default=[[self.vector_color[:]]])
             ecol = inputs['Edge Color'].sv_get(deepcopy=False, default=[[self.edge_color[:]]])
             pcol = inputs['Polygon Color'].sv_get(deepcopy=False, default=[[self.polygon_color[:]]])
 
-            geom = build_geom(cfg, vecs, edges_s, polys_s, mats, vcol, ecol, pcol, self.random_seed)
-            if geom is None:
-                return
+            mats = []
+            if inputs['Matrix'].is_linked:
+                mats = inputs['Matrix'].sv_get(deepcopy=False, default=[])
+
+            if can_instance(cfg, vecs, edges_s, polys_s, mats, vcol, ecol, pcol):
+                # every matrix would get an identical copy: build the mesh once, let the GPU
+                # draw it once per matrix
+                geom = build_geom(cfg, vecs[:1], edges_s[:1], polys_s[:1], [], vcol, ecol, pcol, self.random_seed)
+                if geom is None:
+                    return
+                geom.instances = np.array([np.array(m, dtype=np.float32) for m in mats], dtype=np.float32)
+            else:
+                if mats:
+                    vecs, mats = match_long_repeat([vecs, mats])
+                geom = build_geom(cfg, vecs, edges_s, polys_s, mats, vcol, ecol, pcol, self.random_seed)
+                if geom is None:
+                    return
 
             callback_enable(n_id, {
                 'tree_name': self.id_data.name[:],
