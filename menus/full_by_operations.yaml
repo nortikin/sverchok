@@ -553,6 +553,7 @@
         - SvInsetSpecialMk2
         - SvInsetFaces
         - SvLatheNode
+        - SvSDFRevolveNode
         - SvSmoothNode
         - SvRelaxMeshNode
         - SvSmoothLines
@@ -806,6 +807,7 @@
         - SvCurveViewerDrawNode
         - SvSurfaceViewerDrawNode
         - SvSolidViewerNode
+        - SvSDFViewerNode
         - SvMatrixViewer28
         - SvIDXViewer28
         - SvViewer2D
@@ -1008,6 +1010,8 @@
     - SvFCStdSpreadsheetNode
     - SvApproxSubdtoNurbsNode
     - SvGlbExportNode
+    - SvSDFMeshNode 
+    - SvSDFRemeshNode    
 
 ################################################################################
 #################################### NTWK ######################################
