@@ -30,6 +30,51 @@ class BlendSurfaceConstraint(enum.Enum):
     NORMALS_MATCH = enum.auto()
     CURVATURE_MATCH = enum.auto()
 
+def make_curvature_goal(degree_u, degree_v, n_cpts_u, n_cpts_v, knotvector_u, knotvector_v,
+                        lambda_bending = 1.0, lambda_curvature = 1.0, use_cpts = True):
+    if not use_cpts:    
+        nodes_v = sv_knotvector.calc_nodes(degree_v, n_cpts_v, knotvector_v)
+        nodes_u = sv_knotvector.calc_nodes(degree_v, n_cpts_u, knotvector_u)
+        calculator_u = SvNurbsDerivativesCalculator.from_knotvector(knotvector_u, degree_u, n_cpts_u, 3, nodes_u)
+        calculator_v = SvNurbsDerivativesCalculator.from_knotvector(knotvector_v, degree_v, n_cpts_v, 3, nodes_v)
+        
+    def goal(p):
+        cpts = p.reshape((n_cpts_u, n_cpts_v, 3))
+                
+        if not use_cpts:            
+            dus = np.array([calculator_u.copy(control_points = cpts[:,i]).second_derivatives() for i in range(n_cpts_v)])
+            dus = np.transpose(dus, axes=(1,0,2))
+            dvs = np.array([calculator_v.copy(control_points = cpts[i,:]).second_derivatives() for i in range(n_cpts_u)])
+        else:
+            I = np.arange(1, n_cpts_u-1)
+            J = np.arange(1, n_cpts_v-1)
+            II, JJ = np.meshgrid(I, J, indexing='ij')
+            #I0 = np.arange(n_cpts_u)
+            #II0, JJ0 = np.meshgrid(I0, J, indexing='ij')
+            dus = np.zeros((n_cpts_u, n_cpts_v, 3))
+            dvs = np.zeros((n_cpts_u, n_cpts_v, 3))
+            dus[II,JJ] = cpts[II,JJ-1] - 2*cpts[II,JJ] + cpts[II,JJ+1]
+            dvs[II,JJ] = cpts[II-1,JJ] - 2*cpts[II,JJ] + cpts[II+1,JJ]
+            
+            #dus[II0,0] = 12*(p[II0,0] - 2*p[II0,1] + 2*p[II0,2]) / (du1**2)
+            #dus[II0,-1] = 12*(p[II0,-1] - 2*p[II0,-2] + 2*p[II0,-3]) / (dun**2)
+            #dvs[II,0] = p[II-1,0] - 2*p[II,0] + p[II+1,0]
+            #dvs[II,-1] = p[II-1,-1] - 2*p[II,-1] + p[II+1,-1]
+            #dus[0,JJ] = p[0,JJ-1] - 2*p[0,JJ] + p[0,JJ+1]
+            #dus[-1,JJ] = p[-1,JJ-1] - 2*p[-1,JJ] + p[-1,JJ+1]
+        
+        curvature = 0.0
+        if lambda_curvature > 0.0:
+            crosses = np.cross(dus, dvs)
+            curvature = (crosses * crosses).sum()
+        bending = 0.0
+        if lambda_bending > 0.0:
+            bending = (dus * dus).sum() + (dvs * dvs).sum()
+            
+        return lambda_curvature * curvature + lambda_bending * bending
+
+    return goal
+
 class BlendSurfaceOptimizer:
 
     def __init__(self, input1, input2):
@@ -87,48 +132,11 @@ class BlendSurfaceOptimizer:
         self.n_across = len(self.cpts1_last)
 
     def _mk_goal(self, lambda_bending = 1.0, lambda_curvature = 0.0, use_cpts = True):
-        if not use_cpts:    
-            nodes_across = sv_knotvector.calc_nodes(self.degree_across, self.n_across, self.kv_across)
-            nodes_along = sv_knotvector.calc_nodes(self.degree_along, self.n_along, self.kv_along)
-            calculator_u = SvNurbsDerivativesCalculator.from_knotvector(self.kv_along, self.degree_along, self.n_along, 3, nodes_along)
-            calculator_v = SvNurbsDerivativesCalculator.from_knotvector(self.kv_across, self.degree_along, self.n_across, 3, nodes_across)
-            
-        def goal(p):
-            cpts = p.reshape((self.n_along, self.n_across, 3))
-                    
-            if not use_cpts:            
-                dus = np.array([calculator_u.copy(control_points = cpts[:,i]).second_derivatives() for i in range(self.n_across)])
-                dus = np.transpose(dus, axes=(1,0,2))
-                dvs = np.array([calculator_v.copy(control_points = cpts[i,:]).second_derivatives() for i in range(self.n_along)])
-            else:
-                I = np.arange(1, self.n_along-1)
-                J = np.arange(1, self.n_across-1)
-                II, JJ = np.meshgrid(I, J, indexing='ij')
-                #I0 = np.arange(self.n_along)
-                #II0, JJ0 = np.meshgrid(I0, J, indexing='ij')
-                dus = np.zeros((self.n_along, self.n_across, 3))
-                dvs = np.zeros((self.n_along, self.n_across, 3))
-                dus[II,JJ] = cpts[II,JJ-1] - 2*cpts[II,JJ] + cpts[II,JJ+1]
-                dvs[II,JJ] = cpts[II-1,JJ] - 2*cpts[II,JJ] + cpts[II+1,JJ]
-                
-                #dus[II0,0] = 12*(p[II0,0] - 2*p[II0,1] + 2*p[II0,2]) / (du1**2)
-                #dus[II0,-1] = 12*(p[II0,-1] - 2*p[II0,-2] + 2*p[II0,-3]) / (dun**2)
-                #dvs[II,0] = p[II-1,0] - 2*p[II,0] + p[II+1,0]
-                #dvs[II,-1] = p[II-1,-1] - 2*p[II,-1] + p[II+1,-1]
-                #dus[0,JJ] = p[0,JJ-1] - 2*p[0,JJ] + p[0,JJ+1]
-                #dus[-1,JJ] = p[-1,JJ-1] - 2*p[-1,JJ] + p[-1,JJ+1]
-            
-            curvature = 0.0
-            if lambda_curvature > 0.0:
-                crosses = np.cross(dus, dvs)
-                curvature = (crosses * crosses).sum()
-            bending = 0.0
-            if lambda_bending > 0.0:
-                bending = (dus * dus).sum() + (dvs * dvs).sum()
-                
-            return lambda_curvature * curvature + lambda_bending * bending
-
-        return goal
+        return make_curvature_goal(self.degree_along, self.degree_across,
+                                   self.n_along, self.n_across,
+                                   self.kv_along, self.kv_across,
+                                   lambda_bending = lambda_bending, lambda_curvature = lambda_curvature,
+                                   use_cpts = use_cpts)
 
     def solve(self,
               implementation = SvNurbsMaths.NATIVE,

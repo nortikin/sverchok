@@ -12,6 +12,7 @@ solver (`sverchok.utils.curve.nurbs_solver` module).
 
 import numpy as np
 
+from sverchok.data_structure import apply_mask
 from sverchok.core.sv_custom_exceptions import ArgumentError
 from sverchok.utils.math import falloff_array, distribute_int
 from sverchok.utils.geom import Spline
@@ -19,7 +20,9 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolver, CurvatureIntegral
 from sverchok.utils.nurbs_common import SvNurbsMaths, to_homogenous
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots, concatenate_nurbs_curves
-from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveSolver
+from sverchok.utils.curve.nurbs_solver import SvNurbsCurveCotangents, SvNurbsCurvePoints, SvNurbsCurveSelfIntersections, SvNurbsCurveTangents, SvNurbsCurveSolver
+from sverchok.utils.curve.splines import SvMonotoneSpline
+from sverchok.utils.adaptive_curve import populate_curve
 from sverchok.utils.sv_logging import get_logger
 
 def adjust_curve_points(curve, us_bar, points, preserve_tangents=False, tangents = None, logger=None):
@@ -113,7 +116,7 @@ def deform_curve_with_falloff(curve, length_solver, u_bar, falloff_delta, fallof
     result = solver.solve()
     return remove_excessive_knots(result, tolerance)
 
-def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTANCE', implementation=SvNurbsMaths.NATIVE):
+def approximate_nurbs_curve(degree, n_cpts, points, weights=None, exact_mask=None, metric='DISTANCE', tknots = None, is_cyclic=False, implementation=SvNurbsMaths.NATIVE, logger=None):
     """
     Approximate points by a NURBS curve.
 
@@ -125,20 +128,121 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
         weights: points weights. Bigger weight means that the curve should be
             attracted to corresponding point more than to points with smaller
             weights. None means all weights are equal.
+        exact_mask: optional mask indicating points through which the curve
+            must pass exactly. If provided, the length of mask must be equal
+            to number of points. None means all points are approximated.
         metric: metric to be used.
+        tknots: specific T parameter values for points. If provided, their
+            count must be equal to number of points.
+        is_cyclic: set to True if the curve must be cyclic (closed).
         implementation: NURBS mathematics implementation.
+        logger: logger instance.
 
     Returns:
         an instance of SvNurbsCurve.
     """
     points = np.asarray(points)
-    tknots = Spline.create_knots(points, metric=metric)
+    if tknots is None:
+        tknots = Spline.create_knots(points, metric=metric)
+    else:
+        if len(tknots) != len(points):
+            raise ArgumentError("Number of tknots must be equal to number of points")
     knotvector = sv_knotvector.from_tknots(degree, tknots, n_cpts=n_cpts)
-    goal = SvNurbsCurvePoints(tknots, points, weights = weights, relative=False)
     solver = SvNurbsCurveSolver(degree=degree)
     solver.set_curve_params(n_cpts, knotvector = knotvector)
-    solver.add_goal(goal)
-    return solver.solve(implementation=implementation)
+    if exact_mask is None:
+        goal = SvNurbsCurvePoints(tknots, points, weights = weights, relative=False)
+        solver.add_goal(goal)
+    else:
+        if len(exact_mask) != len(points):
+            raise ArgumentError("Length of exact_mask must be equal to number of points")
+        t_exact, t_inexact = apply_mask(exact_mask, tknots)
+        points_exact, points_inexact = apply_mask(exact_mask, points)
+        if weights is None:
+            weights_exact, weights_inexact = None, None
+        else:
+            weights_exact, weights_inexact = apply_mask(exact_mask, weights)
+            weights_exact = np.array(weights_exact)
+            weights_inexact = np.array(weights_inexact)
+        if t_exact:
+            exact_goal = SvNurbsCurvePoints(np.array(t_exact), np.array(points_exact), weights = weights_exact, relative=False, exact=True)
+            solver.add_goal(exact_goal)
+        if t_inexact:
+            inexact_goal = SvNurbsCurvePoints(np.array(t_inexact), np.array(points_inexact), weights = weights_inexact, relative=False, exact=False)
+            solver.add_goal(inexact_goal)
+    if is_cyclic:
+        closed = SvNurbsCurveSelfIntersections.single(0.0, 1.0, weight=1.0, relative_u=True, relative=False,exact=True)
+        solver.add_goal(closed)
+        tangents = SvNurbsCurveCotangents.single(0.0, 1.0, weight=1.0, relative_u=True, relative=False, exact=True)
+        solver.add_goal(tangents)
+    return solver.solve(implementation=implementation, logger=logger)
+
+def reparametrize_nurbs_curve(curve, n_cpts, samples, src_key_ts, dst_key_ts,
+                        degree = None,
+                        samples_by_curvature = True,
+                        samples_by_length = False,
+                        weights_by_curvature = False,
+                        populate_resolution = 200,
+                        nurbs_implementation = SvNurbsMaths.NATIVE,
+                        logger = None):
+    if degree is None:
+        if hasattr(curve, 'get_degree'):
+            degree = curve.get_degree()
+        else:
+            raise ArgumentError("Curve degree is not provided, and original curve does not have get_degree() method")
+
+    src_key_ts = np.array(src_key_ts)
+    dst_key_ts = np.array(dst_key_ts)
+    spline = SvMonotoneSpline(src_key_ts, dst_key_ts)
+    
+    t_min, t_max = curve.get_u_bounds()
+    if samples_by_curvature or samples_by_length:
+        src_ts = populate_curve(curve, samples, resolution=populate_resolution, by_length = samples_by_length, by_curvature = samples_by_curvature)
+    else:
+        src_ts = np.linspace(t_min, t_max, num=samples)
+    
+    dst_ts = spline.evaluate_array(src_ts)[:,1]
+    curve_pts = curve.evaluate_array(src_ts)
+    curve_key_pts = curve.evaluate_array(src_key_ts)
+
+    # all_src_ts = np.array(list(set(list(src_key_ts) + list(src_ts))))
+    # all_src_ts = np.sort(all_src_ts)
+    # src_knotvector = sv_knotvector.from_tknots(degree, all_src_ts, n_cpts = n_cpts)
+    # knotvector = spline.evaluate_array(src_knotvector)[:,1]
+    
+    all_ts = np.array(list(set(list(dst_key_ts) + list(dst_ts))))
+    t_idxs = np.argsort(all_ts)
+    all_ts = all_ts[t_idxs]
+
+    # all_pts = np.concatenate((curve_key_pts, curve_pts), axis=0)
+    # sorted_pts = all_pts[t_idxs]
+    # metric_tknots = Spline.create_knots(sorted_pts, metric='DISTANCE')
+    # knotvector = sv_knotvector.from_tknots(degree, metric_tknots, n_cpts = n_cpts)
+    
+    orig_idxs = np.linspace(t_min, t_max, num = n_cpts)
+    dst_idxs = spline.evaluate_array(orig_idxs)[:,1]
+    knotvector = sv_knotvector.from_tknots(degree, dst_idxs)
+    # knotvector = sv_knotvector.from_tknots(degree, all_ts, n_cpts = n_cpts)
+    # knotvector = sv_knotvector.from_tknots(degree, src_ts, n_cpts = n_cpts)
+    
+    solver = SvNurbsCurveSolver(degree=degree)
+    solver.set_curve_params(n_cpts, knotvector = knotvector)
+    
+    exact_goal = SvNurbsCurvePoints(dst_key_ts, curve_key_pts, relative=False, exact=True)
+    solver.add_goal(exact_goal)
+    
+    if weights_by_curvature:
+        weights = np.sqrt(curve.curvature_array(src_ts))
+    else:
+        weights = None
+    inexact_goal = SvNurbsCurvePoints(dst_ts, curve_pts, weights = weights, relative=False, exact=False)
+    solver.add_goal(inexact_goal)
+    
+    new_curve = solver.solve(implementation = nurbs_implementation, logger = logger)
+    new_curve_pts = new_curve.evaluate_array(dst_ts)
+    deltas = new_curve_pts - curve_pts
+    diff = (deltas * deltas).sum() / samples
+    return new_curve, diff
 
 def prepare_solver_for_interpolation(degree, points,
                                      metric='DISTANCE',
